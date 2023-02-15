@@ -113,42 +113,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region StaticData
 
-        public Task<PushEVSEDataResult> AddStaticData(cloud.charging.open.protocols.WWCP.IEVSE EVSE, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
+        #region (Set/Add/Update/Delete) Roaming network...
 
-        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<cloud.charging.open.protocols.WWCP.IEVSE> EVSEs, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushChargingStationDataResult> AddStaticData(IChargingStation ChargingStation, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(ChargingPool ChargingPool, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<ChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushEVSEDataResult> SetStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
@@ -158,36 +125,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             throw new NotImplementedException();
         }
 
-
-
-
-
-        public Task<PushEVSEDataResult> DeleteStaticData(cloud.charging.open.protocols.WWCP.IEVSE EVSE, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<cloud.charging.open.protocols.WWCP.IEVSE> EVSEs, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(IChargingStation ChargingStation, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushEVSEDataResult> UpdateStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
@@ -197,68 +135,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             throw new NotImplementedException();
         }
 
+        #endregion
 
-
-
-        public Task<PushEVSEDataResult> SetStaticData(cloud.charging.open.protocols.WWCP.IEVSE EVSE, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<cloud.charging.open.protocols.WWCP.IEVSE> EVSEs, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> SetStaticData(IChargingStation ChargingStation, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
+        #region (Set/Add/Update/Delete) Charging station operator(s)...
 
         public Task<PushEVSEDataResult> SetStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
+        public Task<PushEVSEDataResult> AddStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> DeleteStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+
         public Task<PushEVSEDataResult> SetStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> SetStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-        public Task<PushEVSEDataResult> UpdateStaticData(cloud.charging.open.protocols.WWCP.IEVSE EVSE, string PropertyName = null, object OldValue = null, object NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<cloud.charging.open.protocols.WWCP.IEVSE> EVSEs, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(IChargingStation ChargingStation, string PropertyName = null, object OldValue = null, object NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public Task<PushEVSEDataResult> UpdateStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
@@ -268,16 +175,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> UpdateStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
+        #endregion
 
+        #region (Set/Add/Update/Delete) Charging pool(s)...
 
-
-
-        public Task<PushEVSEDataResult> SetStaticData(IChargingPool ChargingPool, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingPoolDataResult> SetStaticData(IChargingPool ChargingPool, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
@@ -287,36 +194,126 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> UpdateStaticData(IChargingPool ChargingPool, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingPoolDataResult> UpdateStaticData(IChargingPool ChargingPool, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> DeleteStaticData(IChargingPool ChargingPool, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingPoolDataResult> DeleteStaticData(IChargingPool ChargingPool, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+
+        public Task<PushChargingPoolDataResult> SetStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingPoolDataResult> AddStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingPoolDataResult> UpdateStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingPoolDataResult> DeleteStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
+        #endregion
+
+        #region (Set/Add/Update/Delete) Charging station(s)...
+        public Task<PushChargingStationDataResult> SetStaticData(IChargingStation ChargingStation, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingStationDataResult> AddStaticData(IChargingStation ChargingStation, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingStationDataResult> UpdateStaticData(IChargingStation ChargingStation, string PropertyName = null, object OldValue = null, object NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingStationDataResult> DeleteStaticData(IChargingStation ChargingStation, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Task<PushChargingStationDataResult> SetStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingStationDataResult> AddStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingStationDataResult> UpdateStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingStationDataResult> DeleteStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region (Set/Add/Update/Delete) EVSE(s)...
+
+        public Task<PushEVSEDataResult> SetStaticData(cloud.charging.open.protocols.WWCP.IEVSE EVSE, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> AddStaticData(cloud.charging.open.protocols.WWCP.IEVSE EVSE, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(cloud.charging.open.protocols.WWCP.IEVSE EVSE, string PropertyName = null, object OldValue = null, object NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<PushEVSEDataResult> DeleteStaticData(cloud.charging.open.protocols.WWCP.IEVSE EVSE, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<cloud.charging.open.protocols.WWCP.IEVSE> EVSEs, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<cloud.charging.open.protocols.WWCP.IEVSE> EVSEs, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<cloud.charging.open.protocols.WWCP.IEVSE> EVSEs, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<cloud.charging.open.protocols.WWCP.IEVSE> EVSEs, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
 
         #endregion
 

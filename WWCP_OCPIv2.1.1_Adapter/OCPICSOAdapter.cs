@@ -294,12 +294,356 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
-        #region (Set/Add/Update/Delete) Charging station(s)...
+        #region (Set/Add/Update/Delete) Charging pool(s)...
 
-        public Task<PushEVSEDataResult> SetStaticData(IChargingStation ChargingStation, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        #region SetStaticData   (ChargingPool, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Set the given charging pool.
+        /// </summary>
+        /// <param name="ChargingPool">A charging pool.</param>
+        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        async Task<WWCP.PushChargingPoolDataResult>
+
+            WWCP.ISendPOIData.SetStaticData(WWCP.IChargingPool      ChargingPool,
+                                            WWCP.TransmissionTypes  TransmissionType,
+
+                                            DateTime?               Timestamp,
+                                            CancellationToken?      CancellationToken,
+                                            EventTracking_Id?       EventTrackingId,
+                                            TimeSpan?               RequestTimeout)
+
+        {
+
+            #region Enqueue, if requested...
+
+            if (TransmissionType == WWCP.TransmissionTypes.Enqueue)
+            {
+
+                #region Send OnEnqueueSendCDRRequest event
+
+                //try
+                //{
+
+                //    OnEnqueueSendCDRRequest?.Invoke(Timestamp.Now,
+                //                                    Timestamp.Value,
+                //                                    this,
+                //                                    EventTrackingId,
+                //                                    RoamingNetwork.Id,
+                //                                    ChargeDetailRecord,
+                //                                    RequestTimeout);
+
+                //}
+                //catch (Exception e)
+                //{
+                //    DebugX.LogException(e, nameof(WWCPEMPAdapter) + "." + nameof(OnSendCDRRequest));
+                //}
+
+                #endregion
+
+                var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+
+                try
+                {
+
+                    if (lockTaken)
+                    {
+
+                        if (IncludeChargingPools is null ||
+                           (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
+                        {
+
+                            ChargingPoolsToAddQueue.Add(ChargingPool);
+
+                            FlushEVSEDataAndStatusTimer.Change(FlushEVSEDataAndStatusEvery,
+                                                               TimeSpan.FromMilliseconds(-1));
+
+                        }
+
+                    }
+
+                }
+                finally
+                {
+                    if (lockTaken)
+                        DataAndStatusLock.Release();
+                }
+
+                return lockTaken
+                           ? WWCP.PushChargingPoolDataResult.Enqueued   (Id, this, new IChargingPool[] { ChargingPool })
+                           : WWCP.PushChargingPoolDataResult.LockTimeout(Id, this, new IChargingPool[] { ChargingPool });
+
+            }
+
+            #endregion
+
+            throw new NotImplementedException();
+
+            //return await PushEVSEData(ChargingPool.EVSEs,
+            //                          ActionTypes.Insert,
+            //                          null,
+
+            //                          Timestamp,
+            //                          CancellationToken,
+            //                          EventTrackingId,
+            //                          RequestTimeout).
+
+            //                          ConfigureAwait(false);
+
+        }
+
+        #endregion
+
+        #region AddStaticData   (ChargingPool, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Add the given charging pool.
+        /// </summary>
+        /// <param name="ChargingPool">A charging pool.</param>
+        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        async Task<WWCP.PushChargingPoolDataResult>
+
+            WWCP.ISendPOIData.AddStaticData(WWCP.IChargingPool      ChargingPool,
+                                            WWCP.TransmissionTypes  TransmissionType,
+
+                                            DateTime?               Timestamp,
+                                            CancellationToken?      CancellationToken,
+                                            EventTracking_Id?       EventTrackingId,
+                                            TimeSpan?               RequestTimeout)
+
+        {
+
+            #region Enqueue, if requested...
+
+            if (TransmissionType == WWCP.TransmissionTypes.Enqueue)
+            {
+
+                #region Send OnEnqueueSendCDRRequest event
+
+                //try
+                //{
+
+                //    OnEnqueueSendCDRRequest?.Invoke(Timestamp.Now,
+                //                                    Timestamp.Value,
+                //                                    this,
+                //                                    EventTrackingId,
+                //                                    RoamingNetwork.Id,
+                //                                    ChargeDetailRecord,
+                //                                    RequestTimeout);
+
+                //}
+                //catch (Exception e)
+                //{
+                //    DebugX.LogException(e, nameof(WWCPEMPAdapter) + "." + nameof(OnSendCDRRequest));
+                //}
+
+                #endregion
+
+                var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+
+                try
+                {
+
+                    if (lockTaken)
+                    {
+
+                        if (IncludeChargingPools is null ||
+                           (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
+                        {
+
+                            ChargingPoolsToAddQueue.Add(ChargingPool);
+
+                            FlushEVSEDataAndStatusTimer.Change(FlushEVSEDataAndStatusEvery,
+                                                               TimeSpan.FromMilliseconds(-1));
+
+                        }
+
+                    }
+
+                }
+                finally
+                {
+                    if (lockTaken)
+                        DataAndStatusLock.Release();
+                }
+
+                return lockTaken
+                           ? WWCP.PushChargingPoolDataResult.Enqueued   (Id, this, new IChargingPool[] { ChargingPool })
+                           : WWCP.PushChargingPoolDataResult.LockTimeout(Id, this, new IChargingPool[] { ChargingPool });
+
+            }
+
+            #endregion
+
+            throw new NotImplementedException();
+
+            //return await PushEVSEData(ChargingPool.EVSEs,
+            //                          ActionTypes.Insert,
+            //                          null,
+
+            //                          Timestamp,
+            //                          CancellationToken,
+            //                          EventTrackingId,
+            //                          RequestTimeout).
+
+            //                          ConfigureAwait(false);
+
+        }
+
+        #endregion
+
+        public Task<PushChargingPoolDataResult> UpdateStaticData(IChargingPool ChargingPool, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
+
+        public Task<PushChargingPoolDataResult> DeleteStaticData(IChargingPool ChargingPool, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Task<PushChargingPoolDataResult> SetStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingPoolDataResult> AddStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingPoolDataResult> UpdateStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingPoolDataResult> DeleteStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region (Set/Add/Update/Delete) Charging station(s)...
+
+        #region SetStaticData   (ChargingStation, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Set the given charging station.
+        /// </summary>
+        /// <param name="ChargingStation">A charging station.</param>
+        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        async Task<WWCP.PushChargingStationDataResult>
+
+            WWCP.ISendPOIData.SetStaticData(WWCP.IChargingStation   ChargingStation,
+                                            WWCP.TransmissionTypes  TransmissionType,
+
+                                            DateTime?               Timestamp,
+                                            CancellationToken?      CancellationToken,
+                                            EventTracking_Id?       EventTrackingId,
+                                            TimeSpan?               RequestTimeout)
+
+        {
+
+            #region Enqueue, if requested...
+
+            if (TransmissionType == WWCP.TransmissionTypes.Enqueue)
+            {
+
+                #region Send OnEnqueueSendCDRRequest event
+
+                //try
+                //{
+
+                //    OnEnqueueSendCDRRequest?.Invoke(Timestamp.Now,
+                //                                    Timestamp.Value,
+                //                                    this,
+                //                                    EventTrackingId,
+                //                                    RoamingNetwork.Id,
+                //                                    ChargeDetailRecord,
+                //                                    RequestTimeout);
+
+                //}
+                //catch (Exception e)
+                //{
+                //    DebugX.LogException(e, nameof(WWCPEMPAdapter) + "." + nameof(OnSendCDRRequest));
+                //}
+
+                #endregion
+
+                var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+
+                try
+                {
+
+                    if (lockTaken)
+                    {
+
+                        foreach (var evse in ChargingStation)
+                        {
+
+                            if (IncludeEVSEs is null ||
+                               (IncludeEVSEs is not null && IncludeEVSEs(evse)))
+                            {
+
+                                EVSEsToAddQueue.Add(evse);
+
+                                FlushEVSEDataAndStatusTimer.Change(FlushEVSEDataAndStatusEvery,
+                                                                   TimeSpan.FromMilliseconds(-1));
+
+                            }
+
+                        }
+
+                    }
+
+                }
+                finally
+                {
+                    if (lockTaken)
+                        DataAndStatusLock.Release();
+                }
+
+                return lockTaken
+                           ? WWCP.PushChargingStationDataResult.Enqueued   (Id, this, new IChargingStation[] { ChargingStation })
+                           : WWCP.PushChargingStationDataResult.LockTimeout(Id, this, new IChargingStation[] { ChargingStation });
+
+            }
+
+            #endregion
+
+            throw new NotImplementedException();
+
+            //return await PushEVSEData(ChargingStation.EVSEs,
+            //                          ActionTypes.Insert,
+            //                          null,
+
+            //                          Timestamp,
+            //                          CancellationToken,
+            //                          EventTrackingId,
+            //                          RequestTimeout).
+
+            //                          ConfigureAwait(false);
+
+        }
+
+        #endregion
 
         #region AddStaticData   (ChargingStation, TransmissionType = Enqueue, ...)
 
@@ -409,176 +753,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        public Task<PushEVSEDataResult> UpdateStaticData(IChargingStation ChargingStation, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingStationDataResult> UpdateStaticData(IChargingStation ChargingStation, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> DeleteStaticData(IChargingStation ChargingStation, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region (Set/Add/Update/Delete) Charging pool(s)...
-
-        public Task<PushEVSEDataResult> SetStaticData(IChargingPool ChargingPool, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        #region AddStaticData   (ChargingPool, TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Add the given charging pool.
-        /// </summary>
-        /// <param name="ChargingPool">A charging pool.</param>
-        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        async Task<WWCP.PushChargingPoolDataResult>
-
-            WWCP.ISendPOIData.AddStaticData(WWCP.IChargingPool      ChargingPool,
-                                            WWCP.TransmissionTypes  TransmissionType,
-
-                                            DateTime?               Timestamp,
-                                            CancellationToken?      CancellationToken,
-                                            EventTracking_Id?       EventTrackingId,
-                                            TimeSpan?               RequestTimeout)
-
-        {
-
-            #region Enqueue, if requested...
-
-            if (TransmissionType == WWCP.TransmissionTypes.Enqueue)
-            {
-
-                #region Send OnEnqueueSendCDRRequest event
-
-                //try
-                //{
-
-                //    OnEnqueueSendCDRRequest?.Invoke(Timestamp.Now,
-                //                                    Timestamp.Value,
-                //                                    this,
-                //                                    EventTrackingId,
-                //                                    RoamingNetwork.Id,
-                //                                    ChargeDetailRecord,
-                //                                    RequestTimeout);
-
-                //}
-                //catch (Exception e)
-                //{
-                //    DebugX.LogException(e, nameof(WWCPEMPAdapter) + "." + nameof(OnSendCDRRequest));
-                //}
-
-                #endregion
-
-                var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
-
-                try
-                {
-
-                    if (lockTaken)
-                    {
-
-                        if (IncludeChargingPools is null ||
-                           (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
-                        {
-
-                            ChargingPoolsToAddQueue.Add(ChargingPool);
-
-                            FlushEVSEDataAndStatusTimer.Change(FlushEVSEDataAndStatusEvery,
-                                                               TimeSpan.FromMilliseconds(-1));
-
-                        }
-
-                    }
-
-                }
-                finally
-                {
-                    if (lockTaken)
-                        DataAndStatusLock.Release();
-                }
-
-                return lockTaken
-                           ? WWCP.PushChargingPoolDataResult.Enqueued   (Id, this, new IChargingPool[] { ChargingPool })
-                           : WWCP.PushChargingPoolDataResult.LockTimeout(Id, this, new IChargingPool[] { ChargingPool });
-
-            }
-
-            #endregion
-
-            throw new NotImplementedException();
-
-            //return await PushEVSEData(ChargingPool.EVSEs,
-            //                          ActionTypes.Insert,
-            //                          null,
-
-            //                          Timestamp,
-            //                          CancellationToken,
-            //                          EventTrackingId,
-            //                          RequestTimeout).
-
-            //                          ConfigureAwait(false);
-
-        }
-
-        #endregion
-
-        public Task<PushEVSEDataResult> UpdateStaticData(IChargingPool ChargingPool, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(IChargingPool ChargingPool, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingStationDataResult> DeleteStaticData(IChargingStation ChargingStation, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
 
-        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingStationDataResult> SetStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingStationDataResult> AddStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingStationDataResult> UpdateStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingStationDataResult> DeleteStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
