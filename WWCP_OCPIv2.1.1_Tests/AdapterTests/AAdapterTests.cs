@@ -198,12 +198,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
 
             graphDefinedCSO  = roamingNetwork.CreateChargingStationOperator(
-                                   Id:                                  ChargingStationOperator_Id.Parse("DE*GEF"),
-                                   Name:                                I18NString.Create(Languages.en, "GraphDefined"),
-                                   Description:                         I18NString.Create(Languages.en, "GraphDefined CSO services"),
-                                   InitialAdminStatus:                  ChargingStationOperatorAdminStatusTypes.Operational,
-                                   InitialStatus:                       ChargingStationOperatorStatusTypes.Available
-                               );
+                                   Id:                  ChargingStationOperator_Id.Parse("DE*GEF"),
+                                   Name:                I18NString.Create(Languages.en, "GraphDefined"),
+                                   Description:         I18NString.Create(Languages.en, "GraphDefined CSO services"),
+                                   InitialAdminStatus:  ChargingStationOperatorAdminStatusTypes.Operational,
+                                   InitialStatus:       ChargingStationOperatorStatusTypes.Available
+                               ).Result.ChargingStationOperator;
 
             Assert.IsNotNull(graphDefinedCSO);
 
