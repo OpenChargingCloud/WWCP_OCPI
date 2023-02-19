@@ -45,6 +45,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected  RoamingNetwork?            roamingNetwork;
         protected  HTTPAPI?                   httpAPI;
         protected  CommonAPI?                 commonAPI;
+        protected  CPOAPI?                    cpoAPI;
         protected  OCPICSOAdapter?            csoAdapter;
         protected  IChargingStationOperator?  graphDefinedCSO;
 
@@ -147,21 +148,76 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    OurPartyId:                          Party_Id.   Parse("GEF"),
 
                                    HTTPServer:                          httpAPI.HTTPServer,
-                                   HTTPHostname:                        null,
-                                   ExternalDNSName:                     null,
-                                   URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1"),
-                                   BasePath:                            null,
-                                   HTTPServiceName:                     null,
 
                                    AdditionalURLPathPrefix:             null,
                                    KeepRemovedEVSEs:                    null,
-                                   LocationsAsOpenData:                 false,
+                                   LocationsAsOpenData:                 true,
                                    AllowDowngrades:                     null,
-                                   Disable_RootServices:                false
+                                   Disable_RootServices:                false,
+
+                                   HTTPHostname:                        null,
+                                   ExternalDNSName:                     null,
+                                   HTTPServiceName:                     null,
+                                   BasePath:                            null,
+
+                                   URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1"),
+                                   APIVersionHashes:                    null,
+
+                                   DisableMaintenanceTasks:             null,
+                                   MaintenanceInitialDelay:             null,
+                                   MaintenanceEvery:                    null,
+
+                                   DisableWardenTasks:                  null,
+                                   WardenInitialDelay:                  null,
+                                   WardenCheckEvery:                    null,
+
+                                   IsDevelopment:                       null,
+                                   DevelopmentServers:                  null,
+                                   DisableLogging:                      null,
+                                   LoggingPath:                         null,
+                                   LogfileName:                         null,
+                                   LogfileCreator:                      null,
+                                   Autostart:                           false
 
                                );
 
             Assert.IsNotNull(commonAPI);
+
+
+            cpoAPI           = new CPOAPI(
+
+                                   CommonAPI:                           commonAPI,
+                                   DefaultCountryCode:                  CountryCode.Parse("DE"),
+                                   DefaultPartyId:                      Party_Id.   Parse("GEF"),
+                                   AllowDowngrades:                     null,
+
+                                   HTTPHostname:                        null,
+                                   ExternalDNSName:                     null,
+                                   HTTPServiceName:                     null,
+                                   BasePath:                            null,
+
+                                   URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1"),
+                                   APIVersionHashes:                    null,
+
+                                   DisableMaintenanceTasks:             null,
+                                   MaintenanceInitialDelay:             null,
+                                   MaintenanceEvery:                    null,
+
+                                   DisableWardenTasks:                  null,
+                                   WardenInitialDelay:                  null,
+                                   WardenCheckEvery:                    null,
+
+                                   IsDevelopment:                       null,
+                                   DevelopmentServers:                  null,
+                                   DisableLogging:                      null,
+                                   LoggingPath:                         null,
+                                   LogfileName:                         null,
+                                   LogfileCreator:                      null,
+                                   Autostart:                           false
+
+                               );
+
+            Assert.IsNotNull(cpoAPI);
 
 
             csoAdapter       = roamingNetwork.CreateOCPIv2_1_CSOAdapter(

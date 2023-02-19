@@ -879,7 +879,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
-                    var locationId  = Location_Id.TryParse(EVSE.ChargingPool?.Id.ToString() ?? "");
+                    var locationId  = EVSE.ChargingPool is not null
+                                          ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                          : null;
 
                     if (locationId.HasValue)
                     {

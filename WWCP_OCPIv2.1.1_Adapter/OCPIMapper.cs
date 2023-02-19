@@ -158,16 +158,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var warnings = new List<Warning>();
 
+            if (ChargingPool.Operator is null)
+            {
+                warnings.Add(Warning.Create(Languages.en, "The given charging location must have a valid charging station operator!"));
+                Warnings = warnings;
+                return null;
+            }
+
             if (ChargingPool.Address is null)
             {
-                warnings.Add(Warning.Create(Languages.en, "Charging location must have a valid address!"));
+                warnings.Add(Warning.Create(Languages.en, "The given charging location must have a valid address!"));
                 Warnings = warnings;
                 return null;
             }
 
             if (ChargingPool.GeoLocation is null)
             {
-                warnings.Add(Warning.Create(Languages.en, "Charging location must have a valid geo location!"));
+                warnings.Add(Warning.Create(Languages.en, "The given charging location must have a valid geo location!"));
                 Warnings = warnings;
                 return null;
             }
@@ -179,25 +186,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 return new Location(
 
-                           CountryCode:          CountryCode.Parse("DE"),
-                           PartyId:              Party_Id.   Parse("GEF"),
-                           Id:                   Location_Id.Parse("111"),
-                           LocationType:         LocationType.ON_STREET,
-                           Address:              "",
-                           City:                 "",
-                           PostalCode:           "",
+                           CountryCode:          CountryCode.Parse(ChargingPool.Id.OperatorId.CountryCode.Alpha2Code),
+                           PartyId:              Party_Id.   Parse(ChargingPool.Id.OperatorId.Suffix),
+                           Id:                   Location_Id.Parse(ChargingPool.Id.Suffix),
+                           LocationType:         LocationType.ON_STREET, // ????
+                           Address:              String.Concat(ChargingPool.Address.Street, " ", ChargingPool.Address.HouseNumber),
+                           City:                 ChargingPool.Address.City.FirstText(),
+                           PostalCode:           ChargingPool.Address.PostalCode,
                            Country:              ChargingPool.Address.Country,
                            Coordinates:          ChargingPool.GeoLocation.Value,
 
-                           Name:                 "",
+                           Name:                 ChargingPool.Name.FirstText(),
                            RelatedLocations:     Array.Empty<AdditionalGeoLocation>(),
                            EVSEs:                Array.Empty<EVSE>(),
                            Directions:           Array.Empty<DisplayText>(),
-                           Operator:             null,
+                           Operator:             new BusinessDetails(
+                                                     ChargingPool.Operator.Name.FirstText()
+                                                 ),
                            SubOperator:          null,
                            Owner:                null,
                            Facilities:           Array.Empty<Facilities>(),
-                           Timezone:             "",
+                           Timezone:             ChargingPool.Address.TimeZone?.ToString(),
                            OpeningTimes:         null,
                            ChargingWhenClosed:   null,
                            Images:               Array.Empty<Image>(),
@@ -283,6 +292,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!evseId.HasValue)
                 {
                     warnings.Add(Warning.Create(Languages.en, $"The given EVSE identificaton '{EVSE.Id}' could not be converted to an OCPI EVSE identification!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+
+                if (EVSE.ChargingStation is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The given EVSE must have a valid charging station!"));
                     Warnings = warnings;
                     return null;
                 }

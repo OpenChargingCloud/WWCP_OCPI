@@ -22,6 +22,7 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
@@ -1032,11 +1033,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String    DefaultHTTPServerName     = "GraphDefined OCPI EMSP HTTP API v0.1";
-
-        /// <summary>
-        /// The default HTTP server name.
-        /// </summary>
         public new const           String    DefaultHTTPServiceName    = "GraphDefined OCPI EMSP HTTP API v0.1";
 
         /// <summary>
@@ -1048,6 +1044,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// The default HTTP URL path prefix.
         /// </summary>
         public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("/emsp");
+
+        /// <summary>
+        /// The default EMSP API logfile name.
+        /// </summary>
+        public  const              String    DefaultLogfileName       = "OCPI_EMSPAPI.log";
 
         protected Newtonsoft.Json.Formatting JSONFormat = Newtonsoft.Json.Formatting.Indented;
 
@@ -3129,56 +3130,94 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// Create an instance of the HTTP API for e-mobility service providers
         /// using the given CommonAPI.
         /// </summary>
-        /// <param name="CommonAPI">The OCPI common API.</param>
+        /// <param name="CommonAPI">The OCPI CommonAPI.</param>
         /// <param name="DefaultCountryCode">The default country code to use.</param>
         /// <param name="DefaultPartyId">The default party identification to use.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
-        /// <param name="URLPathPrefix">An optional URL path prefix.</param>
-        /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
-        public EMSPAPI(CommonAPI      CommonAPI,
-                       CountryCode    DefaultCountryCode,
-                       Party_Id       DefaultPartyId,
-                       Boolean?       AllowDowngrades   = null,
+        /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
+        /// 
+        /// <param name="URLPathPrefix">An optional URL path prefix, used when defining URL templates.</param>
+        /// <param name="HTMLTemplate">An optional HTML template.</param>
+        /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
+        /// 
+        /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
+        /// <param name="MaintenanceInitialDelay">The initial delay of the maintenance tasks.</param>
+        /// <param name="MaintenanceEvery">The maintenance intervall.</param>
+        /// 
+        /// <param name="DisableWardenTasks">Disable all warden tasks.</param>
+        /// <param name="WardenInitialDelay">The initial delay of the warden tasks.</param>
+        /// <param name="WardenCheckEvery">The warden intervall.</param>
+        /// 
+        /// <param name="IsDevelopment">This HTTP API runs in development mode.</param>
+        /// <param name="DevelopmentServers">An enumeration of server names which will imply to run this service in development mode.</param>
+        /// <param name="DisableLogging">Disable the log file.</param>
+        /// <param name="LoggingPath">The path for all logfiles.</param>
+        /// <param name="LogfileName">The name of the logfile.</param>
+        /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
+        /// <param name="Autostart">Whether to start the API automatically.</param>
+        public EMSPAPI(CommonAPI                CommonAPI,
+                      CountryCode              DefaultCountryCode,
+                      Party_Id                 DefaultPartyId,
+                      Boolean?                 AllowDowngrades           = null,
 
-                       HTTPHostname?  HTTPHostname      = null,
-                       String         ExternalDNSName   = null,
-                       HTTPPath?      URLPathPrefix     = null,
-                       HTTPPath?      BasePath          = null,
-                       String         HTTPServiceName   = DefaultHTTPServerName)
+                      HTTPHostname?            HTTPHostname              = null,
+                      String?                  ExternalDNSName           = "",
+                      String?                  HTTPServiceName           = DefaultHTTPServiceName,
+                      HTTPPath?                BasePath                  = null,
 
-            : base(CommonAPI?.HTTPServer,
+                      HTTPPath?                URLPathPrefix             = null,
+                      //String?                  HTMLTemplate              = null,
+                      JObject?                 APIVersionHashes          = null,
+
+                      Boolean?                 DisableMaintenanceTasks   = false,
+                      TimeSpan?                MaintenanceInitialDelay   = null,
+                      TimeSpan?                MaintenanceEvery          = null,
+
+                      Boolean?                 DisableWardenTasks        = false,
+                      TimeSpan?                WardenInitialDelay        = null,
+                      TimeSpan?                WardenCheckEvery          = null,
+
+                      Boolean?                 IsDevelopment             = false,
+                      IEnumerable<String>?     DevelopmentServers        = null,
+                      Boolean?                 DisableLogging            = false,
+                      String?                  LoggingPath               = null,
+                      String?                  LogfileName               = DefaultLogfileName,
+                      LogfileCreatorDelegate?  LogfileCreator            = null,
+                      Boolean                  Autostart                 = false)
+
+            : base(CommonAPI.HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,
-                   HTTPServiceName,
+                   HTTPServiceName ?? DefaultHTTPServiceName,
                    BasePath,
 
-                   URLPathPrefix ?? DefaultURLPathPrefix,
-                   null, // HTMLTemplate,
-                   null, // APIVersionHashes,
+                   URLPathPrefix   ?? DefaultURLPathPrefix,
+                   null, //HTMLTemplate,
+                   APIVersionHashes,
 
-                   null, // DisableMaintenanceTasks,
-                   null, // MaintenanceInitialDelay,
-                   null, // MaintenanceEvery,
+                   DisableMaintenanceTasks,
+                   MaintenanceInitialDelay,
+                   MaintenanceEvery,
 
-                   null, // DisableWardenTasks,
-                   null, // WardenInitialDelay,
-                   null, // WardenCheckEvery,
+                   DisableWardenTasks,
+                   WardenInitialDelay,
+                   WardenCheckEvery,
 
-                   null, // IsDevelopment,
-                   null, // DevelopmentServers,
-                   null, // DisableLogging,
-                   null, // LoggingPath,
-                   null, // LogfileName,
-                   null, // LogfileCreator,
-                   false)// Autostart
+                   IsDevelopment,
+                   DevelopmentServers,
+                   DisableLogging,
+                   LoggingPath,
+                   LogfileName     ?? DefaultLogfileName,
+                   LogfileCreator,
+                   Autostart)
 
         {
 
-            this.CommonAPI           = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given CommonAPI must not be null!");
+            this.CommonAPI           = CommonAPI;
             this.DefaultCountryCode  = DefaultCountryCode;
             this.DefaultPartyId      = DefaultPartyId;
             this.AllowDowngrades     = AllowDowngrades;
