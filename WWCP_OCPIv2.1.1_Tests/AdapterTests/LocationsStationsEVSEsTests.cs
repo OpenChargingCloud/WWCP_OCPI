@@ -27,6 +27,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
+using cloud.charging.open.protocols.WWCP.Net.IO.XML;
 
 #endregion
 
@@ -544,6 +545,42 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #region Update DE*GEF*POOL2
 
+                var updatedProperties = new List<PropertyUpdateInfo>();
+
+                chargingPool1!.OnPropertyChanged += async (timestamp,
+                                                           eventTrackingId,
+                                                           sender,
+                                                           propertyName,
+                                                           oldValue,
+                                                           newValue) => {
+
+                    updatedProperties.Add(new PropertyUpdateInfo(propertyName, oldValue, newValue));
+
+                };
+
+                graphDefinedCSO.OnChargingPoolDataChanged += async (timestamp,
+                                                                    eventTrackingId,
+                                                                    sender,
+                                                                    propertyName,
+                                                                    oldValue,
+                                                                    newValue) => {
+
+                    updatedProperties.Add(new PropertyUpdateInfo(propertyName, oldValue, newValue));
+
+                };
+
+                chargingPool1!.Name.       Set(Languages.en, "Test pool #1 (updated)");
+                chargingPool1!.Description.Set(Languages.en, "GraphDefined charging pool for tests #1 (updated)");
+
+                Assert.AreEqual(4, updatedProperties.Count);
+                Assert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
+                Assert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
+
+                csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location);
+                Assert.AreEqual("Test pool #1 (updated)",                             location!.Name);
+                //Assert.AreEqual("GraphDefined Charging Pool für Tests #1",            location!.Name); // Not mapped to OCPI!
+
+
                 //var updateChargingPoolResult2 = await graphDefinedCSO.UpdateChargingPool()
 
 
@@ -576,6 +613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
 
                 #region Validate, that locations had been sent to the OCPI module
+
 
                 var allLocations   = csoAdapter.CommonAPI.GetLocations().ToArray();
                 Assert.IsNotNull(allLocations);

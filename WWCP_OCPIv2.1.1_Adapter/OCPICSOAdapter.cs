@@ -45,6 +45,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         protected readonly  TimeSpan       MaxLockWaitingTime    = TimeSpan.FromSeconds(120);
 
+        protected readonly Dictionary<IChargingPool, List<PropertyUpdateInfo>> chargingPoolsUpdateLog;
+
         #endregion
 
         #region Properties
@@ -246,6 +248,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.DisablePushStatus                  = DisablePushStatus;
             this.DisableAuthentication              = DisableAuthentication;
             this.DisableSendChargeDetailRecords     = DisableSendChargeDetailRecords;
+
+            this.chargingPoolsUpdateLog             = new Dictionary<IChargingPool, List<PropertyUpdateInfo>>();
 
         }
 
@@ -510,7 +514,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
                     {
 
-
                         var location = ChargingPool.ToOCPI(out warnings);
 
                         if (location is not null)
@@ -566,10 +569,112 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        public Task<PushChargingPoolDataResult> UpdateStaticData(IChargingPool ChargingPool, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        #region UpdateStaticData(ChargingPool, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Update the given charging pool.
+        /// </summary>
+        /// <param name="ChargingPool">A charging pool.</param>
+        /// <param name="PropertyName">The optional name of a charging pool property to update.</param>
+        /// <param name="OldValue">The optional old value of a charging pool property to update.</param>
+        /// <param name="NewValue">The optional new value of a charging pool property to update.</param>
+        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<PushChargingPoolDataResult> UpdateStaticData(IChargingPool       ChargingPool,
+                                                                       String?             PropertyName        = null,
+                                                                       Object?             OldValue            = null,
+                                                                       Object?             NewValue            = null,
+                                                                       TransmissionTypes   TransmissionType    = TransmissionTypes.Enqueue,
+                                                                       DateTime?           Timestamp           = null,
+                                                                       CancellationToken?  CancellationToken   = null,
+                                                                       EventTracking_Id?   EventTrackingId     = null,
+                                                                       TimeSpan?           RequestTimeout      = null)
         {
-            throw new NotImplementedException();
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+
+                    if (IncludeChargingPools is null ||
+                       (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
+                    {
+
+                        var location = ChargingPool.ToOCPI(out warnings);
+
+                        if (location is not null)
+                        {
+
+                            var result = CommonAPI.UpdateLocation(location);
+
+                            //ToDo: Process errors!!!
+
+                            if (PropertyName is not null)
+                            {
+
+                                if (chargingPoolsUpdateLog.TryGetValue(ChargingPool, out var propertyUpdateInfos))
+                                    propertyUpdateInfos.Add(new PropertyUpdateInfo(PropertyName, OldValue, NewValue));
+
+                                else
+                                    chargingPoolsUpdateLog.Add(ChargingPool,
+                                                               new List<PropertyUpdateInfo> {
+                                                                   new PropertyUpdateInfo(PropertyName, OldValue, NewValue)
+                                                               });
+
+                            }
+
+                            return WWCP.PushChargingPoolDataResult.Enqueued(
+                                       Id,
+                                       this,
+                                       new IChargingPool[] { ChargingPool },
+                                       String.Empty,
+                                       warnings,
+                                       TimeSpan.Zero
+                                   );
+
+                        }
+
+                    }
+
+                    return WWCP.PushChargingPoolDataResult.NoOperation(
+                               Id,
+                               this,
+                               new IChargingPool[] { ChargingPool },
+                               String.Empty,
+                               warnings,
+                               TimeSpan.Zero
+                           );
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return PushChargingPoolDataResult.LockTimeout(
+                       Id,
+                       this,
+                       new IChargingPool[] { ChargingPool },
+                       "",
+                       Array.Empty<Warning>(),
+                       TimeSpan.Zero
+                   );
+
         }
+
+        #endregion
 
         public Task<PushChargingPoolDataResult> DeleteStaticData(IChargingPool ChargingPool, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
