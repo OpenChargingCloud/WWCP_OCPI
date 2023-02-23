@@ -406,7 +406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          String?                       ExternalDNSName           = null,
                          HTTPPath?                     URLPathPrefix             = null,
                          HTTPPath?                     BasePath                  = null,
-                         String                        HTTPServiceName           = DefaultHTTPServerName,
+                         String?                       HTTPServiceName           = DefaultHTTPServerName,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,

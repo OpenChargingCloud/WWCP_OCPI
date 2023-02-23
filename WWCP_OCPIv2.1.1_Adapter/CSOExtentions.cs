@@ -21,6 +21,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
 #endregion
@@ -82,6 +83,8 @@ namespace cloud.charging.open.protocols.WWCP
                                       IncludeChargingStationDelegate?                          IncludeChargingStations              = null,
                                       IncludeChargingPoolIdDelegate?                           IncludeChargingPoolIds               = null,
                                       IncludeChargingPoolDelegate?                             IncludeChargingPools                 = null,
+                                      IncludeChargingStationOperatorIdDelegate?                IncludeChargingStationOperatorIds    = null,
+                                      IncludeChargingStationOperatorDelegate?                  IncludeChargingStationOperators      = null,
                                       ChargeDetailRecordFilterDelegate?                        ChargeDetailRecordFilter             = null,
 
                                       TimeSpan?                                                ServiceCheckEvery                    = null,
@@ -123,6 +126,8 @@ namespace cloud.charging.open.protocols.WWCP
                                          CustomEVSEStatusUpdateConverter,
                                          CustomChargeDetailRecordConverter,
 
+                                         IncludeChargingStationOperatorIds,
+                                         IncludeChargingStationOperators,
                                          IncludeChargingPoolIds,
                                          IncludeChargingPools,
                                          IncludeChargingStationIds,

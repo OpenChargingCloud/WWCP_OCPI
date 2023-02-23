@@ -103,6 +103,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public IncludeChargingPoolDelegate IncludeChargingPools => throw new NotImplementedException();
 
+        IncludeChargingStationOperatorIdDelegate ISendPOIData.IncludeChargingStationOperatorIds => throw new NotImplementedException();
+
+        IncludeChargingStationOperatorDelegate ISendPOIData.IncludeChargingStationOperators => throw new NotImplementedException();
+
         public Task<AuthStartResult> AuthorizeStart(LocalAuthentication LocalAuthentication, ChargingLocation ChargingLocation = null, ChargingProduct ChargingProduct = null, ChargingSession_Id? SessionId = null, ChargingSession_Id? CPOPartnerSessionId = null, ChargingStationOperator_Id? OperatorId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
@@ -405,8 +409,65 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             throw new NotImplementedException();
         }
 
+        Task<PushEVSEDataResult> ISendPOIData.SetStaticData(IChargingStationOperator ChargingStationOperator, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
 
+        Task<PushEVSEDataResult> ISendPOIData.AddStaticData(IChargingStationOperator ChargingStationOperator, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
 
+        Task<PushEVSEDataResult> ISendPOIData.UpdateStaticData(IChargingStationOperator ChargingStationOperator, String PropertyName, Object? OldValue, Object? NewValue, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PushEVSEDataResult> ISendPOIData.DeleteStaticData(IChargingStationOperator ChargingStationOperator, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PushEVSEDataResult> ISendPOIData.SetStaticData(IEnumerable<IChargingStationOperator> ChargingStationOperators, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PushEVSEDataResult> ISendPOIData.AddStaticData(IEnumerable<IChargingStationOperator> ChargingStationOperators, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PushEVSEDataResult> ISendPOIData.UpdateStaticData(IEnumerable<IChargingStationOperator> ChargingStationOperators, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PushEVSEDataResult> ISendPOIData.DeleteStaticData(IEnumerable<IChargingStationOperator> ChargingStationOperators, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PushEVSEDataResult> ISendPOIData.SetStaticData(IRoamingNetwork RoamingNetwork, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PushEVSEDataResult> ISendPOIData.AddStaticData(IRoamingNetwork RoamingNetwork, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PushEVSEDataResult> ISendPOIData.UpdateStaticData(IRoamingNetwork RoamingNetwork, String PropertyName, Object? OldValue, Object? NewValue, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<PushEVSEDataResult> ISendPOIData.DeleteStaticData(IRoamingNetwork RoamingNetwork, TransmissionTypes TransmissionType, DateTime? Timestamp, CancellationToken? CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

@@ -261,6 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="Status">A current status of the EVSE.</param>
         /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
+        /// 
         /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="StatusSchedule">An enumeration of planned future status of the EVSE.</param>
         /// <param name="Capabilities">An enumeration of functionalities that the EVSE is capable of.</param>
@@ -284,6 +285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public EVSE(EVSE_UId                                                      UId,
                     StatusType                                                    Status,
                     IEnumerable<Connector>                                        Connectors,
+
                     EVSE_Id?                                                      EVSEId                                       = null,
                     IEnumerable<StatusSchedule>?                                  StatusSchedule                               = null,
                     IEnumerable<Capability>?                                      Capabilities                                 = null,

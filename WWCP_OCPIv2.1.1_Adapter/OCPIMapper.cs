@@ -210,7 +210,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            OpeningTimes:         null,
                            ChargingWhenClosed:   null,
                            Images:               Array.Empty<Image>(),
-                           EnergyMix:            null
+                           EnergyMix:            null,
+
+                           LastUpdated:          Timestamp.Now
 
                        );
 

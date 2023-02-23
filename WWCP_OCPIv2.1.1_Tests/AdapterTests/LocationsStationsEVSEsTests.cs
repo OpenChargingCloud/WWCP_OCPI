@@ -49,7 +49,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
         public async Task Add_ChargingLocationsAndEVSEs_Test1()
         {
 
-            if (graphDefinedCSO is not null &&
+            if (roamingNetwork  is not null &&
+                graphDefinedCSO is not null &&
                 csoAdapter      is not null)
             {
 
@@ -141,14 +142,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #endregion
 
-                #region Validate, that locations had been sent to the OCPI module
 
-                var allLocations   = csoAdapter.CommonAPI.GetLocations().ToArray();
-                Assert.IsNotNull(allLocations);
-                Assert.AreEqual (2, allLocations.Length);
-
-                #endregion
-
+                // OCPI does not have stations!
 
                 #region Add DE*GEF*STATION*1*A
 
@@ -224,8 +219,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 Assert.IsNotNull(chargingStation3);
 
                 #endregion
-
-                // OCPI does not have stations!
 
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
@@ -320,9 +313,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #endregion
 
+
+                #region Validate, that locations had been sent to the OCPI module
+
+                var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
+                Assert.IsNotNull(allLocations);
+                Assert.AreEqual (2, allLocations.Length);
+
+                #endregion
+
                 #region Validate, that EVSEs had been sent to the OCPI module
 
-                var allEVSEs  = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
+                var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
                 Assert.IsNotNull(allEVSEs);
                 Assert.AreEqual (4, allEVSEs.Length);
 
@@ -451,7 +453,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
         public async Task Update_ChargingLocationsAndEVSEs_Test1()
         {
 
-            if (graphDefinedCSO is not null &&
+            if (roamingNetwork  is not null &&
+                graphDefinedCSO is not null &&
                 csoAdapter      is not null)
             {
 
@@ -543,84 +546,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #endregion
 
-                #region Update DE*GEF*POOL2
 
-                var updatedProperties = new List<PropertyUpdateInfo>();
-
-                chargingPool1!.OnPropertyChanged += async (timestamp,
-                                                           eventTrackingId,
-                                                           sender,
-                                                           propertyName,
-                                                           oldValue,
-                                                           newValue) => {
-
-                    updatedProperties.Add(new PropertyUpdateInfo(propertyName, oldValue, newValue));
-
-                };
-
-                graphDefinedCSO.OnChargingPoolDataChanged += async (timestamp,
-                                                                    eventTrackingId,
-                                                                    sender,
-                                                                    propertyName,
-                                                                    oldValue,
-                                                                    newValue) => {
-
-                    updatedProperties.Add(new PropertyUpdateInfo(propertyName, oldValue, newValue));
-
-                };
-
-                chargingPool1!.Name.       Set(Languages.en, "Test pool #1 (updated)");
-                chargingPool1!.Description.Set(Languages.en, "GraphDefined charging pool for tests #1 (updated)");
-
-                Assert.AreEqual(4, updatedProperties.Count);
-                Assert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
-                Assert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
-
-                csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location);
-                Assert.AreEqual("Test pool #1 (updated)",                             location!.Name);
-                //Assert.AreEqual("GraphDefined Charging Pool für Tests #1",            location!.Name); // Not mapped to OCPI!
-
-
-                //var updateChargingPoolResult2 = await graphDefinedCSO.UpdateChargingPool()
-
-
-                //var updateChargingPoolResult2 = await chargingPool2.Address = new Address(
-
-                //                                                                  Street:             "Biberweg",
-                //                                                                  PostalCode:         "07749",
-                //                                                                  City:               I18NString.Create(Languages.da, "Jena"),
-                //                                                                  Country:            Country.Germany,
-
-                //                                                                  HouseNumber:        "18",
-                //                                                                  FloorLevel:         null,
-                //                                                                  Region:             null,
-                //                                                                  PostalCodeSub:      null,
-                //                                                                  TimeZone:           null,
-                //                                                                  OfficialLanguages:  null,
-                //                                                                  Comment:            null,
-
-                //                                                                  CustomData:         null,
-                //                                                                  InternalData:       null
-
-                //                                                              );
-
-                //Assert.IsNotNull(addChargingPoolResult2);
-
-                //var chargingPool2  = addChargingPoolResult2.ChargingPool;
-                //Assert.IsNotNull(chargingPool2);
-
-                #endregion
-
-
-                #region Validate, that locations had been sent to the OCPI module
-
-
-                var allLocations   = csoAdapter.CommonAPI.GetLocations().ToArray();
-                Assert.IsNotNull(allLocations);
-                Assert.AreEqual (2, allLocations.Length);
-
-                #endregion
-
+                // OCPI does not have stations!
 
                 #region Add DE*GEF*STATION*1*A
 
@@ -696,8 +623,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 Assert.IsNotNull(chargingStation3);
 
                 #endregion
-
-                // OCPI does not have stations!
 
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
@@ -792,13 +717,246 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #endregion
 
+
+
+                #region Validate, that locations had been sent to the OCPI module
+
+                var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
+                Assert.IsNotNull(allLocations);
+                Assert.AreEqual (2, allLocations.Length);
+
+                #endregion
+
                 #region Validate, that EVSEs had been sent to the OCPI module
 
-                var allEVSEs  = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
+                var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
                 Assert.IsNotNull(allEVSEs);
                 Assert.AreEqual (4, allEVSEs.Length);
 
                 #endregion
+
+
+                #region Update Add DE*GEF*POOL2, DE*GEF*STATION*2*A, DE*GEF*POOL2
+
+                var updatedPoolProperties     = new List<PropertyUpdateInfo<ChargingPool_Id>>();
+                var updatedStationProperties  = new List<PropertyUpdateInfo<ChargingStation_Id>>();
+                var updatedEVSEProperties     = new List<PropertyUpdateInfo<WWCP.EVSE_Id>>();
+
+                #region Subscribe charging pool events
+
+                chargingPool1!.OnPropertyChanged += (timestamp,
+                                                     eventTrackingId,
+                                                     chargingPool,
+                                                     propertyName,
+                                                     oldValue,
+                                                     newValue) => {
+
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>((chargingPool as IChargingPool)!.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                chargingPool1!.OnDataChanged += (timestamp,
+                                                 eventTrackingId,
+                                                 chargingPool,
+                                                 propertyName,
+                                                 oldValue,
+                                                 newValue) => {
+
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                graphDefinedCSO.OnChargingPoolDataChanged += (timestamp,
+                                                              eventTrackingId,
+                                                              chargingPool,
+                                                              propertyName,
+                                                              oldValue,
+                                                              newValue) => {
+
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                roamingNetwork.OnChargingPoolDataChanged  += (timestamp,
+                                                              eventTrackingId,
+                                                              chargingPool,
+                                                              propertyName,
+                                                              oldValue,
+                                                              newValue) => {
+
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                #endregion
+
+                #region Subscribe charging station events
+
+                chargingStation1!.OnPropertyChanged += (timestamp,
+                                                        eventTrackingId,
+                                                        chargingStation,
+                                                        propertyName,
+                                                        oldValue,
+                                                        newValue) => {
+
+                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>((chargingStation as IChargingStation)!.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                chargingStation1!.OnDataChanged += (timestamp,
+                                                    eventTrackingId,
+                                                    chargingStation,
+                                                    propertyName,
+                                                    oldValue,
+                                                    newValue) => {
+
+                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                graphDefinedCSO.OnChargingStationDataChanged += (timestamp,
+                                                                 eventTrackingId,
+                                                                 chargingStation,
+                                                                 propertyName,
+                                                                 oldValue,
+                                                                 newValue) => {
+
+                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                roamingNetwork.OnChargingStationDataChanged += (timestamp,
+                                                                eventTrackingId,
+                                                                chargingStation,
+                                                                propertyName,
+                                                                oldValue,
+                                                                newValue) => {
+
+                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                #endregion
+
+                #region Subscribe EVSE events
+
+                evse1!.OnPropertyChanged += (timestamp,
+                                             eventTrackingId,
+                                             evse,
+                                             propertyName,
+                                             oldValue,
+                                             newValue) => {
+
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>((evse as IEVSE)!.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                evse1!.OnDataChanged += (timestamp,
+                                         eventTrackingId,
+                                         evse,
+                                         propertyName,
+                                         oldValue,
+                                         newValue) => {
+
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                graphDefinedCSO.OnEVSEDataChanged += (timestamp,
+                                                      eventTrackingId,
+                                                      evse,
+                                                      propertyName,
+                                                      oldValue,
+                                                      newValue) => {
+
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                roamingNetwork.OnEVSEDataChanged += (timestamp,
+                                                     eventTrackingId,
+                                                     evse,
+                                                     propertyName,
+                                                     oldValue,
+                                                     newValue) => {
+
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, oldValue, newValue));
+                    return Task.CompletedTask;
+
+                };
+
+                #endregion
+
+
+                chargingPool1!.Name.       Set(Languages.en, "Test pool #1 (updated)");
+                chargingPool1!.Description.Set(Languages.en, "GraphDefined charging pool for tests #1 (updated)");
+
+                Assert.AreEqual(8, updatedPoolProperties.Count);
+                Assert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
+                Assert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
+
+                csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location);
+                Assert.AreEqual("Test pool #1 (updated)",                             location!.Name);
+                //Assert.AreEqual("GraphDefined Charging Pool für Tests #1",            location!.Name); // Not mapped to OCPI!
+
+
+                evse1.Name.Set(Languages.en, "Test EVSE #1A1 (updated)");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                //var updateChargingPoolResult2 = await graphDefinedCSO.UpdateChargingPool()
+
+
+                //var updateChargingPoolResult2 = await chargingPool2.Address = new Address(
+
+                //                                                                  Street:             "Biberweg",
+                //                                                                  PostalCode:         "07749",
+                //                                                                  City:               I18NString.Create(Languages.da, "Jena"),
+                //                                                                  Country:            Country.Germany,
+
+                //                                                                  HouseNumber:        "18",
+                //                                                                  FloorLevel:         null,
+                //                                                                  Region:             null,
+                //                                                                  PostalCodeSub:      null,
+                //                                                                  TimeZone:           null,
+                //                                                                  OfficialLanguages:  null,
+                //                                                                  Comment:            null,
+
+                //                                                                  CustomData:         null,
+                //                                                                  InternalData:       null
+
+                //                                                              );
+
+                //Assert.IsNotNull(addChargingPoolResult2);
+
+                //var chargingPool2  = addChargingPoolResult2.ChargingPool;
+                //Assert.IsNotNull(chargingPool2);
+
+                #endregion
+
 
 
                 var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/locations");
