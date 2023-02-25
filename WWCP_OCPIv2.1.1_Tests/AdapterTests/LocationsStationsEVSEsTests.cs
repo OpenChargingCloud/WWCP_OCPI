@@ -735,6 +735,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #endregion
 
+                #region Validate, that both locations have EVSEs
+
+                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1.Id.Suffix), out var location1) && location1 is not null)
+                {
+
+                    Assert.AreEqual(3, location1.EVSEs.Count());
+
+                }
+                else
+                    Assert.Fail("location1 was not found!");
+
+
+                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool2.Id.Suffix), out var location2) && location2 is not null)
+                {
+
+                    Assert.AreEqual(1, location2.EVSEs.Count());
+
+                }
+                else
+                    Assert.Fail("location2 was not found!");
+
+                #endregion
+
+
 
                 #region Update Add DE*GEF*POOL2, DE*GEF*STATION*2*A, DE*GEF*POOL2
 

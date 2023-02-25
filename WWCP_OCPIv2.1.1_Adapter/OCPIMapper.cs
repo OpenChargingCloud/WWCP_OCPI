@@ -150,7 +150,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region ToOCPI(this ChargingPool,  out warnings)
+        #region ToOCPI(this ChargingPool,  ref Warnings)
+
+        public static Location? ToOCPI(this WWCP.IChargingPool  ChargingPool,
+                                       ref List<Warning>        Warnings)
+        {
+
+            var location = ChargingPool.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return location;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingPool,  out Warnings)
 
         public static Location? ToOCPI(this WWCP.IChargingPool   ChargingPool,
                                        out IEnumerable<Warning>  Warnings)
@@ -184,6 +201,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 Warnings = Array.Empty<Warning>();
 
+                var evses = new List<EVSE>();
+
+                foreach (var evse in ChargingPool.SelectMany(station => station.EVSEs))
+                {
+
+                    var ocpiEVSE = evse.ToOCPI(ref warnings);
+
+                    if (ocpiEVSE is not null)
+                        evses.Add(ocpiEVSE);
+
+                }
+
                 return new Location(
 
                            CountryCode:          CountryCode.Parse(ChargingPool.Id.OperatorId.CountryCode.Alpha2Code),
@@ -198,10 +227,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            Name:                 ChargingPool.Name.FirstText(),
                            RelatedLocations:     Array.Empty<AdditionalGeoLocation>(),
-                           EVSEs:                Array.Empty<EVSE>(),
+                           EVSEs:                evses,
                            Directions:           Array.Empty<DisplayText>(),
                            Operator:             new BusinessDetails(
-                                                     ChargingPool.Operator.Name.FirstText()
+                                                     ChargingPool.Operator.Name.FirstText(),
+                                                     ChargingPool.Operator.Homepage
                                                  ),
                            SubOperator:          null,
                            Owner:                null,
@@ -229,7 +259,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToOCPI(this ChargingPools, out warnings)
+        #region ToOCPI(this ChargingPools, ref Warnings)
+
+        public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools,
+                                                   ref List<Warning>                    Warnings)
+        {
+
+            var locations = ChargingPools.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return locations;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingPools, out Warnings)
 
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools,
                                                    out IEnumerable<Warning>             Warnings)
@@ -268,7 +315,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region ToOCPI(this EVSE, out warnings)
+        #region ToOCPI(this EVSE,  ref Warnings)
+
+        public static EVSE? ToOCPI(this WWCP.IEVSE    EVSE,
+                                   ref List<Warning>  Warnings)
+        {
+
+            var result = EVSE.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return result;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this EVSE,  out Warnings)
 
         public static EVSE? ToOCPI(this WWCP.IEVSE           EVSE,
                                    out IEnumerable<Warning>  Warnings)
@@ -343,7 +407,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToOCPI(this EVSEs)
+        #region ToOCPI(this EVSEs, ref Warnings)
+
+        public static IEnumerable<EVSE> ToOCPI(this IEnumerable<WWCP.IEVSE>  EVSEs,
+                                               ref List<Warning>             Warnings)
+        {
+
+            var evses = EVSEs.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return evses;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this EVSEs, out Warnings)
 
         public static IEnumerable<EVSE> ToOCPI(this IEnumerable<WWCP.IEVSE>  EVSEs,
                                                out IEnumerable<Warning>      Warnings)
