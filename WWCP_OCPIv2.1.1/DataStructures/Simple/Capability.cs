@@ -48,8 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
     /// <summary>
-    /// The unique identification of a meter.
-    /// string(255)
+    /// Capabilities or functionalities of an EVSE.
     /// </summary>
     public readonly struct Capability : IId<Capability>
     {

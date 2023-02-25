@@ -18,8 +18,6 @@
 #region Usings
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using cloud.charging.open.protocols.WWCP;
 
 #endregion
 
@@ -103,48 +101,68 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region AsOCPIEVSEStatus(this EVSEStatus)
+        #region ToOCPI(this EVSEStatus)
 
         /// <summary>
-        /// Convert an OCPI v2.0 EVSE status into a corresponding WWCP EVSE status.
+        /// Convert a WWCP EVSE status into OCPI EVSE status.
         /// </summary>
-        /// <param name="EVSEStatus">An OCPI v2.0 EVSE status.</param>
-        /// <returns>The corresponding WWCP EVSE status.</returns>
-        public static StatusType AsOCPIEVSEStatus(this WWCP.EVSEStatusTypes EVSEStatus)
+        /// <param name="EVSEStatus">A WWCP EVSE status.</param>
+        public static StatusType ToOCPI(this WWCP.EVSEStatusTypes EVSEStatus)
         {
 
-            //case WWCP.EVSEStatusTypes.Planned:
-            //    return OCPIv2_2.EVSEStatusType.Planned;
-
-            //case WWCP.EVSEStatusTypes.InDeployment:
-            //    return OCPIv2_2.EVSEStatusType.Planned;
-
-            if (EVSEStatus == WWCP.EVSEStatusTypes.Available)
+            if      (EVSEStatus == WWCP.EVSEStatusTypes.Available)
                 return StatusType.AVAILABLE;
+
+            else if (EVSEStatus == WWCP.EVSEStatusTypes.Blocked)
+                return StatusType.BLOCKED;
 
             else if (EVSEStatus == WWCP.EVSEStatusTypes.Charging)
                 return StatusType.CHARGING;
 
-            else if (EVSEStatus == WWCP.EVSEStatusTypes.Error)
-                return StatusType.OUTOFORDER;
-
             else if (EVSEStatus == WWCP.EVSEStatusTypes.OutOfService)
                 return StatusType.INOPERATIVE;
 
-            else if (EVSEStatus == WWCP.EVSEStatusTypes.Offline)
-                return StatusType.UNKNOWN;
+            else if (EVSEStatus == WWCP.EVSEStatusTypes.Error)
+                return StatusType.OUTOFORDER;
+
+            else if (EVSEStatus == WWCP.EVSEStatusTypes.InDeployment)
+                return StatusType.PLANNED;
+
+            else if (EVSEStatus == WWCP.EVSEStatusTypes.Removed)
+                return StatusType.REMOVED;
 
             else if (EVSEStatus == WWCP.EVSEStatusTypes.Reserved)
                 return StatusType.RESERVED;
 
-            //case WWCP.EVSEStatusTypes.Private:
-            //    return OCPIv2_2.EVSEStatusType.Unknown;
-
-            //else if (EVSEStatus == WWCP.EVSEStatusTypes.UnknownEVSE)
-            //    return StatusType.REMOVED;
-
             else
                 return StatusType.UNKNOWN;
+
+        }
+
+        #endregion
+
+
+        #region ToOCPI(this I18NString)
+
+        public static IEnumerable<DisplayText> ToOCPI(this I18NString I18NString)
+
+            => I18NString.Select(text => new DisplayText(text.Language,
+                                                         text.Text));
+
+        #endregion
+
+        #region ToWWCP(this DisplayTexts)
+
+        public static I18NString ToOCPI(this IEnumerable<DisplayText> DisplayTexts)
+        {
+
+            var i18nString = I18NString.Empty;
+
+            foreach (var displayText in DisplayTexts)
+                i18nString.Set(displayText.Language,
+                               displayText.Text);
+
+            return i18nString;
 
         }
 
@@ -388,7 +406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return new EVSE(
 
                            UId:                   evseUId.Value,
-                           Status:                StatusType.AVAILABLE,
+                           Status:                EVSE.Status.Value.ToOCPI(),
                            Connectors:            Array.Empty<Connector>(),
 
                            EVSEId:                evseId,
@@ -397,8 +415,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            EnergyMeter:           null,
                            FloorLevel:            EVSE.ChargingStation.Address?.FloorLevel ?? EVSE.ChargingPool.Address?.FloorLevel,
                            Coordinates:           EVSE.ChargingStation.GeoLocation         ?? EVSE.ChargingPool.GeoLocation,
-                           PhysicalReference:     "",
-                           Directions:            Array.Empty<DisplayText>(),
+                           PhysicalReference:     EVSE.PhysicalReference                   ?? EVSE.ChargingStation.PhysicalReference,
+                           Directions:            EVSE.ChargingStation.ArrivalInstructions.ToOCPI(),
                            ParkingRestrictions:   Array.Empty<ParkingRestrictions>(),
                            Images:                Array.Empty<Image>(),
 
