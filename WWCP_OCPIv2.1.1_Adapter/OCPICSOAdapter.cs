@@ -350,9 +350,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                             CancellationToken?        CancellationToken,
                                                             EventTracking_Id?         EventTrackingId,
                                                             TimeSpan?                 RequestTimeout)
-        {
-            return Task.FromResult(PushEVSEDataResult.NoOperation(Id, this, null));
-        }
+
+            => Task.FromResult(PushEVSEDataResult.NoOperation(Id,
+                                                              this,
+                                                              null));//new IChargingStationOperator[] { ChargingStationOperator }));
+
+
 
         Task<PushEVSEDataResult> ISendPOIData.AddStaticData(IChargingStationOperator  ChargingStationOperator,
                                                             TransmissionTypes         TransmissionType,
@@ -466,7 +469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public IncludeChargingPoolDelegate    IncludeChargingPools      { get; }
 
 
-        #region SetStaticData   (ChargingPool, TransmissionType = Enqueue, ...)
+        #region SetStaticData   (ChargingPool,  TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Set the given charging pool.
@@ -553,7 +556,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region AddStaticData   (ChargingPool, TransmissionType = Enqueue, ...)
+        #region AddStaticData   (ChargingPool,  TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Add the given charging pool.
@@ -646,7 +649,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region UpdateStaticData(ChargingPool, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
+        #region UpdateStaticData(ChargingPool,  PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the given charging pool.
@@ -753,7 +756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region DeleteStaticData(ChargingPool, TransmissionType = Enqueue, ...)
+        #region DeleteStaticData(ChargingPool,  TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Delete the charging pool.
@@ -784,25 +787,85 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        public Task<PushChargingPoolDataResult> SetStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
+        #region SetStaticData   (ChargingPools, TransmissionType = Enqueue, ...)
 
-        public Task<PushChargingPoolDataResult> AddStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<PushChargingPoolDataResult> SetStaticData(IEnumerable<IChargingPool>  ChargingPools,
+                                                              WWCP.TransmissionTypes      TransmissionType,
 
-        public Task<PushChargingPoolDataResult> UpdateStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
+                                                              DateTime?                   Timestamp,
+                                                              CancellationToken?          CancellationToken,
+                                                              EventTracking_Id?           EventTrackingId,
+                                                              TimeSpan?                   RequestTimeout)
 
-        public Task<PushChargingPoolDataResult> DeleteStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
+            => Task.FromResult(
+                   PushChargingPoolDataResult.NoOperation(
+                       Id,
+                       this,
+                       ChargingPools
+                   )
+               );
+
+        #endregion
+
+        #region SetStaticData   (ChargingPools, TransmissionType = Enqueue, ...)
+
+        public Task<PushChargingPoolDataResult> AddStaticData(IEnumerable<IChargingPool>  ChargingPools,
+                                                              WWCP.TransmissionTypes      TransmissionType,
+
+                                                              DateTime?                   Timestamp,
+                                                              CancellationToken?          CancellationToken,
+                                                              EventTracking_Id?           EventTrackingId,
+                                                              TimeSpan?                   RequestTimeout)
+
+            => Task.FromResult(
+                   PushChargingPoolDataResult.NoOperation(
+                       Id,
+                       this,
+                       ChargingPools
+                   )
+               );
+
+        #endregion
+
+        #region UpdateStaticData(ChargingPools, TransmissionType = Enqueue, ...)
+
+        public Task<PushChargingPoolDataResult> UpdateStaticData(IEnumerable<IChargingPool>  ChargingPools,
+                                                                 WWCP.TransmissionTypes      TransmissionType,
+
+                                                                 DateTime?                   Timestamp,
+                                                                 CancellationToken?          CancellationToken,
+                                                                 EventTracking_Id?           EventTrackingId,
+                                                                 TimeSpan?                   RequestTimeout)
+
+            => Task.FromResult(
+                   PushChargingPoolDataResult.NoOperation(
+                       Id,
+                       this,
+                       ChargingPools
+                   )
+               );
+
+        #endregion
+
+        #region DeleteStaticData(ChargingPools, TransmissionType = Enqueue, ...)
+
+        public Task<PushChargingPoolDataResult> DeleteStaticData(IEnumerable<IChargingPool>  ChargingPools,
+                                                                 WWCP.TransmissionTypes      TransmissionType,
+
+                                                                 DateTime?                   Timestamp,
+                                                                 CancellationToken?          CancellationToken,
+                                                                 EventTracking_Id?           EventTrackingId,
+                                                                 TimeSpan?                   RequestTimeout)
+
+            => Task.FromResult(
+                   PushChargingPoolDataResult.NoOperation(
+                       Id,
+                       this,
+                       ChargingPools
+                   )
+               );
+
+        #endregion
 
 
         public Task<PushChargingPoolAdminStatusResult> UpdateAdminStatus(IEnumerable<ChargingPoolAdminStatusUpdate> AdminStatusUpdates, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)

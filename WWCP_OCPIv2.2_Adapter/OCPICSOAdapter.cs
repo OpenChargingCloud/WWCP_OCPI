@@ -750,10 +750,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        public Task<PushChargingPoolDataResult> DeleteStaticData(IChargingPool ChargingPool, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        #region DeleteStaticData(ChargingPool, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Delete the charging pool.
+        /// </summary>
+        /// <param name="ChargingPool">A charging pool.</param>
+        /// <param name="TransmissionType">Whether to send the charging station update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        Task<WWCP.PushChargingPoolDataResult>
+
+            WWCP.ISendPOIData.DeleteStaticData(WWCP.IChargingPool       ChargingPool,
+                                               WWCP.TransmissionTypes   TransmissionType,
+
+                                               DateTime?                Timestamp,
+                                               CancellationToken?       CancellationToken,
+                                               EventTracking_Id?        EventTrackingId,
+                                               TimeSpan?                RequestTimeout)
+
         {
-            throw new NotImplementedException();
+
+            return Task.FromResult(PushChargingPoolDataResult.NoOperation(Id, this, new IChargingPool[] { ChargingPool }));
+
         }
+
+        #endregion
 
 
         public Task<PushChargingPoolDataResult> SetStaticData(IEnumerable<IChargingPool> ChargingPools, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
@@ -997,15 +1022,138 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        public Task<PushChargingStationDataResult> UpdateStaticData(IChargingStation ChargingStation, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        #region UpdateStaticData(ChargingStation, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Update the EVSE data of the given charging station within the static EVSE data at the OICP server.
+        /// </summary>
+        /// <param name="ChargingStation">A charging station.</param>
+        /// <param name="PropertyName">The name of the charging station property to update.</param>
+        /// <param name="OldValue">The old value of the charging station property to update.</param>
+        /// <param name="NewValue">The new value of the charging station property to update.</param>
+        /// <param name="TransmissionType">Whether to send the charging station update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        async Task<WWCP.PushChargingStationDataResult>
+
+            WWCP.ISendPOIData.UpdateStaticData(WWCP.IChargingStation    ChargingStation,
+                                               String?                  PropertyName,
+                                               Object?                  OldValue,
+                                               Object?                  NewValue,
+                                               WWCP.TransmissionTypes   TransmissionType,
+
+                                               DateTime?                Timestamp,
+                                               CancellationToken?       CancellationToken,
+                                               EventTracking_Id?        EventTrackingId,
+                                               TimeSpan?                RequestTimeout)
+
         {
-            throw new NotImplementedException();
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    var countryCode  = CountryCode.TryParse(ChargingStation.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = Party_Id.   TryParse(ChargingStation.Id.OperatorId.Suffix);
+                    var locationId   = Location_Id.TryParse(ChargingStation.ChargingPool?.Id.ToString() ?? "");
+
+                    if (countryCode.HasValue &&
+                        partyId.    HasValue &&
+                        locationId. HasValue)
+                    {
+
+                        var warnings  = new List<Warning>();
+                        var results   = new List<AddOrUpdateResult<EVSE>>();
+
+                        foreach (var evse in ChargingStation)
+                        {
+
+                            if (IncludeEVSEs is null ||
+                               (IncludeEVSEs is not null && IncludeEVSEs(evse)))
+                            {
+
+                                if (CommonAPI.TryGetLocation(countryCode.Value,
+                                                             partyId.    Value,
+                                                             locationId. Value,
+                                                             out var location) &&
+                                    location is not null)
+                                {
+
+                                    var evse2 = evse.ToOCPI(out var warning);
+
+                                    if (evse2 is not null)
+                                        results.Add(await CommonAPI.AddOrUpdateEVSE(location, evse2));
+                                    else
+                                        results.Add(AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!"));
+
+                                    if (warning is not null && warning.Any())
+                                        warnings.AddRange(warning);
+
+                                }
+
+                            }
+
+                        }
+
+
+                        //ToDo: Process errors!!!
+
+
+                    }
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return lockTaken
+                       ? WWCP.PushChargingStationDataResult.Enqueued   (Id, this, new IChargingStation[] { ChargingStation })
+                       : WWCP.PushChargingStationDataResult.LockTimeout(Id, this, new IChargingStation[] { ChargingStation });
+
         }
 
-        public Task<PushChargingStationDataResult> DeleteStaticData(IChargingStation ChargingStation, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        #endregion
+
+        #region DeleteStaticData(ChargingStation, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Delete the EVSE data of the given charging station from the static EVSE data at the OICP server.
+        /// </summary>
+        /// <param name="ChargingStation">A charging station.</param>
+        /// <param name="TransmissionType">Whether to send the charging station update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        Task<WWCP.PushChargingStationDataResult>
+
+            WWCP.ISendPOIData.DeleteStaticData(WWCP.IChargingStation    ChargingStation,
+                                               WWCP.TransmissionTypes   TransmissionType,
+
+                                               DateTime?                Timestamp,
+                                               CancellationToken?       CancellationToken,
+                                               EventTracking_Id?        EventTrackingId,
+                                               TimeSpan?                RequestTimeout)
+
         {
-            throw new NotImplementedException();
+
+            return Task.FromResult(PushChargingStationDataResult.NoOperation(Id, this, new IChargingStation[] { ChargingStation }));
+
         }
+
+        #endregion
 
 
         public Task<PushChargingStationDataResult> SetStaticData(IEnumerable<IChargingStation> ChargingStations, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
@@ -1054,10 +1202,136 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public IncludeEVSEDelegate    IncludeEVSEs      { get; }
 
 
-        public Task<PushEVSEDataResult> SetStaticData(IEVSE EVSE, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        #region SetStaticData   (EVSE, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Set the given EVSE as new static EVSE data at the OICP server.
+        /// </summary>
+        /// <param name="EVSE">An EVSE to upload.</param>
+        /// <param name="TransmissionType">Whether to send the EVSE directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        async Task<WWCP.PushEVSEDataResult>
+
+            WWCP.ISendPOIData.SetStaticData(WWCP.IEVSE              EVSE,
+                                            WWCP.TransmissionTypes  TransmissionType,
+
+                                            DateTime?               Timestamp,
+                                            CancellationToken?      CancellationToken,
+                                            EventTracking_Id?       EventTrackingId,
+                                            TimeSpan?               RequestTimeout)
+
         {
-            throw new NotImplementedException();
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    AddOrUpdateResult<EVSE> result;
+
+                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+
+                    var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var locationId   = EVSE.ChargingPool is not null
+                                           ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                           : null;
+
+                    if (countryCode.HasValue &&
+                        partyId.    HasValue &&
+                        locationId. HasValue)
+                    {
+
+                        if (IncludeEVSEs is null ||
+                           (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
+                        {
+
+                            if (CommonAPI.TryGetLocation(countryCode.Value,
+                                                         partyId.    Value,
+                                                         locationId. Value,
+                                                         out var location) &&
+                                location is not null)
+                            {
+
+                                var evse2 = EVSE.ToOCPI(out warnings);
+
+                                if (evse2 is not null)
+                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                else
+                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+
+                            }
+                            else
+                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+
+                        }
+                        else
+                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+
+                    }
+                    else
+                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+
+
+                    return result.IsSuccess
+
+                               ? new PushEVSEDataResult(
+                                       Id,
+                                       this,
+                                       PushDataResultTypes.Success,
+                                       new PushSingleEVSEDataResult[] {
+                                           new PushSingleEVSEDataResult(
+                                               EVSE,
+                                               PushSingleDataResultTypes.Error,
+                                               warnings
+                                           )
+                                       },
+                                       Array.Empty<PushSingleEVSEDataResult>(),
+                                       result.ErrorResponse,
+                                       warnings,
+                                       TimeSpan.FromMilliseconds(10)
+                                   )
+
+                               : new PushEVSEDataResult(
+                                       Id,
+                                       this,
+                                       PushDataResultTypes.Error,
+                                       Array.Empty<PushSingleEVSEDataResult>(),
+                                       new PushSingleEVSEDataResult[] {
+                                           new PushSingleEVSEDataResult(
+                                               EVSE,
+                                               PushSingleDataResultTypes.Success,
+                                               warnings
+                                           )
+                                       },
+                                       result.ErrorResponse,
+                                       warnings,
+                                       TimeSpan.FromMilliseconds(10)
+                                   );
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return lockTaken
+                       ? WWCP.PushEVSEDataResult.Enqueued   (Id, this, new IEVSE[] { EVSE })
+                       : WWCP.PushEVSEDataResult.LockTimeout(Id, this, new IEVSE[] { EVSE });
+
         }
+
+        #endregion
 
         #region AddStaticData   (EVSE, TransmissionType = Enqueue, ...)
 
@@ -1327,10 +1601,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        public Task<PushEVSEDataResult> DeleteStaticData(IEVSE EVSE, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        #region DeleteStaticData(EVSE, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Delete the EVSE data of the given EVSE from the static EVSE data at the OICP server.
+        /// </summary>
+        /// <param name="EVSE">An EVSE.</param>
+        /// <param name="TransmissionType">Whether to send the charging station update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        Task<WWCP.PushEVSEDataResult>
+
+            WWCP.ISendPOIData.DeleteStaticData(WWCP.IEVSE               EVSE,
+                                               WWCP.TransmissionTypes   TransmissionType,
+
+                                               DateTime?                Timestamp,
+                                               CancellationToken?       CancellationToken,
+                                               EventTracking_Id?        EventTrackingId,
+                                               TimeSpan?                RequestTimeout)
+
         {
-            throw new NotImplementedException();
+
+            return Task.FromResult(PushEVSEDataResult.NoOperation(Id, this, new IEVSE[] { EVSE }));
+
         }
+
+        #endregion
 
 
         public Task<PushEVSEDataResult> SetStaticData(IEnumerable<IEVSE> EVSEs, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
@@ -1354,15 +1653,157 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
 
-        public Task<PushEVSEAdminStatusResult> UpdateAdminStatus(IEnumerable<EVSEAdminStatusUpdate> AdminStatusUpdates, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        #region UpdateAdminStatus(AdminStatusUpdates, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Update the given enumeration of EVSE admin status updates.
+        /// </summary>
+        /// <param name="AdminStatusUpdates">An enumeration of EVSE admin status updates.</param>
+        /// <param name="TransmissionType">Whether to send the EVSE admin status updates directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        Task<WWCP.PushEVSEAdminStatusResult>
+
+            WWCP.ISendAdminStatus.UpdateAdminStatus(IEnumerable<WWCP.EVSEAdminStatusUpdate>  AdminStatusUpdates,
+                                                    WWCP.TransmissionTypes                   TransmissionType,
+
+                                                    DateTime?                                Timestamp,
+                                                    CancellationToken?                       CancellationToken,
+                                                    EventTracking_Id?                        EventTrackingId,
+                                                    TimeSpan?                                RequestTimeout)
+
+
+                => Task.FromResult(WWCP.PushEVSEAdminStatusResult.NoOperation(Id, this));
+
+        #endregion
+
+        #region UpdateStatus     (StatusUpdates,      TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Update the given enumeration of EVSE status updates.
+        /// </summary>
+        /// <param name="StatusUpdates">An enumeration of EVSE status updates.</param>
+        /// <param name="TransmissionType">Whether to send the EVSE status updates directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<WWCP.PushEVSEStatusResult>
+
+            UpdateStatus(IEnumerable<WWCP.EVSEStatusUpdate>  StatusUpdates,
+                         WWCP.TransmissionTypes              TransmissionType,
+
+                         DateTime?                           Timestamp,
+                         CancellationToken?                  CancellationToken,
+                         EventTracking_Id                    EventTrackingId,
+                         TimeSpan?                           RequestTimeout)
+
         {
-            throw new NotImplementedException();
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    PushEVSEStatusResult result;
+
+                    var startTime  = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                    var warnings   = new List<Warning>();
+                    var results    = new List<PushEVSEStatusResult>();
+
+                    foreach (var statusUpdate in StatusUpdates)
+                    {
+
+                        if (RoamingNetwork.TryGetEVSEById(statusUpdate.Id, out var evse) && evse is not null)
+                        {
+
+                            if (IncludeEVSEs is null ||
+                               (IncludeEVSEs is not null && IncludeEVSEs(evse)))
+                            {
+
+                                var countryCode  = CountryCode.TryParse(evse.Id.OperatorId.CountryCode.Alpha2Code);
+                                var partyId      = Party_Id.   TryParse(evse.Id.OperatorId.Suffix);
+                                var locationId   = evse.ChargingPool is not null
+                                                       ? Location_Id.TryParse(evse.ChargingPool.Id.Suffix)
+                                                       : null;
+
+                                if (countryCode.HasValue &&
+                                    partyId.    HasValue &&
+                                    locationId. HasValue)
+                                {
+
+                                    if (CommonAPI.TryGetLocation(countryCode.Value,
+                                                                 partyId.    Value,
+                                                                 locationId. Value,
+                                                                 out var location) &&
+                                        location is not null)
+                                    {
+
+                                        var evse2 = evse.ToOCPI(ref warnings);
+
+                                        if (evse2 is not null)
+                                        {
+
+                                            var result2 = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+
+                                            result = result2.IsSuccess
+                                                         ? PushEVSEStatusResult.Success(Id, this, null, warnings)
+                                                         : PushEVSEStatusResult.Failed (Id, this, StatusUpdates, result2.ErrorResponse, warnings);
+
+                                        }
+                                        else
+                                            result = PushEVSEStatusResult.Failed(Id, this, StatusUpdates, "Could not convert the given EVSE!");
+
+                                    }
+                                    else
+                                        result = PushEVSEStatusResult.Failed(Id, this, StatusUpdates, "Unknown location identification!");
+
+                                }
+                                else
+                                    result = PushEVSEStatusResult.Failed(Id, this, StatusUpdates, "Invalid location identification!");
+
+                            }
+                            else
+                                result = PushEVSEStatusResult.Failed(Id, this, StatusUpdates, "The given EVSE was filtered!");
+
+                        }
+                        else
+                            result = PushEVSEStatusResult.Failed(Id, this, StatusUpdates, "The given EVSE does not exist!");
+
+                        results.Add(result);
+
+                    }
+
+                    return PushEVSEStatusResult.Flatten(
+                               Id,
+                               this,
+                               results,
+                               org.GraphDefined.Vanaheimr.Illias.Timestamp.Now - startTime
+                           );
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return lockTaken
+                       ? WWCP.PushEVSEStatusResult.Enqueued   (Id, this)
+                       : WWCP.PushEVSEStatusResult.LockTimeout(Id, this);
+
         }
 
-        public Task<PushEVSEStatusResult> UpdateStatus(IEnumerable<EVSEStatusUpdate> StatusUpdates, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
 
         #endregion
 
