@@ -2625,7 +2625,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public event OnEVSEChangedDelegate? OnEVSEChanged;
 
-        public delegate Task OnEVSEStatusChangedDelegate(DateTime Timestamp, EVSE EVSE, StatusType NewEVSEStatus);
+        public delegate Task OnEVSEStatusChangedDelegate(DateTime Timestamp, EVSE EVSE, StatusType OldEVSEStatus, StatusType NewEVSEStatus);
 
         public event OnEVSEStatusChangedDelegate? OnEVSEStatusChanged;
 
@@ -2642,7 +2642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           Boolean?  AllowDowngrades = false)
         {
 
-            var EVSEExistedBefore = Location.TryGetEVSE(newOrUpdatedEVSE.UId, out var existingEVSE);
+            Location.TryGetEVSE(newOrUpdatedEVSE.UId, out var existingEVSE);
 
             if (existingEVSE is not null)
             {
@@ -2673,15 +2673,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
                     DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnLocationChanged), ": ",
                                 Environment.NewLine, e.Message,
-                                Environment.NewLine, e.StackTrace);
+                                e.StackTrace is not null
+                                            ? Environment.NewLine + e.StackTrace
+                                            : String.Empty);
                 }
             }
 
 
-            if (EVSEExistedBefore)
+            if (existingEVSE is not null)
             {
 
-                if (newOrUpdatedEVSE.Status != StatusType.REMOVED)
+                if (existingEVSE.Status != StatusType.REMOVED)
                 {
 
                     var OnEVSEChangedLocal = OnEVSEChanged;
@@ -2695,7 +2697,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         {
                             DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEChanged), ": ",
                                         Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
+                                        e.StackTrace is not null
+                                            ? Environment.NewLine + e.StackTrace
+                                            : String.Empty);
+                        }
+                    }
+
+
+                    if (existingEVSE.Status != newOrUpdatedEVSE.Status)
+                    {
+                        var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                        if (OnEVSEStatusChangedLocal is not null)
+                        {
+                            try
+                            {
+
+                                OnEVSEStatusChangedLocal(Timestamp.Now,
+                                                         newOrUpdatedEVSE,
+                                                         existingEVSE.Status,
+                                                         newOrUpdatedEVSE.Status).Wait();
+
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            e.StackTrace is not null
+                                                ? Environment.NewLine + e.StackTrace
+                                                : String.Empty);
+                            }
                         }
                     }
 
@@ -2717,7 +2747,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         {
                             DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSERemoved), ": ",
                                         Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
+                                        e.StackTrace is not null
+                                            ? Environment.NewLine + e.StackTrace
+                                            : String.Empty);
                         }
                     }
 
@@ -2736,13 +2768,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     {
                         DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEAdded), ": ",
                                     Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace);
+                                    e.StackTrace is not null
+                                            ? Environment.NewLine + e.StackTrace
+                                            : String.Empty);
                     }
                 }
             }
 
             return AddOrUpdateResult<EVSE>.Success(newOrUpdatedEVSE,
-                                                   WasCreated: !EVSEExistedBefore);
+                                                   WasCreated: existingEVSE is null);
 
         }
 
@@ -2750,14 +2784,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    EVSE      newOrUpdatedEVSE,
                                                                    Boolean?  AllowDowngrades = false)
         {
-
-            if (Location is null)
-                return AddOrUpdateResult<EVSE>.Failed(newOrUpdatedEVSE,
-                                                      "The given location must not be null!");
-
-            if (newOrUpdatedEVSE is null)
-                return AddOrUpdateResult<EVSE>.Failed(newOrUpdatedEVSE,
-                                                      "The given EVSE must not be null!");
 
             // ToDo: Remove me and add a proper 'lock' mechanism!
             //await Task.Delay(1);
@@ -2791,10 +2817,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Locations)
             {
 
-                var patchResult          = EVSE.TryPatch(EVSEPatch,
-                                                         AllowDowngrades ?? this.AllowDowngrades ?? false);
+                var patchResult        = EVSE.TryPatch(EVSEPatch,
+                                                       AllowDowngrades ?? this.AllowDowngrades ?? false);
 
-                var IsJustAStatusChange  = EVSEPatch.Children().Count() == 2 && EVSEPatch.ContainsKey("status") && EVSEPatch.ContainsKey("last_updated");
+                var justAStatusChange  = EVSEPatch.Children().Count() == 2 && EVSEPatch.ContainsKey("status") && EVSEPatch.ContainsKey("last_updated");
 
                 if (patchResult.IsSuccess)
                 {
@@ -2810,10 +2836,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     __addOrUpdateLocation(builder, (AllowDowngrades ?? this.AllowDowngrades) == false);
 
 
-                    if (patchResult.PatchedData.Status != StatusType.REMOVED)
+                    if (EVSE.Status != StatusType.REMOVED)
                     {
 
-                        if (IsJustAStatusChange)
+                        if (justAStatusChange)
                         {
 
                             DebugX.Log("EVSE status change: " + EVSE.EVSEId + " => " + patchResult.PatchedData.Status);
@@ -2826,6 +2852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                     OnEVSEStatusChangedLocal(patchResult.PatchedData.LastUpdated,
                                                              EVSE,
+                                                             EVSE.Status,
                                                              patchResult.PatchedData.Status).Wait();
 
                                 }
@@ -2833,7 +2860,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                 {
                                     DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
                                                 Environment.NewLine, e.Message,
-                                                Environment.NewLine, e.StackTrace);
+                                                e.StackTrace is not null
+                                                    ? Environment.NewLine + e.StackTrace
+                                                    : String.Empty);
                                 }
                             }
 
@@ -2852,7 +2881,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                 {
                                     DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchEVSE), " ", nameof(OnEVSEChanged), ": ",
                                                 Environment.NewLine, e.Message,
-                                                Environment.NewLine, e.StackTrace);
+                                                e.StackTrace is not null
+                                                    ? Environment.NewLine + e.StackTrace
+                                                    : String.Empty);
                                 }
                             }
 
@@ -2873,7 +2904,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             {
                                 DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchEVSE), " ", nameof(OnEVSERemoved), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            e.StackTrace is not null
+                                                ? Environment.NewLine + e.StackTrace
+                                                : String.Empty);
                             }
                         }
 

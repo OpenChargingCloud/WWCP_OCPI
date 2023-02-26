@@ -169,6 +169,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        #region ToOCPI_EVSEUId(this EVSEId)
+
+        public static EVSE_UId? ToOCPI_EVSEUId(this WWCP.EVSE_Id EVSEId)
+
+            => EVSE_UId.TryParse(EVSEId.ToString());
+
+        public static EVSE_UId? ToOCPI_EVSEUId(this WWCP.EVSE_Id? EVSEId)
+
+            => EVSEId.HasValue
+                   ? EVSE_UId.TryParse(EVSEId.Value.ToString())
+                   : null;
+
+        #endregion
+
+
+        #region ToOCPI_EVSEId(this EVSEId)
+
+        public static EVSE_Id? ToOCPI_EVSEId(this WWCP.EVSE_Id EVSEId)
+
+            => EVSE_Id.TryParse(EVSEId.ToString());
+
+        public static EVSE_Id? ToOCPI_EVSEId(this WWCP.EVSE_Id? EVSEId)
+
+            => EVSEId.HasValue
+                   ? EVSE_Id.TryParse(EVSEId.Value.ToString())
+                   : null;
+
+        #endregion
+
 
         #region ToOCPI(this ChargingPool,  ref Warnings)
 
@@ -198,6 +227,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (ChargingPool.Operator is null)
             {
                 warnings.Add(Warning.Create(Languages.en, "The given charging location must have a valid charging station operator!"));
+                Warnings = warnings;
+                return null;
+            }
+
+            var countryCode  = CountryCode.TryParse(ChargingPool.Operator.Id.CountryCode.Alpha2Code);
+
+            if (!countryCode.HasValue)
+            {
+                warnings.Add(Warning.Create(Languages.en, $"The given charging station operator identificaton '{ChargingPool.Id.OperatorId}' could not be converted to an OCPI country code!"));
+                Warnings = warnings;
+                return null;
+            }
+
+            var partyId      = Party_Id.   TryParse(ChargingPool.Operator.Id.Suffix);
+
+            if (!partyId.HasValue)
+            {
+                warnings.Add(Warning.Create(Languages.en, $"The given charging station operator identificaton '{ChargingPool.Id.OperatorId}' could not be converted to an OCPI party identification!"));
+                Warnings = warnings;
+                return null;
+            }
+
+            var locationId   = Location_Id.TryParse(ChargingPool.Id.Suffix);
+
+            if (!locationId.HasValue)
+            {
+                warnings.Add(Warning.Create(Languages.en, $"The given charging pool identificaton '{ChargingPool.Id}' could not be converted to an OCPI location identification!"));
                 Warnings = warnings;
                 return null;
             }
@@ -235,11 +291,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 return new Location(
 
-                           CountryCode:          CountryCode.Parse(ChargingPool.Id.OperatorId.CountryCode.Alpha2Code),
-                           PartyId:              Party_Id.   Parse(ChargingPool.Id.OperatorId.Suffix),
-                           Id:                   Location_Id.Parse(ChargingPool.Id.Suffix),
+                           CountryCode:          countryCode.Value,
+                           PartyId:              partyId    .Value,
+                           Id:                   locationId .Value,
                            LocationType:         LocationType.ON_STREET, // ????
-                           Address:              String.Concat(ChargingPool.Address.Street, " ", ChargingPool.Address.HouseNumber),
+                           Address:              ChargingPool.Address.HouseNumber is not null
+                                                     ? $"{ChargingPool.Address.Street} {ChargingPool.Address.HouseNumber}"
+                                                     : ChargingPool.Address.Street,
                            City:                 ChargingPool.Address.City.FirstText(),
                            PostalCode:           ChargingPool.Address.PostalCode,
                            Country:              ChargingPool.Address.Country,
@@ -363,7 +421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             try
             {
 
-                var evseUId = EVSE_UId.TryParse(EVSE.ToString());
+                var evseUId = EVSE.Id.ToOCPI_EVSEUId();
 
                 if (!evseUId.HasValue)
                 {
@@ -373,7 +431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 }
 
 
-                var evseId  = EVSE_Id.TryParse(EVSE.ToString());
+                var evseId  = EVSE.Id.ToOCPI_EVSEId();
 
                 if (!evseId.HasValue)
                 {
