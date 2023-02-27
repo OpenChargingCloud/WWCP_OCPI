@@ -31,6 +31,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// </summary>
     public class OCPICSOAdapter : //AWWCPEMPAdapter<ChargeDetailRecord>,
                                   IEMPRoamingProvider,
+                                  ISendEnergyStatus,
                                   IEquatable <OCPICSOAdapter>,
                                   IComparable<OCPICSOAdapter>,
                                   IComparable
@@ -59,6 +60,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         [Mandatory]
         public EMPRoamingProvider_Id                        Id                                   { get; }
+
+        public IId AuthId => Id;
+
+        IId ISendChargeDetailRecords.Id => Id;
+
 
         /// <summary>
         /// The multi-language name.
@@ -108,6 +114,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// This service can be disabled, e.g. for debugging reasons.
         /// </summary>
         public Boolean                                      DisablePushStatus                    { get; set; }
+
+        /// <summary>
+        /// This service can be disabled, e.g. for debugging reasons.
+        /// </summary>
+        public Boolean                                      DisablePushEnergyStatus              { get; set; }
 
         /// <summary>
         /// This service can be disabled, e.g. for debugging reasons.
@@ -189,6 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                               Boolean                                      DisablePushData                     = false,
                               Boolean                                      DisablePushAdminStatus              = false,
                               Boolean                                      DisablePushStatus                   = false,
+                              Boolean                                      DisablePushEnergyStatus             = false,
                               Boolean                                      DisableAuthentication               = false,
                               Boolean                                      DisableSendChargeDetailRecords      = false)
 
@@ -219,6 +231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.DisablePushData                    = DisablePushData;
             this.DisablePushAdminStatus             = DisablePushAdminStatus;
             this.DisablePushStatus                  = DisablePushStatus;
+            this.DisablePushEnergyStatus            = DisablePushEnergyStatus;
             this.DisableAuthentication              = DisableAuthentication;
             this.DisableSendChargeDetailRecords     = DisableSendChargeDetailRecords;
 
@@ -234,39 +247,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         }
 
         #endregion
-
-
-
-        public IEnumerable<ChargingReservation> ChargingReservations
-            => throw new NotImplementedException();
-
-        public bool TryGetChargingReservationById(ChargingReservation_Id ReservationId, out ChargingReservation ChargingReservation)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryGetChargingSessionById(ChargingSession_Id ChargingSessionId, out ChargingSession ChargingSession)
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-
-        public IEnumerable<ChargingSession> ChargingSessions
-            => throw new NotImplementedException();
-
-        public TimeSpan MaxReservationDuration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public IId AuthId => throw new NotImplementedException();
-
-        IId ISendChargeDetailRecords.Id => throw new NotImplementedException();
-
-        public Task<IEnumerable<ChargeDetailRecord>> GetChargeDetailRecords(DateTime From, DateTime? To = null, EMobilityProvider_Id? ProviderId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
 
 
         #region (Set/Add/Update/Delete) Roaming network...
@@ -1682,7 +1662,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         }
 
 
-        #region UpdateAdminStatus(AdminStatusUpdates, TransmissionType = Enqueue, ...)
+        #region UpdateAdminStatus (AdminStatusUpdates,  TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the given enumeration of EVSE admin status updates.
@@ -1709,7 +1689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region UpdateStatus     (StatusUpdates,      TransmissionType = Enqueue, ...)
+        #region UpdateStatus      (StatusUpdates,       TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the given enumeration of EVSE status updates.
@@ -1721,15 +1701,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<WWCP.PushEVSEStatusResult>
+        async Task<WWCP.PushEVSEStatusResult>
 
-            UpdateStatus(IEnumerable<WWCP.EVSEStatusUpdate>  StatusUpdates,
-                         WWCP.TransmissionTypes              TransmissionType,
+            ISendStatus.UpdateStatus(IEnumerable<WWCP.EVSEStatusUpdate>  StatusUpdates,
+                                     WWCP.TransmissionTypes              TransmissionType,
 
-                         DateTime?                           Timestamp,
-                         CancellationToken?                  CancellationToken,
-                         EventTracking_Id                    EventTrackingId,
-                         TimeSpan?                           RequestTimeout)
+                                     DateTime?                           Timestamp,
+                                     CancellationToken?                  CancellationToken,
+                                     EventTracking_Id?                   EventTrackingId,
+                                     TimeSpan?                           RequestTimeout)
 
         {
 
@@ -1827,6 +1807,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+        #region UpdateEnergyStatus(EnergyStatusUpdates, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Update the given enumeration of EVSE status updates.
+        /// </summary>
+        /// <param name="EnergyStatusUpdates">An enumeration of EVSE status updates.</param>
+        /// <param name="TransmissionType">Whether to send the EVSE status updates directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        Task<WWCP.PushEVSEEnergyStatusResult>
+
+            ISendEnergyStatus.UpdateEnergyStatus(IEnumerable<WWCP.EVSEEnergyStatusUpdate>  EnergyStatusUpdates,
+                                                 WWCP.TransmissionTypes                    TransmissionType,
+
+                                                 DateTime?                                 Timestamp,
+                                                 CancellationToken?                        CancellationToken,
+                                                 EventTracking_Id?                         EventTrackingId,
+                                                 TimeSpan?                                 RequestTimeout)
+
+                => Task.FromResult(WWCP.PushEVSEEnergyStatusResult.NoOperation(Id, this));
+
+        #endregion
+
         #endregion
 
 
@@ -1844,75 +1850,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region Reserve
-
-        public Task<ReservationResult> Reserve(ChargingLocation ChargingLocation, ChargingReservationLevel ReservationLevel = ChargingReservationLevel.EVSE, DateTime? StartTime = null, TimeSpan? Duration = null, ChargingReservation_Id? ReservationId = null, ChargingReservation_Id? LinkedReservationId = null, EMobilityProvider_Id? ProviderId = null, RemoteAuthentication? RemoteAuthentication = null, ChargingProduct? ChargingProduct = null, IEnumerable<AuthenticationToken>? AuthTokens = null, IEnumerable<eMobilityAccount_Id>? eMAIds = null, IEnumerable<UInt32>? PINs = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<CancelReservationResult> CancelReservation(ChargingReservation_Id ReservationId, ChargingReservationCancellationReason Reason, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region RemoteStart/-Stop
-
-        public Task<RemoteStartResult> RemoteStart(ChargingLocation ChargingLocation, ChargingProduct? ChargingProduct = null, ChargingReservation_Id? ReservationId = null, ChargingSession_Id? SessionId = null, EMobilityProvider_Id? ProviderId = null, RemoteAuthentication? RemoteAuthentication = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<RemoteStopResult> RemoteStop(ChargingSession_Id SessionId, ReservationHandling? ReservationHandling = null, EMobilityProvider_Id? ProviderId = null, RemoteAuthentication? RemoteAuthentication = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
         #region SendChargeDetailRecords
 
         public Task<SendCDRsResult> SendChargeDetailRecords(IEnumerable<ChargeDetailRecord> ChargeDetailRecords, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(SendCDRsResult.NoOperation(org.GraphDefined.Vanaheimr.Illias.Timestamp.Now, Id, this, ChargeDetailRecords));
         }
 
         #endregion
-
-
-
-
-        protected Boolean SkipFlushEVSEDataAndStatusQueues()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected Task FlushEVSEDataAndStatusQueues()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected Boolean SkipFlushEVSEFastStatusQueues()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected Task FlushEVSEFastStatusQueues()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected Boolean SkipFlushChargeDetailRecordsQueues()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected Task FlushChargeDetailRecordsQueues(IEnumerable<ChargeDetailRecord> ChargeDetailsRecords)
-        {
-            throw new NotImplementedException();
-        }
 
 
 
