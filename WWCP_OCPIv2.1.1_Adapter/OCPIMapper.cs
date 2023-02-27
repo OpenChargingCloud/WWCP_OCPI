@@ -455,6 +455,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return null;
                 }
 
+                var connectors = EVSE.SocketOutlets.
+                                      Select (socketOutlet => socketOutlet.ToOCPI(EVSE, ref warnings)).
+                                      Where  (connector    => connector is not null).
+                                      Cast<Connector>().
+                                      ToArray();
+
+                if (!connectors.Any())
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"The given EVSE socket outlets could not be converted to OCPI connectors!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
 
                 Warnings = Array.Empty<Warning>();
 
@@ -462,7 +475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            UId:                   evseUId.Value,
                            Status:                EVSE.Status.Value.ToOCPI(),
-                           Connectors:            Array.Empty<Connector>(), // !!!
+                           Connectors:            connectors,
 
                            EVSEId:                evseId,
                            StatusSchedule:        Array.Empty<StatusSchedule>(),
@@ -542,6 +555,186 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             Warnings = warnings.ToArray();
             return evses;
+
+        }
+
+        #endregion
+
+
+
+        #region ToOCPI(this SocketOutletId)
+
+        public static Connector_Id? ToOCPI(this WWCP.SocketOutlet_Id SocketOutletId)
+
+            => Connector_Id.TryParse(SocketOutletId.ToString());
+
+        public static Connector_Id? ToOCPI(this WWCP.SocketOutlet_Id? SocketOutletId)
+
+            => SocketOutletId.HasValue
+                   ? Connector_Id.TryParse(SocketOutletId.Value.ToString())
+                   : null;
+
+        #endregion
+
+
+        #region ToOCPI(this CurrentType)
+
+        public static PowerTypes? ToOCPI(this WWCP.CurrentTypes CurrentType)
+
+            => CurrentType switch {
+                   WWCP.CurrentTypes.AC_OnePhase     => PowerTypes.AC_1_PHASE,
+                   WWCP.CurrentTypes.AC_ThreePhases  => PowerTypes.AC_3_PHASE,
+                   WWCP.CurrentTypes.DC              => PowerTypes.DC,
+                   _                                 => null
+               };
+
+        public static PowerTypes? ToOCPI(this WWCP.CurrentTypes? CurrentType)
+
+            => CurrentType.HasValue
+                   ? CurrentType.Value.ToOCPI()
+                   : null;
+
+        #endregion
+
+
+        #region ToOCPI(this PlugType)
+
+        public static ConnectorType? ToOCPI(this WWCP.PlugTypes PlugType)
+
+            => PlugType switch {
+                   //WWCP.PlugTypes.SmallPaddleInductive          => 
+                   //WWCP.PlugTypes.LargePaddleInductive          => 
+                   //WWCP.PlugTypes.AVCONConnector                => 
+                   //WWCP.PlugTypes.TeslaConnector                => 
+                   WWCP.PlugTypes.TESLA_Roadster                => ConnectorType.TESLA_R,
+                   WWCP.PlugTypes.TESLA_ModelS                  => ConnectorType.TESLA_S,
+                   //WWCP.PlugTypes.NEMA5_20                      => 
+                   WWCP.PlugTypes.TypeEFrenchStandard           => ConnectorType.DOMESTIC_E,
+                   WWCP.PlugTypes.TypeFSchuko                   => ConnectorType.DOMESTIC_F,
+                   WWCP.PlugTypes.TypeGBritishStandard          => ConnectorType.DOMESTIC_G,
+                   WWCP.PlugTypes.TypeJSwissStandard            => ConnectorType.DOMESTIC_J,
+                   WWCP.PlugTypes.Type1Connector_CableAttached  => ConnectorType.IEC_62196_T1,
+                   WWCP.PlugTypes.Type2Outlet                   => ConnectorType.IEC_62196_T2,
+                   WWCP.PlugTypes.Type2Connector_CableAttached  => ConnectorType.IEC_62196_T2,
+                   WWCP.PlugTypes.Type3Outlet                   => ConnectorType.IEC_62196_T3A,
+                   WWCP.PlugTypes.IEC60309SinglePhase           => ConnectorType.IEC_60309_2_single_16,
+                   WWCP.PlugTypes.IEC60309ThreePhase            => ConnectorType.IEC_60309_2_three_16,
+                   WWCP.PlugTypes.CCSCombo1Plug_CableAttached   => ConnectorType.IEC_62196_T1_COMBO,
+                   WWCP.PlugTypes.CCSCombo2Plug_CableAttached   => ConnectorType.IEC_62196_T2_COMBO,
+                   WWCP.PlugTypes.CHAdeMO                       => ConnectorType.CHADEMO,
+                   //WWCP.PlugTypes.CEE3                          => 
+                   //WWCP.PlugTypes.CEE5                          => 
+                   _                                            => null
+               };
+
+        public static ConnectorType? ToOCPI(this WWCP.PlugTypes? PlugType)
+
+            => PlugType.HasValue
+                   ? PlugType.Value.ToOCPI()
+                   : null;
+
+        #endregion
+
+
+        #region ToOCPI(this SocketOutlet, EVSE,  ref Warnings)
+
+        public static Connector? ToOCPI(this WWCP.SocketOutlet  SocketOutlet,
+                                        WWCP.IEVSE              EVSE,
+                                        ref List<Warning>       Warnings)
+        {
+
+            var result = SocketOutlet.ToOCPI(EVSE, out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return result;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this SocketOutlet, EVSE,  out Warnings)
+
+        public static Connector? ToOCPI(this WWCP.SocketOutlet    SocketOutlet,
+                                        WWCP.IEVSE                EVSE,
+                                        out IEnumerable<Warning>  Warnings)
+        {
+
+            var warnings = new List<Warning>();
+
+            try
+            {
+
+                if (EVSE is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"The given EVSE must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                var connectorId  = Connector_Id.Parse(SocketOutlet.Id.HasValue
+                                                          ? SocketOutlet.Id.Value.ToString()
+                                                          : "1");
+
+                var powerType    = EVSE.CurrentType.ToOCPI();
+
+                if (!powerType.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"The given EVSE current type '{EVSE.CurrentType}' could not be converted to an OCPI power type!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                var standard     = SocketOutlet.Plug.ToOCPI();
+
+                if (!standard.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"The given socket outlet plug '{SocketOutlet.Plug}' could not be converted to an OCPI connector standard!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+
+                Warnings = Array.Empty<Warning>();
+
+                return new Connector(
+
+                           Id:                      connectorId,
+                           Standard:                standard.Value,
+                           Format:                  SocketOutlet.CableAttached switch {
+                                                        true  => ConnectorFormats.CABLE,
+                                                        _     => ConnectorFormats.SOCKET
+                                                    },
+                           PowerType:               powerType.Value,
+                           Voltage:                 (UInt16) (EVSE.AverageVoltage ?? powerType.Value switch {
+                                                        PowerTypes.AC_1_PHASE  => 240,
+                                                        PowerTypes.AC_3_PHASE  => 400,
+                                                        PowerTypes.DC          => 0,
+                                                        _                      => 0
+                                                    }),
+                           Amperage:                (UInt16) (EVSE.MaxCurrent     ?? powerType.Value switch {
+                                                        PowerTypes.AC_1_PHASE  => 16,
+                                                        PowerTypes.AC_3_PHASE  => 16,
+                                                        PowerTypes.DC          => 50,
+                                                        _                      => 0
+                                                    }),
+
+                           TariffId:                null,
+                           TermsAndConditionsURL:   null,
+
+                           LastUpdated:             EVSE.LastChange
+
+                       );
+
+            }
+            catch (Exception ex)
+            {
+                warnings.Add(Warning.Create(Languages.en, $"Could not convert the given socket outlet to OCPI: " + ex.Message));
+                Warnings = warnings;
+            }
+
+            return null;
 
         }
 
