@@ -227,6 +227,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    Description:                         I18NString.Create(Languages.de, "OCPI v2.1 CSO Roaming"),
 
                                    CommonAPI:                           commonAPI,
+                                   DefaultCountryCode:                  CountryCode.Parse("DE"),
+                                   DefaultPartyId:                      Party_Id.   Parse("GEF"),
 
                                    CustomEVSEIdConverter:               null,
                                    CustomEVSEConverter:                 null,
