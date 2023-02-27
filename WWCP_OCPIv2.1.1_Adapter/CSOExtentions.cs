@@ -68,6 +68,8 @@ namespace cloud.charging.open.protocols.WWCP
                                       I18NString                                               Description,
 
                                       CommonAPI                                                CommonAPI,
+                                      OCPIv2_1_1.CountryCode                                   DefaultCountryCode,
+                                      OCPIv2_1_1.Party_Id                                      DefaultPartyId,
 
                                       OCPIv2_1_1.WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
                                       OCPIv2_1_1.WWCPEVSE_2_EVSE_Delegate?                     CustomEVSEConverter                  = null,
@@ -120,6 +122,8 @@ namespace cloud.charging.open.protocols.WWCP
                                          RoamingNetwork,
 
                                          CommonAPI,
+                                         DefaultCountryCode,
+                                         DefaultPartyId,
 
                                          CustomEVSEIdConverter,
                                          CustomEVSEConverter,

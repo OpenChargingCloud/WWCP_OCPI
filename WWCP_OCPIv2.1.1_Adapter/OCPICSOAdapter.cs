@@ -17,12 +17,9 @@
 
 #region Usings
 
-using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.WWCP;
-using org.GraphDefined.Vanaheimr.Illias.Geometry;
 
 #endregion
 
@@ -51,10 +48,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
         #region Properties
+
         public CommonAPI                                    CommonAPI                            { get; }
 
-        //public HTTPServer                                   HTTPServer                           { get; }
-        //public HTTPPath                                     HTTPPathPrefix                       { get; }
+        public CPOAPI                                       CPOAPI                               { get; }
 
 
         /// <summary>
@@ -171,6 +168,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                               RoamingNetwork                               RoamingNetwork,
 
                               CommonAPI                                    CommonAPI,
+                              CountryCode                                  DefaultCountryCode,
+                              Party_Id                                     DefaultPartyId,
 
                               WWCPEVSEId_2_EVSEId_Delegate?                CustomEVSEIdConverter               = null,
                               WWCPEVSE_2_EVSE_Delegate?                    CustomEVSEConverter                 = null,
@@ -224,6 +223,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.DisableSendChargeDetailRecords     = DisableSendChargeDetailRecords;
 
             this.chargingPoolsUpdateLog             = new Dictionary<IChargingPool, List<PropertyUpdateInfo>>();
+
+            this.CPOAPI                             = new CPOAPI(
+                                                          this.CommonAPI,
+                                                          DefaultCountryCode,
+                                                          DefaultPartyId,
+                                                          URLPathPrefix: CommonAPI.URLPathPrefix + "2.1.1/cpo"
+                                                      );
 
         }
 

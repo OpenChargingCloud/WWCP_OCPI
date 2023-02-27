@@ -792,7 +792,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    }
 
-                                   if (!Version_Id.TryParse(Request.ParsedURLParameters[0], out Version_Id versionId))
+                                   if (!Version_Id.TryParse(Request.ParsedURLParameters[0], out var versionId))
                                    {
 
                                        return Task.FromResult(

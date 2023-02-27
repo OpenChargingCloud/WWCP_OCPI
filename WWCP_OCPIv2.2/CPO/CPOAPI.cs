@@ -2393,7 +2393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                       Boolean?                AllowDowngrades      = null,
 
                       HTTPHostname?           HTTPHostname         = null,
-                      String                  ExternalDNSName      = null,
+                      String?                 ExternalDNSName      = null,
                       HTTPPath?               URLPathPrefix        = null,
                       HTTPPath?               BasePath             = null,
                       String                  HTTPServiceName      = DefaultHTTPServerName,
