@@ -1861,23 +1861,214 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
-        public int CompareTo(OCPICSOAdapter? other)
+        #region Operator overloading
 
-            => other is null
-                   ? throw new ArgumentException("The given object is not an OCPI CSO adapter!")
-                   : Id.CompareTo(other.Id);
+        #region Operator == (OCPICSOAdapter1, OCPICSOAdapter2)
 
-        public int CompareTo(Object? other)
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="OCPICSOAdapter1">An OCPI CSO adapter.</param>
+        /// <param name="OCPICSOAdapter2">Another OCPI CSO adapter.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (OCPICSOAdapter OCPICSOAdapter1,
+                                           OCPICSOAdapter OCPICSOAdapter2)
+        {
 
-            => other is OCPICSOAdapter OCPICSOAdapter
-                   ? Id.CompareTo(OCPICSOAdapter.Id)
-                   : throw new ArgumentException("The given object is not an OCPI CSO adapter!");
+            // If both are null, or both are same instance, return true.
+            if (ReferenceEquals(OCPICSOAdapter1, OCPICSOAdapter2))
+                return true;
 
+            // If one is null, but not both, return false.
+            if (OCPICSOAdapter1 is null || OCPICSOAdapter2 is null)
+                return false;
 
-        public Boolean Equals(OCPICSOAdapter? other)
+            return OCPICSOAdapter1.Equals(OCPICSOAdapter2);
 
-            => other is not null &&
-                   Id.Equals(other.Id);
+        }
+
+        #endregion
+
+        #region Operator != (OCPICSOAdapter1, OCPICSOAdapter2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="OCPICSOAdapter1">An OCPI CSO adapter.</param>
+        /// <param name="OCPICSOAdapter2">Another OCPI CSO adapter.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (OCPICSOAdapter OCPICSOAdapter1,
+                                           OCPICSOAdapter OCPICSOAdapter2)
+
+            => !(OCPICSOAdapter1 == OCPICSOAdapter2);
+
+        #endregion
+
+        #region Operator <  (OCPICSOAdapter1, OCPICSOAdapter2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="OCPICSOAdapter1">An OCPI CSO adapter.</param>
+        /// <param name="OCPICSOAdapter2">Another OCPI CSO adapter.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (OCPICSOAdapter OCPICSOAdapter1,
+                                          OCPICSOAdapter OCPICSOAdapter2)
+        {
+
+            if (OCPICSOAdapter1 is null)
+                throw new ArgumentNullException(nameof(OCPICSOAdapter1), "The given OCPI CSO adapter must not be null!");
+
+            return OCPICSOAdapter1.CompareTo(OCPICSOAdapter2) < 0;
+
+        }
+
+        #endregion
+
+        #region Operator <= (OCPICSOAdapter1, OCPICSOAdapter2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="OCPICSOAdapter1">An OCPI CSO adapter.</param>
+        /// <param name="OCPICSOAdapter2">Another OCPI CSO adapter.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (OCPICSOAdapter OCPICSOAdapter1,
+                                           OCPICSOAdapter OCPICSOAdapter2)
+
+            => !(OCPICSOAdapter1 > OCPICSOAdapter2);
+
+        #endregion
+
+        #region Operator >  (OCPICSOAdapter1, OCPICSOAdapter2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="OCPICSOAdapter1">An OCPI CSO adapter.</param>
+        /// <param name="OCPICSOAdapter2">Another OCPI CSO adapter.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (OCPICSOAdapter OCPICSOAdapter1,
+                                          OCPICSOAdapter OCPICSOAdapter2)
+        {
+
+            if (OCPICSOAdapter1 is null)
+                throw new ArgumentNullException(nameof(OCPICSOAdapter1), "The given OCPI CSO adapter must not be null!");
+
+            return OCPICSOAdapter1.CompareTo(OCPICSOAdapter2) > 0;
+
+        }
+
+        #endregion
+
+        #region Operator >= (OCPICSOAdapter1, OCPICSOAdapter2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="OCPICSOAdapter1">An OCPI CSO adapter.</param>
+        /// <param name="OCPICSOAdapter2">Another OCPI CSO adapter.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (OCPICSOAdapter OCPICSOAdapter1,
+                                           OCPICSOAdapter OCPICSOAdapter2)
+
+            => !(OCPICSOAdapter1 < OCPICSOAdapter2);
+
+        #endregion
+
+        #endregion
+
+        #region IComparable<OCPICSOAdapter> Members
+
+        #region CompareTo(Object)
+
+        /// <summary>
+        /// Compares two OCPI CSO adapters.
+        /// </summary>
+        /// <param name="Object">An OCPI CSO adapter to compare with.</param>
+        public Int32 CompareTo(Object? Object)
+
+            => Object is OCPICSOAdapter evseDataRecord
+                   ? CompareTo(evseDataRecord)
+                   : throw new ArgumentException("The given object is not an OCPI CSO adapter!",
+                                                 nameof(Object));
+
+        #endregion
+
+        #region CompareTo(OCPICSOAdapter)
+
+        /// <summary>
+        /// Compares two OCPI CSO adapters.
+        /// </summary>
+        /// <param name="OCPICSOAdapter">An OCPI CSO adapter to compare with.</param>
+        public Int32 CompareTo(OCPICSOAdapter? OCPICSOAdapter)
+        {
+
+            if (OCPICSOAdapter is null)
+                throw new ArgumentNullException(nameof(OCPICSOAdapter),
+                                                "The given OCPI CSO adapter must not be null!");
+
+            return Id.CompareTo(OCPICSOAdapter.Id);
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region IEquatable<OCPICSOAdapter> Members
+
+        #region Equals(Object)
+
+        /// <summary>
+        /// Compares two OCPI CSO adapters for equality.
+        /// </summary>
+        /// <param name="Object">An OCPI CSO adapter to compare with.</param>
+        public override Boolean Equals(Object? Object)
+
+            => Object is OCPICSOAdapter ocpiCSOAdapter &&
+                   Equals(ocpiCSOAdapter);
+
+        #endregion
+
+        #region Equals(OCPICSOAdapter)
+
+        /// <summary>
+        /// Compares two OCPI CSO adapters for equality.
+        /// </summary>
+        /// <param name="OCPICSOAdapter">An OCPI CSO adapter to compare with.</param>
+        public Boolean Equals(OCPICSOAdapter? OCPICSOAdapter)
+
+            => OCPICSOAdapter is not null &&
+                   Id.Equals(OCPICSOAdapter.Id);
+
+        #endregion
+
+        #endregion
+
+        #region GetHashCode()
+
+        /// <summary>
+        /// Return the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code of this object.</returns>
+        public override Int32 GetHashCode()
+
+            => Id.GetHashCode();
+
+        #endregion
+
+        #region (override) ToString()
+
+        /// <summary>
+        /// Return a text representation of this object.
+        /// </summary>
+        public override String ToString()
+
+            => Id.ToString();
+
+        #endregion
+
 
     }
 
