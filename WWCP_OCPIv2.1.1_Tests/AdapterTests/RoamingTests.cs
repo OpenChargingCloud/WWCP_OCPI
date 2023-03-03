@@ -33,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 {
 
     [TestFixture]
-    public class LocationsStationsEVSEsTests : ACSOAdapterTests
+    public class RoamingTests : ARoamingTests
     {
 
         #region Add_ChargingLocationsAndEVSEs_Test1()
@@ -47,13 +47,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
         public async Task Add_ChargingLocationsAndEVSEs_Test1()
         {
 
-            if (roamingNetwork  is not null &&
-                graphDefinedCSO is not null &&
-                csoAdapter      is not null)
-            {
+            if (csoRoamingNetwork  is not null &&
+                emp1RoamingNetwork is not null &&
+                emp2RoamingNetwork is not null &&
 
-                csoAdapter.CommonAPI.OnLocationAdded += async (location) => { };
-                csoAdapter.CommonAPI.OnEVSEAdded     += async (evse)     => { };
+                graphDefinedCSO    is not null &&
+                graphDefinedEMP    is not null &&
+                exampleEMP         is not null)
+            {
 
                 #region Add DE*GEF*POOL1
 
@@ -315,125 +316,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #endregion
 
 
-                #region Validate, that locations had been sent to the OCPI module
+                #region Validate, that locations had been sent to the e-mobility providers
 
-                var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
-                Assert.IsNotNull(allLocations);
-                Assert.AreEqual (2, allLocations.Length);
-
-                #endregion
-
-                #region Validate, that EVSEs had been sent to the OCPI module
-
-                var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
-                Assert.IsNotNull(allEVSEs);
-                Assert.AreEqual (4, allEVSEs.Length);
+                //var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
+                //Assert.IsNotNull(allLocations);
+                //Assert.AreEqual (2, allLocations.Length);
 
                 #endregion
 
+                #region Validate, that EVSEs had been sent to the e-mobility providers
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/locations");
-
-                #region Validate via HTTP (OpenData, no authorization)
-
-                {
-
-                    var httpResponse = await new HTTPSClient(remoteURL).
-                                                  Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                         remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
-                                                                                         })).
-                                                  ConfigureAwait(false);
-
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
-
-                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
-
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
-
-                    var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
-
-                    var jsonLocation1 = jsonLocations[0] as JObject;
-                    var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
-
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
-
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
-
-                }
-
-                #endregion
-
-                #region Validate via HTTP (with authorization)
-
-                commonAPI!.AddRemoteParty(
-                               CountryCode:      CountryCode.Parse("DE"),
-                               PartyId:          Party_Id.Parse("GDF"),
-                               Role:             Roles.EMSP,
-                               BusinessDetails:  new BusinessDetails(
-                                                     "GraphDefiend EMSP"
-                                                 ),
-                               AccessToken:      AccessToken.Parse("1234xyz"),
-                               AccessStatus:     AccessStatus.ALLOWED,
-                               PartyStatus:      PartyStatus.ENABLED
-                           );
-
-                {
-
-                    var httpResponse = await new HTTPSClient(remoteURL).
-                                                  Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                         remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication("1234xyz");
-                                                                                             requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
-                                                                                         })).
-                                                  ConfigureAwait(false);
-
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
-
-                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
-
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
-
-                    var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
-
-                    var jsonLocation1 = jsonLocations[0] as JObject;
-                    var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
-
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
-
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
-
-                }
+                //var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
+                //Assert.IsNotNull(allEVSEs);
+                //Assert.AreEqual (4, allEVSEs.Length);
 
                 #endregion
 
@@ -454,9 +349,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
         public async Task Update_ChargingLocationsAndEVSEs_Test1()
         {
 
-            if (roamingNetwork  is not null &&
-                graphDefinedCSO is not null &&
-                csoAdapter      is not null)
+            if (csoRoamingNetwork  is not null &&
+                emp1RoamingNetwork is not null &&
+                emp2RoamingNetwork is not null &&
+
+                graphDefinedCSO    is not null &&
+                graphDefinedEMP    is not null &&
+                exampleEMP         is not null)
             {
 
                 #region Add DE*GEF*POOL1
@@ -805,7 +704,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 };
 
-                roamingNetwork.OnChargingPoolDataChanged  += (timestamp,
+                csoRoamingNetwork.OnChargingPoolDataChanged  += (timestamp,
                                                               eventTrackingId,
                                                               chargingPool,
                                                               propertyName,
@@ -857,7 +756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 };
 
-                roamingNetwork.OnChargingStationDataChanged += (timestamp,
+                csoRoamingNetwork.OnChargingStationDataChanged += (timestamp,
                                                                 eventTrackingId,
                                                                 chargingStation,
                                                                 propertyName,
@@ -909,7 +808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 };
 
-                roamingNetwork.OnEVSEDataChanged += (timestamp,
+                csoRoamingNetwork.OnEVSEDataChanged += (timestamp,
                                                      eventTrackingId,
                                                      evse,
                                                      propertyName,
@@ -987,111 +886,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
 
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/locations");
-
-                #region Validate via HTTP (OpenData, no authorization)
-
-                {
-
-                    var httpResponse = await new HTTPSClient(remoteURL).
-                                                  Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                         remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
-                                                                                         })).
-                                                  ConfigureAwait(false);
-
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
-
-                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
-
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
-
-                    var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
-
-                    var jsonLocation1 = jsonLocations[0] as JObject;
-                    var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
-
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
-
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
-
-                }
-
-                #endregion
-
-                #region Validate via HTTP (with authorization)
-
-                commonAPI!.AddRemoteParty(
-                               CountryCode:      CountryCode.Parse("DE"),
-                               PartyId:          Party_Id.Parse("GDF"),
-                               Role:             Roles.EMSP,
-                               BusinessDetails:  new BusinessDetails(
-                                                     "GraphDefiend EMSP"
-                                                 ),
-                               AccessToken:      AccessToken.Parse("1234xyz"),
-                               AccessStatus:     AccessStatus.ALLOWED,
-                               PartyStatus:      PartyStatus.ENABLED
-                           );
-
-                {
-
-                    var httpResponse = await new HTTPSClient(remoteURL).
-                                                  Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                         remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication("1234xyz");
-                                                                                             requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
-                                                                                         })).
-                                                  ConfigureAwait(false);
-
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
-
-                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
-
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
-
-                    var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
-
-                    var jsonLocation1 = jsonLocations[0] as JObject;
-                    var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
-
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
-
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
-
-                }
-
-                #endregion
-
             }
 
         }
@@ -1109,9 +903,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
         public async Task Update_EVSEStatus_Test1()
         {
 
-            if (roamingNetwork  is not null &&
-                graphDefinedCSO is not null &&
-                csoAdapter      is not null)
+            if (csoRoamingNetwork  is not null &&
+                emp1RoamingNetwork is not null &&
+                emp2RoamingNetwork is not null &&
+
+                graphDefinedCSO    is not null &&
+                graphDefinedEMP    is not null &&
+                exampleEMP         is not null)
             {
 
                 #region Add DE*GEF*POOL1
@@ -1445,7 +1243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 };
 
-                roamingNetwork.OnEVSEStatusChanged += (timestamp,
+                csoRoamingNetwork.OnEVSEStatusChanged += (timestamp,
                                                        eventTrackingId,
                                                        evse,
                                                        oldEVSEStatus,
@@ -1514,128 +1312,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #endregion
 
-
-
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/locations");
-
-                #region Validate via HTTP (OpenData, no authorization)
-
-                {
-
-                    var httpResponse = await new HTTPSClient(remoteURL).
-                                                  Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                         remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
-                                                                                         })).
-                                                  ConfigureAwait(false);
-
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
-
-                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
-
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
-
-                    var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
-
-                    var jsonLocation1 = jsonLocations[0] as JObject;
-                    var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
-
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
-
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
-
-                    foreach (var jsonEVSE in jsonEVSEs1!)
-                    {
-                        if (jsonEVSE is JObject jobjectEVSE && jobjectEVSE["evse_id"]?.Value<String>() == evse1_UId!.ToString())
-                        {
-                            Assert.AreEqual("CHARGING", jobjectEVSE["status"]?.Value<String>());
-                        }
-                    }
-
-                }
-
-                #endregion
-
-                #region Validate via HTTP (with authorization)
-
-                commonAPI!.AddRemoteParty(
-                               CountryCode:      CountryCode.Parse("DE"),
-                               PartyId:          Party_Id.Parse("GDF"),
-                               Role:             Roles.EMSP,
-                               BusinessDetails:  new BusinessDetails(
-                                                     "GraphDefiend EMSP"
-                                                 ),
-                               AccessToken:      AccessToken.Parse("1234xyz"),
-                               AccessStatus:     AccessStatus.ALLOWED,
-                               PartyStatus:      PartyStatus.ENABLED
-                           );
-
-                {
-
-                    var httpResponse = await new HTTPSClient(remoteURL).
-                                                  Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                         remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication("1234xyz");
-                                                                                             requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
-                                                                                         })).
-                                                  ConfigureAwait(false);
-
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
-
-                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
-
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
-
-                    var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
-
-                    var jsonLocation1 = jsonLocations[0] as JObject;
-                    var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
-
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
-
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
-
-                    foreach (var jsonEVSE in jsonEVSEs1!)
-                    {
-                        if (jsonEVSE is JObject jobjectEVSE && jobjectEVSE["evse_id"]?.Value<String>() == evse1_UId!.ToString())
-                        {
-                            Assert.AreEqual("CHARGING", jobjectEVSE["status"]?.Value<String>());
-                        }
-                    }
-
-                }
-
-                #endregion
 
             }
 

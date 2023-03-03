@@ -62,7 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public IId AuthId => Id;
 
-        IId ISendChargeDetailRecords.Id => Id;
+        IId ISendChargeDetailRecords.SendChargeDetailRecordsId => Id;
 
 
         /// <summary>

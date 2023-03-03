@@ -62,7 +62,7 @@ namespace cloud.charging.open.protocols.WWCP
         /// <param name="Configurator">An optional delegate to configure the new roaming provider after its creation.</param>
         public static OCPIv2_1_1.HTTP.OCPICSOAdapter?
 
-            CreateOCPIv2_1_CSOAdapter(this RoamingNetwork                                      RoamingNetwork,
+            CreateOCPIv2_1_CSOAdapter(this IRoamingNetwork                                     RoamingNetwork,
                                       EMPRoamingProvider_Id                                    Id,
                                       I18NString                                               Name,
                                       I18NString                                               Description,
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.WWCP
             OCPIConfigurator?.Invoke(newRoamingProvider);
 
             return RoamingNetwork.
-                       CreateNewRoamingProvider(newRoamingProvider,
+                       CreateEMPRoamingProvider(newRoamingProvider,
                                                 Configurator) as OCPIv2_1_1.HTTP.OCPICSOAdapter;
 
         }

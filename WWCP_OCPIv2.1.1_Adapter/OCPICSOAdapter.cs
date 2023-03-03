@@ -63,7 +63,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public IId AuthId => Id;
 
-        IId ISendChargeDetailRecords.Id => Id;
+        IId ISendChargeDetailRecords.SendChargeDetailRecordsId => Id;
 
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public OCPICSOAdapter(EMPRoamingProvider_Id                        Id,
                               I18NString                                   Name,
                               I18NString                                   Description,
-                              RoamingNetwork                               RoamingNetwork,
+                              IRoamingNetwork                              RoamingNetwork,
 
                               CommonAPI                                    CommonAPI,
                               CountryCode                                  DefaultCountryCode,

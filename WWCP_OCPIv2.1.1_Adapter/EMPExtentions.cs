@@ -22,7 +22,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
-using cloud.charging.open.protocols.OCPIv2_2.HTTP;
+using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
 #endregion
 
@@ -32,7 +32,7 @@ namespace cloud.charging.open.protocols.WWCP
     /// <summary>
     /// Extensions methods for the WWCP wrapper for OCPI roaming clients for charging station operators.
     /// </summary>
-    public static class CSOExtensions
+    public static class EMPExtensions
     {
 
         /// <summary>
@@ -60,50 +60,50 @@ namespace cloud.charging.open.protocols.WWCP
         /// 
         /// <param name="OCPIConfigurator">An optional delegate to configure the new OCPI roaming provider after its creation.</param>
         /// <param name="Configurator">An optional delegate to configure the new roaming provider after its creation.</param>
-        public static OCPIv2_2.HTTP.OCPICSOAdapter?
+        public static OCPIv2_1_1.HTTP.OCPIEMPAdapter?
 
-            CreateOCPIv2_2_CSOAdapter(this RoamingNetwork                                    RoamingNetwork,
-                                      EMPRoamingProvider_Id                                  Id,
-                                      I18NString                                             Name,
-                                      I18NString                                             Description,
+            CreateOCPIv2_1_EMPAdapter(this IRoamingNetwork                                     RoamingNetwork,
+                                      CSORoamingProvider_Id                                    Id,
+                                      I18NString                                               Name,
+                                      I18NString                                               Description,
 
-                                      CommonAPI                                              CommonAPI,
-                                      OCPIv2_2.CountryCode                                   DefaultCountryCode,
-                                      OCPIv2_2.Party_Id                                      DefaultPartyId,
+                                      CommonAPI                                                CommonAPI,
+                                      OCPIv2_1_1.CountryCode                                   DefaultCountryCode,
+                                      OCPIv2_1_1.Party_Id                                      DefaultPartyId,
 
-                                      OCPIv2_2.WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
-                                      OCPIv2_2.WWCPEVSE_2_EVSE_Delegate?                     CustomEVSEConverter                  = null,
-                                      OCPIv2_2.WWCPEVSEStatusUpdate_2_StatusType_Delegate?   CustomEVSEStatusUpdateConverter      = null,
-                                      OCPIv2_2.WWCPChargeDetailRecord_2_CDR_Delegate?        CustomChargeDetailRecordConverter    = null,
+                                      OCPIv2_1_1.EVSEId_2_WWCPEVSEId_Delegate?                 CustomEVSEIdConverter                = null,
+                                      OCPIv2_1_1.EVSE_2_WWCPEVSE_Delegate?                     CustomEVSEConverter                  = null,
+                                      OCPIv2_1_1.StatusType_2_WWCPEVSEStatusUpdate_Delegate?   CustomEVSEStatusUpdateConverter      = null,
+                                      OCPIv2_1_1.CDR_2_WWCPChargeDetailRecord_Delegate?        CustomChargeDetailRecordConverter    = null,
 
-                                      //IChargingStationOperator?                              DefaultOperator                      = null,
-                                      //ChargingStationOperatorNameSelectorDelegate?           OperatorNameSelector                 = null,
+                                      //IChargingStationOperator?                                DefaultOperator                      = null,
+                                      //ChargingStationOperatorNameSelectorDelegate?             OperatorNameSelector                 = null,
 
-                                      IncludeEVSEIdDelegate?                                 IncludeEVSEIds                       = null,
-                                      IncludeEVSEDelegate?                                   IncludeEVSEs                         = null,
-                                      IncludeChargingStationIdDelegate?                      IncludeChargingStationIds            = null,
-                                      IncludeChargingStationDelegate?                        IncludeChargingStations              = null,
-                                      IncludeChargingPoolIdDelegate?                         IncludeChargingPoolIds               = null,
-                                      IncludeChargingPoolDelegate?                           IncludeChargingPools                 = null,
-                                      IncludeChargingStationOperatorIdDelegate?              IncludeChargingStationOperatorIds    = null,
-                                      IncludeChargingStationOperatorDelegate?                IncludeChargingStationOperators      = null,
-                                      ChargeDetailRecordFilterDelegate?                      ChargeDetailRecordFilter             = null,
+                                      IncludeEVSEIdDelegate?                                   IncludeEVSEIds                       = null,
+                                      IncludeEVSEDelegate?                                     IncludeEVSEs                         = null,
+                                      IncludeChargingStationIdDelegate?                        IncludeChargingStationIds            = null,
+                                      IncludeChargingStationDelegate?                          IncludeChargingStations              = null,
+                                      IncludeChargingPoolIdDelegate?                           IncludeChargingPoolIds               = null,
+                                      IncludeChargingPoolDelegate?                             IncludeChargingPools                 = null,
+                                      IncludeChargingStationOperatorIdDelegate?                IncludeChargingStationOperatorIds    = null,
+                                      IncludeChargingStationOperatorDelegate?                  IncludeChargingStationOperators      = null,
+                                      ChargeDetailRecordFilterDelegate?                        ChargeDetailRecordFilter             = null,
 
-                                      TimeSpan?                                              ServiceCheckEvery                    = null,
-                                      TimeSpan?                                              StatusCheckEvery                     = null,
-                                      TimeSpan?                                              CDRCheckEvery                        = null,
+                                      TimeSpan?                                                ServiceCheckEvery                    = null,
+                                      TimeSpan?                                                StatusCheckEvery                     = null,
+                                      TimeSpan?                                                CDRCheckEvery                        = null,
 
-                                      Boolean                                                DisablePushData                      = false,
-                                      Boolean                                                DisablePushStatus                    = false,
-                                      Boolean                                                DisableAuthentication                = false,
-                                      Boolean                                                DisableSendChargeDetailRecords       = false,
+                                      Boolean                                                  DisablePushData                      = false,
+                                      Boolean                                                  DisablePushStatus                    = false,
+                                      Boolean                                                  DisableAuthentication                = false,
+                                      Boolean                                                  DisableSendChargeDetailRecords       = false,
 
-                                      Action<OCPIv2_2.HTTP.OCPICSOAdapter>?                  OCPIConfigurator                     = null,
-                                      Action<IEMPRoamingProvider>?                           Configurator                         = null,
+                                      Action<OCPIv2_1_1.HTTP.OCPIEMPAdapter>?                  OCPIConfigurator                     = null,
+                                      Action<ICSORoamingProvider>?                             Configurator                         = null,
 
-                                      String                                                 EllipticCurve                        = "P-256",
-                                      ECPrivateKeyParameters?                                PrivateKey                           = null,
-                                      PublicKeyCertificates?                                 PublicKeyCertificates                = null)
+                                      String                                                   EllipticCurve                        = "P-256",
+                                      ECPrivateKeyParameters?                                  PrivateKey                           = null,
+                                      PublicKeyCertificates?                                   PublicKeyCertificates                = null)
 
         {
 
@@ -114,7 +114,7 @@ namespace cloud.charging.open.protocols.WWCP
 
             #endregion
 
-            var newRoamingProvider = new OCPIv2_2.HTTP.OCPICSOAdapter(
+            var newRoamingProvider = new OCPIv2_1_1.HTTP.OCPIEMPAdapter(
 
                                          Id,
                                          Name,
@@ -154,8 +154,8 @@ namespace cloud.charging.open.protocols.WWCP
             OCPIConfigurator?.Invoke(newRoamingProvider);
 
             return RoamingNetwork.
-                       CreateEMPRoamingProvider(newRoamingProvider,
-                                                Configurator) as OCPIv2_2.HTTP.OCPICSOAdapter;
+                       CreateCSORoamingProvider(newRoamingProvider,
+                                                Configurator) as OCPIv2_1_1.HTTP.OCPIEMPAdapter;
 
         }
 

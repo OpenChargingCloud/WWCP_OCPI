@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
     /// <summary>
     /// OCPI v2.1.1 adapter test defaults.
     /// </summary>
-    public abstract class AAdapterTests
+    public abstract class ACSOAdapterTests
     {
 
         #region Data
@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         #region Constructor(s)
 
-        public AAdapterTests()
+        public ACSOAdapterTests()
         {
 
         }
@@ -187,8 +187,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             cpoAPI           = new CPOAPI(
 
                                    CommonAPI:                           commonAPI,
-                                   DefaultCountryCode:                  CountryCode.Parse("DE"),
-                                   DefaultPartyId:                      Party_Id.   Parse("GEF"),
+                                   DefaultCountryCode:                  commonAPI.OurCountryCode,
+                                   DefaultPartyId:                      commonAPI.OurPartyId,
                                    AllowDowngrades:                     null,
 
                                    HTTPHostname:                        null,
@@ -257,8 +257,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             graphDefinedCSO  = roamingNetwork.CreateChargingStationOperator(
                                    Id:                  ChargingStationOperator_Id.Parse("DE*GEF"),
-                                   Name:                I18NString.Create(Languages.en, "GraphDefined"),
-                                   Description:         I18NString.Create(Languages.en, "GraphDefined CSO services"),
+                                   Name:                I18NString.Create(Languages.en, "GraphDefined CSO"),
+                                   Description:         I18NString.Create(Languages.en, "GraphDefined CSO Services"),
                                    InitialAdminStatus:  ChargingStationOperatorAdminStatusTypes.Operational,
                                    InitialStatus:       ChargingStationOperatorStatusTypes.Available
                                ).Result.ChargingStationOperator;

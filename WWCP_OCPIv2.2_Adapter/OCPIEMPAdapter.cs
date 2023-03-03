@@ -89,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public ChargeDetailRecordFilterDelegate ChargeDetailRecordFilter => throw new NotImplementedException();
 
-        IId ISendChargeDetailRecords.Id => throw new NotImplementedException();
+        IId ISendChargeDetailRecords.SendChargeDetailRecordsId => throw new NotImplementedException();
 
         public IncludeEVSEIdDelegate IncludeEVSEIds => throw new NotImplementedException();
 
