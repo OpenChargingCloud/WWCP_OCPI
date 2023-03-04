@@ -19,7 +19,10 @@
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+
 using cloud.charging.open.protocols.WWCP;
+using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
 
 #endregion
 
@@ -244,6 +247,72 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           URLPathPrefix: CommonAPI.URLPathPrefix + "2.1.1/cpo"
                                                       );
 
+        }
+
+        #endregion
+
+
+        #region AddRemoteParty(...)
+
+        public Boolean AddRemoteParty(CountryCode               CountryCode,
+                                      Party_Id                  PartyId,
+                                      Roles                     Role,
+                                      BusinessDetails           BusinessDetails,
+
+                                      AccessToken               AccessToken,
+
+                                      AccessToken               RemoteAccessToken,
+                                      URL                       RemoteVersionsURL,
+                                      IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                      Version_Id?               SelectedVersionId           = null,
+
+                                      Boolean?                  AccessTokenBase64Encoding   = null,
+                                      AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
+                                      RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
+                                      PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
+        {
+
+            return CommonAPI.AddRemoteParty(CountryCode,
+                                            PartyId,
+                                            Role,
+                                            BusinessDetails,
+
+                                            AccessToken,
+
+                                            RemoteAccessToken,
+                                            RemoteVersionsURL,
+                                            RemoteVersionIds,
+                                            SelectedVersionId,
+
+                                            AccessTokenBase64Encoding,
+                                            AccessStatus,
+                                            RemoteStatus,
+                                            PartyStatus);
+
+        }
+
+        #endregion
+
+        #region AddRemoteParty(...)
+
+        public Boolean AddRemoteParty(CountryCode      CountryCode,
+                                      Party_Id         PartyId,
+                                      Roles            Role,
+                                      BusinessDetails  BusinessDetails,
+
+                                      AccessToken      AccessToken,
+                                      AccessStatus     AccessStatus   = AccessStatus.ALLOWED,
+
+                                      PartyStatus      PartyStatus    = PartyStatus. ENABLED)
+        {
+
+            return CommonAPI.AddRemoteParty(CountryCode,
+                                            PartyId,
+                                            Role,
+                                            BusinessDetails,
+                                            AccessToken,
+                                            AccessStatus,
+                                            PartyStatus);
         }
 
         #endregion
@@ -1836,19 +1905,172 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region AuthorizeStart/-Stop
+        #region AuthorizeStart(LocalAuthentication, ...)
 
-        public Task<AuthStartResult> AuthorizeStart(LocalAuthentication LocalAuthentication, ChargingLocation ChargingLocation = null, ChargingProduct ChargingProduct = null, ChargingSession_Id? SessionId = null, ChargingSession_Id? CPOPartnerSessionId = null, ChargingStationOperator_Id? OperatorId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public async Task<AuthStartResult> AuthorizeStart(LocalAuthentication          LocalAuthentication,
+                                                          ChargingLocation?            ChargingLocation      = null,
+                                                          ChargingProduct?             ChargingProduct       = null,
+                                                          ChargingSession_Id?          SessionId             = null,
+                                                          ChargingSession_Id?          CPOPartnerSessionId   = null,
+                                                          ChargingStationOperator_Id?  OperatorId            = null,
+
+                                                          DateTime?                    Timestamp             = null,
+                                                          CancellationToken?           CancellationToken     = null,
+                                                          EventTracking_Id?            EventTrackingId       = null,
+                                                          TimeSpan?                    RequestTimeout        = null)
         {
-            return Task.FromResult(AuthStartResult.NotAuthorized(Id, this));
+
+            var remotes = new PriorityList<RemoteParty>();
+            foreach (var remote in CommonAPI.GetRemoteParties(Roles.EMSP))
+                remotes.Add(remote);
+
+            var authorizationInfo = await remotes.WhenFirst(Work:            async remoteParty => {
+
+                                                                                       var remoteAccessInfo = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
+
+                                                                                       if (remoteAccessInfo is null)
+                                                                                           return new AuthorizationInfo(
+                                                                                                      Allowed:  AllowedType.NOT_ALLOWED,
+                                                                                                      Info:     new DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'")
+                                                                                                  );
+
+                                                                                       var cpoClient = new CPOClient(
+                                                                                                           RemoteVersionsURL:           remoteAccessInfo.VersionsURL,
+                                                                                                           AccessToken:                 remoteAccessInfo.AccessToken,
+                                                                                                           MyCommonAPI:                 CommonAPI,
+                                                                                                           AccessTokenBase64Encoding:   remoteAccessInfo.AccessTokenBase64Encoding
+                                                                                                       );
+
+                                                                                       var authorizationInfo = await cpoClient.PostToken(
+                                                                                                                         TokenId:             Token_Id.Parse(LocalAuthentication.ToString()),
+                                                                                                                         TokenType:           TokenType.RFID,
+                                                                                                                         LocationReference:   null
+                                                                                                                     );
+
+                                                                                       return new AuthorizationInfo(authorizationInfo.Data.Allowed,
+                                                                                                                    authorizationInfo.Data.Location,
+                                                                                                                    authorizationInfo.Data.Info,
+                                                                                                                    remoteParty,
+                                                                                                                    authorizationInfo.Data.Runtime);
+
+                                                                                   },
+
+                                                            VerifyResult:    result2                   => result2.Allowed == AllowedType.ALLOWED,
+
+                                                            Timeout:         RequestTimeout ?? TimeSpan.FromSeconds(10),
+
+                                                            OnException:     null,
+
+                                                            DefaultResult:   runtime                   => new AuthorizationInfo(
+                                                                                                              Allowed:    AllowedType.NOT_ALLOWED,
+                                                                                                              Location:   null,
+                                                                                                              Info:       new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
+                                                                                                              Runtime:    runtime
+                                                                                                          ));
+
+            AuthStartResult? authStartResult = null;
+
+            if (authorizationInfo is null)
+                authStartResult = AuthStartResult.CommunicationTimeout(Id, this, SessionId);
+
+            else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+                authStartResult = AuthStartResult.Authorized(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           EMPPartnerSessionId:       null,
+                           ContractId:                null,
+                           PrintedNumber:             null,
+                           ExpiryDate:                null,
+                           MaxkW:                     null,
+                           MaxkWh:                    null,
+                           MaxDuration:               null,
+                           ChargingTariffs:           null,
+                           ListOfAuthStopTokens:      null,
+                           ListOfAuthStopPINs:        null,
+                           ProviderId:                EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+                authStartResult = AuthStartResult.Blocked(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
+                authStartResult = AuthStartResult.Expired(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
+                authStartResult = AuthStartResult.NoCredit(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+                authStartResult = AuthStartResult.NotAuthorized(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                null,
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+
+            authStartResult ??= AuthStartResult.Error(Id, this, SessionId);
+
+
+            return authStartResult;
+
         }
 
-        public Task<AuthStopResult> AuthorizeStop(ChargingSession_Id SessionId, LocalAuthentication LocalAuthentication, ChargingLocation ChargingLocation = null, ChargingSession_Id? CPOPartnerSessionId = null, ChargingStationOperator_Id? OperatorId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        #endregion
+
+        #region AuthorizeStop(SessionId, LocalAuthentication, 
+
+        public Task<AuthStopResult> AuthorizeStop(ChargingSession_Id           SessionId,
+                                                  LocalAuthentication          LocalAuthentication,
+                                                  ChargingLocation?            ChargingLocation      = null,
+                                                  ChargingSession_Id?          CPOPartnerSessionId   = null,
+                                                  ChargingStationOperator_Id?  OperatorId            = null,
+
+                                                  DateTime?                    Timestamp             = null,
+                                                  CancellationToken?           CancellationToken     = null,
+                                                  EventTracking_Id?            EventTrackingId       = null,
+                                                  TimeSpan?                    RequestTimeout        = null)
         {
             return Task.FromResult(AuthStopResult.NotAuthorized(Id, this));
         }
 
         #endregion
+
 
         #region SendChargeDetailRecords
 

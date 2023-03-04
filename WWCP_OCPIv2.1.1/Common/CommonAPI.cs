@@ -38,6 +38,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 {
 
     /// <summary>
+    /// A delegate for filtering remote parties.
+    /// </summary>
+    public delegate Boolean IncludeRemoteParty(RemoteParty RemoteParty);
+
+
+    /// <summary>
     /// The Common API.
     /// </summary>
     public class CommonAPI : HTTPAPI
@@ -1492,6 +1498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                    version2_1_1,
 
                                    null, //receivedCredentials.Role,
+                                   null,
                                    AccessStatus.      ALLOWED,
                                    RemoteAccessStatus.ONLINE,
                                    PartyStatus.       ENABLED);
@@ -1574,12 +1581,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                       AccessToken               RemoteAccessToken,
                                       URL                       RemoteVersionsURL,
-                                      IEnumerable<Version_Id>?  RemoteVersionIds    = null,
-                                      Version_Id?               SelectedVersionId   = null,
+                                      IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                      Version_Id?               SelectedVersionId           = null,
 
-                                      AccessStatus              AccessStatus        = AccessStatus.      ALLOWED,
-                                      RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
-                                      PartyStatus               PartyStatus         = PartyStatus.       ENABLED)
+                                      Boolean?                  AccessTokenBase64Encoding   = null,
+                                      AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
+                                      RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
+                                      PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
         {
 
             lock (remoteParties)
@@ -1597,6 +1605,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      RemoteVersionIds,
                                                      SelectedVersionId,
 
+                                                     AccessTokenBase64Encoding,
                                                      AccessStatus,
                                                      RemoteStatus,
                                                      PartyStatus);
@@ -1666,11 +1675,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                       AccessToken               RemoteAccessToken,
                                       URL                       RemoteVersionsURL,
-                                      IEnumerable<Version_Id>?  RemoteVersionIds    = null,
-                                      Version_Id?               SelectedVersionId   = null,
+                                      IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                      Version_Id?               SelectedVersionId           = null,
 
-                                      RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.UNKNOWN,
-                                      PartyStatus               PartyStatus         = PartyStatus.       ENABLED)
+                                      Boolean?                  AccessTokenBase64Encoding   = null,
+                                      RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.UNKNOWN,
+                                      PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
         {
 
             lock (remoteParties)
@@ -1686,6 +1696,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      RemoteVersionIds,
                                                      SelectedVersionId,
 
+                                                     AccessTokenBase64Encoding,
                                                      RemoteStatus,
                                                      PartyStatus);
 
@@ -1758,13 +1769,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                               AccessToken               RemoteAccessToken,
                                               URL                       RemoteVersionsURL,
-                                              IEnumerable<Version_Id>?  RemoteVersionIds    = null,
-                                              Version_Id?               SelectedVersionId   = null,
+                                              IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                              Version_Id?               SelectedVersionId           = null,
 
-                                              Roles?                    Role                = null,
-                                              AccessStatus              AccessStatus        = AccessStatus.      ALLOWED,
-                                              RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
-                                              PartyStatus               PartyStatus         = PartyStatus.       ENABLED)
+                                              Roles?                    Role                        = null,
+
+                                              Boolean?                  AccessTokenBase64Encoding   = null,
+                                              AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
+                                              RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
+                                              PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
         {
 
             lock (remoteParties)
@@ -1795,6 +1808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      RemoteVersionIds,
                                                      SelectedVersionId,
 
+                                                     AccessTokenBase64Encoding,
                                                      AccessStatus,
                                                      RemoteStatus,
                                                      PartyStatus);
@@ -1869,11 +1883,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                               AccessToken               RemoteAccessToken,
                                               URL                       RemoteVersionsURL,
-                                              IEnumerable<Version_Id>?  RemoteVersionIds    = null,
-                                              Version_Id?               SelectedVersionId   = null,
+                                              IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                              Version_Id?               SelectedVersionId           = null,
 
-                                              RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.UNKNOWN,
-                                              PartyStatus               PartyStatus         = PartyStatus.       ENABLED)
+                                              Boolean?                  AccessTokenBase64Encoding   = null,
+                                              RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.UNKNOWN,
+                                              PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
         {
 
             lock (remoteParties)
@@ -1895,6 +1910,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      RemoteVersionIds,
                                                      SelectedVersionId,
 
+                                                     AccessTokenBase64Encoding,
                                                      RemoteStatus,
                                                      PartyStatus);
 
@@ -1989,6 +2005,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 RemoteParty = null;
                 return false;
+
+            }
+            finally
+            {
+                //RemotePartiesSemaphore.Release();
+            }
+
+        }
+
+        #endregion
+
+        #region GetRemoteParties   (IncludeFilter = null)
+
+        /// <summary>
+        /// Get all remote parties machting the given optional filter.
+        /// </summary>
+        /// <param name="IncludeFilter">A delegate for filtering remote parties.</param>
+        public IEnumerable<RemoteParty> GetRemoteParties(IncludeRemoteParty? IncludeFilter = null)
+        {
+
+            try
+            {
+
+                //await RemotePartiesSemaphore.WaitAsync();
+
+                return IncludeFilter is null
+                           ? remoteParties.Values.ToArray()
+                           : remoteParties.Values.Where(remoteParty => IncludeFilter(remoteParty)).ToArray();
+
+            }
+            finally
+            {
+                //RemotePartiesSemaphore.Release();
+            }
+
+        }
+
+        #endregion
+
+        #region GetRemoteParties   (Role)
+
+        /// <summary>
+        /// Get all remote parties having the given role.
+        /// </summary>
+        /// <param name="Role">The role of the remote parties.</param>
+        public IEnumerable<RemoteParty> GetRemoteParties(Roles Role)
+        {
+
+            try
+            {
+
+                //await RemotePartiesSemaphore.WaitAsync();
+
+                return remoteParties.Values.Where(remoteParty => remoteParty.Role == Role).ToArray();
 
             }
             finally

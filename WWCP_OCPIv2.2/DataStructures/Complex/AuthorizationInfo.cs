@@ -67,6 +67,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Optional]
         public DisplayText?             Info                      { get; }
 
+        /// <summary>
+        /// The runtime of the authorization.
+        /// </summary>
+        [Optional, NonStandard]
+        public TimeSpan                 Runtime                   { get; }
+
         #endregion
 
         #region Constructor(s)
@@ -79,11 +85,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Location">An optional reference to the location if it was included in the request, and if the EV driver is allowed to charge at that location. Only the EVSEs the EV driver is allowed to charge at are returned.</param>
         /// <param name="AuthorizationReference">An optional reference to the authorization given by the eMSP, when given, this reference will be provided in the relevant charging session and/or charge detail record.</param>
         /// <param name="Info">An optional additional information to the EV driver.</param>
+        /// <param name="Runtime">The runtime of the authorization.</param>
         public AuthorizationInfo(AllowedType               Allowed,
                                  Token                     Token,
                                  LocationReference?        Location                 = null,
                                  AuthorizationReference?   AuthorizationReference   = null,
-                                 DisplayText?              Info                     = null)
+                                 DisplayText?              Info                     = null,
+                                 TimeSpan?                 Runtime                  = null)
         {
 
             this.Allowed                 = Allowed;
@@ -91,6 +99,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.Location                = Location;
             this.AuthorizationReference  = AuthorizationReference;
             this.Info                    = Info;
+            this.Runtime                 = Runtime ?? TimeSpan.Zero;
 
         }
 

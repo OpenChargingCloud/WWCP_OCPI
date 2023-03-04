@@ -219,13 +219,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            AccessToken               RemoteAccessToken,
                            URL                       RemoteVersionsURL,
-                           IEnumerable<Version_Id>?  RemoteVersionIds    = null,
-                           Version_Id?               SelectedVersionId   = null,
+                           IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                           Version_Id?               SelectedVersionId           = null,
+                           Boolean?                  AccessTokenBase64Encoding   = null,
 
-                           RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
-                           PartyStatus               Status              = PartyStatus.       ENABLED,
+                           RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
+                           PartyStatus               Status                      = PartyStatus.       ENABLED,
 
-                           DateTime?                 LastUpdated         = null)
+                           DateTime?                 LastUpdated                 = null)
 
             : this(CountryCode,
                    PartyId,
@@ -238,6 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            RemoteVersionsURL,
                            RemoteVersionIds,
                            SelectedVersionId,
+                           AccessTokenBase64Encoding,
                            RemoteStatus
                        )
                    },
@@ -259,14 +261,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            AccessToken               RemoteAccessToken,
                            URL                       RemoteVersionsURL,
-                           IEnumerable<Version_Id>?  RemoteVersionIds    = null,
-                           Version_Id?               SelectedVersionId   = null,
+                           IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                           Version_Id?               SelectedVersionId           = null,
 
-                           AccessStatus              AccessStatus        = AccessStatus.      ALLOWED,
-                           RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
-                           PartyStatus               Status              = PartyStatus.       ENABLED,
+                           Boolean?                  AccessTokenBase64Encoding   = null,
+                           AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
+                           RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
+                           PartyStatus               Status                      = PartyStatus.       ENABLED,
 
-                           DateTime?                 LastUpdated         = null)
+                           DateTime?                 LastUpdated                 = null)
 
             : this(CountryCode,
                    PartyId,
@@ -284,6 +287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            RemoteVersionsURL,
                            RemoteVersionIds,
                            SelectedVersionId,
+                           AccessTokenBase64Encoding,
                            RemoteStatus
                        )
                    },

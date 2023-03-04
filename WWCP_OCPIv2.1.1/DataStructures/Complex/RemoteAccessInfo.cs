@@ -36,22 +36,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         [Mandatory]
-        public AccessToken              AccessToken          { get; }
+        public AccessToken              AccessToken                  { get; }
 
         [Mandatory]
-        public URL                      VersionsURL          { get; }
+        public URL                      VersionsURL                  { get; }
 
         [Optional]
-        public IEnumerable<Version_Id>  VersionIds           { get; }
+        public IEnumerable<Version_Id>  VersionIds                   { get; }
 
         [Optional]
-        public Version_Id?              SelectedVersionId    { get; }
+        public Version_Id?              SelectedVersionId            { get; }
 
         [Mandatory]
-        public RemoteAccessStatus       Status               { get; set; }
+        public Boolean                  AccessTokenBase64Encoding    { get; }
 
         [Mandatory]
-        public DateTime                 LastUpdate           { get; }
+        public RemoteAccessStatus       Status                       { get; set; }
+
+        [Mandatory]
+        public DateTime                 LastUpdate                   { get; }
 
         #endregion
 
@@ -64,20 +67,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="VersionsURL">An OCPI vesions URL.</param>
         /// <param name="VersionIds">An optional enumeration of version identifications.</param>
         /// <param name="SelectedVersionId">A optional selected version identification.</param>
+        /// <param name="AccessTokenBase64Encoding">Whether the access token is base64 encoded or not.</param>
         /// <param name="Status">A remote access status.</param>
         public RemoteAccessInfo(AccessToken               AccessToken,
                                 URL                       VersionsURL,
-                                IEnumerable<Version_Id>?  VersionIds          = null,
-                                Version_Id?               SelectedVersionId   = null,
-                                RemoteAccessStatus?       Status              = RemoteAccessStatus.ONLINE)
+                                IEnumerable<Version_Id>?  VersionIds                  = null,
+                                Version_Id?               SelectedVersionId           = null,
+                                Boolean?                  AccessTokenBase64Encoding   = null,
+                                RemoteAccessStatus?       Status                      = RemoteAccessStatus.ONLINE)
         {
 
-            this.AccessToken        = AccessToken;
-            this.VersionsURL        = VersionsURL;
-            this.VersionIds         = VersionIds?.Distinct() ?? Array.Empty<Version_Id>();
-            this.SelectedVersionId  = SelectedVersionId;
-            this.Status             = Status ?? RemoteAccessStatus.ONLINE;
-            this.LastUpdate         = Timestamp.Now;
+            this.AccessToken                = AccessToken;
+            this.VersionsURL                = VersionsURL;
+            this.VersionIds                 = VersionIds?.Distinct() ?? Array.Empty<Version_Id>();
+            this.SelectedVersionId          = SelectedVersionId;
+            this.AccessTokenBase64Encoding  = AccessTokenBase64Encoding ?? false;
+            this.Status                     = Status ?? RemoteAccessStatus.ONLINE;
+            this.LastUpdate                 = Timestamp.Now;
 
         }
 

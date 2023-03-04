@@ -56,6 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected  EMSPAPI?                   emp1EMSPAPI;
         protected  OCPIEMPAdapter?            emp1Adapter;
         protected  IEMobilityProvider?        graphDefinedEMP;
+        protected  IEMobilityProvider?        graphDefinedEMP_remote;
 
         protected  RoamingNetwork?            emp2RoamingNetwork;
         protected  HTTPAPI?                   emp2HTTPAPI;
@@ -63,6 +64,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected  EMSPAPI?                   emp2EMSPAPI;
         protected  OCPIEMPAdapter?            emp2Adapter;
         protected  IEMobilityProvider?        exampleEMP;
+        protected  IEMobilityProvider?        exampleEMP_remote;
 
         #endregion
 
@@ -97,7 +99,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Create cso/emp1/emp2 roaming network
 
             csoRoamingNetwork = new RoamingNetwork(
-                                       Id:                                  RoamingNetwork_Id.Parse("test"),
+                                       Id:                                  RoamingNetwork_Id.Parse("test_cso"),
                                        Name:                                I18NString.Create(Languages.en, "CSO EV Roaming Test Network"),
                                        Description:                         I18NString.Create(Languages.en, "The EV roaming test network at the charging station operator"),
                                        InitialAdminStatus:                  RoamingNetworkAdminStatusTypes.Operational,
@@ -105,7 +107,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    );
 
             emp1RoamingNetwork   = new RoamingNetwork(
-                                       Id:                                  RoamingNetwork_Id.Parse("test"),
+                                       Id:                                  RoamingNetwork_Id.Parse("test_emp1"),
                                        Name:                                I18NString.Create(Languages.en, "EV Roaming Test Network EMP1"),
                                        Description:                         I18NString.Create(Languages.en, "The EV roaming test network at the 1st e-mobility provider"),
                                        InitialAdminStatus:                  RoamingNetworkAdminStatusTypes.Operational,
@@ -113,7 +115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    );
 
             emp2RoamingNetwork   = new RoamingNetwork(
-                                       Id:                                  RoamingNetwork_Id.Parse("test"),
+                                       Id:                                  RoamingNetwork_Id.Parse("test_emp2"),
                                        Name:                                I18NString.Create(Languages.en, "EV Roaming Test Network EMP2"),
                                        Description:                         I18NString.Create(Languages.en, "The EV roaming test network at the 2nd e-mobility provider"),
                                        InitialAdminStatus:                  RoamingNetworkAdminStatusTypes.Operational,
@@ -336,7 +338,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/2.1.1/emsp"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
@@ -369,7 +371,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/2.1.1/emsp"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
@@ -462,7 +464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                    );
 
-            emp2Adapter          = csoRoamingNetwork.CreateOCPIv2_1_EMPAdapter(
+            emp2Adapter          = emp2RoamingNetwork.CreateOCPIv2_1_EMPAdapter(
 
                                        Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.1_EMP2_" + this.emp1RoamingNetwork.Id),
                                        Name:                                I18NString.Create(Languages.de, "OCPI v2.1 EMP2"),
@@ -500,34 +502,176 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
+            #region Create graphDefinedCSO / graphDefinedEMP / exampleEMP
 
-            graphDefinedCSO     = csoRoamingNetwork.CreateChargingStationOperator(
-                                      Id:                                  ChargingStationOperator_Id.Parse("DE*GEF"),
-                                      Name:                                I18NString.Create(Languages.en, "GraphDefined CSO"),
-                                      Description:                         I18NString.Create(Languages.en, "GraphDefined CSO Services"),
-                                      InitialAdminStatus:                  ChargingStationOperatorAdminStatusTypes.Operational,
-                                      InitialStatus:                       ChargingStationOperatorStatusTypes.Available
-                                  ).Result.ChargingStationOperator;
+            graphDefinedCSO         = csoRoamingNetwork.CreateChargingStationOperator(
+                                          Id:                                  ChargingStationOperator_Id.Parse("DE*GEF"),
+                                          Name:                                I18NString.Create(Languages.en, "GraphDefined CSO"),
+                                          Description:                         I18NString.Create(Languages.en, "GraphDefined CSO Services"),
+                                          InitialAdminStatus:                  ChargingStationOperatorAdminStatusTypes.Operational,
+                                          InitialStatus:                       ChargingStationOperatorStatusTypes.Available
+                                      ).Result.ChargingStationOperator;
 
-            graphDefinedEMP     = emp1RoamingNetwork.CreateEMobilityProvider(
-                                      Id:                                  EMobilityProvider_Id.Parse("DE*GDF"),
-                                      Name:                                I18NString.Create(Languages.en, "GraphDefined EMP"),
-                                      Description:                         I18NString.Create(Languages.en, "GraphDefined EMP Services"),
-                                      InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
-                                      InitialStatus:                       EMobilityProviderStatusTypes.Available
-                                  ).Result.EMobilityProvider;
 
-            exampleEMP          = emp1RoamingNetwork.CreateEMobilityProvider(
-                                      Id:                                  EMobilityProvider_Id.Parse("DE*EMP"),
-                                      Name:                                I18NString.Create(Languages.en, "example EMP"),
-                                      Description:                         I18NString.Create(Languages.en, "example EMP Services"),
-                                      InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
-                                      InitialStatus:                       EMobilityProviderStatusTypes.Available
-                                  ).Result.EMobilityProvider;
+            //graphDefinedEMP_remote  = csoRoamingNetwork.CreateEMobilityProvider(
+            //                              Id:                                  EMobilityProvider_Id.Parse("DE*GDF"),
+            //                              Name:                                I18NString.Create(Languages.en, "GraphDefined EMP"),
+            //                              Description:                         I18NString.Create(Languages.en, "GraphDefined EMP Services"),
+            //                              InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
+            //                              InitialStatus:                       EMobilityProviderStatusTypes.Available,
+            //                              RemoteEMobilityProviderCreator:      (eMobilityProvider) => {
 
-            Assert.IsNotNull(graphDefinedCSO);
-            Assert.IsNotNull(graphDefinedEMP);
-            Assert.IsNotNull(exampleEMP);
+            //                                                                       var empAdapter = new OCPIEMPAdapter(
+            //                                                                                            Id:                 CSORoamingProvider_Id.Parse($"{emp1CommonAPI.OurCountryCode}-{emp1CommonAPI.OurPartyId}"),
+            //                                                                                            Name:               I18NString.           Create(Languages.en, emp1CommonAPI.OurBusinessDetails.Name),
+            //                                                                                            Description:        I18NString.           Create(Languages.en, emp1CommonAPI.OurBusinessDetails.Name + "_description"),
+            //                                                                                            RoamingNetwork:     emp1RoamingNetwork,
+            //                                                                                            CommonAPI:          emp1CommonAPI,
+            //                                                                                            DefaultCountryCode: emp1CommonAPI.OurCountryCode,
+            //                                                                                            DefaultPartyId:     emp1CommonAPI.OurPartyId
+            //                                                                                        );
+
+            //                                                                       // IRemoteEMobilityProvider
+            //                                                                       return empAdapter;
+
+            //                                                                   }
+            //                          ).Result.EMobilityProvider;
+
+            //var graphDefMAP_remote  = csoRoamingNetwork.CreateEMPRoamingProvider(
+            //                              Id:                                  EMPRoamingProvider_Id.Parse("DE*GDF"),
+            //                              Name:                                I18NString.Create(Languages.en, "GraphDefined EMP"),
+            //                              Description:                         I18NString.Create(Languages.en, "GraphDefined EMP Services"),
+            //                              InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
+            //                              InitialStatus:                       EMobilityProviderStatusTypes.Available,
+            //                              RemoteEMobilityProviderCreator:      (eMobilityProvider) => {
+
+            //                                                                       var empAdapter = new OCPIEMPAdapter(
+            //                                                                                            Id:                 CSORoamingProvider_Id.Parse($"{emp1CommonAPI.OurCountryCode}-{emp1CommonAPI.OurPartyId}"),
+            //                                                                                            Name:               I18NString.           Create(Languages.en, emp1CommonAPI.OurBusinessDetails.Name),
+            //                                                                                            Description:        I18NString.           Create(Languages.en, emp1CommonAPI.OurBusinessDetails.Name + "_description"),
+            //                                                                                            RoamingNetwork:     emp1RoamingNetwork,
+            //                                                                                            CommonAPI:          emp1CommonAPI,
+            //                                                                                            DefaultCountryCode: emp1CommonAPI.OurCountryCode,
+            //                                                                                            DefaultPartyId:     emp1CommonAPI.OurPartyId
+            //                                                                                        );
+
+            //                                                                       // IRemoteEMobilityProvider
+            //                                                                       return empAdapter;
+
+            //                                                                   }
+            //                          ).Result.EMobilityProvider;
+
+
+
+
+
+
+
+
+            //graphDefinedEMP     = emp1RoamingNetwork.CreateEMobilityProvider(
+            //                          Id:                                  EMobilityProvider_Id.Parse("DE*GDF"),
+            //                          Name:                                I18NString.Create(Languages.en, "GraphDefined EMP"),
+            //                          Description:                         I18NString.Create(Languages.en, "GraphDefined EMP Services"),
+            //                          InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
+            //                          InitialStatus:                       EMobilityProviderStatusTypes.Available
+            //                      ).Result.EMobilityProvider;
+
+
+
+
+
+
+            //exampleEMP          = emp2RoamingNetwork.CreateEMobilityProvider(
+            //                          Id:                                  EMobilityProvider_Id.Parse("DE*EMP"),
+            //                          Name:                                I18NString.Create(Languages.en, "example EMP"),
+            //                          Description:                         I18NString.Create(Languages.en, "example EMP Services"),
+            //                          InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
+            //                          InitialStatus:                       EMobilityProviderStatusTypes.Available
+            //                      ).Result.EMobilityProvider;
+
+
+
+
+
+
+            //Assert.IsNotNull(graphDefinedCSO);
+            //Assert.IsNotNull(graphDefinedEMP);
+            //Assert.IsNotNull(exampleEMP);
+
+            #endregion
+
+            #region Add Remote Parties
+
+            csoAdapter!. AddRemoteParty(CountryCode:                 emp1CommonAPI.OurCountryCode,
+                                        PartyId:                     emp1CommonAPI.OurPartyId,
+                                        Role:                        Roles.EMSP,
+                                        BusinessDetails:             emp1CommonAPI.OurBusinessDetails,
+
+                                        AccessToken:                 AccessToken.Parse("cso-2-emp1:token"),
+                                        AccessStatus:                AccessStatus.ALLOWED,
+
+                                        RemoteAccessToken:           AccessToken.Parse("emp1-2-cso:token"),
+                                        RemoteVersionsURL:           URL.Parse($"http://localhost:{emp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                        RemoteVersionIds:            null,
+                                        AccessTokenBase64Encoding:   false,
+                                        RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                        PartyStatus:                 PartyStatus.ENABLED);
+
+            csoAdapter!. AddRemoteParty(CountryCode:                 emp2CommonAPI.OurCountryCode,
+                                        PartyId:                     emp2CommonAPI.OurPartyId,
+                                        Role:                        Roles.EMSP,
+                                        BusinessDetails:             emp2CommonAPI.OurBusinessDetails,
+                                        AccessToken:                 AccessToken.Parse("cso-2-emp2:token"),
+                                        AccessStatus:                AccessStatus.ALLOWED,
+                                        RemoteAccessToken:           AccessToken.Parse("emp2-2-cso:token"),
+                                        RemoteVersionsURL:           URL.Parse($"http://localhost:{emp2HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                        RemoteVersionIds:            null,
+                                        AccessTokenBase64Encoding:   false,
+                                        RemoteStatus:                RemoteAccessStatus.ONLINE,
+                                        PartyStatus:                 PartyStatus.ENABLED);
+
+
+
+            emp1Adapter!.AddRemoteParty(CountryCode:                 csoCommonAPI.OurCountryCode,
+                                        PartyId:                     csoCommonAPI.OurPartyId,
+                                        Role:                        Roles.CPO,
+                                        BusinessDetails:             csoCommonAPI.OurBusinessDetails,
+
+                                        AccessToken:                 AccessToken.Parse("emp1-2-cso:token"),
+                                        AccessStatus:                AccessStatus.ALLOWED,
+
+                                        RemoteAccessToken:           AccessToken.Parse("cso-2-emp1:token"),
+                                        RemoteVersionsURL:           URL.Parse($"http://localhost:{csoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                        RemoteVersionIds:            null,
+                                        AccessTokenBase64Encoding:   false,
+                                        RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                        PartyStatus:                 PartyStatus.ENABLED);
+
+
+            emp2Adapter!.AddRemoteParty(CountryCode:                 csoCommonAPI.OurCountryCode,
+                                        PartyId:                     csoCommonAPI.OurPartyId,
+                                        Role:                        Roles.CPO,
+                                        BusinessDetails:             csoCommonAPI.OurBusinessDetails,
+
+                                        AccessToken:                 AccessToken.Parse("emp2-2-cso:token"),
+                                        AccessStatus:                AccessStatus.ALLOWED,
+
+                                        RemoteAccessToken:           AccessToken.Parse("cso-2-emp2:token"),
+                                        RemoteVersionsURL:           URL.Parse($"http://localhost:{csoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                        RemoteVersionIds:            null,
+                                        AccessTokenBase64Encoding:   false,
+                                        RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                        PartyStatus:                 PartyStatus.ENABLED);
+
+
+            Assert.AreEqual(2, csoCommonAPI. RemoteParties.Count());
+            Assert.AreEqual(1, emp1CommonAPI.RemoteParties.Count());
+            Assert.AreEqual(1, emp2CommonAPI.RemoteParties.Count());
+
+            #endregion
 
         }
 

@@ -3431,7 +3431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                        Boolean?                 AllowDowngrades      = null,
 
                        HTTPHostname?            HTTPHostname         = null,
-                       String                   ExternalDNSName      = null,
+                       String?                  ExternalDNSName      = null,
                        HTTPPath?                URLPathPrefix        = null,
                        HTTPPath?                BasePath             = null,
                        String                   HTTPServiceName      = DefaultHTTPServerName,
@@ -3475,7 +3475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.DefaultCountryCode  = DefaultCountryCode;
             this.DefaultPartyId      = DefaultPartyId;
             this.AllowDowngrades     = AllowDowngrades;
-            this.RequestTimeout      = TimeSpan.FromSeconds(60);
+            this.RequestTimeout      = TimeSpan.FromSeconds(30);
 
             RegisterURLTemplates();
 
@@ -7205,19 +7205,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         AuthorizationInfo? authorizationInfo = null;
 
-                                        var RFIDAuthTokenLocal = OnRFIDAuthToken;
-                                        if (RFIDAuthTokenLocal is not null)
+                                        var onRFIDAuthTokenLocal = OnRFIDAuthToken;
+                                        if (onRFIDAuthTokenLocal is not null)
                                         {
 
                                             try
                                             {
 
-                                                var result = RFIDAuthTokenLocal(Request.FromCountryCode ?? DefaultCountryCode,
-                                                                                Request.FromPartyId     ?? DefaultPartyId,
-                                                                                Request.ToCountryCode   ?? DefaultCountryCode,
-                                                                                Request.ToPartyId       ?? DefaultPartyId,
-                                                                                tokenId.Value,
-                                                                                locationReference).Result;
+                                                var result = onRFIDAuthTokenLocal(Request.FromCountryCode ?? DefaultCountryCode,
+                                                                                  Request.FromPartyId     ?? DefaultPartyId,
+                                                                                  Request.ToCountryCode   ?? DefaultCountryCode,
+                                                                                  Request.ToPartyId       ?? DefaultPartyId,
+                                                                                  tokenId.Value,
+                                                                                  locationReference).Result;
 
                                                 authorizationInfo = result;
 

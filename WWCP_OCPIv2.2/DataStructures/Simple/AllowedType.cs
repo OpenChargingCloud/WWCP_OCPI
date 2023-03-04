@@ -192,25 +192,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// This token is blocked.
         /// </summary>
         public static AllowedType BLOCKED
-            => new("ALLOWED");
+            => new ("BLOCKED");
 
         /// <summary>
         /// This token has expired.
         /// </summary>
         public static AllowedType EXPIRED
-            => new("ALLOWED");
+            => new ("EXPIRED");
 
         /// <summary>
         /// This token belongs to an account that has not enough credits to charge (at the given location).
         /// </summary>
         public static AllowedType NO_CREDIT
-            => new("ALLOWED");
+            => new ("NO_CREDIT");
 
         /// <summary>
         /// Token is valid, but is not allowed to charge at the given location.
         /// </summary>
         public static AllowedType NOT_ALLOWED
-            => new("ALLOWED");
+            => new ("NOT_ALLOWED");
 
         #endregion
 

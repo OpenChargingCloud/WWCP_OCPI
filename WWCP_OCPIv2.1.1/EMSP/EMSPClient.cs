@@ -687,7 +687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                           UInt16?                               MaxNumberOfRetries           = null,
                           Boolean                               UseHTTPPipelining            = false,
                           HTTPClientLogger?                     HTTPLogger                   = null,
-                          Boolean                               AccessTokenBase64Encoding    = true,
+                          Boolean                               AccessTokenBase64Encoding    = false,
 
                           Boolean                               DisableLogging               = false,
                           String?                               LoggingPath                  = null,

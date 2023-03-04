@@ -29,7 +29,7 @@ using cloud.charging.open.protocols.WWCP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
+namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
 {
 
     [TestFixture]
@@ -1312,6 +1312,336 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #endregion
 
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region AuthStart_Test1()
+
+        /// <summary>
+        /// Add WWCP charging locations, stations and EVSEs and update the EVSE status.
+        /// Validate that they had been sent to the OCPI module.
+        /// Validate via HTTP that they are present within the OCPI module.
+        /// </summary>
+        [Test]
+        public async Task AuthStart_Test1()
+        {
+
+            if (csoRoamingNetwork  is not null &&
+                emp1RoamingNetwork is not null &&
+                emp2RoamingNetwork is not null &&
+
+                csoCPOAPI          is not null &&
+                emp1EMSPAPI        is not null &&
+                emp2EMSPAPI        is not null &&
+
+                graphDefinedCSO    is not null)
+                //graphDefinedEMP    is not null &&
+                //exampleEMP         is not null)
+            {
+
+                #region Add DE*GEF*POOL1
+
+                var addChargingPoolResult1 = await graphDefinedCSO.CreateChargingPool(
+
+                                                 Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
+                                                 Name:                 I18NString.Create(Languages.en, "Test pool #1"),
+                                                 Description:          I18NString.Create(Languages.en, "GraphDefined charging pool for tests #1"),
+
+                                                 Address:              new Address(
+
+                                                                           Street:             "Biberweg",
+                                                                           PostalCode:         "07749",
+                                                                           City:               I18NString.Create(Languages.da, "Jena"),
+                                                                           Country:            Country.Germany,
+
+                                                                           HouseNumber:        "18",
+                                                                           FloorLevel:         null,
+                                                                           Region:             null,
+                                                                           PostalCodeSub:      null,
+                                                                           TimeZone:           null,
+                                                                           OfficialLanguages:  null,
+                                                                           Comment:            null,
+
+                                                                           CustomData:         null,
+                                                                           InternalData:       null
+
+                                                                       ),
+                                                 GeoLocation:          GeoCoordinate.Parse(50.93, 11.63),
+
+                                                 InitialAdminStatus:   ChargingPoolAdminStatusTypes.Operational,
+                                                 InitialStatus:        ChargingPoolStatusTypes.Available,
+
+                                                 Configurator:         chargingPool => {
+                                                                       }
+
+                                             );
+
+                Assert.IsNotNull(addChargingPoolResult1);
+
+                var chargingPool1  = addChargingPoolResult1.ChargingPool;
+                Assert.IsNotNull(chargingPool1);
+
+                #endregion
+
+                #region Add DE*GEF*POOL2
+
+                var addChargingPoolResult2 = await graphDefinedCSO.CreateChargingPool(
+
+                                                 Id:                   ChargingPool_Id.Parse("DE*GEF*POOL2"),
+                                                 Name:                 I18NString.Create(Languages.en, "Test pool #2"),
+                                                 Description:          I18NString.Create(Languages.en, "GraphDefined charging pool for tests #2"),
+
+                                                 Address:              new Address(
+
+                                                                           Street:             "Biberweg",
+                                                                           PostalCode:         "07749",
+                                                                           City:               I18NString.Create(Languages.da, "Jena"),
+                                                                           Country:            Country.Germany,
+
+                                                                           HouseNumber:        "18",
+                                                                           FloorLevel:         null,
+                                                                           Region:             null,
+                                                                           PostalCodeSub:      null,
+                                                                           TimeZone:           null,
+                                                                           OfficialLanguages:  null,
+                                                                           Comment:            null,
+
+                                                                           CustomData:         null,
+                                                                           InternalData:       null
+
+                                                                       ),
+                                                 GeoLocation:          GeoCoordinate.Parse(50.93, 11.63),
+
+                                                 InitialAdminStatus:   ChargingPoolAdminStatusTypes.Operational,
+                                                 InitialStatus:        ChargingPoolStatusTypes.Available,
+
+                                                 Configurator:         chargingPool => {
+                                                                       }
+
+                                             );
+
+                Assert.IsNotNull(addChargingPoolResult2);
+
+                var chargingPool2  = addChargingPoolResult2.ChargingPool;
+                Assert.IsNotNull(chargingPool2);
+
+                #endregion
+
+
+                // OCPI does not have stations!
+
+                #region Add DE*GEF*STATION*1*A
+
+                var addChargingStationResult1 = await chargingPool1!.CreateChargingStation(
+
+                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                    Name:                 I18NString.Create(Languages.en, "Test station #1A"),
+                                                    Description:          I18NString.Create(Languages.en, "GraphDefined charging station for tests #1A"),
+
+                                                    GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
+
+                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialStatus:        ChargingStationStatusTypes.Available,
+
+                                                    Configurator:         chargingStation => {
+                                                                          }
+
+                                                );
+
+                Assert.IsNotNull(addChargingStationResult1);
+
+                var chargingStation1  = addChargingStationResult1.ChargingStation;
+                Assert.IsNotNull(chargingStation1);
+
+                #endregion
+
+                #region Add DE*GEF*STATION*1*B
+
+                var addChargingStationResult2 = await chargingPool1!.CreateChargingStation(
+
+                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
+                                                    Name:                 I18NString.Create(Languages.en, "Test station #1B"),
+                                                    Description:          I18NString.Create(Languages.en, "GraphDefined charging station for tests #1B"),
+
+                                                    GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
+
+                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialStatus:        ChargingStationStatusTypes.Available,
+
+                                                    Configurator:         chargingStation => {
+                                                                          }
+
+                                                );
+
+                Assert.IsNotNull(addChargingStationResult2);
+
+                var chargingStation2  = addChargingStationResult2.ChargingStation;
+                Assert.IsNotNull(chargingStation2);
+
+                #endregion
+
+                #region Add DE*GEF*STATION*2*A
+
+                var addChargingStationResult3 = await chargingPool2!.CreateChargingStation(
+
+                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
+                                                    Name:                 I18NString.Create(Languages.en, "Test station #2A"),
+                                                    Description:          I18NString.Create(Languages.en, "GraphDefined charging station for tests #2A"),
+
+                                                    GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
+
+                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialStatus:        ChargingStationStatusTypes.Available,
+
+                                                    Configurator:         chargingStation => {
+                                                                          }
+
+                                                );
+
+                Assert.IsNotNull(addChargingStationResult3);
+
+                var chargingStation3  = addChargingStationResult3.ChargingStation;
+                Assert.IsNotNull(chargingStation3);
+
+                #endregion
+
+
+                #region Add EVSE DE*GEF*EVSE*1*A*1
+
+                var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
+
+                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+                                          Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
+                                          Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #1A1"),
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusTypes.Available,
+
+                                          Configurator:         evse => {
+                                                                }
+
+                                      );
+
+                Assert.IsNotNull(addEVSE1Result1);
+
+                var evse1     = addEVSE1Result1.EVSE;
+                Assert.IsNotNull(evse1);
+
+                #endregion
+
+                #region Add EVSE DE*GEF*EVSE*1*A*2
+
+                var addEVSE1Result2 = await chargingStation1!.CreateEVSE(
+
+                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
+                                          Name:                 I18NString.Create(Languages.en, "Test EVSE #1A2"),
+                                          Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #1A2"),
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusTypes.Available,
+
+                                          Configurator:         evse => {
+                                                                }
+
+                                      );
+
+                Assert.IsNotNull(addEVSE1Result2);
+
+                var evse2     = addEVSE1Result2.EVSE;
+                Assert.IsNotNull(evse2);
+
+                #endregion
+
+                #region Add EVSE DE*GEF*EVSE*1*B*1
+
+                var addEVSE1Result3 = await chargingStation2!.CreateEVSE(
+
+                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
+                                          Name:                 I18NString.Create(Languages.en, "Test EVSE #1B1"),
+                                          Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #1B1"),
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusTypes.Available,
+
+                                          Configurator:         evse => {
+                                                                }
+
+                                      );
+
+                Assert.IsNotNull(addEVSE1Result3);
+
+                var evse3     = addEVSE1Result3.EVSE;
+                Assert.IsNotNull(evse2);
+
+                #endregion
+
+                #region Add EVSE DE*GEF*EVSE*2*A*1
+
+                var addEVSE1Result4 = await chargingStation3!.CreateEVSE(
+
+                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
+                                          Name:                 I18NString.Create(Languages.en, "Test EVSE #2A1"),
+                                          Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #2A1"),
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusTypes.Available,
+
+                                          Configurator:         evse => {
+                                                                }
+
+                                      );
+
+                Assert.IsNotNull(addEVSE1Result4);
+
+                var evse4     = addEVSE1Result4.EVSE;
+                Assert.IsNotNull(evse4);
+
+                #endregion
+
+
+                emp1EMSPAPI.OnRFIDAuthToken += async (countryCode, partyId, tokenId, locationReference) => {
+
+                    return tokenId.ToString() == "11223344"
+                               ? new AuthorizationInfo(AllowedType.ALLOWED,     null, DisplayText.Create(Languages.en, "Hello world!"))
+                               : new AuthorizationInfo(AllowedType.NOT_ALLOWED, null, DisplayText.Create(Languages.en, "Go away!"));
+
+                };
+
+                emp2EMSPAPI.OnRFIDAuthToken += async (countryCode, partyId, tokenId, locationReference) => {
+
+                    return tokenId.ToString() == "55667788"
+                               ? new AuthorizationInfo(AllowedType.ALLOWED,     null, DisplayText.Create(Languages.en, "Hello world!"))
+                               : new AuthorizationInfo(AllowedType.NOT_ALLOWED, null, DisplayText.Create(Languages.en, "Go away!"));
+
+                };
+
+
+                var authStartResult1 = await csoRoamingNetwork.AuthorizeStart(
+                                                 LocalAuthentication: LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
+                                                 ChargingLocation:    ChargingLocation.   FromEVSEId   (evse1!.Id),
+                                                 ChargingProduct:     ChargingProduct.    FromId       (ChargingProduct_Id.Parse("AC1"))
+                                             );
+
+                var authStartResult2 = await csoRoamingNetwork.AuthorizeStart(
+                                                 LocalAuthentication: LocalAuthentication.FromAuthToken(AuthenticationToken.Parse("11223344")),
+                                                 ChargingLocation:    ChargingLocation.   FromEVSEId   (evse1!.Id),
+                                                 ChargingProduct:     ChargingProduct.    FromId       (ChargingProduct_Id.Parse("AC1"))
+                                             );
+
+                var authStartResult3 = await csoRoamingNetwork.AuthorizeStart(
+                                                 LocalAuthentication: LocalAuthentication.FromAuthToken(AuthenticationToken.Parse("55667788")),
+                                                 ChargingLocation:    ChargingLocation.   FromEVSEId   (evse1!.Id),
+                                                 ChargingProduct:     ChargingProduct.    FromId       (ChargingProduct_Id.Parse("AC1"))
+                                             );
+
+                Assert.AreEqual(AuthStartResultTypes.NotAuthorized, authStartResult1.Result);
+                Assert.AreEqual(AuthStartResultTypes.Authorized,    authStartResult2.Result);
+                Assert.AreEqual(AuthStartResultTypes.Authorized,    authStartResult3.Result);
 
             }
 

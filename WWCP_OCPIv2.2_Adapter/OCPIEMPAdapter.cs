@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using cloud.charging.open.protocols.WWCP;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 
 #endregion
 
@@ -107,19 +108,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         IncludeChargingStationOperatorDelegate ISendPOIData.IncludeChargingStationOperators => throw new NotImplementedException();
 
+
         public Task<AuthStartResult> AuthorizeStart(LocalAuthentication LocalAuthentication, ChargingLocation ChargingLocation = null, ChargingProduct ChargingProduct = null, ChargingSession_Id? SessionId = null, ChargingSession_Id? CPOPartnerSessionId = null, ChargingStationOperator_Id? OperatorId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(AuthStartResult.NotAuthorized(Id, this, SessionId));
         }
 
         public Task<AuthStopResult> AuthorizeStop(ChargingSession_Id SessionId, LocalAuthentication LocalAuthentication, ChargingLocation ChargingLocation = null, ChargingSession_Id? CPOPartnerSessionId = null, ChargingStationOperator_Id? OperatorId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(AuthStopResult.NotAuthorized(Id, this, SessionId));
         }
 
         public Task<SendCDRsResult> SendChargeDetailRecords(IEnumerable<ChargeDetailRecord> ChargeDetailRecords, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(SendCDRsResult.NoOperation(org.GraphDefined.Vanaheimr.Illias.Timestamp.Now, Id, this, Array.Empty<ChargeDetailRecord>()));
         }
 
 

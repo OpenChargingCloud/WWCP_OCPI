@@ -2860,10 +2860,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
-        public delegate Task<AuthorizationInfo> OnRFIDAuthTokenDelegate(CountryCode         From_CountryCode,
-                                                                        Party_Id            From_PartyId,
-                                                                        CountryCode         To_CountryCode,
-                                                                        Party_Id            To_PartyId,
+        public delegate Task<AuthorizationInfo> OnRFIDAuthTokenDelegate(CountryCode         CountryCode,
+                                                                        Party_Id            PartyId,
                                                                         Token_Id            TokenId,
                                                                         LocationReference?  LocationReference);
 
@@ -3141,7 +3139,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// 
         /// <param name="URLPathPrefix">An optional URL path prefix, used when defining URL templates.</param>
-        /// <param name="HTMLTemplate">An optional HTML template.</param>
         /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
         /// 
         /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
@@ -3160,34 +3157,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="Autostart">Whether to start the API automatically.</param>
         public EMSPAPI(CommonAPI                CommonAPI,
-                      CountryCode              DefaultCountryCode,
-                      Party_Id                 DefaultPartyId,
-                      Boolean?                 AllowDowngrades           = null,
+                       CountryCode              DefaultCountryCode,
+                       Party_Id                 DefaultPartyId,
+                       Boolean?                 AllowDowngrades           = null,
 
-                      HTTPHostname?            HTTPHostname              = null,
-                      String?                  ExternalDNSName           = "",
-                      String?                  HTTPServiceName           = DefaultHTTPServiceName,
-                      HTTPPath?                BasePath                  = null,
+                       HTTPHostname?            HTTPHostname              = null,
+                       String?                  ExternalDNSName           = "",
+                       String?                  HTTPServiceName           = DefaultHTTPServiceName,
+                       HTTPPath?                BasePath                  = null,
 
-                      HTTPPath?                URLPathPrefix             = null,
-                      //String?                  HTMLTemplate              = null,
-                      JObject?                 APIVersionHashes          = null,
+                       HTTPPath?                URLPathPrefix             = null,
+                       JObject?                 APIVersionHashes          = null,
 
-                      Boolean?                 DisableMaintenanceTasks   = false,
-                      TimeSpan?                MaintenanceInitialDelay   = null,
-                      TimeSpan?                MaintenanceEvery          = null,
+                       Boolean?                 DisableMaintenanceTasks   = false,
+                       TimeSpan?                MaintenanceInitialDelay   = null,
+                       TimeSpan?                MaintenanceEvery          = null,
 
-                      Boolean?                 DisableWardenTasks        = false,
-                      TimeSpan?                WardenInitialDelay        = null,
-                      TimeSpan?                WardenCheckEvery          = null,
+                       Boolean?                 DisableWardenTasks        = false,
+                       TimeSpan?                WardenInitialDelay        = null,
+                       TimeSpan?                WardenCheckEvery          = null,
 
-                      Boolean?                 IsDevelopment             = false,
-                      IEnumerable<String>?     DevelopmentServers        = null,
-                      Boolean?                 DisableLogging            = false,
-                      String?                  LoggingPath               = null,
-                      String?                  LogfileName               = DefaultLogfileName,
-                      LogfileCreatorDelegate?  LogfileCreator            = null,
-                      Boolean                  Autostart                 = false)
+                       Boolean?                 IsDevelopment             = false,
+                       IEnumerable<String>?     DevelopmentServers        = null,
+                       Boolean?                 DisableLogging            = false,
+                       String?                  LoggingPath               = null,
+                       String?                  LogfileName               = DefaultLogfileName,
+                       LogfileCreatorDelegate?  LogfileCreator            = null,
+                       Boolean                  Autostart                 = false)
 
             : base(CommonAPI.HTTPServer,
                    HTTPHostname,
@@ -3221,7 +3217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.DefaultCountryCode  = DefaultCountryCode;
             this.DefaultPartyId      = DefaultPartyId;
             this.AllowDowngrades     = AllowDowngrades;
-            this.RequestTimeout      = TimeSpan.FromSeconds(60);
+            this.RequestTimeout      = TimeSpan.FromSeconds(30);
 
             RegisterURLTemplates();
 
@@ -6622,19 +6618,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         AuthorizationInfo? authorizationInfo = null;
 
-                                        var rfidAuthTokenLocal = OnRFIDAuthToken;
-                                        if (rfidAuthTokenLocal is not null)
+                                        var onRFIDAuthTokenLocal = OnRFIDAuthToken;
+                                        if (onRFIDAuthTokenLocal is not null)
                                         {
 
                                             try
                                             {
 
-                                                var result = rfidAuthTokenLocal(DefaultCountryCode, // Request.FromCountryCode ?? DefaultCountryCode,
-                                                                                DefaultPartyId,     // Request.FromPartyId     ?? DefaultPartyId,
-                                                                                DefaultCountryCode, // Request.ToCountryCode   ?? DefaultCountryCode,
-                                                                                DefaultPartyId,     // Request.ToPartyId       ?? DefaultPartyId,
-                                                                                tokenId.Value,
-                                                                                locationReference).Result;
+                                                var result = onRFIDAuthTokenLocal(Request.AccessInfo.Value.CountryCode,
+                                                                                  Request.AccessInfo.Value.PartyId,
+                                                                                  tokenId.Value,
+                                                                                  locationReference).Result;
 
                                                 authorizationInfo = result;
 

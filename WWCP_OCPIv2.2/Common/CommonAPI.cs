@@ -36,6 +36,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
+    /// A delegate for filtering remote parties.
+    /// </summary>
+    public delegate Boolean IncludeRemoteParty(RemoteParty RemoteParty);
+
+
+    /// <summary>
     /// The Common API.
     /// </summary>
     public class CommonAPI : HTTPAPI
@@ -1412,6 +1418,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                        otherVersions.Data.Select(version => version.Id),
                                        version2_2,
 
+                                       null,
                                        AccessStatus.ALLOWED,
                                        RemoteAccessStatus.ONLINE,
                                        PartyStatus.ENABLED);
@@ -1492,12 +1499,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                       AccessToken               RemoteAccessToken,
                                       URL                       RemoteVersionsURL,
-                                      IEnumerable<Version_Id>?  RemoteVersionIds    = null,
-                                      Version_Id?               SelectedVersionId   = null,
+                                      IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                      Version_Id?               SelectedVersionId           = null,
 
-                                      AccessStatus              AccessStatus        = AccessStatus.ALLOWED,
-                                      RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
-                                      PartyStatus               PartyStatus         = PartyStatus.ENABLED)
+                                      Boolean?                  AccessTokenBase64Encoding   = null,
+                                      AccessStatus              AccessStatus                = AccessStatus.ALLOWED,
+                                      RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
+                                      PartyStatus               PartyStatus                 = PartyStatus.ENABLED)
         {
             lock (remoteParties)
             {
@@ -1522,6 +1530,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      RemoteVersionIds,
                                                      SelectedVersionId,
 
+                                                     AccessTokenBase64Encoding,
                                                      AccessStatus,
                                                      RemoteStatus,
                                                      PartyStatus);
@@ -1594,11 +1603,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                       AccessToken               RemoteAccessToken,
                                       URL                       RemoteVersionsURL,
-                                      IEnumerable<Version_Id>?  RemoteVersionIds    = null,
-                                      Version_Id?               SelectedVersionId   = null,
+                                      IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                      Version_Id?               SelectedVersionId           = null,
 
-                                      RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.UNKNOWN,
-                                      PartyStatus               PartyStatus         = PartyStatus.ENABLED)
+                                      Boolean?                  AccessTokenBase64Encoding   = null,
+                                      RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.UNKNOWN,
+                                      PartyStatus               PartyStatus                 = PartyStatus.ENABLED)
         {
             lock (remoteParties)
             {
@@ -1621,6 +1631,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      RemoteVersionIds,
                                                      SelectedVersionId,
 
+                                                     AccessTokenBase64Encoding,
                                                      RemoteStatus,
                                                      PartyStatus);
 
@@ -1689,12 +1700,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                               AccessToken               RemoteAccessToken,
                                               URL                       RemoteVersionsURL,
-                                              IEnumerable<Version_Id>?  RemoteVersionIds    = null,
-                                              Version_Id?               SelectedVersionId   = null,
+                                              IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                              Version_Id?               SelectedVersionId           = null,
 
-                                              AccessStatus              AccessStatus        = AccessStatus.ALLOWED,
-                                              RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
-                                              PartyStatus               PartyStatus         = PartyStatus.ENABLED)
+                                              Boolean?                  AccessTokenBase64Encoding   = null,
+                                              AccessStatus              AccessStatus                = AccessStatus.ALLOWED,
+                                              RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
+                                              PartyStatus               PartyStatus                 = PartyStatus.ENABLED)
         {
             lock (remoteParties)
             {
@@ -1719,6 +1731,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      RemoteVersionIds,
                                                      SelectedVersionId,
 
+                                                     AccessTokenBase64Encoding,
                                                      AccessStatus,
                                                      RemoteStatus,
                                                      PartyStatus);
@@ -1791,11 +1804,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                               AccessToken               RemoteAccessToken,
                                               URL                       RemoteVersionsURL,
-                                              IEnumerable<Version_Id>?  RemoteVersionIds    = null,
-                                              Version_Id?               SelectedVersionId   = null,
+                                              IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                              Version_Id?               SelectedVersionId           = null,
 
-                                              RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.UNKNOWN,
-                                              PartyStatus               PartyStatus         = PartyStatus.ENABLED)
+                                              Boolean?                  AccessTokenBase64Encoding   = null,
+                                              RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.UNKNOWN,
+                                              PartyStatus               PartyStatus                 = PartyStatus.ENABLED)
         {
             lock (remoteParties)
             {
@@ -1818,6 +1832,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      RemoteVersionIds,
                                                      SelectedVersionId,
 
+                                                     AccessTokenBase64Encoding,
                                                      RemoteStatus,
                                                      PartyStatus);
 
@@ -1835,7 +1850,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region ContainsRemoteParty      (RemotePartyId)
+        #region ContainsRemoteParty(RemotePartyId)
 
         /// <summary>
         /// Whether this API contains a remote party having the given unique identification.
@@ -1861,7 +1876,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region GetRemoteParty           (RemotePartyId)
+        #region GetRemoteParty     (RemotePartyId)
 
         /// <summary>
         /// Get the remote party having the given unique identification.
@@ -1890,7 +1905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region TryGetRemoteParty        (RemotePartyId, out RemoteParty)
+        #region TryGetRemoteParty  (RemotePartyId, out RemoteParty)
 
         /// <summary>
         /// Try to get the remote party having the given unique identification.
@@ -1922,96 +1937,171 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #region GetRemoteParties   (IncludeFilter = null)
+
+        /// <summary>
+        /// Get all remote parties machting the given optional filter.
+        /// </summary>
+        /// <param name="IncludeFilter">A delegate for filtering remote parties.</param>
+        public IEnumerable<RemoteParty> GetRemoteParties(IncludeRemoteParty? IncludeFilter = null)
+        {
+
+            try
+            {
+
+                //await RemotePartiesSemaphore.WaitAsync();
+
+                return IncludeFilter is null
+                           ? remoteParties.Values.ToArray()
+                           : remoteParties.Values.Where(remoteParty => IncludeFilter(remoteParty)).ToArray();
+
+            }
+            finally
+            {
+                //RemotePartiesSemaphore.Release();
+            }
+
+        }
+
+        #endregion
+
+        #region GetRemoteParties   (Role)
+
+        /// <summary>
+        /// Get all remote parties having the given role.
+        /// </summary>
+        /// <param name="Role">The role of the remote parties.</param>
+        public IEnumerable<RemoteParty> GetRemoteParties(Roles Role)
+        {
+
+            try
+            {
+
+                //await RemotePartiesSemaphore.WaitAsync();
+
+                return remoteParties.Values.Where(remoteParty => remoteParty.Role == Role).ToArray();
+
+            }
+            finally
+            {
+                //RemotePartiesSemaphore.Release();
+            }
+
+        }
+
+        #endregion
 
 
-        #region Remove...
+        #region RemoveRemoteParty(RemoteParty)
 
         public Boolean RemoveRemoteParty(RemoteParty RemoteParty)
         {
+
             lock (remoteParties)
             {
-                return remoteParties.Remove(RemoteParty.Id);
+
+                if (remoteParties.Remove(RemoteParty.Id, out var remoteParty))
+                {
+
+                    File.AppendAllText(LogfileName,
+                                       new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                       Encoding.UTF8);
+
+                    return true;
+
+                }
+
+                return false;
+
             }
+
         }
+
+        #endregion
+
+        #region RemoveRemoteParty(RemotePartyId)
 
         public Boolean RemoveRemoteParty(RemoteParty_Id RemotePartyId)
         {
+
             lock (remoteParties)
             {
-                return remoteParties.Remove(RemotePartyId);
+
+                if (remoteParties.Remove(RemotePartyId, out var remoteParty))
+                {
+
+                    File.AppendAllText(LogfileName,
+                                       new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                       Encoding.UTF8);
+
+                    return true;
+
+                }
+
+                return false;
+
             }
+
         }
+
+        #endregion
+
+        #region RemoveRemoteParty(CountryCode, PartyId)
 
         public Boolean RemoveRemoteParty(CountryCode  CountryCode,
                                          Party_Id     PartyId)
         {
+
             lock (remoteParties)
             {
 
-                var _remoteParties = remoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
-                                                                               remoteParty.PartyId     == PartyId).ToArray();
-
-                foreach (var remoteParty in _remoteParties)
+                foreach (var remoteParty in remoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
+                                                                                      remoteParty.PartyId     == PartyId))
                 {
-                    this.remoteParties.Remove((RemoteParty_Id)remoteParty.Id);
+
+                    remoteParties.Remove(remoteParty.Id);
+
                     File.AppendAllText(LogfileName,
                                        new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
                                        Encoding.UTF8);
+
                 }
 
                 return true;
 
             }
+
         }
+
+        #endregion
+
+        #region RemoveRemoteParty(CountryCode, PartyId, AccessToken)
 
         public Boolean RemoveRemoteParty(CountryCode  CountryCode,
                                          Party_Id     PartyId,
-                                         Roles        Role)
+                                         AccessToken  AccessToken)
         {
+
             lock (remoteParties)
             {
 
-                var _remoteParties = remoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
-                                                                               remoteParty.PartyId     == PartyId     &&
-                                                                               remoteParty.Role        == Role).ToArray();
-
-                foreach (var remoteParty in _remoteParties)
+                foreach (var remoteParty in remoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
+                                                                                      remoteParty.PartyId     == PartyId     &&
+                                                                                      remoteParty.RemoteAccessInfos.Any(remoteAccessInfo => remoteAccessInfo.AccessToken == AccessToken)))
                 {
+
                     remoteParties.Remove(remoteParty.Id);
+
                     File.AppendAllText(LogfileName,
                                        new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
                                        Encoding.UTF8);
+
                 }
 
                 return true;
 
             }
-        }
 
-        public Boolean RemoveRemoteParty(CountryCode  CountryCode,
-                                         Party_Id     PartyId,
-                                         Roles        Role,
-                                         AccessToken  Token)
-        {
-            lock (remoteParties)
-            {
-
-                var _remoteParties = remoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
-                                                                               remoteParty.PartyId     == PartyId     &&
-                                                                               remoteParty.Role        == Role        &&
-                                                                               remoteParty.RemoteAccessInfos.Any(remoteAccessInfo => remoteAccessInfo.AccessToken == Token)).ToArray();
-
-                foreach (var remoteParty in _remoteParties)
-                {
-                    remoteParties.Remove(remoteParty.Id);
-                    File.AppendAllText(LogfileName,
-                                       new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
-                                       Encoding.UTF8);
-                }
-
-                return true;
-
-            }
         }
 
         #endregion

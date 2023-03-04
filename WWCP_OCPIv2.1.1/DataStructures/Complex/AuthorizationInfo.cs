@@ -39,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// charging location.
         /// </summary>
         [Mandatory]
-        public AllowedType         Allowed     { get; }
+        public AllowedType         Allowed        { get; }
 
         /// <summary>
         /// The optional reference to the location if it was included in the request, and if
@@ -47,13 +47,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// driver is allowed to charge at are returned.
         /// </summary>
         [Optional]
-        public LocationReference?  Location    { get; }
+        public LocationReference?  Location       { get; }
 
         /// <summary>
         /// Optional additional information to the EV driver.
         /// </summary>
         [Optional]
-        public DisplayText?        Info        { get; }
+        public DisplayText?        Info           { get; }
+
+        /// <summary>
+        ///  The remote party.
+        /// </summary>
+        [Optional, NonStandard]
+        public RemoteParty?        RemoteParty    { get; }
+
+        /// <summary>
+        /// The runtime of the authorization.
+        /// </summary>
+        [Optional, NonStandard]
+        public TimeSpan            Runtime        { get; }
 
         #endregion
 
@@ -65,14 +77,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Allowed">A status for the token, and whether charging is allowed at the optionally given charging location.</param>
         /// <param name="Location">An optional reference to the location if it was included in the request, and if the EV driver is allowed to charge at that location. Only the EVSEs the EV driver is allowed to charge at are returned.</param>
         /// <param name="Info">An optional additional information to the EV driver.</param>
+        /// <param name="Runtime">The runtime of the authorization.</param>
         public AuthorizationInfo(AllowedType         Allowed,
-                                 LocationReference?  Location   = null,
-                                 DisplayText?        Info       = null)
+                                 LocationReference?  Location      = null,
+                                 DisplayText?        Info          = null,
+                                 RemoteParty?        RemoteParty   = null,
+                                 TimeSpan?           Runtime       = null)
         {
 
-            this.Allowed   = Allowed;
-            this.Location  = Location;
-            this.Info      = Info;
+            this.Allowed      = Allowed;
+            this.Location     = Location;
+            this.Info         = Info;
+            this.RemoteParty  = RemoteParty;
+            this.Runtime      = Runtime ?? TimeSpan.Zero;
 
         }
 
