@@ -24,6 +24,7 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using cloud.charging.open.protocols.WWCP;
 
 #endregion
 
@@ -393,6 +394,232 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         #endregion
 
+
+        #region CDR_WWCP_2_OCPI_Test01()
+
+        /// <summary>
+        /// WWCP CDR to OCPI CDR conversion test.
+        /// </summary>
+        [Test]
+        public static async Task CDR_WWCP_2_OCPI_Test01()
+        {
+
+            #region Add DE*GEF
+
+            var cso = new ChargingStationOperator(
+                          ChargingStationOperator_Id.Parse("DE*GEF"),
+                          new RoamingNetwork(
+                              RoamingNetwork_Id.Parse("test")
+                          ),
+                          I18NString.Create(Languages.en, "GraphDefined CSO")
+                      );
+
+            #endregion
+
+            #region Add DE*GEF*POOL1
+
+            var addChargingPoolResult1 = await cso.CreateChargingPool(
+
+                                             Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
+                                             Name:                 I18NString.Create(Languages.en, "Test pool #1"),
+                                             Description:          I18NString.Create(Languages.en, "GraphDefined charging pool for tests #1"),
+
+                                             Address:              new Address(
+
+                                                                       Street:             "Biberweg",
+                                                                       PostalCode:         "07749",
+                                                                       City:               I18NString.Create(Languages.da, "Jena"),
+                                                                       Country:            Country.Germany,
+
+                                                                       HouseNumber:        "18",
+                                                                       FloorLevel:         null,
+                                                                       Region:             null,
+                                                                       PostalCodeSub:      null,
+                                                                       TimeZone:           null,
+                                                                       OfficialLanguages:  null,
+                                                                       Comment:            null,
+
+                                                                       CustomData:         null,
+                                                                       InternalData:       null
+
+                                                                   ),
+                                             GeoLocation:          GeoCoordinate.Parse(50.93, 11.63),
+
+                                             InitialAdminStatus:   ChargingPoolAdminStatusTypes.Operational,
+                                             InitialStatus:        ChargingPoolStatusTypes.Available
+
+                                         );
+
+            Assert.IsNotNull(addChargingPoolResult1);
+
+            var chargingPool1 = addChargingPoolResult1.ChargingPool;
+            Assert.IsNotNull(chargingPool1);
+
+            #endregion
+
+            #region Add DE*GEF*STATION*1*A
+
+            var addChargingStationResult1 = await chargingPool1!.CreateChargingStation(
+
+                                                Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                Name:                 I18NString.Create(Languages.en, "Test station #1A"),
+                                                Description:          I18NString.Create(Languages.en, "GraphDefined charging station for tests #1A"),
+
+                                                GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
+
+                                                InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                InitialStatus:        ChargingStationStatusTypes.Available
+
+                                            );
+
+            Assert.IsNotNull(addChargingStationResult1);
+
+            var chargingStation1  = addChargingStationResult1.ChargingStation;
+            Assert.IsNotNull(chargingStation1);
+
+            #endregion
+
+            #region Add EVSE DE*GEF*EVSE*1*A*1
+
+            var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
+
+                                      Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+                                      Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
+                                      Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #1A1"),
+
+                                      InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                      InitialStatus:        EVSEStatusTypes.Available,
+
+                                      Configurator:         evse => {
+                                                            }
+
+                                  );
+
+            Assert.IsNotNull(addEVSE1Result1);
+
+            var evse1     = addEVSE1Result1.EVSE;
+            Assert.IsNotNull(evse1);
+
+            #endregion
+
+            #region Add EVSE DE*GEF*EVSE*1*A*2
+
+            var addEVSE1Result2 = await chargingStation1!.CreateEVSE(
+
+                                      Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
+                                      Name:                 I18NString.Create(Languages.en, "Test EVSE #1A2"),
+                                      Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #1A2"),
+
+                                      InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                      InitialStatus:        EVSEStatusTypes.Available,
+
+                                      Configurator:         evse => {
+                                                            }
+
+                                  );
+
+            Assert.IsNotNull(addEVSE1Result2);
+
+            var evse2     = addEVSE1Result2.EVSE;
+            Assert.IsNotNull(evse2);
+
+            #endregion
+
+
+            var startTime = Timestamp.Now - TimeSpan.FromHours(3);
+
+
+            var wwcpCDR = new ChargeDetailRecord(
+
+                              Id:                             ChargeDetailRecord_Id.NewRandom,
+                              SessionId:                      ChargingSession_Id.   NewRandom,
+                              SessionTime:                    new StartEndDateTime(
+                                                                  startTime,
+                                                                  startTime + TimeSpan.FromHours(2)
+                                                              ),
+                              //Duration                      // automagic!
+
+                              EVSE:                           evse1!,
+                              //EVSEId                        // automagic!
+                              //ChargingStation               // automagic!
+                              //ChargingStationId             // automagic!
+                              //ChargingPool                  // automagic!
+                              //ChargingPoolId                // automagic!
+                              //ChargingStationOperator       // automagic!
+                              //ChargingStationOperatorId     // automagic!
+
+                              ChargingProduct:                new ChargingProduct(
+                                                                  ChargingProduct_Id.AC3
+                                                              ),
+                              ChargingPrice:                  21.34M,
+                              Currency:                       org.GraphDefined.Vanaheimr.Illias.Currency.EUR,
+
+                              AuthenticationStart:            LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
+                              //AuthenticationStop        
+                              AuthMethodStart:                AuthMethod.AUTH_REQUEST,
+                              //AuthMethodStop            
+                              ProviderIdStart:                EMobilityProvider_Id.Parse("DE-GDF"),
+                              //ProviderIdStop            
+
+                              //EMPRoamingProvider        
+                              EMPRoamingProviderId:           EMPRoamingProvider_Id.Parse("Hubject"),
+
+                              //Reservation               
+                              //ReservationId             
+                              //ReservationTime           
+                              //ReservationFee            
+
+                              //ParkingSpaceId            
+                              //ParkingTime               
+                              //ParkingFee                
+
+                              EnergyMeterId:                  EnergyMeter_Id.Parse("12345678"),
+                              EnergyMeteringValues:           new Timestamped<Decimal>[] {
+                                                                  new Timestamped<Decimal>(startTime + TimeSpan.FromMinutes(1),    5),
+                                                                  new Timestamped<Decimal>(startTime + TimeSpan.FromMinutes(31),  10),
+                                                                  new Timestamped<Decimal>(startTime + TimeSpan.FromMinutes(61),  15),
+                                                                  new Timestamped<Decimal>(startTime + TimeSpan.FromMinutes(91),  20),
+                                                                  new Timestamped<Decimal>(startTime + TimeSpan.FromMinutes(119), 22),
+                                                              }
+                              //SignedMeteringValues:           new SignedMeteringValue<Decimal>[1] {
+                              //                                    new SignedMeteringValue<Decimal>()
+                              //                                }
+                              //ConsumedEnergy                // automagic!
+
+                              //CustomData                
+                              //InternalData              
+
+                              //PublicKey                 
+                              //Signatures                
+
+                          );
+
+
+            Assert.IsTrue   (wwcpCDR.Duration.         HasValue);
+            Assert.AreEqual (2.0, wwcpCDR.Duration!.Value.TotalHours);
+
+            Assert.IsNotNull(wwcpCDR.EVSE);
+            Assert.IsTrue   (wwcpCDR.EVSEId.           HasValue);
+            Assert.IsNotNull(wwcpCDR.ChargingStation);
+            Assert.IsTrue   (wwcpCDR.ChargingStationId.HasValue);
+            Assert.IsNotNull(wwcpCDR.ChargingPool);
+            Assert.IsTrue   (wwcpCDR.ChargingPoolId.   HasValue);
+
+            Assert.IsTrue   (wwcpCDR.ConsumedEnergy.   HasValue);
+            Assert.AreEqual (17, wwcpCDR.ConsumedEnergy!.Value);
+
+            var ocpiCDR = wwcpCDR.ToOCPI(out var warnings);
+
+            Assert.IsNotNull(ocpiCDR);
+            Assert.AreEqual ("DE",                                  ocpiCDR!.CountryCode.ToString());
+            Assert.AreEqual ("GEF",                                 ocpiCDR!.PartyId.    ToString());
+            Assert.AreEqual (wwcpCDR.Id.ToString(),                 ocpiCDR!.Id.         ToString());
+            Assert.AreEqual (wwcpCDR.SessionTime.StartTime,         ocpiCDR!.Start);
+            Assert.AreEqual (wwcpCDR.SessionTime.EndTime!.Value,    ocpiCDR!.End);
+
+        }
+
+        #endregion
 
     }
 

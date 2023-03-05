@@ -191,73 +191,73 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Total amount of energy (dis-)charged during this ChargingPeriod: defined in kWh. When negative, more energy was feed into the grid then charged into the EV. Default step_size is 1.
         /// </summary>
         public static CDRDimensionType ENERGY
-            => new("ENERGY");
+            => new ("ENERGY");
 
         /// <summary>
         /// Total amount of energy feed back into the grid: defined in kWh.
         /// </summary>
         public static CDRDimensionType ENERGY_EXPORT   // Session only!
-            => new("ENERGY_EXPORT");
+            => new ("ENERGY_EXPORT");
 
         /// <summary>
         /// Total amount of energy charged, defined in kWh.
         /// </summary>
         public static CDRDimensionType ENERGY_IMPORT   // Session only!
-            => new("ENERGY_IMPORT");
+            => new ("ENERGY_IMPORT");
 
         /// <summary>
         /// Sum of the maximum current over all phases, reached during this ChargingPeriod: defined in A (Ampere).
         /// </summary>
         public static CDRDimensionType MAX_CURRENT
-            => new("MAX_CURRENT");
+            => new ("MAX_CURRENT");
 
         /// <summary>
         /// Sum of the minimum current over all phases, reached during this ChargingPeriod, when negative, current has flowed from the EV to the grid. Defined in A (Ampere).
         /// </summary>
         public static CDRDimensionType MIN_CURRENT
-            => new("MIN_CURRENT");
+            => new ("MIN_CURRENT");
 
         /// <summary>
         /// Maximum power reached during this ChargingPeriod: defined in kW (Kilowatt).
         /// </summary>
         public static CDRDimensionType MAX_POWER
-            => new("MAX_POWER");
+            => new ("MAX_POWER");
 
         /// <summary>
         /// Minimum power reached during this ChargingPeriod: defined in kW (Kilowatt), when negative, the power has flowed from the EV to the grid.
         /// </summary>
         public static CDRDimensionType MIN_POWER
-            => new("MIN_POWER");
+            => new ("MIN_POWER");
 
         /// <summary>
         /// Time during this ChargingPeriod not charging: defined in hours, default step_size multiplier is 1 second.
         /// </summary>
         public static CDRDimensionType PARKING_TIME
-            => new("PARKING_TIME");
+            => new ("PARKING_TIME");
 
         /// <summary>
         /// Average power during this ChargingPeriod: defined in kW (Kilowatt). When negative, the power is flowing from the EV to the grid.
         /// </summary>
         public static CDRDimensionType POWER          // Session only!
-            => new("POWER");
+            => new ("POWER");
 
         /// <summary>
         /// Time during this ChargingPeriod Charge Point has been reserved and not yet been in use for this customer: defined in hours, default step_size multiplier is 1 second.
         /// </summary>
         public static CDRDimensionType RESERVATION_TIME
-            => new("RESERVATION_TIME");
+            => new ("RESERVATION_TIME");
 
         /// <summary>
         /// Current state of charge of the EV, in percentage, values allowed: 0 to 100. See note below.
         /// </summary>
         public static CDRDimensionType STATE_OF_CHARGE            // Session only!
-            => new("STATE_OF_CHARGE");
+            => new ("STATE_OF_CHARGE");
 
         /// <summary>
         /// Time charging during this ChargingPeriod: defined in hours, default step_size multiplier is 1 second.
         /// </summary>
         public static CDRDimensionType TIME
-            => new("TIME");
+            => new ("TIME");
 
         #endregion
 

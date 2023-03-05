@@ -17,6 +17,8 @@
 
 #region Usings
 
+using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using cloud.charging.open.protocols.WWCP;
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -227,13 +229,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region ToOCPI(this ChargingPool,  ref Warnings)
+        #region ToOCPI(this ChargingPool,  ref Warnings, IncludeEVSEIds = null)
 
         public static Location? ToOCPI(this WWCP.IChargingPool  ChargingPool,
-                                       ref List<Warning>        Warnings)
+                                       ref List<Warning>        Warnings,
+                                       IncludeEVSEIdDelegate?   IncludeEVSEIds = null)
         {
 
-            var location = ChargingPool.ToOCPI(out var warnings);
+            var location = ChargingPool.ToOCPI(out var warnings,
+                                               IncludeEVSEIds);
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -244,13 +248,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToOCPI(this ChargingPool,  out Warnings)
+        #region ToOCPI(this ChargingPool,  out Warnings, IncludeEVSEIds = null)
 
         public static Location? ToOCPI(this WWCP.IChargingPool   ChargingPool,
-                                       out IEnumerable<Warning>  Warnings)
+                                       out IEnumerable<Warning>  Warnings,
+                                       IncludeEVSEIdDelegate?    IncludeEVSEIds = null)
         {
 
-            var warnings = new List<Warning>();
+            var includeEVSEIds  = IncludeEVSEIds ?? (evseId => true);
+            var warnings        = new List<Warning>();
 
             if (ChargingPool.Operator is null)
             {
@@ -307,7 +313,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var evses = new List<EVSE>();
 
-                foreach (var evse in ChargingPool.SelectMany(station => station.EVSEs))
+                foreach (var evse in ChargingPool.SelectMany(station => station.EVSEs).
+                                                  Where     (evse    => includeEVSEIds(evse.Id)))
                 {
 
                     var ocpiEVSE = evse.ToOCPI(ref warnings);
@@ -365,13 +372,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToOCPI(this ChargingPools, ref Warnings)
+        #region ToOCPI(this ChargingPools, ref Warnings, IncludeEVSEIds = null)
 
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools,
-                                                   ref List<Warning>                    Warnings)
+                                                   ref List<Warning>                    Warnings,
+                                                   IncludeEVSEIdDelegate?               IncludeEVSEIds = null)
         {
 
-            var locations = ChargingPools.ToOCPI(out var warnings);
+            var locations = ChargingPools.ToOCPI(out var warnings,
+                                                 IncludeEVSEIds);
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -382,10 +391,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToOCPI(this ChargingPools, out Warnings)
+        #region ToOCPI(this ChargingPools, out Warnings, IncludeEVSEIds = null)
 
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools,
-                                                   out IEnumerable<Warning>             Warnings)
+                                                   out IEnumerable<Warning>             Warnings,
+                                                   IncludeEVSEIdDelegate?               IncludeEVSEIds = null)
         {
 
             var warnings   = new List<Warning>();
@@ -397,7 +407,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 try
                 {
 
-                    var chargingPool2 = chargingPool.ToOCPI(out var warning);
+                    var chargingPool2 = chargingPool.ToOCPI(out var warning,
+                                                            IncludeEVSEIds);
 
                     if (chargingPool2 is not null)
                         locations.Add(chargingPool2);
@@ -759,6 +770,274 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             catch (Exception ex)
             {
                 warnings.Add(Warning.Create(Languages.en, $"Could not convert the given socket outlet to OCPI: " + ex.Message));
+                Warnings = warnings;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+
+        #region ToOCPI(this AuthMethod)
+
+        public static AuthMethods? ToOCPI(this AuthMethod AuthMethod)
+        {
+
+            if (AuthMethod == AuthMethod.AUTH_REQUEST)
+                return AuthMethods.AUTH_REQUEST;
+
+            if (AuthMethod == AuthMethod.WHITELIST)
+                return AuthMethods.WHITELIST;
+
+            return null;
+
+        }
+
+        public static AuthMethods? ToOCPI(this AuthMethod? AuthMethod)
+
+            => AuthMethod.HasValue
+                   ? AuthMethod.Value.ToOCPI()
+                   : null;
+
+        #endregion
+
+        #region ToWWCP(this AuthMethod)
+
+        public static AuthMethod? ToWWCP(this AuthMethods AuthMethod)
+        {
+
+            if (AuthMethod == AuthMethods.AUTH_REQUEST)
+                return WWCP.AuthMethod.AUTH_REQUEST;
+
+            if (AuthMethod == AuthMethods.WHITELIST)
+                return WWCP.AuthMethod.WHITELIST;
+
+            return null;
+
+        }
+
+        public static AuthMethod? ToWWCP(this AuthMethods? AuthMethod)
+
+            => AuthMethod.HasValue
+                   ? AuthMethod.Value.ToWWCP()
+                   : null;
+
+        #endregion
+
+
+        #region ToOCPI(this EnergyMeterId)
+
+        public static Meter_Id? ToOCPI(this EnergyMeter_Id EnergyMeterId)
+
+            => Meter_Id.Parse(EnergyMeterId.ToString());
+
+        public static Meter_Id? ToOCPI(this EnergyMeter_Id? EnergyMeterId)
+
+            => EnergyMeterId.HasValue
+                   ? EnergyMeterId.Value.ToOCPI()
+                   : null;
+
+        #endregion
+
+        #region ToWWCP(this MeterId)
+
+        public static EnergyMeter_Id? ToWWCP(this Meter_Id MeterId)
+
+            => EnergyMeter_Id.Parse(MeterId.ToString());
+
+        public static EnergyMeter_Id? ToWWCP(this Meter_Id? MeterId)
+
+            => MeterId.HasValue
+                   ? MeterId.Value.ToWWCP()
+                   : null;
+
+        #endregion
+
+
+        #region ToOCPI(this ChargeDetailRecord, ref Warnings)
+
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord  ChargeDetailRecord,
+                                  ref List<Warning>             Warnings)
+        {
+
+            var result = ChargeDetailRecord.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return result;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargeDetailRecord, out Warnings)
+
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord  ChargeDetailRecord,
+                                  out IEnumerable<Warning>      Warnings)
+        {
+
+            var warnings = new List<Warning>();
+
+            try
+            {
+
+                if (ChargeDetailRecord is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.ChargingStationOperator is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The given charge detail record must have a valid charging station operator!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (!ChargeDetailRecord.SessionTime.EndTime.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The session endtime of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (!ChargeDetailRecord.SessionTime.Duration.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The session time duration of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (!ChargeDetailRecord.AuthMethodStart.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The authentication (verification) method used for starting of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                var authMethod = ChargeDetailRecord.AuthMethodStart.ToOCPI();
+
+                if (!authMethod.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The authentication (verification) method used for starting of the given charge detail record is invalid!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.EVSE is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The EVSE of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.ChargingStation is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The charging station of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.ChargingPool is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The charging pool of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                var filteredLocation = ChargeDetailRecord.ChargingPool.ToOCPI(ref warnings,
+                                                                              evseId => evseId == ChargeDetailRecord.EVSE.Id);
+
+                if (filteredLocation is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The charging location of the given charge detail record could not be calculated!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.Currency is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The currency of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                var chargingPeriods = new List<ChargingPeriod>();
+
+                foreach (var energyMeteringValue in ChargeDetailRecord.EnergyMeteringValues)
+                {
+                    chargingPeriods.Add(
+                        new ChargingPeriod(
+                            energyMeteringValue.Timestamp,
+                            new CDRDimension[] {
+                                new CDRDimension(
+                                    CDRDimensionType.ENERGY_EXPORT,
+                                    energyMeteringValue.Value
+                                )
+                            }
+                        )
+                    );
+                }
+
+                if (!ChargeDetailRecord.ChargingPrice.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The charging price of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (!ChargeDetailRecord.ConsumedEnergy.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The consumed energy of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.EnergyMeteringValues.Count() < 2)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "At least two energy metering values are expected!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                Warnings = Array.Empty<Warning>();
+
+                return new CDR(
+
+                           CountryCode:             CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
+                           PartyId:                 Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
+                           Id:                      CDR_Id.     Parse(ChargeDetailRecord.Id.ToString()),
+                           Start:                   ChargeDetailRecord.SessionTime.StartTime,
+                           End:                     ChargeDetailRecord.SessionTime.EndTime. Value,
+                           AuthId:                  Auth_Id.    Parse(ChargeDetailRecord.SessionId.ToString()),
+                           AuthMethod:              authMethod.Value,
+                           Location:                filteredLocation,   //ToDo: Might still have not required connectors!
+                           Currency:                Currency.Parse(ChargeDetailRecord.Currency.ISOCode),
+                           ChargingPeriods:         chargingPeriods,
+                           TotalCost:               ChargeDetailRecord.ChargingPrice.       Value,
+                           TotalEnergy:             ChargeDetailRecord.ConsumedEnergy.      Value,
+                           TotalTime:               ChargeDetailRecord.SessionTime.Duration.Value,
+
+                           MeterId:                 ChargeDetailRecord.EnergyMeterId.ToOCPI(),
+                           EnergyMeter:             null,
+                           TransparencySoftwares:   null,
+                           Tariffs:                 null,
+                           SignedData:              null,
+                           TotalParkingTime:        null,
+                           Remark:                  null,
+
+                           LastUpdated:             Timestamp.Now
+
+                       );
+
+            }
+            catch (Exception ex)
+            {
+                warnings.Add(Warning.Create(Languages.en, "Could not convert the given charge detail record to OCPI: " + ex.Message));
                 Warnings = warnings;
             }
 
