@@ -249,6 +249,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public BusinessDetails Clone()
+
+            => new (new String(Name.ToCharArray()),
+                    Website.HasValue    ? Website.Value.Clone   : null,
+                    Logo    is not null ? Logo.         Clone() : null);
+
+        #endregion
+
 
         #region Operator overloading
 

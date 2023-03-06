@@ -143,7 +143,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The multi-language description of the energy meter.
         /// </summary>
         [Optional]
-        public I18NString?                              Description                   { get; }
+        public I18NString                               Description                   { get; }
+
+        /// <summary>
+        /// The timestamp when this energy meter was last updated (or created).
+        /// </summary>
+        [Mandatory]
+        public DateTime                                 LastUpdated                   { get; }
 
         #endregion
 
@@ -163,6 +169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="PublicKeyCertificateChain">One or multiple optional certificates for the public key of the energy meter.</param>
         /// <param name="TransparencySoftwares">An enumeration of transparency softwares and their legal status, which can be used to validate the charging session data.</param>
         /// <param name="Description">An multi-language description of the energy meter.</param>
+        /// <param name="LastUpdated">The timestamp when this energy meter was last updated (or created).</param>
         public EnergyMeter(Meter_Id                                  Id,
                            String?                                   Model                       = null,
                            URL?                                      ModelURL                    = null,
@@ -176,7 +183,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            I18NString?                               Description                 = null,
 
                            JObject?                                  CustomData                  = null,
-                           UserDefinedDictionary?                    InternalData                = null)
+                           UserDefinedDictionary?                    InternalData                = null,
+                           DateTime?                                 LastUpdated                 = null)
 
             : base(CustomData,
                    InternalData)
@@ -194,6 +202,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.PublicKeyCertificateChain  = PublicKeyCertificateChain;
             this.TransparencySoftwares      = TransparencySoftwares?.Distinct() ?? Array.Empty<TransparencySoftwareStatus>();
             this.Description                = Description                       ?? I18NString.Empty;
+            this.LastUpdated                = LastUpdated                       ?? Timestamp.Now;
 
         }
 
@@ -391,6 +400,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
+                #region Parse LastUpdated           [mandatory]
+
+                if (!JSON.ParseMandatory("last_updated",
+                                         "last updated",
+                                         out DateTime LastUpdated,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
 
                 EnergyMeter = new EnergyMeter(Id,
                                               Model,
@@ -402,7 +423,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               PublicKeys,
                                               PublicKeyCertificateChain,
                                               TransparencySoftwares,
-                                              Description);
+                                              Description,
+                                              null,
+                                              null,
+                                              LastUpdated);
 
                 if (CustomEnergyMeterParser is not null)
                     EnergyMeter = CustomEnergyMeterParser(JSON,
@@ -478,7 +502,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            Description is not null && Description.IsNeitherNullNorEmpty()
                                ? new JProperty("description",                    Description.ToJSON())
-                               : null
+                               : null,
+
+                                 new JProperty("last_updated",                   LastUpdated.ToIso8601())
 
                        );
 
@@ -487,6 +513,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        : json;
 
         }
+
+        #endregion
+
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public EnergyMeter Clone()
+
+            => new (Id.Clone,
+                    Model                     is not null ? new String(Model.          ToCharArray()) : null,
+                    ModelURL.                 HasValue    ? ModelURL.                 Value.Clone     : null,
+                    HardwareVersion           is not null ? new String(HardwareVersion.ToCharArray()) : null,
+                    FirmwareVersion           is not null ? new String(FirmwareVersion.ToCharArray()) : null,
+                    Manufacturer              is not null ? new String(Manufacturer.   ToCharArray()) : null,
+                    ManufacturerURL.          HasValue    ? ManufacturerURL.          Value.Clone     : null,
+                    PublicKeys.           Select(publicKey                  => publicKey.                 Clone).  ToArray(),
+                    PublicKeyCertificateChain.HasValue    ? PublicKeyCertificateChain.Value.Clone     : null,
+                    TransparencySoftwares.Select(transparencySoftwareStatus => transparencySoftwareStatus.Clone()).ToArray(),
+                    Description.IsNeitherNullNorEmpty()   ? Description.Clone                         : I18NString.Empty,
+
+                    CustomData,
+                    InternalData,
+                    LastUpdated);
 
         #endregion
 
@@ -629,13 +680,48 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var c = Id.CompareTo(EnergyMeter.Id);
 
-            // Model
-            // HardwareVersion
-            // FirmwareVersion
-            // Vendor
-            // PublicKey
-            // PublicKeyCertificateChain
-            // TransparencySoftware
+            if (c == 0)
+                c = LastUpdated.ToIso8601().CompareTo(EnergyMeter.LastUpdated.ToIso8601());
+
+            if (c == 0)
+                c = Model is not null && EnergyMeter.Model is not null
+                        ? Model.CompareTo(EnergyMeter.Model)
+                        : 0;
+
+            if (c == 0)
+                c = ModelURL.HasValue && EnergyMeter.ModelURL.HasValue
+                        ? ModelURL.Value.CompareTo(EnergyMeter.ModelURL.Value)
+                        : 0;
+
+            if (c == 0)
+                c = HardwareVersion is not null && EnergyMeter.HardwareVersion is not null
+                        ? HardwareVersion.CompareTo(EnergyMeter.HardwareVersion)
+                        : 0;
+
+            if (c == 0)
+                c = FirmwareVersion is not null && EnergyMeter.FirmwareVersion is not null
+                        ? FirmwareVersion.CompareTo(EnergyMeter.FirmwareVersion)
+                        : 0;
+
+            if (c == 0)
+                c = Manufacturer is not null && EnergyMeter.Manufacturer is not null
+                        ? Manufacturer.CompareTo(EnergyMeter.Manufacturer)
+                        : 0;
+
+            if (c == 0)
+                c = ManufacturerURL.HasValue && EnergyMeter.ManufacturerURL.HasValue
+                        ? ManufacturerURL.Value.CompareTo(EnergyMeter.ManufacturerURL.Value)
+                        : 0;
+
+            // PublicKeys
+
+            if (c == 0)
+                c = PublicKeyCertificateChain.HasValue && EnergyMeter.PublicKeyCertificateChain.HasValue
+                        ? PublicKeyCertificateChain.Value.CompareTo(EnergyMeter.PublicKeyCertificateChain.Value)
+                        : 0;
+
+            // TransparencySoftwares
+            // Description
 
             return c;
 
@@ -671,6 +757,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             => EnergyMeter is not null &&
 
                Id.Equals(EnergyMeter.Id) &&
+               LastUpdated.ToIso8601().Equals(EnergyMeter.LastUpdated.ToIso8601()) &&
 
              ((Model                     is     null &&  EnergyMeter.Model                     is     null) ||
               (Model                     is not null &&  EnergyMeter.Model                     is not null && Model.                          Equals(EnergyMeter.Model)))                           &&
@@ -717,17 +804,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Id.                        GetHashCode()        * 29 ^
-                      (Model?.                    GetHashCode()  ?? 0) * 27 ^
-                      (ModelURL?.                 GetHashCode()  ?? 0) * 23 ^
-                      (HardwareVersion?.          GetHashCode()  ?? 0) * 19 ^
-                      (FirmwareVersion?.          GetHashCode()  ?? 0) * 17 ^
-                      (Manufacturer?.             GetHashCode()  ?? 0) * 13 ^
-                      (ManufacturerURL?.          GetHashCode()  ?? 0) * 11 ^
-                      (PublicKeys?.               CalcHashCode() ?? 0) *  7 ^
-                      (PublicKeyCertificateChain?.GetHashCode()  ?? 0) *  5 ^
-                      (TransparencySoftwares?.    CalcHashCode() ?? 0) *  3 ^
-                       Description?.              GetHashCode()  ?? 0;
+                return Id.                        GetHashCode()        * 31 ^
+                      (Model?.                    GetHashCode()  ?? 0) * 29 ^
+                      (ModelURL?.                 GetHashCode()  ?? 0) * 27 ^
+                      (HardwareVersion?.          GetHashCode()  ?? 0) * 23 ^
+                      (FirmwareVersion?.          GetHashCode()  ?? 0) * 19 ^
+                      (Manufacturer?.             GetHashCode()  ?? 0) * 17 ^
+                      (ManufacturerURL?.          GetHashCode()  ?? 0) * 13 ^
+                      (PublicKeys?.               CalcHashCode() ?? 0) * 11 ^
+                      (PublicKeyCertificateChain?.GetHashCode()  ?? 0) *  7 ^
+                      (TransparencySoftwares?.    CalcHashCode() ?? 0) *  5 ^
+                      (Description?.              GetHashCode()  ?? 0) *  3 ^
+                       LastUpdated.               GetHashCode();
 
             }
         }
@@ -783,7 +871,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    Description is not null && Description.IsNeitherNullNorEmpty()
                        ? $"Description: {Description}"
-                       : String.Empty
+                       : String.Empty,
+
+                   $"Last update: {LastUpdated.ToIso8601()}"
 
             }.Where(_ => _.IsNotNullOrEmpty()).
               AggregateWith(", ");

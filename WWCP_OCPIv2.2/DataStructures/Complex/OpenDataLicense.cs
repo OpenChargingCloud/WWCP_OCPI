@@ -316,6 +316,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public OpenDataLicense Clone()
+
+            => new (Id.         Clone,
+                    Description.Clone,
+                    URLs.Select(url => url.Clone).ToArray());
+
+        #endregion
+
 
         #region Static Definitions
 

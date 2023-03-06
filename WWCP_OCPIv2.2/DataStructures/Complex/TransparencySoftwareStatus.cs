@@ -313,6 +313,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public TransparencySoftwareStatus Clone()
+
+            => new (TransparencySoftware.Clone(),
+                    LegalStatus.Clone,
+                    Certificate       is not null ? new String(Certificate.      ToCharArray()) : null,
+                    CertificateIssuer is not null ? new String(CertificateIssuer.ToCharArray()) : null,
+                    NotBefore.        HasValue    ? NotBefore.Value                             : null,
+                    NotAfter.         HasValue    ? NotAfter. Value                             : null);
+
+        #endregion
+
 
         #region Operator overloading
 

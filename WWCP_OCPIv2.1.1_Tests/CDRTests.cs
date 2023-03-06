@@ -24,6 +24,7 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+
 using cloud.charging.open.protocols.WWCP;
 
 #endregion
@@ -570,23 +571,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                               Currency:                       org.GraphDefined.Vanaheimr.Illias.Currency.EUR,
 
                               AuthenticationStart:            LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
-                              //AuthenticationStop        
+                              //AuthenticationStop
                               AuthMethodStart:                AuthMethod.AUTH_REQUEST,
-                              //AuthMethodStop            
+                              //AuthMethodStop
                               ProviderIdStart:                EMobilityProvider_Id.Parse("DE-GDF"),
-                              //ProviderIdStop            
+                              //ProviderIdStop
 
-                              //EMPRoamingProvider        
+                              //EMPRoamingProvider
                               EMPRoamingProviderId:           EMPRoamingProvider_Id.Parse("Hubject"),
 
-                              //Reservation               
-                              //ReservationId             
-                              //ReservationTime           
-                              //ReservationFee            
+                              //Reservation
+                              //ReservationId
+                              //ReservationTime
+                              //ReservationFee
 
-                              //ParkingSpaceId            
-                              //ParkingTime               
-                              //ParkingFee                
+                              //ParkingSpaceId
+                              //ParkingTime
+                              //ParkingFee
 
                               //EnergyMeterId:                // automagic!
                               EnergyMeter:                    new WWCP.EnergyMeter(
@@ -600,13 +601,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                   new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(119), 22),
                                                               }
                               //ConsumedEnergy                // automagic!
-                              //ConsumedEnergyFee         
+                              //ConsumedEnergyFee
 
-                              //CustomData                
-                              //InternalData              
+                              //CustomData
+                              //InternalData
 
-                              //PublicKey                 
-                              //Signatures                
+                              //PublicKey
+                              //Signatures
 
                           );
 

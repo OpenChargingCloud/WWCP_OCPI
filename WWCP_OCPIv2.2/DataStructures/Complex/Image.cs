@@ -319,6 +319,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Image Clone()
+
+            => new (URL.     Clone,
+                    Type.    Clone,
+                    Category.Clone,
+                    Width.    HasValue ? Width.    Value : null,
+                    Height.   HasValue ? Height.   Value : null,
+                    Thumbnail.HasValue ? Thumbnail.Value : null);
+
+        #endregion
+
 
         #region Operator overloading
 
