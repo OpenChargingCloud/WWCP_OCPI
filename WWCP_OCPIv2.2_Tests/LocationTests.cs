@@ -129,9 +129,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),
@@ -396,9 +398,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),
@@ -635,9 +639,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),
@@ -874,9 +880,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),
@@ -1113,9 +1121,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),
@@ -1354,9 +1364,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),
@@ -1593,9 +1605,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),
@@ -1835,9 +1849,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),
@@ -2075,9 +2091,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),
@@ -2314,9 +2332,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),
@@ -2553,9 +2573,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),
@@ -2792,9 +2814,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         new EnergyMeter(
                                             Meter_Id.Parse("Meter0815"),
                                             "EnergyMeter Model #1",
+                                            null,
                                             "hw. v1.80",
                                             "fw. v1.20",
                                             "Energy Metering Services",
+                                            null,
                                             null,
                                             null
                                         ),

@@ -216,7 +216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="TotalTime">The total duration of the charging session, including the duration of charging and not charging.</param>
         /// 
         /// <param name="MeterId">The optional identification of the energy meter.</param>
-        /// <param name="EnergyMeter">The optional energy meter.</param>
+        /// <param name="EnergyMeter">An optional energy meter.</param>
         /// <param name="TransparencySoftwares">The enumeration of valid transparency softwares which can be used to validate the singed charging session and metering data.</param>
         /// <param name="Tariffs">The enumeration of relevant charging tariffs.</param>
         /// <param name="SignedData">The optional signed metering data that belongs to this charging session.</param>

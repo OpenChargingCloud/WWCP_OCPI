@@ -192,13 +192,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The transparency software is not legally binding, but verified by the given entity.
         /// </summary>
         public static LegalStatus Verified
-            => new("verified");
+            => new ("verified");
 
         /// <summary>
         /// The status is legally binding under the German Calibration Law.
         /// </summary>
         public static LegalStatus GermanCalibrationLaw
-            => new("GermanCalibrationLaw");
+            => new ("GermanCalibrationLaw");
 
         #endregion
 

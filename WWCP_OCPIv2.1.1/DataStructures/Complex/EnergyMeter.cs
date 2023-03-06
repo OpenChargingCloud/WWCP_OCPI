@@ -20,6 +20,7 @@
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -27,10 +28,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// An energy meter. This information will e.g. be used for the German calibration law.
+    /// Extension methods for energy meters.
+    /// </summary>
+    public static partial class EnergyMeterExtensions
+    {
+
+        #region ToJSON(this EnergyMeters, Skip = null, Take = null, ...)
+
+        /// <summary>
+        /// Return a JSON representation for the given enumeration of EnergyMeters.
+        /// </summary>
+        /// <param name="EnergyMeters">An enumeration of smart energy meters.</param>
+        /// <param name="Skip">The optional number of smart energy meters to skip.</param>
+        /// <param name="Take">The optional number of smart energy meters to return.</param>
+        public static JArray ToJSON(this IEnumerable<EnergyMeter>                                 EnergyMeters,
+                                    UInt64?                                                       Skip                                         = null,
+                                    UInt64?                                                       Take                                         = null,
+                                    CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                                    CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                                    CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null)
+
+
+            => EnergyMeters?.Any() == true
+
+                   ? new JArray(EnergyMeters.Where         (energyMeter => energyMeter is not null).
+                                             OrderBy       (energyMeter => energyMeter.Id).
+                                             SkipTakeFilter(Skip, Take).
+                                             SafeSelect    (energyMeter => energyMeter.ToJSON(CustomEnergyMeterSerializer,
+                                                                                              CustomTransparencySoftwareStatusSerializer,
+                                                                                              CustomTransparencySoftwareSerializer)).
+                                             Where         (energyMeter => energyMeter is not null))
+
+                   : new JArray();
+
+        #endregion
+
+    }
+
+
+    /// <summary>
+    /// An energy meter.
     /// </summary>
     [NonStandard]
-    public class EnergyMeter : IEquatable<EnergyMeter>,
+    public class EnergyMeter : AInternalData,
+                               IEquatable<EnergyMeter>,
                                IComparable<EnergyMeter>,
                                IComparable
     {
@@ -50,6 +91,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public String?                                  Model                         { get; }
 
         /// <summary>
+        /// The optional URL to the model of the energy meter.
+        /// </summary>
+        [Optional]
+        public URL?                                     ModelURL                      { get; }
+
+        /// <summary>
         /// The optional hardware version of the energy meter.
         /// </summary>
         [Optional]
@@ -62,16 +109,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public String?                                  FirmwareVersion               { get; }
 
         /// <summary>
-        /// The optional vendor of the energy meter.
+        /// The optional manufacturer of the energy meter.
         /// </summary>
         [Optional]
-        public String?                                  Vendor                        { get; }
+        public String?                                  Manufacturer                  { get; }
 
         /// <summary>
-        /// The optional public key of the energy meter used for signeing the energy meter values.
+        /// The optional URL to the manufacturer of the energy meter.
         /// </summary>
         [Optional]
-        public PublicKey?                               PublicKey                     { get; }
+        public URL?                                     ManufacturerURL               { get; }
+
+        /// <summary>
+        /// The optional enumeration of public keys used for signing the energy meter values.
+        /// </summary>
+        [Optional]
+        public IEnumerable<PublicKey>                   PublicKeys                    { get; }
 
         /// <summary>
         /// One or multiple optional certificates for the public key of the energy meter.
@@ -86,6 +139,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         [Optional]
         public IEnumerable<TransparencySoftwareStatus>  TransparencySoftwares         { get; }
 
+        /// <summary>
+        /// The multi-language description of the energy meter.
+        /// </summary>
+        [Optional]
+        public I18NString?                              Description                   { get; }
+
         #endregion
 
         #region Constructor(s)
@@ -94,32 +153,47 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Create new energy meter.
         /// </summary>
         /// <param name="Id">The identification of the energy meter.</param>
-        /// <param name="Model">The optional model of the energy meter.</param>
-        /// <param name="HardwareVersion">The optional hardware version of the energy meter.</param>
-        /// <param name="FirmwareVersion">The optional firmware version of the energy meter.</param>
-        /// <param name="Vendor">The optional vendor of the energy meter.</param>
-        /// <param name="PublicKey">The optional public key of the energy meter used for signeing the energy meter values.</param>
+        /// <param name="Model">An optional model of the energy meter.</param>
+        /// <param name="ModelURL">An optional URL to the model of the energy meter.</param>
+        /// <param name="HardwareVersion">An optional hardware version of the energy meter.</param>
+        /// <param name="FirmwareVersion">An optional firmware version of the energy meter.</param>
+        /// <param name="Manufacturer">An optional manufacturer of the energy meter.</param>
+        /// <param name="ManufacturerURL">An optional URL to the manufacturer of the energy meter.</param>
+        /// <param name="PublicKeys">The optional public key of the energy meter used for signeing the energy meter values.</param>
         /// <param name="PublicKeyCertificateChain">One or multiple optional certificates for the public key of the energy meter.</param>
         /// <param name="TransparencySoftwares">An enumeration of transparency softwares and their legal status, which can be used to validate the charging session data.</param>
-        /// 
+        /// <param name="Description">An multi-language description of the energy meter.</param>
         public EnergyMeter(Meter_Id                                  Id,
                            String?                                   Model                       = null,
+                           URL?                                      ModelURL                    = null,
                            String?                                   HardwareVersion             = null,
                            String?                                   FirmwareVersion             = null,
-                           String?                                   Vendor                      = null,
-                           PublicKey?                                PublicKey                   = null,
+                           String?                                   Manufacturer                = null,
+                           URL?                                      ManufacturerURL             = null,
+                           IEnumerable<PublicKey>?                   PublicKeys                  = null,
                            CertificateChain?                         PublicKeyCertificateChain   = null,
-                           IEnumerable<TransparencySoftwareStatus>?  TransparencySoftwares       = null)
+                           IEnumerable<TransparencySoftwareStatus>?  TransparencySoftwares       = null,
+                           I18NString?                               Description                 = null,
+
+                           JObject?                                  CustomData                  = null,
+                           UserDefinedDictionary?                    InternalData                = null)
+
+            : base(CustomData,
+                   InternalData)
+
         {
 
             this.Id                         = Id;
             this.Model                      = Model;
+            this.ModelURL                   = ModelURL;
             this.HardwareVersion            = HardwareVersion;
             this.FirmwareVersion            = FirmwareVersion;
-            this.Vendor                     = Vendor;
-            this.PublicKey                  = PublicKey;
+            this.Manufacturer               = Manufacturer;
+            this.ManufacturerURL            = ManufacturerURL;
+            this.PublicKeys                 = PublicKeys?.           Distinct() ?? Array.Empty<PublicKey>();
             this.PublicKeyCertificateChain  = PublicKeyCertificateChain;
             this.TransparencySoftwares      = TransparencySoftwares?.Distinct() ?? Array.Empty<TransparencySoftwareStatus>();
+            this.Description                = Description                       ?? I18NString.Empty;
 
         }
 
@@ -215,6 +289,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
+                #region Parse ModelURL                      [optional]
+
+                if (JSON.ParseOptional("model_url",
+                                       "energy meter model URL",
+                                       URL.TryParse,
+                                       out URL? ModelURL,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse HardwareVersion               [optional]
 
                 var HardwareVersion       = JSON.GetString("hardware_version");
@@ -229,17 +317,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Vendor                        [optional]
 
-                var Vendor                = JSON.GetString("vendor");
+                var Manufacturer          = JSON.GetString("manufacturer");
 
                 #endregion
 
-                #region Parse PublicKey                     [optional]
+                #region Parse ManufacturerURL               [optional]
 
-                if (JSON.ParseOptional("public_key",
-                                       "energy meter public key",
-                                       OCPIv2_1_1.PublicKey.TryParse,
-                                       out PublicKey? PublicKey,
+                if (JSON.ParseOptional("manufacturer_url",
+                                       "energy meter manufacturer URL",
+                                       URL.TryParse,
+                                       out URL? ManufacturerURL,
                                        out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse PublicKeys                    [optional]
+
+                if (JSON.ParseOptionalHashSet("public_keys",
+                                              "energy meter public keys",
+                                              PublicKey.TryParse,
+                                              out HashSet<PublicKey> PublicKeys,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -275,15 +377,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
+                #region Parse Description                   [optional]
+
+                if (JSON.ParseOptional("description",
+                                       "energy meter description",
+                                       I18NString.TryParse,
+                                       out I18NString? Description,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
 
                 EnergyMeter = new EnergyMeter(Id,
                                               Model,
+                                              ModelURL,
                                               HardwareVersion,
                                               FirmwareVersion,
-                                              Vendor,
-                                              PublicKey,
+                                              Manufacturer,
+                                              ManufacturerURL,
+                                              PublicKeys,
                                               PublicKeyCertificateChain,
-                                              TransparencySoftwares);
+                                              TransparencySoftwares,
+                                              Description);
 
                 if (CustomEnergyMeterParser is not null)
                     EnergyMeter = CustomEnergyMeterParser(JSON,
@@ -316,12 +435,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
-                           new JProperty("id",                                   Id.       ToString()),
+                           new JProperty("id",                                   Id.                             ToString()),
 
                            Model is not null
                                ? new JProperty("model",                          Model)
+                               : null,
+
+                           ModelURL.HasValue
+                               ? new JProperty("model_url",                      ModelURL.                 Value.ToString())
                                : null,
 
                            HardwareVersion is not null
@@ -332,28 +455,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("firmware_version",               FirmwareVersion)
                                : null,
 
-                           Vendor is not null
-                               ? new JProperty("vendor",                         Vendor)
+                           Manufacturer is not null
+                               ? new JProperty("manufacturer",                   Manufacturer)
                                : null,
 
-                           PublicKey.HasValue
-                               ? new JProperty("public_key",                     PublicKey.ToString())
+                           ManufacturerURL.HasValue
+                               ? new JProperty("manufacturer_url",               ManufacturerURL.          Value.ToString())
+                               : null,
+
+                           PublicKeys.Any()
+                               ? new JProperty("public_keys",                    new JArray(PublicKeys.Select(publicKey => publicKey.ToString())))
                                : null,
 
                            PublicKeyCertificateChain.HasValue
-                               ? new JProperty("public_key_certificate_chain",   PublicKeyCertificateChain)
+                               ? new JProperty("public_key_certificate_chain",   PublicKeyCertificateChain.Value.ToString())
                                : null,
 
                            TransparencySoftwares.Any()
                                ? new JProperty("transparency_softwares",         new JArray(TransparencySoftwares.Select(transparencySoftwareStatus => transparencySoftwareStatus.ToJSON(CustomTransparencySoftwareStatusSerializer,
                                                                                                                                                                                          CustomTransparencySoftwareSerializer))))
+                               : null,
+
+                           Description is not null && Description.IsNeitherNullNorEmpty()
+                               ? new JProperty("description",                    Description.ToJSON())
                                : null
 
                        );
 
             return CustomEnergyMeterSerializer is not null
-                       ? CustomEnergyMeterSerializer(this, JSON)
-                       : JSON;
+                       ? CustomEnergyMeterSerializer(this, json)
+                       : json;
 
         }
 
@@ -541,22 +672,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                Id.Equals(EnergyMeter.Id) &&
 
+             ((Model                     is     null &&  EnergyMeter.Model                     is     null) ||
+              (Model                     is not null &&  EnergyMeter.Model                     is not null && Model.                          Equals(EnergyMeter.Model)))                           &&
+
+            ((!ModelURL.                 HasValue    && !EnergyMeter.ModelURL.                 HasValue)    ||
+             ( ModelURL.                 HasValue    &&  EnergyMeter.ModelURL.                 HasValue    && ModelURL.                 Value.Equals(EnergyMeter.ModelURL.                 Value))) &&
+
              ((HardwareVersion           is     null &&  EnergyMeter.HardwareVersion           is     null) ||
               (HardwareVersion           is not null &&  EnergyMeter.HardwareVersion           is not null && HardwareVersion.                Equals(EnergyMeter.HardwareVersion)))                 &&
 
              ((FirmwareVersion           is     null &&  EnergyMeter.FirmwareVersion           is     null) ||
               (FirmwareVersion           is not null &&  EnergyMeter.FirmwareVersion           is not null && FirmwareVersion.                Equals(EnergyMeter.FirmwareVersion)))                 &&
 
-             ((Vendor                    is     null &&  EnergyMeter.Vendor                    is     null) ||
-              (Vendor                    is not null &&  EnergyMeter.Vendor                    is not null && Vendor.                         Equals(EnergyMeter.Vendor)))                          &&
+             ((Manufacturer              is     null &&  EnergyMeter.Manufacturer              is     null) ||
+              (Manufacturer              is not null &&  EnergyMeter.Manufacturer              is not null && Manufacturer.                   Equals(EnergyMeter.Manufacturer)))                    &&
 
-            ((!PublicKey.                HasValue    && !EnergyMeter.PublicKey.                HasValue)    ||
-             ( PublicKey.                HasValue    &&  EnergyMeter.PublicKey.                HasValue    && PublicKey.                Value.Equals(EnergyMeter.PublicKey.                Value))) &&
+            ((!ManufacturerURL.          HasValue    && !EnergyMeter.ManufacturerURL.          HasValue)    ||
+             ( ManufacturerURL.          HasValue    &&  EnergyMeter.ManufacturerURL.          HasValue    && ManufacturerURL.          Value.Equals(EnergyMeter.ManufacturerURL.          Value))) &&
 
             ((!PublicKeyCertificateChain.HasValue    &&  EnergyMeter.PublicKeyCertificateChain.HasValue)    ||
               (PublicKeyCertificateChain.HasValue    &&  EnergyMeter.PublicKeyCertificateChain.HasValue    && PublicKeyCertificateChain.Value.Equals(EnergyMeter.PublicKeyCertificateChain.Value))) &&
 
-               TransparencySoftwares.Count().Equals(EnergyMeter.TransparencySoftwares.Count()) &&
+             ((Description               is     null &&  EnergyMeter.Description               is     null) ||
+              (Description               is not null &&  EnergyMeter.Description               is not null && Description.                    Equals(EnergyMeter.Description)))                     &&
+
+               PublicKeys.           Count().Equals(EnergyMeter.PublicKeys.           Count())                          &&
+               PublicKeys.           All(publicKey            => EnergyMeter.PublicKeys.           Contains(publicKey)) &&
+
+               TransparencySoftwares.Count().Equals(EnergyMeter.TransparencySoftwares.Count())                          &&
                TransparencySoftwares.All(transparencySoftware => EnergyMeter.TransparencySoftwares.Contains(transparencySoftware));
 
         #endregion
@@ -574,13 +717,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Id.                        GetHashCode()       * 17 ^
-                      (HardwareVersion?.          GetHashCode() ?? 0) * 13 ^
-                      (FirmwareVersion?.          GetHashCode() ?? 0) * 11 ^
-                      (Vendor?.                   GetHashCode() ?? 0) *  7 ^
-                      (PublicKey?.                GetHashCode() ?? 0) *  5 ^
-                      (PublicKeyCertificateChain?.GetHashCode() ?? 0) *  3 ^
-                       TransparencySoftwares.      CalcHashCode();
+                return Id.                        GetHashCode()        * 29 ^
+                      (Model?.                    GetHashCode()  ?? 0) * 27 ^
+                      (ModelURL?.                 GetHashCode()  ?? 0) * 23 ^
+                      (HardwareVersion?.          GetHashCode()  ?? 0) * 19 ^
+                      (FirmwareVersion?.          GetHashCode()  ?? 0) * 17 ^
+                      (Manufacturer?.             GetHashCode()  ?? 0) * 13 ^
+                      (ManufacturerURL?.          GetHashCode()  ?? 0) * 11 ^
+                      (PublicKeys?.               CalcHashCode() ?? 0) *  7 ^
+                      (PublicKeyCertificateChain?.GetHashCode()  ?? 0) *  5 ^
+                      (TransparencySoftwares?.    CalcHashCode() ?? 0) *  3 ^
+                       Description?.              GetHashCode()  ?? 0;
 
             }
         }
@@ -594,34 +741,52 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(
+            => new String[] {
 
-                   Id,
+                   $"Id: {Id}",
 
-                   HardwareVersion      is not null
-                       ? ", " + HardwareVersion
-                       : "",
+                   Model.IsNotNullOrEmpty()
+                       ? $"Model: {Model}"
+                       : String.Empty,
 
-                   FirmwareVersion      is not null
-                       ? ", " + FirmwareVersion
-                       : "",
+                   ModelURL.HasValue
+                       ? $"Model URL: {ModelURL}"
+                       : String.Empty,
 
-                   Vendor               is not null
-                       ? ", " + Vendor
-                       : "",
+                   HardwareVersion.IsNotNullOrEmpty()
+                       ? $"Hardware version: {HardwareVersion}"
+                       : String.Empty,
 
-                   PublicKey.HasValue
-                       ? ", publicKey: "         + PublicKey.                Value.ToString().SubstringMax(20)
-                       : "",
+                   FirmwareVersion.IsNotNullOrEmpty()
+                       ? $"Firmware version: {FirmwareVersion}"
+                       : String.Empty,
 
-                   PublicKeyCertificateChain is not null
-                       ? ", certificate chain: " + PublicKeyCertificateChain.Value.ToString().SubstringMax(20)
-                       : "",
+                   Manufacturer.IsNotNullOrEmpty()
+                       ? $"Manufacturer: {Manufacturer}"
+                       : String.Empty,
 
-                   TransparencySoftwares.Count(),
-                   " transparency software(s)"
+                   ManufacturerURL.HasValue
+                       ? $"Manufacturer URL: {ManufacturerURL}"
+                       : String.Empty,
 
-               );
+                   PublicKeys.Any()
+                       ? "public keys: " + PublicKeys.Select(publicKey => publicKey.ToString().SubstringMax(20)).AggregateWith(", ")
+                       : String.Empty,
+
+                   PublicKeyCertificateChain.HasValue
+                       ? $"public key certificate chain: {PublicKeyCertificateChain.Value.ToString().SubstringMax(20)}"
+                       : String.Empty,
+
+                   TransparencySoftwares.Any()
+                       ? $"{TransparencySoftwares.Count()} transparency software(s)"
+                       : String.Empty,
+
+                   Description is not null && Description.IsNeitherNullNorEmpty()
+                       ? $"Description: {Description}"
+                       : String.Empty
+
+            }.Where(_ => _.IsNotNullOrEmpty()).
+              AggregateWith(", ");
 
         #endregion
 

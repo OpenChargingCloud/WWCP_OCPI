@@ -97,9 +97,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                             new EnergyMeter(
                                 Meter_Id.Parse("Meter0815"),
                                 "EnergyMeter Model #1",
+                                null,
                                 "hw. v1.80",
                                 "fw. v1.20",
                                 "Energy Metering Services",
+                                null,
                                 null,
                                 null,
                                 new TransparencySoftwareStatus[] {
@@ -107,7 +109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         new TransparencySoftware(
                                             "Chargy Transparency Software Desktop Application",
                                             "v1.00",
-                                            OpenSourceLicenses.GPL3,
+                                            OpenSourceLicense.AGPL3,
                                             "GraphDefined GmbH",
                                             URL.Parse("https://open.charging.cloud/logo.svg"),
                                             URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -124,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         new TransparencySoftware(
                                             "Chargy Transparency Software Mobile Application",
                                             "v1.00",
-                                            OpenSourceLicenses.GPL3,
+                                            OpenSourceLicense.AGPL3,
                                             "GraphDefined GmbH",
                                             URL.Parse("https://open.charging.cloud/logo.svg"),
                                             URL.Parse("https://open.charging.cloud/Chargy/howto"),

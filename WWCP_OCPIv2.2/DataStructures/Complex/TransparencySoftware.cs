@@ -43,49 +43,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The name of the transparency software.
         /// </summary>
         [Mandatory]
-        public String              Name                     { get; }
+        public String             Name                     { get; }
 
         /// <summary>
         /// The version of the transparency software.
         /// </summary>
         [Mandatory]
-        public String              Version                  { get; }
+        public String             Version                  { get; }
 
         /// <summary>
         /// The Open Source license of the transparency software.
         /// </summary>
         [Mandatory]
-        public OpenSourceLicenses  OpenSourceLicense        { get; }
+        public OpenSourceLicense  OpenSourceLicense        { get; }
 
         /// <summary>
         /// The vendor of the transparency software.
         /// </summary>
         [Mandatory]
-        public String              Vendor                   { get; }
+        public String             Vendor                   { get; }
 
         /// <summary>
         /// The optional URL where to find a small logo of the transparency software.
         /// </summary>
         [Optional]
-        public URL?                Logo                     { get; }
+        public URL?               Logo                     { get; }
 
         /// <summary>
         /// The optional URL where to find a manual how to use the transparency software.
         /// </summary>
         [Optional]
-        public URL?                HowToUse                 { get; }
+        public URL?               HowToUse                 { get; }
 
         /// <summary>
         /// The optional URL where to find more information about the transparency software.
         /// </summary>
         [Optional]
-        public URL?                MoreInformation          { get; }
+        public URL?               MoreInformation          { get; }
 
         /// <summary>
         /// The optional URL where to find the source code of the transparency software.
         /// </summary>
         [Optional]
-        public URL?                SourceCodeRepository     { get; }
+        public URL?               SourceCodeRepository     { get; }
 
         #endregion
 
@@ -103,15 +103,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="HowToUse">An optional URL where to find a manual how to use the transparency software.</param>
         /// <param name="MoreInformation">An optional URL where to find more information about the transparency software.</param>
         /// <param name="SourceCodeRepository">An optional URL where to find the source code of the transparency software.</param>
-        public TransparencySoftware(String              Name,
-                                    String              Version,
-                                    OpenSourceLicenses  OpenSourceLicense,
-                                    String              Vendor,
+        public TransparencySoftware(String             Name,
+                                    String             Version,
+                                    OpenSourceLicense  OpenSourceLicense,
+                                    String             Vendor,
 
-                                    URL?                Logo                   = null,
-                                    URL?                HowToUse               = null,
-                                    URL?                MoreInformation        = null,
-                                    URL?                SourceCodeRepository   = null)
+                                    URL?               Logo                   = null,
+                                    URL?               HowToUse               = null,
+                                    URL?               MoreInformation        = null,
+                                    URL?               SourceCodeRepository   = null)
         {
 
             this.Name                  = Name;
@@ -225,10 +225,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse OpenSourceLicense         [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("open_source_license",
+                if (!JSON.ParseMandatoryJSON("open_source_license",
                                              "legal status",
-                                             out OpenSourceLicenses OpenSourceLicense,
-                                             out ErrorResponse))
+                                             OCPIv2_2.OpenSourceLicense.TryParse,
+                                             out OpenSourceLicense? OpenSourceLicense,
+                                             out ErrorResponse) ||
+                    OpenSourceLicense is null)
                 {
                     return false;
                 }

@@ -105,9 +105,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                new EnergyMeter(
                                    Meter_Id.Parse("Meter0815"),
                                    "EnergyMeter Model #1",
+                                   null,
                                    "hw. v1.80",
                                    "fw. v1.20",
                                    "Energy Metering Services",
+                                   null,
                                    null,
                                    null,
                                    new TransparencySoftwareStatus[] {
@@ -115,7 +117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            new TransparencySoftware(
                                                "Chargy Transparency Software Desktop Application",
                                                "v1.00",
-                                               OpenSourceLicenses.GPL3,
+                                               OpenSourceLicense.AGPL3,
                                                "GraphDefined GmbH",
                                                URL.Parse("https://open.charging.cloud/logo.svg"),
                                                URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -132,7 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            new TransparencySoftware(
                                                "Chargy Transparency Software Mobile Application",
                                                "v1.00",
-                                               OpenSourceLicenses.GPL3,
+                                               OpenSourceLicense.AGPL3,
                                                "GraphDefined GmbH",
                                                URL.Parse("https://open.charging.cloud/logo.svg"),
                                                URL.Parse("https://open.charging.cloud/Chargy/howto"),
@@ -490,7 +492,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                       InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                       InitialStatus:        EVSEStatusTypes.Available,
 
-                                      Configurator:         evse => {
+                                      SocketOutlets:        new SocketOutlet[] {
+                                                                new SocketOutlet(
+                                                                    Id:              SocketOutlet_Id.Parse("1"),
+                                                                    Plug:            PlugTypes.Type2Outlet,
+                                                                    Lockable:        true,
+                                                                    CableAttached:   true,
+                                                                    CableLength:     4
+                                                                )
                                                             }
 
                                   );
@@ -513,7 +522,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                       InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                       InitialStatus:        EVSEStatusTypes.Available,
 
-                                      Configurator:         evse => {
+                                      SocketOutlets:        new SocketOutlet[] {
+                                                                new SocketOutlet(
+                                                                    Id:              SocketOutlet_Id.Parse("2"),
+                                                                    Plug:            PlugTypes.TypeFSchuko,
+                                                                    Lockable:        false,
+                                                                    CableAttached:   false
+                                                                )
                                                             }
 
                                   );
@@ -573,18 +588,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                               //ParkingTime               
                               //ParkingFee                
 
-                              EnergyMeterId:                  EnergyMeter_Id.Parse("12345678"),
-                              EnergyMeteringValues:           new Timestamped<Decimal>[] {
-                                                                  new Timestamped<Decimal>(startTime + TimeSpan.FromMinutes(1),    5),
-                                                                  new Timestamped<Decimal>(startTime + TimeSpan.FromMinutes(31),  10),
-                                                                  new Timestamped<Decimal>(startTime + TimeSpan.FromMinutes(61),  15),
-                                                                  new Timestamped<Decimal>(startTime + TimeSpan.FromMinutes(91),  20),
-                                                                  new Timestamped<Decimal>(startTime + TimeSpan.FromMinutes(119), 22),
+                              //EnergyMeterId:                // automagic!
+                              EnergyMeter:                    new WWCP.EnergyMeter(
+                                                                  EnergyMeter_Id.Parse("12345678")
+                                                              ),
+                              EnergyMeteringValues:           new EnergyMeteringValue[] {
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(1),    5),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(31),  10),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(61),  15),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(91),  20),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(119), 22),
                                                               }
-                              //SignedMeteringValues:           new SignedMeteringValue<Decimal>[1] {
-                              //                                    new SignedMeteringValue<Decimal>()
-                              //                                }
                               //ConsumedEnergy                // automagic!
+                              //ConsumedEnergyFee         
 
                               //CustomData                
                               //InternalData              
@@ -609,13 +625,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual (17, wwcpCDR.ConsumedEnergy!.Value);
 
             var ocpiCDR = wwcpCDR.ToOCPI(out var warnings);
+            Assert.AreEqual (0, warnings.Count());
 
             Assert.IsNotNull(ocpiCDR);
-            Assert.AreEqual ("DE",                                  ocpiCDR!.CountryCode.ToString());
-            Assert.AreEqual ("GEF",                                 ocpiCDR!.PartyId.    ToString());
-            Assert.AreEqual (wwcpCDR.Id.ToString(),                 ocpiCDR!.Id.         ToString());
-            Assert.AreEqual (wwcpCDR.SessionTime.StartTime,         ocpiCDR!.Start);
-            Assert.AreEqual (wwcpCDR.SessionTime.EndTime!.Value,    ocpiCDR!.End);
+            Assert.AreEqual ("DE",                                      ocpiCDR!.CountryCode.ToString());
+            Assert.AreEqual ("GEF",                                     ocpiCDR!.PartyId.    ToString());
+            Assert.AreEqual (wwcpCDR.Id.ToString(),                     ocpiCDR!.Id.         ToString());
+            Assert.AreEqual (wwcpCDR.SessionTime.StartTime,             ocpiCDR!.Start);
+            Assert.AreEqual (wwcpCDR.SessionTime.EndTime!.Value,        ocpiCDR!.End);
+            //AuthId
+            Assert.AreEqual (wwcpCDR.AuthMethodStart.ToOCPI(),          ocpiCDR!.AuthMethod);
+
+            Assert.IsNotNull(ocpiCDR!.Location);
+            Assert.IsNotNull(ocpiCDR!.Location.EVSEs);
+            Assert.AreEqual (1,                                         ocpiCDR!.Location.EVSEs.Count());
+            Assert.AreEqual (wwcpCDR!.EVSEId!.Value.ToString(),         ocpiCDR!.Location.EVSEs.First().EVSEId!.Value.ToString());
+
+            Assert.AreEqual (wwcpCDR.Currency!.ISOCode,                 ocpiCDR!.Currency.ToString());
+
+            Assert.IsNotNull(ocpiCDR!.ChargingPeriods);
+            Assert.AreEqual (wwcpCDR!.EnergyMeteringValues.Count(),     ocpiCDR!.ChargingPeriods.Count());
+
+            Assert.AreEqual (wwcpCDR.ChargingPrice!.Value,              ocpiCDR!.TotalCost);
+            Assert.AreEqual (wwcpCDR.ConsumedEnergy!.Value,             ocpiCDR!.TotalEnergy);
+            Assert.AreEqual (wwcpCDR.Duration.Value,                    ocpiCDR!.TotalTime);
+
+            Assert.AreEqual (wwcpCDR.EnergyMeterId!.Value.ToString(),   ocpiCDR!.MeterId.ToString());
+
+            //Tariffs
+            //SignedData
+            //TotalParkingTime
+            //Remark
+
+            //LastUpdated
 
         }
 
