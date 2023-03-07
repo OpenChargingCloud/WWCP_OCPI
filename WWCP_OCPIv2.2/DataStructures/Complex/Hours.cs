@@ -339,6 +339,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Hours Clone()
+
+            => new (IsTwentyFourSevenOpen,
+                    RegularHours.       Select(regularHour         => regularHour.        Clone()).ToArray(),
+                    ExceptionalOpenings.Select(exceptionalOpening  => exceptionalOpening. Clone()).ToArray(),
+                    ExceptionalClosings.Select(exceptionalClosings => exceptionalClosings.Clone()).ToArray());
+
+        #endregion
+
 
         #region Operator overloading
 

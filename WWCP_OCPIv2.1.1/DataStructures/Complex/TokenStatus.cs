@@ -270,6 +270,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public TokenStatus Clone()
+
+            => new (Token.             Clone(),
+                    Status.            Clone,
+                    LocationReference?.Clone());
+
+        #endregion
+
 
         #region Operator overloading
 

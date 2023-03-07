@@ -1219,6 +1219,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public CDR Clone()
+
+            => new (CountryCode.Clone,
+                    PartyId.    Clone,
+                    Id.         Clone,
+                    Start,
+                    End,
+                    CDRToken.   Clone(),
+                    AuthMethod,
+                    Location.   Clone(),
+                    Currency.   Clone,
+                    ChargingPeriods.      Select(chargingPeriod       => chargingPeriod.      Clone()).ToArray(),
+                    TotalCosts. Clone(),
+                    TotalEnergy,
+                    TotalTime,
+
+                    SessionId?.             Clone,
+                    AuthorizationReference?.Clone,
+                    MeterId?.               Clone,
+                    EnergyMeter?.           Clone(),
+                    TransparencySoftwares.Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
+                    Tariffs.              Select(tariff               => tariff.              Clone()).ToArray(),
+                    SignedData?.            Clone(),
+                    TotalFixedCosts?.       Clone(),
+                    TotalEnergyCost?.       Clone(),
+                    TotalTimeCost?.         Clone(),
+                    TotalParkingTime,
+                    TotalParkingCost?.      Clone(),
+                    TotalReservationCost?.  Clone(),
+                    Remark is not null ? new String(Remark.ToCharArray()) : null,
+                    InvoiceReferenceId?.    Clone,
+                    Credit,
+                    CreditReferenceId?.     Clone,
+                    HomeChargingCompensation,
+
+                    LastUpdated);
+
+        #endregion
+
 
         #region Operator overloading
 

@@ -89,11 +89,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="VisualNumber">An optional visual or readable number/identification as printed on the token (RFID card). Might be equal to the contract identification.</param>
         /// <param name="Issuer">An optional issuing company. This is normally the name of the company printed on the token (RFID card), but not necessarily the eMSP.</param>
         /// <param name="GroupId">An optional group identification. This identification groups a couple of tokens to make two or more tokens work as one.</param>
-        public PublishToken(Token_Id?    Id             = null,
+        public PublishToken(Token_Id?   Id             = null,
                             TokenType?  Type           = null,
-                            String?      VisualNumber   = null,
-                            String?      Issuer         = null,
-                            Group_Id?    GroupId        = null)
+                            String?     VisualNumber   = null,
+                            String?     Issuer         = null,
+                            Group_Id?   GroupId        = null)
         {
 
             this.Id            = Id;
@@ -309,6 +309,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        : JSON;
 
         }
+
+        #endregion
+
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public PublishToken Clone()
+
+            => new (Id?.Clone,
+                    Type?.Clone,
+                    VisualNumber is not null ? new String(VisualNumber.ToCharArray()) : null,
+                    Issuer       is not null ? new String(Issuer.      ToCharArray()) : null,
+                    GroupId?.Clone);
 
         #endregion
 

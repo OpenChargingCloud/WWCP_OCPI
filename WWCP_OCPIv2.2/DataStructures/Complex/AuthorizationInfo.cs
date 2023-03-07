@@ -316,6 +316,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public AuthorizationInfo Clone()
+
+            => new (Allowed.                Clone,
+                    Token.                  Clone(),
+                    Location?.              Clone(),
+                    AuthorizationReference?.Clone,
+                    Info?.                  Clone(),
+                    Runtime);
+
+        #endregion
+
 
         #region Operator overloading
 

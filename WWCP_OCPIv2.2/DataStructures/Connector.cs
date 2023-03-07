@@ -510,6 +510,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Connector Clone()
+
+            => new (ParentEVSE,
+
+                    Id.                    Clone,
+                    Standard.              Clone,
+                    Format,
+                    PowerType,
+                    MaxVoltage,
+                    MaxAmperage,
+                    MaxElectricPower,
+                    TariffIds.Select(tariffId => tariffId.Clone).ToArray(),
+                    TermsAndConditionsURL?.Clone,
+
+                    LastUpdated);
+
+        #endregion
+
 
         #region (private) TryPrivatePatch(JSON, Patch)
 

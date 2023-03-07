@@ -505,6 +505,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public CDRLocation Clone()
+
+            => new (Id.               Clone,
+                    new String(Address.ToCharArray()),
+                    new String(City.   ToCharArray()),
+                    Country.          Clone,
+                    Coordinates.      Clone(),
+                    EVSEUId.          Clone,
+                    EVSEId.           Clone,
+                    ConnectorId.      Clone,
+                    ConnectorStandard.Clone,
+                    ConnectorFormat,
+                    ConnectorPowerType,
+
+                    Name       is not null ? new String(Name.      ToCharArray()) : null,
+                    PostalCode is not null ? new String(PostalCode.ToCharArray()) : null,
+                    State      is not null ? new String(State.     ToCharArray()) : null);
+
+        #endregion
+
 
         #region Operator overloading
 

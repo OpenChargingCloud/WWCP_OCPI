@@ -226,6 +226,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public DisplayText Clone()
+
+            => new (Language,
+                    new String(Text.ToCharArray()));
+
+        #endregion
+
 
         #region Operator overloading
 

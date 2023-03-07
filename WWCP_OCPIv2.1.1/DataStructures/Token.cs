@@ -521,6 +521,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Token Clone()
+
+            => new (CountryCode.Clone,
+                    PartyId.    Clone,
+                    Id.         Clone,
+                    Type.       Clone,
+                    AuthId.     Clone,
+                    new String(Issuer.ToCharArray()),
+                    IsValid,
+                    WhitelistType,
+                    VisualNumber is not null ? new String(VisualNumber.ToCharArray()) : null,
+                    UILanguage,
+
+                    LastUpdated);
+
+        #endregion
+
 
         #region (private) TryPrivatePatch(JSON, Patch)
 

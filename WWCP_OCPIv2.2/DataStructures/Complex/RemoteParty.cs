@@ -393,6 +393,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public RemoteParty Clone()
+
+            => new (CountryCode. Clone,
+                    PartyId.     Clone,
+                    Role,
+                    BusinessDetails.Clone(),
+                    AccessInfoStatus. Select(accessInfoStatus  => accessInfoStatus. Clone()),
+                    RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
+                    Status,
+                    LastUpdated);
+
+        #endregion
+
 
         #region CalcSHA256Hash(CustomRemotePartySerializer = null, CustomBusinessDetailsSerializer = null, ...)
 

@@ -20,7 +20,6 @@
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -64,6 +63,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
         #endregion
+
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public AccessInfoStatus Clone()
+
+            => new (Token.Clone,
+                    Status);
+
+        #endregion
+
 
     }
 

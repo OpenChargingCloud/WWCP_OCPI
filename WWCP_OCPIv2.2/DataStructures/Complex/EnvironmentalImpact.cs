@@ -209,6 +209,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public EnvironmentalImpact Clone()
+
+            => new (Category.Clone,
+                    Amount);
+
+        #endregion
+
 
         #region Operator overloading
 

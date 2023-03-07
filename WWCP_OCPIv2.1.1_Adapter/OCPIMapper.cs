@@ -17,9 +17,9 @@
 
 #region Usings
 
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
-using cloud.charging.open.protocols.WWCP;
 using org.GraphDefined.Vanaheimr.Illias;
+
+using cloud.charging.open.protocols.WWCP;
 
 #endregion
 
@@ -858,8 +858,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this ChargeDetailRecord, ref Warnings)
 
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord  ChargeDetailRecord,
-                                  ref List<Warning>             Warnings)
+        public static CDR? ToOCPI(this ChargeDetailRecord  ChargeDetailRecord,
+                                  ref List<Warning>        Warnings)
         {
 
             var result = ChargeDetailRecord.ToOCPI(out var warnings);
@@ -875,8 +875,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this ChargeDetailRecord, out Warnings)
 
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord  ChargeDetailRecord,
-                                  out IEnumerable<Warning>      Warnings)
+        public static CDR? ToOCPI(this ChargeDetailRecord   ChargeDetailRecord,
+                                  out IEnumerable<Warning>  Warnings)
         {
 
             var warnings = new List<Warning>();
@@ -975,7 +975,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             energyMeteringValue.Timestamp,
                             new CDRDimension[] {
                                 new CDRDimension(
-                                    CDRDimensionType.ENERGY_EXPORT,
+                                    CDRDimensionType.ENERGY,
                                     energyMeteringValue.Value
                                 )
                             }
@@ -1030,7 +1030,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            TotalParkingTime:        null,
                            Remark:                  null,
 
-                           LastUpdated:             Timestamp.Now
+                           LastUpdated:             ChargeDetailRecord.LastChange// Timestamp.Now
 
                        );
 

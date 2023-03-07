@@ -222,6 +222,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Time Clone()
+
+            => new (Hour,
+                    Minute,
+                    Second);
+
+        #endregion
+
 
         #region Operator overloading
 

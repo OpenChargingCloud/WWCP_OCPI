@@ -209,10 +209,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             => new ("EDL40 Mennekes");
 
         /// <summary>
-        /// GraphDefiened implementation.
+        /// GraphDefined implementation.
         /// </summary>
-        public static EncodingMethod GraphDefiened
-            => new ("GraphDefiened");
+        public static EncodingMethod GraphDefined
+            => new ("GraphDefined");
 
         /// <summary>
         /// chargeIT Mobility implementation.

@@ -236,6 +236,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public SignedValue Clone()
+
+            => new (Nature.Clone,
+                    new String(PlainData.ToCharArray()),
+                    new String(SignedData.ToCharArray()));
+
+        #endregion
+
 
         #region Operator overloading
 

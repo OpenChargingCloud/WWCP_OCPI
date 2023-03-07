@@ -312,6 +312,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public CDRToken Clone()
+
+            => new (CountryCode.Clone,
+                    PartyId.    Clone,
+                    UID.        Clone,
+                    TokenType.  Clone,
+                    ContractId. Clone);
+
+        #endregion
+
 
         #region Operator overloading
 

@@ -732,6 +732,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Session Clone()
+
+            => new (CountryCode.Clone,
+                    PartyId.    Clone,
+                    Id.         Clone,
+                    Start,
+                    kWh,
+                    AuthId.     Clone,
+                    AuthMethod,
+                    Location.   Clone(),
+                    Currency.   Clone,
+                    Status,
+
+                    End,
+                    MeterId?.   Clone,
+                    ChargingPeriods.Select(chargingPeriod => chargingPeriod.Clone()).ToArray(),
+                    TotalCost,
+
+                    LastUpdated);
+
+        #endregion
+
 
         #region (private) TryPrivatePatch(JSON, Patch)
 

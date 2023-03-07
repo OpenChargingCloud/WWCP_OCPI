@@ -241,6 +241,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public StatusSchedule Clone()
+
+            => new (Status.Clone,
+                    Begin,
+                    End);
+
+        #endregion
+
 
         #region Operator overloading
 

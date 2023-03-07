@@ -241,6 +241,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public LocationReference Clone()
+
+            => new (LocationId.Clone,
+                    EVSEUIds.Select(evseUId => evseUId.Clone).ToArray());
+
+        #endregion
+
 
         #region Operator overloading
 

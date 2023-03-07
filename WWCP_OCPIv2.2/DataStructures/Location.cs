@@ -1040,6 +1040,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Location Clone()
+
+            => new (CountryCode.  Clone,
+                    PartyId.      Clone,
+                    Id.           Clone,
+                    Publish,
+                    new String(Address.   ToCharArray()),
+                    new String(City.      ToCharArray()),
+                    Country.      Clone,
+                    Coordinates.  Clone(),
+                    new String(Timezone.ToCharArray()),
+
+                    PublishAllowedTo.Select(publishToken    => publishToken.   Clone()).ToArray(),
+                    Name       is not null ? new String(Name.      ToCharArray()) : null,
+                    PostalCode is not null ? new String(PostalCode.ToCharArray()) : null,
+                    State      is not null ? new String(State.     ToCharArray()) : null,
+                    RelatedLocations.Select(relatedLocation => relatedLocation.Clone()).ToArray(),
+                    ParkingType?. Clone,
+                    EVSEs.           Select(evse            => evse.           Clone()).ToArray(),
+                    Directions.      Select(displayText     => displayText.    Clone()).ToArray(),
+                    Operator?.    Clone(),
+                    SubOperator?. Clone(),
+                    Owner?.       Clone(),
+                    Facilities.      Select(facility        => facility.       Clone  ).ToArray(),
+                    OpeningTimes?.Clone(),
+                    ChargingWhenClosed,
+                    Images.          Select(image           => image.          Clone()).ToArray(),
+                    EnergyMix?.   Clone(),
+
+                    LastUpdated);
+
+        #endregion
+
 
         #region (private) TryPrivatePatch(JSON, Patch)
 

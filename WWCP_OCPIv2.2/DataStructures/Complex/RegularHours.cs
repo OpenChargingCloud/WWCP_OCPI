@@ -246,6 +246,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public RegularHours Clone()
+
+            => new (Weekday,
+                    Begin,
+                    End);
+
+        #endregion
+
 
         #region Operator overloading
 

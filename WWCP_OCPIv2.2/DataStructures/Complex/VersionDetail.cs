@@ -215,6 +215,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public VersionDetail Clone()
+
+            => new (VersionId.Clone,
+                    Endpoints.Select(endpoint => endpoint.Clone()).ToArray());
+
+        #endregion
+
 
         #region Operator overloading
 

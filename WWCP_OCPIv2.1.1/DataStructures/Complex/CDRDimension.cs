@@ -234,6 +234,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public CDRDimension Clone()
+
+            => new (Type.Clone,
+                    Volume);
+
+        #endregion
+
 
         #region Operator overloading
 

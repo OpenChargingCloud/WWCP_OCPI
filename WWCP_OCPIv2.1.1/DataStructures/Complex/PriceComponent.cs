@@ -310,6 +310,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public PriceComponent Clone()
+
+            => new (Type.Clone,
+                    Price,
+                    StepSize);
+
+        #endregion
+
 
         #region Operator overloading
 

@@ -248,7 +248,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                },
 
                                new SignedData(
-                                   EncodingMethod.GraphDefiened,
+                                   EncodingMethod.GraphDefined,
                                    new SignedValue[] {
                                        new SignedValue(
                                            SignedValueNature.START,
@@ -268,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                    },
                                    1,     // Encoding method version
                                    null,  // Public key
-                                   "https://open.charging.cloud/pools/1/stations/1/evse/1/publicKey"
+                                   URL.Parse("https://open.charging.cloud/pools/1/stations/1/evse/1/publicKey")
                                ),
 
                                // Total Fixed Costs

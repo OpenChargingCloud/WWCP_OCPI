@@ -260,6 +260,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public AdditionalGeoLocation Clone()
+
+            => new (GeoLocation.Clone(),
+                    Name?.      Clone());
+
+        #endregion
+
 
         #region Operator overloading
 

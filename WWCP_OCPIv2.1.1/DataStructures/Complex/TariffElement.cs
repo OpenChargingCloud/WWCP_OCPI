@@ -283,6 +283,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public TariffElement Clone()
+
+            => new (PriceComponents.   Select(priceComponent    => priceComponent.   Clone()).ToArray(),
+                    TariffRestrictions.Select(tariffRestriction => tariffRestriction.Clone()).ToArray());
+
+        #endregion
+
 
         #region Operator overloading
 

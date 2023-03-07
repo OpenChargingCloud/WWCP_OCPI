@@ -474,6 +474,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Connector Clone()
+
+            => new (ParentEVSE,
+
+                    Id.                    Clone,
+                    Standard.              Clone,
+                    Format,
+                    PowerType,
+                    Voltage,
+                    Amperage,
+                    TariffId?.             Clone,
+                    TermsAndConditionsURL?.Clone,
+
+                    LastUpdated);
+
+        #endregion
+
 
         #region (private) TryPrivatePatch(JSON, Patch)
 

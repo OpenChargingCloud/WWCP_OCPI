@@ -180,7 +180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region Static definitions
+        #region Static Definitions
 
         /// <summary>
         /// Signed value at the start of the charging session.

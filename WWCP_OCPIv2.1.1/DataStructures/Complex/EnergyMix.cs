@@ -286,6 +286,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public EnergyMix Clone()
+
+            => new (IsGreenEnergy,
+                    EnergySources.       Select(energySource        => energySource.       Clone()).ToArray(),
+                    EnvironmentalImpacts.Select(environmentalImpact => environmentalImpact.Clone()).ToArray(),
+                    SupplierName      is not null ? new String(SupplierName.     ToCharArray()) : null,
+                    EnergyProductName is not null ? new String(EnergyProductName.ToCharArray()) : null);
+
+        #endregion
+
 
         #region Operator overloading
 

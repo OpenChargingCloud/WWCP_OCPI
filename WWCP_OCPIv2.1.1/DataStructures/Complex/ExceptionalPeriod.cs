@@ -208,6 +208,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public ExceptionalPeriod Clone()
+
+            => new (Begin,
+                    End);
+
+        #endregion
+
 
         #region Operator overloading
 

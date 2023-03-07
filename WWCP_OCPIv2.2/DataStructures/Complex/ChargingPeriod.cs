@@ -277,6 +277,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public ChargingPeriod Clone()
+
+            => new (StartTimestamp,
+                    Dimensions.Select(cdrDimension => cdrDimension.Clone()).ToArray());
+
+        #endregion
+
 
         #region Operator overloading
 

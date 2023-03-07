@@ -20,6 +20,7 @@
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -67,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// This URL gives the EV driver the possibility to verify the signed data of a charging session.
         /// </summary>
         [Optional]
-        public String?                   URL                        { get; }
+        public URL?                      URL                        { get; }
 
         #endregion
 
@@ -85,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                           IEnumerable<SignedValue>  SignedValues,
                           Int32?                    EncodingMethodVersion   = null,
                           PublicKey?                PublicKey               = null,
-                          String?                   URL                     = null)
+                          URL?                      URL                     = null)
         {
 
             if (!SignedValues.Any())
@@ -227,7 +228,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse URL                      [optional]
 
-                var URL = JSON.GetString("url");
+                if (!JSON.ParseOptional("url",
+                                        "url",
+                                        org.GraphDefined.Vanaheimr.Hermod.HTTP.URL.TryParse,
+                                        out URL? URL,
+                                        out ErrorResponse))
+                {
+                    return false;
+                }
 
                 #endregion
 
@@ -284,8 +292,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("signed_values",             new JArray(SignedValues.Select(signedValue => signedValue.ToJSON(CustomSignedValueSerializer))))
                                : null,
 
-                           URL.IsNotNullOrEmpty()
-                               ? new JProperty("url",                       URL)
+                           URL.HasValue
+                               ? new JProperty("url",                       URL.            Value.ToString())
                                : null
 
                        );
@@ -295,6 +303,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        : JSON;
 
         }
+
+        #endregion
+
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public SignedData Clone()
+
+            => new (EncodingMethod.Clone,
+                    SignedValues.Select(signedValue => signedValue.Clone()).ToArray(),
+                    EncodingMethodVersion,
+                    PublicKey?.    Clone,
+                    URL?.          Clone);
 
         #endregion
 
@@ -369,14 +392,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                EncodingMethod.Equals(SignedData.EncodingMethod) &&
 
-            ((!EncodingMethodVersion.HasValue    && !SignedData.EncodingMethodVersion.HasValue)    ||
-              (EncodingMethodVersion.HasValue    &&  SignedData.EncodingMethodVersion.HasValue    && EncodingMethodVersion.Value.Equals(SignedData.EncodingMethodVersion.Value))) &&
+            ((!EncodingMethodVersion.HasValue    && !SignedData.EncodingMethodVersion.HasValue) ||
+              (EncodingMethodVersion.HasValue    &&  SignedData.EncodingMethodVersion.HasValue && EncodingMethodVersion.Value.Equals(SignedData.EncodingMethodVersion.Value))) &&
 
-            ((!PublicKey.            HasValue    && !SignedData.PublicKey.            HasValue)    ||
-              (PublicKey.            HasValue    &&  SignedData.PublicKey.            HasValue    && PublicKey.            Value.Equals(SignedData.PublicKey.            Value))) &&
+            ((!PublicKey.            HasValue    && !SignedData.PublicKey.            HasValue) ||
+              (PublicKey.            HasValue    &&  SignedData.PublicKey.            HasValue && PublicKey.            Value.Equals(SignedData.PublicKey.            Value))) &&
 
-             ((URL                   is     null &&  SignedData.URL                   is     null) ||
-              (URL                   is not null &&  SignedData.URL                   is not null && URL.                        Equals(SignedData.URL)))                         &&
+            ((!URL.                  HasValue    && !SignedData.URL.                  HasValue) ||
+              (URL.                  HasValue    &&  SignedData.URL.                  HasValue && URL.                  Value.Equals(SignedData.URL.                  Value))) &&
 
                SignedValues.Count().Equals(SignedData.SignedValues.Count()) &&
                SignedValues.All(signedValue => SignedData.SignedValues.Contains(signedValue));
@@ -428,8 +451,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        ? ", public key: " + PublicKey.Value.ToString().SubstringMax(20)
                        : "",
 
-                   URL is not null
-                       ? ", URL: "        + URL.                       SubstringMax(20)
+                   URL.      HasValue
+                       ? ", URL: "        + URL.            ToString().SubstringMax(20)
                        : ""
 
                );

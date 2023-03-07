@@ -506,6 +506,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public TariffRestrictions Clone()
+
+            => new (StartTime,
+                    EndTime,
+                    StartDate,
+                    EndDate,
+                    MinkWh,
+                    MaxkWh,
+                    MinPower,
+                    MaxPower,
+                    MinDuration,
+                    MaxDuration,
+                    DayOfWeek.ToArray());
+
+        #endregion
+
 
         #region Operator overloading
 

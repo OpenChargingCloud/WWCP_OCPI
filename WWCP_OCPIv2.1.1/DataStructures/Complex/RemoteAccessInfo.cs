@@ -125,6 +125,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public RemoteAccessInfo Clone()
+
+            => new(AccessToken.Clone,
+                   VersionsURL.Clone,
+                   VersionIds.Select(versionId => versionId.Clone).ToArray(),
+                   SelectedVersionId,
+                   AccessTokenBase64Encoding,
+                   Status);
+
+        #endregion
+
     }
 
 }

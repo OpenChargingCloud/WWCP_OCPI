@@ -238,6 +238,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public EnergyContract Clone()
+
+            => new (new String(SupplierName.ToCharArray()),
+                    ContractId.Clone);
+
+        #endregion
+
 
         #region Operator overloading
 

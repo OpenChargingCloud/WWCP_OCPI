@@ -45,14 +45,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charge detail record.
         /// </summary>
         [Mandatory]
-        public CountryCode                         CountryCode                 { get; }
+        public CountryCode                              CountryCode                 { get; }
 
         /// <summary>
         /// The identification of the charge point operator that 'owns' this charge detail record
         /// (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id                            PartyId                     { get; }
+        public Party_Id                                 PartyId                     { get; }
 
         /// <summary>
         /// The identification of the charge detail record within the charge point operator's platform
@@ -60,14 +60,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// CiString(39)
         /// </summary>
         [Mandatory]
-        public CDR_Id                              Id                          { get; }
+        public CDR_Id                                   Id                          { get; }
 
         /// <summary>
         /// The start timestamp of the charging session, or in-case of a reservation
         /// (before the start of a session) the start of the reservation.
         /// </summary>
         [Mandatory]
-        public DateTime                            Start                       { get; }
+        public DateTime                                 Start                       { get; }
 
         /// <summary>
         /// The timestamp when the session was completed/finished.
@@ -75,57 +75,57 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// EV is full, but parking cost also has to be paid.
         /// </summary>
         [Mandatory]
-        public DateTime                            End                         { get; }
+        public DateTime                                 End                         { get; }
 
         /// <summary>
         /// The reference to a token, identified by the auth_id field of the token.
         /// </summary>
         [Mandatory]
-        public Auth_Id                             AuthId                      { get; }
+        public Auth_Id                                  AuthId                      { get; }
 
         /// <summary>
         /// The authentication method used.
         /// </summary>
         [Mandatory]
-        public AuthMethods                         AuthMethod                  { get; }
+        public AuthMethods                              AuthMethod                  { get; }
 
         /// <summary>
         /// The location where the charging session took place, including only the relevant
         /// EVSE and connector.
         /// </summary>
         [Mandatory]
-        public Location                            Location                    { get; }
+        public Location                                 Location                    { get; }
 
         /// <summary>
         /// The optional identification of the energy meter.
         /// </summary>
         [Optional]
-        public Meter_Id?                           MeterId                     { get; }
+        public Meter_Id?                                MeterId                     { get; }
 
         /// <summary>
         /// The optional energy meter.
         /// </summary>
         [Optional, NonStandard]
-        public EnergyMeter?                        EnergyMeter                 { get; }
+        public EnergyMeter?                             EnergyMeter                 { get; }
 
         /// <summary>
         /// The enumeration of valid transparency softwares which can be used to validate
         /// the singed charging session and metering data.
         /// </summary>
         [Optional, NonStandard]
-        public IEnumerable<TransparencySoftware>   TransparencySoftwares        { get; }
+        public IEnumerable<TransparencySoftwareStatus>  TransparencySoftwares        { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this charge detail record.
         /// </summary>
         [Mandatory]
-        public Currency                            Currency                    { get; }
+        public Currency                                 Currency                    { get; }
 
         /// <summary>
         /// The enumeration of relevant charging tariffs.
         /// </summary>
         [Optional]
-        public IEnumerable<Tariff>                 Tariffs                     { get; }
+        public IEnumerable<Tariff>                      Tariffs                     { get; }
 
         /// <summary>
         /// The enumeration of charging periods that make up this charging session.
@@ -133,46 +133,46 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// different relevant charging tariff.
         /// </summary>
         [Mandatory]
-        public IEnumerable<ChargingPeriod>         ChargingPeriods             { get; }
+        public IEnumerable<ChargingPeriod>              ChargingPeriods             { get; }
 
         /// <summary>
         /// The optional signed metering data that belongs to this charging session.
         /// (Backported from OCPI v2.2)
         /// </summary>
         [Optional, NonStandard]
-        public SignedData?                         SignedData                  { get; }
+        public SignedData?                              SignedData                  { get; }
 
         /// <summary>
         /// The total cost (excluding VAT) of this transaction.
         /// </summary>
         [Mandatory]
-        public Decimal                             TotalCost                  { get; }
+        public Decimal                                  TotalCost                  { get; }
 
         /// <summary>
         /// The total energy charged in kWh.
         /// </summary>
         [Mandatory]
-        public Decimal                             TotalEnergy                 { get; }
+        public Decimal                                  TotalEnergy                 { get; }
 
         /// <summary>
         /// The total duration of the charging session, including the duration of charging and not charging.
         /// </summary>
         [Mandatory]
-        public TimeSpan                            TotalTime                   { get; }
+        public TimeSpan                                 TotalTime                   { get; }
 
         /// <summary>
         /// The optional total duration of the charging session where the EV was not charging
         /// (no energy was transferred between EVSE and EV).
         /// </summary>
         [Optional]
-        public TimeSpan?                           TotalParkingTime            { get; }
+        public TimeSpan?                                TotalParkingTime            { get; }
 
         /// <summary>
         /// The optional total duration of the charging session where the EV was not charging
         /// (no energy was transferred between EVSE and EV).
         /// </summary>
         [Optional]
-        public TimeSpan                            TotalChargingTime
+        public TimeSpan                                 TotalChargingTime
             => TotalTime - (TotalParkingTime ?? TimeSpan.Zero);
 
         /// <summary>
@@ -181,18 +181,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// reason why a transaction was stopped.
         /// </summary>
         [Optional]
-        public String?                             Remark                      { get; }
+        public String?                                  Remark                      { get; }
 
         /// <summary>
         /// The timestamp when this charge detail record was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                            LastUpdated                 { get; }
+        public DateTime                                 LastUpdated                 { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charge detail record.
         /// </summary>
-        public String                              ETag                        { get; }
+        public String                                   ETag                        { get; }
 
         #endregion
 
@@ -264,7 +264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    Meter_Id?                                                     MeterId                                      = null,
                    EnergyMeter?                                                  EnergyMeter                                  = null,
-                   IEnumerable<TransparencySoftware>?                            TransparencySoftwares                        = null,
+                   IEnumerable<TransparencySoftwareStatus>?                      TransparencySoftwares                        = null,
                    IEnumerable<Tariff>?                                          Tariffs                                      = null,
                    SignedData?                                                   SignedData                                   = null,
                    TimeSpan?                                                     TotalParkingTime                             = null,
@@ -317,7 +317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.MeterId                  = MeterId;
             this.EnergyMeter              = EnergyMeter;
-            this.TransparencySoftwares    = TransparencySoftwares ?? Array.Empty<TransparencySoftware>();
+            this.TransparencySoftwares    = TransparencySoftwares ?? Array.Empty<TransparencySoftwareStatus>();
             this.Tariffs                  = Tariffs               ?? Array.Empty<Tariff>();
             this.SignedData               = SignedData;
             this.TotalParkingTime         = TotalParkingTime;
@@ -636,9 +636,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #region Parse TransparencySoftwares     [optional]
 
                 if (JSON.ParseOptionalJSON("transparency_softwares",
-                                           "transparency softwares",
-                                           TransparencySoftware.TryParse,
-                                           out IEnumerable<TransparencySoftware> TransparencySoftwares,
+                                           "transparency software with status",
+                                           TransparencySoftwareStatus.TryParse,
+                                           out IEnumerable<TransparencySoftwareStatus> TransparencySoftwares,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -924,7 +924,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null,
 
                            TransparencySoftwares.Any()
-                               ? new JProperty("transparency_softwares",    new JArray(TransparencySoftwares.Select(transparencySoftware => transparencySoftware.ToJSON(CustomTransparencySoftwareSerializer))))
+                               ? new JProperty("transparency_softwares",    new JArray(TransparencySoftwares.Select(transparencySoftwareStatus => transparencySoftwareStatus.ToJSON(CustomTransparencySoftwareStatusSerializer))))
                                : null,
 
                                  new JProperty("currency",                  Currency.                    ToString()),
@@ -942,8 +942,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null,
 
                            ChargingPeriods.Any()
-                               ? new JProperty("charging_periods",          new JArray(ChargingPeriods.      Select(chargingPeriod       => chargingPeriod.      ToJSON(CustomChargingPeriodSerializer,
-                                                                                                                                                                        CustomCDRDimensionSerializer))))
+                               ? new JProperty("charging_periods",          new JArray(ChargingPeriods.      Select(chargingPeriod             => chargingPeriod.            ToJSON(CustomChargingPeriodSerializer,
+                                                                                                                                                                                    CustomCDRDimensionSerializer))))
                                : null,
 
                                  new JProperty("total_cost",                TotalCost),
@@ -967,6 +967,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        : JSON;
 
         }
+
+        #endregion
+
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public CDR Clone()
+
+            => new (CountryCode.Clone,
+                    PartyId.    Clone,
+                    Id.         Clone,
+                    Start,
+                    End,
+                    AuthId.     Clone,
+                    AuthMethod,
+                    Location.   Clone(),
+                    Currency.   Clone,
+                    ChargingPeriods.      Select(chargingPeriod       => chargingPeriod.      Clone()).ToArray(),
+                    TotalCost,
+                    TotalEnergy,
+                    TotalTime,
+
+                    MeterId?.             Clone,
+                    EnergyMeter?.         Clone(),
+                    TransparencySoftwares.Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
+                    Tariffs.              Select(tariff               => tariff.              Clone()).ToArray(),
+                    SignedData?.          Clone(),
+                    TotalParkingTime,
+                    Remark is not null ? new String(Remark.ToCharArray()) : null,
+
+                    LastUpdated);
 
         #endregion
 

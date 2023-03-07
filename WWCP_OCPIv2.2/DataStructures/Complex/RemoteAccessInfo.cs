@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.VersionIds                 = VersionIds?.Distinct() ?? Array.Empty<Version_Id>();
             this.SelectedVersionId          = SelectedVersionId;
             this.AccessTokenBase64Encoding  = AccessTokenBase64Encoding ?? true;
-            this.Status                     = Status ?? RemoteAccessStatus.ONLINE;
+            this.Status                     = Status                 ?? RemoteAccessStatus.ONLINE;
             this.LastUpdate                 = Timestamp.Now;
 
         }
@@ -122,6 +122,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        : JSON;
 
         }
+
+        #endregion
+
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public RemoteAccessInfo Clone()
+
+            => new(AccessToken.Clone,
+                   VersionsURL.Clone,
+                   VersionIds.Select(versionId => versionId.Clone).ToArray(),
+                   SelectedVersionId,
+                   AccessTokenBase64Encoding,
+                   Status);
 
         #endregion
 

@@ -171,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Token(CountryCode                                       CountryCode,
                      Party_Id                                          PartyId,
                      Token_Id                                          Id,
-                     TokenType                                        Type,
+                     TokenType                                         Type,
                      Contract_Id                                       ContractId,
                      String                                            Issuer,
                      Boolean                                           IsValid,
@@ -614,6 +614,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        : JSON;
 
         }
+
+        #endregion
+
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Token Clone()
+
+            => new (CountryCode.    Clone,
+                    PartyId.        Clone,
+                    Id.             Clone,
+                    Type.           Clone,
+                    ContractId.     Clone,
+                    new String(Issuer.ToCharArray()),
+                    IsValid,
+                    WhitelistType,
+
+                    VisualNumber is not null ? new String(VisualNumber.ToCharArray()) : null,
+                    GroupId?.       Clone,
+                    UILanguage,
+                    DefaultProfile,
+                    EnergyContract?.Clone(),
+
+                    LastUpdated);
 
         #endregion
 

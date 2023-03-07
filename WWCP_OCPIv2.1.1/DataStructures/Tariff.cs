@@ -533,6 +533,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Tariff Clone()
+
+            => new (CountryCode.  Clone,
+                    PartyId.      Clone,
+                    Id.           Clone,
+                    Currency.     Clone,
+                    TariffElements.Select(tariffElement => tariffElement.Clone()).ToArray(),
+
+                    TariffAltText. Select(displayText   => displayText.  Clone()).ToArray(),
+                    TariffAltURL?.Clone,
+                    EnergyMix?.   Clone(),
+
+                    LastUpdated);
+
+        #endregion
+
 
         #region (private) TryPrivatePatch(JSON, Patch)
 

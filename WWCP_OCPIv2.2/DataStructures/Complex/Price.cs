@@ -239,6 +239,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Price Clone()
+
+            => new (ExcludingVAT,
+                    IncludingVAT);
+
+        #endregion
+
 
         #region Operator overloading
 

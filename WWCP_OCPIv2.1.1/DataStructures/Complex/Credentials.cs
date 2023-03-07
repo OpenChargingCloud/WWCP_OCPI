@@ -290,6 +290,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region Clone()
+
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        public Credentials Clone()
+
+            => new (Token.          Clone,
+                    URL.            Clone,
+                    BusinessDetails.Clone(),
+                    CountryCode.    Clone,
+                    PartyId.        Clone);
+
+        #endregion
+
 
         #region Operator overloading
 
