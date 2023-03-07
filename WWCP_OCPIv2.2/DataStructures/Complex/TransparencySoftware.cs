@@ -346,7 +346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                                  new JProperty("name",                    Name),
                                  new JProperty("version",                 Version),
-                                 new JProperty("open_source_license",     OpenSourceLicense.   ToString()),
+                                 new JProperty("open_source_license",     OpenSourceLicense.   ToJSON()),
                                  new JProperty("vendor",                  Vendor),
 
                            Logo.                HasValue

@@ -253,38 +253,44 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var JSON = cdr1.ToJSON();
 
-            Assert.AreEqual("DE",                          JSON["country_code"].Value<String>());
-            Assert.AreEqual("GEF",                         JSON["party_id"].    Value<String>());
-            Assert.AreEqual("CDR0001",                     JSON["id"].          Value<String>());
+            //Assert.AreEqual("DE",                          JSON["country_code"]?.Value<String>());
+            //Assert.AreEqual("GEF",                         JSON["party_id"]?.    Value<String>());
+            Assert.AreEqual("CDR0001",                     JSON["id"]?.          Value<String>());
 
 
-            Assert.IsTrue(CDR.TryParse(JSON, out var cdr2, out var errorResponse));
-            Assert.IsNull(errorResponse);
+            Assert.IsTrue(CDR.TryParse(JSON,
+                                       out var parsedCDR,
+                                       out var errorResponse,
+                                       CountryCode.Parse("DE"),
+                                       Party_Id.   Parse("GEF")));
 
-            Assert.AreEqual(cdr1.CountryCode,              cdr2.CountryCode);
-            Assert.AreEqual(cdr1.PartyId,                  cdr2.PartyId);
-            Assert.AreEqual(cdr1.Id,                       cdr2.Id);
+            Assert.IsNotNull(parsedCDR);
+            Assert.IsNull   (errorResponse);
 
-            Assert.AreEqual(cdr1.Start.ToIso8601(),        cdr2.Start.ToIso8601());
-            Assert.AreEqual(cdr1.End.  ToIso8601(),        cdr2.End.  ToIso8601());
-            Assert.AreEqual(cdr1.AuthId,                   cdr2.AuthId);
-            Assert.AreEqual(cdr1.AuthMethod,               cdr2.AuthMethod);
-            Assert.IsTrue  (cdr1.Location.Equals(cdr2.Location));
-            Assert.AreEqual(cdr1.Currency,                 cdr2.Currency);
-            Assert.AreEqual(cdr1.ChargingPeriods,          cdr2.ChargingPeriods);
-            Assert.AreEqual(cdr1.TotalCost,                cdr2.TotalCost);
-            Assert.AreEqual(cdr1.TotalEnergy,              cdr2.TotalEnergy);
-            Assert.AreEqual(cdr1.TotalTime,                cdr2.TotalTime);
+            Assert.AreEqual (cdr1.CountryCode,              parsedCDR!.CountryCode);
+            Assert.AreEqual (cdr1.PartyId,                  parsedCDR!.PartyId);
+            Assert.AreEqual (cdr1.Id,                       parsedCDR!.Id);
 
-            Assert.AreEqual(cdr1.MeterId,                  cdr2.MeterId);
-            Assert.AreEqual(cdr1.EnergyMeter,              cdr2.EnergyMeter);
-            Assert.AreEqual(cdr1.TransparencySoftwares,    cdr2.TransparencySoftwares);
-            Assert.AreEqual(cdr1.Tariffs,                  cdr2.Tariffs);
-            Assert.AreEqual(cdr1.SignedData,               cdr2.SignedData);
-            Assert.AreEqual(cdr1.TotalParkingTime,         cdr2.TotalParkingTime);
-            Assert.AreEqual(cdr1.Remark,                   cdr2.Remark);
+            Assert.AreEqual (cdr1.Start.ToIso8601(),        parsedCDR!.Start.ToIso8601());
+            Assert.AreEqual (cdr1.End.  ToIso8601(),        parsedCDR!.End.  ToIso8601());
+            Assert.AreEqual (cdr1.AuthId,                   parsedCDR!.AuthId);
+            Assert.AreEqual (cdr1.AuthMethod,               parsedCDR!.AuthMethod);
+            Assert.IsTrue   (cdr1.Location.Equals(parsedCDR!.Location));
+            Assert.AreEqual (cdr1.Currency,                 parsedCDR!.Currency);
+            Assert.AreEqual (cdr1.ChargingPeriods,          parsedCDR!.ChargingPeriods);
+            Assert.AreEqual (cdr1.TotalCost,                parsedCDR!.TotalCost);
+            Assert.AreEqual (cdr1.TotalEnergy,              parsedCDR!.TotalEnergy);
+            Assert.AreEqual (cdr1.TotalTime,                parsedCDR!.TotalTime);
 
-            Assert.AreEqual(cdr1.LastUpdated.ToIso8601(),  cdr2.LastUpdated.ToIso8601());
+            Assert.AreEqual (cdr1.MeterId,                  parsedCDR!.MeterId);
+            Assert.AreEqual (cdr1.EnergyMeter,              parsedCDR!.EnergyMeter);
+            Assert.AreEqual (cdr1.TransparencySoftwares,    parsedCDR!.TransparencySoftwares);
+            Assert.AreEqual (cdr1.Tariffs,                  parsedCDR!.Tariffs);
+            Assert.AreEqual (cdr1.SignedData,               parsedCDR!.SignedData);
+            Assert.AreEqual (cdr1.TotalParkingTime,         parsedCDR!.TotalParkingTime);
+            Assert.AreEqual (cdr1.Remark,                   parsedCDR!.Remark);
+
+            Assert.AreEqual (cdr1.LastUpdated.ToIso8601(),  parsedCDR!.LastUpdated.ToIso8601());
 
         }
 
@@ -370,10 +376,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
-            Assert.IsTrue(CDR.TryParse(JObject.Parse(JSON), out var parsedCDR, out var errorResponse));
-            Assert.IsNull(errorResponse);
+            Assert.IsTrue(CDR.TryParse(JObject.Parse(JSON),
+                                       out var parsedCDR,
+                                       out var errorResponse,
+                                       CountryCode.Parse("DE"),
+                                       Party_Id.   Parse("GEF")));
 
-            Assert.AreEqual(CDR_Id.Parse("12345"),                                 parsedCDR.Id);
+            Assert.IsNotNull(parsedCDR);
+            Assert.IsNull   (errorResponse);
+
+            Assert.AreEqual (CDR_Id.Parse("12345"),                                 parsedCDR!.Id);
             //Assert.AreEqual(true,                                                  parsedCDR.Publish);
             //Assert.AreEqual(cdr1.Start.    ToIso8601(),                            parsedCDR.Start.    ToIso8601());
             //Assert.AreEqual(cdr1.End.Value.ToIso8601(),                            parsedCDR.End.Value.ToIso8601());

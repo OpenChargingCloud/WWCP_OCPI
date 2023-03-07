@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #region Parse OpenSourceLicense         [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("open_source_license",
-                                             "legal status",
+                                             "Open Source License",
                                              OCPIv2_1_1.OpenSourceLicense.TryParse,
                                              out OpenSourceLicense? OpenSourceLicense,
                                              out ErrorResponse) ||
@@ -346,7 +346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  new JProperty("name",                    Name),
                                  new JProperty("version",                 Version),
-                                 new JProperty("open_source_license",     OpenSourceLicense.   ToString()),
+                                 new JProperty("open_source_license",     OpenSourceLicense.   ToJSON()),
                                  new JProperty("vendor",                  Vendor),
 
                            Logo.                HasValue

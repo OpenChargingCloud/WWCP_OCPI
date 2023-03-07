@@ -41,12 +41,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="OpenDataLicense">An enumeration of Open Data licenses.</param>
         /// <param name="Skip">The optional number of Open Data licenses to skip.</param>
         /// <param name="Take">The optional number of Open Data licenses to return.</param>
-        /// <param name="Embedded">Whether this data structure is embedded into another data structure.</param>
         /// <param name="CustomDataLicenseSerializer">A delegate to serialize custom data license JSON elements.</param>
         public static JArray ToJSON(this IEnumerable<OpenDataLicense>                  OpenDataLicense,
                                     UInt64?                                            Skip                          = null,
                                     UInt64?                                            Take                          = null,
-                                    Boolean                                            Embedded                      = false,
                                     CustomJObjectSerializerDelegate<OpenDataLicense>?  CustomDataLicenseSerializer   = null)
 
             => OpenDataLicense is null || !OpenDataLicense.Any()
@@ -57,8 +55,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                     Where         (openDataLicense => openDataLicense is not null).
                                     OrderBy       (openDataLicense => openDataLicense.Id).
                                     SkipTakeFilter(Skip, Take).
-                                    Select        (openDataLicense => openDataLicense.ToJSON(Embedded,
-                                                                                             CustomDataLicenseSerializer)));
+                                    Select        (openDataLicense => openDataLicense.ToJSON(CustomDataLicenseSerializer)));
 
         #endregion
 
@@ -281,24 +278,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(this Embedded = false, CustomSourceLicenseSerializer = null)
+        #region ToJSON(CustomSourceLicenseSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of the given data license.
         /// </summary>
-        /// <param name="Embedded">Whether this data structure is embedded into another data structure.</param>
         /// <param name="CustomDataLicenseSerializer">A delegate to serialize custom data license JSON elements.</param>
-        public JObject ToJSON(Boolean                                            Embedded                      = false,
-                              CustomJObjectSerializerDelegate<OpenDataLicense>?  CustomDataLicenseSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<OpenDataLicense>?  CustomDataLicenseSerializer   = null)
         {
 
             var json = JSONObject.Create(
 
-                                 new JProperty("@id",           Id.ToString()),
-
-                           !Embedded
-                               ? new JProperty("@context",      JSONLDContext)
-                               : null,
+                                 new JProperty("id",            Id.         ToString()),
 
                            Description.IsNeitherNullNorEmpty()
                                ? new JProperty("description",   Description.ToJSON())

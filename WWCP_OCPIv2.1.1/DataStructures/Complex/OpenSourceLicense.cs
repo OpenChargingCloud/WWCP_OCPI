@@ -41,12 +41,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="OpenSourceLicense">An enumeration of Open Source licenses.</param>
         /// <param name="Skip">The optional number of Open Source licenses to skip.</param>
         /// <param name="Take">The optional number of Open Source licenses to return.</param>
-        /// <param name="Embedded">Whether this data structure is embedded into another data structure.</param>
         /// <param name="CustomSourceLicenseSerializer">A delegate to serialize custom data license JSON elements.</param>
         public static JArray ToJSON(this IEnumerable<OpenSourceLicense>                  OpenSourceLicense,
                                     UInt64?                                              Skip                            = null,
                                     UInt64?                                              Take                            = null,
-                                    Boolean                                              Embedded                        = false,
                                     CustomJObjectSerializerDelegate<OpenSourceLicense>?  CustomSourceLicenseSerializer   = null)
 
             => OpenSourceLicense is null || !OpenSourceLicense.Any()
@@ -57,8 +55,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     Where         (openSourceLicense => openSourceLicense is not null).
                                     OrderBy       (openSourceLicense => openSourceLicense.Id).
                                     SkipTakeFilter(Skip, Take).
-                                    Select        (openSourceLicense => openSourceLicense.ToJSON(Embedded,
-                                                                                                 CustomSourceLicenseSerializer)));
+                                    Select        (openSourceLicense => openSourceLicense.ToJSON(CustomSourceLicenseSerializer)));
 
         #endregion
 
@@ -281,30 +278,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToJSON(this Embedded = false, CustomSourceLicenseSerializer = null)
+        #region ToJSON(CustomSourceLicenseSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of the given data license.
         /// </summary>
-        /// <param name="Embedded">Whether this data structure is embedded into another data structure.</param>
         /// <param name="CustomSourceLicenseSerializer">A delegate to serialize custom data license JSON elements.</param>
-        public JObject ToJSON(Boolean                                              Embedded                        = false,
-                              CustomJObjectSerializerDelegate<OpenSourceLicense>?  CustomSourceLicenseSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<OpenSourceLicense>?  CustomSourceLicenseSerializer   = null)
         {
 
             var json = JSONObject.Create(
 
-                                 new JProperty("@id",           Id.ToString()),
-
-                           !Embedded
-                               ? new JProperty("@context",      JSONLDContext)
-                               : null,
+                                 new JProperty("id",            Id.         ToString()),
 
                            Description.IsNeitherNullNorEmpty()
                                ? new JProperty("description",   Description.ToJSON())
                                : null,
 
-                           new JProperty("URLs",                new JArray(URLs.Select(url => url.ToString())))
+                                 new JProperty("URLs",          new JArray(URLs.Select(url => url.ToString())))
 
                        );
 

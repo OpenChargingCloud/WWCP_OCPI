@@ -572,13 +572,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Location                  [mandatory]
 
-                if (!JSON.ParseMandatoryJSON("location",
-                                             "charge detail record location",
-                                             OCPIv2_1_1.Location.TryParse,
-                                             out Location? Location,
-                                             out ErrorResponse))
-                {
-                    return false;
+                Location? Location = null;
+                var locationJSON = JSON["location"] as JObject;
+
+                if (locationJSON is not null) {
+                    if (!OCPIv2_1_1.Location.TryParse(locationJSON,
+                                                      out Location,
+                                                      out ErrorResponse,
+                                                      CountryCodeURL,
+                                                      PartyIdURL))
+                    {
+                        return false;
+                    }
                 }
 
                 if (Location is null)
@@ -657,14 +662,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Tariffs                   [optional]
 
-                if (JSON.ParseOptionalJSON("tariffs",
-                                           "tariffs",
-                                           Tariff.TryParse,
-                                           out IEnumerable<Tariff> Tariffs,
-                                           out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
+                var Tariffs      = new List<Tariff>();
+                var tariffsJSON  = JSON["tariffs"] as JArray;
+
+                if (tariffsJSON is not null && tariffsJSON.Any()) {
+                    foreach (var tariffJSON in tariffsJSON)
+                    {
+                        if (tariffJSON is JObject tariffJSON2)
+                        {
+                            if (Tariff.TryParse(tariffJSON2,
+                                                out var tariff,
+                                                out ErrorResponse,
+                                                CountryCodeURL,
+                                                PartyIdURL) &&
+                                tariff is not null)
+                            {
+                                Tariffs.Add(tariff);
+                            }
+                            else
+                                return false;
+                        }
+                        else
+                        {
+                            ErrorResponse = "The given tariff data is not a valid JSON object!";
+                            return false;
+                        }
+                    }
                 }
 
                 #endregion

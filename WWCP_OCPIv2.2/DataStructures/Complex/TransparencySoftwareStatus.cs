@@ -292,7 +292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            CertificateIssuer is not null
-                               ? new JProperty("open_source_license",     CertificateIssuer)
+                               ? new JProperty("certificate_issuer",      CertificateIssuer)
                                : null,
 
                            NotBefore.HasValue
@@ -505,24 +505,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two transparency software status for equality.
         /// </summary>
         /// <param name="TransparencySoftwareStatus">A transparency software status to compare with.</param>
-        public Boolean Equals(TransparencySoftwareStatus TransparencySoftwareStatus)
+        public Boolean Equals(TransparencySoftwareStatus? TransparencySoftwareStatus)
 
-            => TransparencySoftware is not null &&
+            => TransparencySoftwareStatus is not null &&
 
                TransparencySoftware.Equals(TransparencySoftwareStatus.TransparencySoftware) &&
                LegalStatus.         Equals(TransparencySoftwareStatus.LegalStatus)          &&
 
              ((Certificate       is     null &&  TransparencySoftwareStatus.Certificate       is     null) ||
-              (Certificate       is not null &&  TransparencySoftwareStatus.Certificate       is not null && Certificate.      Equals(TransparencySoftwareStatus.Certificate)))       &&
+              (Certificate       is not null &&  TransparencySoftwareStatus.Certificate       is not null && Certificate.                  Equals(TransparencySoftwareStatus.Certificate)))                 &&
 
              ((CertificateIssuer is     null &&  TransparencySoftwareStatus.CertificateIssuer is     null) ||
-              (CertificateIssuer is not null &&  TransparencySoftwareStatus.CertificateIssuer is not null && CertificateIssuer.Equals(TransparencySoftwareStatus.CertificateIssuer))) &&
+              (CertificateIssuer is not null &&  TransparencySoftwareStatus.CertificateIssuer is not null && CertificateIssuer.            Equals(TransparencySoftwareStatus.CertificateIssuer)))           &&
 
             ((!NotBefore.        HasValue    && !TransparencySoftwareStatus.NotBefore.        HasValue)    ||
-              (NotBefore.        HasValue    &&  TransparencySoftwareStatus.NotBefore.        HasValue    && NotBefore.  Value.Equals(TransparencySoftwareStatus.NotBefore.Value)))   &&
+              (NotBefore.        HasValue    &&  TransparencySoftwareStatus.NotBefore.        HasValue    && NotBefore.  Value.ToIso8601().Equals(TransparencySoftwareStatus.NotBefore.Value.ToIso8601()))) &&
 
             ((!NotAfter.         HasValue    && !TransparencySoftwareStatus.NotAfter.         HasValue)    ||
-              (NotAfter.         HasValue    &&  TransparencySoftwareStatus.NotAfter.         HasValue    && NotAfter.   Value.Equals(TransparencySoftwareStatus.NotAfter. Value)));
+              (NotAfter.         HasValue    &&  TransparencySoftwareStatus.NotAfter.         HasValue    && NotAfter.   Value.ToIso8601().Equals(TransparencySoftwareStatus.NotAfter. Value.ToIso8601())));
 
         #endregion
 

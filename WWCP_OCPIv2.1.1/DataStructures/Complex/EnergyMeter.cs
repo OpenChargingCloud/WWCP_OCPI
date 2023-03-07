@@ -400,7 +400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse LastUpdated           [mandatory]
+                #region Parse LastUpdated                   [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
@@ -756,7 +756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => EnergyMeter is not null &&
 
-               Id.Equals(EnergyMeter.Id) &&
+               Id.                     Equals(EnergyMeter.Id) &&
                LastUpdated.ToIso8601().Equals(EnergyMeter.LastUpdated.ToIso8601()) &&
 
              ((Model                     is     null &&  EnergyMeter.Model                     is     null) ||
@@ -777,7 +777,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             ((!ManufacturerURL.          HasValue    && !EnergyMeter.ManufacturerURL.          HasValue)    ||
              ( ManufacturerURL.          HasValue    &&  EnergyMeter.ManufacturerURL.          HasValue    && ManufacturerURL.          Value.Equals(EnergyMeter.ManufacturerURL.          Value))) &&
 
-            ((!PublicKeyCertificateChain.HasValue    &&  EnergyMeter.PublicKeyCertificateChain.HasValue)    ||
+            ((!PublicKeyCertificateChain.HasValue    && !EnergyMeter.PublicKeyCertificateChain.HasValue)    ||
               (PublicKeyCertificateChain.HasValue    &&  EnergyMeter.PublicKeyCertificateChain.HasValue    && PublicKeyCertificateChain.Value.Equals(EnergyMeter.PublicKeyCertificateChain.Value))) &&
 
              ((Description               is     null &&  EnergyMeter.Description               is     null) ||
@@ -786,8 +786,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                PublicKeys.           Count().Equals(EnergyMeter.PublicKeys.           Count())                          &&
                PublicKeys.           All(publicKey            => EnergyMeter.PublicKeys.           Contains(publicKey)) &&
 
+            TransparencySoftwares.First().Equals(EnergyMeter.TransparencySoftwares.First()) &&
+
                TransparencySoftwares.Count().Equals(EnergyMeter.TransparencySoftwares.Count())                          &&
-               TransparencySoftwares.All(transparencySoftware => EnergyMeter.TransparencySoftwares.Contains(transparencySoftware));
+               TransparencySoftwares.All(transparencySoftwareStatus => EnergyMeter.TransparencySoftwares.Contains(transparencySoftwareStatus));
 
         #endregion
 
