@@ -663,7 +663,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                 HTTPServer.AddMethodCallback(this,
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
-                                             URLPathPrefix1.Value + "versions/{id}",
+                                             URLPathPrefix1.Value + "versions/{versionId}",
                                              HTTPContentType.HTML_UTF8,
                                              HTTPDelegate: Request => {
 

@@ -1,6 +1,6 @@
 ﻿[
   {
-    "outputFile": "HTTPRoot/template.css",
+    "outputFile": "HTTPRoot/css/template.css",
     "inputFile": "HTTPRoot/template.scss"
   },
   {
@@ -8,39 +8,39 @@
     "inputFile": "HTTPRoot/dashboard/dashboard.scss"
   },
   {
-    "outputFile": "HTTPRoot/versions/versions.css",
+    "outputFile": "HTTPRoot/css/versions/versions.css",
     "inputFile": "HTTPRoot/versions/versions.scss"
   },
   {
-    "outputFile": "HTTPRoot/versions/versionDetails.css",
+    "outputFile": "HTTPRoot/css/versions/versionDetails.css",
     "inputFile": "HTTPRoot/versions/versionDetails.scss"
   },
   {
-    "outputFile": "HTTPRoot/remoteParty/remoteParties.css",
+    "outputFile": "HTTPRoot/css/remoteParty/remoteParties.css",
     "inputFile": "HTTPRoot/remoteParty/remoteParties.scss"
   },
   {
-    "outputFile": "HTTPRoot/remoteParty/remoteParty.css",
+    "outputFile": "HTTPRoot/css/remoteParty/remoteParty.css",
     "inputFile": "HTTPRoot/remoteParty/remoteParty.scss"
   },
   {
-    "outputFile": "HTTPRoot/remoteParty/remoteCPO/reserveNow.css",
+    "outputFile": "HTTPRoot/css/remoteParty/remoteCPO/reserveNow.css",
     "inputFile": "HTTPRoot/remoteParty/remoteCPO/reserveNow.scss"
   },
   {
-    "outputFile": "HTTPRoot/remoteParty/remoteCPO/cancelReservation.css",
+    "outputFile": "HTTPRoot/css/remoteParty/remoteCPO/cancelReservation.css",
     "inputFile": "HTTPRoot/remoteParty/remoteCPO/cancelReservation.scss"
   },
   {
-    "outputFile": "HTTPRoot/remoteParty/remoteCPO/startSession.css",
+    "outputFile": "HTTPRoot/css/remoteParty/remoteCPO/startSession.css",
     "inputFile": "HTTPRoot/remoteParty/remoteCPO/startSession.scss"
   },
   {
-    "outputFile": "HTTPRoot/remoteParty/remoteCPO/stopSession.css",
+    "outputFile": "HTTPRoot/css/remoteParty/remoteCPO/stopSession.css",
     "inputFile": "HTTPRoot/remoteParty/remoteCPO/stopSession.scss"
   },
   {
-    "outputFile": "HTTPRoot/remoteParty/remoteCPO/unlockConnector.css",
+    "outputFile": "HTTPRoot/css/remoteParty/remoteCPO/unlockConnector.css",
     "inputFile": "HTTPRoot/remoteParty/remoteCPO/unlockConnector.scss"
   }
 ]

@@ -5842,7 +5842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "sessions/{country_code}/{party_id}",
+                                    URLPathPrefix + "sessions",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteSessionsRequest,
                                     OCPIResponseLogger:  DeleteSessionsResponse,

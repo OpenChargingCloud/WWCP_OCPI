@@ -111,6 +111,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         [Mandatory]
         public Party_Id             OurPartyId                 { get; }
 
+        /// <summary>
+        /// Our business role.
+        /// </summary>
+        [Mandatory]
+        public Roles                OurRole                    { get; }
 
 
         public HTTPPath?            AdditionalURLPathPrefix    { get; }
@@ -495,7 +500,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// 
         /// <param name="URLPathPrefix">An optional URL path prefix, used when defining URL templates.</param>
-        /// <param name="HTMLTemplate">An optional HTML template.</param>
         /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
         /// 
         /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
@@ -517,6 +521,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          BusinessDetails          OurBusinessDetails,
                          CountryCode              OurCountryCode,
                          Party_Id                 OurPartyId,
+                         Roles                    OurRole,
 
                          HTTPServer               HTTPServer,
 
@@ -532,7 +537,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          HTTPPath?                BasePath                  = null,
 
                          HTTPPath?                URLPathPrefix             = null,
-                         //String?                  HTMLTemplate              = null,
                          JObject?                 APIVersionHashes          = null,
 
                          Boolean?                 DisableMaintenanceTasks   = false,
@@ -585,6 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.OurBusinessDetails       = OurBusinessDetails;
             this.OurCountryCode           = OurCountryCode;
             this.OurPartyId               = OurPartyId;
+            this.OurRole                  = OurRole;
 
             this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
@@ -998,9 +1003,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #endregion
 
-                                   #region The other side is an EMP or unauthenticated (Open Data Access)...
+                                   #region We are a CPO, the other side is unauthenticated and we export locations as Open Data...
 
-                                   if (Request.RemoteParty is null && LocationsAsOpenData)
+                                   if (OurRole == Roles.CPO && Request.RemoteParty is null && LocationsAsOpenData)
                                    {
 
                                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,

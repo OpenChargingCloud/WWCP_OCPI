@@ -1,8 +1,8 @@
 ﻿
-<link href="../webapi/versions/versionDetails.min.css" type="text/css" rel="stylesheet" />
+<link href="{{BasePath}}/webapi/css/versions/versionDetails.min.css" type="text/css" rel="stylesheet" />
 
 <script type="text/javascript" src="/shared/UsersAPI/js/date.format.js"></script>
-<script type="text/javascript" src="../webapi/versions/versionDetails.js"></script>
+<script type="text/javascript" src="{{BasePath}}/webapi/versions/versionDetails.js"></script>
 
 <div id="versionDetailInfos" class="entity">
 

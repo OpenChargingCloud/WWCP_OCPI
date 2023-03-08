@@ -113,6 +113,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         public Boolean?                      AllowDowngrades            { get; }
 
+        public Boolean                       Disable_RootServices       { get; }
+
+
         /// <summary>
         /// Disable OCPI v2.1.1.
         /// </summary>
@@ -418,6 +421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
+                         Boolean                       Disable_RootServices      = false,
 
                          Boolean                       Disable_OCPIv2_1_1        = true,
 
@@ -466,14 +470,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
+            this.Disable_RootServices     = Disable_RootServices;
 
             this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
 
-            this.remoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
+            this.remoteParties            = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
             this.tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this.chargingSessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this.tokenStatus                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
+            this.chargingSessions         = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this.tokenStatus              = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
             this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             // Link HTTP events...

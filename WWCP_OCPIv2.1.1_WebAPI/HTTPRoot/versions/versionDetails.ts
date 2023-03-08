@@ -47,7 +47,7 @@ function StartVersionDetails(versionId: string) {
                             const endpointDiv      = endpointsDiv.appendChild(document.createElement('a')) as HTMLAnchorElement;
                             endpointDiv.className  = "endpoint";
                             endpointDiv.href       = endpoint.url;
-                            endpointDiv.innerHTML  = endpoint.identifier + "/" + endpoint.role + "<br /><span class=\"url\">" + endpoint.url + "</span>";
+                            endpointDiv.innerHTML  = endpoint.identifier + (versionDetails.version.startsWith("2.2") ? "/" + endpoint.role : "") + "<br /><span class=\"url\">" + endpoint.url + "</span>";
 
                         }
 
