@@ -1,5 +1,5 @@
 ﻿
-<link href="{{BasePath}}/webapi/versions/versions.min.css" type="text/css" rel="stylesheet" />
+<link href="{{BasePath}}/webapi/css/versions/versions.min.css" type="text/css" rel="stylesheet" />
 
 <script type="text/javascript" src="/shared/UsersAPI/js/date.format.js"></script>
 <script type="text/javascript" src="{{BasePath}}/webapi/versions/versions.js"></script>

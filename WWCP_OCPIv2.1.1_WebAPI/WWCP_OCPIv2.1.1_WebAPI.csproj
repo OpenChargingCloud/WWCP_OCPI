@@ -2,10 +2,174 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>WWCP_OCPIv2._1._1_WebAPI</RootNamespace>
+    <RootNamespace>cloud.charging.open.protocols.OCPIv2_1_1.WebAPI</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\startSession.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\startSession.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\stopSession.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\stopSession.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteParties.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteParties.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteParty.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteParty.min.css" />
+    <None Remove="HTTPRoot\css\template.css" />
+    <None Remove="HTTPRoot\css\template.min.css" />
+    <None Remove="HTTPRoot\css\versions\versionDetails.css" />
+    <None Remove="HTTPRoot\css\versions\versionDetails.min.css" />
+    <None Remove="HTTPRoot\css\versions\versions.css" />
+    <None Remove="HTTPRoot\css\versions\versions.min.css" />
+    <None Remove="HTTPRoot\dashboard\dashboard.css" />
+    <None Remove="HTTPRoot\dashboard\dashboard.html" />
+    <None Remove="HTTPRoot\dashboard\dashboard.js" />
+    <None Remove="HTTPRoot\dashboard\dashboard.js.map" />
+    <None Remove="HTTPRoot\dashboard\dashboard.min.css" />
+    <None Remove="HTTPRoot\dashboard\dashboard.scss" />
+    <None Remove="HTTPRoot\dashboard\dashboard.ts" />
+    <None Remove="HTTPRoot\defaults\defaults.js" />
+    <None Remove="HTTPRoot\defaults\defaults.js.map" />
+    <None Remove="HTTPRoot\defaults\defaults.ts" />
+    <None Remove="HTTPRoot\defaults\_defaults.scss" />
+    <None Remove="HTTPRoot\favicon.png" />
+    <None Remove="HTTPRoot\images\favicon_big.png" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js.map" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.scss" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.shtml" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.ts" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\reserveNow.js" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\reserveNow.js.map" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\reserveNow.scss" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\reserveNow.shtml" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\reserveNow.ts" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\startSession.js" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\startSession.js.map" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\startSession.scss" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\startSession.shtml" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\startSession.ts" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\stopSession.js" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\stopSession.js.map" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\stopSession.scss" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\stopSession.shtml" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\stopSession.ts" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js.map" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\unlockConnector.scss" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\unlockConnector.shtml" />
+    <None Remove="HTTPRoot\remoteParty\remoteCPO\unlockConnector.ts" />
+    <None Remove="HTTPRoot\remoteParty\remoteParties.js" />
+    <None Remove="HTTPRoot\remoteParty\remoteParties.js.map" />
+    <None Remove="HTTPRoot\remoteParty\remoteParties.shtml" />
+    <None Remove="HTTPRoot\remoteParty\remoteParties.ts" />
+    <None Remove="HTTPRoot\remoteParty\remoteParty.js" />
+    <None Remove="HTTPRoot\remoteParty\remoteParty.js.map" />
+    <None Remove="HTTPRoot\remoteParty\remoteParty.scss" />
+    <None Remove="HTTPRoot\remoteParty\remoteParty.shtml" />
+    <None Remove="HTTPRoot\remoteParty\remoteParty.ts" />
+    <None Remove="HTTPRoot\template.html" />
+    <None Remove="HTTPRoot\template.scss" />
+    <None Remove="HTTPRoot\versions\versionDetails.js" />
+    <None Remove="HTTPRoot\versions\versionDetails.js.map" />
+    <None Remove="HTTPRoot\versions\versionDetails.scss" />
+    <None Remove="HTTPRoot\versions\versionDetails.shtml" />
+    <None Remove="HTTPRoot\versions\versionDetails.ts" />
+    <None Remove="HTTPRoot\versions\versions.js" />
+    <None Remove="HTTPRoot\versions\versions.js.map" />
+    <None Remove="HTTPRoot\versions\versions.scss" />
+    <None Remove="HTTPRoot\versions\versions.shtml" />
+    <None Remove="HTTPRoot\versions\versions.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\startSession.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\startSession.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\stopSession.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\stopSession.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParties.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParties.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParty.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParty.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\template.css" />
+    <EmbeddedResource Include="HTTPRoot\css\template.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versions.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versions.min.css" />
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.css" />
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.html" />
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.js" />
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.js.map" />
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.min.css" />
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.scss" />
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.ts" />
+    <EmbeddedResource Include="HTTPRoot\defaults\defaults.js" />
+    <EmbeddedResource Include="HTTPRoot\defaults\defaults.js.map" />
+    <EmbeddedResource Include="HTTPRoot\defaults\defaults.ts" />
+    <EmbeddedResource Include="HTTPRoot\defaults\_defaults.scss" />
+    <EmbeddedResource Include="HTTPRoot\favicon.png" />
+    <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.ts" />
+    <EmbeddedResource Include="HTTPRoot\template.html" />
+    <EmbeddedResource Include="HTTPRoot\template.scss" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js.map" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.scss" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.shtml" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.ts" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.js" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.js.map" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.scss" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.shtml" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.ts" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
@@ -21,5 +185,13 @@
     <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj" />
     <ProjectReference Include="..\WWCP_OCPIv2.1.1\WWCP_OCPIv2.1.1.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="HTTPRoot\js\" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="tsc" />
+  </Target>
 
 </Project>

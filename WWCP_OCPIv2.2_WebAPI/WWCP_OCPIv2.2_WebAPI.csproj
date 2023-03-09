@@ -8,6 +8,52 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\startSession.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\startSession.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\stopSession.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\stopSession.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteParties.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteParties.min.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteParty.css" />
+    <None Remove="HTTPRoot\css\remoteParty\remoteParty.min.css" />
+    <None Remove="HTTPRoot\css\template.css" />
+    <None Remove="HTTPRoot\css\template.min.css" />
+    <None Remove="HTTPRoot\css\versions\versionDetails.css" />
+    <None Remove="HTTPRoot\css\versions\versionDetails.min.css" />
+    <None Remove="HTTPRoot\css\versions\versions.css" />
+    <None Remove="HTTPRoot\css\versions\versions.min.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\startSession.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\startSession.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\stopSession.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\stopSession.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParties.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParties.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParty.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParty.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\template.css" />
+    <EmbeddedResource Include="HTTPRoot\css\template.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versions.css" />
+    <EmbeddedResource Include="HTTPRoot\css\versions\versions.min.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
