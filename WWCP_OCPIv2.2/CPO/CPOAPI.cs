@@ -1151,22 +1151,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String    DefaultHTTPServerName     = "GraphDefined OCPI CPO HTTP API v0.1";
-
-        /// <summary>
-        /// The default HTTP server name.
-        /// </summary>
-        public new const           String    DefaultHTTPServiceName    = "GraphDefined OCPI CPO HTTP API v0.1";
+        public new const           String    DefaultHTTPServiceName   = "GraphDefined OCPI CPO HTTP API v0.1";
 
         /// <summary>
         /// The default HTTP server TCP port.
         /// </summary>
-        public new static readonly IPPort    DefaultHTTPServerPort     = IPPort.Parse(8080);
+        public new static readonly IPPort    DefaultHTTPServerPort    = IPPort.Parse(8080);
 
         /// <summary>
         /// The default HTTP URL path prefix.
         /// </summary>
-        public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("cpo/");
+        public new static readonly HTTPPath  DefaultURLPathPrefix     = HTTPPath.Parse("cpo/");
+
+        /// <summary>
+        /// The default CPO API logfile name.
+        /// </summary>
+        public  const              String    DefaultLogfileName       = "OCPI_CPOAPI.log";
 
         #endregion
 
@@ -2387,53 +2387,64 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
-        public CPOAPI(CommonAPI               CommonAPI,
-                      CountryCode             DefaultCountryCode,
-                      Party_Id                DefaultPartyId,
-                      Boolean?                AllowDowngrades      = null,
+        public CPOAPI(CommonAPI                CommonAPI,
+                      CountryCode              DefaultCountryCode,
+                      Party_Id                 DefaultPartyId,
+                      Boolean?                 AllowDowngrades           = null,
 
-                      HTTPHostname?           HTTPHostname         = null,
-                      String?                 ExternalDNSName      = null,
-                      HTTPPath?               URLPathPrefix        = null,
-                      HTTPPath?               BasePath             = null,
-                      String                  HTTPServiceName      = DefaultHTTPServerName,
+                      HTTPHostname?            HTTPHostname              = null,
+                      String?                  ExternalDNSName           = "",
+                      String?                  HTTPServiceName           = DefaultHTTPServiceName,
+                      HTTPPath?                BasePath                  = null,
 
-                      Boolean?                IsDevelopment        = false,
-                      IEnumerable<String>?    DevelopmentServers   = null,
-                      Boolean?                DisableLogging       = false,
-                      String?                 LoggingPath          = null,
-                      String?                 LogfileName          = null,
-                      LogfileCreatorDelegate? LogfileCreator       = null)
+                      HTTPPath?                URLPathPrefix             = null,
+                      JObject?                 APIVersionHashes          = null,
 
-            : base(CommonAPI?.HTTPServer,
+                      Boolean?                 DisableMaintenanceTasks   = false,
+                      TimeSpan?                MaintenanceInitialDelay   = null,
+                      TimeSpan?                MaintenanceEvery          = null,
+
+                      Boolean?                 DisableWardenTasks        = false,
+                      TimeSpan?                WardenInitialDelay        = null,
+                      TimeSpan?                WardenCheckEvery          = null,
+
+                      Boolean?                 IsDevelopment             = false,
+                      IEnumerable<String>?     DevelopmentServers        = null,
+                      Boolean?                 DisableLogging            = false,
+                      String?                  LoggingPath               = null,
+                      String?                  LogfileName               = DefaultLogfileName,
+                      LogfileCreatorDelegate?  LogfileCreator            = null,
+                      Boolean                  Autostart                 = false)
+
+            : base(CommonAPI.HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,
-                   HTTPServiceName,
+                   HTTPServiceName ?? DefaultHTTPServiceName,
                    BasePath,
 
-                   URLPathPrefix ?? DefaultURLPathPrefix,
-                   null, // HTMLTemplate,
-                   null, // APIVersionHashes,
+                   URLPathPrefix   ?? DefaultURLPathPrefix,
+                   null, //HTMLTemplate,
+                   APIVersionHashes,
 
-                   null, // DisableMaintenanceTasks,
-                   null, // MaintenanceInitialDelay,
-                   null, // MaintenanceEvery,
+                   DisableMaintenanceTasks,
+                   MaintenanceInitialDelay,
+                   MaintenanceEvery,
 
-                   null, // DisableWardenTasks,
-                   null, // WardenInitialDelay,
-                   null, // WardenCheckEvery,
+                   DisableWardenTasks,
+                   WardenInitialDelay,
+                   WardenCheckEvery,
 
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   LogfileName,
+                   LogfileName     ?? DefaultLogfileName,
                    LogfileCreator,
-                   false) // Autostart
+                   Autostart)
 
         {
 
-            this.CommonAPI           = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given CommonAPI must not be null!");
+            this.CommonAPI           = CommonAPI;
             this.DefaultCountryCode  = DefaultCountryCode;
             this.DefaultPartyId      = DefaultPartyId;
             this.AllowDowngrades     = AllowDowngrades;

@@ -19,7 +19,12 @@
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using org.GraphDefined.Vanaheimr.Hermod.DNS;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
+
 using cloud.charging.open.protocols.WWCP;
+using cloud.charging.open.protocols.OCPIv2_2.CPO.HTTP;
 
 #endregion
 
@@ -39,11 +44,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Data
 
-        protected readonly  SemaphoreSlim  DataAndStatusLock     = new(1, 1);
+        protected readonly  SemaphoreSlim  DataAndStatusLock            = new(1, 1);
 
-        protected readonly  TimeSpan       MaxLockWaitingTime    = TimeSpan.FromSeconds(120);
+        protected readonly  TimeSpan       MaxLockWaitingTime           = TimeSpan.FromSeconds(120);
 
-        protected readonly Dictionary<IChargingPool, List<PropertyUpdateInfo>> chargingPoolsUpdateLog;
+        protected readonly  Dictionary<IChargingPool, List<PropertyUpdateInfo>> chargingPoolsUpdateLog;
+
+
+        /// <summary>
+        /// The default logging context.
+        /// </summary>
+        public  const       String         DefaultLoggingContext        = "OCPIv2.1.1_CSOAdapter";
+
+        public  const       String         DefaultHTTPAPI_LoggingPath   = "default";
+
+        public  const       String         DefaultHTTPAPI_LogfileName   = "OCPIv2.1.1_CSOAdapter.log";
+
+
+        /// <summary>
+        /// The request timeout.
+        /// </summary>
+        public readonly     TimeSpan       RequestTimeout               = TimeSpan.FromSeconds(60);
 
         #endregion
 
@@ -129,16 +150,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         public Boolean                                      DisableSendChargeDetailRecords       { get; set; }
 
+
+        public Boolean?                                     DisableLogging                       { get; set; }
+
+
+        public String?                                      ClientsLoggingPath                   { get; }
+        public String?                                      ClientsLoggingContext                { get; }
+        public LogfileCreatorDelegate?                      ClientsLogfileCreator                { get; }
+        public DNSClient?                                   DNSClient                            { get; }
+
         #endregion
 
         #region Events
 
         // from OCPI CSO
-        public event OnAuthorizeStartRequestDelegate?           OnAuthorizeStartRequest;
-        public event OnAuthorizeStartResponseDelegate?          OnAuthorizeStartResponse;
+        //public event OnAuthorizeStartRequestDelegate?           OnAuthorizeStartRequest;
+        //public event OnAuthorizeStartResponseDelegate?          OnAuthorizeStartResponse;
 
-        public event OnAuthorizeStopRequestDelegate?            OnAuthorizeStopRequest;
-        public event OnAuthorizeStopResponseDelegate?           OnAuthorizeStopResponse;
+        //public event OnAuthorizeStopRequestDelegate?            OnAuthorizeStopRequest;
+        //public event OnAuthorizeStopResponseDelegate?           OnAuthorizeStopResponse;
 
         public event OnNewChargingSessionDelegate?              OnNewChargingSession;
 
@@ -165,7 +195,58 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public event WWCP.OnGetCDRsRequestDelegate?             OnGetChargeDetailRecordsRequest;
         public event WWCP.OnGetCDRsResponseDelegate?            OnGetChargeDetailRecordsResponse;
-        public event OnSendCDRsResponseDelegate?                OnSendCDRsResponse;
+        //public event OnSendCDRsResponseDelegate?                OnSendCDRsResponse;
+
+
+        // WWCP
+
+        #region OnAuthorizeStartRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever an authentication token will be verified for charging.
+        /// </summary>
+        public event WWCP.OnAuthorizeStartRequestDelegate?   OnAuthorizeStartRequest;
+
+        /// <summary>
+        /// An event fired whenever an authentication token had been verified for charging.
+        /// </summary>
+        public event WWCP.OnAuthorizeStartResponseDelegate?  OnAuthorizeStartResponse;
+
+        #endregion
+
+        #region OnAuthorizeStopRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever an authentication token will be verified to stop a charging process.
+        /// </summary>
+        public event WWCP.OnAuthorizeStopRequestDelegate?   OnAuthorizeStopRequest;
+
+        /// <summary>
+        /// An event fired whenever an authentication token had been verified to stop a charging process.
+        /// </summary>
+        public event WWCP.OnAuthorizeStopResponseDelegate?  OnAuthorizeStopResponse;
+
+        #endregion
+
+
+        #region OnSendCDRsRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a charge detail record was enqueued for later sending upstream.
+        /// </summary>
+        public event WWCP.OnSendCDRsRequestDelegate?   OnEnqueueSendCDRsRequest;
+
+        /// <summary>
+        /// An event fired whenever a charge detail record will be send upstream.
+        /// </summary>
+        public event WWCP.OnSendCDRsRequestDelegate?   OnSendCDRsRequest;
+
+        /// <summary>
+        /// An event fired whenever a charge detail record had been sent upstream.
+        /// </summary>
+        public event WWCP.OnSendCDRsResponseDelegate?  OnSendCDRsResponse;
+
+        #endregion
 
         #endregion
 
@@ -201,7 +282,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                               Boolean                                      DisablePushStatus                   = false,
                               Boolean                                      DisablePushEnergyStatus             = false,
                               Boolean                                      DisableAuthentication               = false,
-                              Boolean                                      DisableSendChargeDetailRecords      = false)
+                              Boolean                                      DisableSendChargeDetailRecords      = false,
+
+                              Boolean?                                     IsDevelopment                       = null,
+                              IEnumerable<String>?                         DevelopmentServers                  = null,
+                              Boolean?                                     DisableLogging                      = false,
+                              String?                                      LoggingPath                         = DefaultHTTPAPI_LoggingPath,
+                              String?                                      LoggingContext                      = DefaultLoggingContext,
+                              String?                                      LogfileName                         = DefaultHTTPAPI_LogfileName,
+                              LogfileCreatorDelegate?                      LogfileCreator                      = null,
+
+                              String?                                      ClientsLoggingPath                  = DefaultHTTPAPI_LoggingPath,
+                              String?                                      ClientsLoggingContext               = DefaultLoggingContext,
+                              LogfileCreatorDelegate?                      ClientsLogfileCreator               = null,
+                              DNSClient?                                   DNSClient                           = null)
 
         {
 
@@ -237,10 +331,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.chargingPoolsUpdateLog             = new Dictionary<IChargingPool, List<PropertyUpdateInfo>>();
 
             this.CPOAPI                             = new CPOAPI(
+
                                                           this.CommonAPI,
                                                           DefaultCountryCode,
                                                           DefaultPartyId,
-                                                          URLPathPrefix: CommonAPI.URLPathPrefix + "2.1.1/cpo"
+                                                          null, // AllowDowngrades
+
+                                                          null, // HTTPHostname
+                                                          null, // ExternalDNSName
+                                                          null, // HTTPServiceName
+                                                          null, // BasePath
+
+                                                          CommonAPI.URLPathPrefix + "2.2/cpo",
+                                                          null, // APIVersionHashes
+
+                                                          null, // DisableMaintenanceTasks
+                                                          null, // MaintenanceInitialDelay
+                                                          null, // MaintenanceEvery
+
+                                                          null, // DisableWardenTasks
+                                                          null, // WardenInitialDelay
+                                                          null, // WardenCheckEvery
+
+                                                          IsDevelopment,
+                                                          DevelopmentServers,
+                                                          DisableLogging,
+                                                          LoggingPath,
+                                                          LogfileName,
+                                                          LogfileCreator
+                                                          // Autostart
+
                                                       );
 
         }
@@ -1822,25 +1942,594 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region AuthorizeStart/-Stop
 
-        public Task<AuthStartResult> AuthorizeStart(LocalAuthentication LocalAuthentication, ChargingLocation ChargingLocation = null, ChargingProduct ChargingProduct = null, ChargingSession_Id? SessionId = null, ChargingSession_Id? CPOPartnerSessionId = null, ChargingStationOperator_Id? OperatorId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            return Task.FromResult(AuthStartResult.NotAuthorized(Id, this));
-        }
+        #region AuthorizeStart(LocalAuthentication, ...)
 
-        public Task<AuthStopResult> AuthorizeStop(ChargingSession_Id SessionId, LocalAuthentication LocalAuthentication, ChargingLocation ChargingLocation = null, ChargingSession_Id? CPOPartnerSessionId = null, ChargingStationOperator_Id? OperatorId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        /// <summary>
+        /// Create an authorize start request at the given charging location.
+        /// </summary>
+        /// <param name="LocalAuthentication">An user identification.</param>
+        /// <param name="ChargingLocation">The charging location.</param>
+        /// <param name="ChargingProduct">An optional charging product.</param>
+        /// <param name="SessionId">An optional session identification.</param>
+        /// <param name="CPOPartnerSessionId">An optional session identification of the CPO.</param>
+        /// <param name="OperatorId">An optional charging station operator identification.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<AuthStartResult>
+
+            AuthorizeStart(LocalAuthentication          LocalAuthentication,
+                           ChargingLocation?            ChargingLocation      = null,
+                           ChargingProduct?             ChargingProduct       = null,
+                           ChargingSession_Id?          SessionId             = null,
+                           ChargingSession_Id?          CPOPartnerSessionId   = null,
+                           ChargingStationOperator_Id?  OperatorId            = null,
+
+                           DateTime?                    Timestamp             = null,
+                           CancellationToken?           CancellationToken     = null,
+                           EventTracking_Id?            EventTrackingId       = null,
+                           TimeSpan?                    RequestTimeout        = null)
+
         {
-            return Task.FromResult(AuthStopResult.NotAuthorized(Id, this));
+
+            #region Initial checks
+
+            Timestamp         ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            CancellationToken ??= new CancellationTokenSource().Token;
+            EventTrackingId   ??= EventTracking_Id.New;
+            RequestTimeout    ??= this.RequestTimeout;
+
+            #endregion
+
+            #region Send OnAuthorizeStartRequest event
+
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+
+            try
+            {
+
+                OnAuthorizeStartRequest?.Invoke(startTime,
+                                                Timestamp.Value,
+                                                this,
+                                                Id.ToString(),
+                                                EventTrackingId,
+                                                RoamingNetwork.Id,
+                                                null,
+                                                Id,
+                                                OperatorId,
+                                                LocalAuthentication,
+                                                ChargingLocation,
+                                                ChargingProduct,
+                                                SessionId,
+                                                CPOPartnerSessionId,
+                                                Array.Empty<ISendAuthorizeStartStop>(),
+                                                RequestTimeout);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStartRequest));
+            }
+
+            #endregion
+
+
+            if (DisableAuthentication)
+                return AuthStartResult.AdminDown(
+                           AuthorizatorId:           Id,
+                           ISendAuthorizeStartStop:  this,
+                           SessionId:                SessionId,
+                           Description:              I18NString.Create(Languages.en, "Authentication is disabled!"),
+                           Runtime:                  TimeSpan.Zero
+                       );
+
+
+            var remotes = new PriorityList<RemoteParty>();
+            foreach (var remote in CommonAPI.GetRemoteParties(Roles.EMSP))
+                remotes.Add(remote);
+
+            var authorizationInfo = await remotes.WhenFirst(Work:            async remoteParty => {
+
+                                                                                       #region Initial checks
+
+                                                                                       var authToken        = LocalAuthentication.AuthToken?.ToString();
+
+                                                                                       if (authToken is null)
+                                                                                           return new AuthorizationInfo(
+                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                      Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                                      Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
+                                                                                                      RemoteParty:  remoteParty
+                                                                                                  );
+
+
+                                                                                       var tokenId = Token_Id.TryParse(authToken);
+
+                                                                                       if (!tokenId.HasValue)
+                                                                                           return new AuthorizationInfo(
+                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                      Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                                      Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
+                                                                                                      RemoteParty:  remoteParty
+                                                                                                  );
+
+
+                                                                                       var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
+
+                                                                                       if (remoteAccessInfo is null)
+                                                                                           return new AuthorizationInfo(
+                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                      Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                                      Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                      RemoteParty:  remoteParty
+                                                                                                  );
+
+
+                                                                                       var cpoClient = new CPOClient(
+
+                                                                                                           remoteAccessInfo.VersionsURL,
+                                                                                                           remoteAccessInfo.AccessToken,
+                                                                                                           CommonAPI,
+                                                                                                           null, // VirtualHostname             
+                                                                                                           null, // Description                 
+                                                                                                           null, // RemoteCertificateValidator  
+                                                                                                           null, // ClientCertificateSelector   
+                                                                                                           null, // ClientCert                  
+                                                                                                           null, // TLSProtocol                 
+                                                                                                           null, // PreferIPv4                  
+                                                                                                           null, // HTTPUserAgent               
+                                                                                                           null, // RequestTimeout              
+                                                                                                           null, // TransmissionRetryDelay      
+                                                                                                           null, // MaxNumberOfRetries          
+                                                                                                           null, // UseHTTPPipelining           
+                                                                                                           null, // HTTPLogger                  
+                                                                                                           remoteAccessInfo.AccessTokenBase64Encoding,
+
+                                                                                                           DisableLogging,
+                                                                                                           ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                           ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                           ClientsLogfileCreator,
+                                                                                                           DNSClient
+
+                                                                                                       );
+
+                                                                                       if (cpoClient is null)
+                                                                                           return new AuthorizationInfo(
+                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                      Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                                      Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                      RemoteParty:  remoteParty
+                                                                                                  );
+
+
+                                                                                       var cpoClientLogger = new CPOClient.Logger(
+                                                                                                                 cpoClient,
+                                                                                                                 ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                                 ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                                 ClientsLogfileCreator
+                                                                                                             );
+
+                                                                                       #endregion
+
+                                                                                       var authorizationInfo = await cpoClient.PostToken(
+                                                                                                                         TokenId:            tokenId.Value,
+                                                                                                                         TokenType:          TokenType.RFID,
+                                                                                                                         LocationReference:  null
+                                                                                                                     );
+
+                                                                                       return authorizationInfo.Data is not null
+
+                                                                                                  ? new AuthorizationInfo(
+                                                                                                        authorizationInfo.Data.Allowed,
+                                                                                                        authorizationInfo.Data.Token,
+                                                                                                        authorizationInfo.Data.Location,
+                                                                                                        null, // AuthReference
+                                                                                                        authorizationInfo.Data.Info,
+                                                                                                        remoteParty,
+                                                                                                        authorizationInfo.Data.Runtime
+                                                                                                    )
+
+                                                                                                  : new AuthorizationInfo(
+                                                                                                        Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                        Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                                        Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                        RemoteParty:  remoteParty
+                                                                                                    );
+
+                                                                                   },
+
+                                                            VerifyResult:    result  => result.Allowed == AllowedType.ALLOWED,
+
+                                                            Timeout:         RequestTimeout ?? TimeSpan.FromSeconds(10),
+
+                                                            OnException:     null,
+
+                                                            DefaultResult:   runtime  => new AuthorizationInfo(
+                                                                                             Allowed:   AllowedType.NOT_ALLOWED,
+                                                                                             Token:     null, //ToDo: Token should be optional within AuthorizationInfo!
+                                                                                             Location:  null,
+                                                                                             Info:      new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
+                                                                                             Runtime:   runtime
+                                                                                         ));
+
+
+            DateTime         endtime;
+            TimeSpan         runtime;
+            AuthStartResult? authStartResult = null;
+
+
+            if (authorizationInfo is null)
+                authStartResult = AuthStartResult.CommunicationTimeout(Id, this, SessionId);
+
+            else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+                authStartResult = AuthStartResult.Authorized(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           EMPPartnerSessionId:       null,
+                           ContractId:                null,
+                           PrintedNumber:             null,
+                           ExpiryDate:                null,
+                           MaxkW:                     null,
+                           MaxkWh:                    null,
+                           MaxDuration:               null,
+                           ChargingTariffs:           null,
+                           ListOfAuthStopTokens:      null,
+                           ListOfAuthStopPINs:        null,
+                           ProviderId:                EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+                authStartResult = AuthStartResult.Blocked(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
+                authStartResult = AuthStartResult.Expired(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
+                authStartResult = AuthStartResult.NoCredit(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+            else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+                authStartResult = AuthStartResult.NotAuthorized(
+                           AuthorizatorId:            Id,
+                           ISendAuthorizeStartStop:   this,
+                           SessionId:                 SessionId,
+                           ProviderId:                null,
+                           Description:               null,
+                           AdditionalInfo:            null,
+                           NumberOfRetries:           0,
+                           Runtime:                   null
+                       );
+
+
+            authStartResult ??= AuthStartResult.Error(Id, this, SessionId);
+
+
+            #region Send OnAuthorizeStartResponse event
+
+            endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            runtime = endtime - startTime;
+
+            try
+            {
+
+                OnAuthorizeStartResponse?.Invoke(endtime,
+                                                 Timestamp.Value,
+                                                 this,
+                                                 Id.ToString(),
+                                                 EventTrackingId,
+                                                 RoamingNetwork.Id,
+                                                 null,
+                                                 Id,
+                                                 OperatorId,
+                                                 LocalAuthentication,
+                                                 ChargingLocation,
+                                                 ChargingProduct,
+                                                 SessionId,
+                                                 CPOPartnerSessionId,
+                                                 Array.Empty<WWCP.ISendAuthorizeStartStop>(),
+                                                 RequestTimeout,
+                                                 authStartResult,
+                                                 runtime);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStartResponse));
+            }
+
+            #endregion
+
+            return authStartResult;
+
         }
 
         #endregion
 
+
+        #region AuthorizeStop (SessionId, LocalAuthentication, 
+
+        /// <summary>
+        /// Create an authorize stop request at the given charging location.
+        /// </summary>
+        /// <param name="SessionId">The session identification from the AuthorizeStart request.</param>
+        /// <param name="LocalAuthentication">A local user identification.</param>
+        /// <param name="ChargingLocation">The charging location.</param>
+        /// <param name="CPOPartnerSessionId">An optional session identification of the CPO.</param>
+        /// <param name="OperatorId">An optional charging station operator identification.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public Task<AuthStopResult>
+
+            AuthorizeStop(ChargingSession_Id           SessionId,
+                          LocalAuthentication          LocalAuthentication,
+                          ChargingLocation?            ChargingLocation      = null,
+                          ChargingSession_Id?          CPOPartnerSessionId   = null,
+                          ChargingStationOperator_Id?  OperatorId            = null,
+
+                          DateTime?                    Timestamp             = null,
+                          CancellationToken?           CancellationToken     = null,
+                          EventTracking_Id?            EventTrackingId       = null,
+                          TimeSpan?                    RequestTimeout        = null)
+
+        {
+
+            #region Initial checks
+
+            Timestamp         ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            CancellationToken ??= new CancellationTokenSource().Token;
+            EventTrackingId   ??= EventTracking_Id.New;
+            RequestTimeout    ??= this.RequestTimeout;
+
+            #endregion
+
+            #region Send OnAuthorizeStopRequest event
+
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+
+            try
+            {
+
+                OnAuthorizeStopRequest?.Invoke(startTime,
+                                               Timestamp.Value,
+                                               this,
+                                               Id.ToString(),
+                                               EventTrackingId,
+                                               RoamingNetwork.Id,
+                                               null,
+                                               Id,
+                                               OperatorId,
+                                               ChargingLocation,
+                                               SessionId,
+                                               CPOPartnerSessionId,
+                                               LocalAuthentication,
+                                               RequestTimeout);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStopRequest));
+            }
+
+            #endregion
+
+
+            DateTime              endtime;
+            TimeSpan              runtime;
+            WWCP.AuthStopResult?  authStopResult   = null;
+
+            if (DisableAuthentication)
+                authStopResult = AuthStopResult.AdminDown(
+                                     AuthorizatorId:           Id,
+                                     ISendAuthorizeStartStop:  this,
+                                     SessionId:                SessionId,
+                                     Description:              I18NString.Create(Languages.en, "Authentication is disabled!"),
+                                     Runtime:                  TimeSpan.Zero
+                                 );
+
+            authStopResult ??= AuthStopResult.NotAuthorized(Id, this);
+
+
+            endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            runtime = endtime - startTime;
+
+            #region Send OnAuthorizeStopResponse event
+
+            try
+            {
+
+                OnAuthorizeStopResponse?.Invoke(endtime,
+                                                Timestamp.Value,
+                                                this,
+                                                Id.ToString(),
+                                                EventTrackingId,
+                                                RoamingNetwork.Id,
+                                                null,
+                                                Id,
+                                                OperatorId,
+                                                ChargingLocation,
+                                                SessionId,
+                                                CPOPartnerSessionId,
+                                                LocalAuthentication,
+                                                RequestTimeout,
+                                                authStopResult,
+                                                runtime);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnAuthorizeStopResponse));
+            }
+
+            #endregion
+
+            return Task.FromResult(authStopResult);
+
+        }
+
+        #endregion
+
+
         #region SendChargeDetailRecords
 
-        public Task<SendCDRsResult> SendChargeDetailRecords(IEnumerable<ChargeDetailRecord> ChargeDetailRecords, TransmissionTypes TransmissionType = TransmissionTypes.Enqueue, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        /// <summary>
+        /// Send charge detail records to an OICP server.
+        /// </summary>
+        /// <param name="ChargeDetailRecords">An enumeration of charge detail records.</param>
+        /// <param name="TransmissionType">Whether to send the CDR directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<WWCP.SendCDRsResult>
+
+            SendChargeDetailRecords(IEnumerable<ChargeDetailRecord>  ChargeDetailRecords,
+                                    TransmissionTypes                TransmissionType    = TransmissionTypes.Enqueue,
+
+                                    DateTime?                        Timestamp           = null,
+                                    CancellationToken?               CancellationToken   = null,
+                                    EventTracking_Id?                EventTrackingId     = null,
+                                    TimeSpan?                        RequestTimeout      = null)
+
         {
-            return Task.FromResult(SendCDRsResult.NoOperation(org.GraphDefined.Vanaheimr.Illias.Timestamp.Now, Id, this, ChargeDetailRecords));
+
+            #region Initial checks
+
+            Timestamp         ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            CancellationToken ??= new CancellationTokenSource().Token;
+            EventTrackingId   ??= EventTracking_Id.New;
+            RequestTimeout    ??= this.RequestTimeout;
+
+            #endregion
+
+            #region Filter charge detail records
+
+            var forwardedCDRs  = new List<WWCP.ChargeDetailRecord>();
+            var filteredCDRs   = new List<WWCP.SendCDRResult>();
+
+            foreach (var cdr in ChargeDetailRecords)
+            {
+
+                if (ChargeDetailRecordFilter(cdr) == WWCP.ChargeDetailRecordFilters.forward)
+                    forwardedCDRs.Add(cdr);
+
+                else
+                    filteredCDRs.Add(WWCP.SendCDRResult.Filtered(org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                                                                 cdr,
+                                                                 Warning.Create(I18NString.Create(Languages.en, "This charge detail record was filtered!"))));
+
+            }
+
+            #endregion
+
+            #region Send OnSendCDRsRequest event
+
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+
+            try
+            {
+
+                OnSendCDRsRequest?.Invoke(startTime,
+                                          Timestamp.Value,
+                                          this,
+                                          Id.ToString(),
+                                          EventTrackingId,
+                                          RoamingNetwork.Id,
+                                          ChargeDetailRecords,
+                                          RequestTimeout);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnSendCDRsRequest));
+            }
+
+            #endregion
+
+
+            #region if disabled => 'AdminDown'...
+
+            DateTime         endtime;
+            TimeSpan         runtime;
+            SendCDRsResult?  sendCDRsResult   = null;
+
+            if (DisableSendChargeDetailRecords)
+            {
+
+                endtime         = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                runtime         = endtime - startTime;
+                sendCDRsResult  = SendCDRsResult.AdminDown(
+                                      org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                                      Id,
+                                      this,
+                                      ChargeDetailRecords,
+                                      I18NString.Create(Languages.en, "Sending charge detail records is disabled!"),
+                                      Runtime: runtime
+                                  );
+
+            }
+
+            #endregion
+
+            #region ..., or when there are no charge detail records...
+
+            else if (!ChargeDetailRecords.Any())
+            {
+
+                endtime         = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                runtime         = endtime - startTime;
+                sendCDRsResult  = SendCDRsResult.NoOperation(
+                                      org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                                      Id,
+                                      this,
+                                      ChargeDetailRecords,
+                                      Runtime: runtime
+                                  );
+
+            }
+
+            #endregion
+
+
+            return SendCDRsResult.NoOperation(org.GraphDefined.Vanaheimr.Illias.Timestamp.Now, Id, this, ChargeDetailRecords);
+
         }
 
         #endregion

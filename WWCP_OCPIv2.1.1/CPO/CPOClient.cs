@@ -832,11 +832,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                          TimeSpan?                             RequestTimeout               = null,
                          TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                          UInt16?                               MaxNumberOfRetries           = null,
-                         Boolean                               UseHTTPPipelining            = false,
+                         Boolean?                              UseHTTPPipelining            = null,
                          HTTPClientLogger?                     HTTPLogger                   = null,
                          Boolean                               AccessTokenBase64Encoding    = false,
 
-                         Boolean                               DisableLogging               = false,
+                         Boolean?                              DisableLogging               = false,
                          String?                               LoggingPath                  = null,
                          String?                               LoggingContext               = null,
                          LogfileCreatorDelegate?               LogfileCreator               = null,

@@ -20,7 +20,9 @@
 using Org.BouncyCastle.Crypto.Parameters;
 
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
@@ -95,6 +97,8 @@ namespace cloud.charging.open.protocols.WWCP
 
                                       Boolean                                                  DisablePushData                      = false,
                                       Boolean                                                  DisablePushStatus                    = false,
+                                      Boolean                                                  DisablePushAdminStatus               = false,
+                                      Boolean                                                  DisablePushEnergyStatus              = false,
                                       Boolean                                                  DisableAuthentication                = false,
                                       Boolean                                                  DisableSendChargeDetailRecords       = false,
 
@@ -103,7 +107,20 @@ namespace cloud.charging.open.protocols.WWCP
 
                                       String                                                   EllipticCurve                        = "P-256",
                                       ECPrivateKeyParameters?                                  PrivateKey                           = null,
-                                      PublicKeyCertificates?                                   PublicKeyCertificates                = null)
+                                      PublicKeyCertificates?                                   PublicKeyCertificates                = null,
+
+                                      Boolean?                                                 IsDevelopment                        = null,
+                                      IEnumerable<String>?                                     DevelopmentServers                   = null,
+                                      Boolean?                                                 DisableLogging                       = null,
+                                      String?                                                  LoggingPath                          = null,
+                                      String?                                                  LoggingContext                       = null,
+                                      String?                                                  LogfileName                          = null,
+                                      LogfileCreatorDelegate?                                  LogfileCreator                       = null,
+
+                                      String?                                                  ClientsLoggingPath                   = null,
+                                      String?                                                  ClientsLoggingContext                = null,
+                                      LogfileCreatorDelegate?                                  ClientsLogfileCreator                = null,
+                                      DNSClient?                                               DNSClient                            = null)
 
         {
 
@@ -145,9 +162,24 @@ namespace cloud.charging.open.protocols.WWCP
                                          //CDRCheckEvery,
 
                                          DisablePushData,
+                                         DisablePushAdminStatus,
                                          DisablePushStatus,
+                                         DisablePushEnergyStatus,
                                          DisableAuthentication,
-                                         DisableSendChargeDetailRecords
+                                         DisableSendChargeDetailRecords,
+
+                                         IsDevelopment,
+                                         DevelopmentServers,
+                                         DisableLogging,
+                                         LoggingPath,
+                                         LoggingContext,
+                                         LogfileName,
+                                         LogfileCreator,
+
+                                         ClientsLoggingPath,
+                                         ClientsLoggingContext,
+                                         ClientsLogfileCreator,
+                                         DNSClient
 
                                      );
 

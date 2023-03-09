@@ -45,7 +45,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public new const String  DefaultContext  = "OCPIEMSPClient";
+            public new const String  DefaultContext   = "OCPIEMSPClient";
 
             #endregion
 
@@ -71,8 +71,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
             public Logger(EMSPClient               EMSPClient,
                           String                   LoggingPath,
-                          String                   Context         = DefaultContext,
-                          LogfileCreatorDelegate?  LogfileCreator  = null)
+                          String                   Context          = DefaultContext,
+                          LogfileCreatorDelegate?  LogfileCreator   = null)
 
                 : this(EMSPClient,
                        LoggingPath,
@@ -190,6 +190,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
+                #endregion
+
+                #region EVSEs
 
                 RegisterEvent("GetEVSERequest",
                               handler => EMSPClient.OnGetEVSEHTTPRequest += handler,
@@ -205,6 +208,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
+                #endregion
+
+                #region Connectors
 
                 RegisterEvent("GetConnectorRequest",
                               handler => EMSPClient.OnGetConnectorHTTPRequest += handler,

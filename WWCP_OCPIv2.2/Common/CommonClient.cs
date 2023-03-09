@@ -466,22 +466,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event fired whenever a request getting all versions will be send.
         /// </summary>
-        public event OnGetVersionsRequestDelegate   OnGetVersionsRequest;
+        public event OnGetVersionsRequestDelegate?   OnGetVersionsRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting all versions will be send.
         /// </summary>
-        public event ClientRequestLogHandler        OnGetVersionsHTTPRequest;
+        public event ClientRequestLogHandler?        OnGetVersionsHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting all versions HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler       OnGetVersionsHTTPResponse;
+        public event ClientResponseLogHandler?       OnGetVersionsHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting all versions request had been received.
         /// </summary>
-        public event OnGetVersionsResponseDelegate  OnGetVersionsResponse;
+        public event OnGetVersionsResponseDelegate?  OnGetVersionsResponse;
 
         #endregion
 
@@ -490,22 +490,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event fired whenever a request getting version details will be send.
         /// </summary>
-        public event OnGetVersionsRequestDelegate   OnGetVersionDetailsRequest;
+        public event OnGetVersionsRequestDelegate?   OnGetVersionDetailsRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting version details will be send.
         /// </summary>
-        public event ClientRequestLogHandler        OnGetVersionDetailsHTTPRequest;
+        public event ClientRequestLogHandler?        OnGetVersionDetailsHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting version details HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler       OnGetVersionDetailsHTTPResponse;
+        public event ClientResponseLogHandler?       OnGetVersionDetailsHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting version details request had been received.
         /// </summary>
-        public event OnGetVersionsResponseDelegate  OnGetVersionDetailsResponse;
+        public event OnGetVersionsResponseDelegate?  OnGetVersionDetailsResponse;
 
         #endregion
 
@@ -515,22 +515,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event fired whenever a request getting credentials will be send.
         /// </summary>
-        public event OnGetCredentialsRequestDelegate   OnGetCredentialsRequest;
+        public event OnGetCredentialsRequestDelegate?   OnGetCredentialsRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting credentials will be send.
         /// </summary>
-        public event ClientRequestLogHandler           OnGetCredentialsHTTPRequest;
+        public event ClientRequestLogHandler?           OnGetCredentialsHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting credentials HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler          OnGetCredentialsHTTPResponse;
+        public event ClientResponseLogHandler?          OnGetCredentialsHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting credentials request had been received.
         /// </summary>
-        public event OnGetCredentialsResponseDelegate  OnGetCredentialsResponse;
+        public event OnGetCredentialsResponseDelegate?  OnGetCredentialsResponse;
 
         #endregion
 
@@ -539,22 +539,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event fired whenever a request posting credentials will be send.
         /// </summary>
-        public event OnPostCredentialsRequestDelegate   OnPostCredentialsRequest;
+        public event OnPostCredentialsRequestDelegate?   OnPostCredentialsRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request posting credentials will be send.
         /// </summary>
-        public event ClientRequestLogHandler            OnPostCredentialsHTTPRequest;
+        public event ClientRequestLogHandler?            OnPostCredentialsHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a posting credentials HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler           OnPostCredentialsHTTPResponse;
+        public event ClientResponseLogHandler?           OnPostCredentialsHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a posting credentials request had been received.
         /// </summary>
-        public event OnPostCredentialsResponseDelegate  OnPostCredentialsResponse;
+        public event OnPostCredentialsResponseDelegate?  OnPostCredentialsResponse;
 
         #endregion
 
@@ -563,22 +563,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event fired whenever a request putting credentials will be send.
         /// </summary>
-        public event OnPutCredentialsRequestDelegate   OnPutCredentialsRequest;
+        public event OnPutCredentialsRequestDelegate?   OnPutCredentialsRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request putting credentials will be send.
         /// </summary>
-        public event ClientRequestLogHandler           OnPutCredentialsHTTPRequest;
+        public event ClientRequestLogHandler?           OnPutCredentialsHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a putting credentials HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler          OnPutCredentialsHTTPResponse;
+        public event ClientResponseLogHandler?          OnPutCredentialsHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a putting credentials request had been received.
         /// </summary>
-        public event OnPutCredentialsResponseDelegate  OnPutCredentialsResponse;
+        public event OnPutCredentialsResponseDelegate?  OnPutCredentialsResponse;
 
         #endregion
 
@@ -587,22 +587,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event fired whenever a request deleting credentials will be send.
         /// </summary>
-        public event OnDeleteCredentialsRequestDelegate   OnDeleteCredentialsRequest;
+        public event OnDeleteCredentialsRequestDelegate?   OnDeleteCredentialsRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request deleting credentials will be send.
         /// </summary>
-        public event ClientRequestLogHandler              OnDeleteCredentialsHTTPRequest;
+        public event ClientRequestLogHandler?              OnDeleteCredentialsHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a deleting credentials HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler             OnDeleteCredentialsHTTPResponse;
+        public event ClientResponseLogHandler?             OnDeleteCredentialsHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a deleting credentials request had been received.
         /// </summary>
-        public event OnDeleteCredentialsResponseDelegate  OnDeleteCredentialsResponse;
+        public event OnDeleteCredentialsResponseDelegate?  OnDeleteCredentialsResponse;
 
         #endregion
 
@@ -612,22 +612,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event fired whenever a registration request will be send.
         /// </summary>
-        public event OnRegisterRequestDelegate   OnRegisterRequest;
+        public event OnRegisterRequestDelegate?   OnRegisterRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP registration request will be send.
         /// </summary>
-        public event ClientRequestLogHandler     OnRegisterHTTPRequest;
+        public event ClientRequestLogHandler?     OnRegisterHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a HTTP registration request had been received.
         /// </summary>
-        public event ClientResponseLogHandler    OnRegisterHTTPResponse;
+        public event ClientResponseLogHandler?    OnRegisterHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a registration request had been received.
         /// </summary>
-        public event OnRegisterResponseDelegate  OnRegisterResponse;
+        public event OnRegisterResponseDelegate?  OnRegisterResponse;
 
         #endregion
 
@@ -667,11 +667,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             TimeSpan?                             RequestTimeout               = null,
                             TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                             UInt16?                               MaxNumberOfRetries           = null,
-                            Boolean                               UseHTTPPipelining            = false,
+                            Boolean?                              UseHTTPPipelining            = null,
                             HTTPClientLogger?                     HTTPLogger                   = null,
                             Boolean                               AccessTokenBase64Encoding    = true,
 
-                            Boolean                               DisableLogging               = false,
+                            Boolean?                              DisableLogging               = false,
                             String?                               LoggingPath                  = null,
                             String?                               LoggingContext               = null,
                             LogfileCreatorDelegate?               LogfileCreator               = null,
@@ -681,16 +681,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    VirtualHostname,
                    Description,
                    RemoteCertificateValidator,
-                   null,
+                   ClientCertificateSelector,
                    ClientCert,
-                   null,
-                   null,
+                   TLSProtocol,
+                   PreferIPv4,
                    HTTPUserAgent      ?? DefaultHTTPUserAgent,
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries ?? DefaultMaxNumberOfRetries,
-                   false,
-                   null,
+                   UseHTTPPipelining,
+                   HTTPLogger,
                    DNSClient)
 
         {

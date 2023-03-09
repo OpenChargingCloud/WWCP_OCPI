@@ -1655,7 +1655,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                       Roles                          Role,
                                       BusinessDetails                BusinessDetails,
 
-                                      IEnumerable<AccessInfoStatus>       AccessInfos,
+                                      IEnumerable<AccessInfoStatus>  AccessInfoStatus,
                                       IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
                                       PartyStatus                    Status        = PartyStatus.ENABLED,
@@ -1669,7 +1669,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      Role,
                                                      BusinessDetails,
 
-                                                     AccessInfos,
+                                                     AccessInfoStatus,
                                                      RemoteAccessInfos,
 
                                                      Status,

@@ -118,7 +118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
                 BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
-                AccessInfos:        new AccessInfoStatus[] {
+                AccessInfoStatus:        new AccessInfoStatus[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("aaaaaa"),
                                             AccessStatus.ALLOWED
@@ -216,7 +216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
                 BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
-                AccessInfos:        new AccessInfoStatus[] {
+                AccessInfoStatus:        new AccessInfoStatus[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("xxxxxx"),
                                             AccessStatus.ALLOWED
@@ -244,7 +244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GEF"),
                 Role:               Roles.      CPO,
                 BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
-                AccessInfos:        new AccessInfoStatus[] {
+                AccessInfoStatus:        new AccessInfoStatus[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("yyyyyy"),
                                             AccessStatus.BLOCKED
@@ -509,7 +509,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
                 BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
-                AccessInfos:        new AccessInfoStatus[] {
+                AccessInfoStatus:        new AccessInfoStatus[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("aaaaaa"),
                                             AccessStatus.ALLOWED
@@ -617,7 +617,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
                 BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
-                AccessInfos:        new AccessInfoStatus[] {
+                AccessInfoStatus:        new AccessInfoStatus[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("xxxxxx"),
                                             AccessStatus.ALLOWED
@@ -645,7 +645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GEF"),
                 Role:               Roles.      CPO,
                 BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
-                AccessInfos:        new AccessInfoStatus[] {
+                AccessInfoStatus:        new AccessInfoStatus[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("yyyyyy"),
                                             AccessStatus.BLOCKED
@@ -727,7 +727,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
                 BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
-                AccessInfos:        new AccessInfoStatus[] {
+                AccessInfoStatus:        new AccessInfoStatus[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("xxxxxx"),
                                             AccessStatus.ALLOWED
@@ -755,7 +755,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GEF"),
                 Role:               Roles.      CPO,
                 BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
-                AccessInfos:        new AccessInfoStatus[] {
+                AccessInfoStatus:        new AccessInfoStatus[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("yyyyyy"),
                                             AccessStatus.BLOCKED
@@ -828,7 +828,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
                 BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
-                AccessInfos:        new AccessInfoStatus[] {
+                AccessInfoStatus:        new AccessInfoStatus[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("xxxxxx"),
                                             AccessStatus.ALLOWED
@@ -856,7 +856,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GEF"),
                 Role:               Roles.      CPO,
                 BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
-                AccessInfos:        new AccessInfoStatus[] {
+                AccessInfoStatus:        new AccessInfoStatus[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("yyyyyy"),
                                             AccessStatus.BLOCKED
@@ -1003,7 +1003,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
                 BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
-                AccessInfos:        new AccessInfoStatus[] {
+                AccessInfoStatus:        new AccessInfoStatus[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("aaaaaa"),
                                             AccessStatus.ALLOWED

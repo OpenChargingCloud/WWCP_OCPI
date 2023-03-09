@@ -68,6 +68,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public DisplayText?             Info                      { get; }
 
         /// <summary>
+        ///  The remote party.
+        /// </summary>
+        [Optional, NonStandard]
+        public RemoteParty?             RemoteParty               { get; }
+
+        /// <summary>
         /// The runtime of the authorization.
         /// </summary>
         [Optional, NonStandard]
@@ -86,12 +92,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="AuthorizationReference">An optional reference to the authorization given by the eMSP, when given, this reference will be provided in the relevant charging session and/or charge detail record.</param>
         /// <param name="Info">An optional additional information to the EV driver.</param>
         /// <param name="Runtime">The runtime of the authorization.</param>
-        public AuthorizationInfo(AllowedType               Allowed,
-                                 Token                     Token,
-                                 LocationReference?        Location                 = null,
-                                 AuthorizationReference?   AuthorizationReference   = null,
-                                 DisplayText?              Info                     = null,
-                                 TimeSpan?                 Runtime                  = null)
+        public AuthorizationInfo(AllowedType              Allowed,
+                                 Token                    Token,
+                                 LocationReference?       Location                 = null,
+                                 AuthorizationReference?  AuthorizationReference   = null,
+                                 DisplayText?             Info                     = null,
+                                 RemoteParty?             RemoteParty              = null,
+                                 TimeSpan?                Runtime                  = null)
         {
 
             this.Allowed                 = Allowed;
@@ -99,6 +106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.Location                = Location;
             this.AuthorizationReference  = AuthorizationReference;
             this.Info                    = Info;
+            this.RemoteParty             = RemoteParty;
             this.Runtime                 = Runtime ?? TimeSpan.Zero;
 
         }
@@ -328,6 +336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     Location?.              Clone(),
                     AuthorizationReference?.Clone,
                     Info?.                  Clone(),
+                    RemoteParty,
                     Runtime);
 
         #endregion
