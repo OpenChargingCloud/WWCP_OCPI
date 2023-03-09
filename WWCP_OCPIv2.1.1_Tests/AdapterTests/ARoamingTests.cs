@@ -162,6 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                             ),
                                        OurCountryCode:                      CountryCode.Parse("DE"),
                                        OurPartyId:                          Party_Id.   Parse("GEF"),
+                                       OurRole:                             Roles.      CPO,
 
                                        HTTPServer:                          csoHTTPAPI.HTTPServer,
 
@@ -206,6 +207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                             ),
                                        OurCountryCode:                      CountryCode.Parse("DE"),
                                        OurPartyId:                          Party_Id.   Parse("GDF"),
+                                       OurRole:                             Roles.      EMSP,
 
                                        HTTPServer:                          emp1HTTPAPI.HTTPServer,
 
@@ -250,6 +252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                             ),
                                        OurCountryCode:                      CountryCode.Parse("DE"),
                                        OurPartyId:                          Party_Id.   Parse("EMP"),
+                                       OurRole:                             Roles.      EMSP,
 
                                        HTTPServer:                          emp2HTTPAPI.HTTPServer,
 

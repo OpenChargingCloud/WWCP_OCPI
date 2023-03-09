@@ -146,6 +146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                         ),
                                    OurCountryCode:                      CountryCode.Parse("DE"),
                                    OurPartyId:                          Party_Id.   Parse("GEF"),
+                                   OurRole:                             Roles.      CPO,
 
                                    HTTPServer:                          httpAPI.HTTPServer,
 
