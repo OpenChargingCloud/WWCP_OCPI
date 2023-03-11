@@ -152,6 +152,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             else if (EVSEStatus == WWCP.EVSEStatusTypes.OutOfService)
                 return StatusType.INOPERATIVE;
 
+            else if (EVSEStatus == WWCP.EVSEStatusTypes.Offline)
+                return StatusType.INOPERATIVE;
+
             else if (EVSEStatus == WWCP.EVSEStatusTypes.Error)
                 return StatusType.OUTOFORDER;
 
@@ -283,7 +286,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 return null;
             }
 
-            var locationId   = Location_Id.TryParse(ChargingPool.Id.Suffix);
+            var locationId   = Location_Id.TryParse(ChargingPool.Id.ToString());
 
             if (!locationId.HasValue)
             {
@@ -321,6 +324,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     if (ocpiEVSE is not null)
                         evses.Add(ocpiEVSE);
+                    else
+                    {
+
+                    }
 
                 }
 

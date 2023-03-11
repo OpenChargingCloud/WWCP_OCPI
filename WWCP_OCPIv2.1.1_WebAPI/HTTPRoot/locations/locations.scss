@@ -1,0 +1,211 @@
+﻿@import "../defaults/_defaults.scss";
+
+body {
+    #page {
+        #bottom {
+
+            overflow-y: auto;
+
+            #right {
+                #text {
+                    #locationInfos {
+
+                        #locationInfos2 {
+
+                            padding:            1vh 2vw;
+                            border-radius:      6px;
+                            background-color:   #e7e7e7;
+
+                            #description {
+                                font-weight:        bold;
+                                padding-bottom:     .6vh;
+                            }
+
+                            #locationStatistics {
+
+                                display:            table;
+                                padding-bottom:     10px;
+
+                                .row {
+                                    display:            table-row;
+
+                                    .key {
+                                        display:            table-cell;
+                                        padding-right:      10px;
+                                    }
+
+                                    .value {
+                                        display:            table-cell;
+                                    }
+
+                                }
+
+                            }
+
+
+                            #locations {
+
+                                display:                flex;
+                                flex-direction:         column;
+                                border-top:             none;
+
+                                .properties {
+
+                                    display:                table;
+
+                                    .row {
+
+                                        display:                table-row;
+
+                                        .key {
+                                            display:                table-cell;
+                                            padding-right:          10px;
+                                        }
+
+                                        .value {
+                                            display:                table-cell;
+                                        }
+
+                                    }
+                                }
+
+                                .location {
+
+                                    padding:                15px 22px;
+                                    display:                inline-block;
+                                    color:                  #5272a3;
+                                    font-weight:            bold;
+                                    background-color:       #e1e1e1;
+                                    border-top:             1px solid #ebebeb;
+
+                                    .title {
+                                        padding-bottom:         3px;
+                                    }
+
+                                    .locationLink {
+                                        font-size:              85%;
+                                        font-weight:            normal;
+                                    }
+
+                                    .evses {
+
+                                        padding-left: 10px;
+
+                                        .evse {
+
+                                            background-color:       #e2e2e2;
+                                            padding:                10px 15px;
+                                            margin-top:             1px;
+
+                                            .evseId {
+                                                font-size:              90%;
+                                            }
+
+                                            .evseStatus {
+                                                font-size:              67%;
+                                                padding-bottom:         4px;
+                                            }
+
+                                            .evseStatus_AVAILABLE {
+                                                color:                  rgb(  6, 146,   6, 0.5);
+                                                background-color:       unset;
+                                            }
+
+                                            .evseStatus_CHARGING {
+                                                color:                  rgb(206,   3,   3, 0.5);
+                                                background-color:       unset;
+                                            }
+
+                                            .evseStatus_OUTOFORDER {    
+                                                color:                  rgb(215, 146,   3, 0.5);
+                                                background-color:       unset;
+                                            }
+
+                                            .evseStatus_INOPERATIVE {
+                                                color:                  rgb(204,  91,   0, 0.5);
+                                                background-color:       unset;
+                                            }
+
+                                            .evseStatus_UNKNOWN {
+                                                color:                  rgb(130, 130, 130, 0.5);
+                                                background-color:       unset;
+                                            }
+
+                                            .connectors {
+
+                                                padding-left:           10px;
+                                                font-size:              90%;
+
+                                                .connector {
+
+                                                    padding:                10px 20px;
+                                                    border-radius:          6px;
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                        .evse:first-child {
+                                            margin-top:             unset;
+                                        }
+
+                                        .evseStatus_AVAILABLE {
+                                            background-color:       rgb(  0, 255,   0, 0.25);
+                                        }
+
+                                        .evseStatus_CHARGING {
+                                            background-color:       rgb(255,   0,   0, 0.25);
+                                        }
+
+                                        .evseStatus_OUTOFORDER {
+                                            background-color:       rgb(255, 172,   0, 0.25);
+                                        }
+
+                                        .evseStatus_INOPERATIVE {
+                                            background-color:       rgb(255, 114,   0, 0.25);
+                                        }
+
+                                        .evseStatus_UNKNOWN {
+                                            background-color:       rgb(175, 175, 175, 0.25);
+                                        }
+
+                                    }
+
+                                    .evses .evse:first-child {
+                                        border-top-left-radius:         4px;
+                                        border-top-right-radius:        4px;
+                                    }
+
+                                    .evses .evse:last-child {
+                                        border-bottom-left-radius:      4px;
+                                        border-bottom-right-radius:     4px;
+                                    }
+
+                                }
+
+                                .location:hover {
+                                    background-color:       rgba(188, 201, 221, 0.5);
+                                }
+
+                            }
+
+                            #locations .location:first-child {
+                                border-top-left-radius:         6px;
+                                border-top-right-radius:        6px;
+                            }
+
+                            #locations .location:last-child {
+                                border-bottom-left-radius:      6px;
+                                border-bottom-right-radius:     6px;
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+}

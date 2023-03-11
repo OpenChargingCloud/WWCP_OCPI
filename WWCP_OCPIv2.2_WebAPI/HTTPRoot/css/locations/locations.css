@@ -1,0 +1,38 @@
+﻿body #page #bottom #right #text #versionInfos #versionInfos2 {
+  padding: 1vh 2vw;
+  border-radius: 6px;
+  background-color: #e7e7e7;
+}
+body #page #bottom #right #text #versionInfos #versionInfos2 #description {
+  font-weight: bold;
+  padding-bottom: 0.6vh;
+}
+body #page #bottom #right #text #versionInfos #versionInfos2 #locations {
+  display: flex;
+  flex-direction: column;
+  border-top: none;
+}
+body #page #bottom #right #text #versionInfos #versionInfos2 #locations a.location {
+  padding: 1vh 2vw;
+  display: inline-block;
+  color: #5272a3;
+  font-weight: bold;
+  background-color: #e1e1e1;
+  text-decoration: none;
+  border-top: 1px solid #ebebeb;
+}
+body #page #bottom #right #text #versionInfos #versionInfos2 #locations a.location .locationLink {
+  font-size: 85%;
+  font-weight: normal;
+}
+body #page #bottom #right #text #versionInfos #versionInfos2 #locations a.location:hover {
+  background-color: #bcc9dd;
+}
+body #page #bottom #right #text #versionInfos #versionInfos2 #location a.location:first-child {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+body #page #bottom #right #text #versionInfos #versionInfos2 #location a.location:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}

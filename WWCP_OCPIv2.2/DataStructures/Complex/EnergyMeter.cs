@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
     /// <summary>
-    /// An energy meter. This information will e.g. be used for the German calibration law.
+    /// An energy meter.
     /// </summary>
     [NonStandard]
     public class EnergyMeter : AInternalData,
@@ -143,7 +143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The multi-language description of the energy meter.
         /// </summary>
         [Optional]
-        public I18NString                               Description                   { get; }
+        public IEnumerable<DisplayText>                 Description                   { get; }
 
         /// <summary>
         /// The timestamp when this energy meter was last updated (or created).
@@ -180,7 +180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            IEnumerable<PublicKey>?                   PublicKeys                  = null,
                            CertificateChain?                         PublicKeyCertificateChain   = null,
                            IEnumerable<TransparencySoftwareStatus>?  TransparencySoftwares       = null,
-                           I18NString?                               Description                 = null,
+                           IEnumerable<DisplayText>?                 Description                 = null,
 
                            JObject?                                  CustomData                  = null,
                            UserDefinedDictionary?                    InternalData                = null,
@@ -201,7 +201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.PublicKeys                 = PublicKeys?.           Distinct() ?? Array.Empty<PublicKey>();
             this.PublicKeyCertificateChain  = PublicKeyCertificateChain;
             this.TransparencySoftwares      = TransparencySoftwares?.Distinct() ?? Array.Empty<TransparencySoftwareStatus>();
-            this.Description                = Description                       ?? I18NString.Empty;
+            this.Description                = Description?.          Distinct() ?? Array.Empty<DisplayText>();
             this.LastUpdated                = LastUpdated                       ?? Timestamp.Now;
 
         }
@@ -388,11 +388,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Description                   [optional]
 
-                if (JSON.ParseOptional("description",
-                                       "energy meter description",
-                                       I18NString.TryParse,
-                                       out I18NString? Description,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("description",
+                                              "energy meter description",
+                                              DisplayText.TryParse,
+                                              out HashSet<DisplayText> Description,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -400,7 +400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse LastUpdated           [mandatory]
+                #region Parse LastUpdated                   [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
@@ -501,7 +501,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            Description is not null && Description.IsNeitherNullNorEmpty()
-                               ? new JProperty("description",                    Description.ToJSON())
+                               ? new JProperty("description",                    new JArray(Description.Select(displayText => displayText.ToJSON())))
                                : null,
 
                                  new JProperty("last_updated",                   LastUpdated.ToIso8601())
@@ -533,8 +533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     PublicKeys.           Select(publicKey                  => publicKey.                 Clone).  ToArray(),
                     PublicKeyCertificateChain.HasValue    ? PublicKeyCertificateChain.Value.Clone     : null,
                     TransparencySoftwares.Select(transparencySoftwareStatus => transparencySoftwareStatus.Clone()).ToArray(),
-                    Description.IsNeitherNullNorEmpty()   ? Description.Clone                         : I18NString.Empty,
-
+                    Description.          Select(displayText                => displayText.               Clone()).ToArray(),
                     CustomData,
                     InternalData,
                     LastUpdated);
@@ -780,13 +779,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             ((!PublicKeyCertificateChain.HasValue    && !EnergyMeter.PublicKeyCertificateChain.HasValue)    ||
               (PublicKeyCertificateChain.HasValue    &&  EnergyMeter.PublicKeyCertificateChain.HasValue    && PublicKeyCertificateChain.Value.Equals(EnergyMeter.PublicKeyCertificateChain.Value))) &&
 
-             ((Description               is     null &&  EnergyMeter.Description               is     null) ||
-              (Description               is not null &&  EnergyMeter.Description               is not null && Description.                    Equals(EnergyMeter.Description)))                     &&
+               PublicKeys.           Count().Equals(EnergyMeter.PublicKeys.           Count())                                &&
+               PublicKeys.           All(publicKey            => EnergyMeter.PublicKeys.                 Contains(publicKey)) &&
 
-               PublicKeys.           Count().Equals(EnergyMeter.PublicKeys.           Count())                          &&
-               PublicKeys.           All(publicKey            => EnergyMeter.PublicKeys.           Contains(publicKey)) &&
+               Description.          Count().Equals(EnergyMeter.Description.          Count())                                &&
+               Description.          All(publicKey            => EnergyMeter.Description.                Contains(publicKey)) &&
 
-               TransparencySoftwares.Count().Equals(EnergyMeter.TransparencySoftwares.Count())                          &&
+               TransparencySoftwares.Count().Equals(EnergyMeter.TransparencySoftwares.Count())                                &&
                TransparencySoftwares.All(transparencySoftwareStatus => EnergyMeter.TransparencySoftwares.Contains(transparencySoftwareStatus));
 
         #endregion
@@ -814,7 +813,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                       (PublicKeys?.               CalcHashCode() ?? 0) * 11 ^
                       (PublicKeyCertificateChain?.GetHashCode()  ?? 0) *  7 ^
                       (TransparencySoftwares?.    CalcHashCode() ?? 0) *  5 ^
-                      (Description?.              GetHashCode()  ?? 0) *  3 ^
+                      (Description?.              CalcHashCode() ?? 0) *  3 ^
                        LastUpdated.               GetHashCode();
 
             }
@@ -869,8 +868,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        ? $"{TransparencySoftwares.Count()} transparency software(s)"
                        : String.Empty,
 
-                   Description is not null && Description.IsNeitherNullNorEmpty()
-                       ? $"Description: {Description}"
+                   Description.Any()
+                       ? "description:" + Description.Select(displayText => $"[{displayText.Language}] {displayText.Text.SubstringMax(15)}").AggregateWith(", ")
                        : String.Empty,
 
                    $"Last update: {LastUpdated.ToIso8601()}"

@@ -555,8 +555,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          LogfileCreatorDelegate?  LogfileCreator            = null,
                          Boolean                  Autostart                 = false)
 
-
-
             : base(HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,

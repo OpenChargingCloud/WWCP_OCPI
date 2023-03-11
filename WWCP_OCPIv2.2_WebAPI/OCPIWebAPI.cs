@@ -581,8 +581,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #endregion
 
+        #region (protected override) MixWithHTMLTemplate    (ResourceName, HTMLConverter)
+
+        protected override String MixWithHTMLTemplate(String ResourceName, Func<String, String> HTMLConverter)
+
+            => MixWithHTMLTemplate(ResourceName,
+                                   HTMLConverter,
+                                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                   new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
         #endregion
 
+        #endregion
+
+        /// <summary>
+        /// The following will register HTTP overlays for text/html
+        /// showing a html representation of the OCPI common API!
+        /// </summary>
         private void RegisterURITemplates()
         {
 
@@ -611,19 +627,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                          AccessControlAllowMethods  = "OPTIONS, GET",
                                                          AccessControlAllowHeaders  = "Authorization",
                                                          ContentType                = HTTPContentType.HTML_UTF8,
-                                                         Content                    = ("<html><body>" +
-                                                                                          "This is an Open Charge Point Interface HTTP service!<br /><br />" +
-                                                                                          "<ul>" +
-                                                                                              "<li><a href=\"versions\">Versions</a></li>" +
-                                                                                              "<li><a href=\"" + URLPathPrefix.ToString() + "/remoteParties\">Remote Parties</a></li>" +
-                                                                                              "<li><a href=\"" + URLPathPrefix.ToString() + "/clients\">Clients</a></li>" +
-                                                                                              "<li><a href=\"" + URLPathPrefix.ToString() + "/cpoclients\">CPO Clients</a></li>" +
-                                                                                              "<li><a href=\"" + URLPathPrefix.ToString() + "/emspclients\">EMSP Clients</a></li>" +
-                                                                                       "</ul><body></html>").ToUTF8Bytes(),
-                                                         Connection                 = "close"
+                                                         Content                    = MixWithHTMLTemplate("index.shtml").ToUTF8Bytes(),
+                                                         Connection                 = "close",
+                                                         Vary                       = "Accept"
                                                      }.AsImmutable);
 
                                              });
+
+            if (URLPathPrefix1.HasValue)
+                HTTPServer.AddMethodCallback(this,
+                                             HTTPHostname.Any,
+                                             HTTPMethod.GET,
+                                             URLPathPrefix1.Value + "/",
+                                             HTTPContentType.HTML_UTF8,
+                                             HTTPDelegate: Request => {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         //Server                     = DefaultHTTPServerName,
+                                                         Date                       = Timestamp.Now,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "OPTIONS, GET",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         Content                    = MixWithHTMLTemplate("index.shtml").ToUTF8Bytes(),
+                                                         Connection                 = "close",
+                                                         Vary                       = "Accept"
+                                                     }.AsImmutable);
+
+                                             });
+
 
             if (URLPathPrefix1.HasValue)
                 HTTPServer.AddMethodCallback(this,
@@ -667,7 +701,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                          AccessControlAllowMethods  = "OPTIONS, GET",
                                                          AccessControlAllowHeaders  = "Authorization",
                                                          ContentType                = HTTPContentType.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("versions.versionDetails.shtml").ToUTF8Bytes(),
+                                                         Content                    = MixWithHTMLTemplate("locations.locations.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);

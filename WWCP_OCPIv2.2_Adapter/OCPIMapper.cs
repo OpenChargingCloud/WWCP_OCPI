@@ -122,6 +122,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             else if (EVSEStatus == WWCP.EVSEStatusTypes.OutOfService)
                 return StatusType.INOPERATIVE;
 
+            else if (EVSEStatus == WWCP.EVSEStatusTypes.Offline)
+                return StatusType.INOPERATIVE;
+
             else if (EVSEStatus == WWCP.EVSEStatusTypes.Error)
                 return StatusType.OUTOFORDER;
 

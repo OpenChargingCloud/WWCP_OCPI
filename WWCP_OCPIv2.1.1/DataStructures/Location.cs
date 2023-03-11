@@ -227,6 +227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The SHA256 hash of the JSON representation of this location.
         /// </summary>
+        [Optional, NonStandard("OCPIComputerScienceExtension")]
         public String                              ETag                     { get; private set; }
 
         #endregion

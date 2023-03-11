@@ -27,6 +27,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
+    /// Extension methods for multi-language text.
+    /// </summary>
+    public static class DisplayTextExtensions
+    {
+
+        /// <summary>
+        /// Add the given multi-language text to the hash set of multi-language texts.
+        /// </summary>
+        /// <param name="CommandId">A command identification.</param>
+        public static HashSet<DisplayText> Add(this HashSet<DisplayText>  DisplayTexts,
+                                               Languages                  Language,
+                                               String                     Text)
+        {
+
+            DisplayTexts.Add(
+                new DisplayText(Language,
+                                Text)
+            );
+
+            return DisplayTexts;
+
+        }
+
+    }
+
+
+    /// <summary>
     /// A multi-language text.
     /// </summary>
     public readonly struct DisplayText : IEquatable<DisplayText>,
@@ -72,7 +99,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region (static) Create  (Language, Text)
+        #region (static) Create   (Language, Text)
 
         /// <summary>
         /// Create a new multi-language text.
@@ -87,7 +114,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) Parse   (JSON, CustomDisplayTextParser = null)
+        #region (static) CreateSet(Language, Text)
+
+        /// <summary>
+        /// Create a new multi-language text.
+        /// </summary>
+        /// <param name="Language">The language of the text.</param>
+        /// <param name="Text">The text.</param>
+        public static HashSet<DisplayText> CreateSet(Languages  Language,
+                                                     String     Text)
+
+            => new (
+                   new DisplayText[] {
+                       new DisplayText(Language,
+                                       Text)
+                   }
+               );
+
+        #endregion
+
+        #region (static) Parse    (JSON, CustomDisplayTextParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a multi-language text.
@@ -113,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(JSON, out DisplayText, out ErrorResponse, CustomDisplayTextParser = null)
+        #region (static) TryParse (JSON, out DisplayText, out ErrorResponse, CustomDisplayTextParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 

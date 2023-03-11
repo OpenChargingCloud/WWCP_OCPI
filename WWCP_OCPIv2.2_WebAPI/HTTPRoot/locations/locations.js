@@ -1,5 +1,5 @@
 ///<reference path="../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
-function StartVersions() {
+function StartLocations() {
     const versionInfosDiv = document.getElementById("versionInfos");
     const versionsDiv = versionInfosDiv.querySelector("#versions");
     OCPIGet(window.location.href, // == "/versions"
@@ -24,4 +24,4 @@ function StartVersions() {
     });
     //var refresh = setTimeout(StartDashboard, 30000);
 }
-//# sourceMappingURL=versions.js.map
+//# sourceMappingURL=locations.js.map

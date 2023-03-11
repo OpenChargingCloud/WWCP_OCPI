@@ -1,0 +1,35 @@
+﻿
+<link href="{{BasePath}}/webapi/css/locations/locations.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="/shared/UsersAPI/js/date.format.js"></script>
+<script type="text/javascript" src="{{BasePath}}/webapi/locations/locations.js"></script>
+
+<div id="locationInfos" class="entity">
+
+    <div id="locationInfos2">
+
+        <div id="description">
+            Locations
+        </div>
+
+        <div id="locationStatistics">
+            <div class="row"><div class="key">Number of locations</div><div id="numberOfLocations">-</div></div>
+            <div class="row"><div class="key">Number of EVSEs</div><div id="numberOfEVSEs">-</div></div>
+            <div class="row"><div class="key">EVSEs Available</div><div id="numberOfEVSEsAvailable">-</div></div>
+            <div class="row"><div class="key">EVSEs Charging</div><div id="numberOfEVSEsCharging">-</div></div>
+            <div class="row"><div class="key">EVSEs Out Of Order</div><div id="numberOfEVSEsOutOfOrder">-</div></div>
+            <div class="row"><div class="key">EVSEs Inoperative</div><div id="numberOfEVSEsInoperative">-</div></div>
+            <div class="row"><div class="key">EVSEs Unkown</div><div id="numberOfEVSEsUnkown">-</div></div>
+        </div>
+
+        <div id="locations">
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    StartLocations();
+</script>

@@ -4,12 +4,20 @@
     "inputFile": "HTTPRoot/template.scss"
   },
   {
+    "outputFile": "HTTPRoot/css/index.css",
+    "inputFile": "HTTPRoot/index.scss"
+  },
+  {
     "outputFile": "HTTPRoot/dashboard/dashboard.css",
     "inputFile": "HTTPRoot/dashboard/dashboard.scss"
   },
   {
     "outputFile": "HTTPRoot/css/versions/versions.css",
     "inputFile": "HTTPRoot/versions/versions.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/locations/locations.css",
+    "inputFile": "HTTPRoot/locations/locations.scss"
   },
   {
     "outputFile": "HTTPRoot/css/versions/versionDetails.css",

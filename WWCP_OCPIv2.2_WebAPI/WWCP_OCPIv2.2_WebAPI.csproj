@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="HTTPRoot\css\index.css" />
+    <None Remove="HTTPRoot\css\index.min.css" />
+    <None Remove="HTTPRoot\css\locations\locations.css" />
+    <None Remove="HTTPRoot\css\locations\locations.min.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
@@ -28,9 +32,18 @@
     <None Remove="HTTPRoot\css\versions\versionDetails.min.css" />
     <None Remove="HTTPRoot\css\versions\versions.css" />
     <None Remove="HTTPRoot\css\versions\versions.min.css" />
+    <None Remove="HTTPRoot\locations\locations.js" />
+    <None Remove="HTTPRoot\locations\locations.js.map" />
+    <None Remove="HTTPRoot\locations\locations.scss" />
+    <None Remove="HTTPRoot\locations\locations.shtml" />
+    <None Remove="HTTPRoot\locations\locations.ts" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\css\index.css" />
+    <EmbeddedResource Include="HTTPRoot\css\index.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\locations\locations.css" />
+    <EmbeddedResource Include="HTTPRoot\css\locations\locations.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
@@ -51,6 +64,11 @@
     <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.min.css" />
+    <EmbeddedResource Include="HTTPRoot\locations\locations.js" />
+    <EmbeddedResource Include="HTTPRoot\locations\locations.js.map" />
+    <EmbeddedResource Include="HTTPRoot\locations\locations.scss" />
+    <EmbeddedResource Include="HTTPRoot\locations\locations.shtml" />
+    <EmbeddedResource Include="HTTPRoot\locations\locations.ts" />
   </ItemGroup>
 
   <ItemGroup>

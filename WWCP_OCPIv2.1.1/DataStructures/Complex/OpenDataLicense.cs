@@ -84,17 +84,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The unique identification of the Open Data license.
         /// </summary>
-        public OpenDataLicense_Id  Id             { get; }
+        public OpenDataLicense_Id        Id             { get; }
 
         /// <summary>
         /// The description of the Open Data license.
         /// </summary>
-        public I18NString          Description    { get; }
+        public IEnumerable<DisplayText>  Description    { get; }
 
         /// <summary>
         /// Optional URLs for more information on the Open Data license.
         /// </summary>
-        public IEnumerable<URL>    URLs           { get; }
+        public IEnumerable<URL>          URLs           { get; }
 
         #endregion
 
@@ -112,8 +112,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.Id           = Id;
-            this.Description  = I18NString.Empty;
-            this.URLs         = URLs?.Distinct() ?? Array.Empty<URL>();
+            this.Description  = Array.Empty<DisplayText>();
+            this.URLs         = URLs?.Distinct().ToArray() ?? Array.Empty<URL>();
 
         }
 
@@ -127,14 +127,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Id">The unique identification of the Open Data license.</param>
         /// <param name="Description">The description of the Open Data license.</param>
         /// <param name="URLs">Optional URLs for more information on the Open Data license.</param>
-        public OpenDataLicense(OpenDataLicense_Id  Id,
-                               I18NString          Description,
-                               params URL[]        URLs)
+        public OpenDataLicense(OpenDataLicense_Id        Id,
+                               IEnumerable<DisplayText>  Description,
+                               params URL[]              URLs)
         {
 
             this.Id           = Id;
-            this.Description  = Description      ?? I18NString.Empty;
-            this.URLs         = URLs?.Distinct() ?? Array.Empty<URL>();
+            this.Description  = Description?.Distinct().ToArray() ?? Array.Empty<DisplayText>();
+            this.URLs         = URLs?.       Distinct().ToArray() ?? Array.Empty<URL>();
 
         }
 
@@ -228,11 +228,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Description    [optional]
 
-                if (JSON.ParseOptional("description",
-                                       "Open Data license description",
-                                       I18NString.TryParse,
-                                       out I18NString? Description,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("description",
+                                              "Open Source license description",
+                                              DisplayText.TryParse,
+                                              out HashSet<DisplayText> Description,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -243,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse URLs           [optional]
 
-                if (JSON.ParseOptionalHashSet("URLs",
+                if (JSON.ParseOptionalHashSet("urls",
                                               "Open Data license URLs",
                                               URL.TryParse,
                                               out HashSet<URL> URLs,
@@ -257,7 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
                 OpenDataLicense = new OpenDataLicense(Id,
-                                                      Description ?? I18NString.Empty,
+                                                      Description,
                                                       URLs.ToArray());
 
                 if (CustomOpenDataLicenseParser is not null)
@@ -291,11 +291,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  new JProperty("id",            Id.         ToString()),
 
-                           Description.IsNeitherNullNorEmpty()
-                               ? new JProperty("description",   Description.ToJSON())
+                           Description.Any()
+                               ? new JProperty("description",   new JArray(Description.Select(displayText => displayText.ToJSON())))
                                : null,
 
-                           new JProperty("URLs",                new JArray(URLs.Select(url => url.ToString())))
+                                 new JProperty("urls",          new JArray(URLs.       Select(url         => url.        ToString())))
 
                        );
 
@@ -315,8 +315,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public OpenDataLicense Clone()
 
             => new (Id.         Clone,
-                    Description.Clone,
-                    URLs.Select(url => url.Clone).ToArray());
+                    Description.Select(displayText => displayText.Clone()).ToArray(),
+                    URLs.       Select(url         => url.        Clone).  ToArray());
 
         #endregion
 
@@ -327,7 +327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// No license, ask the data source for more details.
         /// </summary>
         public static readonly OpenDataLicense None                              = new (OpenDataLicense_Id.Parse("None"),
-                                                                                        I18NString.Create(Languages.en, "None"));
+                                                                                        DisplayText.CreateSet(Languages.en, "None"));
 
 
         // Open Data licenses
@@ -336,14 +336,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Open Data Commons: Public Domain Dedication and License (PDDL)
         /// </summary>
         public static readonly OpenDataLicense PublicDomainDedicationAndLicense  = new (OpenDataLicense_Id.Parse("PDDL"),
-                                                                                        I18NString.Create(Languages.en, "Open Data Commons: Public Domain Dedication and License"),
+                                                                                        DisplayText.CreateSet(Languages.en, "Open Data Commons: Public Domain Dedication and License"),
                                                                                         URL.Parse("http://opendatacommons.org/licenses/pddl/"));
 
         /// <summary>
         /// Open Data Commons: Attribution License (ODC-By)
         /// </summary>
         public static readonly OpenDataLicense AttributionLicense                = new (OpenDataLicense_Id.Parse("ODC-By"),
-                                                                                        I18NString.Create(Languages.en, "Open Data Commons: Attribution License"),
+                                                                                        DisplayText.CreateSet(Languages.en, "Open Data Commons: Attribution License"),
                                                                                         URL.Parse("http://opendatacommons.org/licenses/by/"));
 
         /// <summary>
@@ -351,7 +351,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Attribution and Share-Alike for Data/Databases
         /// </summary>
         public static readonly OpenDataLicense OpenDatabaseLicense               = new (OpenDataLicense_Id.Parse("ODbL"),
-                                                                                        I18NString.Create(Languages.en, "Open Data Commons: Open Data Commons Open Database License"),
+                                                                                        DisplayText.CreateSet(Languages.en, "Open Data Commons: Open Data Commons Open Database License"),
                                                                                         URL.Parse("http://opendatacommons.org/licenses/odbl/"),
                                                                                         URL.Parse("http://opendatacommons.org/licenses/odbl/summary/"),
                                                                                         URL.Parse("http://opendatacommons.org/licenses/odbl/1.0/"));
@@ -365,21 +365,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Datenlizenz Deutschland – Namensnennung – Version 2.0
         /// </summary>
         public static readonly OpenDataLicense DatenlizenzDeutschland_BY_2       = new (OpenDataLicense_Id.Parse("dl-de/by-2-0"),
-                                                                                        I18NString.Create(Languages.de, "Datenlizenz Deutschland – Namensnennung – Version 2.0"),
+                                                                                        DisplayText.CreateSet(Languages.de, "Datenlizenz Deutschland – Namensnennung – Version 2.0"),
                                                                                         URL.Parse("https://www.govdata.de/dl-de/by-2-0"));
 
         /// <summary>
         /// Datenlizenz Deutschland – Namensnennung – Version 2.0
         /// </summary>
         public static readonly OpenDataLicense DatenlizenzDeutschland_Zero_2     = new (OpenDataLicense_Id.Parse("dl-de/zero-2-0"),
-                                                                                        I18NString.Create(Languages.de, "Datenlizenz Deutschland – Namensnennung – Version 2.0"),
+                                                                                        DisplayText.CreateSet(Languages.de, "Datenlizenz Deutschland – Namensnennung – Version 2.0"),
                                                                                         URL.Parse("https://www.govdata.de/dl-de/zero-2-0"));
 
         /// <summary>
         /// GeoLizenz V1.3 – Open
         /// </summary>
         public static readonly OpenDataLicense GeoLizenz_OpenData_1_3_1          = new (OpenDataLicense_Id.Parse("GeoLizenz_V1.3"),
-                                                                                        I18NString.Create(Languages.de, "GeoLizenz V1.3 – Open"),
+                                                                                        DisplayText.CreateSet(Languages.de, "GeoLizenz V1.3 – Open"),
                                                                                         URL.Parse("https://www.geolizenz.org/index/page.php?p=GL/opendata"),
                                                                                         URL.Parse("https://www.geolizenz.org/modules/geolizenz/docs/1.3.1/GeoLizenz_V1.3_Open_050615_V1.pdf"),
                                                                                         URL.Parse("https://www.geolizenz.org/modules/geolizenz/docs/1.3.1/Erl%C3%A4uterungen_GeoLizenzV1.3_Open_06.06.2015_V1.pdf"));
@@ -393,7 +393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Creative Commons Attribution 4.0 International (CC BY 4.0)
         /// </summary>
         public static readonly OpenDataLicense CreativeCommons_BY_4              = new (OpenDataLicense_Id.Parse("CC BY 4.0"),
-                                                                                        I18NString.Create(Languages.en, "Creative Commons Attribution 4.0 International"),
+                                                                                        DisplayText.CreateSet(Languages.en, "Creative Commons Attribution 4.0 International"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by/4.0/"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by/4.0/legalcode"));
 
@@ -401,7 +401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
         /// </summary>
         public static readonly OpenDataLicense CreativeCommons_BY_SA_4           = new (OpenDataLicense_Id.Parse("CC BY-SA 4.0"),
-                                                                                        I18NString.Create(Languages.en, "Creative Commons Attribution-ShareAlike 4.0 International"),
+                                                                                        DisplayText.CreateSet(Languages.en, "Creative Commons Attribution-ShareAlike 4.0 International"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by-sa/4.0/"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by-sa/4.0/legalcode"));
 
@@ -409,7 +409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Creative Commons Attribution-NoDerivs 4.0 International (CC BY-ND 4.0)
         /// </summary>
         public static readonly OpenDataLicense CreativeCommons_BY_ND_4           = new (OpenDataLicense_Id.Parse("CC BY-ND 4.0"),
-                                                                                        I18NString.Create(Languages.en, "Creative Commons Attribution-NoDerivs 4.0 International"),
+                                                                                        DisplayText.CreateSet(Languages.en, "Creative Commons Attribution-NoDerivs 4.0 International"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by-nd/4.0/"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by-nd/4.0/legalcode"));
 
@@ -417,7 +417,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
         /// </summary>
         public static readonly OpenDataLicense CreativeCommons_BY_NC_4           = new (OpenDataLicense_Id.Parse("CC BY-NC 4.0"),
-                                                                                        I18NString.Create(Languages.en, "Creative Commons Attribution-NonCommercial 4.0 International"),
+                                                                                        DisplayText.CreateSet(Languages.en, "Creative Commons Attribution-NonCommercial 4.0 International"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by-nc/4.0/"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by-nc/4.0/legalcode"));
 
@@ -425,7 +425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
         /// </summary>
         public static readonly OpenDataLicense CreativeCommons_BY_NC_SA_4        = new (OpenDataLicense_Id.Parse("CC BY-NC-SA 4.0"),
-                                                                                        I18NString.Create(Languages.en, "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International"),
+                                                                                        DisplayText.CreateSet(Languages.en, "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by-nc-sa/4.0/"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by-nc-sa/4.0/legalcode"));
 
@@ -433,7 +433,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Creative Commons Attribution-NonCommercial-NoDerivs 4.0 International (CC BY-NC-ND 4.0)
         /// </summary>
         public static readonly OpenDataLicense CreativeCommons_BY_NC_ND_4        = new (OpenDataLicense_Id.Parse("CC BY-NC-ND 4.0"),
-                                                                                        I18NString.Create(Languages.en, "Creative Commons Attribution-NonCommercial-NoDerivs 4.0 International"),
+                                                                                        DisplayText.CreateSet(Languages.en, "Creative Commons Attribution-NonCommercial-NoDerivs 4.0 International"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by-nc-nd/4.0/"),
                                                                                         URL.Parse("http://creativecommons.org/licenses/by-nc-nd/4.0/legalcode"));
 
@@ -595,11 +595,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                Id.Equals(OpenDataLicense.Id) &&
 
-             ((Description is null     && OpenDataLicense.Description is null    ) ||
-              (Description is not null && OpenDataLicense.Description is not null && Description.Equals(OpenDataLicense.Description))) &&
+               Description.Count().Equals(OpenDataLicense.Description.Count()) &&
+               Description.All(displayText => OpenDataLicense.Description.Contains(displayText)) &&
 
-               URLs.Count().Equals(OpenDataLicense.URLs.Count()) &&
-               URLs.All(url => OpenDataLicense.URLs.Contains(url));
+               URLs.       Count().Equals(OpenDataLicense.URLs.       Count()) &&
+               URLs.       All(url         => OpenDataLicense.URLs.       Contains(url));
 
         #endregion
 
@@ -616,9 +616,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Id.          GetHashCode()        * 5 ^
-                      (Description?.GetHashCode()  ?? 0) * 3 ^
-                       URLs?.       CalcHashCode() ?? 0;
+                return Id.         GetHashCode()  * 5 ^
+                       Description.CalcHashCode() * 3 ^
+                       URLs.       CalcHashCode();
 
             }
         }
@@ -636,8 +636,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    Id.ToString(),
 
-                   Description.IsNeitherNullNorEmpty()
-                       ? ": " + Description
+                   Description.Any()
+                       ? ": " + Description.Select(displayText => $"[{displayText.Language}] {displayText.Text.SubstringMax(20)}").AggregateWith(", ")
+                       : String.Empty,
+
+                   URLs.Any()
+                       ? ": " + URLs.       Select(url         => url.ToString().SubstringMax(15)).AggregateWith(", ")
                        : String.Empty
 
                );

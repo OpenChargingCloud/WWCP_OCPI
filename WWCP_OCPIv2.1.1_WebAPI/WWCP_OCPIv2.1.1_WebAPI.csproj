@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="HTTPRoot\js\**" />
+    <EmbeddedResource Remove="HTTPRoot\js\**" />
+    <None Remove="HTTPRoot\js\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="HTTPRoot\css\index.css" />
+    <None Remove="HTTPRoot\css\index.min.css" />
+    <None Remove="HTTPRoot\css\locations\locations.css" />
+    <None Remove="HTTPRoot\css\locations\locations.min.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
@@ -41,6 +51,13 @@
     <None Remove="HTTPRoot\defaults\_defaults.scss" />
     <None Remove="HTTPRoot\favicon.png" />
     <None Remove="HTTPRoot\images\favicon_big.png" />
+    <None Remove="HTTPRoot\index.scss" />
+    <None Remove="HTTPRoot\index.shtml" />
+    <None Remove="HTTPRoot\locations\locations.js" />
+    <None Remove="HTTPRoot\locations\locations.js.map" />
+    <None Remove="HTTPRoot\locations\locations.scss" />
+    <None Remove="HTTPRoot\locations\locations.shtml" />
+    <None Remove="HTTPRoot\locations\locations.ts" />
     <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js" />
     <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js.map" />
     <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.scss" />
@@ -90,6 +107,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\css\index.css" />
+    <EmbeddedResource Include="HTTPRoot\css\index.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\locations\locations.css" />
+    <EmbeddedResource Include="HTTPRoot\css\locations\locations.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
@@ -123,6 +144,11 @@
     <EmbeddedResource Include="HTTPRoot\defaults\_defaults.scss" />
     <EmbeddedResource Include="HTTPRoot\favicon.png" />
     <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />
+    <EmbeddedResource Include="HTTPRoot\locations\locations.js" />
+    <EmbeddedResource Include="HTTPRoot\locations\locations.js.map" />
+    <EmbeddedResource Include="HTTPRoot\locations\locations.scss" />
+    <EmbeddedResource Include="HTTPRoot\locations\locations.shtml" />
+    <EmbeddedResource Include="HTTPRoot\locations\locations.ts" />
     <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js" />
     <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js.map" />
     <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.scss" />
@@ -159,6 +185,8 @@
     <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.ts" />
     <EmbeddedResource Include="HTTPRoot\template.html" />
     <EmbeddedResource Include="HTTPRoot\template.scss" />
+    <EmbeddedResource Include="HTTPRoot\index.shtml" />
+    <EmbeddedResource Include="HTTPRoot\index.scss" />
     <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js" />
     <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js.map" />
     <EmbeddedResource Include="HTTPRoot\versions\versionDetails.scss" />
@@ -184,10 +212,6 @@
     <ProjectReference Include="..\..\UsersAPI\UsersAPI\UsersAPI.csproj" />
     <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj" />
     <ProjectReference Include="..\WWCP_OCPIv2.1.1\WWCP_OCPIv2.1.1.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="HTTPRoot\js\" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

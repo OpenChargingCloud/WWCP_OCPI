@@ -84,17 +84,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The unique identification of the Open Source license.
         /// </summary>
-        public OpenSourceLicense_Id  Id             { get; }
+        public OpenSourceLicense_Id      Id             { get; }
 
         /// <summary>
         /// The description of the Open Source license.
         /// </summary>
-        public I18NString            Description    { get; }
+        public IEnumerable<DisplayText>  Description    { get; }
 
         /// <summary>
         /// Optional URLs for more information on the Open Source license.
         /// </summary>
-        public IEnumerable<URL>      URLs           { get; }
+        public IEnumerable<URL>          URLs           { get; }
 
         #endregion
 
@@ -112,8 +112,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             this.Id           = Id;
-            this.Description  = I18NString.Empty;
-            this.URLs         = URLs?.Distinct() ?? Array.Empty<URL>();
+            this.Description  = Array.Empty<DisplayText>();
+            this.URLs         = URLs?.Distinct().ToArray() ?? Array.Empty<URL>();
 
         }
 
@@ -127,14 +127,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Id">The unique identification of the Open Source license.</param>
         /// <param name="Description">The description of the Open Source license.</param>
         /// <param name="URLs">Optional URLs for more information on the Open Source license.</param>
-        public OpenSourceLicense(OpenSourceLicense_Id  Id,
-                                 I18NString            Description,
-                                 params URL[]          URLs)
+        public OpenSourceLicense(OpenSourceLicense_Id      Id,
+                                 IEnumerable<DisplayText>  Description,
+                                 params URL[]              URLs)
         {
 
             this.Id           = Id;
-            this.Description  = Description      ?? I18NString.Empty;
-            this.URLs         = URLs?.Distinct() ?? Array.Empty<URL>();
+            this.Description  = Description?.Distinct().ToArray() ?? Array.Empty<DisplayText>();
+            this.URLs         = URLs?.       Distinct().ToArray() ?? Array.Empty<URL>();
 
         }
 
@@ -228,11 +228,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Description    [optional]
 
-                if (JSON.ParseOptional("description",
-                                       "Open Source license description",
-                                       I18NString.TryParse,
-                                       out I18NString? Description,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("description",
+                                              "Open Source license description",
+                                              DisplayText.TryParse,
+                                              out HashSet<DisplayText> Description,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -243,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse URLs           [optional]
 
-                if (JSON.ParseOptionalHashSet("URLs",
+                if (JSON.ParseOptionalHashSet("urls",
                                               "Open Source license URLs",
                                               URL.TryParse,
                                               out HashSet<URL> URLs,
@@ -257,7 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
                 OpenSourceLicense = new OpenSourceLicense(Id,
-                                                          Description ?? I18NString.Empty,
+                                                          Description,
                                                           URLs.ToArray());
 
                 if (CustomOpenSourceLicenseParser is not null)
@@ -291,11 +291,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                                  new JProperty("id",            Id.         ToString()),
 
-                           Description.IsNeitherNullNorEmpty()
-                               ? new JProperty("description",   Description.ToJSON())
+                           Description.Any()
+                               ? new JProperty("description",   new JArray(Description.Select(displayText => displayText.ToJSON())))
                                : null,
 
-                                 new JProperty("URLs",          new JArray(URLs.Select(url => url.ToString())))
+                                 new JProperty("urls",          new JArray(URLs.       Select(url         => url.        ToString())))
 
                        );
 
@@ -315,8 +315,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public OpenSourceLicense Clone()
 
             => new (Id.         Clone,
-                    Description.Clone,
-                    URLs.Select(url => url.Clone).ToArray());
+                    Description.Select(displayText => displayText.Clone()).ToArray(),
+                    URLs.       Select(url         => url.        Clone).  ToArray());
 
         #endregion
 
@@ -327,20 +327,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// No license.
         /// </summary>
         public static readonly OpenSourceLicense None               = new (OpenSourceLicense_Id.Parse("None"),
-                                                                           I18NString.Create(Languages.en, "None - do not use!"));
+                                                                           DisplayText.CreateSet(Languages.en, "None - do not use!"));
 
         /// <summary>
         /// The software etc.pp is not Open Source.
         /// </summary>
         public static readonly OpenSourceLicense ClosedSource       = new (OpenSourceLicense_Id.Parse("ClosedSource"),
-                                                                           I18NString.Create(Languages.en, "Closed Source - do not use!"));
+                                                                           DisplayText.CreateSet(Languages.en, "Closed Source - do not use!"));
 
 
         /// <summary>
         /// Apache License v2.0
         /// </summary>
         public static readonly OpenSourceLicense Apache2_0          = new (OpenSourceLicense_Id.Parse("Apache-2.0"),
-                                                                           I18NString.Create(Languages.en, "Apache License v2.0"),
+                                                                           DisplayText.CreateSet(Languages.en, "Apache License v2.0"),
                                                                            URL.Parse("https://www.apache.org/licenses/LICENSE-2.0.txt"),
                                                                            URL.Parse("https://www.apache.org/licenses/LICENSE-2.0"),
                                                                            URL.Parse("https://opensource.org/license/apache-2-0/"));
@@ -349,21 +349,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The MIT License
         /// </summary>
         public static readonly OpenSourceLicense MIT                = new (OpenSourceLicense_Id.Parse("MIT"),
-                                                                           I18NString.Create(Languages.en, "The MIT License"),
+                                                                           DisplayText.CreateSet(Languages.en, "The MIT License"),
                                                                            URL.Parse("https://opensource.org/license/mit/"));
 
         /// <summary>
         /// The 2-Clause BSD License
         /// </summary>
         public static readonly OpenSourceLicense BSD2               = new (OpenSourceLicense_Id.Parse("BSD-2-Clause"),
-                                                                           I18NString.Create(Languages.en, "The 2-Clause BSD License"),
+                                                                           DisplayText.CreateSet(Languages.en, "The 2-Clause BSD License"),
                                                                            URL.Parse("https://opensource.org/license/bsd-2-clause/"));
 
         /// <summary>
         /// The 3-Clause BSD License
         /// </summary>
         public static readonly OpenSourceLicense BSD3               = new (OpenSourceLicense_Id.Parse("BSD-3-Clause"),
-                                                                           I18NString.Create(Languages.en, "The 3-Clause BSD License"),
+                                                                           DisplayText.CreateSet(Languages.en, "The 3-Clause BSD License"),
                                                                            URL.Parse("https://opensource.org/license/bsd-3-clause/"));
 
 
@@ -371,7 +371,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// GNU General Public License version 2
         /// </summary>
         public static readonly OpenSourceLicense GPL2               = new (OpenSourceLicense_Id.Parse("GPL-2.0"),
-                                                                           I18NString.Create(Languages.en, "GNU General Public License version 2"),
+                                                                           DisplayText.CreateSet(Languages.en, "GNU General Public License version 2"),
                                                                            URL.Parse("https://www.gnu.org/licenses/gpl-2.0.html"),
                                                                            URL.Parse("https://opensource.org/license/gpl-2-0/"));
 
@@ -379,7 +379,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// GNU General Public License version 3
         /// </summary>
         public static readonly OpenSourceLicense GPL3               = new (OpenSourceLicense_Id.Parse("GPL-3.0"),
-                                                                           I18NString.Create(Languages.en, "GNU General Public License version 3"),
+                                                                           DisplayText.CreateSet(Languages.en, "GNU General Public License version 3"),
                                                                            URL.Parse("https://www.gnu.org/licenses/gpl-3.0.html"),
                                                                            URL.Parse("https://opensource.org/license/gpl-3-0/"));
 
@@ -387,7 +387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// GNU Affero General Public License version 3
         /// </summary>
         public static readonly OpenSourceLicense AGPL3              = new (OpenSourceLicense_Id.Parse("AGPL-3.0"),
-                                                                           I18NString.Create(Languages.en, "GNU Affero General Public License version 3"),
+                                                                           DisplayText.CreateSet(Languages.en, "GNU Affero General Public License version 3"),
                                                                            URL.Parse("https://www.gnu.org/licenses/agpl-3.0.html"),
                                                                            URL.Parse("https://opensource.org/license/agpl-v3/"));
 
@@ -395,7 +395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// GNU Lesser General Public License version 3
         /// </summary>
         public static readonly OpenSourceLicense LGPL3              = new (OpenSourceLicense_Id.Parse("LGPL-3.0"),
-                                                                           I18NString.Create(Languages.en, "GNU Lesser General Public License version 3"),
+                                                                           DisplayText.CreateSet(Languages.en, "GNU Lesser General Public License version 3"),
                                                                            URL.Parse("https://www.gnu.org/licenses/lgpl-3.0.html"),
                                                                            URL.Parse("https://opensource.org/license/lgpl-v3/"));
 
@@ -404,7 +404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// European Union Public License, version 1.2 (EUPL-1.2)
         /// </summary>
         public static readonly OpenSourceLicense EUPLv1_2           = new (OpenSourceLicense_Id.Parse("EUPL-1.2"),
-                                                                           I18NString.Create(Languages.en, "European Union Public License, version 1.2 (EUPL-1.2)"),
+                                                                           DisplayText.CreateSet(Languages.en, "European Union Public License, version 1.2 (EUPL-1.2)"),
                                                                            URL.Parse("https://joinup.ec.europa.eu/collection/eupl/news/understanding-eupl-v12"),
                                                                            URL.Parse("https://opensource.org/license/eupl-1-2/"));
 
@@ -566,11 +566,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                Id.Equals(OpenSourceLicense.Id) &&
 
-             ((Description is null     && OpenSourceLicense.Description is null    ) ||
-              (Description is not null && OpenSourceLicense.Description is not null && Description.Equals(OpenSourceLicense.Description))) &&
+               Description.Count().Equals(OpenSourceLicense.Description.Count()) &&
+               Description.All(displayText => OpenSourceLicense.Description.Contains(displayText)) &&
 
-               URLs.Count().Equals(OpenSourceLicense.URLs.Count()) &&
-               URLs.All(url => OpenSourceLicense.URLs.Contains(url));
+               URLs.       Count().Equals(OpenSourceLicense.URLs.       Count()) &&
+               URLs.       All(url         => OpenSourceLicense.URLs.       Contains(url));
 
         #endregion
 
@@ -587,9 +587,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return Id.          GetHashCode()        * 5 ^
-                      (Description?.GetHashCode()  ?? 0) * 3 ^
-                       URLs?.       CalcHashCode() ?? 0;
+                return Id.         GetHashCode()  * 5 ^
+                       Description.CalcHashCode() * 3 ^
+                       URLs.       CalcHashCode();
 
             }
         }
@@ -607,8 +607,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                    Id.ToString(),
 
-                   Description.IsNeitherNullNorEmpty()
-                       ? ": " + Description
+                   Description.Any()
+                       ? ": " + Description.Select(displayText => $"[{displayText.Language}] {displayText.Text.SubstringMax(20)}").AggregateWith(", ")
+                       : String.Empty,
+
+                   URLs.Any()
+                       ? ": " + URLs.       Select(url         => url.ToString().SubstringMax(15)).AggregateWith(", ")
                        : String.Empty
 
                );
