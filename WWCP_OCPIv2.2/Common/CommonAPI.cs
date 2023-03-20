@@ -18,7 +18,10 @@
 #region Usings
 
 using System.Text;
+using System.Net.Security;
 using System.Collections.Concurrent;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
 
@@ -27,8 +30,8 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
-using System.Linq;
-using System.Collections.Generic;
+using org.GraphDefined.Vanaheimr.Hermod.Sockets;
+using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
 #endregion
 
@@ -1495,22 +1498,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode               CountryCode,
-                                      Party_Id                  PartyId,
-                                      Roles                     Role,
-                                      BusinessDetails           BusinessDetails,
+        public Boolean AddRemoteParty(CountryCode                           CountryCode,
+                                      Party_Id                              PartyId,
+                                      Roles                                 Role,
+                                      BusinessDetails                       BusinessDetails,
 
-                                      AccessToken               AccessToken,
+                                      AccessToken                           AccessToken,
 
-                                      AccessToken               RemoteAccessToken,
-                                      URL                       RemoteVersionsURL,
-                                      IEnumerable<Version_Id>?  RemoteVersionIds            = null,
-                                      Version_Id?               SelectedVersionId           = null,
+                                      AccessToken                           RemoteAccessToken,
+                                      URL                                   RemoteVersionsURL,
+                                      IEnumerable<Version_Id>?              RemoteVersionIds             = null,
+                                      Version_Id?                           SelectedVersionId            = null,
 
-                                      Boolean?                  AccessTokenBase64Encoding   = null,
-                                      AccessStatus              AccessStatus                = AccessStatus.ALLOWED,
-                                      RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
-                                      PartyStatus               PartyStatus                 = PartyStatus.ENABLED)
+                                      Boolean?                              AccessTokenBase64Encoding    = null,
+                                      AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
+                                      RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
+                                      PartyStatus                           PartyStatus                  = PartyStatus.ENABLED,
+
+                                      RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
+                                      LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                      X509Certificate?                      ClientCert                   = null,
+                                      SslProtocols?                         TLSProtocol                  = null,
+                                      Boolean?                              PreferIPv4                   = null,
+                                      String?                               HTTPUserAgent                = null,
+                                      TimeSpan?                             RequestTimeout               = null,
+                                      TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
+                                      UInt16?                               MaxNumberOfRetries           = null,
+                                      Boolean?                              UseHTTPPipelining            = null)
+
         {
             lock (remoteParties)
             {
@@ -1538,7 +1553,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      AccessTokenBase64Encoding,
                                                      AccessStatus,
                                                      RemoteStatus,
-                                                     PartyStatus);
+                                                     PartyStatus,
+
+                                                     RemoteCertificateValidator,
+                                                     ClientCertificateSelector,
+                                                     ClientCert,
+                                                     TLSProtocol,
+                                                     PreferIPv4,
+                                                     HTTPUserAgent,
+                                                     RequestTimeout,
+                                                     TransmissionRetryDelay,
+                                                     MaxNumberOfRetries,
+                                                     UseHTTPPipelining);
 
                 remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
@@ -1555,15 +1581,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode      CountryCode,
-                                      Party_Id         PartyId,
-                                      Roles            Role,
-                                      BusinessDetails  BusinessDetails,
+        public Boolean AddRemoteParty(CountryCode                           CountryCode,
+                                      Party_Id                              PartyId,
+                                      Roles                                 Role,
+                                      BusinessDetails                       BusinessDetails,
 
-                                      AccessToken      AccessToken,
-                                      AccessStatus     AccessStatus   = AccessStatus.ALLOWED,
+                                      AccessToken                           AccessToken,
+                                      AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
 
-                                      PartyStatus      PartyStatus    = PartyStatus.ENABLED)
+                                      PartyStatus                           PartyStatus                  = PartyStatus.ENABLED,
+
+                                      RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
+                                      LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                      X509Certificate?                      ClientCert                   = null,
+                                      SslProtocols?                         TLSProtocol                  = null,
+                                      Boolean?                              PreferIPv4                   = null,
+                                      String?                               HTTPUserAgent                = null,
+                                      TimeSpan?                             RequestTimeout               = null,
+                                      TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
+                                      UInt16?                               MaxNumberOfRetries           = null,
+                                      Boolean?                              UseHTTPPipelining            = null)
         {
             lock (remoteParties)
             {
@@ -1584,7 +1621,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      AccessToken,
                                                      AccessStatus,
 
-                                                     PartyStatus);
+                                                     PartyStatus,
+
+                                                     RemoteCertificateValidator,
+                                                     ClientCertificateSelector,
+                                                     ClientCert,
+                                                     TLSProtocol,
+                                                     PreferIPv4,
+                                                     HTTPUserAgent,
+                                                     RequestTimeout,
+                                                     TransmissionRetryDelay,
+                                                     MaxNumberOfRetries,
+                                                     UseHTTPPipelining);
 
                 remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
@@ -1601,19 +1649,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode               CountryCode,
-                                      Party_Id                  PartyId,
-                                      Roles                     Role,
-                                      BusinessDetails           BusinessDetails,
+        public Boolean AddRemoteParty(CountryCode                           CountryCode,
+                                      Party_Id                              PartyId,
+                                      Roles                                 Role,
+                                      BusinessDetails                       BusinessDetails,
 
-                                      AccessToken               RemoteAccessToken,
-                                      URL                       RemoteVersionsURL,
-                                      IEnumerable<Version_Id>?  RemoteVersionIds            = null,
-                                      Version_Id?               SelectedVersionId           = null,
+                                      AccessToken                           RemoteAccessToken,
+                                      URL                                   RemoteVersionsURL,
+                                      IEnumerable<Version_Id>?              RemoteVersionIds             = null,
+                                      Version_Id?                           SelectedVersionId            = null,
 
-                                      Boolean?                  AccessTokenBase64Encoding   = null,
-                                      RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.UNKNOWN,
-                                      PartyStatus               PartyStatus                 = PartyStatus.ENABLED)
+                                      Boolean?                              AccessTokenBase64Encoding    = null,
+                                      RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
+                                      PartyStatus                           PartyStatus                  = PartyStatus.ENABLED,
+
+                                      RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
+                                      LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                      X509Certificate?                      ClientCert                   = null,
+                                      SslProtocols?                         TLSProtocol                  = null,
+                                      Boolean?                              PreferIPv4                   = null,
+                                      String?                               HTTPUserAgent                = null,
+                                      TimeSpan?                             RequestTimeout               = null,
+                                      TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
+                                      UInt16?                               MaxNumberOfRetries           = null,
+                                      Boolean?                              UseHTTPPipelining            = null)
         {
             lock (remoteParties)
             {
@@ -1638,7 +1697,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                      AccessTokenBase64Encoding,
                                                      RemoteStatus,
-                                                     PartyStatus);
+                                                     PartyStatus,
+
+                                                     RemoteCertificateValidator,
+                                                     ClientCertificateSelector,
+                                                     ClientCert,
+                                                     TLSProtocol,
+                                                     PreferIPv4,
+                                                     HTTPUserAgent,
+                                                     RequestTimeout,
+                                                     TransmissionRetryDelay,
+                                                     MaxNumberOfRetries,
+                                                     UseHTTPPipelining);
 
                 remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
@@ -1655,16 +1725,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode                    CountryCode,
-                                      Party_Id                       PartyId,
-                                      Roles                          Role,
-                                      BusinessDetails                BusinessDetails,
+        public Boolean AddRemoteParty(CountryCode                           CountryCode,
+                                      Party_Id                              PartyId,
+                                      Roles                                 Role,
+                                      BusinessDetails                       BusinessDetails,
 
-                                      IEnumerable<AccessInfoStatus>  AccessInfoStatus,
-                                      IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
+                                      IEnumerable<AccessInfoStatus>         AccessInfoStatus,
+                                      IEnumerable<RemoteAccessInfo>         RemoteAccessInfos,
 
-                                      PartyStatus                    Status        = PartyStatus.ENABLED,
-                                      DateTime?                      LastUpdated   = null)
+                                      PartyStatus                           Status                       = PartyStatus.ENABLED,
+
+                                      RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
+                                      LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                      X509Certificate?                      ClientCert                   = null,
+                                      SslProtocols?                         TLSProtocol                  = null,
+                                      Boolean?                              PreferIPv4                   = null,
+                                      String?                               HTTPUserAgent                = null,
+                                      TimeSpan?                             RequestTimeout               = null,
+                                      TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
+                                      UInt16?                               MaxNumberOfRetries           = null,
+                                      Boolean?                              UseHTTPPipelining            = null,
+
+                                      DateTime?                             LastUpdated                  = null)
         {
             lock (remoteParties)
             {
@@ -1678,6 +1760,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      RemoteAccessInfos,
 
                                                      Status,
+
+                                                     RemoteCertificateValidator,
+                                                     ClientCertificateSelector,
+                                                     ClientCert,
+                                                     TLSProtocol,
+                                                     PreferIPv4,
+                                                     HTTPUserAgent,
+                                                     RequestTimeout,
+                                                     TransmissionRetryDelay,
+                                                     MaxNumberOfRetries,
+                                                     UseHTTPPipelining,
+
                                                      LastUpdated);
 
                 remoteParties.Add(newRemoteParty.Id, newRemoteParty);
@@ -1696,22 +1790,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AddOrUpdateRemoteParty(...)
 
-        public Boolean AddOrUpdateRemoteParty(CountryCode               CountryCode,
-                                              Party_Id                  PartyId,
-                                              Roles                     Role,
-                                              BusinessDetails           BusinessDetails,
+        public Boolean AddOrUpdateRemoteParty(CountryCode                           CountryCode,
+                                              Party_Id                              PartyId,
+                                              Roles                                 Role,
+                                              BusinessDetails                       BusinessDetails,
 
-                                              AccessToken               AccessToken,
+                                              AccessToken                           AccessToken,
 
-                                              AccessToken               RemoteAccessToken,
-                                              URL                       RemoteVersionsURL,
-                                              IEnumerable<Version_Id>?  RemoteVersionIds            = null,
-                                              Version_Id?               SelectedVersionId           = null,
+                                              AccessToken                           RemoteAccessToken,
+                                              URL                                   RemoteVersionsURL,
+                                              IEnumerable<Version_Id>?              RemoteVersionIds             = null,
+                                              Version_Id?                           SelectedVersionId            = null,
 
-                                              Boolean?                  AccessTokenBase64Encoding   = null,
-                                              AccessStatus              AccessStatus                = AccessStatus.ALLOWED,
-                                              RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
-                                              PartyStatus               PartyStatus                 = PartyStatus.ENABLED)
+                                              Boolean?                              AccessTokenBase64Encoding    = null,
+                                              AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
+                                              RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
+                                              PartyStatus                           PartyStatus                  = PartyStatus.ENABLED,
+
+                                              RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
+                                              LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                              X509Certificate?                      ClientCert                   = null,
+                                              SslProtocols?                         TLSProtocol                  = null,
+                                              Boolean?                              PreferIPv4                   = null,
+                                              String?                               HTTPUserAgent                = null,
+                                              TimeSpan?                             RequestTimeout               = null,
+                                              TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
+                                              UInt16?                               MaxNumberOfRetries           = null,
+                                              Boolean?                              UseHTTPPipelining            = null)
         {
             lock (remoteParties)
             {
@@ -1739,7 +1844,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      AccessTokenBase64Encoding,
                                                      AccessStatus,
                                                      RemoteStatus,
-                                                     PartyStatus);
+                                                     PartyStatus,
+
+                                                     RemoteCertificateValidator,
+                                                     ClientCertificateSelector,
+                                                     ClientCert,
+                                                     TLSProtocol,
+                                                     PreferIPv4,
+                                                     HTTPUserAgent,
+                                                     RequestTimeout,
+                                                     TransmissionRetryDelay,
+                                                     MaxNumberOfRetries,
+                                                     UseHTTPPipelining);
 
                 this.remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
@@ -1756,15 +1872,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AddOrUpdateRemoteParty(...)
 
-        public Boolean AddOrUpdateRemoteParty(CountryCode      CountryCode,
-                                              Party_Id         PartyId,
-                                              Roles            Role,
-                                              BusinessDetails  BusinessDetails,
+        public Boolean AddOrUpdateRemoteParty(CountryCode                           CountryCode,
+                                              Party_Id                              PartyId,
+                                              Roles                                 Role,
+                                              BusinessDetails                       BusinessDetails,
 
-                                              AccessToken      AccessToken,
-                                              AccessStatus     AccessStatus   = AccessStatus.ALLOWED,
+                                              AccessToken                           AccessToken,
+                                              AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
 
-                                              PartyStatus      PartyStatus    = PartyStatus.ENABLED)
+                                              PartyStatus                           PartyStatus                  = PartyStatus.ENABLED,
+
+                                              RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
+                                              LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                              X509Certificate?                      ClientCert                   = null,
+                                              SslProtocols?                         TLSProtocol                  = null,
+                                              Boolean?                              PreferIPv4                   = null,
+                                              String?                               HTTPUserAgent                = null,
+                                              TimeSpan?                             RequestTimeout               = null,
+                                              TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
+                                              UInt16?                               MaxNumberOfRetries           = null,
+                                              Boolean?                              UseHTTPPipelining            = null)
         {
             lock (remoteParties)
             {
@@ -1785,7 +1912,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      AccessToken,
                                                      AccessStatus,
 
-                                                     PartyStatus);
+                                                     PartyStatus,
+
+                                                     RemoteCertificateValidator,
+                                                     ClientCertificateSelector,
+                                                     ClientCert,
+                                                     TLSProtocol,
+                                                     PreferIPv4,
+                                                     HTTPUserAgent,
+                                                     RequestTimeout,
+                                                     TransmissionRetryDelay,
+                                                     MaxNumberOfRetries,
+                                                     UseHTTPPipelining);
 
                 this.remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
@@ -1802,19 +1940,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AddOrUpdateRemoteParty(...)
 
-        public Boolean AddOrUpdateRemoteParty(CountryCode               CountryCode,
-                                              Party_Id                  PartyId,
-                                              Roles                     Role,
-                                              BusinessDetails           BusinessDetails,
+        public Boolean AddOrUpdateRemoteParty(CountryCode                           CountryCode,
+                                              Party_Id                              PartyId,
+                                              Roles                                 Role,
+                                              BusinessDetails                       BusinessDetails,
 
-                                              AccessToken               RemoteAccessToken,
-                                              URL                       RemoteVersionsURL,
-                                              IEnumerable<Version_Id>?  RemoteVersionIds            = null,
-                                              Version_Id?               SelectedVersionId           = null,
+                                              AccessToken                           RemoteAccessToken,
+                                              URL                                   RemoteVersionsURL,
+                                              IEnumerable<Version_Id>?              RemoteVersionIds             = null,
+                                              Version_Id?                           SelectedVersionId            = null,
 
-                                              Boolean?                  AccessTokenBase64Encoding   = null,
-                                              RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.UNKNOWN,
-                                              PartyStatus               PartyStatus                 = PartyStatus.ENABLED)
+                                              Boolean?                              AccessTokenBase64Encoding    = null,
+                                              RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
+                                              PartyStatus                           PartyStatus                  = PartyStatus.ENABLED,
+
+                                              RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
+                                              LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                              X509Certificate?                      ClientCert                   = null,
+                                              SslProtocols?                         TLSProtocol                  = null,
+                                              Boolean?                              PreferIPv4                   = null,
+                                              String?                               HTTPUserAgent                = null,
+                                              TimeSpan?                             RequestTimeout               = null,
+                                              TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
+                                              UInt16?                               MaxNumberOfRetries           = null,
+                                              Boolean?                              UseHTTPPipelining            = null)
+
         {
             lock (remoteParties)
             {
@@ -1839,7 +1989,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                      AccessTokenBase64Encoding,
                                                      RemoteStatus,
-                                                     PartyStatus);
+                                                     PartyStatus,
+
+                                                     RemoteCertificateValidator,
+                                                     ClientCertificateSelector,
+                                                     ClientCert,
+                                                     TLSProtocol,
+                                                     PreferIPv4,
+                                                     HTTPUserAgent,
+                                                     RequestTimeout,
+                                                     TransmissionRetryDelay,
+                                                     MaxNumberOfRetries,
+                                                     UseHTTPPipelining);
 
                 this.remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 

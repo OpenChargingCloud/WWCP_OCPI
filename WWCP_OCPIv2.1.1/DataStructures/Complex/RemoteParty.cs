@@ -165,6 +165,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public String                   ETag                 { get; private set; }
 
 
+
         /// <summary>
         /// The remote SSL/TLS certificate validator.
         /// </summary>
@@ -214,6 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.
         /// </summary>
         public Boolean?                              UseHTTPPipelining             { get; }
+
 
 
 
@@ -554,9 +556,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     PartyId.     Clone,
                     Role,
                     BusinessDetails.Clone(),
+
                     AccessInfoStatus. Select(accessInfoStatus  => accessInfoStatus. Clone()),
                     RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
                     Status,
+
                     RemoteCertificateValidator,
                     ClientCertificateSelector,
                     ClientCert,
@@ -567,6 +571,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     TransmissionRetryDelay,
                     MaxNumberOfRetries,
                     UseHTTPPipelining,
+
                     LastUpdated);
 
         #endregion
