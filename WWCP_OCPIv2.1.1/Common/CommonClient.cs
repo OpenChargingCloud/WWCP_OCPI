@@ -864,6 +864,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                   requestbuilder => {
                                                                                       //requestbuilder.Host           = VirtualHostname ?? Hostname;
                                                                                       requestbuilder.Authorization  = TokenAuth;
+                                                                                      requestbuilder.UserAgent      = "curl/7.74.0";
                                                                                       requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                       requestbuilder.Set("X-Request-ID",      requestId);
                                                                                       requestbuilder.Set("X-Correlation-ID",  correlationId);

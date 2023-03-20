@@ -2167,16 +2167,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                                            CommonAPI,
                                                                                                            null, // VirtualHostname             
                                                                                                            null, // Description                 
-                                                                                                           null, // RemoteCertificateValidator  
-                                                                                                           null, // ClientCertificateSelector   
-                                                                                                           null, // ClientCert                  
-                                                                                                           null, // TLSProtocol                 
-                                                                                                           null, // PreferIPv4                  
-                                                                                                           null, // HTTPUserAgent               
-                                                                                                           null, // RequestTimeout              
-                                                                                                           null, // TransmissionRetryDelay      
-                                                                                                           null, // MaxNumberOfRetries          
-                                                                                                           null, // UseHTTPPipelining           
+                                                                                                           remoteParty.RemoteCertificateValidator,
+                                                                                                           remoteParty.ClientCertificateSelector,
+                                                                                                           remoteParty.ClientCert,
+                                                                                                           remoteParty.TLSProtocol,
+                                                                                                           remoteParty.PreferIPv4,
+                                                                                                           remoteParty.HTTPUserAgent,
+                                                                                                           remoteParty.RequestTimeout,
+                                                                                                           remoteParty.TransmissionRetryDelay,
+                                                                                                           remoteParty.MaxNumberOfRetries,
+                                                                                                           remoteParty.UseHTTPPipelining,
                                                                                                            null, // HTTPLogger                  
                                                                                                            remoteAccessInfo.AccessTokenBase64Encoding,
 
