@@ -2165,8 +2165,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                                            remoteAccessInfo.VersionsURL,
                                                                                                            remoteAccessInfo.AccessToken,
                                                                                                            CommonAPI,
-                                                                                                           null, // VirtualHostname             
-                                                                                                           null, // Description                 
+                                                                                                           null, // VirtualHostname
+                                                                                                           null, // Description
                                                                                                            remoteParty.RemoteCertificateValidator,
                                                                                                            remoteParty.ClientCertificateSelector,
                                                                                                            remoteParty.ClientCert,
@@ -2177,7 +2177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                                            remoteParty.TransmissionRetryDelay,
                                                                                                            remoteParty.MaxNumberOfRetries,
                                                                                                            remoteParty.UseHTTPPipelining,
-                                                                                                           null, // HTTPLogger                  
+                                                                                                           null, // HTTPLogger
                                                                                                            remoteAccessInfo.AccessTokenBase64Encoding,
 
                                                                                                            DisableLogging,
