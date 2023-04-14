@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Constructor(s)
 
-        #region Hours(IsTwentyFourSevenOpen, RegularHours = null, ExceptionalOpenings = null, ExceptionalClosings = null)
+        #region (private) Hours(IsTwentyFourSevenOpen, RegularHours = null, ExceptionalOpenings = null, ExceptionalClosings = null)
 
         /// <summary>
         /// Create a new hours class having regular hours, weekday based.
@@ -91,7 +91,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region Hours(                       RegularHours = null, ExceptionalOpenings = null, ExceptionalClosings = null)
+
+        #region Hours(RegularHours = null, ExceptionalOpenings = null, ExceptionalClosings = null)
 
         /// <summary>
         /// Create a new hours class having regular hours, weekday based.
@@ -113,25 +114,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region Hours(                                            ExceptionalOpenings = null, ExceptionalClosings = null)
-
-        /// <summary>
-        /// Create a new hours class representing 24 hours per day and 7 days per week, except the given exceptions.
-        /// </summary>
-        /// <param name="ExceptionalOpenings">Exceptions for specified calendar dates, time-range based. Periods the station is operating/accessible. Additional to regular hours. May overlap regular rules.</param>
-        /// <param name="ExceptionalClosings">Exceptions for specified calendar dates, time-range based. Periods the station is not operating/accessible. Overwriting regularHours and exceptionalOpenings. Should not overlap exceptionalOpenings.</param>
-        public Hours(IEnumerable<ExceptionalPeriod>?  ExceptionalOpenings   = null,
-                     IEnumerable<ExceptionalPeriod>?  ExceptionalClosings   = null)
-
-            : this(true,
-                   Array.Empty<RegularHours>(),
-                   ExceptionalOpenings,
-                   ExceptionalClosings)
-
-        { }
-
-        #endregion
-
         #endregion
 
 
@@ -145,7 +127,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Hours TwentyFourSevenOpen(IEnumerable<ExceptionalPeriod>?  ExceptionalOpenings   = null,
                                                 IEnumerable<ExceptionalPeriod>?  ExceptionalClosings   = null)
 
-            => new (ExceptionalOpenings,
+            => new (true,
+                    Array.Empty<RegularHours>(),
+                    ExceptionalOpenings,
                     ExceptionalClosings);
 
         #endregion

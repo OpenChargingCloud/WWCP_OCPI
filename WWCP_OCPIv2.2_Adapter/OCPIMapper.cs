@@ -172,6 +172,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region ToOCPI(this OpeningTimes)
+
+        public static Hours? ToOCPI(this OpeningTimes OpeningTimes)
+
+            => OpeningTimes.IsOpen24Hours
+
+                   ? Hours.TwentyFourSevenOpen(
+                         OpeningTimes.ExceptionalOpenings.ToOCPI(),
+                         OpeningTimes.ExceptionalClosings.ToOCPI()
+                     )
+
+                   : new (RegularHours:         null,
+                          ExceptionalOpenings:  OpeningTimes.ExceptionalOpenings.ToOCPI(),
+                          ExceptionalClosings:  OpeningTimes.ExceptionalClosings.ToOCPI());
+
+
+        public static ExceptionalPeriod? ToOCPI(this org.GraphDefined.Vanaheimr.Illias.ExceptionalPeriod ExceptionalPeriod)
+
+            => new ExceptionalPeriod(
+                   ExceptionalPeriod.Begin,
+                   ExceptionalPeriod.End
+               );
+
+        public static IEnumerable<ExceptionalPeriod> ToOCPI(this IEnumerable<org.GraphDefined.Vanaheimr.Illias.ExceptionalPeriod> ExceptionalPeriods)
+        {
+
+            var exceptionalPeriods = new List<ExceptionalPeriod>();
+
+            foreach (var exceptionalPeriod in ExceptionalPeriods)
+            {
+
+                var converted = exceptionalPeriod.ToOCPI();
+
+                if (converted.HasValue)
+                    exceptionalPeriods.Add(converted.Value);
+
+            }
+
+            return exceptionalPeriods;
+
+        }
+
+        #endregion
+
+
         #region ToOCPI(this ChargingPool,  ref Warnings)
 
         public static Location? ToOCPI(this WWCP.IChargingPool  ChargingPool,
@@ -263,8 +308,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            SubOperator:          null,
                            Owner:                null,
                            Facilities:           Array.Empty<Facilities>(),
-                           OpeningTimes:         null,
-                           ChargingWhenClosed:   null,
+                           OpeningTimes:         ChargingPool.OpeningTimes.ToOCPI(),
+                           ChargingWhenClosed:   ChargingPool.ChargingWhenClosed,
                            Images:               Array.Empty<Image>(),
                            EnergyMix:            null,
 

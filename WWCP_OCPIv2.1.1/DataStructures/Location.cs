@@ -257,7 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Facilities">An optional enumeration of facilities this charging location directly belongs to.</param>
         /// <param name="Timezone">One of IANA tzdata’s TZ-values representing the time zone of the charging location (http://www.iana.org/time-zones).</param>
         /// <param name="OpeningTimes">An optional times when the EVSEs at the charging location can be accessed for charging.</param>
-        /// <param name="ChargingWhenClosed">Indicates if the EVSEs are still charging outside the opening hours of the charging location. </param>
+        /// <param name="ChargingWhenClosed">Indicates if the EVSEs are still charging outside the opening hours of the charging location.</param>
         /// <param name="Images">An optional enumeration of images related to the charging location such as photos or logos.</param>
         /// <param name="EnergyMix">Optional details on the energy supplied at this charging location.</param>
         /// 
