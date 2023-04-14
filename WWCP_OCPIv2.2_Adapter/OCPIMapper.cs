@@ -655,9 +655,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                     },
                            PowerType:               powerType.Value,
                            MaxVoltage:              (UInt16) (EVSE.AverageVoltage ?? powerType.Value switch {
-                                                        PowerTypes.AC_1_PHASE  => 240,
-                                                        PowerTypes.AC_3_PHASE  => 400,
-                                                        PowerTypes.DC          => 0,
+                                                        PowerTypes.AC_1_PHASE  => 230,
+                                                        PowerTypes.AC_3_PHASE  => 230,  // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
+                                                        PowerTypes.DC          => 400,
                                                         _                      => 0
                                                     }),
                            MaxAmperage:             (UInt16) (EVSE.MaxCurrent     ?? powerType.Value switch {
