@@ -400,6 +400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
+
                 #region Parse LastUpdated                   [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",

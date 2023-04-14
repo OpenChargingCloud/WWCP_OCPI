@@ -214,9 +214,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          OpeningTimes.ExceptionalClosings.ToOCPI()
                      )
 
-                   : new (RegularHours:         null,
-                          ExceptionalOpenings:  OpeningTimes.ExceptionalOpenings.ToOCPI(),
-                          ExceptionalClosings:  OpeningTimes.ExceptionalClosings.ToOCPI());
+                   : new Hours(
+                         RegularHours:          OpeningTimes.RegularOpenings.Values.
+                                                    SelectMany(regularHoursList => regularHoursList.Select(regularHours => new RegularHours(
+                                                                                                                               regularHours.DayOfWeek,
+                                                                                                                               regularHours.PeriodBegin,
+                                                                                                                               regularHours.PeriodEnd
+                                                                                                                           ))),
+                         ExceptionalOpenings:   OpeningTimes.ExceptionalOpenings.ToOCPI(),
+                         ExceptionalClosings:   OpeningTimes.ExceptionalClosings.ToOCPI()
+                     );
 
 
         public static ExceptionalPeriod? ToOCPI(this org.GraphDefined.Vanaheimr.Illias.ExceptionalPeriod ExceptionalPeriod)
@@ -504,7 +511,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                      ChargingPool.Operator.Logo.HasValue
                                                          ? new Image(
                                                                ChargingPool.Operator.Logo.Value,
-                                                               ChargingPool.Operator.Logo.Value.Path.Substring(ChargingPool.Operator.Logo.Value.Path.LastIndexOf(".")).ToString().ToLower() switch {
+                                                               ChargingPool.Operator.Logo.Value.Path.ToString().Substring(ChargingPool.Operator.Logo.Value.Path.LastIndexOf(".")+1).ToString().ToLower() switch {
                                                                    "gif"  => ImageFileType.gif,
                                                                    "png"  => ImageFileType.png,
                                                                    "svg"  => ImageFileType.svg,
@@ -602,6 +609,74 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+
+        #region ToOCPI(this OpenSourceLicense)
+
+        public static OpenSourceLicense ToOCPI(this org.GraphDefined.Vanaheimr.Hermod.OpenSourceLicense OpenSourceLicense)
+
+            => new (OpenSourceLicense_Id.Parse(OpenSourceLicense.Id.ToString()),
+                    OpenSourceLicense.URLs.ToArray());
+
+        #endregion
+
+        #region ToOCPI(this LegalStatus)
+
+        public static LegalStatus ToOCPI(this WWCP.LegalStatus LegalStatus)
+
+            => OCPIv2_1_1.LegalStatus.Parse(LegalStatus.ToString());
+
+        #endregion
+
+        #region ToOCPI(this TransparencySoftware)
+
+        public static TransparencySoftware ToOCPI(this WWCP.TransparencySoftware TransparencySoftware)
+
+            => new (TransparencySoftware.Name,
+                    TransparencySoftware.Version,
+                    TransparencySoftware.OpenSourceLicense.ToOCPI(),
+                    TransparencySoftware.Vendor,
+                    TransparencySoftware.Logo,
+                    TransparencySoftware.HowToUse,
+                    TransparencySoftware.MoreInformation,
+                    TransparencySoftware.SourceCodeRepository);
+
+        #endregion
+
+        #region ToOCPI(this TransparencySoftwareStatus)
+
+        public static TransparencySoftwareStatus ToOCPI(this WWCP.TransparencySoftwareStatus TransparencySoftwareStatus)
+
+            => new (TransparencySoftwareStatus.TransparencySoftware.ToOCPI(),
+                    TransparencySoftwareStatus.LegalStatus.         ToOCPI(),
+                    TransparencySoftwareStatus.Certificate,
+                    TransparencySoftwareStatus.CertificateIssuer,
+                    TransparencySoftwareStatus.NotBefore,
+                    TransparencySoftwareStatus.NotAfter);
+
+        #endregion
+
+        #region ToOCPI(this EnergyMeter)
+
+        public static EnergyMeter ToOCPI(this WWCP.EnergyMeter EnergyMeter)
+
+            => new (Meter_Id.Parse(EnergyMeter.Id.ToString()),
+                    EnergyMeter.Model,
+                    EnergyMeter.ModelURL,
+                    EnergyMeter.HardwareVersion,
+                    EnergyMeter.FirmwareVersion,
+                    EnergyMeter.Manufacturer,
+                    EnergyMeter.ManufacturerURL,
+                    EnergyMeter.PublicKeys.               Select(publicKey                  => PublicKey.Parse(publicKey. ToString())),
+                    EnergyMeter.PublicKeyCertificateChain.HasValue ? CertificateChain.Parse(EnergyMeter.PublicKeyCertificateChain.Value.ToString()) : null,
+                    EnergyMeter.TransparencySoftwares.    Select(transparencySoftwareStatus => transparencySoftwareStatus.ToOCPI()),
+                    EnergyMeter.Description.ToOCPI(),
+                    EnergyMeter.CustomData,
+                    EnergyMeter.InternalData,
+                    EnergyMeter.LastUpdate);
+
+        #endregion
+
+
         #region ToOCPI(this EVSE,  ref Warnings)
 
         public static EVSE? ToOCPI(this WWCP.IEVSE    EVSE,
@@ -689,9 +764,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            EVSEId:                evseId,
                            StatusSchedule:        Array.Empty<StatusSchedule>(),
                            Capabilities:          EVSE.ChargingStation.ToOCPI_Capabilities(),
-                           EnergyMeter:           EVSE.EnergyMeter is not null
-                                                      ? EnergyMeter.Parse(EVSE.EnergyMeter.ToJSON())
-                                                      : null,
+                           EnergyMeter:           EVSE.EnergyMeter?.ToOCPI(),
                            FloorLevel:            EVSE.ChargingStation.Address?.FloorLevel ?? EVSE.ChargingPool.Address?.FloorLevel,
                            Coordinates:           EVSE.ChargingStation.GeoLocation         ?? EVSE.ChargingPool.GeoLocation,
                            PhysicalReference:     EVSE.PhysicalReference                   ?? EVSE.ChargingStation.PhysicalReference,
@@ -918,12 +991,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         _     => ConnectorFormats.SOCKET
                                                     },
                            PowerType:               powerType.Value,
-                           Voltage:                 (UInt16) (EVSE.AverageVoltage ?? powerType.Value switch {
-                                                        PowerTypes.AC_1_PHASE  => 230,
-                                                        PowerTypes.AC_3_PHASE  => 230,  // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
-                                                        PowerTypes.DC          => 400,
-                                                        _                      => 0
-                                                    }),
+                           Voltage:                 (UInt16) (EVSE.AverageVoltage.HasValue
+                                                        ? ((Double) EVSE.AverageVoltage.Value / Math.Sqrt(3))   // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
+                                                        : powerType.Value switch {
+                                                              PowerTypes.AC_1_PHASE  => 230,
+                                                              PowerTypes.AC_3_PHASE  => 230,                    // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
+                                                              PowerTypes.DC          => 400,
+                                                              _                      => 0
+                                                          }),
                            Amperage:                (UInt16) (EVSE.MaxCurrent     ?? powerType.Value switch {
                                                         PowerTypes.AC_1_PHASE  => 16,
                                                         PowerTypes.AC_3_PHASE  => 16,
