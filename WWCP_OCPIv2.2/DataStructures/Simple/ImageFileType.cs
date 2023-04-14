@@ -213,6 +213,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static ImageFileType svg
             => new("svg");
 
+        /// <summary>
+        /// webp
+        /// </summary>
+        public static ImageFileType webp
+            => new("webp");
+
 #pragma warning restore IDE1006 // Naming Styles
 
         #endregion

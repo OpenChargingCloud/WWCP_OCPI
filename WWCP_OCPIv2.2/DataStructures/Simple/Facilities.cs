@@ -215,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Sport facilities: gym, field etc.
         /// </summary>
         public static Facilities SPORT
-            => new ("XXSPORTX");
+            => new ("SPORT");
 
         /// <summary>
         /// A recreation area.

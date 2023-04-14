@@ -20,6 +20,7 @@
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.WWCP;
+using Org.BouncyCastle.Crypto.Engines;
 
 #endregion
 
@@ -277,6 +278,109 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        #region ToOCPI_Capabilities(this ChargingStation)
+
+        public static IEnumerable<Capability> ToOCPI_Capabilities(this IChargingStation ChargingStation)
+        {
+
+            var capabilities = new HashSet<Capability>();
+
+            if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is AuthenticationModes.RFID)       ||
+                ChargingStation.UIFeatures.    Contains(UIFeatures.    RFID))
+                capabilities.Add(Capability.RFID_READER);
+
+            if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is AuthenticationModes.CreditCard) ||
+                ChargingStation.PaymentOptions.Contains(PaymentOptions.CreditCard) ||
+                ChargingStation.UIFeatures.    Contains(UIFeatures.    CreditCard))
+                capabilities.Add(Capability.CREDIT_CARD_PAYABLE);
+
+            if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is AuthenticationModes.DebitCard)  ||
+                ChargingStation.PaymentOptions.Contains(PaymentOptions.DebitCard) ||
+                ChargingStation.UIFeatures.    Contains(UIFeatures.    DebitCard))
+                capabilities.Add(Capability.DEBIT_CARD_PAYABLE);
+
+            if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is AuthenticationModes.NFC)        ||
+                ChargingStation.UIFeatures.    Contains(UIFeatures.    NFC))
+                capabilities.Add(Capability.CONTACTLESS_CARD_SUPPORT);
+
+            if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is AuthenticationModes.PINPAD)     ||
+                ChargingStation.UIFeatures.    Contains(UIFeatures.    Pinpad))
+                capabilities.Add(Capability.PED_TERMINAL);
+
+            if (ChargingStation.AuthenticationModes.Any(authenticationMode => authenticationMode is AuthenticationModes.REMOTE))
+                capabilities.Add(Capability.REMOTE_START_STOP_CAPABLE);
+
+            // CHIP_CARD_SUPPORT (payment terminal that supports chip cards)
+
+
+
+            if (ChargingStation.Features.Contains(Features.Reservable))
+                capabilities.Add(Capability.RESERVABLE);
+
+            if (ChargingStation.Features.Contains(Features.ChargingProfilesSupported))
+                capabilities.Add(Capability.CHARGING_PROFILE_CAPABLE);
+
+            if (ChargingStation.Features.Contains(Features.ChargingPreferencesSupported))
+                capabilities.Add(Capability.CHARGING_PREFERENCES_CAPABLE);
+
+            if (ChargingStation.Features.Contains(Features.TokenGroupsSupported))
+                capabilities.Add(Capability.TOKEN_GROUP_CAPABLE);
+
+            if (ChargingStation.Features.Contains(Features.CSOUnlockSupported))
+                capabilities.Add(Capability.UNLOCK_CAPABLE);
+
+
+            return capabilities;
+
+        }
+
+        #endregion
+
+        #region ToOCPI_Facilities(this Facilities)
+
+        public static IEnumerable<Facilities> ToOCPI(this IEnumerable<WWCP.Facilities> Facilities)
+        {
+
+            var facilities = new HashSet<Facilities>();
+
+            foreach (var facility in Facilities)
+            {
+
+                switch (facility.ToString())
+                {
+
+                    case "HOTEL":           facilities.Add(OCPIv2_1_1.Facilities.HOTEL);            break;
+                    case "RESTAURANT":      facilities.Add(OCPIv2_1_1.Facilities.RESTAURANT);       break;
+                    case "CAFE":            facilities.Add(OCPIv2_1_1.Facilities.CAFE);             break;
+                    case "MALL":            facilities.Add(OCPIv2_1_1.Facilities.MALL);             break;
+                    case "SUPERMARKET":     facilities.Add(OCPIv2_1_1.Facilities.SUPERMARKET);      break;
+                    case "SPORT":           facilities.Add(OCPIv2_1_1.Facilities.SPORT);            break;
+                    case "RECREATION_AREA": facilities.Add(OCPIv2_1_1.Facilities.RECREATION_AREA);  break;
+                    case "NATURE":          facilities.Add(OCPIv2_1_1.Facilities.NATURE);           break;
+                    case "MUSEUM":          facilities.Add(OCPIv2_1_1.Facilities.MUSEUM);           break;
+                    case "BIKE_SHARING":    facilities.Add(OCPIv2_1_1.Facilities.BIKE_SHARING);     break;
+                    case "BUS_STOP":        facilities.Add(OCPIv2_1_1.Facilities.BUS_STOP);         break;
+                    case "TAXI_STAND":      facilities.Add(OCPIv2_1_1.Facilities.TAXI_STAND);       break;
+                    case "TRAM_STOP":       facilities.Add(OCPIv2_1_1.Facilities.TRAM_STOP);        break;
+                    case "METRO_STATION":   facilities.Add(OCPIv2_1_1.Facilities.METRO_STATION);    break;
+                    case "TRAIN_STATION":   facilities.Add(OCPIv2_1_1.Facilities.TRAIN_STATION);    break;
+                    case "AIRPORT":         facilities.Add(OCPIv2_1_1.Facilities.AIRPORT);          break;
+                    case "PARKING_LOT":     facilities.Add(OCPIv2_1_1.Facilities.PARKING_LOT);      break;
+                    case "CARPOOL_PARKING": facilities.Add(OCPIv2_1_1.Facilities.CARPOOL_PARKING);  break;
+                    case "FUEL_STATION":    facilities.Add(OCPIv2_1_1.Facilities.FUEL_STATION);     break;
+                    case "WIFI":            facilities.Add(OCPIv2_1_1.Facilities.WIFI);             break;
+
+                }
+
+            }
+
+            return facilities;
+
+        }
+
+        #endregion
+
+
         #region ToOCPI(this ChargingPool,  ref Warnings, IncludeEVSEIds = null)
 
         public static Location? ToOCPI(this WWCP.IChargingPool  ChargingPool,
@@ -396,25 +500,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Directions:           Array.Empty<DisplayText>(),
                            Operator:             new BusinessDetails(
                                                      ChargingPool.Operator.Name.FirstText(),
-                                                     ChargingPool.Operator.Homepage
+                                                     ChargingPool.Operator.Homepage,
+                                                     ChargingPool.Operator.Logo.HasValue
+                                                         ? new Image(
+                                                               ChargingPool.Operator.Logo.Value,
+                                                               ChargingPool.Operator.Logo.Value.Path.Substring(ChargingPool.Operator.Logo.Value.Path.LastIndexOf(".")).ToString().ToLower() switch {
+                                                                   "gif"  => ImageFileType.gif,
+                                                                   "png"  => ImageFileType.png,
+                                                                   "svg"  => ImageFileType.svg,
+                                                                   "jpeg" => ImageFileType.jpeg,
+                                                                   "webp" => ImageFileType.webp,
+                                                                   _      => ImageFileType.jpg
+                                                               },
+                                                               ImageCategory.OPERATOR
+                                                           )
+                                                         : null
                                                  ),
                            SubOperator:          null,
                            Owner:                null,
-                           Facilities:           Array.Empty<Facilities>(),
+                           Facilities:           ChargingPool.Facilities.       ToOCPI(),
                            Timezone:             ChargingPool.Address.TimeZone?.ToString(),
                            OpeningTimes:         ChargingPool.OpeningTimes.     ToOCPI(),
                            ChargingWhenClosed:   ChargingPool.ChargingWhenClosed,
                            Images:               Array.Empty<Image>(),
                            EnergyMix:            null,
 
-                           LastUpdated:          Timestamp.Now
+                           LastUpdated:          ChargingPool.LastChange
 
                        );
 
             }
             catch (Exception ex)
             {
-                warnings.Add(Warning.Create(Languages.en, $"Could not convert the given charging pool '{ChargingPool.Id}' to OCPI: " + ex.Message));
+                warnings.Add(Warning.Create(Languages.en, $"Could not convert the given charging pool '{ChargingPool.Id}' to OCPI: {ex.Message}"));
                 Warnings = warnings;
             }
 
@@ -570,8 +688,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            EVSEId:                evseId,
                            StatusSchedule:        Array.Empty<StatusSchedule>(),
-                           Capabilities:          Array.Empty<Capability>(),
-                           EnergyMeter:           null,
+                           Capabilities:          EVSE.ChargingStation.ToOCPI_Capabilities(),
+                           EnergyMeter:           EVSE.EnergyMeter is not null
+                                                      ? EnergyMeter.Parse(EVSE.EnergyMeter.ToJSON())
+                                                      : null,
                            FloorLevel:            EVSE.ChargingStation.Address?.FloorLevel ?? EVSE.ChargingPool.Address?.FloorLevel,
                            Coordinates:           EVSE.ChargingStation.GeoLocation         ?? EVSE.ChargingPool.GeoLocation,
                            PhysicalReference:     EVSE.PhysicalReference                   ?? EVSE.ChargingStation.PhysicalReference,
@@ -586,7 +706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
             catch (Exception ex)
             {
-                warnings.Add(Warning.Create(Languages.en, $"Could not convert the given EVSE '{EVSE.Id}' to OCPI: " + ex.Message));
+                warnings.Add(Warning.Create(Languages.en, $"Could not convert the given EVSE '{EVSE.Id}' to OCPI: {ex.Message}"));
                 Warnings = warnings;
             }
 
