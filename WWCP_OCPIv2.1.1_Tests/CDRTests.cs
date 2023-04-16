@@ -579,8 +579,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                               ChargingProduct:                new ChargingProduct(
                                                                   ChargingProduct_Id.AC3
                                                               ),
-                              ChargingPrice:                  21.34M,
-                              Currency:                       org.GraphDefined.Vanaheimr.Illias.Currency.EUR,
+                              ChargingPrice:                  Price.EURO(
+                                                                  21.34M,
+                                                                   1.00M
+                                                              ),
 
                               AuthenticationStart:            LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
                               //AuthenticationStop
@@ -637,27 +639,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsTrue   (wwcpCDR.ConsumedEnergy.   HasValue);
             Assert.AreEqual (17, wwcpCDR.ConsumedEnergy!.Value);
 
-            var ocpiCDR = wwcpCDR.ToOCPI(out var warnings);
+            var ocpiCDR = wwcpCDR.ToOCPI(null, null, out var warnings);
             Assert.AreEqual (0, warnings.Count());
 
             Assert.IsNotNull(ocpiCDR);
-            Assert.AreEqual ("DE",                                        ocpiCDR!.CountryCode.ToString());
-            Assert.AreEqual ("GEF",                                       ocpiCDR!.PartyId.    ToString());
-            Assert.AreEqual (wwcpCDR.Id.ToString(),                       ocpiCDR!.Id.         ToString());
-            Assert.AreEqual (wwcpCDR.SessionTime.StartTime,               ocpiCDR!.Start);
-            Assert.AreEqual (wwcpCDR.SessionTime.EndTime!.Value,          ocpiCDR!.End);
+            Assert.AreEqual ("DE",                                       ocpiCDR!.CountryCode.ToString());
+            Assert.AreEqual ("GEF",                                      ocpiCDR!.PartyId.    ToString());
+            Assert.AreEqual (wwcpCDR.Id.ToString(),                      ocpiCDR!.Id.         ToString());
+            Assert.AreEqual (wwcpCDR.SessionTime.StartTime,              ocpiCDR!.Start);
+            Assert.AreEqual (wwcpCDR.SessionTime.EndTime!.Value,         ocpiCDR!.End);
             //AuthId
-            Assert.AreEqual (wwcpCDR.AuthMethodStart.ToOCPI(),            ocpiCDR!.AuthMethod);
+            Assert.AreEqual (wwcpCDR.AuthMethodStart.ToOCPI(),           ocpiCDR!.AuthMethod);
 
-            Assert.IsNotNull(ocpiCDR!.Location);
-            Assert.IsNotNull(ocpiCDR!.Location.EVSEs);
-            Assert.AreEqual (1,                                           ocpiCDR!.Location.EVSEs.Count());
-            Assert.AreEqual (wwcpCDR!.EVSEId!.Value.ToString(),           ocpiCDR!.Location.EVSEs.First().EVSEId!.Value.ToString());
+            Assert.IsNotNull(ocpiCDR.Location);
+            Assert.IsNotNull(ocpiCDR.Location.EVSEs);
+            Assert.AreEqual (1,                                          ocpiCDR!.Location.EVSEs.Count());
+            Assert.AreEqual (wwcpCDR.EVSEId!.Value.ToString(),           ocpiCDR!.Location.EVSEs.First().EVSEId!.Value.ToString());
 
-            Assert.AreEqual (wwcpCDR.Currency!.ISOCode,                   ocpiCDR!.Currency.ToString());
+            Assert.AreEqual (wwcpCDR.ChargingPrice?.Currency?.ISOCode,   ocpiCDR!.Currency.ToString());
 
-            Assert.IsNotNull(ocpiCDR!.ChargingPeriods);
-            Assert.AreEqual (wwcpCDR!.EnergyMeteringValues.Count(),       ocpiCDR!.ChargingPeriods.Count());
+            Assert.IsNotNull(ocpiCDR.ChargingPeriods);
+            Assert.AreEqual (wwcpCDR.EnergyMeteringValues.Count(),       ocpiCDR!.ChargingPeriods.Count());
 
             var energyMeteringValue1  = wwcpCDR!.EnergyMeteringValues.ElementAt(0);
             var energyMeteringValue2  = wwcpCDR!.EnergyMeteringValues.ElementAt(1);

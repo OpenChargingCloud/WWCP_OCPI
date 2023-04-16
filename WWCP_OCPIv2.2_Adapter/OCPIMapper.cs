@@ -17,6 +17,8 @@
 
 #region Usings
 
+using com.GraphDefined.SMSApi.API.Response;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -25,34 +27,75 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
+    /// A delegate which allows you to modify the convertion from WWCP EVSE identifications to OCPI EVSE unique identifications.
+    /// </summary>
+    /// <param name="EVSEId">A WWCP EVSE identification.</param>
+    public delegate EVSE_UId                 WWCPEVSEId_2_EVSEUId_Delegate              (WWCP.EVSE_Id             EVSEId);
+
+    /// <summary>
+    /// A delegate which allows you to modify the convertion from OCPI EVSE unique identifications to WWCP EVSE identifications.
+    /// </summary>
+    /// <param name="EVSEId">An EVSE identification.</param>
+    public delegate WWCP.EVSE_Id             EVSEUId_2_WWCPEVSEId_Delegate              (EVSE_UId                 EVSEUId);
+
+
+    /// <summary>
     /// A delegate which allows you to modify the convertion from WWCP EVSE identifications to OCPI EVSE identifications.
     /// </summary>
     /// <param name="EVSEId">A WWCP EVSE identification.</param>
-    public delegate EVSE_Id     WWCPEVSEId_2_EVSEId_Delegate               (WWCP.EVSE_Id           EVSEId);
+    public delegate EVSE_Id                  WWCPEVSEId_2_EVSEId_Delegate               (WWCP.EVSE_Id             EVSEId);
+
+    /// <summary>
+    /// A delegate which allows you to modify the convertion from OCPI EVSE identifications to WWCP EVSE identifications.
+    /// </summary>
+    /// <param name="EVSEId">An EVSE identification.</param>
+    public delegate WWCP.EVSE_Id             EVSEId_2_WWCPEVSEId_Delegate               (EVSE_Id                  EVSEId);
+
 
     /// <summary>
     /// A delegate which allows you to modify the convertion from WWCP EVSEs to OCPI EVSEs.
     /// </summary>
     /// <param name="WWCPEVSE">A WWCP EVSE.</param>
     /// <param name="OCPIEVSE">An OCPI EVSE.</param>
-    public delegate EVSE        WWCPEVSE_2_EVSE_Delegate                   (WWCP.IEVSE             WWCPEVSE,
-                                                                            EVSE                   OCPIEVSE);
+    public delegate EVSE                     WWCPEVSE_2_EVSE_Delegate                   (WWCP.IEVSE               WWCPEVSE,
+                                                                                         EVSE                     OCPIEVSE);
+
+    /// <summary>
+    /// A delegate which allows you to modify the convertion from OCPI EVSEs to WWCP EVSEs.
+    /// </summary>
+    /// <param name="WWCPEVSE">A WWCP EVSE.</param>
+    public delegate WWCP.IEVSE               EVSE_2_WWCPEVSE_Delegate                   (EVSE                     EVSE);
+
 
     /// <summary>
     /// A delegate which allows you to modify the convertion from WWCP EVSE status updates to OCPI EVSE status types.
     /// </summary>
     /// <param name="WWCPEVSEStatusUpdate">A WWCP EVSE status update.</param>
     /// <param name="OCPIStatusType">An OICP status type.</param>
-    public delegate StatusType  WWCPEVSEStatusUpdate_2_StatusType_Delegate (WWCP.EVSEStatusUpdate  WWCPEVSEStatusUpdate,
-                                                                            StatusType             OCPIStatusType);
+    public delegate StatusType               WWCPEVSEStatusUpdate_2_StatusType_Delegate (WWCP.EVSEStatusUpdate    WWCPEVSEStatusUpdate,
+                                                                                         StatusType               OCPIStatusType);
+
+    /// <summary>
+    /// A delegate which allows you to modify the convertion from WWCP EVSE status updates to OCPI EVSE status types.
+    /// </summary>
+    /// <param name="OCPIStatusType">An OICP status type.</param>
+    public delegate WWCP.EVSEStatusUpdate    StatusType_2_WWCPEVSEStatusUpdate_Delegate (StatusType               OCPIStatusType);
+
 
     /// <summary>
     /// A delegate which allows you to modify the convertion from WWCP charge detail records to OICP charge detail records.
     /// </summary>
     /// <param name="WWCPChargeDetailRecord">A WWCP charge detail record.</param>
     /// <param name="OCIPCDR">An OICP charge detail record.</param>
-    public delegate CDR         WWCPChargeDetailRecord_2_CDR_Delegate      (WWCP.ChargeDetailRecord  WWCPChargeDetailRecord,
-                                                                            CDR                      OCIPCDR);
+    public delegate CDR                      WWCPChargeDetailRecord_2_CDR_Delegate      (WWCP.ChargeDetailRecord  WWCPChargeDetailRecord,
+                                                                                         CDR                      OCIPCDR);
+
+    /// <summary>
+    /// A delegate which allows you to modify the convertion from OCPI charge detail records to WWCP charge detail records.
+    /// </summary>
+    /// <param name="OCIPCDR">An OICP charge detail record.</param>
+    public delegate WWCP.ChargeDetailRecord  CDR_2_WWCPChargeDetailRecord_Delegate      (CDR                      OCIPCDR);
+
 
 
     /// <summary>
@@ -225,29 +268,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region ToOCPI_EVSEUId(this EVSEId)
 
-        public static EVSE_UId? ToOCPI_EVSEUId(this WWCP.EVSE_Id EVSEId)
+        public static EVSE_UId? ToOCPI_EVSEUId(this WWCP.EVSE_Id               EVSEId,
+                                               WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEIdConverter   = null)
 
-            => EVSE_UId.TryParse(EVSEId.ToString());
+            => CustomEVSEIdConverter is not null
+                   ? EVSE_UId.TryParse(CustomEVSEIdConverter(EVSEId).ToString())
+                   : EVSE_UId.TryParse(EVSEId.ToString());
 
-        public static EVSE_UId? ToOCPI_EVSEUId(this WWCP.EVSE_Id? EVSEId)
+        public static EVSE_UId? ToOCPI_EVSEUId(this WWCP.EVSE_Id?              EVSEId,
+                                               WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEIdConverter   = null)
 
             => EVSEId.HasValue
-                   ? EVSE_UId.TryParse(EVSEId.Value.ToString())
+                   ? EVSEId.Value.ToOCPI_EVSEUId(CustomEVSEIdConverter)
                    : null;
 
         #endregion
 
+        #region ToOCPI_EVSEId (this EVSEId, CustomEVSEIdConverter = null)
 
-        #region ToOCPI_EVSEId(this EVSEId)
+        public static EVSE_Id? ToOCPI_EVSEId(this WWCP.EVSE_Id              EVSEId,
+                                             WWCPEVSEId_2_EVSEId_Delegate?  CustomEVSEIdConverter   = null)
 
-        public static EVSE_Id? ToOCPI_EVSEId(this WWCP.EVSE_Id EVSEId)
+            => CustomEVSEIdConverter is not null
+                   ? EVSE_Id.TryParse(CustomEVSEIdConverter(EVSEId).ToString())
+                   : EVSE_Id.TryParse(EVSEId.ToString());
 
-            => EVSE_Id.TryParse(EVSEId.ToString());
-
-        public static EVSE_Id? ToOCPI_EVSEId(this WWCP.EVSE_Id? EVSEId)
+        public static EVSE_Id? ToOCPI_EVSEId(this WWCP.EVSE_Id?             EVSEId,
+                                             WWCPEVSEId_2_EVSEId_Delegate?  CustomEVSEIdConverter   = null)
 
             => EVSEId.HasValue
-                   ? EVSE_Id.TryParse(EVSEId.Value.ToString())
+                   ? EVSEId.Value.ToOCPI_EVSEId(CustomEVSEIdConverter)
                    : null;
 
         #endregion
@@ -356,13 +406,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region ToOCPI(this ChargingPool,  ref Warnings)
+        #region ToOCPI(this ChargingPool,  ref Warnings, IncludeEVSEIds = null)
 
-        public static Location? ToOCPI(this WWCP.IChargingPool  ChargingPool,
-                                       ref List<Warning>        Warnings)
+        public static Location? ToOCPI(this WWCP.IChargingPool         ChargingPool,
+                                       WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                       WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                       ref List<Warning>               Warnings,
+                                       WWCP.IncludeEVSEIdDelegate?     IncludeEVSEIds   = null)
         {
 
-            var location = ChargingPool.ToOCPI(out var warnings);
+            var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
+                                               CustomEVSEIdConverter,
+                                               out var warnings,
+                                               IncludeEVSEIds);
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -373,13 +429,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToOCPI(this ChargingPool,  out Warnings)
+        #region ToOCPI(this ChargingPool,  out Warnings, IncludeEVSEIds = null)
 
-        public static Location? ToOCPI(this WWCP.IChargingPool   ChargingPool,
-                                       out IEnumerable<Warning>  Warnings)
+        public static Location? ToOCPI(this WWCP.IChargingPool         ChargingPool,
+                                       WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                       WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                       out IEnumerable<Warning>        Warnings,
+                                       WWCP.IncludeEVSEIdDelegate?     IncludeEVSEIds   = null)
         {
 
-            var warnings = new List<Warning>();
+            var includeEVSEIds  = IncludeEVSEIds ?? (evseId => true);
+            var warnings        = new List<Warning>();
 
             if (ChargingPool.Operator is null)
             {
@@ -409,10 +469,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 var evses = new List<EVSE>();
 
-                foreach (var evse in ChargingPool.SelectMany(station => station.EVSEs))
+                foreach (var evse in ChargingPool.SelectMany(station => station.EVSEs).
+                                                  Where     (evse    => includeEVSEIds(evse.Id)))
                 {
 
-                    var ocpiEVSE = evse.ToOCPI(ref warnings);
+                    var ocpiEVSE = evse.ToOCPI(CustomEVSEUIdConverter,
+                                               CustomEVSEIdConverter,
+                                               ref warnings);
 
                     if (ocpiEVSE is not null)
                         evses.Add(ocpiEVSE);
@@ -483,13 +546,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToOCPI(this ChargingPools, ref Warnings)
+        #region ToOCPI(this ChargingPools, ref Warnings, IncludeEVSEIds = null)
 
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools,
-                                                   ref List<Warning>                    Warnings)
+                                                   WWCPEVSEId_2_EVSEUId_Delegate?       CustomEVSEUIdConverter,
+                                                   WWCPEVSEId_2_EVSEId_Delegate?        CustomEVSEIdConverter,
+                                                   ref List<Warning>                    Warnings,
+                                                   WWCP.IncludeEVSEIdDelegate?          IncludeEVSEIds   = null)
         {
 
-            var locations = ChargingPools.ToOCPI(out var warnings);
+            var locations = ChargingPools.ToOCPI(CustomEVSEUIdConverter,
+                                                 CustomEVSEIdConverter,
+                                                 out var warnings,
+                                                 IncludeEVSEIds);
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -500,10 +569,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToOCPI(this ChargingPools, out Warnings)
+        #region ToOCPI(this ChargingPools, out Warnings, IncludeEVSEIds = null)
 
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools,
-                                                   out IEnumerable<Warning>             Warnings)
+                                                   WWCPEVSEId_2_EVSEUId_Delegate?       CustomEVSEUIdConverter,
+                                                   WWCPEVSEId_2_EVSEId_Delegate?        CustomEVSEIdConverter,
+                                                   out IEnumerable<Warning>             Warnings,
+                                                   WWCP.IncludeEVSEIdDelegate?          IncludeEVSEIds   = null)
         {
 
             var warnings   = new List<Warning>();
@@ -515,7 +587,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 try
                 {
 
-                    var chargingPool2 = chargingPool.ToOCPI(out var warning);
+                    var chargingPool2 = chargingPool.ToOCPI(CustomEVSEUIdConverter,
+                                                            CustomEVSEIdConverter,
+                                                            out var warning,
+                                                            IncludeEVSEIds);
 
                     if (chargingPool2 is not null)
                         locations.Add(chargingPool2);
@@ -609,11 +684,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region ToOCPI(this EVSE,  ref Warnings)
 
-        public static EVSE? ToOCPI(this WWCP.IEVSE    EVSE,
-                                   ref List<Warning>  Warnings)
+        public static EVSE? ToOCPI(this WWCP.IEVSE                 EVSE,
+                                   WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                   WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                   ref List<Warning>               Warnings)
         {
 
-            var result = EVSE.ToOCPI(out var warnings);
+            var result = EVSE.ToOCPI(CustomEVSEUIdConverter,
+                                     CustomEVSEIdConverter,
+                                     out var warnings);
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -626,8 +705,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region ToOCPI(this EVSE,  out Warnings)
 
-        public static EVSE? ToOCPI(this WWCP.IEVSE           EVSE,
-                                   out IEnumerable<Warning>  Warnings)
+        public static EVSE? ToOCPI(this WWCP.IEVSE                 EVSE,
+                                   WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                   WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                   out IEnumerable<Warning>        Warnings)
         {
 
             var warnings = new List<Warning>();
@@ -635,7 +716,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
-                var evseUId = EVSE.Id.ToOCPI_EVSEUId();
+                var evseUId = EVSE.Id.ToOCPI_EVSEUId(CustomEVSEUIdConverter);
 
                 if (!evseUId.HasValue)
                 {
@@ -645,7 +726,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 }
 
 
-                var evseId = EVSE.Id.ToOCPI_EVSEId();
+                var evseId = EVSE.Id.ToOCPI_EVSEId(CustomEVSEIdConverter);
 
                 if (!evseId.HasValue)
                 {
@@ -721,11 +802,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region ToOCPI(this EVSEs, ref Warnings)
 
-        public static IEnumerable<EVSE> ToOCPI(this IEnumerable<WWCP.IEVSE>  EVSEs,
-                                               ref List<Warning>             Warnings)
+        public static IEnumerable<EVSE> ToOCPI(this IEnumerable<WWCP.IEVSE>    EVSEs,
+                                               WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                               WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                               ref List<Warning>               Warnings)
         {
 
-            var evses = EVSEs.ToOCPI(out var warnings);
+            var evses = EVSEs.ToOCPI(CustomEVSEUIdConverter,
+                                     CustomEVSEIdConverter,
+                                     out var warnings);
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -738,8 +823,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region ToOCPI(this EVSEs, out Warnings)
 
-        public static IEnumerable<EVSE> ToOCPI(this IEnumerable<WWCP.IEVSE>  EVSEs,
-                                               out IEnumerable<Warning>      Warnings)
+        public static IEnumerable<EVSE> ToOCPI(this IEnumerable<WWCP.IEVSE>    EVSEs,
+                                               WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                               WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                               out IEnumerable<Warning>        Warnings)
         {
 
             var warnings  = new List<Warning>();
@@ -751,7 +838,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 try
                 {
 
-                    var evse2 = evse.ToOCPI(out var warning);
+                    var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
+                                            CustomEVSEIdConverter,
+                                            out var warning);
 
                     if (evse2 is not null)
                         evses.Add(evse2);
@@ -956,6 +1045,317 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+        #region ToOCPI(this AuthMethod)
+
+        public static AuthMethods? ToOCPI(this WWCP.AuthMethod AuthMethod)
+        {
+
+            if (AuthMethod == WWCP.AuthMethod.AUTH_REQUEST)
+                return AuthMethods.AUTH_REQUEST;
+
+            if (AuthMethod == WWCP.AuthMethod.WHITELIST)
+                return AuthMethods.WHITELIST;
+
+            return null;
+
+        }
+
+        public static AuthMethods? ToOCPI(this WWCP.AuthMethod? AuthMethod)
+
+            => AuthMethod.HasValue
+                   ? AuthMethod.Value.ToOCPI()
+                   : null;
+
+        #endregion
+
+        #region ToWWCP(this AuthMethod)
+
+        public static WWCP.AuthMethod? ToWWCP(this AuthMethods AuthMethod)
+        {
+
+            if (AuthMethod == AuthMethods.AUTH_REQUEST)
+                return WWCP.AuthMethod.AUTH_REQUEST;
+
+            if (AuthMethod == AuthMethods.WHITELIST)
+                return WWCP.AuthMethod.WHITELIST;
+
+            return null;
+
+        }
+
+        public static WWCP.AuthMethod? ToWWCP(this AuthMethods? AuthMethod)
+
+            => AuthMethod.HasValue
+                   ? AuthMethod.Value.ToWWCP()
+                   : null;
+
+        #endregion
+
+
+        #region ToOCPI(this EnergyMeterId)
+
+        public static Meter_Id? ToOCPI(this WWCP.EnergyMeter_Id EnergyMeterId)
+
+            => Meter_Id.Parse(EnergyMeterId.ToString());
+
+        public static Meter_Id? ToOCPI(this WWCP.EnergyMeter_Id? EnergyMeterId)
+
+            => EnergyMeterId.HasValue
+                   ? EnergyMeterId.Value.ToOCPI()
+                   : null;
+
+        #endregion
+
+        #region ToWWCP(this MeterId)
+
+        public static WWCP.EnergyMeter_Id? ToWWCP(this Meter_Id MeterId)
+
+            => WWCP.EnergyMeter_Id.Parse(MeterId.ToString());
+
+        public static WWCP.EnergyMeter_Id? ToWWCP(this Meter_Id? MeterId)
+
+            => MeterId.HasValue
+                   ? MeterId.Value.ToWWCP()
+                   : null;
+
+        #endregion
+
+
+        #region ToOCPI(this ChargeDetailRecord, ref Warnings)
+
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                  ref List<Warning>               Warnings)
+        {
+
+            var result = ChargeDetailRecord.ToOCPI(CustomEVSEUIdConverter,
+                                                   CustomEVSEIdConverter,
+                                                   out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return result;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargeDetailRecord, out Warnings)
+
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                  out IEnumerable<Warning>        Warnings)
+        {
+
+            var warnings = new List<Warning>();
+
+            try
+            {
+
+                if (ChargeDetailRecord is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.ChargingStationOperator is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The given charge detail record must have a valid charging station operator!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (!ChargeDetailRecord.SessionTime.EndTime.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The session endtime of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (!ChargeDetailRecord.SessionTime.Duration.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The session time duration of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (!ChargeDetailRecord.AuthMethodStart.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The authentication (verification) method used for starting of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                var authMethod = ChargeDetailRecord.AuthMethodStart.ToOCPI();
+
+                if (!authMethod.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The authentication (verification) method used for starting of the given charge detail record is invalid!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.EVSE is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The EVSE of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.ChargingStation is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The charging station of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.ChargingPool is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The charging pool of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                var filteredLocation = ChargeDetailRecord.ChargingPool.ToOCPI(CustomEVSEUIdConverter,
+                                                                              CustomEVSEIdConverter,
+                                                                              ref warnings,
+                                                                              evseId => evseId == ChargeDetailRecord.EVSE.Id);
+
+                if (filteredLocation is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The charging location of the given charge detail record could not be calculated!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                var chargingPeriods = new List<ChargingPeriod>();
+
+                foreach (var energyMeteringValue in ChargeDetailRecord.EnergyMeteringValues)
+                {
+                    chargingPeriods.Add(
+                        new ChargingPeriod(
+                            energyMeteringValue.Timestamp,
+                            new CDRDimension[] {
+                                new CDRDimension(
+                                    CDRDimensionType.ENERGY,
+                                    energyMeteringValue.Value
+                                )
+                            }
+                        )
+                    );
+                }
+
+                if (!ChargeDetailRecord.ChargingPrice.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The charging price of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.ChargingPrice.Value.Currency is null)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The currency of the charging price of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (!ChargeDetailRecord.ConsumedEnergy.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "The consumed energy of the given charge detail record must not be null!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                if (ChargeDetailRecord.EnergyMeteringValues.Count() < 2)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "At least two energy metering values are expected!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+                Warnings = Array.Empty<Warning>();
+
+                return new CDR(
+
+                           CountryCode:                CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
+                           PartyId:                    Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
+                           Id:                         CDR_Id.     Parse(ChargeDetailRecord.Id.ToString()),
+                           Start:                      ChargeDetailRecord.SessionTime.StartTime,
+                           End:                        ChargeDetailRecord.SessionTime.EndTime. Value,
+                           CDRToken:                   new CDRToken(
+                                                           CountryCode:   CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
+                                                           PartyId:       Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
+                                                           UID:           Token_Id.Parse("123"),    //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                                           TokenType:     TokenType.RFID,           //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                                           ContractId:    Contract_Id.Parse("123")  //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                                       ),
+                           AuthMethod:                 authMethod.Value,
+                           Location:                   new CDRLocation(          //ToDo: Might still have not required connectors!
+                                                           Id:                   filteredLocation.Id,
+                                                           Address:              filteredLocation.Address,
+                                                           City:                 filteredLocation.City,
+                                                           Country:              filteredLocation.Country,
+                                                           Coordinates:          filteredLocation.Coordinates,
+                                                           EVSEUId:              filteredLocation.EVSEUIds.First(),
+                                                           EVSEId:               filteredLocation.EVSEIds. First(),
+                                                           ConnectorId:          filteredLocation.EVSEs.First().Connectors.First().Id,          //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                                           ConnectorStandard:    filteredLocation.EVSEs.First().Connectors.First().Standard,    //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                                           ConnectorFormat:      filteredLocation.EVSEs.First().Connectors.First().Format,      //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                                           ConnectorPowerType:   filteredLocation.EVSEs.First().Connectors.First().PowerType,   //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                                                           Name:                 filteredLocation.Name,
+                                                           PostalCode:           filteredLocation.PostalCode,
+                                                           State:                filteredLocation.State
+                                                       ),
+                           Currency:                   Currency.Parse(ChargeDetailRecord.ChargingPrice.Value.Currency.ISOCode),
+                           ChargingPeriods:            chargingPeriods,
+                           TotalCosts:                 new Price(
+                                                           ExcludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Base,
+                                                           IncludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Total
+                                                       ),
+                           TotalEnergy:                ChargeDetailRecord.ConsumedEnergy.      Value,
+                           TotalTime:                  ChargeDetailRecord.SessionTime.Duration.Value,
+
+                           SessionId:                  null,
+                           AuthorizationReference:     null,
+                           MeterId:                    ChargeDetailRecord.EnergyMeterId.ToOCPI(),
+                           EnergyMeter:                null,
+                           TransparencySoftwares:      null,
+                           Tariffs:                    null,
+                           SignedData:                 null,
+                           TotalFixedCosts:            null,
+                           TotalEnergyCost:            null,
+                           TotalTimeCost:              null,
+                           TotalParkingTime:           null,
+                           TotalParkingCost:           null,
+                           TotalReservationCost:       null,
+                           Remark:                     null,
+                           InvoiceReferenceId:         null,
+                           Credit:                     null,
+                           CreditReferenceId:          null,
+                           HomeChargingCompensation:   null,
+
+                           LastUpdated:                ChargeDetailRecord.LastChange// Timestamp.Now
+
+                       );
+
+            }
+            catch (Exception ex)
+            {
+                warnings.Add(Warning.Create(Languages.en, "Could not convert the given charge detail record to OCPI: " + ex.Message));
+                Warnings = warnings;
+            }
+
+            return null;
+
+        }
+
+        #endregion
 
     }
 

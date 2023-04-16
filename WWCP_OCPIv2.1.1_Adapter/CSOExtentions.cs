@@ -62,7 +62,7 @@ namespace cloud.charging.open.protocols.WWCP
         /// 
         /// <param name="OCPIConfigurator">An optional delegate to configure the new OCPI roaming provider after its creation.</param>
         /// <param name="Configurator">An optional delegate to configure the new roaming provider after its creation.</param>
-        public static OCPIv2_1_1.HTTP.OCPICSOAdapter?
+        public static OCPICSOAdapter?
 
             CreateOCPIv2_1_CSOAdapter(this IRoamingNetwork                                     RoamingNetwork,
                                       EMPRoamingProvider_Id                                    Id,
@@ -73,6 +73,7 @@ namespace cloud.charging.open.protocols.WWCP
                                       OCPIv2_1_1.CountryCode                                   DefaultCountryCode,
                                       OCPIv2_1_1.Party_Id                                      DefaultPartyId,
 
+                                      OCPIv2_1_1.WWCPEVSEId_2_EVSEUId_Delegate?                CustomEVSEUIdConverter               = null,
                                       OCPIv2_1_1.WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
                                       OCPIv2_1_1.WWCPEVSE_2_EVSE_Delegate?                     CustomEVSEConverter                  = null,
                                       OCPIv2_1_1.WWCPEVSEStatusUpdate_2_StatusType_Delegate?   CustomEVSEStatusUpdateConverter      = null,
@@ -131,7 +132,7 @@ namespace cloud.charging.open.protocols.WWCP
 
             #endregion
 
-            var newRoamingProvider = new OCPIv2_1_1.HTTP.OCPICSOAdapter(
+            var newRoamingProvider = new OCPICSOAdapter(
 
                                          Id,
                                          Name,
@@ -142,6 +143,7 @@ namespace cloud.charging.open.protocols.WWCP
                                          DefaultCountryCode,
                                          DefaultPartyId,
 
+                                         CustomEVSEUIdConverter,
                                          CustomEVSEIdConverter,
                                          CustomEVSEConverter,
                                          CustomEVSEStatusUpdateConverter,
@@ -187,7 +189,7 @@ namespace cloud.charging.open.protocols.WWCP
 
             return RoamingNetwork.
                        CreateEMPRoamingProvider(newRoamingProvider,
-                                                Configurator) as OCPIv2_1_1.HTTP.OCPICSOAdapter;
+                                                Configurator) as OCPICSOAdapter;
 
         }
 
