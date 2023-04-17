@@ -25,7 +25,7 @@ using cloud.charging.open.protocols.WWCP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
@@ -77,9 +77,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
-        public CommonAPI                                    CommonAPI                            { get; }
+        public HTTP.CommonAPI                               CommonAPI                            { get; }
 
-        public EMSPAPI                                      EMSPAPI                              { get; }
+        public HTTP.EMSPAPI                                 EMSPAPI                              { get; }
 
         #endregion
 
@@ -355,7 +355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                               I18NString                                   Description,
                               IRoamingNetwork                              RoamingNetwork,
 
-                              CommonAPI                                    CommonAPI,
+                              HTTP.CommonAPI                               CommonAPI,
                               CountryCode                                  DefaultCountryCode,
                               Party_Id                                     DefaultPartyId,
 
@@ -414,7 +414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             //this.chargingPoolsUpdateLog             = new Dictionary<IChargingPool, List<PropertyUpdateInfo>>();
 
-            this.EMSPAPI                            = new EMSPAPI(
+            this.EMSPAPI                            = new HTTP.EMSPAPI(
                                                           this.CommonAPI,
                                                           DefaultCountryCode,
                                                           DefaultPartyId,

@@ -22,8 +22,6 @@ using Org.BouncyCastle.Crypto.Parameters;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
-
 #endregion
 
 namespace cloud.charging.open.protocols.WWCP
@@ -60,14 +58,14 @@ namespace cloud.charging.open.protocols.WWCP
         /// 
         /// <param name="OCPIConfigurator">An optional delegate to configure the new OCPI roaming provider after its creation.</param>
         /// <param name="Configurator">An optional delegate to configure the new roaming provider after its creation.</param>
-        public static OCPIv2_1_1.HTTP.OCPIEMPAdapter?
+        public static OCPIv2_1_1.OCPIEMPAdapter?
 
             CreateOCPIv2_1_EMPAdapter(this IRoamingNetwork                                     RoamingNetwork,
                                       CSORoamingProvider_Id                                    Id,
                                       I18NString                                               Name,
                                       I18NString                                               Description,
 
-                                      CommonAPI                                                CommonAPI,
+                                      OCPIv2_1_1.HTTP.CommonAPI                                CommonAPI,
                                       OCPIv2_1_1.CountryCode                                   DefaultCountryCode,
                                       OCPIv2_1_1.Party_Id                                      DefaultPartyId,
 
@@ -98,7 +96,7 @@ namespace cloud.charging.open.protocols.WWCP
                                       Boolean                                                  DisableAuthentication                = false,
                                       Boolean                                                  DisableSendChargeDetailRecords       = false,
 
-                                      Action<OCPIv2_1_1.HTTP.OCPIEMPAdapter>?                  OCPIConfigurator                     = null,
+                                      Action<OCPIv2_1_1.OCPIEMPAdapter>?                       OCPIConfigurator                     = null,
                                       Action<ICSORoamingProvider>?                             Configurator                         = null,
 
                                       String                                                   EllipticCurve                        = "P-256",
@@ -114,7 +112,7 @@ namespace cloud.charging.open.protocols.WWCP
 
             #endregion
 
-            var newRoamingProvider = new OCPIv2_1_1.HTTP.OCPIEMPAdapter(
+            var newRoamingProvider = new OCPIv2_1_1.OCPIEMPAdapter(
 
                                          Id,
                                          Name,
@@ -155,7 +153,7 @@ namespace cloud.charging.open.protocols.WWCP
 
             return RoamingNetwork.
                        CreateCSORoamingProvider(newRoamingProvider,
-                                                Configurator) as OCPIv2_1_1.HTTP.OCPIEMPAdapter;
+                                                Configurator) as OCPIv2_1_1.OCPIEMPAdapter;
 
         }
 

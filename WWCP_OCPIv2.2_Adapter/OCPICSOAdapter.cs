@@ -22,12 +22,18 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
-using cloud.charging.open.protocols.OCPIv2_2.CPO.HTTP;
-
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2
 {
+
+
+    public delegate IEnumerable<Tariff_Id>   GetTariffIds_Delegate                      (WWCP.ChargingPool_Id?       ChargingPoolId,
+                                                                                         WWCP.ChargingStation_Id?    ChargingStationId,
+                                                                                         WWCP.EVSE_Id?               EVSEId,
+                                                                                         WWCP.ChargingConnector_Id?  ChargingConnectorId);
+
+
 
     /// <summary>
     /// Receive charging stations downstream from an OCPI partner...
@@ -68,9 +74,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Properties
 
-        public CommonAPI                                    CommonAPI                            { get; }
+        public HTTP.CommonAPI                               CommonAPI                            { get; }
 
-        public CPOAPI                                       CPOAPI                               { get; }
+        public HTTP.CPOAPI                                  CPOAPI                               { get; }
 
 
         /// <summary>
@@ -257,7 +263,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                               I18NString                                      Description,
                               WWCP.RoamingNetwork                             RoamingNetwork,
 
-                              CommonAPI                                       CommonAPI,
+                              HTTP.CommonAPI                                  CommonAPI,
                               CountryCode                                     DefaultCountryCode,
                               Party_Id                                        DefaultPartyId,
 
@@ -329,7 +335,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.chargingPoolsUpdateLog             = new Dictionary<WWCP.IChargingPool, List<PropertyUpdateInfo>>();
 
-            this.CPOAPI                             = new CPOAPI(
+            this.CPOAPI                             = new HTTP.CPOAPI(
 
                                                           this.CommonAPI,
                                                           DefaultCountryCode,
@@ -365,6 +371,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
         #endregion
+
+
+        public IEnumerable<Tariff_Id> GetTariffIds(WWCP.ChargingPool_Id?       ChargingPoolId,
+                                                   WWCP.ChargingStation_Id?    ChargingStationId,
+                                                   WWCP.EVSE_Id?               EVSEId,
+                                                   WWCP.ChargingConnector_Id?  ChargingConnectorId)
+        {
+
+            var isDC = EVSEId.HasValue && ChargingConnectorId.HasValue
+                           ? RoamingNetwork.GetEVSEById(EVSEId.Value)?.ChargingConnectors.First(chargingConnector => chargingConnector.Id == ChargingConnectorId.Value).IsDC
+                           : null;
+
+            if (isDC == true)
+                return new[] { Tariff_Id.Parse("DC") };
+
+            if (isDC == false)
+                return new[] { Tariff_Id.Parse("AC") };
+
+            return Array.Empty<Tariff_Id>();
+
+        }
+
 
 
         #region (Set/Add/Update/Delete) Roaming network...
@@ -611,6 +639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                            CustomEVSEIdConverter,
+                                                           GetTariffIds,
                                                            out warnings);
 
                         if (location is not null)
@@ -699,6 +728,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                            CustomEVSEIdConverter,
+                                                           GetTariffIds,
                                                            out warnings);
 
                         if (location is not null)
@@ -796,6 +826,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                            CustomEVSEIdConverter,
+                                                           GetTariffIds,
                                                            out warnings);
 
                         if (location is not null)
@@ -1055,6 +1086,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                     var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                             CustomEVSEIdConverter,
+                                                            GetTariffIds,
                                                             out var warning);
 
                                     if (evse2 is not null)
@@ -1154,6 +1186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                     var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                             CustomEVSEIdConverter,
+                                                            GetTariffIds,
                                                             out var warning);
 
                                     if (evse2 is not null)
@@ -1259,6 +1292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                     var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                             CustomEVSEIdConverter,
+                                                            GetTariffIds,
                                                             out var warning);
 
                                     if (evse2 is not null)
@@ -1488,6 +1522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
+                                                        GetTariffIds,
                                                         out warnings);
 
                                 if (evse2 is not null)
@@ -1621,6 +1656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
+                                                        GetTariffIds,
                                                         out warnings);
 
                                 if (evse2 is not null)
@@ -1760,6 +1796,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
+                                                        GetTariffIds,
                                                         out warnings);
 
                                 if (evse2 is not null)
@@ -2016,6 +2053,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                                 CustomEVSEIdConverter,
+                                                                GetTariffIds,
                                                                 ref warnings);
 
                                         if (evse2 is not null)
@@ -2230,7 +2268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                                   );
 
 
-                                                                                       var cpoClient = new CPOClient(
+                                                                                       var cpoClient = new CPO.HTTP.CPOClient(
 
                                                                                                            remoteAccessInfo.VersionsURL,
                                                                                                            remoteAccessInfo.AccessToken,
@@ -2267,7 +2305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                                   );
 
 
-                                                                                       var cpoClientLogger = new CPOClient.Logger(
+                                                                                       var cpoClientLogger = new CPO.HTTP.CPOClient.Logger(
                                                                                                                  cpoClient,
                                                                                                                  ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
                                                                                                                  ClientsLoggingContext ?? DefaultLoggingContext,

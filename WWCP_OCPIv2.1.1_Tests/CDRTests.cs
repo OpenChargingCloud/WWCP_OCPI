@@ -505,10 +505,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                       InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                       InitialStatus:        EVSEStatusTypes.Available,
 
-                                      SocketOutlets:        new SocketOutlet[] {
-                                                                new SocketOutlet(
-                                                                    Id:              SocketOutlet_Id.Parse("1"),
-                                                                    Plug:            PlugTypes.Type2Outlet,
+                                      SocketOutlets:        new ChargingConnector[] {
+                                                                new ChargingConnector(
+                                                                    Id:              ChargingConnector_Id.Parse("1"),
+                                                                    Plug:            ChargingPlugTypes.Type2Outlet,
                                                                     Lockable:        true,
                                                                     CableAttached:   true,
                                                                     CableLength:     4
@@ -535,10 +535,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                       InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                       InitialStatus:        EVSEStatusTypes.Available,
 
-                                      SocketOutlets:        new SocketOutlet[] {
-                                                                new SocketOutlet(
-                                                                    Id:              SocketOutlet_Id.Parse("2"),
-                                                                    Plug:            PlugTypes.TypeFSchuko,
+                                      SocketOutlets:        new ChargingConnector[] {
+                                                                new ChargingConnector(
+                                                                    Id:              ChargingConnector_Id.Parse("2"),
+                                                                    Plug:            ChargingPlugTypes.TypeFSchuko,
                                                                     Lockable:        false,
                                                                     CableAttached:   false
                                                                 )
@@ -639,7 +639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsTrue   (wwcpCDR.ConsumedEnergy.   HasValue);
             Assert.AreEqual (17, wwcpCDR.ConsumedEnergy!.Value);
 
-            var ocpiCDR = wwcpCDR.ToOCPI(null, null, out var warnings);
+            var ocpiCDR = wwcpCDR.ToOCPI(null, null, null, out var warnings);
             Assert.AreEqual (0, warnings.Count());
 
             Assert.IsNotNull(ocpiCDR);
