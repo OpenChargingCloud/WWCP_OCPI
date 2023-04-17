@@ -182,20 +182,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Properties
 
-        public CommonAPI        CommonAPI           { get; }
+        public CommonAPI          CommonAPI           { get; }
 
-        public HTTPRequest      HTTPRequest         { get; }
+        public HTTPRequest        HTTPRequest         { get; }
 
-        public Request_Id?      RequestId           { get; }
-        public Correlation_Id?  CorrelationId       { get; }
+        public Request_Id?        RequestId           { get; }
+        public Correlation_Id?    CorrelationId       { get; }
 
-        public AccessToken?     AccessToken         { get; }
+        public AccessToken?       AccessToken         { get; }
 
-        public AccessInfo?      AccessInfo          { get; }
+        public AccessInfo?        AccessInfo          { get; }
 
-        public AccessInfoStatus?     AccessInfo2         { get; }
+        public AccessInfoStatus?  AccessInfo2         { get; }
 
-        public RemoteParty?     RemoteParty         { get; }
+        public RemoteParty?       RemoteParty         { get; }
+
+        public EMP_Id?            EMPId               { get; }
 
 
         /// <summary>

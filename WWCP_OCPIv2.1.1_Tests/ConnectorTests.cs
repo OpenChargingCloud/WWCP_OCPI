@@ -63,9 +63,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual("IEC_62196_T2",                       JSON["standard"].            Value<String>());
             Assert.AreEqual("SOCKET",                             JSON["format"].              Value<String>());
             Assert.AreEqual("AC_3_PHASE",                         JSON["power_type"].          Value<String>());
-            Assert.AreEqual(400,                                  JSON["max_voltage"].         Value<UInt16>());
-            Assert.AreEqual(30,                                   JSON["max_amperage"].        Value<UInt16>());
-            Assert.AreEqual(12,                                   JSON["max_electric_power"].  Value<UInt16>());
+            Assert.AreEqual(400,                                  JSON["voltage"].             Value<UInt16>());
+            Assert.AreEqual(30,                                   JSON["amperage"].            Value<UInt16>());
             Assert.AreEqual("DE*GEF*T0001",                       JSON["tariff_id"].           Value<String>());
             Assert.AreEqual("https://open.charging.cloud/terms",  JSON["terms_and_conditions"].Value<String>());
             Assert.AreEqual("2020-09-21T00:00:00.000Z",           JSON["last_updated"].        Value<String>());
@@ -220,13 +219,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         #endregion
 
-        #region Connector_PATCH_TariffIdArray()
+        #region Connector_PATCH_TariffId()
 
         /// <summary>
-        /// Try to PATCH the tariff_id array of a connector.
+        /// Try to PATCH the tariff_id of a connector.
         /// </summary>
         [Test]
-        public static void Connector_PATCH_TariffIdArray()
+        public static void Connector_PATCH_TariffId()
         {
 
             var Connector1 = new Connector(
@@ -241,7 +240,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
 
-            var patchResult = Connector1.TryPatch(JObject.Parse(@"{ ""tariff_ids"": [ ""DE*GEF*T0003"" ], ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
+            var patchResult = Connector1.TryPatch(JObject.Parse(@"{ ""tariff_id"": ""DE*GEF*T0003"", ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
             Assert.IsNotNull(patchResult);
             Assert.IsTrue   (patchResult.IsSuccess);
@@ -263,13 +262,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         #endregion
 
-        #region Connector_PATCH_RemoveTariffIdArray()
+        #region Connector_PATCH_RemoveTariffId()
 
         /// <summary>
-        /// Try to remove the tariff_id array of a connector via PATCH.
+        /// Try to remove the tariff_id of a connector via PATCH.
         /// </summary>
         [Test]
-        public static void Connector_PATCH_RemoveTariffIdArray()
+        public static void Connector_PATCH_RemoveTariffId()
         {
 
             var Connector1 = new Connector(
@@ -284,7 +283,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
 
-            var patchResult = Connector1.TryPatch(JObject.Parse(@"{ ""tariff_ids"": null, ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
+            var patchResult = Connector1.TryPatch(JObject.Parse(@"{ ""tariff_id"": null, ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
             Assert.IsNotNull(patchResult);
             Assert.IsTrue   (patchResult.IsSuccess);

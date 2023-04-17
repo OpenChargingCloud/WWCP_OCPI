@@ -29,6 +29,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 #endregion
 
@@ -1073,6 +1074,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<Location>>
 
             PutLocation(Location            Location,
+                        EMP_Id?             EMPId               = null,
 
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
@@ -1160,6 +1162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content        = Location.ToJSON(false,
+                                                                                                                                         EMPId,
                                                                                                                                          CustomLocationSerializer,
                                                                                                                                          CustomAdditionalGeoLocationSerializer,
                                                                                                                                          CustomEVSESerializer,
@@ -1636,6 +1639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE                EVSE,
+                    EMP_Id?             EMPId               = null,
 
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
@@ -1652,6 +1656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             return await PutEVSE(EVSE,
                                  EVSE.ParentLocation.Id,
+                                 EMPId,
 
                                  RequestId,
                                  CorrelationId,
@@ -1680,6 +1685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             PutEVSE(EVSE                EVSE,
                     Location_Id         LocationId,
+                    EMP_Id?             EMPId               = null,
 
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
@@ -1768,7 +1774,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content        = EVSE.ToJSON(CustomEVSESerializer,
+                                                                                         requestbuilder.Content        = EVSE.ToJSON(EMPId,
+                                                                                                                                     CustomEVSESerializer,
                                                                                                                                      CustomStatusScheduleSerializer,
                                                                                                                                      CustomConnectorSerializer,
                                                                                                                                      CustomEnergyMeterSerializer,
@@ -2246,6 +2253,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<Connector>>
 
             PutConnector(Connector           Connector,
+                         EMP_Id?             EMPId               = null,
 
                          Request_Id?         RequestId           = null,
                          Correlation_Id?     CorrelationId       = null,
@@ -2344,7 +2352,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content        = Connector.ToJSON(CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Content        = Connector.ToJSON(EMPId,
+                                                                                                                                          CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Connection     = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
@@ -4109,6 +4118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<CDR>>
 
             PostCDR(CDR                 CDR,
+                    EMP_Id?             EMPId               = null,
 
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
@@ -4196,6 +4206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content        = CDR.ToJSON(false,
+                                                                                                                                    EMPId,
                                                                                                                                     CustomCDRSerializer,
                                                                                                                                     CustomLocationSerializer,
                                                                                                                                     CustomAdditionalGeoLocationSerializer,

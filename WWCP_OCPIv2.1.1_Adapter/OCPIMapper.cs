@@ -17,6 +17,7 @@
 
 #region Usings
 
+using org.GraphDefined.Vanaheimr.Styx;
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -410,14 +411,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Location? ToOCPI(this WWCP.IChargingPool         ChargingPool,
                                        WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
                                        WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                       GetTariffId_Delegate?           GetTariffIdDelegate,
                                        ref List<Warning>               Warnings,
                                        WWCP.IncludeEVSEIdDelegate?     IncludeEVSEIds   = null)
         {
 
             var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                CustomEVSEIdConverter,
-                                               GetTariffIdDelegate,
                                                out var warnings,
                                                IncludeEVSEIds);
 
@@ -435,7 +434,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Location? ToOCPI(this WWCP.IChargingPool         ChargingPool,
                                        WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
                                        WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                       GetTariffId_Delegate?           GetTariffIdDelegate,
                                        out IEnumerable<Warning>        Warnings,
                                        WWCP.IncludeEVSEIdDelegate?     IncludeEVSEIds   = null)
         {
@@ -504,7 +502,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     var ocpiEVSE = evse.ToOCPI(CustomEVSEUIdConverter,
                                                CustomEVSEIdConverter,
-                                               GetTariffIdDelegate,
                                                ref warnings);
 
                     if (ocpiEVSE is not null)
@@ -583,14 +580,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools,
                                                    WWCPEVSEId_2_EVSEUId_Delegate?       CustomEVSEUIdConverter,
                                                    WWCPEVSEId_2_EVSEId_Delegate?        CustomEVSEIdConverter,
-                                                   GetTariffId_Delegate?                GetTariffIdDelegate,
                                                    ref List<Warning>                    Warnings,
                                                    WWCP.IncludeEVSEIdDelegate?          IncludeEVSEIds = null)
         {
 
             var locations = ChargingPools.ToOCPI(CustomEVSEUIdConverter,
                                                  CustomEVSEIdConverter,
-                                                 GetTariffIdDelegate,
                                                  out var warnings,
                                                  IncludeEVSEIds);
 
@@ -608,7 +603,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools,
                                                    WWCPEVSEId_2_EVSEUId_Delegate?       CustomEVSEUIdConverter,
                                                    WWCPEVSEId_2_EVSEId_Delegate?        CustomEVSEIdConverter,
-                                                   GetTariffId_Delegate?                GetTariffIdDelegate,
                                                    out IEnumerable<Warning>             Warnings,
                                                    WWCP.IncludeEVSEIdDelegate?          IncludeEVSEIds = null)
         {
@@ -624,7 +618,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     var chargingPool2 = chargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                             CustomEVSEIdConverter,
-                                                            GetTariffIdDelegate,
                                                             out var warning,
                                                             IncludeEVSEIds);
 
@@ -723,13 +716,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static EVSE? ToOCPI(this WWCP.IEVSE                 EVSE,
                                    WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
                                    WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                   GetTariffId_Delegate?           GetTariffIdDelegate,
                                    ref List<Warning>               Warnings)
         {
 
             var result = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                      CustomEVSEIdConverter,
-                                     GetTariffIdDelegate,
                                      out var warnings);
 
             foreach (var warning in warnings)
@@ -746,7 +737,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static EVSE? ToOCPI(this WWCP.IEVSE                 EVSE,
                                    WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
                                    WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                   GetTariffId_Delegate?           GetTariffIdDelegate,
                                    out IEnumerable<Warning>        Warnings)
         {
 
@@ -790,7 +780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 }
 
                 var connectors = EVSE.ChargingConnectors.
-                                      Select (socketOutlet => socketOutlet.ToOCPI(EVSE, GetTariffIdDelegate, ref warnings)).
+                                      Select (socketOutlet => socketOutlet.ToOCPI(EVSE, ref warnings)).
                                       Where  (connector    => connector is not null).
                                       Cast<Connector>().
                                       ToArray();
@@ -844,13 +834,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static IEnumerable<EVSE> ToOCPI(this IEnumerable<WWCP.IEVSE>    EVSEs,
                                                WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
                                                WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                               GetTariffId_Delegate?           GetTariffIdDelegate,
                                                ref List<Warning>               Warnings)
         {
 
             var evses = EVSEs.ToOCPI(CustomEVSEUIdConverter,
                                      CustomEVSEIdConverter,
-                                     GetTariffIdDelegate,
                                      out var warnings);
 
             foreach (var warning in warnings)
@@ -867,7 +855,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static IEnumerable<EVSE> ToOCPI(this IEnumerable<WWCP.IEVSE>    EVSEs,
                                                WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
                                                WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                               GetTariffId_Delegate?           GetTariffIdDelegate,
                                                out IEnumerable<Warning>        Warnings)
         {
 
@@ -882,7 +869,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                             CustomEVSEIdConverter,
-                                            GetTariffIdDelegate,
                                             out var warning);
 
                     if (evse2 is not null)
@@ -986,11 +972,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public static Connector? ToOCPI(this WWCP.ChargingConnector  ChargingConnector,
                                         WWCP.IEVSE                   EVSE,
-                                        GetTariffId_Delegate?        GetTariffIdDelegate,
                                         ref List<Warning>            Warnings)
         {
 
-            var result = ChargingConnector.ToOCPI(EVSE, GetTariffIdDelegate, out var warnings);
+            var result = ChargingConnector.ToOCPI(EVSE,
+                                                  out var warnings);
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -1005,7 +991,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public static Connector? ToOCPI(this WWCP.ChargingConnector  ChargingConnector,
                                         WWCP.IEVSE                   EVSE,
-                                        GetTariffId_Delegate?        GetTariffIdDelegate,
                                         out IEnumerable<Warning>     Warnings)
         {
 
@@ -1072,12 +1057,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                               _                      => 0
                                                           }),
 
-                           TariffId:                GetTariffIdDelegate?.Invoke(
-                                                        EVSE.ChargingPool!.Id,
-                                                        EVSE.ChargingStation!.Id,
-                                                        EVSE.Id,
-                                                        ChargingConnector.Id ?? WWCP.ChargingConnector_Id.Parse("1")
-                                                    ),
+                           //TariffId:              Via lookup table!
                            TermsAndConditionsURL:   EVSE.Operator?.TermsAndConditionsURL,
 
                            LastUpdated:             EVSE.LastChange
@@ -1174,19 +1154,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region ToOCPI(this ChargeDetailRecord, ref Warnings)
+        #region ToOCPI(this Time)
 
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
-                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
-                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                  GetTariffId_Delegate?           GetTariffIdDelegate,
-                                  ref List<Warning>               Warnings)
+        public static Time? ToOCPI(this org.GraphDefined.Vanaheimr.Illias.Time Time)
+
+            => OCPIv2_1_1.Time.FromHourMinSec(Time.Hour,
+                                              Time.Minute,
+                                              Time.Second ?? 0);
+
+        #endregion
+
+
+        #region ToOCPI(this ChargingPriceComponent,     ref Warnings)
+
+        public static PriceComponent? ToOCPI(this WWCP.ChargingPriceComponent  ChargingPriceComponent,
+                                             ref List<Warning>                 Warnings)
         {
 
-            var result = ChargeDetailRecord.ToOCPI(CustomEVSEUIdConverter,
-                                                   CustomEVSEIdConverter,
-                                                   GetTariffIdDelegate,
-                                                   out var warnings);
+            var result = ChargingPriceComponent.ToOCPI(out var warnings);
 
             foreach (var warning in warnings)
                 Warnings.Add(warning);
@@ -1197,12 +1182,499 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region ToOCPI(this ChargingPriceComponent,     out Warnings)
+
+        public static PriceComponent? ToOCPI(this WWCP.ChargingPriceComponent  ChargingPriceComponent,
+                                             out IEnumerable<Warning>          Warnings)
+        {
+
+            var warnings = new List<Warning>();
+
+            try
+            {
+
+                Warnings = Array.Empty<Warning>();
+
+                return new PriceComponent(
+
+                           Type:       TariffDimension.Parse(ChargingPriceComponent.Type.ToString()),
+                           Price:      ChargingPriceComponent.Price,
+                           StepSize:   ChargingPriceComponent.StepSize
+
+                       );;
+
+            }
+            catch (Exception ex)
+            {
+                warnings.Add(Warning.Create(Languages.en, $"Could not convert the given charging price component to OCPI: {ex.Message}"));
+                Warnings = warnings;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingPriceComponents,    ref Warnings)
+
+        public static IEnumerable<PriceComponent> ToOCPI(this IEnumerable<WWCP.ChargingPriceComponent>  ChargingPriceComponents,
+                                                         ref List<Warning>                              Warnings)
+        {
+
+            var priceComponents = ChargingPriceComponents.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return priceComponents;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingPriceComponents,    out Warnings)
+
+        public static IEnumerable<PriceComponent> ToOCPI(this IEnumerable<WWCP.ChargingPriceComponent>  ChargingPriceComponents,
+                                                             out IEnumerable<Warning>                   Warnings)
+        {
+
+            var warnings         = new List<Warning>();
+            var priceComponents  = new HashSet<PriceComponent>();
+
+            foreach (var chargingPriceComponent in ChargingPriceComponents)
+            {
+
+                try
+                {
+
+                    var priceComponent2 = chargingPriceComponent.ToOCPI(out var warning);
+
+                    if (priceComponent2.HasValue)
+                        priceComponents.Add(priceComponent2.Value);
+
+                    if (warning is not null && warning.Any())
+                        warnings.AddRange(warning);
+
+                }
+                catch (Exception ex)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "Could not convert the given charging price component to OCPI: " + ex.Message));
+                }
+
+            }
+
+            Warnings = warnings.ToArray();
+            return priceComponents;
+
+        }
+
+        #endregion
+
+
+        #region ToOCPI(this ChargingTariffRestriction,  ref Warnings)
+
+        public static TariffRestrictions? ToOCPI(this WWCP.ChargingTariffRestriction  ChargingTariffRestriction,
+                                                 ref List<Warning>                    Warnings)
+        {
+
+            var tariffRestrictions = ChargingTariffRestriction.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return tariffRestrictions;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingTariffRestriction,  out Warnings)
+
+        public static TariffRestrictions? ToOCPI(this WWCP.ChargingTariffRestriction  ChargingTariffRestriction,
+                                                 out IEnumerable<Warning>             Warnings)
+        {
+
+            var warnings = new List<Warning>();
+
+            try
+            {
+
+                Warnings = Array.Empty<Warning>();
+
+                return new TariffRestrictions(
+
+                           StartTime:     ChargingTariffRestriction.Time?.    StartTime?.ToOCPI(),
+                           EndTime:       ChargingTariffRestriction.Time?.    EndTime?.  ToOCPI(),
+                           StartDate:     ChargingTariffRestriction.Date?.    StartTime,
+                           EndDate:       ChargingTariffRestriction.Date?.    EndTime,
+                           MinkWh:        ChargingTariffRestriction.kWh?.     Min,
+                           MaxkWh:        ChargingTariffRestriction.kWh?.     Max,
+                           MinPower:      ChargingTariffRestriction.Power?.   Min,
+                           MaxPower:      ChargingTariffRestriction.Power?.   Max,
+                           MinDuration:   ChargingTariffRestriction.Duration?.Min,
+                           MaxDuration:   ChargingTariffRestriction.Duration?.Max,
+                           DayOfWeek:     ChargingTariffRestriction.DayOfWeek
+
+                       );
+
+            }
+            catch (Exception ex)
+            {
+                warnings.Add(Warning.Create(Languages.en, $"Could not convert the given charging tariff restrictions to OCPI: {ex.Message}"));
+                Warnings = warnings;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingTariffRestrictions, ref Warnings)
+
+        public static IEnumerable<TariffRestrictions> ToOCPI(this IEnumerable<WWCP.ChargingTariffRestriction>  ChargingTariffRestrictions,
+                                                             ref List<Warning>                                 Warnings)
+        {
+
+            var tariffRestrictions = ChargingTariffRestrictions.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return tariffRestrictions;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingTariffRestrictions, out Warnings)
+
+        public static IEnumerable<TariffRestrictions> ToOCPI(this IEnumerable<WWCP.ChargingTariffRestriction>  ChargingTariffRestrictions,
+                                                             out IEnumerable<Warning>                          Warnings)
+        {
+
+            var warnings            = new List<Warning>();
+            var tariffRestrictions  = new HashSet<TariffRestrictions>();
+
+            foreach (var chargingTariffRestriction in ChargingTariffRestrictions)
+            {
+
+                try
+                {
+
+                    var tariffRestrictions2 = chargingTariffRestriction.ToOCPI(out var warning);
+
+                    if (tariffRestrictions2 is not null)
+                        tariffRestrictions.Add(tariffRestrictions2);
+
+                    if (warning is not null && warning.Any())
+                        warnings.AddRange(warning);
+
+                }
+                catch (Exception ex)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "Could not convert the given charging tariff restriction to OCPI: " + ex.Message));
+                }
+
+            }
+
+            Warnings = warnings.ToArray();
+            return tariffRestrictions;
+
+        }
+
+        #endregion
+
+
+        #region ToOCPI(this ChargingTariffElement,      ref Warnings)
+
+        public static TariffElement? ToOCPI(this WWCP.ChargingTariffElement  ChargingTariffElement,
+                                            ref List<Warning>                Warnings)
+        {
+
+            var tariffElements = ChargingTariffElement.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return tariffElements;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingTariffElement,      out Warnings)
+
+        public static TariffElement? ToOCPI(this WWCP.ChargingTariffElement  ChargingTariffElement,
+                                            out IEnumerable<Warning>         Warnings)
+        {
+
+            var warnings = new List<Warning>();
+
+            try
+            {
+
+                var priceComponents = ChargingTariffElement.ChargingPriceComponents.
+                                          Select (chargingPriceComponent => chargingPriceComponent.ToOCPI(ref warnings)).
+                                          Where  (priceComponent         => priceComponent is not null).
+                                          Cast<PriceComponent>().
+                                          ToArray();
+
+                if (!priceComponents.Any())
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"The given charging price components could not be converted to OCPI price components!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+
+                var tariffRestrictions = ChargingTariffElement.ChargingTariffRestrictions.
+                                             Select (chargingTariffRestriction => chargingTariffRestriction.ToOCPI(ref warnings)).
+                                             Where  (tariffRestriction         => tariffRestriction is not null).
+                                             Cast<TariffRestrictions>().
+                                             ToArray();
+
+                if (!tariffRestrictions.Any())
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"The given charging tariff restrictions could not be converted to OCPI tariff restrictions!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+
+                Warnings = Array.Empty<Warning>();
+
+                return new TariffElement(
+                           PriceComponents:     priceComponents,
+                           TariffRestrictions:  tariffRestrictions
+                       );
+
+            }
+            catch (Exception ex)
+            {
+                warnings.Add(Warning.Create(Languages.en, $"Could not convert the given charging tariff element to OCPI: {ex.Message}"));
+                Warnings = warnings;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingTariffElements,     ref Warnings)
+
+        public static IEnumerable<TariffElement> ToOCPI(this IEnumerable<WWCP.ChargingTariffElement>  ChargingTariffElements,
+                                                        ref List<Warning>                             Warnings)
+        {
+
+            var tariffElements = ChargingTariffElements.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return tariffElements;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingTariffElements,     out Warnings)
+
+        public static IEnumerable<TariffElement> ToOCPI(this IEnumerable<WWCP.ChargingTariffElement>  ChargingTariffElements,
+                                                        out IEnumerable<Warning>                      Warnings)
+        {
+
+            var warnings        = new List<Warning>();
+            var tariffElements  = new HashSet<TariffElement>();
+
+            foreach (var chargingTariff in ChargingTariffElements)
+            {
+
+                try
+                {
+
+                    var tariffElement2 = chargingTariff.ToOCPI(out var warning);
+
+                    if (tariffElement2.HasValue)
+                        tariffElements.Add(tariffElement2.Value);
+
+                    if (warning is not null && warning.Any())
+                        warnings.AddRange(warning);
+
+                }
+                catch (Exception ex)
+                {
+                    warnings.Add(Warning.Create(Languages.en, "Could not convert the given charging tariff element to OCPI: " + ex.Message));
+                }
+
+            }
+
+            Warnings = warnings.ToArray();
+            return tariffElements;
+
+        }
+
+        #endregion
+
+
+        #region ToOCPI(this ChargingTariff,             ref Warnings)
+
+        public static Tariff? ToOCPI(this WWCP.IChargingTariff  ChargingTariff,
+                                     ref List<Warning>          Warnings)
+        {
+
+            var tariff = ChargingTariff.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return tariff;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingTariff,             out Warnings)
+
+        public static Tariff? ToOCPI(this WWCP.IChargingTariff  ChargingTariff,
+                                     out IEnumerable<Warning>   Warnings)
+        {
+
+            var warnings = new List<Warning>();
+
+            try
+            {
+
+                var tariffElements = ChargingTariff.TariffElements.
+                                         Select (chargingTariffElement => chargingTariffElement.ToOCPI(ref warnings)).
+                                         Where  (tariffElement         => tariffElement is not null).
+                                         Cast<TariffElement>().
+                                         ToArray();
+
+                if (!tariffElements.Any())
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"The given charging tariff elements could not be converted to OCPI tariff elements!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+
+                Warnings = Array.Empty<Warning>();
+
+                return new Tariff(
+
+                           CountryCode:      CountryCode.Parse(ChargingTariff.Id.OperatorId.CountryCode.Alpha2Code),
+                           PartyId:          Party_Id.   Parse(ChargingTariff.Id.OperatorId.Suffix),
+                           Id:               Tariff_Id.  Parse(ChargingTariff.Id.ToString()),
+                           Currency:         Currency.   Parse(ChargingTariff.Currency.ISOCode),
+                           TariffElements:   tariffElements,
+
+                           TariffAltText:    ChargingTariff.Description.ToOCPI(),
+                           TariffAltURL:     ChargingTariff.TariffURL,
+                           EnergyMix:        null, //ChargingTariff.EnergyMix.ToOCPI(),
+
+                           LastUpdated:      ChargingTariff.LastChange
+
+                       );
+
+            }
+            catch (Exception ex)
+            {
+                warnings.Add(Warning.Create(Languages.en, $"Could not convert the given charging tariff '{ChargingTariff.Id}' to OCPI: {ex.Message}"));
+                Warnings = warnings;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingTariffs,            ref Warnings)
+
+        public static IEnumerable<Tariff> ToOCPI(this IEnumerable<WWCP.IChargingTariff>  ChargingTariffs,
+                                                 ref List<Warning>                       Warnings)
+        {
+
+            var tariffs = ChargingTariffs.ToOCPI(out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return tariffs;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingTariffs,            out Warnings)
+
+        public static IEnumerable<Tariff> ToOCPI(this IEnumerable<WWCP.IChargingTariff>  ChargingTariffs,
+                                                 out IEnumerable<Warning>                Warnings)
+        {
+
+            var warnings  = new List<Warning>();
+            var tariffs   = new HashSet<Tariff>();
+
+            foreach (var chargingTariff in ChargingTariffs)
+            {
+
+                try
+                {
+
+                    var tariff2 = chargingTariff.ToOCPI(out var warning);
+
+                    if (tariff2 is not null)
+                        tariffs.Add(tariff2);
+
+                    if (warning is not null && warning.Any())
+                        warnings.AddRange(warning);
+
+                }
+                catch (Exception ex)
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"Could not convert the given charging tariff '{chargingTariff.Id}' to OCPI: " + ex.Message));
+                }
+
+            }
+
+            Warnings = warnings.ToArray();
+            return tariffs;
+
+        }
+
+        #endregion
+
+
+
+        #region ToOCPI(this ChargeDetailRecord, ref Warnings)
+
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                  ref List<Warning>               Warnings)
+        {
+
+            var cdr = ChargeDetailRecord.ToOCPI(CustomEVSEUIdConverter,
+                                                CustomEVSEIdConverter,
+                                                out var warnings);
+
+            foreach (var warning in warnings)
+                Warnings.Add(warning);
+
+            return cdr;
+
+        }
+
+        #endregion
+
         #region ToOCPI(this ChargeDetailRecord, out Warnings)
 
         public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
                                   WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
                                   WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                  GetTariffId_Delegate?           GetTariffIdDelegate,
                                   out IEnumerable<Warning>        Warnings)
         {
 
@@ -1278,7 +1750,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var filteredLocation = ChargeDetailRecord.ChargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                                               CustomEVSEIdConverter,
-                                                                              GetTariffIdDelegate,
                                                                               ref warnings,
                                                                               evseId => evseId == ChargeDetailRecord.EVSE.Id);
 
@@ -1336,6 +1807,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 Warnings = Array.Empty<Warning>();
 
+                var tariffs = ChargeDetailRecord.ChargingStationOperator.GetChargingTariffs(
+                                                                             ChargeDetailRecord.ChargingPoolId,
+                                                                             ChargeDetailRecord.ChargingStationId,
+                                                                             ChargeDetailRecord.EVSEId,
+                                                                             ChargeDetailRecord.ConnectorId,
+                                                                             ChargeDetailRecord.ProviderIdStart
+                                                                         ).ToOCPI(ref warnings);
+
+
+                Warnings = warnings;
+
                 return new CDR(
 
                            CountryCode:             CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
@@ -1355,7 +1837,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            MeterId:                 ChargeDetailRecord.EnergyMeterId.ToOCPI(),
                            EnergyMeter:             null,
                            TransparencySoftwares:   null,
-                           Tariffs:                 null,
+                           Tariffs:                 tariffs,
                            SignedData:              null,
                            TotalParkingTime:        null,
                            Remark:                  null,

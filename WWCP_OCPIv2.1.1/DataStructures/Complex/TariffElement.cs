@@ -97,8 +97,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                              TariffRestrictions  TariffRestriction)
         {
 
-            this.PriceComponents     = new PriceComponent[]     { PriceComponent };
-            this.TariffRestrictions  = new TariffRestrictions[] { TariffRestriction };
+            this.PriceComponents     = new[] { PriceComponent };
+            this.TariffRestrictions  = new[] { TariffRestriction };
 
         }
 

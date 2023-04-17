@@ -2567,7 +2567,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
                                                                                                                       filters.Limit).
-                                                                                                       SafeSelect(location => location.ToJSON(CustomLocationSerializer,
+                                                                                                       SafeSelect(location => location.ToJSON(Request.EMPId,
+                                                                                                                                              CustomLocationSerializer,
                                                                                                                                               CustomPublishTokenSerializer,
                                                                                                                                               CustomAdditionalGeoLocationSerializer,
                                                                                                                                               CustomEVSESerializer,
@@ -2673,7 +2674,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = location.ToJSON(CustomLocationSerializer,
+                                                   Data                 = location.ToJSON(Request.EMPId,
+                                                                                          CustomLocationSerializer,
                                                                                           CustomPublishTokenSerializer,
                                                                                           CustomAdditionalGeoLocationSerializer,
                                                                                           CustomEVSESerializer,
@@ -2776,7 +2778,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = evse.ToJSON(CustomEVSESerializer,
+                                                   Data                 = evse.ToJSON(Request.EMPId,
+                                                                                      CustomEVSESerializer,
                                                                                       CustomStatusScheduleSerializer,
                                                                                       CustomConnectorSerializer,
                                                                                       CustomEnergyMeterSerializer,
@@ -2873,7 +2876,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = connector.ToJSON(CustomConnectorSerializer),
+                                                   Data                 = connector.ToJSON(Request.EMPId,
+                                                                                           CustomConnectorSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET",

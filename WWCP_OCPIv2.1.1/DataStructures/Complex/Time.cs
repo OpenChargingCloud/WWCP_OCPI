@@ -85,7 +85,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Hour">The hour.</param>
         public static Time FromHour(Byte Hour)
 
-            => new Time(Hour);
+            => new (Hour);
 
         #endregion
 
@@ -96,10 +96,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="Hour">The hour.</param>
         /// <param name="Minute">The minute</param>
-        public static Time FromHourMin(Byte Hour, Byte Minute)
+        public static Time FromHourMin(Byte Hour,
+                                       Byte Minute)
 
-            => new Time(Hour,
-                        Minute);
+            => new (Hour,
+                    Minute);
 
         #endregion
 
@@ -111,11 +112,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Hour">The hour.</param>
         /// <param name="Minute">The minute</param>
         /// <param name="Second">The second.</param>
-        public static Time FromHourMinSec(Byte Hour, Byte Minute, Byte Second)
+        public static Time FromHourMinSec(Byte Hour,
+                                          Byte Minute,
+                                          Byte Second)
 
-            => new Time(Hour,
-                        Minute,
-                        Second);
+            => new (Hour,
+                    Minute,
+                    Second);
 
         #endregion
 
@@ -132,7 +135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(Text, out var time))
                 return time;
 
-            throw new ArgumentException("The given JSON representation of tariff restrictions is invalid: " + Text,
+            throw new ArgumentException("The given JSON representation of time is invalid: " + Text,
                                         nameof(Text));
 
         }

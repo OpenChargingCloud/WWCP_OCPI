@@ -199,6 +199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        Decimal?                                                      TotalCost                                    = null,
 
                        DateTime?                                                     LastUpdated                                  = null,
+                       EMP_Id?                                                       EMPId                                        = null,
                        CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                      = null,
                        CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                        CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -238,7 +239,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.LastUpdated      = LastUpdated ?? Timestamp.Now;
 
-            this.ETag             = CalcSHA256Hash(CustomSessionSerializer,
+            this.ETag             = CalcSHA256Hash(EMPId,
+                                                   CustomSessionSerializer,
                                                    CustomLocationSerializer,
                                                    CustomAdditionalGeoLocationSerializer,
                                                    CustomEVSESerializer,
@@ -642,6 +644,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
+                              EMP_Id?                                                       EMPId                                        = null,
                               CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                      = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -686,6 +689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  new JProperty("auth_method",                    AuthMethod.            ToString()),
 
                                  new JProperty("location",                       Location.              ToJSON(false,
+                                                                                                               EMPId,
                                                                                                                CustomLocationSerializer,
                                                                                                                CustomAdditionalGeoLocationSerializer,
                                                                                                                CustomEVSESerializer,
@@ -905,7 +909,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                      = null,
+        public String CalcSHA256Hash(EMP_Id?                                                       EMPId                                        = null,
+                                     CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                      = null,
                                      CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                                      CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                                      CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -926,6 +931,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.ETag = SHA256.Create().ComputeHash(ToJSON(true,
+                                                           EMPId,
                                                            CustomSessionSerializer,
                                                            CustomLocationSerializer,
                                                            CustomAdditionalGeoLocationSerializer,

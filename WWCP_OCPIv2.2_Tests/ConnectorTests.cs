@@ -118,7 +118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                  400,
                                  30,
                                  12,
-                                 new Tariff_Id[] {
+                                 new[] {
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
                                  },
@@ -136,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                                         patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorType.IEC_62196_T2,                                     patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                                      patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                                         patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                                           patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                                             patchResult.PatchedData.MaxVoltage);

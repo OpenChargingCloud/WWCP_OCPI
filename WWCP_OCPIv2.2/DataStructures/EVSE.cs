@@ -209,6 +209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                       IEnumerable<Image>?                                           Images                                       = null,
 
                       DateTime?                                                     LastUpdated                                  = null,
+                      EMP_Id?                                                       EMPId                                        = null,
                       CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                       CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                       CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -242,7 +243,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             foreach (var connector in this.Connectors)
                 connector.ParentEVSE = this;
 
-            this.ETag                  = CalcSHA256Hash(CustomEVSESerializer,
+            this.ETag                  = CalcSHA256Hash(EMPId,
+                                                        CustomEVSESerializer,
                                                         CustomStatusScheduleSerializer,
                                                         CustomConnectorSerializer,
                                                         CustomEnergyMeterSerializer,
@@ -300,6 +302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     IEnumerable<Image>?                                           Images                                       = null,
 
                     DateTime?                                                     LastUpdated                                  = null,
+                    EMP_Id?                                                       EMPId                                        = null,
                     CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                     CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                     CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -327,6 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                    Images,
 
                    LastUpdated,
+                   EMPId,
                    CustomEVSESerializer,
                    CustomStatusScheduleSerializer,
                    CustomConnectorSerializer,
@@ -657,7 +661,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+        public JObject ToJSON(EMP_Id?                                                       EMPId                                        = null,
+                              CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
                               CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
@@ -667,7 +672,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            new JProperty("uid",                         UId.         ToString()),
 
@@ -686,7 +691,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            Connectors.Any()
-                               ? new JProperty("connectors",            new JArray(Connectors.         Select(connector          => connector.         ToJSON(CustomConnectorSerializer))))
+                               ? new JProperty("connectors",            new JArray(Connectors.         Select(connector          => connector.         ToJSON(EMPId,
+                                                                                                                                                              CustomConnectorSerializer))))
                                : null,
 
                            EnergyMeter is not null
@@ -726,8 +732,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        );
 
             return CustomEVSESerializer is not null
-                       ? CustomEVSESerializer(this, JSON)
-                       : JSON;
+                       ? CustomEVSESerializer(this, json)
+                       : json;
 
         }
 
@@ -948,6 +954,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        internal IEnumerable<Tariff_Id> GetTariffs(Connector_Id?  ConnectorId   = null,
+                                                   EMP_Id?        EMPId         = null)
+
+            => ParentLocation?.GetTariffs(UId,
+                                          ConnectorId,
+                                          EMPId) ?? Array.Empty<Tariff_Id>();
+
+
         #region (internal) UpdateConnector(Connector)
 
         internal void UpdateConnector(Connector Connector)
@@ -982,7 +996,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+        public String CalcSHA256Hash(EMP_Id?                                                       EMPId                                        = null,
+                                     CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                                      CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                                      CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
                                      CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
@@ -992,7 +1007,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                      CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null)
         {
 
-            this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomEVSESerializer,
+            this.ETag = SHA256.Create().ComputeHash(ToJSON(EMPId,
+                                                           CustomEVSESerializer,
                                                            CustomStatusScheduleSerializer,
                                                            CustomConnectorSerializer,
                                                            CustomEnergyMeterSerializer,

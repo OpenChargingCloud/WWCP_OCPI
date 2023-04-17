@@ -71,6 +71,9 @@ namespace cloud.charging.open.protocols.WWCP
                                       OCPIv2_2.CountryCode                                   DefaultCountryCode,
                                       OCPIv2_2.Party_Id                                      DefaultPartyId,
 
+                                      OCPIv2_2.GetTariffIds_Delegate?                        GetTariffIds                         = null,
+
+                                      OCPIv2_2.WWCPEVSEId_2_EVSEUId_Delegate?                CustomEVSEUIdConverter               = null,
                                       OCPIv2_2.WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
                                       OCPIv2_2.WWCPEVSE_2_EVSE_Delegate?                     CustomEVSEConverter                  = null,
                                       OCPIv2_2.WWCPEVSEStatusUpdate_2_StatusType_Delegate?   CustomEVSEStatusUpdateConverter      = null,
@@ -140,6 +143,9 @@ namespace cloud.charging.open.protocols.WWCP
                                          DefaultCountryCode,
                                          DefaultPartyId,
 
+                                         GetTariffIds,
+
+                                         CustomEVSEUIdConverter,
                                          CustomEVSEIdConverter,
                                          CustomEVSEConverter,
                                          CustomEVSEStatusUpdateConverter,

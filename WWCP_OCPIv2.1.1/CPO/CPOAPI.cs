@@ -2672,6 +2672,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = location.ToJSON(false,
+                                                                                          Request.EMPId,
                                                                                           CustomLocationSerializer,
                                                                                           CustomAdditionalGeoLocationSerializer,
                                                                                           CustomEVSESerializer,
@@ -2781,7 +2782,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = evse.ToJSON(CustomEVSESerializer,
+                                                   Data                 = evse.ToJSON(Request.EMPId,
+                                                                                      CustomEVSESerializer,
                                                                                       CustomStatusScheduleSerializer,
                                                                                       CustomConnectorSerializer,
                                                                                       CustomEnergyMeterSerializer,
@@ -2885,7 +2887,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = connector.ToJSON(CustomConnectorSerializer),
+                                                   Data                 = connector.ToJSON(Request.EMPId,
+                                                                                           CustomConnectorSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET",
@@ -3187,6 +3190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
                                                                                   Select(session => session.ToJSON(false,
+                                                                                                                   Request.EMPId,
                                                                                                                    CustomSessionSerializer,
                                                                                                                    CustomLocationSerializer,
                                                                                                                    CustomAdditionalGeoLocationSerializer,
@@ -3301,6 +3305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = session.ToJSON(false,
+                                                                                         Request.EMPId,
                                                                                          CustomSessionSerializer,
                                                                                          CustomLocationSerializer,
                                                                                          CustomAdditionalGeoLocationSerializer,
@@ -3424,6 +3429,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
                                                                                   Select(CDR => CDR.ToJSON(false,
+                                                                                                           Request.EMPId,
                                                                                                            CustomCDRSerializer,
                                                                                                            CustomLocationSerializer,
                                                                                                            CustomAdditionalGeoLocationSerializer,
@@ -3545,6 +3551,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = cdr.ToJSON(false,
+                                                                                     Request.EMPId,
                                                                                      CustomCDRSerializer,
                                                                                      CustomLocationSerializer,
                                                                                      CustomAdditionalGeoLocationSerializer,

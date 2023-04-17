@@ -639,7 +639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsTrue   (wwcpCDR.ConsumedEnergy.   HasValue);
             Assert.AreEqual (17, wwcpCDR.ConsumedEnergy!.Value);
 
-            var ocpiCDR = wwcpCDR.ToOCPI(null, null, null, out var warnings);
+            var ocpiCDR = wwcpCDR.ToOCPI(null, null, out var warnings);
             Assert.AreEqual (0, warnings.Count());
 
             Assert.IsNotNull(ocpiCDR);

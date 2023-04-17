@@ -31,6 +31,14 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
+                                                                   Party_Id       CPOPartyId,
+                                                                   Location_Id?   Location      = null,
+                                                                   EVSE_UId?      EVSEUId       = null,
+                                                                   Connector_Id?  ConnectorId   = null,
+                                                                   EMP_Id?        EMPId         = null);
+
+
     /// <summary>
     /// The charging location is a group of EVSEs at more or less the same geographical location
     /// and operated by the same charge point operator.
@@ -54,6 +62,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
         #region Properties
+
+        public GetTariffIds2_Delegate              GetTariffIds2            { get; set; }
 
         /// <summary>
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.
@@ -305,6 +315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         Boolean?                                                      Publish                                      = null,
 
                         DateTime?                                                     LastUpdated                                  = null,
+                        EMP_Id?                                                       EMPId                                        = null,
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                         CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -353,7 +364,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             foreach (var evse in this.EVSEs)
                 evse.ParentLocation = this;
 
-            this.ETag                 = CalcSHA256Hash(CustomLocationSerializer,
+            this.ETag                 = CalcSHA256Hash(EMPId,
+                                                       CustomLocationSerializer,
                                                        CustomAdditionalGeoLocationSerializer,
                                                        CustomEVSESerializer,
                                                        CustomStatusScheduleSerializer,
@@ -874,6 +886,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
+                              EMP_Id?                                                       EMPId                                        = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -925,7 +938,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null,
 
                            EVSEs.Any()
-                               ? new JProperty("evses",                  new JArray(EVSEs.           Select(evse                  => evse.                 ToJSON(CustomEVSESerializer,
+                               ? new JProperty("evses",                  new JArray(EVSEs.           Select(evse                  => evse.                 ToJSON(EMPId,
+                                                                                                                                                                  CustomEVSESerializer,
                                                                                                                                                                   CustomStatusScheduleSerializer,
                                                                                                                                                                   CustomConnectorSerializer,
                                                                                                                                                                   CustomEnergyMeterSerializer,
@@ -1228,6 +1242,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        internal IEnumerable<Tariff_Id> GetTariffs(EVSE_UId?      EVSEUId       = null,
+                                                   Connector_Id?  ConnectorId   = null,
+                                                   EMP_Id?        EMPId         = null)
+
+            => GetTariffIds2?.Invoke(CountryCode,
+                                     PartyId,
+                                     Id,
+                                     EVSEUId,
+                                     ConnectorId,
+                                     EMPId) ?? Array.Empty<Tariff_Id>();
+
+
         #region EVSEExists(EVSEUId)
 
         /// <summary>
@@ -1422,7 +1448,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
+        public String CalcSHA256Hash(EMP_Id?                                                       EMPId                                        = null,
+                                     CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                                      CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                                      CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                                      CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
@@ -1438,6 +1465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.ETag = SHA256.Create().ComputeHash(ToJSON(true,
+                                                           EMPId,
                                                            CustomLocationSerializer,
                                                            CustomAdditionalGeoLocationSerializer,
                                                            CustomEVSESerializer,

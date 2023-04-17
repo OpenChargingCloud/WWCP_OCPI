@@ -29,6 +29,9 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
+    public delegate IEnumerable<Tariff_Id> GetTariffIdsForEMP_Delegate(EMP_Id? EMPId);
+
+
     /// <summary>
     /// A connector is the socket or cable available for the electric vehicle to make use of.
     /// </summary>
@@ -40,7 +43,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly Object patchLock = new Object();
+        private readonly Object patchLock = new();
 
         #endregion
 
@@ -89,12 +92,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         [Mandatory]
         public UInt16            Amperage                 { get; }
 
+        public EMP_Id?           EMPId                    { get; }
+
+        private readonly Tariff_Id? tariffId;
+
         /// <summary>
         /// The identification of the currently valid charging tariff.
         /// For a "Free of Charge" tariff this field should be set, and point to a defined "Free of Charge" tariff.
         /// </summary>
         [Optional]
-        public Tariff_Id?        TariffId                 { get; }
+        public Tariff_Id?        TariffId
+        {
+            get
+            {
+
+                var tariffIds = ParentEVSE?.GetTariffs(Id, EMPId);
+
+                return tariffIds is not null && tariffIds.Any()
+                           ? tariffIds.First()
+                           : tariffId;
+
+            }
+        }
 
         /// <summary>
         /// The optional URL to the operator's terms and conditions.
@@ -147,6 +166,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            URL?                                         TermsAndConditionsURL       = null,
 
                            DateTime?                                    LastUpdated                 = null,
+                           EMP_Id?                                      EMPId                       = null,
                            CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
         {
@@ -159,11 +179,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.PowerType              = PowerType;
             this.Voltage                = Voltage;
             this.Amperage               = Amperage;
-            this.TariffId               = TariffId;
+            this.tariffId               = TariffId;
             this.TermsAndConditionsURL  = TermsAndConditionsURL;
 
             this.LastUpdated            = LastUpdated ?? Timestamp.Now;
-            this.ETag                   = SHA256.Create().ComputeHash(ToJSON(CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();
+            this.ETag                   = SHA256.Create().ComputeHash(ToJSON(EMPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();    //ToDo: EMP Id must not be null!
 
         }
 
@@ -195,6 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          URL?                                         TermsAndConditionsURL       = null,
 
                          DateTime?                                    LastUpdated                 = null,
+                         EMP_Id?                                      EMPId                       = null,
                          CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
             : this(null,
@@ -209,6 +230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    TermsAndConditionsURL,
 
                    LastUpdated,
+                   EMPId,
                    CustomConnectorSerializer)
 
         { }
@@ -366,10 +388,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse TariffIds          [optional]
+                #region Parse TariffId           [optional]
 
-                if (JSON.ParseOptional("tariff_ids",
-                                       "tariff identifications",
+                if (JSON.ParseOptional("tariff_id",
+                                       "tariff identification",
                                        Tariff_Id.TryParse,
                                        out Tariff_Id? TariffId,
                                        out ErrorResponse))
@@ -436,39 +458,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToJSON(CustomConnectorSerializer = null)
+        #region ToJSON(EMPId = null, CustomConnectorSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Connector>? CustomConnectorSerializer = null)
+        public JObject ToJSON(EMP_Id?                                      EMPId                       = null,
+                              CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var tariffIds  = GetTariffs(EMPId);
+            var tariffId   = this.tariffId ?? (tariffIds.Any()
+                                                   ? tariffIds.First()
+                                                   : null);
 
-                           new JProperty("id",                          Id.                   ToString()),
-                           new JProperty("standard",                    Standard.             ToString()),
-                           new JProperty("format",                      Format.               AsText()),
-                           new JProperty("power_type",                  PowerType.            AsText()),
-                           new JProperty("voltage",                     Voltage),
-                           new JProperty("amperage",                    Amperage),
+            var json       = JSONObject.Create(
 
-                           TariffId.HasValue
-                               ? new JProperty("tariff_id",             TariffId.             ToString())
-                               : null,
+                                 new JProperty("id",                           Id.                   ToString()),
+                                 new JProperty("standard",                     Standard.             ToString()),
+                                 new JProperty("format",                       Format.               AsText()),
+                                 new JProperty("power_type",                   PowerType.            AsText()),
+                                 new JProperty("voltage",                      Voltage),
+                                 new JProperty("amperage",                     Amperage),
 
-                           TermsAndConditionsURL.HasValue
-                               ? new JProperty("terms_and_conditions",  TermsAndConditionsURL.ToString())
-                               : null,
+                                 tariffId is not null
+                                     ? new JProperty("tariff_id",              tariffId.       Value.ToString())
+                                     : null,
 
-                           new JProperty("last_updated",                LastUpdated.          ToIso8601())
+                                 TermsAndConditionsURL.HasValue
+                                     ? new JProperty("terms_and_conditions",   TermsAndConditionsURL.ToString())
+                                     : null,
 
-                       );
+                                 new JProperty("last_updated",                 LastUpdated.          ToIso8601())
+
+                             );
 
             return CustomConnectorSerializer is not null
-                       ? CustomConnectorSerializer(this, JSON)
-                       : JSON;
+                       ? CustomConnectorSerializer(this, json)
+                       : json;
 
         }
 
@@ -612,6 +640,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
         #endregion
+
+
+        internal IEnumerable<Tariff_Id> GetTariffs(EMP_Id? EMPId = null)
+
+            => ParentEVSE?.GetTariffs(Id,
+                                      EMPId) ?? Array.Empty<Tariff_Id>();
 
 
         #region Operator overloading
