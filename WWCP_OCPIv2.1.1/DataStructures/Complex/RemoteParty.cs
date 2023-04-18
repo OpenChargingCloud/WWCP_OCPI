@@ -265,7 +265,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Role,
                    BusinessDetails,
 
-                   new AccessInfoStatus[] {
+                   new[] {
                        new AccessInfoStatus(
                            AccessToken,
                            AccessStatus
@@ -326,7 +326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    BusinessDetails,
 
                    Array.Empty<AccessInfoStatus>(),
-                   new RemoteAccessInfo[] {
+                   new[] {
                        new RemoteAccessInfo(
                            RemoteAccessToken,
                            RemoteVersionsURL,
@@ -392,7 +392,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Role,
                    BusinessDetails,
 
-                   new AccessInfoStatus[] {
+                   new[] {
                        new AccessInfoStatus(
                            AccessToken,
                            AccessStatus
@@ -453,12 +453,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
-            this.Id                 = RemoteParty_Id.Parse(
-                                          String.Concat(CountryCode,
-                                                        "-",
-                                                        PartyId,
-                                                        "_",
-                                                        Role));
+            this.Id                          = RemoteParty_Id.Parse(
+                                                   String.Concat(CountryCode,
+                                                                 "-",
+                                                                 PartyId,
+                                                                 "_",
+                                                                 Role));
 
             this.CountryCode                 = CountryCode;
             this.PartyId                     = PartyId;
@@ -466,7 +466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.BusinessDetails             = BusinessDetails;
             this.Status                      = Status;
 
-            this.RemoteCertificateValidator  = RemoteCertificateValidator;
+            this.RemoteCertificateValidator  = RemoteCertificateValidator ?? ((sender, certificate, chain, sslPolicyErrors) => true);
             this.ClientCertificateSelector   = ClientCertificateSelector;
             this.ClientCert                  = ClientCert;
             this.TLSProtocol                 = TLSProtocol;

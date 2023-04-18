@@ -266,7 +266,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                 AccessToken.Value,
                                                 parties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
                                                 null,
-                                                new CredentialsRole[] {
+                                                new[] {
                                                     new CredentialsRole(
                                                         parties.First().CountryCode,
                                                         parties.First().PartyId,
@@ -280,6 +280,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         this.AccessInfo2  = parties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken);
 
                         this.RemoteParty  = parties.First();
+
+                        this.EMPId        = EMP_Id.Parse($"{this.AccessInfo.Value.Roles.First().CountryCode}*{this.AccessInfo.Value.Roles.First().PartyId}");
 
                     }
 

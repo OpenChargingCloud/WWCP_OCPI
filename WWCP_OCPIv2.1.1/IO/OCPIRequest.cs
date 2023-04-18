@@ -267,6 +267,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         this.RemoteParty  = parties.First();
 
+                        this.EMPId        = EMP_Id.Parse($"{this.AccessInfo.Value.CountryCode}*{this.AccessInfo.Value.PartyId}");
+
                     }
 
                     //else if (parties.Count() > 1      &&

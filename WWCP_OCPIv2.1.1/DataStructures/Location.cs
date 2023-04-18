@@ -25,19 +25,12 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
-
-    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
-                                                                   Party_Id       CPOPartyId,
-                                                                   Location_Id?   Location      = null,
-                                                                   EVSE_UId?      EVSEUId       = null,
-                                                                   Connector_Id?  ConnectorId   = null,
-                                                                   EMP_Id?        EMPId         = null);
-
 
     /// <summary>
     /// The charging location is a group of EVSEs at more or less the same geographical location
@@ -57,13 +50,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly Object patchLock = new Object();
+        private readonly Object patchLock = new();
 
         #endregion
 
         #region Properties
 
-        public GetTariffIds2_Delegate              GetTariffIds2            { get; set; }
+        internal CommonAPI                         CommonAPI                { get; set; }
+
 
         /// <summary>
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.
@@ -904,7 +898,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            IncludeOwnerInformation
                                ? new JProperty("country_code",           CountryCode. ToString())
@@ -1002,8 +996,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomLocationSerializer is not null
-                       ? CustomLocationSerializer(this, JSON)
-                       : JSON;
+                       ? CustomLocationSerializer(this, json)
+                       : json;
 
         }
 
@@ -1242,16 +1236,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffs(EVSE_UId?      EVSEUId       = null,
-                                                   Connector_Id?  ConnectorId   = null,
-                                                   EMP_Id?        EMPId         = null)
+        internal IEnumerable<Tariff_Id> GetTariffIds(EVSE_UId?      EVSEUId       = null,
+                                                     Connector_Id?  ConnectorId   = null,
+                                                     EMP_Id?        EMPId         = null)
 
-            => GetTariffIds2?.Invoke(CountryCode,
-                                     PartyId,
-                                     Id,
-                                     EVSEUId,
-                                     ConnectorId,
-                                     EMPId) ?? Array.Empty<Tariff_Id>();
+            => CommonAPI?.GetTariffIds(CountryCode,
+                                       PartyId,
+                                       Id,
+                                       EVSEUId,
+                                       ConnectorId,
+                                       EMPId) ?? Array.Empty<Tariff_Id>();
 
 
         #region EVSEExists(EVSEUId)

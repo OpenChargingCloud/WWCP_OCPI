@@ -49,7 +49,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
     /// <summary>
     /// The unique identification of an EMP.
-    /// CiString(3)
     /// </summary>
     public readonly struct EMP_Id : IId<EMP_Id>
     {
@@ -148,9 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             Text = Text.Trim();
 
-            if (Text.IsNotNullOrEmpty() &&
-                Text.Length >= 1        &&
-                Text.Length <= 3)
+            if (Text.IsNotNullOrEmpty())
             {
                 try
                 {

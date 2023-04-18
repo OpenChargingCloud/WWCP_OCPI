@@ -17,16 +17,12 @@
 
 #region Usings
 
-using NUnit.Framework;
-
+using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 using Newtonsoft.Json.Linq;
-
-using org.GraphDefined.Vanaheimr.Aegir;
-using org.GraphDefined.Vanaheimr.Illias;
+using NUnit.Framework;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
@@ -93,13 +89,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         #region Data
 
         protected          HTTPServer?                                                 cpoHTTPServer;
-        protected          HTTPServer?                                                 emspHTTPServer;
+        protected          HTTPServer?                                                 emspHTTPServer1;
+        protected          HTTPServer?                                                 emspHTTPServer2;
 
         protected          WebAPI.OCPIWebAPI?                                          cpoWebAPI;
-        protected          WebAPI.OCPIWebAPI?                                          emspWebAPI;
+        protected          WebAPI.OCPIWebAPI?                                          emspWebAPI1;
+        protected          WebAPI.OCPIWebAPI?                                          emspWebAPI2;
 
-        public             URL                                                         cpoVersionsAPIURL  = URL.Parse("http://127.0.0.1:7134/versions");
-        public             URL                                                         emspVersionsAPIURL = URL.Parse("http://127.0.0.1:7135/versions");
+        public             URL                                                         cpoVersionsAPIURL   = URL.Parse("http://127.0.0.1:7134/versions");
+        public             URL                                                         emspVersionsAPIURL1 = URL.Parse("http://127.0.0.1:7135/versions");
+        public             URL                                                         emspVersionsAPIURL2 = URL.Parse("http://127.0.0.1:7136/versions");
 
         //protected readonly Dictionary<Operator_Id, HashSet<EVSEDataRecord>>            EVSEDataRecords;
         //protected readonly Dictionary<Operator_Id, HashSet<EVSEStatusRecord>>          EVSEStatusRecords;
@@ -143,18 +142,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             Timestamp.Reset();
 
-            cpoHTTPServer   = new HTTPServer(
-                                  IPPort.Parse(7134),
-                                  Autostart: true
-                              );
+            cpoHTTPServer    = new HTTPServer(
+                                   IPPort.Parse(7134),
+                                   Autostart: true
+                               );
 
-            emspHTTPServer  = new HTTPServer(
-                                  IPPort.Parse(7135),
-                                  Autostart: true
-                              );
+            emspHTTPServer1  = new HTTPServer(
+                                   IPPort.Parse(7135),
+                                   Autostart: true
+                               );
+
+            emspHTTPServer2  = new HTTPServer(
+                                   IPPort.Parse(7136),
+                                   Autostart: true
+                               );
 
             Assert.IsNotNull(cpoHTTPServer);
-            Assert.IsNotNull(emspHTTPServer);
+            Assert.IsNotNull(emspHTTPServer1);
+            Assert.IsNotNull(emspHTTPServer2);
 
 
             cpoWebAPI       = new WebAPI.OCPIWebAPI(
@@ -182,22 +187,47 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                               );
 
-            emspWebAPI      = new WebAPI.OCPIWebAPI(
+            emspWebAPI1     = new WebAPI.OCPIWebAPI(
 
-                                  emspHTTPServer,
+                                  emspHTTPServer1,
 
                                   new CommonAPI(
 
-                                      emspVersionsAPIURL,
+                                      emspVersionsAPIURL1,
                                       new BusinessDetails(
-                                          "GraphDefined EMSP Services",
-                                          URL.Parse("https://www.graphdefined.com/emsp")
+                                          "GraphDefined EMSP #1 Services",
+                                          URL.Parse("https://www.graphdefined.com/emsp1")
                                       ),
                                       CountryCode.Parse("DE"),
                                       Party_Id.   Parse("GDF"),
                                       Roles.      EMSP,
 
-                                      HTTPServer:            emspHTTPServer,
+                                      HTTPServer:            emspHTTPServer1,
+                                      HTTPHostname:          HTTPHostname.Any,
+                                      Disable_RootServices:  false
+
+                                  ),
+
+                                  RequestTimeout: TimeSpan.FromSeconds(10)
+
+                              );
+
+            emspWebAPI2     = new WebAPI.OCPIWebAPI(
+
+                                  emspHTTPServer2,
+
+                                  new CommonAPI(
+
+                                      emspVersionsAPIURL2,
+                                      new BusinessDetails(
+                                          "GraphDefined EMSP #2 Services",
+                                          URL.Parse("https://www.graphdefined.com/emsp2")
+                                      ),
+                                      CountryCode.Parse("DE"),
+                                      Party_Id.   Parse("GD2"),
+                                      Roles.      EMSP,
+
+                                      HTTPServer:            emspHTTPServer2,
                                       HTTPHostname:          HTTPHostname.Any,
                                       Disable_RootServices:  false
 
@@ -208,7 +238,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                               );
 
             Assert.IsNotNull(cpoWebAPI);
-            Assert.IsNotNull(emspWebAPI);
+            Assert.IsNotNull(emspWebAPI1);
+            Assert.IsNotNull(emspWebAPI2);
 
 
 
@@ -221,75 +252,141 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        AllowDowngrades:  false
                                    );
 
-            var emspAPI          = new EMSPAPI(
-                                       emspWebAPI.CommonAPI,
+            var emspAPI1         = new EMSPAPI(
+                                       emspWebAPI1.CommonAPI,
                                        CountryCode.Parse("DE"),
                                        Party_Id.   Parse("GDF"),
-                                       URLPathPrefix:    HTTPPath.Parse("2.1.1/emsp"),
+                                       URLPathPrefix:    HTTPPath.Parse("2.1.1/emsp1"),
+                                       //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
+                                       AllowDowngrades:  false
+                                   );
+
+            var emspAPI2         = new EMSPAPI(
+                                       emspWebAPI2.CommonAPI,
+                                       CountryCode.Parse("DE"),
+                                       Party_Id.   Parse("GD2"),
+                                       URLPathPrefix:    HTTPPath.Parse("2.1.1/emsp2"),
                                        //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
                                        AllowDowngrades:  false
                                    );
 
 
 
-            var addEMSPResult = cpoWebAPI.CommonAPI.AddRemoteParty(
-                CountryCode:        CountryCode.Parse("DE"),
-                PartyId:            Party_Id.   Parse("GDF"),
-                Role:               Roles.      EMSP,
-                BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
-                AccessInfoStatus:   new[] {
-                                        new AccessInfoStatus(
-                                            AccessToken.Parse("xxxxxx"),
-                                            AccessStatus.ALLOWED
-                                        )
-                                    },
-                RemoteAccessInfos:  new[] {
-                                        new RemoteAccessInfo(
-                                            AccessToken:        AccessToken.Parse("yyyyyy"),
-                                            VersionsURL:        emspVersionsAPIURL,
-                                            VersionIds:         new[] {
-                                                                    Version_Id.Parse("2.1.1")
-                                                                },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                            Status:             RemoteAccessStatus.ONLINE
-                                        )
-                                    },
-                Status:             PartyStatus.ENABLED
+            var addEMSPResult1 = cpoWebAPI.CommonAPI.AddRemoteParty(
+                CountryCode:         CountryCode.Parse("DE"),
+                PartyId:             Party_Id.   Parse("GDF"),
+                Role:                Roles.      EMSP,
+                BusinessDetails:     new BusinessDetails("GraphDefined EMSP #1 Services"),
+                AccessInfoStatus:    new[] {
+                                         new AccessInfoStatus(
+                                             AccessToken.Parse("xxxxxx"),
+                                             AccessStatus.ALLOWED
+                                         )
+                                     },
+                RemoteAccessInfos:   new[] {
+                                         new RemoteAccessInfo(
+                                             AccessToken:        AccessToken.Parse("yyyyyy"),
+                                             VersionsURL:        emspVersionsAPIURL1,
+                                             VersionIds:         new[] {
+                                                                     Version_Id.Parse("2.1.1")
+                                                                 },
+                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             Status:             RemoteAccessStatus.ONLINE
+                                         )
+                                     },
+                Status:              PartyStatus.ENABLED
             );
 
-            Assert.IsTrue(addEMSPResult);
-
-
-            var addCPOResult = emspWebAPI.CommonAPI.AddRemoteParty(
-                CountryCode:        CountryCode.Parse("DE"),
-                PartyId:            Party_Id.   Parse("GEF"),
-                Role:               Roles.      CPO,
-                BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
-                AccessInfoStatus:   new[] {
-                                        new AccessInfoStatus(
-                                            AccessToken.Parse("yyyyyy"),
-                                            AccessStatus.ALLOWED
-                                        )
-                                        //new AccessInfo2(
-                                        //    AccessToken.Parse("eeeeee"),
-                                        //    AccessStatus.BLOCKED
-                                        //)
-                                    },
-                RemoteAccessInfos:  new[] {
-                                        new RemoteAccessInfo(
-                                            AccessToken:        AccessToken.Parse("xxxxxx"),
-                                            VersionsURL:        cpoVersionsAPIURL,
-                                            VersionIds:         new[] {
-                                                                    Version_Id.Parse("2.1.1")
-                                                                },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                            Status:             RemoteAccessStatus.ONLINE
-                                        )
-                                    },
-                Status:             PartyStatus.ENABLED
+            var addEMSPResult2 = cpoWebAPI.CommonAPI.AddRemoteParty(
+                CountryCode:         CountryCode.Parse("DE"),
+                PartyId:             Party_Id.   Parse("GD2"),
+                Role:                Roles.      EMSP,
+                BusinessDetails:     new BusinessDetails("GraphDefined EMSP #2 Services"),
+                AccessInfoStatus:    new[] {
+                                         new AccessInfoStatus(
+                                             AccessToken.Parse("eeeeee"),
+                                             AccessStatus.ALLOWED
+                                         )
+                                     },
+                RemoteAccessInfos:   new[] {
+                                         new RemoteAccessInfo(
+                                             AccessToken:        AccessToken.Parse("ffffff"),
+                                             VersionsURL:        emspVersionsAPIURL2,
+                                             VersionIds:         new[] {
+                                                                     Version_Id.Parse("2.1.1")
+                                                                 },
+                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             Status:             RemoteAccessStatus.ONLINE
+                                         )
+                                     },
+                Status:              PartyStatus.ENABLED
             );
 
-            Assert.IsTrue(addCPOResult);
+            Assert.IsTrue(addEMSPResult1);
+            Assert.IsTrue(addEMSPResult2);
+
+
+
+            var addCPOResult1 = emspWebAPI1.CommonAPI.AddRemoteParty(
+                CountryCode:         CountryCode.Parse("DE"),
+                PartyId:             Party_Id.   Parse("GEF"),
+                Role:                Roles.      CPO,
+                BusinessDetails:     new BusinessDetails("GraphDefined CPO Services"),
+                AccessInfoStatus:    new[] {
+                                         new AccessInfoStatus(
+                                             AccessToken.Parse("yyyyyy"),
+                                             AccessStatus.ALLOWED
+                                         )
+                                         //new AccessInfo2(
+                                         //    AccessToken.Parse("eeeeee"),
+                                         //    AccessStatus.BLOCKED
+                                         //)
+                                     },
+                RemoteAccessInfos:   new[] {
+                                         new RemoteAccessInfo(
+                                             AccessToken:        AccessToken.Parse("xxxxxx"),
+                                             VersionsURL:        cpoVersionsAPIURL,
+                                             VersionIds:         new[] {
+                                                                     Version_Id.Parse("2.1.1")
+                                                                 },
+                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             Status:             RemoteAccessStatus.ONLINE
+                                         )
+                                     },
+                Status:              PartyStatus.ENABLED
+            );
+
+            var addCPOResult2 = emspWebAPI2.CommonAPI.AddRemoteParty(
+                CountryCode:         CountryCode.Parse("DE"),
+                PartyId:             Party_Id.   Parse("GEF"),
+                Role:                Roles.      CPO,
+                BusinessDetails:     new BusinessDetails("GraphDefined CPO Services"),
+                AccessInfoStatus:    new[] {
+                                         new AccessInfoStatus(
+                                             AccessToken.Parse("ffffff"),
+                                             AccessStatus.ALLOWED
+                                         )
+                                         //new AccessInfo2(
+                                         //    AccessToken.Parse("eeeeee"),
+                                         //    AccessStatus.BLOCKED
+                                         //)
+                                     },
+                RemoteAccessInfos:   new[] {
+                                         new RemoteAccessInfo(
+                                             AccessToken:        AccessToken.Parse("eeeeee"),
+                                             VersionsURL:        cpoVersionsAPIURL,
+                                             VersionIds:         new[] {
+                                                                     Version_Id.Parse("2.1.1")
+                                                                 },
+                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             Status:             RemoteAccessStatus.ONLINE
+                                         )
+                                     },
+                Status:              PartyStatus.ENABLED
+            );
+
+            Assert.IsTrue(addCPOResult1);
+            Assert.IsTrue(addCPOResult2);
 
         }
 
@@ -304,8 +401,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             cpoWebAPI?.     Shutdown();
             cpoHTTPServer?. Shutdown();
 
-            emspWebAPI?.    Shutdown();
-            emspHTTPServer?.Shutdown();
+            emspWebAPI1?.    Shutdown();
+            emspHTTPServer1?.Shutdown();
 
         }
 

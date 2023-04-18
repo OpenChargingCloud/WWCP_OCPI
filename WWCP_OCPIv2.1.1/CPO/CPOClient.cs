@@ -803,63 +803,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <summary>
         /// Create a new EMSP client.
         /// </summary>
-        /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
-        /// <param name="AccessToken">The access token.</param>
+        /// <param name="RemoteParty">The remote party.</param>
         /// <param name="MyCommonAPI">My Common API.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
-        /// <param name="RemoteCertificateValidator">The remote SSL/TLS certificate validator.</param>
-        /// <param name="ClientCert">The SSL/TLS client certificate to use of HTTP authentication.</param>
-        /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
-        /// <param name="RequestTimeout">An optional request timeout.</param>
-        /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
-        /// <param name="MaxNumberOfRetries">The maximum number of transmission retries for HTTP request.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
         /// <param name="LoggingPath">The logging path.</param>
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPOClient(URL                                   RemoteVersionsURL,
-                         AccessToken                           AccessToken,
-                         CommonAPI                             MyCommonAPI,
-                         HTTPHostname?                         VirtualHostname              = null,
-                         String?                               Description                  = null,
-                         RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                         LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
-                         X509Certificate?                      ClientCert                   = null,
-                         SslProtocols?                         TLSProtocol                  = null,
-                         Boolean?                              PreferIPv4                   = null,
-                         String?                               HTTPUserAgent                = null,
-                         TimeSpan?                             RequestTimeout               = null,
-                         TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
-                         UInt16?                               MaxNumberOfRetries           = null,
-                         Boolean?                              UseHTTPPipelining            = null,
-                         HTTPClientLogger?                     HTTPLogger                   = null,
-                         Boolean                               AccessTokenBase64Encoding    = false,
+        public CPOClient(RemoteParty              RemoteParty,
+                         CommonAPI                MyCommonAPI,
+                         HTTPHostname?            VirtualHostname   = null,
+                         String?                  Description       = null,
+                         HTTPClientLogger?        HTTPLogger        = null,
 
-                         Boolean?                              DisableLogging               = false,
-                         String?                               LoggingPath                  = null,
-                         String?                               LoggingContext               = null,
-                         LogfileCreatorDelegate?               LogfileCreator               = null,
-                         DNSClient?                            DNSClient                    = null)
+                         Boolean?                 DisableLogging    = false,
+                         String?                  LoggingPath       = null,
+                         String?                  LoggingContext    = null,
+                         LogfileCreatorDelegate?  LogfileCreator    = null,
+                         DNSClient?               DNSClient         = null)
 
-            : base(RemoteVersionsURL,
-                   AccessToken,
+            : base(RemoteParty,
                    MyCommonAPI,
                    VirtualHostname,
                    Description,
-                   RemoteCertificateValidator,
-                   ClientCertificateSelector,
-                   ClientCert,
-                   TLSProtocol,
-                   PreferIPv4,
-                   HTTPUserAgent,
-                   RequestTimeout,
-                   TransmissionRetryDelay,
-                   MaxNumberOfRetries,
-                   UseHTTPPipelining,
                    HTTPLogger,
-                   AccessTokenBase64Encoding,
 
                    DisableLogging,
                    LoggingPath,

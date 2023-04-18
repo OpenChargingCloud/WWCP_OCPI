@@ -2560,8 +2560,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters            = Request.GetDateAndPaginationFilters();
 
-                                        //var allLocations       = CommonAPI.GetLocations(Request.AccessInfo.Value.CountryCode,
-                                        //                                                Request.AccessInfo.Value.PartyId).ToArray();
                                         var allLocations       = CommonAPI.GetLocations().ToArray();
 
                                         var filteredLocations  = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
@@ -2575,7 +2573,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
                                                                                                                       filters.Limit).
-                                                                                                       SafeSelect(location => location.ToJSON())),
+                                                                                                       SafeSelect(location => location.ToJSON(false,
+                                                                                                                                              Request.EMPId,
+                                                                                                                                              CustomLocationSerializer,
+                                                                                                                                              CustomAdditionalGeoLocationSerializer,
+                                                                                                                                              CustomEVSESerializer,
+                                                                                                                                              CustomStatusScheduleSerializer,
+                                                                                                                                              CustomConnectorSerializer,
+                                                                                                                                              CustomEnergyMeterSerializer,
+                                                                                                                                              CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                              CustomTransparencySoftwareSerializer,
+                                                                                                                                              CustomDisplayTextSerializer,
+                                                                                                                                              CustomBusinessDetailsSerializer,
+                                                                                                                                              CustomHoursSerializer,
+                                                                                                                                              CustomImageSerializer,
+                                                                                                                                              CustomEnergyMixSerializer,
+                                                                                                                                              CustomEnergySourceSerializer,
+                                                                                                                                              CustomEnvironmentalImpactSerializer))),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET",

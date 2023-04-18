@@ -106,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             get
             {
 
-                var tariffIds = ParentEVSE?.GetTariffs(Id, EMPId);
+                var tariffIds = ParentEVSE?.GetTariffIds(Id, EMPId);
 
                 return tariffIds is not null && tariffIds.Any()
                            ? tariffIds.First()
@@ -468,7 +468,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
-            var tariffIds  = GetTariffs(EMPId);
+            var tariffIds  = GetTariffIds(EMPId);
             var tariffId   = this.tariffId ?? (tariffIds.Any()
                                                    ? tariffIds.First()
                                                    : null);
@@ -642,10 +642,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffs(EMP_Id? EMPId = null)
+        internal IEnumerable<Tariff_Id> GetTariffIds(EMP_Id? EMPId = null)
 
-            => ParentEVSE?.GetTariffs(Id,
-                                      EMPId) ?? Array.Empty<Tariff_Id>();
+            => ParentEVSE?.GetTariffIds(Id,
+                                        EMPId) ?? Array.Empty<Tariff_Id>();
 
 
         #region Operator overloading

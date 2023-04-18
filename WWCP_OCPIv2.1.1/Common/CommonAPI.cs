@@ -43,6 +43,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// </summary>
     public delegate Boolean IncludeRemoteParty(RemoteParty RemoteParty);
 
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
+                                                                   Party_Id       CPOPartyId,
+                                                                   Location_Id?   Location      = null,
+                                                                   EVSE_UId?      EVSEUId       = null,
+                                                                   Connector_Id?  ConnectorId   = null,
+                                                                   EMP_Id?        EMPId         = null);
+
 
     /// <summary>
     /// The Common API.
@@ -139,6 +146,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
         public Boolean              Disable_RootServices       { get; }
+
+
+        public GetTariffIds2_Delegate GetTariffIdsDelegate     { get; set; }
 
         #endregion
 
@@ -2553,6 +2563,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     Locations.Add(Location.Id, Location);
+                    Location.CommonAPI = this;
 
                     if (!SkipNotifications)
                     {
@@ -3770,6 +3781,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
         }
+
+        #endregion
+
+        #region GetTariffIds(CountryCode?, PartyId?, LocationId?, EVSEUId?, ConnectorId?, EMPId?)
+
+        public IEnumerable<Tariff_Id> GetTariffIds(CountryCode    CountryCode,
+                                                   Party_Id       PartyId,
+                                                   Location_Id?   LocationId,
+                                                   EVSE_UId?      EVSEUId,
+                                                   Connector_Id?  ConnectorId,
+                                                   EMP_Id?        EMPId)
+
+            => GetTariffIdsDelegate?.Invoke(CountryCode,
+                                            PartyId,
+                                            LocationId,
+                                            EVSEUId,
+                                            ConnectorId,
+                                            EMPId) ?? Array.Empty<Tariff_Id>();
+
+
+            //if (LocationId. HasValue &&          TryGetLocation (LocationId. Value, out var location)  && location  is not null &&
+            //    EVSEUId.    HasValue && location.TryGetEVSE     (EVSEUId.    Value, out var evse)      && evse      is not null &&
+            //    ConnectorId.HasValue && evse.    TryGetConnector(ConnectorId.Value, out var connector) && connector is not null)
+            //{
+
+            //    return connector.TariffId;
+
+            //}
+
+
+            //lock (tariffs)
+            //{
+
+
+            //    return tariffs.Values.Where (tariff => !CountryCode.HasValue || CountryCode.Value == tariff.CountryCode).
+            //                          Where (tariff => !PartyId.    HasValue || PartyId.    Value == tariff.PartyId).
+            //                          Where (tariff => !LocationId. HasValue || LocationId. Value == tariff.LocationId).
+            //                          Where (tariff => !PartyId.    HasValue || PartyId.    Value == tariff.PartyId).
+            //                          Where (tariff => !PartyId.    HasValue || PartyId.    Value == tariff.PartyId).
+            //                          Where (tariff => !PartyId.    HasValue || PartyId.    Value == tariff.PartyId).
+            //                          Select(tariff => tariff.Id).
+            //                          ToArray();
+
+            //}
 
         #endregion
 

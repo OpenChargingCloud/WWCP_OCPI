@@ -30,8 +30,6 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
 #endregion
 
