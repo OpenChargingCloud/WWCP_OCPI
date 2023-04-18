@@ -157,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNotNull(emspHTTPServer);
 
 
-            cpoWebAPI = new WebAPI.OCPIWebAPI(
+            cpoWebAPI       = new WebAPI.OCPIWebAPI(
 
                                   cpoHTTPServer,
 
@@ -212,14 +212,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
 
 
-            //var cpoAPI           = new CPOAPI(
-            //                           webAPI.CommonAPI,
-            //                           CountryCode.Parse("DE"),
-            //                           Party_Id.   Parse("GEF"),
-            //                           URLPathPrefix:    HTTPPath.Parse("2.1.1/cpo"),
-            //                           //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
-            //                           AllowDowngrades:  false
-            //                       );
+            var cpoAPI           = new CPOAPI(
+                                       cpoWebAPI.CommonAPI,
+                                       CountryCode.Parse("DE"),
+                                       Party_Id.   Parse("GEF"),
+                                       URLPathPrefix:    HTTPPath.Parse("2.1.1/cpo"),
+                                       //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
+                                       AllowDowngrades:  false
+                                   );
 
             var emspAPI          = new EMSPAPI(
                                        emspWebAPI.CommonAPI,
@@ -237,17 +237,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
                 BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
-                AccessInfoStatus:        new AccessInfoStatus[] {
+                AccessInfoStatus:   new[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("xxxxxx"),
                                             AccessStatus.ALLOWED
                                         )
                                     },
-                RemoteAccessInfos:  new RemoteAccessInfo[] {
+                RemoteAccessInfos:  new[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("yyyyyy"),
                                             VersionsURL:        emspVersionsAPIURL,
-                                            VersionIds:         new Version_Id[] {
+                                            VersionIds:         new[] {
                                                                     Version_Id.Parse("2.1.1")
                                                                 },
                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
@@ -265,7 +265,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GEF"),
                 Role:               Roles.      CPO,
                 BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
-                AccessInfoStatus:        new AccessInfoStatus[] {
+                AccessInfoStatus:   new[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("yyyyyy"),
                                             AccessStatus.ALLOWED
@@ -275,11 +275,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         //    AccessStatus.BLOCKED
                                         //)
                                     },
-                RemoteAccessInfos:  new RemoteAccessInfo[] {
+                RemoteAccessInfos:  new[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("xxxxxx"),
-                                            VersionsURL:        emspVersionsAPIURL,
-                                            VersionIds:         new Version_Id[] {
+                                            VersionsURL:        cpoVersionsAPIURL,
+                                            VersionIds:         new[] {
                                                                     Version_Id.Parse("2.1.1")
                                                                 },
                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),

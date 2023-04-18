@@ -374,7 +374,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             public APICounterValues  Register       { get; }
 
             public CommonAPICounters(APICounterValues?  GetVersions   = null,
-                                  APICounterValues?  Register      = null)
+                                     APICounterValues?  Register      = null)
             {
 
                 this.GetVersions  = GetVersions ?? new APICounterValues();
@@ -862,9 +862,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                            Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                   RemoteVersionsURL.Path,
                                                                                   requestbuilder => {
-                                                                                      //requestbuilder.Host           = VirtualHostname ?? Hostname;
                                                                                       requestbuilder.Authorization  = TokenAuth;
-                                                                                      requestbuilder.UserAgent      = "curl/7.74.0";
+                                                                                      requestbuilder.UserAgent      = "GraphDefined OCPI HTTP Client v1.0";
                                                                                       requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                       requestbuilder.Set("X-Request-ID",      requestId);
                                                                                       requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -1086,13 +1085,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                       Versions[versionId.Value].Path,
-                                                                                      requestbuilder =>
-                                                                                      {
+                                                                                      requestbuilder => {
                                                                                           //requestbuilder.Host           = HTTPHostname.Parse(Versions[VersionId].Hostname + (Versions[VersionId].Port.HasValue ? Versions[VersionId].Port.Value.ToString() : ""));
-                                                                                          requestbuilder.Authorization = TokenAuth;
+                                                                                          requestbuilder.Authorization  = TokenAuth;
+                                                                                          requestbuilder.UserAgent      = "GraphDefined OCPI HTTP Client v1.0";
                                                                                           requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                          requestbuilder.Set("X-Request-ID", requestId);
-                                                                                          requestbuilder.Set("X-Correlation-ID", correlationId);
+                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                                       }),
 
                                                      RequestLogDelegate: OnGetVersionDetailsHTTPRequest,

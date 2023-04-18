@@ -562,7 +562,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    BasePath,
 
-                   URLPathPrefix   ?? DefaultURLPathPrefix,
+                   URLPathPrefix,//   ?? DefaultURLPathPrefix,
                    null, //HTMLTemplate,
                    APIVersionHashes,
 

@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         #region CPO_GetVersions_Test()
 
         /// <summary>
-        /// CPO Test 01.
+        /// CPO GetVersions Test 01.
         /// </summary>
         [Test]
         public async Task CPO_GetVersions_Test()
@@ -54,6 +54,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             {
 
                 var response = await graphDefinedEMSP.GetVersions();
+
+                // GET /versions HTTP/1.1
+                // Date:                          Sun, 25 Dec 2022 23:16:30 GMT
+                // Accept:                        application/json; charset=utf-8;q=1
+                // Host:                          127.0.0.1:7135
+                // Authorization:                 Token xxxxxx
+                // User-Agent:                    GraphDefined OCPI HTTP Client v1.0
+                // X-Request-ID:                  nM7djM37h56hQz8t8hKMznnhGYj3CK
+                // X-Correlation-ID:              53YKxAnt2zM9bGp2AvjK6t83txbCK3
 
                 // HTTP/1.1 200 OK
                 // Date:                          Sun, 25 Dec 2022 23:16:31 GMT
@@ -91,8 +100,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 Assert.AreEqual (1, response.Data.Count());
 
                 var version = versions.First();
-                Assert.AreEqual (Version_Id.Parse("2.1.1"),    version.Id);
-                Assert.AreEqual (emspVersionsAPIURL + "2.1.1", version.URL);
+                Assert.AreEqual (Version_Id.Parse("2.1.1"),     version.Id);
+                Assert.AreEqual (emspVersionsAPIURL + "2.1.1",  version.URL);
 
             }
 
@@ -320,7 +329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         #region CPO_GetVersion_Test()
 
         /// <summary>
-        /// CPO Test 01.
+        /// CPO GetVersion Test 01.
         /// </summary>
         [Test]
         public async Task CPO_GetVersion_Test()
@@ -338,6 +347,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                 var response1 = await graphDefinedEMSP.GetVersions();
                 var response2 = await graphDefinedEMSP.GetVersionDetails(Version_Id.Parse("2.1.1"));
+
+                // GET /versions/2.1.1 HTTP/1.1
+                // Date:                          Mon, 26 Dec 2022 00:36:20 GMT
+                // Accept:                        application/json; charset=utf-8;q=1
+                // Host:                          127.0.0.1:7135
+                // Authorization:                 Token yyyyyy
+                // User-Agent:                    GraphDefined OCPI HTTP Client v1.0
+                // X-Request-ID:                  MpG9fA2Mjr89K16r82phMA18r83CS9
+                // X-Correlation-ID:              S1p1rKhhh96vEK8A8t84Sht382KE8f
 
                 // HTTP/1.1 200 OK
                 // Date:                          Mon, 26 Dec 2022 00:36:21 GMT
@@ -418,7 +436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         #region CPO_GetCredentials_Test()
 
         /// <summary>
-        /// CPO Test 01.
+        /// CPO GetCredentials Test 01.
         /// </summary>
         [Test]
         public async Task CPO_GetCredentials_Test()
@@ -436,6 +454,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                 var response1 = await graphDefinedEMSP.GetVersions();
                 var response2 = await graphDefinedEMSP.GetCredentials();
+
+                // GET /2.1.1/credentials HTTP/1.1
+                // Date:                          Mon, 26 Dec 2022 10:29:48 GMT
+                // Accept:                        application/json; charset=utf-8;q=1
+                // Host:                          127.0.0.1:7135
+                // Authorization:                 Token yyyyyy
+                // X-Request-ID:                  7AYph123pWAUt7j1Ad3n1jh1G279xG
+                // X-Correlation-ID:              jhz1GGj3j83SE7Wrf42p8hM82rM3A3
 
                 // HTTP/1.1 200 OK
                 // Date:                          Mon, 26 Dec 2022 10:29:49 GMT
@@ -617,13 +643,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
                 BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
-                AccessInfoStatus:        new AccessInfoStatus[] {
+                AccessInfoStatus:   new[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("xxxxxx"),
                                             AccessStatus.ALLOWED
                                         )
                                     },
-                RemoteAccessInfos:  new RemoteAccessInfo[] {
+                RemoteAccessInfos:  new[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("yyyyyy"),
                                             VersionsURL:        emspVersionsAPIURL,
@@ -645,13 +671,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 PartyId:            Party_Id.   Parse("GEF"),
                 Role:               Roles.      CPO,
                 BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
-                AccessInfoStatus:        new AccessInfoStatus[] {
+                AccessInfoStatus:   new[] {
                                         new AccessInfoStatus(
                                             AccessToken.Parse("yyyyyy"),
                                             AccessStatus.BLOCKED
                                         )
                                     },
-                RemoteAccessInfos:  new RemoteAccessInfo[] {
+                RemoteAccessInfos:  new[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("xxxxxx"),
                                             VersionsURL:        emspVersionsAPIURL,

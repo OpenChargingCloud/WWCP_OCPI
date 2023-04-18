@@ -3106,6 +3106,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #region GetEMSPClient(CountryCode, PartyId, AccessTokenBase64Encoding = false)
 
+        /// <summary>
+        /// As an EMSP create a client to access a remote CPO.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the remote CPO.</param>
+        /// <param name="PartyId">The party identification of the remote CPO.</param>
+        /// <param name="AccessTokenBase64Encoding">Whether the remote access token must be sent Base64 encoded.</param>
         public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
                                          Party_Id     PartyId,
                                          Boolean      AccessTokenBase64Encoding   = false)
@@ -3196,6 +3202,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #region GetCPOClient (CountryCode, PartyId, AccessTokenBase64Encoding = false)
 
+        /// <summary>
+        /// As a CPO create a client to access a remote EMSP.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the remote EMSP.</param>
+        /// <param name="PartyId">The party identification of the remote EMSP.</param>
+        /// <param name="AccessTokenBase64Encoding">Whether the remote access token must be sent Base64 encoded.</param>
         public CPOClient? GetCPOClient(CountryCode  CountryCode,
                                        Party_Id     PartyId,
                                        Boolean      AccessTokenBase64Encoding   = false)
@@ -3221,22 +3233,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #endregion
 
-
-
-        //public void Add(WWCPCPOAdapter CPOAdapter)
-        //{
-
-        //    _CPOAdapters.Add(CPOAdapter);
-
-        //}
-
-
-        //public void Add(WWCPEMPAdapter EMPAdapter)
-        //{
-
-        //    _EMPAdapters.Add(EMPAdapter);
-
-        //}
 
     }
 
