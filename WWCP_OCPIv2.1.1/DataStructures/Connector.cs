@@ -106,11 +106,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             get
             {
 
-                var tariffIds = ParentEVSE?.GetTariffIds(Id, EMPId);
+                if (tariffId.HasValue)
+                    return tariffId;
 
-                return tariffIds is not null && tariffIds.Any()
-                           ? tariffIds.First()
-                           : tariffId;
+                return ParentEVSE?.GetTariffIds(Id, EMPId)?.FirstOrDefault();
 
             }
         }
@@ -475,12 +474,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var json       = JSONObject.Create(
 
-                                 new JProperty("id",                           Id.                   ToString()),
-                                 new JProperty("standard",                     Standard.             ToString()),
-                                 new JProperty("format",                       Format.               AsText()),
-                                 new JProperty("power_type",                   PowerType.            AsText()),
-                                 new JProperty("voltage",                      Voltage),
-                                 new JProperty("amperage",                     Amperage),
+                                       new JProperty("id",                     Id.                   ToString()),
+                                       new JProperty("standard",               Standard.             ToString()),
+                                       new JProperty("format",                 Format.               AsText()),
+                                       new JProperty("power_type",             PowerType.            AsText()),
+                                       new JProperty("voltage",                Voltage),
+                                       new JProperty("amperage",               Amperage),
 
                                  tariffId is not null
                                      ? new JProperty("tariff_id",              tariffId.       Value.ToString())
@@ -490,7 +489,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      ? new JProperty("terms_and_conditions",   TermsAndConditionsURL.ToString())
                                      : null,
 
-                                 new JProperty("last_updated",                 LastUpdated.          ToIso8601())
+                                       new JProperty("last_updated",           LastUpdated.          ToIso8601())
 
                              );
 

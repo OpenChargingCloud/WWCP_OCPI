@@ -69,7 +69,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (static) Success(Data, WasCreated, ErrorResponse = null)
+        #region (static) Success    (Data, WasCreated, ErrorResponse = null)
 
         public static AddOrUpdateResult<T> Success(T        Data,
                                                    Boolean  WasCreated,
@@ -82,7 +82,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) Failed (Data,             ErrorResponse)
+        #region (static) NoOperation(Data,             ErrorResponse = null)
+
+        public static AddOrUpdateResult<T> NoOperation(T        Data,
+                                                       String?  ErrorResponse = null)
+
+            => new (true,
+                    Data,
+                    false,
+                    ErrorResponse);
+
+        #endregion
+
+        #region (static) Failed     (Data,             ErrorResponse)
 
         public static AddOrUpdateResult<T> Failed(T?       Data,
                                                   String   ErrorResponse)
@@ -94,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) Failed (                  ErrorResponse)
+        #region (static) Failed     (                  ErrorResponse)
 
         public static AddOrUpdateResult<T> Failed(String ErrorResponse)
 

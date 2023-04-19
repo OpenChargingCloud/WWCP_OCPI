@@ -954,12 +954,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffs(Connector_Id?  ConnectorId   = null,
-                                                   EMP_Id?        EMPId         = null)
+        internal IEnumerable<Tariff_Id> GetTariffIds(Connector_Id?  ConnectorId   = null,
+                                                     EMP_Id?        EMPId         = null)
 
-            => ParentLocation?.GetTariffs(UId,
-                                          ConnectorId,
-                                          EMPId) ?? Array.Empty<Tariff_Id>();
+            => ParentLocation?.GetTariffIds(UId,
+                                            ConnectorId,
+                                            EMPId) ?? Array.Empty<Tariff_Id>();
 
 
         #region (internal) UpdateConnector(Connector)

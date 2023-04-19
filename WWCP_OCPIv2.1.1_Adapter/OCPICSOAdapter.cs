@@ -455,27 +455,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        //public IEnumerable<Tariff_Id> GetTariffIds(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
-        //                                           WWCP.ChargingPool_Id?             ChargingPoolId,
-        //                                           WWCP.ChargingStation_Id?          ChargingStationId,
-        //                                           WWCP.EVSE_Id?                     EVSEId,
-        //                                           WWCP.ChargingConnector_Id?        ChargingConnectorId)
-        //{
-
-        //    var isDC = EVSEId.HasValue && ChargingConnectorId.HasValue
-        //                   ? RoamingNetwork.GetEVSEById(EVSEId.Value)?.ChargingConnectors.First(chargingConnector => chargingConnector.Id == ChargingConnectorId.Value).IsDC
-        //                   : null;
-
-        //    if (isDC == true)
-        //        return new[] { Tariff_Id.Parse("DC") };
-
-        //    if (isDC == false)
-        //        return new[] { Tariff_Id.Parse("AC") };
-
-        //    return Array.Empty<Tariff_Id>();
-
-        //}
-
 
         #region (Set/Add/Update/Delete) Roaming network...
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.SetStaticData(WWCP.IRoamingNetwork    RoamingNetwork,

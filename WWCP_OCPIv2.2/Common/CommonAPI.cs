@@ -41,6 +41,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// </summary>
     public delegate Boolean IncludeRemoteParty(RemoteParty RemoteParty);
 
+    public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
+                                                                   Party_Id       CPOPartyId,
+                                                                   Location_Id?   Location      = null,
+                                                                   EVSE_UId?      EVSEUId       = null,
+                                                                   Connector_Id?  ConnectorId   = null,
+                                                                   EMP_Id?        EMPId         = null);
+
 
     /// <summary>
     /// The Common API.
@@ -121,6 +128,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// Disable OCPI v2.1.1.
         /// </summary>
         public Boolean                       Disable_OCPIv2_1_1         { get; }
+
+
+        public GetTariffIds2_Delegate        GetTariffIdsDelegate       { get; set; }
 
         #endregion
 
@@ -2459,6 +2469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 {
 
                     locations.Add(Location.Id, Location);
+                    Location.CommonAPI = this;
 
                     if (!SkipNotifications)
                     {
@@ -2520,6 +2531,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 {
 
                     locations.Add(Location.Id, Location);
+                    Location.CommonAPI = this;
 
                     if (!SkipNotifications)
                     {
@@ -2580,11 +2592,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     newOrUpdatedLocation.LastUpdated <= existingLocation.LastUpdated)
                 {
-                    return AddOrUpdateResult<Location>.Failed(newOrUpdatedLocation,
-                                                              "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
+                    return AddOrUpdateResult<Location>.Failed     (newOrUpdatedLocation,
+                                                                   "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
                 }
 
+                if (newOrUpdatedLocation.LastUpdated.ToIso8601() == existingLocation.LastUpdated.ToIso8601())
+                    return AddOrUpdateResult<Location>.NoOperation(newOrUpdatedLocation,
+                                                                   "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
+
                 locations[newOrUpdatedLocation.Id] = newOrUpdatedLocation;
+                newOrUpdatedLocation.CommonAPI = this;
 
                 var OnLocationChangedLocal = OnLocationChanged;
                 if (OnLocationChangedLocal is not null)
@@ -2623,6 +2640,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
 
             locations.Add(newOrUpdatedLocation.Id, newOrUpdatedLocation);
+            newOrUpdatedLocation.CommonAPI = this;
 
             var OnLocationAddedLocal = OnLocationAdded;
             if (OnLocationAddedLocal is not null)
@@ -2682,6 +2700,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 {
 
                     locations[Location.Id] = Location;
+                    Location.CommonAPI = this;
 
                     var OnEVSEChangedLocal = OnEVSEChanged;
                     if (OnEVSEChangedLocal is not null)
@@ -2826,12 +2845,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             if (existingEVSE is not null)
             {
+
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     newOrUpdatedEVSE.LastUpdated < existingEVSE.LastUpdated)
                 {
-                    return AddOrUpdateResult<EVSE>.Failed(newOrUpdatedEVSE,
-                                                          "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
+                    return AddOrUpdateResult<EVSE>.Failed     (newOrUpdatedEVSE,
+                                                               "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
                 }
+
+                if (newOrUpdatedEVSE.LastUpdated.ToIso8601() == existingEVSE.LastUpdated.ToIso8601())
+                    return AddOrUpdateResult<EVSE>.NoOperation(newOrUpdatedEVSE,
+                                                               "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
+
             }
 
 
@@ -3133,12 +3158,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (existingConnector is not null)
                 {
+
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                         newOrUpdatedConnector.LastUpdated < existingConnector.LastUpdated)
                     {
-                        return AddOrUpdateResult<Connector>.Failed(newOrUpdatedConnector,
-                                                                   "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
+                        return AddOrUpdateResult<Connector>.Failed     (newOrUpdatedConnector,
+                                                                        "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
                     }
+
+                    if (newOrUpdatedConnector.LastUpdated.ToIso8601() == existingConnector.LastUpdated.ToIso8601())
+                        return AddOrUpdateResult<Connector>.NoOperation(newOrUpdatedConnector,
+                                                                        "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
+
                 }
 
                 EVSE.UpdateConnector(newOrUpdatedConnector);
@@ -3963,6 +3994,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
 
         }
+
+        #endregion
+
+        #region GetTariffIds(CountryCode?, PartyId?, LocationId?, EVSEUId?, ConnectorId?, EMPId?)
+
+        public IEnumerable<Tariff_Id> GetTariffIds(CountryCode    CountryCode,
+                                                   Party_Id       PartyId,
+                                                   Location_Id?   LocationId,
+                                                   EVSE_UId?      EVSEUId,
+                                                   Connector_Id?  ConnectorId,
+                                                   EMP_Id?        EMPId)
+
+            => GetTariffIdsDelegate?.Invoke(CountryCode,
+                                            PartyId,
+                                            LocationId,
+                                            EVSEUId,
+                                            ConnectorId,
+                                            EMPId) ?? Array.Empty<Tariff_Id>();
 
         #endregion
 

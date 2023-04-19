@@ -25,6 +25,7 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
 #endregion
@@ -56,8 +57,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Properties
 
-        internal CommonAPI                         CommonAPI                { get; set; }
-
+        /// <summary>
+        /// The parent CommonAPI of this charging location.
+        /// </summary>
+        internal CommonAPI?                        CommonAPI                { get; set; }
 
         /// <summary>
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.
@@ -324,8 +327,142 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
                         CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null)
 
+            : this(null,
+                   CountryCode,
+                   PartyId,
+                   Id,
+                   LocationType,
+                   Address,
+                   City,
+                   PostalCode,
+                   Country,
+                   Coordinates,
+
+                   Name,
+                   RelatedLocations,
+                   EVSEs,
+                   Directions,
+                   Operator,
+                   SubOperator,
+                   Owner,
+                   Facilities,
+                   Timezone,
+                   OpeningTimes,
+                   ChargingWhenClosed,
+                   Images,
+                   EnergyMix,
+
+                   Publish,
+
+                   LastUpdated,
+                   EMPId,
+                   CustomLocationSerializer,
+                   CustomAdditionalGeoLocationSerializer,
+                   CustomEVSESerializer,
+                   CustomStatusScheduleSerializer,
+                   CustomConnectorSerializer,
+                   CustomEnergyMeterSerializer,
+                   CustomTransparencySoftwareStatusSerializer,
+                   CustomTransparencySoftwareSerializer,
+                   CustomDisplayTextSerializer,
+                   CustomBusinessDetailsSerializer,
+                   CustomHoursSerializer,
+                   CustomImageSerializer,
+                   CustomEnergyMixSerializer)
+
+        { }
+
+
+        /// <summary>
+        /// Create a new charging location.
+        /// </summary>
+        /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.</param>
+        /// <param name="PartyId">An identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).</param>
+        /// <param name="Id">An identification of the charging location within the CPOs platform (and suboperator platforms).</param>
+        /// <param name="LocationType">An optional general type of parking at the charging location.</param>
+        /// <param name="Address">The address of the charging location.</param>
+        /// <param name="City">The city or town of the charging location.</param>
+        /// <param name="PostalCode">The postal code of the charging location.</param>
+        /// <param name="Country">The country of the charging location.</param>
+        /// <param name="Coordinates">The geographical location of this charging location.</param>
+        /// 
+        /// <param name="Name">An optional display name of the charging location.</param>
+        /// <param name="RelatedLocations">An optional enumeration of additional geographical locations of related geo coordinates that might be relevant to the EV driver.</param>
+        /// <param name="EVSEs">An optional enumeration of Electric Vehicle Supply Equipments (EVSE) at this charging location.</param>
+        /// <param name="Directions">An optional enumeration of human-readable directions on how to reach the location.</param>
+        /// <param name="Operator">Optional information about the charging station operator.</param>
+        /// <param name="SubOperator">Optional information about the suboperator.</param>
+        /// <param name="Owner">Optional information about the owner.</param>
+        /// <param name="Facilities">An optional enumeration of facilities this charging location directly belongs to.</param>
+        /// <param name="Timezone">One of IANA tzdata’s TZ-values representing the time zone of the charging location (http://www.iana.org/time-zones).</param>
+        /// <param name="OpeningTimes">An optional times when the EVSEs at the charging location can be accessed for charging.</param>
+        /// <param name="ChargingWhenClosed">Indicates if the EVSEs are still charging outside the opening hours of the charging location.</param>
+        /// <param name="Images">An optional enumeration of images related to the charging location such as photos or logos.</param>
+        /// <param name="EnergyMix">Optional details on the energy supplied at this charging location.</param>
+        /// 
+        /// <param name="Publish">Whether this charging location may be published on an website or app etc., or not.</param>
+        /// 
+        /// <param name="LastUpdated">The timestamp when this charging location was last updated (or created).</param>
+        /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
+        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        public Location(CommonAPI?                                                    CommonAPI,
+                        CountryCode                                                   CountryCode,
+                        Party_Id                                                      PartyId,
+                        Location_Id                                                   Id,
+                        LocationType                                                  LocationType,
+                        String                                                        Address,
+                        String                                                        City,
+                        String                                                        PostalCode,
+                        Country                                                       Country,
+                        GeoCoordinate                                                 Coordinates,
+
+                        String?                                                       Name                                         = null,
+                        IEnumerable<AdditionalGeoLocation>?                           RelatedLocations                             = null,
+                        IEnumerable<EVSE>?                                            EVSEs                                        = null,
+                        IEnumerable<DisplayText>?                                     Directions                                   = null,
+                        BusinessDetails?                                              Operator                                     = null,
+                        BusinessDetails?                                              SubOperator                                  = null,
+                        BusinessDetails?                                              Owner                                        = null,
+                        IEnumerable<Facilities>?                                      Facilities                                   = null,
+                        String?                                                       Timezone                                     = null,
+                        Hours?                                                        OpeningTimes                                 = null,
+                        Boolean?                                                      ChargingWhenClosed                           = null,
+                        IEnumerable<Image>?                                           Images                                       = null,
+                        EnergyMix?                                                    EnergyMix                                    = null,
+
+                        // Non-Standard extensions
+                        Boolean?                                                      Publish                                      = null,
+
+                        DateTime?                                                     LastUpdated                                  = null,
+                        EMP_Id?                                                       EMPId                                        = null,
+                        CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
+                        CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
+                        CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+                        CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                        CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                        CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                        CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                        CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                        CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
+                        CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
+                        CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
+                        CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
+                        CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null)
+
         {
 
+            this.CommonAPI            = CommonAPI;
             this.CountryCode          = CountryCode;
             this.PartyId              = PartyId;
             this.Id                   = Id;
@@ -812,7 +949,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                Location = new Location(CountryCodeBody ?? CountryCodeURL!.Value,
+                Location = new Location(null,
+                                        CountryCodeBody ?? CountryCodeURL!.Value,
                                         PartyIdBody     ?? PartyIdURL!.    Value,
                                         LocationIdBody  ?? LocationIdURL!. Value,
                                         LocationType,
@@ -1010,7 +1148,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public Location Clone()
 
-            => new (CountryCode.  Clone,
+            => new (CommonAPI,
+                    CountryCode.  Clone,
                     PartyId.      Clone,
                     Id.           Clone,
                     LocationType. Clone,
@@ -1793,7 +1932,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="NewLocationId">An optional new location identification.</param>
         public Builder ToBuilder(Location_Id? NewLocationId = null)
 
-            => new (CountryCode,
+            => new (CommonAPI,
+                    CountryCode,
                     PartyId,
                     NewLocationId ?? Id,
                     LocationType,
@@ -1832,6 +1972,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             #region Properties
+
+            /// <summary>
+            /// The parent CommonAPI of this charging location.
+            /// </summary>
+            internal CommonAPI?                        CommonAPI                { get; }
 
             /// <summary>
             /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.
@@ -2038,7 +2183,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// <param name="EnergyMix">Optional details on the energy supplied at this charging location.</param>
             /// 
             /// <param name="Publish">Whether this charging location may be published on an website or app etc., or not.</param>
-            public Builder(CountryCode                          CountryCode,
+            public Builder(CommonAPI?                           CommonAPI,
+                           CountryCode                          CountryCode,
                            Party_Id                             PartyId,
                            Location_Id?                         Id                   = null,
                            LocationType?                        LocationType         = null,
@@ -2068,6 +2214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             {
 
+                this.CommonAPI           = CommonAPI;
                 this.CountryCode         = CountryCode;
                 this.PartyId             = PartyId;
                 this.Id                  = Id;
@@ -2146,7 +2293,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         throw new ArgumentNullException(nameof(Coordinates),  "The geo coordinates must not be null or empty!");
 
 
-                    return new Location(CountryCode. Value,
+                    return new Location(CommonAPI,
+                                        CountryCode. Value,
                                         PartyId.     Value,
                                         Id.          Value,
                                         LocationType.Value,
