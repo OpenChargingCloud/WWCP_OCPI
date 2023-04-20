@@ -320,6 +320,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.GetTariffIds                       = GetTariffIds;
 
+            if (this.GetTariffIds is not null) {
+
+                this.CommonAPI.GetTariffIdsDelegate += (cpoCountryCode,
+                                                        cpoPartyId,
+                                                        locationId,
+                                                        evseUId,
+                                                        connectorId,
+                                                        empId) =>
+
+                    this.GetTariffIds(                       WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
+                                      locationId. HasValue ? WWCP.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
+                                      null,
+                                      evseUId.    HasValue ? WWCP.EVSE_Id.                   Parse(evseUId.    Value.ToString()) : null,
+                                      connectorId.HasValue ? WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
+                                      empId.      HasValue ? WWCP.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null);
+
+            }
+
             this.CustomEVSEUIdConverter             = CustomEVSEUIdConverter;
             this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
             this.CustomEVSEConverter                = CustomEVSEConverter;

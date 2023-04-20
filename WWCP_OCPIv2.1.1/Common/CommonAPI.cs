@@ -45,7 +45,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
     public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
                                                                    Party_Id       CPOPartyId,
-                                                                   Location_Id?   Location      = null,
+                                                                   Location_Id?   LocationId    = null,
                                                                    EVSE_UId?      EVSEUId       = null,
                                                                    Connector_Id?  ConnectorId   = null,
                                                                    EMP_Id?        EMPId         = null);
