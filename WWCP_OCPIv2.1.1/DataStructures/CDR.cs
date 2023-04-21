@@ -1267,41 +1267,57 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
+        private Int32? cachedHashCode;
+
+        private readonly Object hashSync = new();
+
         /// <summary>
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
         {
-            unchecked
+
+            if (cachedHashCode.HasValue)
+                return cachedHashCode.Value;
+
+            lock (hashSync)
             {
 
-                return CountryCode.            GetHashCode()        * 73 ^
-                       PartyId.                GetHashCode()        * 71 ^
-                       Id.                     GetHashCode()        * 67 ^
-                       Start.                  GetHashCode()        * 61 ^
-                       End.                    GetHashCode()        * 59 ^
-                       AuthId.                 GetHashCode()        * 53 ^
-                       AuthMethod.             GetHashCode()        * 47 ^
-                       Location.               GetHashCode()        * 43 ^
-                       Currency.               GetHashCode()        * 41 ^
-                       ChargingPeriods.        CalcHashCode()       * 37 ^
-                       Tariffs.                CalcHashCode()       * 31 ^
-                       TotalCost.              GetHashCode()        * 29 ^
-                       TotalEnergy.            GetHashCode()        * 23 ^
-                       TotalTime.              GetHashCode()        * 19 ^
-                       LastUpdated.            GetHashCode()        * 17 ^
+                unchecked
+                {
 
-                       (MeterId?.              GetHashCode()  ?? 0) * 13 ^
-                       (EnergyMeter?.          GetHashCode()  ?? 0) * 11 ^
-                       (TransparencySoftwares?.CalcHashCode() ?? 0) *  7 ^
-                       (SignedData?.           GetHashCode()  ?? 0) *  5 ^
-                       (TotalParkingTime?.     GetHashCode()  ?? 0) *  3 ^
-                        Remark?.               GetHashCode()  ?? 0;
+                    cachedHashCode = CountryCode.            GetHashCode()        * 73 ^
+                                     PartyId.                GetHashCode()        * 71 ^
+                                     Id.                     GetHashCode()        * 67 ^
+                                     Start.                  GetHashCode()        * 61 ^
+                                     End.                    GetHashCode()        * 59 ^
+                                     AuthId.                 GetHashCode()        * 53 ^
+                                     AuthMethod.             GetHashCode()        * 47 ^
+                                     Location.               GetHashCode()        * 43 ^
+                                     Currency.               GetHashCode()        * 41 ^
+                                     ChargingPeriods.        CalcHashCode()       * 37 ^
+                                     Tariffs.                CalcHashCode()       * 31 ^
+                                     TotalCost.              GetHashCode()        * 29 ^
+                                     TotalEnergy.            GetHashCode()        * 23 ^
+                                     TotalTime.              GetHashCode()        * 19 ^
+                                     LastUpdated.            GetHashCode()        * 17 ^
+
+                                     (MeterId?.              GetHashCode()  ?? 0) * 13 ^
+                                     (EnergyMeter?.          GetHashCode()  ?? 0) * 11 ^
+                                     (TransparencySoftwares?.CalcHashCode() ?? 0) *  7 ^
+                                     (SignedData?.           GetHashCode()  ?? 0) *  5 ^
+                                     (TotalParkingTime?.     GetHashCode()  ?? 0) *  3 ^
+                                      Remark?.               GetHashCode()  ?? 0;
+
+                return cachedHashCode.Value;
 
             }
+
         }
 
-        #endregion
+    }
+
+    #endregion
 
         #region (override) ToString()
 

@@ -1062,29 +1062,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region GetHashCode()
 
+        private Int32? cachedHashCode;
+
+        private readonly Object hashSync = new();
+
         /// <summary>
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
         {
-            unchecked
+
+            if (cachedHashCode.HasValue)
+                return cachedHashCode.Value;
+
+            lock (hashSync)
             {
 
-                return CountryCode.   GetHashCode()        * 41 ^
-                       PartyId.       GetHashCode()        * 37 ^
-                       Id.            GetHashCode()        * 31 ^
-                       Currency.      GetHashCode()        * 29 ^
-                       TariffElements.CalcHashCode()       * 23 ^
-                       LastUpdated.   GetHashCode()        * 19 ^
-                       TariffAltText. CalcHashCode()       * 17 ^
-                      (TariffAltURL?. GetHashCode()  ?? 0) * 13 ^
-                      (MinPrice?.     GetHashCode()  ?? 0) * 11 ^
-                      (MaxPrice?.     GetHashCode()  ?? 0) *  7 ^
-                      (Start?.        GetHashCode()  ?? 0) *  5 ^
-                      (End?.          GetHashCode()  ?? 0) *  3 ^
-                       EnergyMix?.    GetHashCode()  ?? 0;
+                unchecked
+                {
+
+                    cachedHashCode = CountryCode.   GetHashCode()        * 41 ^
+                                     PartyId.       GetHashCode()        * 37 ^
+                                     Id.            GetHashCode()        * 31 ^
+                                     Currency.      GetHashCode()        * 29 ^
+                                     TariffElements.CalcHashCode()       * 23 ^
+                                     LastUpdated.   GetHashCode()        * 19 ^
+                                     TariffAltText. CalcHashCode()       * 17 ^
+                                    (TariffAltURL?. GetHashCode()  ?? 0) * 13 ^
+                                    (MinPrice?.     GetHashCode()  ?? 0) * 11 ^
+                                    (MaxPrice?.     GetHashCode()  ?? 0) *  7 ^
+                                    (Start?.        GetHashCode()  ?? 0) *  5 ^
+                                    (End?.          GetHashCode()  ?? 0) *  3 ^
+                                     EnergyMix?.    GetHashCode()  ?? 0;
+
+                    return cachedHashCode.Value;
+
+                }
 
             }
+
         }
 
         #endregion

@@ -878,27 +878,43 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
+        private Int32? cachedHashCode;
+
+        private readonly Object hashSync = new();
+
         /// <summary>
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
         {
-            unchecked
+
+            if (cachedHashCode.HasValue)
+                return cachedHashCode.Value;
+
+            lock (hashSync)
             {
 
-                return CountryCode.  GetHashCode()       * 31 ^
-                       PartyId.      GetHashCode()       * 29 ^
-                       Id.           GetHashCode()       * 23 ^
-                       Type.         GetHashCode()       * 19 ^
-                       AuthId.       GetHashCode()       * 17 ^
-                       Issuer.       GetHashCode()       * 13 ^
-                       IsValid.      GetHashCode()       * 11 ^
-                       WhitelistType.GetHashCode()       *  7 ^
-                       LastUpdated.  GetHashCode()       *  5 ^
-                      (VisualNumber?.GetHashCode() ?? 0) *  3 ^
-                      (UILanguage?.  GetHashCode() ?? 0);
+                unchecked
+                {
+
+                    cachedHashCode =  CountryCode.  GetHashCode()       * 31 ^
+                                      PartyId.      GetHashCode()       * 29 ^
+                                      Id.           GetHashCode()       * 23 ^
+                                      Type.         GetHashCode()       * 19 ^
+                                      AuthId.       GetHashCode()       * 17 ^
+                                      Issuer.       GetHashCode()       * 13 ^
+                                      IsValid.      GetHashCode()       * 11 ^
+                                      WhitelistType.GetHashCode()       *  7 ^
+                                      LastUpdated.  GetHashCode()       *  5 ^
+                                     (VisualNumber?.GetHashCode() ?? 0) *  3 ^
+                                     (UILanguage?.  GetHashCode() ?? 0);
+
+                    return cachedHashCode.Value;
+
+                }
 
             }
+
         }
 
         #endregion

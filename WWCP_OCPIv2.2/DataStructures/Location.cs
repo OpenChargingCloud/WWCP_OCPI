@@ -1937,43 +1937,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region GetHashCode()
 
+        private Int32? cachedHashCode;
+
+        private readonly Object hashSync = new();
+
         /// <summary>
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
         {
-            unchecked
+
+            if (cachedHashCode.HasValue)
+                return cachedHashCode.Value;
+
+            lock (hashSync)
             {
 
-                return CountryCode.        GetHashCode()       * 103 ^
-                       PartyId.            GetHashCode()       * 101 ^
-                       Id.                 GetHashCode()       *  97 ^
-                       Publish.            GetHashCode()       *  89 ^
-                       Address.            GetHashCode()       *  83 ^
-                       City.               GetHashCode()       *  79 ^
-                       Country.            GetHashCode()       *  73 ^
-                       Coordinates.        GetHashCode()       *  71 ^
-                       Timezone.           GetHashCode()       *  67 ^
-                       LastUpdated.        GetHashCode()       *  61 ^
+                unchecked
+                {
 
-                      (PublishAllowedTo?.  GetHashCode() ?? 0) *  59 ^
-                      (Name?.              GetHashCode() ?? 0) *  53 ^
-                      (PostalCode?.        GetHashCode() ?? 0) *  47 ^
-                      (State?.             GetHashCode() ?? 0) *  41 ^
-                      (RelatedLocations?.  GetHashCode() ?? 0) *  37 ^
-                      (ParkingType?.       GetHashCode() ?? 0) *  31^
-                      (EVSEs?.             GetHashCode() ?? 0) *  29 ^
-                      (Directions?.        GetHashCode() ?? 0) *  23 ^
-                      (Operator?.          GetHashCode() ?? 0) *  19 ^
-                      (SubOperator?.       GetHashCode() ?? 0) *  17 ^
-                      (Owner?.             GetHashCode() ?? 0) *  13 ^
-                      (Facilities?.        GetHashCode() ?? 0) *  11 ^
-                      (OpeningTimes?.      GetHashCode() ?? 0) *   7 ^
-                      (ChargingWhenClosed?.GetHashCode() ?? 0) *   5 ^
-                      (Images?.            GetHashCode() ?? 0) *   3 ^
-                      (EnergyMix?.         GetHashCode() ?? 0);
+                    cachedHashCode = CountryCode.        GetHashCode()       * 103 ^
+                                     PartyId.            GetHashCode()       * 101 ^
+                                     Id.                 GetHashCode()       *  97 ^
+                                     Publish.            GetHashCode()       *  89 ^
+                                     Address.            GetHashCode()       *  83 ^
+                                     City.               GetHashCode()       *  79 ^
+                                     Country.            GetHashCode()       *  73 ^
+                                     Coordinates.        GetHashCode()       *  71 ^
+                                     Timezone.           GetHashCode()       *  67 ^
+                                     LastUpdated.        GetHashCode()       *  61 ^
+
+                                    (PublishAllowedTo?.  GetHashCode() ?? 0) *  59 ^
+                                    (Name?.              GetHashCode() ?? 0) *  53 ^
+                                    (PostalCode?.        GetHashCode() ?? 0) *  47 ^
+                                    (State?.             GetHashCode() ?? 0) *  41 ^
+                                    (RelatedLocations?.  GetHashCode() ?? 0) *  37 ^
+                                    (ParkingType?.       GetHashCode() ?? 0) *  31^
+                                    (EVSEs?.             GetHashCode() ?? 0) *  29 ^
+                                    (Directions?.        GetHashCode() ?? 0) *  23 ^
+                                    (Operator?.          GetHashCode() ?? 0) *  19 ^
+                                    (SubOperator?.       GetHashCode() ?? 0) *  17 ^
+                                    (Owner?.             GetHashCode() ?? 0) *  13 ^
+                                    (Facilities?.        GetHashCode() ?? 0) *  11 ^
+                                    (OpeningTimes?.      GetHashCode() ?? 0) *   7 ^
+                                    (ChargingWhenClosed?.GetHashCode() ?? 0) *   5 ^
+                                    (Images?.            GetHashCode() ?? 0) *   3 ^
+                                    (EnergyMix?.         GetHashCode() ?? 0);
+
+                    return cachedHashCode.Value;
+
+                }
 
             }
+
         }
 
         #endregion

@@ -23,6 +23,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
+using System.Diagnostics;
 
 #endregion
 
@@ -2558,6 +2559,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
+                                        var sw = new Stopwatch();
+                                        sw.Start();
+
                                         var filters            = Request.GetDateAndPaginationFilters();
 
                                         var allLocations       = CommonAPI.GetLocations().ToArray();
@@ -2566,12 +2570,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
                                                                               ToArray();
 
+                                        DebugX.Log($"OCPI 1: {sw.ElapsedMilliseconds} ms");
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
-                                                   StatusMessage        = "Hello world!",
-                                                   Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
+                                        var aa = filteredLocations.SkipTakeFilter(filters.Offset,
                                                                                                                       filters.Limit).
                                                                                                        SafeSelect(location => location.ToJSON(false,
                                                                                                                                               Request.EMPId,
@@ -2589,7 +2590,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                                                                               CustomImageSerializer,
                                                                                                                                               CustomEnergyMixSerializer,
                                                                                                                                               CustomEnergySourceSerializer,
-                                                                                                                                              CustomEnvironmentalImpactSerializer))),
+                                                                                                                                              CustomEnvironmentalImpactSerializer));
+
+                                        DebugX.Log($"OCPI 2: {sw.ElapsedMilliseconds} ms");
+
+                                        var cc = new JArray(aa);
+
+                                        DebugX.Log($"OCPI 3: {sw.ElapsedMilliseconds} ms");
+
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   StatusCode           = 1000,
+                                                   StatusMessage        = "Hello world!",
+                                                   Data                 = cc,
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET",

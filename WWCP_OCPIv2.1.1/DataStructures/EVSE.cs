@@ -721,7 +721,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("images",                new JArray(Images.             Select(image              => image.             ToJSON(CustomImageSerializer))))
                                : null,
 
-                           new JProperty("last_updated",                LastUpdated.ToIso8601())
+                                 new JProperty("last_updated",          LastUpdated.ToIso8601())
 
                        );
 
@@ -1321,29 +1321,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
+        private Int32? cachedHashCode;
+
+        private readonly Object hashSync = new();
+
         /// <summary>
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
         {
-            unchecked
+
+            if (cachedHashCode.HasValue)
+                return cachedHashCode.Value;
+
+            lock (hashSync)
             {
 
-                return UId.                GetHashCode()       * 41 ^
-                       Status.             GetHashCode()       * 37 ^
-                       Connectors.         CalcHashCode()      * 31 ^
-                      (EVSEId?.            GetHashCode() ?? 0) * 29 ^
-                       StatusSchedule.     GetHashCode()       * 23 ^
-                       Capabilities.       CalcHashCode()      * 19 ^
-                      (FloorLevel?.        GetHashCode() ?? 0) * 17 ^
-                      (Coordinates?.       GetHashCode() ?? 0) * 13 ^
-                      (PhysicalReference?. GetHashCode() ?? 0) * 11 ^
-                       Directions.         CalcHashCode()      *  7 ^
-                       ParkingRestrictions.CalcHashCode()      *  5 ^
-                       Images.             CalcHashCode()      *  3 ^
-                       LastUpdated.        GetHashCode();
+                unchecked
+                {
+
+                    cachedHashCode = UId.                GetHashCode()       * 41 ^
+                                     Status.             GetHashCode()       * 37 ^
+                                     Connectors.         CalcHashCode()      * 31 ^
+                                    (EVSEId?.            GetHashCode() ?? 0) * 29 ^
+                                     StatusSchedule.     GetHashCode()       * 23 ^
+                                     Capabilities.       CalcHashCode()      * 19 ^
+                                    (FloorLevel?.        GetHashCode() ?? 0) * 17 ^
+                                    (Coordinates?.       GetHashCode() ?? 0) * 13 ^
+                                    (PhysicalReference?. GetHashCode() ?? 0) * 11 ^
+                                     Directions.         CalcHashCode()      *  7 ^
+                                     ParkingRestrictions.CalcHashCode()      *  5 ^
+                                     Images.             CalcHashCode()      *  3 ^
+                                     LastUpdated.        GetHashCode();
+
+                    return cachedHashCode.Value;
+
+                }
 
             }
+
         }
 
         #endregion

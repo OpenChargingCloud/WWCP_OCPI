@@ -940,9 +940,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region ToOCPI(this ChargingConnector, EVSE, ref Warnings)
 
-        public static Connector? ToOCPI(this WWCP.ChargingConnector  ChargingConnector,
-                                        WWCP.IEVSE                   EVSE,
-                                        ref List<Warning>            Warnings)
+        public static Connector? ToOCPI(this WWCP.IChargingConnector  ChargingConnector,
+                                        WWCP.IEVSE                    EVSE,
+                                        ref List<Warning>             Warnings)
         {
 
             var connector = ChargingConnector.ToOCPI(EVSE, out var warnings);
@@ -958,9 +958,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region ToOCPI(this ChargingConnector, EVSE, out Warnings)
 
-        public static Connector? ToOCPI(this WWCP.ChargingConnector  ChargingConnector,
-                                        WWCP.IEVSE                   EVSE,
-                                        out IEnumerable<Warning>     Warnings)
+        public static Connector? ToOCPI(this WWCP.IChargingConnector  ChargingConnector,
+                                        WWCP.IEVSE                    EVSE,
+                                        out IEnumerable<Warning>      Warnings)
         {
 
             var warnings = new List<Warning>();
@@ -975,10 +975,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return null;
                 }
 
-                var connectorId  = Connector_Id.Parse(ChargingConnector.Id.HasValue
-                                                          ? ChargingConnector.Id.Value.ToString()
-                                                          : "1");
-
+                var connectorId  = Connector_Id.Parse(ChargingConnector.Id.ToString());
                 var powerType    = EVSE.CurrentType.ToOCPI();
 
                 if (!powerType.HasValue)

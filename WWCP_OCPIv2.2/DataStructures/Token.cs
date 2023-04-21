@@ -987,33 +987,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region GetHashCode()
 
+        private Int32? cachedHashCode;
+
+        private readonly Object hashSync = new();
+
         /// <summary>
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
         {
-            unchecked
+
+            if (cachedHashCode.HasValue)
+                return cachedHashCode.Value;
+
+            lock (hashSync)
             {
 
-                return CountryCode.    GetHashCode()       * 31 ^
-                       PartyId.        GetHashCode()       * 29 ^
-                       Id.             GetHashCode()       * 23 ^
-                       Type.           GetHashCode()       * 19 ^
-                       ContractId.     GetHashCode()       * 17 ^
-                       Issuer.         GetHashCode()       * 23 ^
-                       IsValid.        GetHashCode()       * 19 ^
-                       WhitelistType.  GetHashCode()       * 17 ^
-                       LastUpdated.    GetHashCode()       * 13 ^
-                      (VisualNumber?.  GetHashCode() ?? 0) * 11 ^
-                      (GroupId?.       GetHashCode() ?? 0) *  7 ^
-                      (UILanguage?.    GetHashCode() ?? 0) *  5 ^
-                      (DefaultProfile?.GetHashCode() ?? 0) *  3 ^
-                      (EnergyContract?.GetHashCode() ?? 0);
+                unchecked
+                {
+
+                    cachedHashCode = CountryCode.    GetHashCode()       * 31 ^
+                                     PartyId.        GetHashCode()       * 29 ^
+                                     Id.             GetHashCode()       * 23 ^
+                                     Type.           GetHashCode()       * 19 ^
+                                     ContractId.     GetHashCode()       * 17 ^
+                                     Issuer.         GetHashCode()       * 23 ^
+                                     IsValid.        GetHashCode()       * 19 ^
+                                     WhitelistType.  GetHashCode()       * 17 ^
+                                     LastUpdated.    GetHashCode()       * 13 ^
+                                    (VisualNumber?.  GetHashCode() ?? 0) * 11 ^
+                                    (GroupId?.       GetHashCode() ?? 0) *  7 ^
+                                    (UILanguage?.    GetHashCode() ?? 0) *  5 ^
+                                    (DefaultProfile?.GetHashCode() ?? 0) *  3 ^
+                                    (EnergyContract?.GetHashCode() ?? 0);
+
+                return cachedHashCode.Value;
 
             }
+
         }
 
-        #endregion
+    }
+
+    #endregion
 
         #region (override) ToString()
 

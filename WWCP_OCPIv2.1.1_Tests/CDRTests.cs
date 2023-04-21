@@ -505,7 +505,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                       InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                       InitialStatus:        EVSEStatusTypes.Available,
 
-                                      SocketOutlets:        new ChargingConnector[] {
+                                      ChargingConnectors:        new ChargingConnector[] {
                                                                 new ChargingConnector(
                                                                     Id:              ChargingConnector_Id.Parse("1"),
                                                                     Plug:            ChargingPlugTypes.Type2Outlet,
@@ -535,7 +535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                       InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                       InitialStatus:        EVSEStatusTypes.Available,
 
-                                      SocketOutlets:        new ChargingConnector[] {
+                                      ChargingConnectors:   new ChargingConnector[] {
                                                                 new ChargingConnector(
                                                                     Id:              ChargingConnector_Id.Parse("2"),
                                                                     Plug:            ChargingPlugTypes.TypeFSchuko,

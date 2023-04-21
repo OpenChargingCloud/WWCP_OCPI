@@ -467,10 +467,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
-            var tariffIds  = GetTariffIds(EMPId);
-            var tariffId   = this.tariffId ?? (tariffIds.Any()
-                                                   ? tariffIds.First()
-                                                   : null);
+            //var tariffIds  = GetTariffIds(EMPId);
+            //var tariffId   = this.tariffId ?? (tariffIds.Any()
+            //                                       ? tariffIds.First()
+            //                                       : null);
 
             var json       = JSONObject.Create(
 
@@ -481,9 +481,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        new JProperty("voltage",                Voltage),
                                        new JProperty("amperage",               Amperage),
 
-                                 tariffId is not null
-                                     ? new JProperty("tariff_id",              tariffId.       Value.ToString())
-                                     : null,
+                                 //tariffId is not null
+                                 //    ? new JProperty("tariff_id",              tariffId.       Value.ToString())
+                                 //    : null,
 
                                  TermsAndConditionsURL.HasValue
                                      ? new JProperty("terms_and_conditions",   TermsAndConditionsURL.ToString())
@@ -859,25 +859,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
+        private Int32? cachedHashCode;
+
+        private readonly Object hashSync = new();
+
         /// <summary>
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
         {
-            unchecked
+
+            if (cachedHashCode.HasValue)
+                return cachedHashCode.Value;
+
+            lock (hashSync)
             {
 
-                return Id.                    GetHashCode()       * 23 ^
-                       Standard.              GetHashCode()       * 19 ^
-                       Format.                GetHashCode()       * 17 ^
-                       PowerType.             GetHashCode()       * 13 ^
-                       Voltage.               GetHashCode()       * 11 ^
-                       Amperage.              GetHashCode()       *  7 ^
-                      (TariffId?.             GetHashCode() ?? 0) *  5 ^
-                      (TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
-                       LastUpdated.           GetHashCode();
+                unchecked
+                {
+
+                    cachedHashCode = Id.                    GetHashCode()       * 23 ^
+                                     Standard.              GetHashCode()       * 19 ^
+                                     Format.                GetHashCode()       * 17 ^
+                                     PowerType.             GetHashCode()       * 13 ^
+                                     Voltage.               GetHashCode()       * 11 ^
+                                     Amperage.              GetHashCode()       *  7 ^
+                                    (tariffId?.             GetHashCode() ?? 0) *  5 ^
+                                    (TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
+                                     LastUpdated.           GetHashCode();
+
+                    return cachedHashCode.Value;
+
+                }
 
             }
+
         }
 
         #endregion

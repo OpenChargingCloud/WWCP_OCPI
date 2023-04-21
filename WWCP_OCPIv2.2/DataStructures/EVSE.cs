@@ -1326,30 +1326,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region GetHashCode()
 
+        private Int32? cachedHashCode;
+
+        private readonly Object hashSync = new();
+
         /// <summary>
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
         {
-            unchecked
+
+            if (cachedHashCode.HasValue)
+                return cachedHashCode.Value;
+
+            lock (hashSync)
             {
 
-                return UId.                GetHashCode()       * 43 ^
-                       Status.             GetHashCode()       * 41 ^
-                       Connectors.         CalcHashCode()      * 37 ^
-                      (EVSEId?.            GetHashCode() ?? 0) * 31 ^
-                       StatusSchedule.     GetHashCode()       * 29 ^
-                       Capabilities.       CalcHashCode()      * 23 ^
-                      (EnergyMeter?.       GetHashCode() ?? 0) * 19 ^
-                      (FloorLevel?.        GetHashCode() ?? 0) * 17 ^
-                      (Coordinates?.       GetHashCode() ?? 0) * 13 ^
-                      (PhysicalReference?. GetHashCode() ?? 0) * 11 ^
-                       Directions.         CalcHashCode()      *  7 ^
-                       ParkingRestrictions.CalcHashCode()      *  5 ^
-                       Images.             CalcHashCode()      *  3 ^
-                       LastUpdated.        GetHashCode();
+                unchecked
+                {
+
+                    cachedHashCode = UId.                GetHashCode()       * 43 ^
+                                     Status.             GetHashCode()       * 41 ^
+                                     Connectors.         CalcHashCode()      * 37 ^
+                                    (EVSEId?.            GetHashCode() ?? 0) * 31 ^
+                                     StatusSchedule.     GetHashCode()       * 29 ^
+                                     Capabilities.       CalcHashCode()      * 23 ^
+                                    (EnergyMeter?.       GetHashCode() ?? 0) * 19 ^
+                                    (FloorLevel?.        GetHashCode() ?? 0) * 17 ^
+                                    (Coordinates?.       GetHashCode() ?? 0) * 13 ^
+                                    (PhysicalReference?. GetHashCode() ?? 0) * 11 ^
+                                     Directions.         CalcHashCode()      *  7 ^
+                                     ParkingRestrictions.CalcHashCode()      *  5 ^
+                                     Images.             CalcHashCode()      *  3 ^
+                                     LastUpdated.        GetHashCode();
+
+                    return cachedHashCode.Value;
+
+                }
 
             }
+
         }
 
         #endregion

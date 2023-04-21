@@ -893,25 +893,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
+        private Int32? cachedHashCode;
+
+        private readonly Object hashSync = new();
+
         /// <summary>
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
         {
-            unchecked
+
+            if (cachedHashCode.HasValue)
+                return cachedHashCode.Value;
+
+            lock (hashSync)
             {
 
-                return CountryCode.   GetHashCode()        * 23 ^
-                       PartyId.       GetHashCode()        * 19 ^
-                       Id.            GetHashCode()        * 17 ^
-                       Currency.      GetHashCode()        * 13 ^
-                       TariffElements.CalcHashCode()       * 11 ^
-                       LastUpdated.   GetHashCode()        *  7 ^
-                       TariffAltText. CalcHashCode()       *  5 ^
-                      (TariffAltURL?. GetHashCode()  ?? 0) *  3 ^
-                       EnergyMix?.    GetHashCode()  ?? 0;
+                unchecked
+                {
+
+                    cachedHashCode = CountryCode.   GetHashCode()        * 23 ^
+                                     PartyId.       GetHashCode()        * 19 ^
+                                     Id.            GetHashCode()        * 17 ^
+                                     Currency.      GetHashCode()        * 13 ^
+                                     TariffElements.CalcHashCode()       * 11 ^
+                                     LastUpdated.   GetHashCode()        *  7 ^
+                                     TariffAltText. CalcHashCode()       *  5 ^
+                                    (TariffAltURL?. GetHashCode()  ?? 0) *  3 ^
+                                     EnergyMix?.    GetHashCode()  ?? 0;
+
+                    return cachedHashCode.Value;
+
+                }
 
             }
+
         }
 
         #endregion

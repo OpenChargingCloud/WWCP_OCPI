@@ -894,26 +894,42 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region GetHashCode()
 
+        private Int32? cachedHashCode;
+
+        private readonly Object hashSync = new();
+
         /// <summary>
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
         {
-            unchecked
+
+            if (cachedHashCode.HasValue)
+                return cachedHashCode.Value;
+
+            lock (hashSync)
             {
 
-                return Id.                    GetHashCode()       * 29 ^
-                       Standard.              GetHashCode()       * 23 ^
-                       Format.                GetHashCode()       * 19 ^
-                       PowerType.             GetHashCode()       * 17 ^
-                       MaxVoltage.            GetHashCode()       * 13 ^
-                       MaxAmperage.           GetHashCode()       * 11 ^
-                       TariffIds.             CalcHashCode()      *  7 ^
-                      (MaxElectricPower?.     GetHashCode() ?? 0) *  5 ^
-                      (TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
-                       LastUpdated.           GetHashCode();
+                unchecked
+                {
+
+                    cachedHashCode = Id.                    GetHashCode()       * 29 ^
+                                     Standard.              GetHashCode()       * 23 ^
+                                     Format.                GetHashCode()       * 19 ^
+                                     PowerType.             GetHashCode()       * 17 ^
+                                     MaxVoltage.            GetHashCode()       * 13 ^
+                                     MaxAmperage.           GetHashCode()       * 11 ^
+                                     TariffIds.             CalcHashCode()      *  7 ^
+                                    (MaxElectricPower?.     GetHashCode() ?? 0) *  5 ^
+                                    (TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
+                                     LastUpdated.           GetHashCode();
+
+                    return cachedHashCode.Value;
+
+                }
 
             }
+
         }
 
         #endregion

@@ -1164,30 +1164,52 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region GetHashCode()
 
+        private Int32? cachedHashCode;
+
+        private readonly Object hashSync = new();
+
         /// <summary>
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
+        {
 
-            => CountryCode.            GetHashCode()       * 61 ^
-               PartyId.                GetHashCode()       * 59 ^
-               Id.                     GetHashCode()       * 53 ^
-               Start.                  GetHashCode()       * 47 ^
-               kWh.                    GetHashCode()       * 43 ^
-               CDRToken.               GetHashCode()       * 41 ^
-               AuthMethod.             GetHashCode()       * 37 ^
-               LocationId.             GetHashCode()       * 31 ^
-               EVSEUId.                GetHashCode()       * 29 ^
-               ConnectorId.            GetHashCode()       * 23 ^
-               Currency.               GetHashCode()       * 19 ^
-               Status.                 GetHashCode()       * 17 ^
-               LastUpdated.            GetHashCode()       * 13 ^
+            if (cachedHashCode.HasValue)
+                return cachedHashCode.Value;
 
-              (End?.                   GetHashCode() ?? 0) * 11 ^
-              (AuthorizationReference?.GetHashCode() ?? 0) *  7 ^
-              (MeterId?.               GetHashCode() ?? 0) *  5 ^
-              (ChargingPeriods?.       GetHashCode() ?? 0) *  3 ^
-               TotalCosts?.            GetHashCode() ?? 0;
+            lock (hashSync)
+            {
+
+                unchecked
+                {
+
+                    cachedHashCode = CountryCode.            GetHashCode()       * 61 ^
+                                     PartyId.                GetHashCode()       * 59 ^
+                                     Id.                     GetHashCode()       * 53 ^
+                                     Start.                  GetHashCode()       * 47 ^
+                                     kWh.                    GetHashCode()       * 43 ^
+                                     CDRToken.               GetHashCode()       * 41 ^
+                                     AuthMethod.             GetHashCode()       * 37 ^
+                                     LocationId.             GetHashCode()       * 31 ^
+                                     EVSEUId.                GetHashCode()       * 29 ^
+                                     ConnectorId.            GetHashCode()       * 23 ^
+                                     Currency.               GetHashCode()       * 19 ^
+                                     Status.                 GetHashCode()       * 17 ^
+                                     LastUpdated.            GetHashCode()       * 13 ^
+
+                                    (End?.                   GetHashCode() ?? 0) * 11 ^
+                                    (AuthorizationReference?.GetHashCode() ?? 0) *  7 ^
+                                    (MeterId?.               GetHashCode() ?? 0) *  5 ^
+                                    (ChargingPeriods?.       GetHashCode() ?? 0) *  3 ^
+                                     TotalCosts?.            GetHashCode() ?? 0;
+
+                    return cachedHashCode.Value;
+
+                }
+
+            }
+
+        }
 
         #endregion
 
