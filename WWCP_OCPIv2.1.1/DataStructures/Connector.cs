@@ -467,10 +467,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
-            //var tariffIds  = GetTariffIds(EMPId);
-            //var tariffId   = this.tariffId ?? (tariffIds.Any()
-            //                                       ? tariffIds.First()
-            //                                       : null);
+            var tariffIds  = GetTariffIds(EMPId);
+            var tariffId   = this.tariffId ?? (tariffIds.Any()
+                                                   ? tariffIds.First()
+                                                   : null);
 
             var json       = JSONObject.Create(
 
@@ -481,9 +481,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        new JProperty("voltage",                Voltage),
                                        new JProperty("amperage",               Amperage),
 
-                                 //tariffId is not null
-                                 //    ? new JProperty("tariff_id",              tariffId.       Value.ToString())
-                                 //    : null,
+                                 tariffId is not null
+                                     ? new JProperty("tariff_id",              tariffId.       Value.ToString())
+                                     : null,
 
                                  TermsAndConditionsURL.HasValue
                                      ? new JProperty("terms_and_conditions",   TermsAndConditionsURL.ToString())
