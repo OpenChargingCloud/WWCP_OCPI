@@ -27,7 +27,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 {
 
     /// <summary>
@@ -87,7 +87,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -337,7 +337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -528,7 +528,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -744,7 +744,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -3040,7 +3040,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region GET    [/emsp] == /
 
             //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.SCSPAPI.HTTPRoot",
+            //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.SCSPAPI.HTTPRoot",
             //                                   Assembly.GetCallingAssembly());
 
             //CommonAPI.AddOCPIMethod(HTTPHostname.Any,
@@ -3053,8 +3053,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             //                             OCPIRequest: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(SCSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.SCSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(SCSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.SCSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(SCSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.SCSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(SCSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.SCSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
             //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,

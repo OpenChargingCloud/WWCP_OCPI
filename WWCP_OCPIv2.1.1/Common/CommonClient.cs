@@ -1122,148 +1122,157 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             var versionId = VersionId ?? SelectedOCPIVersionId;
 
             if (!versionId.HasValue)
-                response = OCPIResponse<Version_Id, VersionDetail>.Error("No versionId available!");
-
-            else if (!Versions.ContainsKey(versionId.Value))
-                return     OCPIResponse<Version_Id, VersionDetail>.Error("Unkown version identification!");
+                response = OCPIResponse<Version_Id, VersionDetail>.Error("No version identification available!");
 
             else
             {
 
-                try
+                if (!Versions.ContainsKey(versionId.Value))
+                    await GetVersions();
+
+                if (!Versions.ContainsKey(versionId.Value))
+                    response = OCPIResponse<Version_Id, VersionDetail>.Error("Unkown version identification!");
+
+                else
                 {
 
-                    var requestId      = RequestId     ?? Request_Id.    NewRandom();
-                    var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-
-                    // ToDo: Add request logging!
-
-
-                    #region Upstream HTTP request...
-
-                    var httpResponse = await new HTTPSClient(Versions[versionId.Value],
-                                                             VirtualHostname,
-                                                             Description,
-                                                             RemoteCertificateValidator,
-                                                             ClientCertificateSelector,
-                                                             ClientCert,
-                                                             TLSProtocol,
-                                                             PreferIPv4,
-                                                             HTTPUserAgent,
-                                                             RequestTimeout,
-                                                             TransmissionRetryDelay,
-                                                             MaxNumberOfRetries,
-                                                             UseHTTPPipelining,
-                                                             HTTPLogger,
-                                                             DNSClient).
-
-                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                      Versions[versionId.Value].Path,
-                                                                                      requestbuilder => {
-                                                                                          //requestbuilder.Host           = HTTPHostname.Parse(Versions[VersionId].Hostname + (Versions[VersionId].Port.HasValue ? Versions[VersionId].Port.Value.ToString() : ""));
-                                                                                          requestbuilder.Authorization  = TokenAuth;
-                                                                                          requestbuilder.UserAgent      = "GraphDefined OCPI HTTP Client v1.0";
-                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                      }),
-
-                                                     RequestLogDelegate: OnGetVersionDetailsHTTPRequest,
-                                                     ResponseLogDelegate: OnGetVersionDetailsHTTPResponse,
-                                                     CancellationToken: CancellationToken,
-                                                     EventTrackingId: EventTrackingId,
-                                                     RequestTimeout: RequestTimeout ?? this.RequestTimeout).
-
-                                               ConfigureAwait(false);
-
-                    #endregion
-
-                    #region Documentation
-
-                    // {
-                    //   "data": {
-                    //     "version": "2.2",
-                    //     "endpoints": [
-                    //       {
-                    //         "identifier": "sessions",
-                    //         "role":       "SENDER",
-                    //         "url":        "https://example.com/ocpi/cpo/2.2/sessions/"
-                    //       },
-                    //       {
-                    //         "identifier": "tariffs",
-                    //         "role":       "SENDER",
-                    //         "url":        "https://example.com/ocpi/cpo/2.2/tariffs/"
-                    //       },
-                    //       {
-                    //         "identifier": "hubclientinfo",
-                    //         "role":       "RECEIVER",
-                    //         "url":        "https://example.com/ocpi/cpo/2.2/hubclientinfo/"
-                    //       },
-                    //       {
-                    //         "identifier": "locations",
-                    //         "role":       "SENDER",
-                    //         "url":        "https://example.com/ocpi/cpo/2.2/locations/"
-                    //       },
-                    //       {
-                    //         "identifier": "tokens",
-                    //         "role":       "RECEIVER",
-                    //         "url":        "https://example.com/ocpi/cpo/2.2/tokens/"
-                    //       },
-                    //       {
-                    //         "identifier": "commands",
-                    //         "role":       "RECEIVER",
-                    //         "url":        "https://example.com/ocpi/cpo/2.2/commands/"
-                    //       },
-                    //       {
-                    //         "identifier": "credentials",
-                    //         "role":       "RECEIVER",
-                    //         "url":        "https://example.com/ocpi/2.2/credentials/"
-                    //       },
-                    //       {
-                    //         "identifier": "credentials",
-                    //         "role":       "SENDER",
-                    //         "url":        "https://example.com/ocpi/2.2/credentials/"
-                    //       }
-                    //     ]
-                    //   },
-                    //   "status_code": 1000
-                    // }
-
-                    #endregion
-
-                    response = OCPIResponse<Version_Id, VersionDetail>.ParseJObject(versionId.Value,
-                                                                                    httpResponse,
-                                                                                    requestId,
-                                                                                    correlationId,
-                                                                                    json => VersionDetail.Parse(json, null));
-
-                    switch (response.StatusCode)
+                    try
                     {
 
-                        case 1000:
+                        var requestId = RequestId ?? Request_Id.NewRandom();
+                        var correlationId = CorrelationId ?? Correlation_Id.NewRandom();
 
-                            lock (VersionDetails)
-                            {
+                        // ToDo: Add request logging!
 
-                                if (VersionDetails.ContainsKey(versionId.Value))
-                                    VersionDetails.Remove(versionId.Value);
 
-                                VersionDetails.Add(versionId.Value, response.Data);
+                        #region Upstream HTTP request...
 
-                                if (SetAsDefaultVersion)
-                                    SelectedOCPIVersionId = VersionId;
+                        var httpResponse = await new HTTPSClient(Versions[versionId.Value],
+                                                                 VirtualHostname,
+                                                                 Description,
+                                                                 RemoteCertificateValidator,
+                                                                 ClientCertificateSelector,
+                                                                 ClientCert,
+                                                                 TLSProtocol,
+                                                                 PreferIPv4,
+                                                                 HTTPUserAgent,
+                                                                 RequestTimeout,
+                                                                 TransmissionRetryDelay,
+                                                                 MaxNumberOfRetries,
+                                                                 UseHTTPPipelining,
+                                                                 HTTPLogger,
+                                                                 DNSClient).
 
-                            }
+                                                   Execute(client => client.CreateRequest(HTTPMethod.GET,
+                                                                                          Versions[versionId.Value].Path,
+                                                                                          requestbuilder =>
+                                                                                          {
+                                                                                              //requestbuilder.Host           = HTTPHostname.Parse(Versions[VersionId].Hostname + (Versions[VersionId].Port.HasValue ? Versions[VersionId].Port.Value.ToString() : ""));
+                                                                                              requestbuilder.Authorization = TokenAuth;
+                                                                                              requestbuilder.UserAgent = "GraphDefined OCPI HTTP Client v1.0";
+                                                                                              requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                              requestbuilder.Set("X-Request-ID", requestId);
+                                                                                              requestbuilder.Set("X-Correlation-ID", correlationId);
+                                                                                          }),
 
-                            break;
+                                                         RequestLogDelegate: OnGetVersionDetailsHTTPRequest,
+                                                         ResponseLogDelegate: OnGetVersionDetailsHTTPResponse,
+                                                         CancellationToken: CancellationToken,
+                                                         EventTrackingId: EventTrackingId,
+                                                         RequestTimeout: RequestTimeout ?? this.RequestTimeout).
+
+                                                   ConfigureAwait(false);
+
+                        #endregion
+
+                        #region Documentation
+
+                        // {
+                        //   "data": {
+                        //     "version": "2.2",
+                        //     "endpoints": [
+                        //       {
+                        //         "identifier": "sessions",
+                        //         "role":       "SENDER",
+                        //         "url":        "https://example.com/ocpi/cpo/2.2/sessions/"
+                        //       },
+                        //       {
+                        //         "identifier": "tariffs",
+                        //         "role":       "SENDER",
+                        //         "url":        "https://example.com/ocpi/cpo/2.2/tariffs/"
+                        //       },
+                        //       {
+                        //         "identifier": "hubclientinfo",
+                        //         "role":       "RECEIVER",
+                        //         "url":        "https://example.com/ocpi/cpo/2.2/hubclientinfo/"
+                        //       },
+                        //       {
+                        //         "identifier": "locations",
+                        //         "role":       "SENDER",
+                        //         "url":        "https://example.com/ocpi/cpo/2.2/locations/"
+                        //       },
+                        //       {
+                        //         "identifier": "tokens",
+                        //         "role":       "RECEIVER",
+                        //         "url":        "https://example.com/ocpi/cpo/2.2/tokens/"
+                        //       },
+                        //       {
+                        //         "identifier": "commands",
+                        //         "role":       "RECEIVER",
+                        //         "url":        "https://example.com/ocpi/cpo/2.2/commands/"
+                        //       },
+                        //       {
+                        //         "identifier": "credentials",
+                        //         "role":       "RECEIVER",
+                        //         "url":        "https://example.com/ocpi/2.2/credentials/"
+                        //       },
+                        //       {
+                        //         "identifier": "credentials",
+                        //         "role":       "SENDER",
+                        //         "url":        "https://example.com/ocpi/2.2/credentials/"
+                        //       }
+                        //     ]
+                        //   },
+                        //   "status_code": 1000
+                        // }
+
+                        #endregion
+
+                        response = OCPIResponse<Version_Id, VersionDetail>.ParseJObject(versionId.Value,
+                                                                                        httpResponse,
+                                                                                        requestId,
+                                                                                        correlationId,
+                                                                                        json => VersionDetail.Parse(json, null));
+
+                        switch (response.StatusCode)
+                        {
+
+                            case 1000:
+
+                                lock (VersionDetails)
+                                {
+
+                                    if (VersionDetails.ContainsKey(versionId.Value))
+                                        VersionDetails.Remove(versionId.Value);
+
+                                    VersionDetails.Add(versionId.Value, response.Data);
+
+                                    if (SetAsDefaultVersion)
+                                        SelectedOCPIVersionId = VersionId;
+
+                                }
+
+                                break;
+
+                        }
 
                     }
 
-                }
+                    catch (Exception e)
+                    {
+                        response = OCPIResponse<Version_Id, VersionDetail>.Exception(e);
+                    }
 
-                catch (Exception e)
-                {
-                    response = OCPIResponse<Version_Id, VersionDetail>.Exception(e);
                 }
 
             }

@@ -25,7 +25,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 {
 
     /// <summary>

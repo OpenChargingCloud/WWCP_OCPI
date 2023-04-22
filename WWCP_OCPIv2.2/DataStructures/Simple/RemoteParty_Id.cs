@@ -24,7 +24,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>

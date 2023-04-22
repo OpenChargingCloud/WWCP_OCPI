@@ -33,7 +33,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 {
 
     /// <summary>
@@ -589,7 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region GET         ~/
 
             //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPrefix + "/", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot",
+            //                                   URLPrefix + "/", "cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.CommonAPI.HTTPRoot",
             //                                   Assembly.GetCallingAssembly());
 
             //this.AddMethodCallback(HTTPHostname.Any,
@@ -602,8 +602,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             //                             HTTPDelegate: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(CommonAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(CommonAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(CommonAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.CommonAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(CommonAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.CommonAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
             //                                 return new HTTPResponse.Builder(Request) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,
@@ -717,9 +717,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                               (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.1.1")).Replace("//", "/"))
                                                                                 ),
                                                                           new VersionInformation(
-                                                                              Version_Id.Parse("2.2"),
+                                                                              Version.Id,
                                                                               URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                        (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.2")).Replace("//", "/"))
+                                                                                        (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/"))
                                                                           )
                                                                       }.Where (version => version is not null).
                                                                         Select(version => version?.ToJSON())
@@ -832,9 +832,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    #endregion
 
-                                   #region Only allow versionId == "2.2"
+                                   #region Only allow OCPI version v2.2.1
 
-                                   if (versionId.ToString() != "2.2")
+                                   if (versionId.ToString() != Version.Id.ToString())
                                        return Task.FromResult(
                                            new OCPIResponse.Builder(Request) {
                                               StatusCode           = 2000,
@@ -982,19 +982,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    return Task.FromResult(
                                        new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 1000,
-                                              StatusMessage        = "Hello world!",
-                                              Data                 = new VersionDetail(
-                                                                         versionId,
-                                                                         endpoints
-                                                                     ).ToJSON(),
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.OK,
-                                                  AccessControlAllowMethods  = "OPTIONS, GET",
-                                                  AccessControlAllowHeaders  = "Authorization",
-                                                  Vary                       = "Accept"
-                                              }
-                                          });
+                                               StatusCode           = 1000,
+                                               StatusMessage        = "Hello world!",
+                                               Data                 = new VersionDetail(
+                                                                          versionId,
+                                                                          endpoints
+                                                                      ).ToJSON(),
+                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                                   AccessControlAllowMethods  = "OPTIONS, GET",
+                                                   AccessControlAllowHeaders  = "Authorization",
+                                                   Vary                       = "Accept"
+                                               }
+                                           });
 
                                });
 

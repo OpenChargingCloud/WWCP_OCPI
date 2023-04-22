@@ -29,7 +29,7 @@ using cloud.charging.open.protocols.WWCP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 {
 
     /// <summary>

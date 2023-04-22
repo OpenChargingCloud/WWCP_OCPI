@@ -23,7 +23,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -143,7 +143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatory("source",
                                          "energy source",
-                                         OCPIv2_2.EnergySourceCategory.TryParse,
+                                         OCPIv2_2_1.EnergySourceCategory.TryParse,
                                          out EnergySourceCategory EnergySourceCategory,
                                          out ErrorResponse))
                 {

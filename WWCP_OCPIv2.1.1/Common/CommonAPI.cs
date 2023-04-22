@@ -99,56 +99,56 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// The URL to your API versions endpoint.
         /// </summary>
         [Mandatory]
-        public URL                     OurVersionsURL        { get; }
+        public URL                      OurVersionsURL             { get; }
 
         /// <summary>
         /// Business details of this party.
         /// </summary>
         [Mandatory]
-        public BusinessDetails         OurBusinessDetails         { get; }
+        public BusinessDetails          OurBusinessDetails         { get; }
 
         /// <summary>
         /// ISO-3166 alpha-2 country code of the country this party is operating in.
         /// </summary>
         [Mandatory]
-        public CountryCode             OurCountryCode             { get; }
+        public CountryCode              OurCountryCode             { get; }
 
         /// <summary>
         /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id                OurPartyId                 { get; }
+        public Party_Id                 OurPartyId                 { get; }
 
         /// <summary>
         /// Our business role.
         /// </summary>
         [Mandatory]
-        public Roles                   OurRole                    { get; }
+        public Roles                    OurRole                    { get; }
 
 
-        public HTTPPath?               AdditionalURLPathPrefix    { get; }
+        public HTTPPath?                AdditionalURLPathPrefix    { get; }
 
         /// <summary>
         /// Whether to keep or delete EVSEs marked as "REMOVED".
         /// </summary>
-        public Func<EVSE, Boolean>     KeepRemovedEVSEs           { get; }
+        public Func<EVSE, Boolean>      KeepRemovedEVSEs           { get; }
 
         /// <summary>
         /// Allow anonymous access to locations as Open Data.
         /// </summary>
-        public Boolean                 LocationsAsOpenData        { get; }
+        public Boolean                  LocationsAsOpenData        { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?                AllowDowngrades            { get; }
+        public Boolean?                 AllowDowngrades            { get; }
 
 
-        public Boolean                 Disable_RootServices       { get; }
+        public Boolean                  Disable_RootServices       { get; }
 
 
-        public GetTariffIds2_Delegate  GetTariffIdsDelegate       { get; set; }
+        public GetTariffIds2_Delegate?  GetTariffIdsDelegate       { get; set; }
 
         #endregion
 
@@ -833,9 +833,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                            Data                 = new JArray(
                                                                       new VersionInformation[] {
                                                                           new VersionInformation(
-                                                                              Version_Id.Parse("2.1.1"),
+                                                                              Version.Id,
                                                                               URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                      (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.1.1")).Replace("//", "/"))
+                                                                                      (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/"))
                                                                           )
                                                                       }.Where (version => version is not null).
                                                                       Select(version => version.ToJSON())
@@ -948,9 +948,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #endregion
 
-                                   #region Only allow versionId == "2.1.1"
+                                   #region Only allow OCPI version v2.1.1
 
-                                   if (versionId.ToString() != "2.1.1")
+                                   if (versionId.ToString() != Version.Id.ToString())
                                        return Task.FromResult(
                                            new OCPIResponse.Builder(Request) {
                                               StatusCode           = 2000,

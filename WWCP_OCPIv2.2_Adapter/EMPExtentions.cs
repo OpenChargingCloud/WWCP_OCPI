@@ -58,21 +58,21 @@ namespace cloud.charging.open.protocols.WWCP
         /// 
         /// <param name="OCPIConfigurator">An optional delegate to configure the new OCPI roaming provider after its creation.</param>
         /// <param name="Configurator">An optional delegate to configure the new roaming provider after its creation.</param>
-        public static OCPIv2_2.OCPIEMPAdapter?
+        public static OCPIv2_2_1.OCPIEMPAdapter?
 
             CreateOCPIv2_1_EMPAdapter(this IRoamingNetwork                                     RoamingNetwork,
                                       CSORoamingProvider_Id                                    Id,
                                       I18NString                                               Name,
                                       I18NString                                               Description,
 
-                                      OCPIv2_2.HTTP.CommonAPI                                CommonAPI,
-                                      OCPIv2_2.CountryCode                                   DefaultCountryCode,
-                                      OCPIv2_2.Party_Id                                      DefaultPartyId,
+                                      OCPIv2_2_1.HTTP.CommonAPI                                CommonAPI,
+                                      OCPIv2_2_1.CountryCode                                   DefaultCountryCode,
+                                      OCPIv2_2_1.Party_Id                                      DefaultPartyId,
 
-                                      OCPIv2_2.EVSEId_2_WWCPEVSEId_Delegate?                 CustomEVSEIdConverter                = null,
-                                      OCPIv2_2.EVSE_2_WWCPEVSE_Delegate?                     CustomEVSEConverter                  = null,
-                                      OCPIv2_2.StatusType_2_WWCPEVSEStatusUpdate_Delegate?   CustomEVSEStatusUpdateConverter      = null,
-                                      OCPIv2_2.CDR_2_WWCPChargeDetailRecord_Delegate?        CustomChargeDetailRecordConverter    = null,
+                                      OCPIv2_2_1.EVSEId_2_WWCPEVSEId_Delegate?                 CustomEVSEIdConverter                = null,
+                                      OCPIv2_2_1.EVSE_2_WWCPEVSE_Delegate?                     CustomEVSEConverter                  = null,
+                                      OCPIv2_2_1.StatusType_2_WWCPEVSEStatusUpdate_Delegate?   CustomEVSEStatusUpdateConverter      = null,
+                                      OCPIv2_2_1.CDR_2_WWCPChargeDetailRecord_Delegate?        CustomChargeDetailRecordConverter    = null,
 
                                       //IChargingStationOperator?                                DefaultOperator                      = null,
                                       //ChargingStationOperatorNameSelectorDelegate?             OperatorNameSelector                 = null,
@@ -96,7 +96,7 @@ namespace cloud.charging.open.protocols.WWCP
                                       Boolean                                                  DisableAuthentication                = false,
                                       Boolean                                                  DisableSendChargeDetailRecords       = false,
 
-                                      Action<OCPIv2_2.OCPIEMPAdapter>?                         OCPIConfigurator                     = null,
+                                      Action<OCPIv2_2_1.OCPIEMPAdapter>?                         OCPIConfigurator                     = null,
                                       Action<ICSORoamingProvider>?                             Configurator                         = null,
 
                                       String                                                   EllipticCurve                        = "P-256",
@@ -112,7 +112,7 @@ namespace cloud.charging.open.protocols.WWCP
 
             #endregion
 
-            var newRoamingProvider = new OCPIv2_2.OCPIEMPAdapter(
+            var newRoamingProvider = new OCPIv2_2_1.OCPIEMPAdapter(
 
                                          Id,
                                          Name,
@@ -153,7 +153,7 @@ namespace cloud.charging.open.protocols.WWCP
 
             return RoamingNetwork.
                        CreateCSORoamingProvider(newRoamingProvider,
-                                                Configurator) as OCPIv2_2.OCPIEMPAdapter;
+                                                Configurator) as OCPIv2_2_1.OCPIEMPAdapter;
 
         }
 

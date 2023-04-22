@@ -23,7 +23,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 {
 
     #region OnGetLocationsRequest/-Response

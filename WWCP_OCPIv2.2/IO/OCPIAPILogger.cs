@@ -26,7 +26,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 {
 
     public delegate Task   OCPIRequestLoggerDelegate (String LoggingPath, String Context, String LogEventName, OCPIRequest Request);

@@ -24,7 +24,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -177,7 +177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatory("encoding_method",
                                          "encoding method",
-                                         OCPIv2_2.EncodingMethod.TryParse,
+                                         OCPIv2_2_1.EncodingMethod.TryParse,
                                          out EncodingMethod EncodingMethod,
                                          out ErrorResponse))
                 {
@@ -203,7 +203,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptional("public_key",
                                        "public key",
-                                       OCPIv2_2.PublicKey.TryParse,
+                                       OCPIv2_2_1.PublicKey.TryParse,
                                        out PublicKey? PublicKey,
                                        out ErrorResponse))
                 {

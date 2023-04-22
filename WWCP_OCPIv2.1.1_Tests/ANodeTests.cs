@@ -35,8 +35,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
     public static class TestHelpers
     {
 
-        public static async Task<HTTPResponse<JObject>> JSONRequest(URL         RemoteURL,
-                                                                    String      Token)
+        public static async Task<HTTPResponse<JObject>> JSONRequest(URL     RemoteURL,
+                                                                    String  Token)
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
@@ -250,7 +250,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        cpoWebAPI.CommonAPI,
                                        CountryCode.Parse("DE"),
                                        Party_Id.   Parse("GEF"),
-                                       URLPathPrefix:    HTTPPath.Parse("2.1.1/cpo"),
+                                       URLPathPrefix:    HTTPPath.Parse($"{Version.Id}/cpo"),
                                        //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
                                        AllowDowngrades:  false
                                    );
@@ -259,7 +259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        emspWebAPI1.CommonAPI,
                                        CountryCode.Parse("DE"),
                                        Party_Id.   Parse("GDF"),
-                                       URLPathPrefix:    HTTPPath.Parse("2.1.1/emsp1"),
+                                       URLPathPrefix:    HTTPPath.Parse($"{Version.Id}/emsp1"),
                                        //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
                                        AllowDowngrades:  false
                                    );
@@ -268,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        emspWebAPI2.CommonAPI,
                                        CountryCode.Parse("DE"),
                                        Party_Id.   Parse("GD2"),
-                                       URLPathPrefix:    HTTPPath.Parse("2.1.1/emsp2"),
+                                       URLPathPrefix:    HTTPPath.Parse($"{Version.Id}/emsp2"),
                                        //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
                                        AllowDowngrades:  false
                                    );
@@ -291,9 +291,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                              AccessToken:        AccessToken.Parse("yyyyyy"),
                                              VersionsURL:        emspVersionsAPIURL1,
                                              VersionIds:         new[] {
-                                                                     Version_Id.Parse("2.1.1")
+                                                                     Version.Id
                                                                  },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             SelectedVersionId:  Version.Id,
                                              Status:             RemoteAccessStatus.ONLINE
                                          )
                                      },
@@ -316,9 +316,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                              AccessToken:        AccessToken.Parse("ffffff"),
                                              VersionsURL:        emspVersionsAPIURL2,
                                              VersionIds:         new[] {
-                                                                     Version_Id.Parse("2.1.1")
+                                                                     Version.Id
                                                                  },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             SelectedVersionId:  Version.Id,
                                              Status:             RemoteAccessStatus.ONLINE
                                          )
                                      },
@@ -350,9 +350,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                              AccessToken:        AccessToken.Parse("xxxxxx"),
                                              VersionsURL:        cpoVersionsAPIURL,
                                              VersionIds:         new[] {
-                                                                     Version_Id.Parse("2.1.1")
+                                                                     Version.Id
                                                                  },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             SelectedVersionId:  Version.Id,
                                              Status:             RemoteAccessStatus.ONLINE
                                          )
                                      },
@@ -379,9 +379,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                              AccessToken:        AccessToken.Parse("eeeeee"),
                                              VersionsURL:        cpoVersionsAPIURL,
                                              VersionIds:         new[] {
-                                                                     Version_Id.Parse("2.1.1")
+                                                                     Version.Id
                                                                  },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             SelectedVersionId:  Version.Id,
                                              Status:             RemoteAccessStatus.ONLINE
                                          )
                                      },

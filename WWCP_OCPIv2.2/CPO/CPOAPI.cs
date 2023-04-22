@@ -26,7 +26,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 {
 
     /// <summary>
@@ -86,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -950,7 +950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -2464,7 +2464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region GET    [/cpo] == /
 
             //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPathPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot",
+            //                                   URLPathPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.CPOAPI.HTTPRoot",
             //                                   Assembly.GetCallingAssembly());
 
             //CommonAPI.AddOCPIMethod(HTTPHostname.Any,
@@ -2477,8 +2477,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             //                             OCPIRequest: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2_1.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
             //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,
@@ -2552,8 +2552,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         var filters            = Request.GetDateAndPaginationFilters();
 
-                                        var allLocations       = CommonAPI.GetLocations(location => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == location.CountryCode &&
-                                                                                                                                               role.PartyId     == location.PartyId)).
+                                                                                          //ToDo: Filter to NOT show all locations to everyone!
+                                        var allLocations       = CommonAPI.GetLocations().//location => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == location.CountryCode &&
+                                                                                          //                                                       role.PartyId     == location.PartyId)).
                                                                            ToArray();
 
                                         var filteredLocations  = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
@@ -2563,36 +2564,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
-                                                   StatusMessage        = "Hello world!",
-                                                   Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
-                                                                                                                      filters.Limit).
-                                                                                                       SafeSelect(location => location.ToJSON(Request.EMPId,
-                                                                                                                                              CustomLocationSerializer,
-                                                                                                                                              CustomPublishTokenSerializer,
-                                                                                                                                              CustomAdditionalGeoLocationSerializer,
-                                                                                                                                              CustomEVSESerializer,
-                                                                                                                                              CustomStatusScheduleSerializer,
-                                                                                                                                              CustomConnectorSerializer,
-                                                                                                                                              CustomEnergyMeterSerializer,
-                                                                                                                                              CustomTransparencySoftwareStatusSerializer,
-                                                                                                                                              CustomTransparencySoftwareSerializer,
-                                                                                                                                              CustomDisplayTextSerializer,
-                                                                                                                                              CustomBusinessDetailsSerializer,
-                                                                                                                                              CustomHoursSerializer,
-                                                                                                                                              CustomImageSerializer,
-                                                                                                                                              CustomEnergyMixSerializer,
-                                                                                                                                              CustomEnergySourceSerializer,
-                                                                                                                                              CustomEnvironmentalImpactSerializer))),
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET",
-                                                       AccessControlAllowHeaders  = "Authorization"
-                                                       //LastModified               = ?
-                                                   }.
-                                                   Set("X-Total-Count", allLocations.Length)
-                                                   // X-Limit               The maximum number of objects that the server WILL return.
-                                                   // Link                  Link to the 'next' page should be provided when this is NOT the last page.
+                                                    StatusCode           = 1000,
+                                                    StatusMessage        = "Hello world!",
+                                                    Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
+                                                                                                                       filters.Limit).
+                                                                                                        SafeSelect(location => location.ToJSON(Request.EMPId,
+                                                                                                                                               CustomLocationSerializer,
+                                                                                                                                               CustomPublishTokenSerializer,
+                                                                                                                                               CustomAdditionalGeoLocationSerializer,
+                                                                                                                                               CustomEVSESerializer,
+                                                                                                                                               CustomStatusScheduleSerializer,
+                                                                                                                                               CustomConnectorSerializer,
+                                                                                                                                               CustomEnergyMeterSerializer,
+                                                                                                                                               CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                               CustomTransparencySoftwareSerializer,
+                                                                                                                                               CustomDisplayTextSerializer,
+                                                                                                                                               CustomBusinessDetailsSerializer,
+                                                                                                                                               CustomHoursSerializer,
+                                                                                                                                               CustomImageSerializer,
+                                                                                                                                               CustomEnergyMixSerializer,
+                                                                                                                                               CustomEnergySourceSerializer,
+                                                                                                                                               CustomEnvironmentalImpactSerializer))),
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                        //LastModified               = ?
+                                                    }.
+                                                    Set("X-Total-Count", allLocations.Length)
+                                                    // X-Limit               The maximum number of objects that the server WILL return.
+                                                    // Link                  Link to the 'next' page should be provided when this is NOT the last page.
                                             });
 
                                     });
@@ -3906,7 +3907,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                newOrUpdatedToken.Id);
 
                                         //ToDo: What exactly to do with this information?
-                                        var TokenType  = Request.QueryString.TryParseEnum<TokenType>("type") ?? OCPIv2_2.TokenType.RFID;
+                                        var TokenType  = Request.QueryString.TryParseEnum<TokenType>("type") ?? OCPIv2_2_1.TokenType.RFID;
 
                                         var addOrUpdateResult = await CommonAPI.AddOrUpdateToken(newOrUpdatedToken,
                                                                                                  AllowDowngrades: AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));

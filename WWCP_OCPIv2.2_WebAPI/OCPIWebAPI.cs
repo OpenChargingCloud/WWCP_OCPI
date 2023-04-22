@@ -25,13 +25,13 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using social.OpenData.UsersAPI;
 
 using cloud.charging.open.protocols.WWCP;
-using cloud.charging.open.protocols.OCPIv2_2.HTTP;
-using cloud.charging.open.protocols.OCPIv2_2.CPO.HTTP;
-using cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
+namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 {
 
     /// <summary>
@@ -306,7 +306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <summary>
         /// The HTTP root for embedded ressources.
         /// </summary>
-        public new const       String                               HTTPRoot                    = "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot.";
+        public new const       String                               HTTPRoot                    = "cloud.charging.open.protocols.OCPIv2_2_1.WebAPI.HTTPRoot.";
 
 
         //ToDo: http://www.iana.org/form/media-types
@@ -615,7 +615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             HTTPServer.RegisterResourcesFolder(this,
                                                HTTPHostname.Any,
                                                URLPathPrefix,
-                                               "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot",
+                                               "cloud.charging.open.protocols.OCPIv2_2_1.WebAPI.HTTPRoot",
                                                DefaultFilename: "index.html");
 
             if (URLPathPrefix1.HasValue)
@@ -1326,7 +1326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
                                              if (!JSON.ParseMandatoryJSON("token",
                                                                           "token",
-                                                                          OCPIv2_2.Token.TryParse,
+                                                                          OCPIv2_2_1.Token.TryParse,
                                                                           out Token Token,
                                                                           out var ErrorResponse))
                                              {
@@ -1466,7 +1466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
                                              if (JSON.ParseOptional("authorizationReference",
                                                                     "authorization reference",
-                                                                    OCPIv2_2.AuthorizationReference.TryParse,
+                                                                    OCPIv2_2_1.AuthorizationReference.TryParse,
                                                                     out AuthorizationReference? AuthorizationReference,
                                                                     out                         ErrorResponse))
                                              {
@@ -2144,7 +2144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
                                              if (!JSON.ParseMandatoryJSON("token",
                                                                           "token",
-                                                                          OCPIv2_2.Token.TryParse,
+                                                                          OCPIv2_2_1.Token.TryParse,
                                                                           out Token? Token,
                                                                           out var ErrorResponse))
                                              {
@@ -2258,7 +2258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
                                              if (JSON.ParseOptional("authorizationReference",
                                                                     "authorization reference",
-                                                                    OCPIv2_2.AuthorizationReference.TryParse,
+                                                                    OCPIv2_2_1.AuthorizationReference.TryParse,
                                                                     out AuthorizationReference? AuthorizationReference,
                                                                     out                         ErrorResponse))
                                              {

@@ -26,7 +26,7 @@ using org.GraphDefined.Vanaheimr.Aegir;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 {
 
     /// <summary>

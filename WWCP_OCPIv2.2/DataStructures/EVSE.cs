@@ -27,7 +27,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -493,7 +493,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalJSON("status_schedule",
                                            "status schedule",
-                                           OCPIv2_2.StatusSchedule.TryParse,
+                                           OCPIv2_2_1.StatusSchedule.TryParse,
                                            out IEnumerable<StatusSchedule> StatusSchedule,
                                            out ErrorResponse))
                 {
@@ -521,7 +521,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
-                                           OCPIv2_2.EnergyMeter.TryParse,
+                                           OCPIv2_2_1.EnergyMeter.TryParse,
                                            out EnergyMeter EnergyMeter,
                                            out ErrorResponse))
                 {

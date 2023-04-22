@@ -25,7 +25,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -245,7 +245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatory("country_code",
                                          "country code",
-                                         OCPIv2_2.CountryCode.TryParse,
+                                         OCPIv2_2_1.CountryCode.TryParse,
                                          out CountryCode CountryCode,
                                          out ErrorResponse))
                 {

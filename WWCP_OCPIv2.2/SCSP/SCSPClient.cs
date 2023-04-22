@@ -28,11 +28,11 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
-using cloud.charging.open.protocols.OCPIv2_2.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.SCSP.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 {
 
     /// <summary>

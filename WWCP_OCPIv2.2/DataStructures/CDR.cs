@@ -26,7 +26,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -657,7 +657,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatoryJSON("cdr_token",
                                              "charge detail record token",
-                                             OCPIv2_2.CDRToken.TryParse,
+                                             OCPIv2_2_1.CDRToken.TryParse,
                                              out CDRToken CDRToken,
                                              out ErrorResponse))
                 {
@@ -682,7 +682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptional("authorization_reference",
                                        "authorization reference",
-                                       OCPIv2_2.AuthorizationReference.TryParse,
+                                       OCPIv2_2_1.AuthorizationReference.TryParse,
                                        out AuthorizationReference? AuthorizationReference,
                                        out ErrorResponse))
                 {
@@ -726,7 +726,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
-                                           OCPIv2_2.EnergyMeter.TryParse,
+                                           OCPIv2_2_1.EnergyMeter.TryParse,
                                            out EnergyMeter EnergyMeter,
                                            out ErrorResponse))
                 {
@@ -754,7 +754,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
-                                         OCPIv2_2.Currency.TryParse,
+                                         OCPIv2_2_1.Currency.TryParse,
                                          out Currency Currency,
                                          out ErrorResponse))
                 {
@@ -794,7 +794,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalJSON("signed_data",
                                            "signed data",
-                                           OCPIv2_2.SignedData.TryParse,
+                                           OCPIv2_2_1.SignedData.TryParse,
                                            out SignedData SignedData,
                                            out ErrorResponse))
                 {

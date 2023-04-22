@@ -24,7 +24,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -149,7 +149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatoryJSON("charging_profile",
                                              "charging profile",
-                                             OCPIv2_2.ChargingProfile.TryParse,
+                                             OCPIv2_2_1.ChargingProfile.TryParse,
                                              out ChargingProfile? ChargingProfile,
                                              out ErrorResponse))
                 {

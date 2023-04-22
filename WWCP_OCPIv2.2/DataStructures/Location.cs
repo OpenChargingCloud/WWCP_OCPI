@@ -26,11 +26,11 @@ using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
-using cloud.charging.open.protocols.OCPIv2_2.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
@@ -849,7 +849,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptional("parking_type",
                                        "parking type",
-                                       OCPIv2_2.ParkingType.TryParse,
+                                       OCPIv2_2_1.ParkingType.TryParse,
                                        out ParkingType? ParkingType,
                                        out ErrorResponse))
                 {
@@ -933,7 +933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalHashSet("facilities",
                                               "facilities",
-                                              OCPIv2_2.Facilities.TryParse,
+                                              OCPIv2_2_1.Facilities.TryParse,
                                               out HashSet<Facilities> Facilities,
                                               out ErrorResponse))
                 {
@@ -988,7 +988,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalJSON("energy_mix",
                                            "energy mix",
-                                           OCPIv2_2.EnergyMix.TryParse,
+                                           OCPIv2_2_1.EnergyMix.TryParse,
                                            out EnergyMix EnergyMix,
                                            out ErrorResponse))
                 {

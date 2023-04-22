@@ -26,7 +26,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -413,7 +413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
-                                         OCPIv2_2.Currency.TryParse,
+                                         OCPIv2_2_1.Currency.TryParse,
                                          out Currency Currency,
                                          out ErrorResponse))
                 {
@@ -535,7 +535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalJSON("energy_mix",
                                            "energy mix",
-                                           OCPIv2_2.EnergyMix.TryParse,
+                                           OCPIv2_2_1.EnergyMix.TryParse,
                                            out EnergyMix EnergyMix,
                                            out ErrorResponse))
                 {

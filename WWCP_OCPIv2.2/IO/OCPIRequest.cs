@@ -24,7 +24,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 {
 
     /// <summary>
@@ -242,13 +242,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
                 TokenAuth.Token.TryBase64Decode_UTF8(out String DecodedToken)   &&
-                OCPIv2_2.AccessToken.TryParse(DecodedToken, out var accessToken))
+                OCPIv2_2_1.AccessToken.TryParse(DecodedToken, out var accessToken))
             {
                 this.AccessToken = accessToken;
             }
 
             else if (Request.Authorization is HTTPBasicAuthentication BasicAuth &&
-                OCPIv2_2.AccessToken.TryParse(BasicAuth.Username, out accessToken))
+                OCPIv2_2_1.AccessToken.TryParse(BasicAuth.Username, out accessToken))
             {
                 this.AccessToken = accessToken;
             }
@@ -281,7 +281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         this.RemoteParty  = parties.First();
 
-                        this.EMPId        = EMP_Id.Parse($"{this.AccessInfo.Value.Roles.First().CountryCode}*{this.AccessInfo.Value.Roles.First().PartyId}");
+                        this.EMPId        = EMP_Id.Parse($"{this.AccessInfo.Value.Roles.First().CountryCode}-{this.AccessInfo.Value.Roles.First().PartyId}");
 
                     }
 

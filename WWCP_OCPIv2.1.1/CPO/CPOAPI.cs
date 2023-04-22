@@ -2564,7 +2564,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters            = Request.GetDateAndPaginationFilters();
 
-                                        var allLocations       = CommonAPI.GetLocations().ToArray();
+                                                                                          //ToDo: Filter to NOT show all locations to everyone!
+                                        var allLocations       = CommonAPI.GetLocations().//location => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == location.CountryCode &&
+                                                                                          //                                                       role.PartyId     == location.PartyId)).
+                                                                           ToArray();
 
                                         var filteredLocations  = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
                                                                               Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).

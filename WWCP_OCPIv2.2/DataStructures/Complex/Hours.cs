@@ -23,7 +23,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -237,7 +237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalHashSet("regular_hours",
                                               "regular hours",
-                                              OCPIv2_2.RegularHours.TryParse,
+                                              OCPIv2_2_1.RegularHours.TryParse,
                                               out HashSet<RegularHours> RegularHours,
                                               out ErrorResponse))
                 {

@@ -25,7 +25,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -502,7 +502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalJSON("energy_contract",
                                            "energy contract",
-                                           OCPIv2_2.EnergyContract.TryParse,
+                                           OCPIv2_2_1.EnergyContract.TryParse,
                                            out EnergyContract EnergyContract,
                                            out ErrorResponse))
                 {

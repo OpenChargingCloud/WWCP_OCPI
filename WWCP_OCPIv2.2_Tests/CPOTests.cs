@@ -28,7 +28,7 @@ using org.GraphDefined.Vanaheimr.Hermod.WebSocket;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 {
 
     [TestFixture]
@@ -59,7 +59,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 // GET /versions HTTP/1.1
                 // Date:                          Sun, 25 Dec 2022 23:16:30 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
-                // Host:                          127.0.0.1:7135
+                // Host:                          127.0.0.1:7235
                 // Authorization:                 Token xxxxxx
                 // User-Agent:                    GraphDefined OCPI HTTP Client v1.0
                 // X-Request-ID:                  nM7djM37h56hQz8t8hKMznnhGYj3CK
@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 // {
                 //     "data": [{
                 //         "version":  "2.2",
-                //         "url":      "http://127.0.0.1:7135/versions/2.2"
+                //         "url":      "http://127.0.0.1:7235/versions/2.2"
                 //     }],
                 //     "status_code":      1000,
                 //     "status_message":  "Hello world!",
@@ -178,7 +178,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 // {
                 //     "data": [{
                 //         "version":  "2.2",
-                //         "url":      "http://127.0.0.1:7135/versions/2.2"
+                //         "url":      "http://127.0.0.1:7235/versions/2.2"
                 //     }],
                 //     "status_code":      1000,
                 //     "status_message":  "Hello world!",
@@ -352,7 +352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 // GET /versions/2.2 HTTP/1.1
                 // Date:                          Mon, 26 Dec 2022 00:36:20 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
-                // Host:                          127.0.0.1:7135
+                // Host:                          127.0.0.1:7235
                 // Authorization:                 Token yyyyyy
                 // User-Agent:                    GraphDefined OCPI HTTP Client v1.0
                 // X-Request-ID:                  MpG9fA2Mjr89K16r82phMA18r83CS9
@@ -377,31 +377,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 //         "endpoints": [
                 //             {
                 //                 "identifier":  "credentials",
-                //                 "url":         "http://127.0.0.1:7135/2.2/credentials"
+                //                 "url":         "http://127.0.0.1:7235/2.2/credentials"
                 //             },
                 //             {
                 //                 "identifier":  "locations",
-                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/locations"
+                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/locations"
                 //             },
                 //             {
                 //                 "identifier":  "tariffs",
-                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/tariffs"
+                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/tariffs"
                 //             },
                 //             {
                 //                 "identifier":  "sessions",
-                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/sessions"
+                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/sessions"
                 //             },
                 //             {
                 //                 "identifier":  "cdrs",
-                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/cdrs"
+                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/cdrs"
                 //             },
                 //             {
                 //                 "identifier":  "commands",
-                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/commands"
+                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/commands"
                 //             },
                 //             {
                 //                 "identifier":  "tokens",
-                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/tokens"
+                //                 "url":         "http://127.0.0.1:7235/2.2/emsp/tokens"
                 //             }
                 //         ]
                 //     },
@@ -459,7 +459,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 // GET /2.2/credentials HTTP/1.1
                 // Date:                          Mon, 26 Dec 2022 10:29:48 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
-                // Host:                          127.0.0.1:7135
+                // Host:                          127.0.0.1:7235
                 // Authorization:                 Token yyyyyy
                 // X-Request-ID:                  7AYph123pWAUt7j1Ad3n1jh1G279xG
                 // X-Correlation-ID:              jhz1GGj3j83SE7Wrf42p8hM82rM3A3
@@ -479,7 +479,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 // {
                 //    "data": {
                 //        "token":         "yyyyyy",
-                //        "url":           "http://127.0.0.1:7135/versions",
+                //        "url":           "http://127.0.0.1:7235/versions",
                 //        "business_details": {
                 //            "name":           "GraphDefined EMSP Services",
                 //            "website":        "https://www.graphdefined.com/emsp"
@@ -503,7 +503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 var credentials = response2.Data;
                 Assert.IsNotNull(credentials);
                 Assert.AreEqual("yyyyyy",                             credentials.Token.                    ToString());
-                Assert.AreEqual("http://127.0.0.1:7135/versions",     credentials.URL.                      ToString());
+                Assert.AreEqual("http://127.0.0.1:7235/versions",     credentials.URL.                      ToString());
                 Assert.AreEqual("DE",                                 credentials.Roles.First().CountryCode.ToString());
                 Assert.AreEqual("GDF",                                credentials.Roles.First().PartyId.    ToString());
 
@@ -586,7 +586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 // {
                 //    "data": {
                 //        "token":         "<any>",
-                //        "url":           "http://127.0.0.1:7135/versions",
+                //        "url":           "http://127.0.0.1:7235/versions",
                 //        "business_details": {
                 //            "name":           "GraphDefined EMSP Services",
                 //            "website":        "https://www.graphdefined.com/emsp"
@@ -610,7 +610,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 var credentials = response2.Data;
                 Assert.IsNotNull(credentials);
                 Assert.AreEqual("<any>",                              credentials.Token.                    ToString());
-                Assert.AreEqual("http://127.0.0.1:7135/versions",     credentials.URL.                      ToString());
+                Assert.AreEqual("http://127.0.0.1:7235/versions",     credentials.URL.                      ToString());
                 Assert.AreEqual("DE",                                 credentials.Roles.First().CountryCode.ToString());
                 Assert.AreEqual("GDF",                                credentials.Roles.First().PartyId.    ToString());
 
@@ -720,7 +720,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 var credentials = response2.Data;
                 Assert.IsNull(credentials);
                 //Assert.AreEqual("<any>",                              credentials.    Token.      ToString());
-                //Assert.AreEqual("http://127.0.0.1:7135/versions",     credentials.    URL.        ToString());
+                //Assert.AreEqual("http://127.0.0.1:7235/versions",     credentials.    URL.        ToString());
                 //Assert.AreEqual("DE",                                 credentials.    CountryCode.ToString());
                 //Assert.AreEqual("GDF",                                credentials.    PartyId.    ToString());
 
@@ -907,7 +907,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            var httpResponse = await TestHelpers.JSONRequest(URL.Parse("http://127.0.0.1:7135/2.2/credentials"),
+            var httpResponse = await TestHelpers.JSONRequest(URL.Parse("http://127.0.0.1:7235/2.2/credentials"),
                                                              "yyyyyy");
 
             // HTTP/1.1 403 Forbidden
@@ -1161,7 +1161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                 // {
                 //     "data": {
                 //         "token":         "tM1bM71zW39f9W46WM5K9W46h6rYtdYfK1nS46rjA6Cf9ffY9h",
-                //         "url":           "http://127.0.0.1:7135/versions",
+                //         "url":           "http://127.0.0.1:7235/versions",
                 //         "business_details": {
                 //             "name":            "GraphDefined EMSP Services",
                 //             "website":         "https://www.graphdefined.com/emsp"

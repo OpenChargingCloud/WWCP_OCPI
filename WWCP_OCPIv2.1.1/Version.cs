@@ -15,25 +15,24 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using System;
-
-#endregion
-
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// The current OCPI version.
+    /// This OCPI version 2.1.1.
     /// </summary>
     public static class Version
     {
 
         /// <summary>
-        /// The current OCPI version.
+        /// This OCPI version 2.1.1.
         /// </summary>
-        public const String Number = "v2.1.1";
+        public const           String      Number  = "v2.1.1";
+
+        /// <summary>
+        /// This OCPI version 2.1.1.
+        /// </summary>
+        public readonly static Version_Id  Id      = Version_Id.Parse(Number[1..]);
 
     }
 

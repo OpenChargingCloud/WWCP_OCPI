@@ -23,7 +23,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalHashSet("restrictions",
                                               "tariff restrictions",
-                                              OCPIv2_2.TariffRestrictions.TryParse,
+                                              OCPIv2_2_1.TariffRestrictions.TryParse,
                                               out HashSet<TariffRestrictions> TariffRestrictions,
                                               out ErrorResponse))
                 {

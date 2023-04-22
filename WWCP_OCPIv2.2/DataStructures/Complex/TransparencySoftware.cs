@@ -24,7 +24,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
     /// <summary>
@@ -227,7 +227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatoryJSON("open_source_license",
                                              "legal status",
-                                             OCPIv2_2.OpenSourceLicense.TryParse,
+                                             OCPIv2_2_1.OpenSourceLicense.TryParse,
                                              out OpenSourceLicense? OpenSourceLicense,
                                              out ErrorResponse) ||
                     OpenSourceLicense is null)

@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         #region EMSP_GetVersions_Test()
 
         /// <summary>
-        /// EMSP GetVersions Test 01.
+        /// EMSP GetVersions Test.
         /// </summary>
         [Test]
         public async Task EMSP_GetVersions_Test()
@@ -93,22 +93,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 Assert.AreEqual ("Hello world!",  response.StatusMessage);
                 Assert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
 
-                //Assert.IsNotNull(response.Request);
-
                 var versions = response.Data;
                 Assert.IsNotNull(versions);
                 Assert.AreEqual (1, response.Data.Count());
 
                 var version = versions.First();
-                Assert.AreEqual (Version_Id.Parse("2.1.1"),    version.Id);
-                Assert.AreEqual (cpoVersionsAPIURL + "2.1.1",  version.URL);
+                Assert.IsTrue   (version.Id == Version.Id);
+                Assert.AreEqual (cpoVersionsAPIURL + Version.Id.ToString(), version.URL);
 
             }
 
         }
 
         #endregion
-
 
         #region EMSP_GetVersion_Test()
 
@@ -129,8 +126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             if (graphDefinedCPO is not null)
             {
 
-                var response1 = await graphDefinedCPO.GetVersions();
-                var response2 = await graphDefinedCPO.GetVersionDetails(Version_Id.Parse("2.1.1"));
+                var response = await graphDefinedCPO.GetVersionDetails(Version.Id);
 
                 // GET /versions/2.1.1 HTTP/1.1
                 // Date:                          Mon, 26 Dec 2022 00:36:20 GMT
@@ -193,22 +189,142 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 //     "timestamp":       "2022-12-26T00:36:21.259Z"
                 // }
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (200,             response2.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,            response2.StatusCode);
-                Assert.AreEqual ("Hello world!",  response2.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now -  response2.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,             response.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (1000,            response.StatusCode);
+                Assert.AreEqual ("Hello world!",  response.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
 
-                //Assert.IsNotNull(response.Request);
-
-                var versionDetail = response2.Data;
+                var versionDetail  = response.Data;
                 Assert.IsNotNull(versionDetail);
 
-                var endpoints = versionDetail.Endpoints;
-                Assert.AreEqual (7, endpoints.Count());
-                //Assert.AreEqual(Version_Id.Parse("2.1.1"), endpoints.Id);
-                //Assert.AreEqual(cpoVersionsAPIURL + "2.1.1", endpoints.URL);
+                var versionId      = versionDetail.VersionId;
+                Assert.IsTrue   (versionId == Version.Id);
 
+                var endpoints      = versionDetail.Endpoints;
+                Assert.AreEqual (7, endpoints.Count());
+
+                Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "credentials"));
+                Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "locations"));
+                Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tariffs"));
+                Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "sessions"));
+                Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "cdrs"));
+                Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "commands"));
+                Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tokens"));
+
+            }
+
+        }
+
+        #endregion
+
+        #region EMSP_GetVersion_UnknownVersion_Test()
+
+        /// <summary>
+        /// EMSP GetVersion Unknown Version Test.
+        /// </summary>
+        [Test]
+        public async Task EMSP_GetVersion_UnknownVersion_Test()
+        {
+
+            var graphDefinedCPO = emspWebAPI1?.GetEMSPClient(
+                                      CountryCode: CountryCode.Parse("DE"),
+                                      PartyId:     Party_Id.   Parse("GEF")
+                                  );
+
+            Assert.IsNotNull(graphDefinedCPO);
+
+            if (graphDefinedCPO is not null)
+            {
+
+                var response = await graphDefinedCPO.GetVersionDetails(Version_Id.Parse("0.7"));
+
+                // GET /versions/0.7 HTTP/1.1
+                // Date:              Mon, 26 Dec 2022 00:36:20 GMT
+                // Accept:            application/json; charset=utf-8;q=1
+                // Host:              127.0.0.1:7134
+                // Authorization:     Token xxxxxx
+                // User-Agent:        GraphDefined OCPI HTTP Client v1.0
+                // X-Request-ID:      21Sj4CSUttCvUE7t8YdttY31YA1nzx
+                // X-Correlation-ID:  jGrrQ7pEb541dCnUx12SEp3KG88YjG
+
+                Assert.IsNotNull(response);
+
+                Assert.AreEqual (-1,                                response.StatusCode); // local error!
+                Assert.AreEqual ("Unkown version identification!",  response.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
+
+                // There is not HTTP response, as this is a local error!
+                Assert.IsNull   (response.HTTPResponse);
+                Assert.IsNull   (response.RequestId);
+                Assert.IsNull   (response.CorrelationId);
+
+            }
+
+        }
+
+        #endregion
+
+        #region EMSP_GetVersion_UnknownVersion_viaHTTP_Test()
+
+        /// <summary>
+        /// EMSP GetVersion Unknown Version via HTTP Test.
+        /// </summary>
+        [Test]
+        public async Task EMSP_GetVersion_UnknownVersion_viaHTTP_Test()
+        {
+
+            var graphDefinedCPO = emspWebAPI1?.GetEMSPClient(
+                                      CountryCode: CountryCode.Parse("DE"),
+                                      PartyId:     Party_Id.   Parse("GEF")
+                                  );
+
+            Assert.IsNotNull(graphDefinedCPO);
+
+            if (graphDefinedCPO is not null)
+            {
+
+                var httpResponse = await TestHelpers.JSONRequest(URL.Parse("http://127.0.0.1:7135/versions/0.7"),
+                                                                 "xxxxxx");
+
+                // GET /versions/0.7 HTTP/1.1
+                // Date:                          Sat, 22 Apr 2023 11:54:54 GMT
+                // Accept:                        application/json; charset=utf-8;q=1
+                // Host:                          127.0.0.1:7135
+                // Authorization:                 Token xxxxxx
+                // X-Request-ID:                  1234
+                // X-Correlation-ID:              5678
+
+                // HTTP/1.1 404 Not Found
+                // Date:                          Sat, 22 Apr 2023 11:54:54 GMT
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Server:                        GraphDefined Hermod HTTP Server v1.0
+                // Access-Control-Allow-Origin:   *
+                // Connection:                    close
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                114
+                // X-Request-ID:                  1234
+                // X-Correlation-ID:              5678
+                // 
+                // {
+                //     "status_code":      2000,
+                //     "status_message":  "This OCPI version is not supported!",
+                //     "timestamp":       "2023-04-22T11:54:54.800Z"
+                // }
+
+                Assert.IsNotNull(httpResponse);
+                Assert.IsTrue   (httpResponse.ContentLength > 0);
+
+                var response = OCPIResponse.Parse(httpResponse,
+                                                  Request_Id.    Parse("12340"),
+                                                  Correlation_Id.Parse("56780"));
+
+                Assert.AreEqual (2000,                                   response.StatusCode);
+                Assert.AreEqual ("This OCPI version is not supported!",  response.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response.HTTPResponse);
 
             }
 
@@ -1036,7 +1152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                              ConnectorId,
                                                              EMPId) => {
 
-                    if (EMPId.ToString() == "DE*GDF")
+                    if (EMPId.ToString() == "DE-GDF")
                         return new[] { Tariff_Id.Parse("AC1") };
 
                     // Will be called during a lot of internal calculations!
@@ -1336,7 +1452,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         }
 
         #endregion
-
 
 
     }
