@@ -24,10 +24,11 @@ using NUnit.Framework;
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.WebSocket;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 {
 
     [TestFixture]
@@ -79,8 +80,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 // 
                 // {
                 //     "data": [{
-                //         "version":  "2.1.1",
-                //         "url":      "http://127.0.0.1:7135/versions/2.1.1"
+                //         "version":  "2.2",
+                //         "url":      "http://127.0.0.1:7135/versions/2.2"
                 //     }],
                 //     "status_code":      1000,
                 //     "status_message":  "Hello world!",
@@ -100,8 +101,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 Assert.AreEqual (1, response.Data.Count());
 
                 var version = versions.First();
-                Assert.AreEqual (Version_Id.Parse("2.1.1"),     version.Id);
-                Assert.AreEqual (emspVersionsAPIURL1 + "2.1.1",  version.URL);
+                Assert.AreEqual (Version_Id.Parse("2.2"),     version.Id);
+                Assert.AreEqual (emspVersionsAPIURL1 + "2.2",  version.URL);
 
             }
 
@@ -138,9 +139,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                             AccessToken:        AccessToken.Parse("bbbbbb"),
                                             VersionsURL:        emspVersionsAPIURL1,
                                             VersionIds:         new Version_Id[] {
-                                                                    Version_Id.Parse("2.1.1")
+                                                                    Version_Id.Parse("2.2")
                                                                 },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            SelectedVersionId:  Version_Id.Parse("2.2"),
                                             Status:             RemoteAccessStatus.ONLINE
                                         )
                                     },
@@ -176,8 +177,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 // 
                 // {
                 //     "data": [{
-                //         "version":  "2.1.1",
-                //         "url":      "http://127.0.0.1:7135/versions/2.1.1"
+                //         "version":  "2.2",
+                //         "url":      "http://127.0.0.1:7135/versions/2.2"
                 //     }],
                 //     "status_code":      1000,
                 //     "status_message":  "Hello world!",
@@ -197,8 +198,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 Assert.AreEqual (1, response.Data.Count());
 
                 var version = versions.First();
-                Assert.AreEqual (Version_Id.Parse("2.1.1"),    version.Id);
-                Assert.AreEqual (emspVersionsAPIURL1 + "2.1.1", version.URL);
+                Assert.AreEqual (Version_Id.Parse("2.2"),    version.Id);
+                Assert.AreEqual (emspVersionsAPIURL1 + "2.2", version.URL);
 
             }
 
@@ -236,9 +237,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                             AccessToken:        AccessToken.Parse("yyyyyy"),
                                             VersionsURL:        emspVersionsAPIURL1,
                                             VersionIds:         new Version_Id[] {
-                                                                    Version_Id.Parse("2.1.1")
+                                                                    Version_Id.Parse("2.2")
                                                                 },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            SelectedVersionId:  Version_Id.Parse("2.2"),
                                             Status:             RemoteAccessStatus.ONLINE
                                         )
                                     },
@@ -264,9 +265,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                             AccessToken:        AccessToken.Parse("xxxxxx"),
                                             VersionsURL:        emspVersionsAPIURL1,
                                             VersionIds:         new Version_Id[] {
-                                                                    Version_Id.Parse("2.1.1")
+                                                                    Version_Id.Parse("2.2")
                                                                 },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            SelectedVersionId:  Version_Id.Parse("2.2"),
                                             Status:             RemoteAccessStatus.ONLINE
                                         )
                                     },
@@ -346,9 +347,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             {
 
                 var response1 = await graphDefinedEMSP.GetVersions();
-                var response2 = await graphDefinedEMSP.GetVersionDetails(Version_Id.Parse("2.1.1"));
+                var response2 = await graphDefinedEMSP.GetVersionDetails(Version_Id.Parse("2.2"));
 
-                // GET /versions/2.1.1 HTTP/1.1
+                // GET /versions/2.2 HTTP/1.1
                 // Date:                          Mon, 26 Dec 2022 00:36:20 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7135
@@ -372,35 +373,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 // 
                 // {
                 //     "data": {
-                //         "version": "2.1.1",
+                //         "version": "2.2",
                 //         "endpoints": [
                 //             {
                 //                 "identifier":  "credentials",
-                //                 "url":         "http://127.0.0.1:7135/2.1.1/credentials"
+                //                 "url":         "http://127.0.0.1:7135/2.2/credentials"
                 //             },
                 //             {
                 //                 "identifier":  "locations",
-                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/locations"
+                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/locations"
                 //             },
                 //             {
                 //                 "identifier":  "tariffs",
-                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/tariffs"
+                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/tariffs"
                 //             },
                 //             {
                 //                 "identifier":  "sessions",
-                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/sessions"
+                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/sessions"
                 //             },
                 //             {
                 //                 "identifier":  "cdrs",
-                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/cdrs"
+                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/cdrs"
                 //             },
                 //             {
                 //                 "identifier":  "commands",
-                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/commands"
+                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/commands"
                 //             },
                 //             {
                 //                 "identifier":  "tokens",
-                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/tokens"
+                //                 "url":         "http://127.0.0.1:7135/2.2/emsp/tokens"
                 //             }
                 //         ]
                 //     },
@@ -422,8 +423,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                 var endpoints = versionDetail.Endpoints;
                 Assert.AreEqual (7, endpoints.Count());
-                //Assert.AreEqual(Version_Id.Parse("2.1.1"), endpoints.Id);
-                //Assert.AreEqual(emspVersionsAPIURL + "2.1.1", endpoints.URL);
+                //Assert.AreEqual(Version_Id.Parse("2.2"), endpoints.Id);
+                //Assert.AreEqual(emspVersionsAPIURL + "2.2", endpoints.URL);
 
 
             }
@@ -455,7 +456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 var response1 = await graphDefinedEMSP.GetVersions();
                 var response2 = await graphDefinedEMSP.GetCredentials();
 
-                // GET /2.1.1/credentials HTTP/1.1
+                // GET /2.2/credentials HTTP/1.1
                 // Date:                          Mon, 26 Dec 2022 10:29:48 GMT
                 // Accept:                        application/json; charset=utf-8;q=1
                 // Host:                          127.0.0.1:7135
@@ -501,12 +502,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                 var credentials = response2.Data;
                 Assert.IsNotNull(credentials);
-                Assert.AreEqual("yyyyyy",                             credentials.    Token.      ToString());
-                Assert.AreEqual("http://127.0.0.1:7135/versions",     credentials.    URL.        ToString());
-                Assert.AreEqual("DE",                                 credentials.    CountryCode.ToString());
-                Assert.AreEqual("GDF",                                credentials.    PartyId.    ToString());
+                Assert.AreEqual("yyyyyy",                             credentials.Token.                    ToString());
+                Assert.AreEqual("http://127.0.0.1:7135/versions",     credentials.URL.                      ToString());
+                Assert.AreEqual("DE",                                 credentials.Roles.First().CountryCode.ToString());
+                Assert.AreEqual("GDF",                                credentials.Roles.First().PartyId.    ToString());
 
-                var businessDetails = credentials.BusinessDetails;
+                var businessDetails = credentials.Roles.First().BusinessDetails;
                 Assert.IsNotNull(businessDetails);
                 Assert.AreEqual("GraphDefined EMSP Services",         businessDetails.Name);
                 Assert.AreEqual("https://www.graphdefined.com/emsp",  businessDetails.Website.    ToString());
@@ -546,9 +547,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                             AccessToken:        AccessToken.Parse("bbbbbb"),
                                             VersionsURL:        emspVersionsAPIURL1,
                                             VersionIds:         new Version_Id[] {
-                                                                    Version_Id.Parse("2.1.1")
+                                                                    Version_Id.Parse("2.2")
                                                                 },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            SelectedVersionId:  Version_Id.Parse("2.2"),
                                             Status:             RemoteAccessStatus.ONLINE
                                         )
                                     },
@@ -608,12 +609,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                 var credentials = response2.Data;
                 Assert.IsNotNull(credentials);
-                Assert.AreEqual("<any>",                              credentials.    Token.      ToString());
-                Assert.AreEqual("http://127.0.0.1:7135/versions",     credentials.    URL.        ToString());
-                Assert.AreEqual("DE",                                 credentials.    CountryCode.ToString());
-                Assert.AreEqual("GDF",                                credentials.    PartyId.    ToString());
+                Assert.AreEqual("<any>",                              credentials.Token.                    ToString());
+                Assert.AreEqual("http://127.0.0.1:7135/versions",     credentials.URL.                      ToString());
+                Assert.AreEqual("DE",                                 credentials.Roles.First().CountryCode.ToString());
+                Assert.AreEqual("GDF",                                credentials.Roles.First().PartyId.    ToString());
 
-                var businessDetails = credentials.BusinessDetails;
+                var businessDetails = credentials.Roles.First().BusinessDetails;
                 Assert.IsNotNull(businessDetails);
                 Assert.AreEqual("GraphDefined EMSP Services",         businessDetails.Name);
                 Assert.AreEqual("https://www.graphdefined.com/emsp",  businessDetails.Website.    ToString());
@@ -654,9 +655,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                             AccessToken:        AccessToken.Parse("yyyyyy"),
                                             VersionsURL:        emspVersionsAPIURL1,
                                             VersionIds:         new Version_Id[] {
-                                                                    Version_Id.Parse("2.1.1")
+                                                                    Version_Id.Parse("2.2")
                                                                 },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            SelectedVersionId:  Version_Id.Parse("2.2"),
                                             Status:             RemoteAccessStatus.ONLINE
                                         )
                                     },
@@ -682,9 +683,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                             AccessToken:        AccessToken.Parse("xxxxxx"),
                                             VersionsURL:        emspVersionsAPIURL1,
                                             VersionIds:         new Version_Id[] {
-                                                                    Version_Id.Parse("2.1.1")
+                                                                    Version_Id.Parse("2.2")
                                                                 },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            SelectedVersionId:  Version_Id.Parse("2.2"),
                                             Status:             RemoteAccessStatus.ONLINE
                                         )
                                     },
@@ -764,9 +765,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                             AccessToken:        AccessToken.Parse("yyyyyy"),
                                             VersionsURL:        emspVersionsAPIURL1,
                                             VersionIds:         new Version_Id[] {
-                                                                    Version_Id.Parse("2.1.1")
+                                                                    Version_Id.Parse("2.2")
                                                                 },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            SelectedVersionId:  Version_Id.Parse("2.2"),
                                             Status:             RemoteAccessStatus.ONLINE
                                         )
                                     },
@@ -792,9 +793,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                             AccessToken:        AccessToken.Parse("xxxxxx"),
                                             VersionsURL:        emspVersionsAPIURL1,
                                             VersionIds:         new Version_Id[] {
-                                                                    Version_Id.Parse("2.1.1")
+                                                                    Version_Id.Parse("2.2")
                                                                 },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            SelectedVersionId:  Version_Id.Parse("2.2"),
                                             Status:             RemoteAccessStatus.ONLINE
                                         )
                                     },
@@ -816,7 +817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             {
 
                 var response1 = await graphDefinedEMSP.GetVersions();
-                var response2 = await graphDefinedEMSP.GetCredentials(Version_Id.Parse("2.1.1"));
+                var response2 = await graphDefinedEMSP.GetCredentials(Version_Id.Parse("2.2"));
 
                 Assert.IsNotNull(response2);
                 Assert.IsNull   (response2.HTTPResponse);
@@ -865,9 +866,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                             AccessToken:        AccessToken.Parse("yyyyyy"),
                                             VersionsURL:        emspVersionsAPIURL1,
                                             VersionIds:         new Version_Id[] {
-                                                                    Version_Id.Parse("2.1.1")
+                                                                    Version_Id.Parse("2.2")
                                                                 },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            SelectedVersionId:  Version_Id.Parse("2.2"),
                                             Status:             RemoteAccessStatus.ONLINE
                                         )
                                     },
@@ -893,9 +894,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                             AccessToken:        AccessToken.Parse("xxxxxx"),
                                             VersionsURL:        emspVersionsAPIURL1,
                                             VersionIds:         new Version_Id[] {
-                                                                    Version_Id.Parse("2.1.1")
+                                                                    Version_Id.Parse("2.2")
                                                                 },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            SelectedVersionId:  Version_Id.Parse("2.2"),
                                             Status:             RemoteAccessStatus.ONLINE
                                         )
                                     },
@@ -906,7 +907,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
-            var httpResponse = await TestHelpers.JSONRequest(URL.Parse("http://127.0.0.1:7135/2.1.1/credentials"),
+            var httpResponse = await TestHelpers.JSONRequest(URL.Parse("http://127.0.0.1:7135/2.2/credentials"),
                                                              "yyyyyy");
 
             // HTTP/1.1 403 Forbidden
@@ -968,12 +969,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                            new Credentials(
                                                                AccessToken.Parse("nnnnnn"),
                                                                URL.Parse("http://example.org/versions"),
-                                                               new BusinessDetails(
-                                                                   "Example Org",
-                                                                   URL.Parse("http://example.org")
-                                                               ),
-                                                               CountryCode.Parse("DE"),
-                                                               Party_Id.   Parse("EXP")
+                                                               new[] {
+                                                                   new CredentialsRole(
+                                                                       CountryCode.Parse("DE"),
+                                                                       Party_Id.   Parse("EXP"),
+                                                                       Roles.      CPO,
+                                                                       new BusinessDetails(
+                                                                           "Example Org",
+                                                                           URL.Parse("http://example.org")
+                                                                       )
+                                                                   )
+                                                               }
                                                            )
                                                        );
 
@@ -1040,9 +1046,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                             AccessToken:        AccessToken.Parse("bbbbbb"),
                                             VersionsURL:        emspVersionsAPIURL1,
                                             VersionIds:         new Version_Id[] {
-                                                                    Version_Id.Parse("2.1.1")
+                                                                    Version_Id.Parse("2.2")
                                                                 },
-                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            SelectedVersionId:  Version_Id.Parse("2.2"),
                                             Status:             RemoteAccessStatus.ONLINE
                                         )
                                     },
@@ -1066,12 +1072,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                            new Credentials(
                                                                AccessToken.Parse("nnnnnn"),
                                                                URL.Parse("http://example.org/versions"),
-                                                               new BusinessDetails(
-                                                                   "Example Org",
-                                                                   URL.Parse("http://example.org")
-                                                               ),
-                                                               CountryCode.Parse("DE"),
-                                                               Party_Id.   Parse("EXP")
+                                                               new[] {
+                                                                   new CredentialsRole(
+                                                                       CountryCode.Parse("DE"),
+                                                                       Party_Id.   Parse("EXP"),
+                                                                       Roles.      CPO,
+                                                                       new BusinessDetails(
+                                                                           "Example Org",
+                                                                           URL.Parse("http://example.org")
+                                                                       )
+                                                                   )
+                                                               }
                                                            )
                                                        );
 
@@ -1207,27 +1218,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 var response2            = await graphDefinedEMSP.Register();
                 var response3            = await graphDefinedEMSP.PutLocation(new Location(
                                                                                   CountryCode.Parse("DE"),
-                                                                                  Party_Id.   Parse("GEF"),
+                                                                                  Party_Id.Parse("GEF"),
                                                                                   Location_Id.Parse("LOC0001"),
-                                                                                  LocationType.PARKING_LOT,
+                                                                                  true,
                                                                                   "Biberweg 18",
                                                                                   "Jena",
-                                                                                  "07749",
                                                                                   Country.Germany,
                                                                                   GeoCoordinate.Parse(10, 20),
+                                                                                  "Europe/Berlin",
+                                                                                  null,
                                                                                   "Location 0001",
-                                                                                  new AdditionalGeoLocation[] {
+                                                                                  "07749",
+                                                                                  "Thüringen",
+                                                                                  new[] {
                                                                                       new AdditionalGeoLocation(
                                                                                           Latitude.Parse(11),
                                                                                           Longitude.Parse(22),
                                                                                           Name: DisplayText.Create(Languages.de, "Postkasten")
                                                                                       )
                                                                                   },
-                                                                                  new EVSE[] {
+                                                                                  ParkingType.PARKING_LOT,
+                                                                                  new[] {
                                                                                       new EVSE(
                                                                                           EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                                                           StatusType.AVAILABLE,
-                                                                                          new Connector[] {
+                                                                                          new[] {
                                                                                               new Connector(
                                                                                                   Connector_Id.Parse("1"),
                                                                                                   ConnectorType.IEC_62196_T2,
@@ -1235,7 +1250,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                                   PowerTypes.AC_3_PHASE,
                                                                                                   400,
                                                                                                   30,
-                                                                                                  Tariff_Id.Parse("DE*GEF*T0001"),
+                                                                                                  12,
+                                                                                                  new Tariff_Id[] {
+                                                                                                      Tariff_Id.Parse("DE*GEF*T0001"),
+                                                                                                      Tariff_Id.Parse("DE*GEF*T0002")
+                                                                                                  },
                                                                                                   URL.Parse("https://open.charging.cloud/terms"),
                                                                                                   DateTime.Parse("2020-09-21")
                                                                                               ),
@@ -1246,13 +1265,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                                   PowerTypes.AC_3_PHASE,
                                                                                                   400,
                                                                                                   20,
-                                                                                                  Tariff_Id.Parse("DE*GEF*T0003"),
+                                                                                                  8,
+                                                                                                  new Tariff_Id[] {
+                                                                                                      Tariff_Id.Parse("DE*GEF*T0003"),
+                                                                                                      Tariff_Id.Parse("DE*GEF*T0004")
+                                                                                                  },
                                                                                                   URL.Parse("https://open.charging.cloud/terms"),
                                                                                                   DateTime.Parse("2020-09-22")
                                                                                               )
                                                                                           },
                                                                                           EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                                                                          new StatusSchedule[] {
+                                                                                          new[] {
                                                                                               new StatusSchedule(
                                                                                                   StatusType.INOPERATIVE,
                                                                                                   DateTime.Parse("2020-09-23"),
@@ -1264,7 +1287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                                   DateTime.Parse("2020-12-31")
                                                                                               )
                                                                                           },
-                                                                                          new Capability[] {
+                                                                                          new[] {
                                                                                               Capability.RFID_READER,
                                                                                               Capability.RESERVABLE
                                                                                           },
@@ -1279,49 +1302,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                               "Energy Metering Services",
                                                                                               null,
                                                                                               null,
-                                                                                              null,
-                                                                                              new TransparencySoftwareStatus[] {
-                                                                                                  new TransparencySoftwareStatus(
-                                                                                                      new TransparencySoftware(
-                                                                                                          "Chargy Transparency Software Desktop Application",
-                                                                                                          "v1.00",
-                                                                                                          OpenSourceLicense.AGPL3,
-                                                                                                          "GraphDefined GmbH",
-                                                                                                          URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                                                          URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                                                          URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                                                          URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
-                                                                                                      ),
-                                                                                                      LegalStatus.GermanCalibrationLaw,
-                                                                                                      "cert",
-                                                                                                      "German PTB",
-                                                                                                      NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                                                      NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                                                  ),
-                                                                                                  new TransparencySoftwareStatus(
-                                                                                                      new TransparencySoftware(
-                                                                                                          "Chargy Transparency Software Mobile Application",
-                                                                                                          "v1.00",
-                                                                                                          OpenSourceLicense.AGPL3,
-                                                                                                          "GraphDefined GmbH",
-                                                                                                          URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                                                          URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                                                          URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                                                          URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
-                                                                                                      ),
-                                                                                                      LegalStatus.ForInformationOnly,
-                                                                                                      "no cert",
-                                                                                                      "GraphDefiend",
-                                                                                                      NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                                                      NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                                                  )
-                                                                                              }
+                                                                                              null
                                                                                           ),
 
                                                                                           "1. Stock",
                                                                                           GeoCoordinate.Parse(10.1, 20.2),
                                                                                           "Ladestation #1",
-                                                                                          new DisplayText[] {
+                                                                                          new[] {
                                                                                               DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                                                               DisplayText.Create(Languages.en, "Ken sent me!")
                                                                                           },
@@ -1329,7 +1316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                               ParkingRestrictions.EV_ONLY,
                                                                                               ParkingRestrictions.PLUGGED
                                                                                           },
-                                                                                          new Image[] {
+                                                                                          new[] {
                                                                                               new Image(
                                                                                                   URL.Parse("http://example.com/pinguine.jpg"),
                                                                                                   ImageFileType.jpeg,
@@ -1342,7 +1329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                           DateTime.Parse("2020-09-22")
                                                                                       )
                                                                                   },
-                                                                                  new DisplayText[] {
+                                                                                  new[] {
                                                                                       new DisplayText(Languages.de, "Hallo Welt!"),
                                                                                       new DisplayText(Languages.en, "Hello world!")
                                                                                   },
@@ -1382,25 +1369,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                           URL.Parse("http://ahzf.de/logo_small.gif")
                                                                                       )
                                                                                   ),
-                                                                                  new Facilities[] {
+                                                                                  new[] {
                                                                                       Facilities.CAFE
                                                                                   },
-                                                                                  "Europe/Berlin",
                                                                                   new Hours(
-                                                                                      new RegularHours[] {
+                                                                                      new[] {
                                                                                           new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                                                                           new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                                                                           new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                                                                           new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                                                                           new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                                                                       },
-                                                                                      new ExceptionalPeriod[] {
+                                                                                      new[] {
                                                                                           new ExceptionalPeriod(
                                                                                               DateTime.Parse("2020-09-21T00:00:00Z"),
                                                                                               DateTime.Parse("2020-09-22T00:00:00Z")
                                                                                           )
                                                                                       },
-                                                                                      new ExceptionalPeriod[] {
+                                                                                      new[] {
                                                                                           new ExceptionalPeriod(
                                                                                               DateTime.Parse("2020-12-24T00:00:00Z"),
                                                                                               DateTime.Parse("2020-12-26T00:00:00Z")
@@ -1408,7 +1394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                       }
                                                                                   ),
                                                                                   false,
-                                                                                  new Image[] {
+                                                                                  new[] {
                                                                                       new Image(
                                                                                           URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                                                                           ImageFileType.jpeg,
@@ -1418,9 +1404,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                           URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
                                                                                       )
                                                                                   },
-                                                                                  new EnergyMix(
+                                                                                  new(
                                                                                       true,
-                                                                                      new EnergySource[] {
+                                                                                      new[] {
                                                                                           new EnergySource(
                                                                                               EnergySourceCategory.SOLAR,
                                                                                               80
@@ -1430,7 +1416,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                               20
                                                                                           )
                                                                                       },
-                                                                                      new EnvironmentalImpact[] {
+                                                                                      new[] {
                                                                                           new EnvironmentalImpact(
                                                                                               EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                                                               0.1
@@ -1439,8 +1425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                       "Stadtwerke Jena-Ost",
                                                                                       "New Green Deal"
                                                                                   ),
-                                                                                  null,
-                                                                                  DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                                                                  DateTime.Parse("2020-09-21T00:00:00Z")
                                                                               ));
 
                 // HTTP/1.1 201 Created
@@ -1503,25 +1488,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                   CountryCode.Parse("DE"),
                                                                                   Party_Id.   Parse("GEF"),
                                                                                   Location_Id.Parse("LOC0001"),
-                                                                                  LocationType.PARKING_LOT,
+                                                                                  true,
                                                                                   "Biberweg 18",
                                                                                   "Jena",
-                                                                                  "07749",
                                                                                   Country.Germany,
                                                                                   GeoCoordinate.Parse(10, 20),
+                                                                                  "Europe/Berlin",
+                                                                                  null,
                                                                                   "Location 0001",
-                                                                                  new AdditionalGeoLocation[] {
+                                                                                  "07749",
+                                                                                  "Thüringen",
+                                                                                  new[] {
                                                                                       new AdditionalGeoLocation(
                                                                                           Latitude.Parse(11),
                                                                                           Longitude.Parse(22),
                                                                                           Name: DisplayText.Create(Languages.de, "Postkasten")
                                                                                       )
                                                                                   },
-                                                                                  new EVSE[] {
+                                                                                  ParkingType.PARKING_LOT,
+                                                                                  new[] {
                                                                                       new EVSE(
                                                                                           EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                                                           StatusType.AVAILABLE,
-                                                                                          new Connector[] {
+                                                                                          new[] {
                                                                                               new Connector(
                                                                                                   Connector_Id.Parse("1"),
                                                                                                   ConnectorType.IEC_62196_T2,
@@ -1529,7 +1518,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                                   PowerTypes.AC_3_PHASE,
                                                                                                   400,
                                                                                                   30,
-                                                                                                  Tariff_Id.Parse("DE*GEF*T0001"),
+                                                                                                  12,
+                                                                                                  new Tariff_Id[] {
+                                                                                                      Tariff_Id.Parse("DE*GEF*T0001"),
+                                                                                                      Tariff_Id.Parse("DE*GEF*T0002")
+                                                                                                  },
                                                                                                   URL.Parse("https://open.charging.cloud/terms"),
                                                                                                   DateTime.Parse("2020-09-21")
                                                                                               ),
@@ -1540,13 +1533,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                                   PowerTypes.AC_3_PHASE,
                                                                                                   400,
                                                                                                   20,
-                                                                                                  Tariff_Id.Parse("DE*GEF*T0003"),
+                                                                                                  8,
+                                                                                                  new Tariff_Id[] {
+                                                                                                      Tariff_Id.Parse("DE*GEF*T0003"),
+                                                                                                      Tariff_Id.Parse("DE*GEF*T0004")
+                                                                                                  },
                                                                                                   URL.Parse("https://open.charging.cloud/terms"),
                                                                                                   DateTime.Parse("2020-09-22")
                                                                                               )
                                                                                           },
                                                                                           EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                                                                          new StatusSchedule[] {
+                                                                                          new[] {
                                                                                               new StatusSchedule(
                                                                                                   StatusType.INOPERATIVE,
                                                                                                   DateTime.Parse("2020-09-23"),
@@ -1558,7 +1555,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                                   DateTime.Parse("2020-12-31")
                                                                                               )
                                                                                           },
-                                                                                          new Capability[] {
+                                                                                          new[] {
                                                                                               Capability.RFID_READER,
                                                                                               Capability.RESERVABLE
                                                                                           },
@@ -1573,49 +1570,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                               "Energy Metering Services",
                                                                                               null,
                                                                                               null,
-                                                                                              null,
-                                                                                              new TransparencySoftwareStatus[] {
-                                                                                                  new TransparencySoftwareStatus(
-                                                                                                      new TransparencySoftware(
-                                                                                                          "Chargy Transparency Software Desktop Application",
-                                                                                                          "v1.00",
-                                                                                                          OpenSourceLicense.AGPL3,
-                                                                                                          "GraphDefined GmbH",
-                                                                                                          URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                                                          URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                                                          URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                                                          URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
-                                                                                                      ),
-                                                                                                      LegalStatus.GermanCalibrationLaw,
-                                                                                                      "cert",
-                                                                                                      "German PTB",
-                                                                                                      NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                                                      NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                                                  ),
-                                                                                                  new TransparencySoftwareStatus(
-                                                                                                      new TransparencySoftware(
-                                                                                                          "Chargy Transparency Software Mobile Application",
-                                                                                                          "v1.00",
-                                                                                                          OpenSourceLicense.AGPL3,
-                                                                                                          "GraphDefined GmbH",
-                                                                                                          URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                                                          URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                                                          URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                                                          URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
-                                                                                                      ),
-                                                                                                      LegalStatus.ForInformationOnly,
-                                                                                                      "no cert",
-                                                                                                      "GraphDefiend",
-                                                                                                      NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                                                      NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                                                  )
-                                                                                              }
+                                                                                              null
                                                                                           ),
 
                                                                                           "1. Stock",
                                                                                           GeoCoordinate.Parse(10.1, 20.2),
                                                                                           "Ladestation #1",
-                                                                                          new DisplayText[] {
+                                                                                          new[] {
                                                                                               DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                                                               DisplayText.Create(Languages.en, "Ken sent me!")
                                                                                           },
@@ -1623,7 +1584,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                               ParkingRestrictions.EV_ONLY,
                                                                                               ParkingRestrictions.PLUGGED
                                                                                           },
-                                                                                          new Image[] {
+                                                                                          new[] {
                                                                                               new Image(
                                                                                                   URL.Parse("http://example.com/pinguine.jpg"),
                                                                                                   ImageFileType.jpeg,
@@ -1636,7 +1597,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                           DateTime.Parse("2020-09-22")
                                                                                       )
                                                                                   },
-                                                                                  new DisplayText[] {
+                                                                                  new[] {
                                                                                       new DisplayText(Languages.de, "Hallo Welt!"),
                                                                                       new DisplayText(Languages.en, "Hello world!")
                                                                                   },
@@ -1676,25 +1637,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                           URL.Parse("http://ahzf.de/logo_small.gif")
                                                                                       )
                                                                                   ),
-                                                                                  new Facilities[] {
+                                                                                  new[] {
                                                                                       Facilities.CAFE
                                                                                   },
-                                                                                  "Europe/Berlin",
                                                                                   new Hours(
-                                                                                      new RegularHours[] {
+                                                                                      new[] {
                                                                                           new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                                                                           new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                                                                           new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                                                                           new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                                                                           new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                                                                       },
-                                                                                      new ExceptionalPeriod[] {
+                                                                                      new[] {
                                                                                           new ExceptionalPeriod(
                                                                                               DateTime.Parse("2020-09-21T00:00:00Z"),
                                                                                               DateTime.Parse("2020-09-22T00:00:00Z")
                                                                                           )
                                                                                       },
-                                                                                      new ExceptionalPeriod[] {
+                                                                                      new[] {
                                                                                           new ExceptionalPeriod(
                                                                                               DateTime.Parse("2020-12-24T00:00:00Z"),
                                                                                               DateTime.Parse("2020-12-26T00:00:00Z")
@@ -1702,7 +1662,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                       }
                                                                                   ),
                                                                                   false,
-                                                                                  new Image[] {
+                                                                                  new[] {
                                                                                       new Image(
                                                                                           URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                                                                           ImageFileType.jpeg,
@@ -1712,9 +1672,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                           URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
                                                                                       )
                                                                                   },
-                                                                                  new EnergyMix(
+                                                                                  new(
                                                                                       true,
-                                                                                      new EnergySource[] {
+                                                                                      new[] {
                                                                                           new EnergySource(
                                                                                               EnergySourceCategory.SOLAR,
                                                                                               80
@@ -1724,7 +1684,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                               20
                                                                                           )
                                                                                       },
-                                                                                      new EnvironmentalImpact[] {
+                                                                                      new[] {
                                                                                           new EnvironmentalImpact(
                                                                                               EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                                                               0.1
@@ -1733,58 +1693,65 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                       "Stadtwerke Jena-Ost",
                                                                                       "New Green Deal"
                                                                                   ),
-                                                                                  null,
-                                                                                  DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                                                                  DateTime.Parse("2020-09-21T00:00:00Z")
                                                                               ));
 
                 var response4            = await graphDefinedEMSP.PutEVSE(new EVSE(
-                                                                              EVSE_UId.Parse("DE*GEF*E*LOC0001*2"),
+                                                                              EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                                               StatusType.AVAILABLE,
-                                                                              new Connector[] {
+                                                                              new[] {
                                                                                   new Connector(
                                                                                       Connector_Id.Parse("1"),
-                                                                                      ConnectorType.CHADEMO,
+                                                                                      ConnectorType.IEC_62196_T2,
                                                                                       ConnectorFormats.SOCKET,
-                                                                                      PowerTypes.DC,
+                                                                                      PowerTypes.AC_3_PHASE,
                                                                                       400,
                                                                                       30,
-                                                                                      Tariff_Id.Parse("DE*GEF*T0003"),
+                                                                                      12,
+                                                                                      new Tariff_Id[] {
+                                                                                          Tariff_Id.Parse("DE*GEF*T0001"),
+                                                                                          Tariff_Id.Parse("DE*GEF*T0002")
+                                                                                      },
                                                                                       URL.Parse("https://open.charging.cloud/terms"),
                                                                                       DateTime.Parse("2020-09-21")
                                                                                   ),
                                                                                   new Connector(
                                                                                       Connector_Id.Parse("2"),
-                                                                                      ConnectorType.CHADEMO,
+                                                                                      ConnectorType.IEC_62196_T2_COMBO,
                                                                                       ConnectorFormats.CABLE,
-                                                                                      PowerTypes.DC,
+                                                                                      PowerTypes.AC_3_PHASE,
                                                                                       400,
                                                                                       20,
-                                                                                      Tariff_Id.Parse("DE*GEF*T0004"),
+                                                                                      8,
+                                                                                      new Tariff_Id[] {
+                                                                                          Tariff_Id.Parse("DE*GEF*T0003"),
+                                                                                          Tariff_Id.Parse("DE*GEF*T0004")
+                                                                                      },
                                                                                       URL.Parse("https://open.charging.cloud/terms"),
-                                                                                      DateTime.Parse("2021-11-13")
+                                                                                      DateTime.Parse("2020-09-22")
                                                                                   )
                                                                               },
-                                                                              EVSE_Id.Parse("DE*GEF*E*LOC0001*2"),
-                                                                              new StatusSchedule[] {
+                                                                              EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
+                                                                              new[] {
                                                                                   new StatusSchedule(
                                                                                       StatusType.INOPERATIVE,
-                                                                                      DateTime.Parse("2021-11-23"),
-                                                                                      DateTime.Parse("2021-11-24")
+                                                                                      DateTime.Parse("2020-09-23"),
+                                                                                      DateTime.Parse("2020-09-24")
                                                                                   ),
                                                                                   new StatusSchedule(
                                                                                       StatusType.OUTOFORDER,
-                                                                                      DateTime.Parse("2021-10-30"),
-                                                                                      DateTime.Parse("2021-10-31")
+                                                                                      DateTime.Parse("2020-12-30"),
+                                                                                      DateTime.Parse("2020-12-31")
                                                                                   )
                                                                               },
-                                                                              new Capability[] {
+                                                                              new[] {
                                                                                   Capability.RFID_READER,
                                                                                   Capability.RESERVABLE
                                                                               },
 
                                                                               // OCPI Computer Science Extensions
                                                                               new EnergyMeter(
-                                                                                  Meter_Id.Parse("Meter0815b"),
+                                                                                  Meter_Id.Parse("Meter0815"),
                                                                                   "EnergyMeter Model #1",
                                                                                   null,
                                                                                   "hw. v1.80",
@@ -1792,57 +1759,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                   "Energy Metering Services",
                                                                                   null,
                                                                                   null,
-                                                                                  null,
-                                                                                  new TransparencySoftwareStatus[] {
-                                                                                      new TransparencySoftwareStatus(
-                                                                                          new TransparencySoftware(
-                                                                                              "Chargy Transparency Software Desktop Application",
-                                                                                              "v1.00",
-                                                                                              OpenSourceLicense.AGPL3,
-                                                                                              "GraphDefined GmbH",
-                                                                                              URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                                              URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                                              URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                                              URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
-                                                                                          ),
-                                                                                          LegalStatus.GermanCalibrationLaw,
-                                                                                          "cert",
-                                                                                          "German PTB",
-                                                                                          NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                                          NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                                      ),
-                                                                                      new TransparencySoftwareStatus(
-                                                                                          new TransparencySoftware(
-                                                                                              "Chargy Transparency Software Mobile Application",
-                                                                                              "v1.00",
-                                                                                              OpenSourceLicense.AGPL3,
-                                                                                              "GraphDefined GmbH",
-                                                                                              URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                                              URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                                              URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                                              URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
-                                                                                          ),
-                                                                                          LegalStatus.ForInformationOnly,
-                                                                                          "no cert",
-                                                                                          "GraphDefiend",
-                                                                                          NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                                          NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                                      )
-                                                                                  }
+                                                                                  null
                                                                               ),
 
-                                                                              "2. Stock",
+                                                                              "1. Stock",
                                                                               GeoCoordinate.Parse(10.1, 20.2),
-                                                                              "Ladestation #2",
-                                                                              new DisplayText[] {
+                                                                              "Ladestation #1",
+                                                                              new[] {
                                                                                   DisplayText.Create(Languages.de, "Bitte klingeln!"),
-                                                                                  DisplayText.Create(Languages.en, "Dave sent me!")
+                                                                                  DisplayText.Create(Languages.en, "Ken sent me!")
                                                                               },
                                                                               new ParkingRestrictions[] {
                                                                                   ParkingRestrictions.EV_ONLY,
                                                                                   ParkingRestrictions.PLUGGED
                                                                               },
-                                                                              new Image[] {
+                                                                              new[] {
                                                                                   new Image(
                                                                                       URL.Parse("http://example.com/pinguine.jpg"),
                                                                                       ImageFileType.jpeg,
@@ -1854,6 +1785,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                               },
                                                                               DateTime.Parse("2020-09-22")
                                                                           ),
+                                                                          CountryCode.Parse("DE"),
+                                                                          Party_Id.   Parse("GEF"),
                                                                           Location_Id.Parse("LOC0001"));
 
                 // HTTP/1.1 201 Created
@@ -1920,50 +1853,68 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                               CDR_Id.     Parse("CDR0001"),
                                                                               DateTime.   Parse("2020-04-12T18:20:19Z").ToUniversalTime(),
                                                                               DateTime.   Parse("2020-04-12T22:20:19Z").ToUniversalTime(),
-                                                                              Auth_Id.    Parse("1234"),
+                                                                              new CDRToken(
+                                                                                  CountryCode.Parse("DE"),
+                                                                                  Party_Id.   Parse("GEF"),
+                                                                                  Token_Id.   Parse("1234"),
+                                                                                  TokenType. RFID,
+                                                                                  Contract_Id.Parse("C1234")
+                                                                              ),
                                                                               AuthMethods.AUTH_REQUEST,
-                                                                              new Location(
-                                                                                  CountryCode. Parse("DE"),
-                                                                                  Party_Id.    Parse("GEF"),
-                                                                                  Location_Id. Parse("LOC0001"),
-                                                                                  LocationType.UNDERGROUND_GARAGE,
+                                                                              new CDRLocation(
+                                                                                  Location_Id.     Parse("LOC0001"),
                                                                                   "Biberweg 18",
                                                                                   "Jena",
-                                                                                  "07749",
                                                                                   Country.Germany,
-                                                                                  GeoCoordinate.   Parse(10, 20)
+                                                                                  GeoCoordinate.   Parse(10, 20),
+                                                                                  EVSE_UId.        Parse("DE*GEF*E*LOC0001*1"),
+                                                                                  EVSE_Id.         Parse("DE*GEF*E*LOC0001*1"),
+                                                                                  Connector_Id.    Parse("1"),
+                                                                                  ConnectorType.   IEC_62196_T2,
+                                                                                  ConnectorFormats.SOCKET,
+                                                                                  PowerTypes.      AC_3_PHASE,
+                                                                                  "Name?",
+                                                                                  "07749"
                                                                               ),
                                                                               Currency.EUR,
 
                                                                               new ChargingPeriod[] {
                                                                                   new ChargingPeriod(
-                                                                                      DateTime.Parse("2020-04-12T18:21:49Z"),
-                                                                                      new CDRDimension[] {
+                                                                                      DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
+                                                                                      new[] {
                                                                                           new CDRDimension(
                                                                                               CDRDimensionType.ENERGY,
                                                                                               1.33M
                                                                                           )
-                                                                                      }
+                                                                                      },
+                                                                                      Tariff_Id.Parse("DE*GEF*T0001")
                                                                                   ),
                                                                                   new ChargingPeriod(
-                                                                                      DateTime.Parse("2020-04-12T18:21:50Z"),
-                                                                                      new CDRDimension[] {
+                                                                                      DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
+                                                                                      new[] {
                                                                                           new CDRDimension(
                                                                                               CDRDimensionType.TIME,
                                                                                               5.12M
                                                                                           )
-                                                                                      }
+                                                                                      },
+                                                                                      Tariff_Id.Parse("DE*GEF*T0002")
                                                                                   )
                                                                               },
 
-                                                                              // Total cost
-                                                                              10.00M,
+                                                                              // Total costs
+                                                                              new Price(
+                                                                                  10.00,
+                                                                                  11.60
+                                                                              ),
 
                                                                               // Total Energy
                                                                               50.00M,
 
                                                                               // Total time
                                                                               TimeSpan.              FromMinutes(30),
+
+                                                                              Session_Id.            Parse("0815"),
+                                                                              AuthorizationReference.Parse("Auth0815"),
                                                                               Meter_Id.              Parse("Meter0815"),
 
                                                                               // OCPI Computer Science Extensions
@@ -1977,7 +1928,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                   null,
                                                                                   null,
                                                                                   null,
-                                                                                  new TransparencySoftwareStatus[] {
+                                                                                  new[] {
                                                                                       new TransparencySoftwareStatus(
                                                                                           new TransparencySoftware(
                                                                                               "Chargy Transparency Software Desktop Application",
@@ -2016,21 +1967,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                               ),
                                                                               null,
 
-                                                                              new Tariff[] {
+                                                                              new[] {
                                                                                   new Tariff(
                                                                                       CountryCode.Parse("DE"),
                                                                                       Party_Id.   Parse("GEF"),
                                                                                       Tariff_Id.  Parse("TARIFF0001"),
                                                                                       Currency.EUR,
-                                                                                      new TariffElement[] {
+                                                                                      new[] {
                                                                                           new TariffElement(
                                                                                               new PriceComponent[] {
                                                                                                   PriceComponent.ChargingTime(
                                                                                                       TimeSpan.FromSeconds(300),
-                                                                                                      2.00M
+                                                                                                      2.00M,
+                                                                                                      0.10M
                                                                                                   )
                                                                                               },
-                                                                                              new TariffRestrictions [] {
+                                                                                              new[] {
                                                                                                   new TariffRestrictions(
                                                                                                       Time.FromHourMin(08,00),       // Start time
                                                                                                       Time.FromHourMin(18,00),       // End time
@@ -2038,6 +1990,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                                       DateTime.Parse("2020-12-31"),  // End timestamp
                                                                                                       1.12M,                         // MinkWh
                                                                                                       5.67M,                         // MaxkWh
+                                                                                                      1.34M,                         // MinCurrent
+                                                                                                      8.89M,                         // MaxCurrent
                                                                                                       1.49M,                         // MinPower
                                                                                                       9.91M,                         // MaxPower
                                                                                                       TimeSpan.FromMinutes(10),      // MinDuration
@@ -2045,19 +1999,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                                       new DayOfWeek[] {
                                                                                                           DayOfWeek.Monday,
                                                                                                           DayOfWeek.Tuesday
-                                                                                                      }
+                                                                                                      },
+                                                                                                      ReservationRestrictions.RESERVATION
                                                                                                   )
                                                                                               }
                                                                                           )
                                                                                       },
-                                                                                      new DisplayText[] {
+                                                                                      TariffTypes.PROFILE_GREEN,
+                                                                                      new[] {
                                                                                           new DisplayText(Languages.de, "Hallo Welt!"),
                                                                                           new DisplayText(Languages.en, "Hello world!"),
                                                                                       },
                                                                                       URL.Parse("https://open.charging.cloud"),
+                                                                                      new Price( // Min Price
+                                                                                          1.10,
+                                                                                          1.26
+                                                                                      ),
+                                                                                      new Price( // Max Price
+                                                                                          2.20,
+                                                                                          2.52
+                                                                                      ),
+                                                                                      DateTime.Parse("2020-12-01").ToUniversalTime(), // Start timestamp
+                                                                                      DateTime.Parse("2020-12-31").ToUniversalTime(), // End timestamp
                                                                                       new EnergyMix(
                                                                                           true,
-                                                                                          new EnergySource[] {
+                                                                                          new[] {
                                                                                               new EnergySource(
                                                                                                   EnergySourceCategory.SOLAR,
                                                                                                   80
@@ -2067,7 +2033,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                                   20
                                                                                               )
                                                                                           },
-                                                                                          new EnvironmentalImpact[] {
+                                                                                          new[] {
                                                                                               new EnvironmentalImpact(
                                                                                                   EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                                                                   0.1
@@ -2082,7 +2048,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                                                               new SignedData(
                                                                                   EncodingMethod.GraphDefined,
-                                                                                  new SignedValue[] {
+                                                                                  new[] {
                                                                                       new SignedValue(
                                                                                           SignedValueNature.START,
                                                                                           "PlainStartValue",
@@ -2104,10 +2070,44 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                   URL.Parse("https://open.charging.cloud/pools/1/stations/1/evse/1/publicKey")
                                                                               ),
 
+                                                                              // Total Fixed Costs
+                                                                              new Price(
+                                                                                  20.00,
+                                                                                  23.10
+                                                                              ),
+
+                                                                              // Total Energy Cost
+                                                                              new Price(
+                                                                                  20.00,
+                                                                                  23.10
+                                                                              ),
+
+                                                                              // Total Time Cost
+                                                                              new Price(
+                                                                                  20.00,
+                                                                                  23.10
+                                                                              ),
+
                                                                               // Total Parking Time
                                                                               TimeSpan.FromMinutes(120),
 
+                                                                              // Total Parking Cost
+                                                                              new Price(
+                                                                                  20.00,
+                                                                                  23.10
+                                                                              ),
+
+                                                                              // Total Reservation Cost
+                                                                              new Price(
+                                                                                  20.00,
+                                                                                  23.10
+                                                                              ),
+
                                                                               "Remark!",
+                                                                              InvoiceReference_Id.Parse("Invoice:0815"),
+                                                                              true, // IsCredit
+                                                                              CreditReference_Id.Parse("Credit:0815"),
+                                                                              false,
 
                                                                               DateTime.Parse("2020-09-12").ToUniversalTime()
 
@@ -2115,7 +2115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                 // HTTP/1.1 201 Created
                 // Date:                          Wed, 28 Dec 2022 23:20:07 GMT
-                // Location:                      /2.1.1/emsp/cdrs/CDR0001
+                // Location:                      /2.2/emsp/cdrs/CDR0001
                 // Access-Control-Allow-Methods:  OPTIONS, GET, POST, DELETE
                 // Access-Control-Allow-Headers:  Authorization
                 // Last-Modified:                 2020-09-11T22:00:00.000Z

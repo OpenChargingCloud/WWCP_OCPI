@@ -404,6 +404,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         public IEnumerable<EMSPClient>                      EMSPClients
             => emspClients;
 
+        /// <summary>
+        /// The default request timeout for new CPO/EMSP clients.
+        /// </summary>
+        public TimeSpan?                                    RequestTimeout     { get; set; }
+
         #endregion
 
         #region Custom JSON parsers
@@ -460,7 +465,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                           HTTPPath?                                   BasePath         = null,
                           String                                      HTTPRealm        = DefaultHTTPRealm,
                           IEnumerable<KeyValuePair<String, String>>?  HTTPLogins       = null,
-                          String?                                     HTMLTemplate     = null)
+                          String?                                     HTMLTemplate     = null,
+
+                          TimeSpan?                                   RequestTimeout   = null)
 
             : base(HTTPServer,
                    null,
@@ -515,7 +522,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             RegisterURITemplates();
 
-            this.HTMLTemplate = HTMLTemplate ?? GetResourceString("template.html");
+            this.HTMLTemplate        = HTMLTemplate ?? GetResourceString("template.html");
+            this.RequestTimeout      = RequestTimeout;
 
         }
 
@@ -528,7 +536,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #region (protected override) GetResourceStream      (ResourceName)
 
-        protected override Stream GetResourceStream(String ResourceName)
+        protected override Stream? GetResourceStream(String ResourceName)
 
             => GetResourceStream(ResourceName,
                                  new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
@@ -539,7 +547,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #region (protected override) GetResourceMemoryStream(ResourceName)
 
-        protected override MemoryStream GetResourceMemoryStream(String ResourceName)
+        protected override MemoryStream? GetResourceMemoryStream(String ResourceName)
 
             => GetResourceMemoryStream(ResourceName,
                                        new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),

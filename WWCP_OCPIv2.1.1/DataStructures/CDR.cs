@@ -881,94 +881,94 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                  = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            IncludeOwnerInformation
-                               ? new JProperty("country_code",              CountryCode.                 ToString())
+                               ? new JProperty("country_code",             CountryCode.                 ToString())
                                : null,
 
                            IncludeOwnerInformation
-                               ? new JProperty("party_id",                  PartyId.                     ToString())
+                               ? new JProperty("party_id",                 PartyId.                     ToString())
                                : null,
 
-                                 new JProperty("id",                        Id.                          ToString()),
-                                 new JProperty("start_date_time",           Start.                       ToIso8601()),
-                                 new JProperty("end_date_time",             End.                         ToIso8601()),
-                                 new JProperty("auth_id",                   AuthId.                      ToString()),
-                                 new JProperty("auth_method",               AuthMethod.                  ToString()),
-                                 new JProperty("location",                  Location.                    ToJSON(false,
-                                                                                                                EMPId,
-                                                                                                                CustomLocationSerializer,
-                                                                                                                CustomAdditionalGeoLocationSerializer,
-                                                                                                                CustomEVSESerializer,
-                                                                                                                CustomStatusScheduleSerializer,
-                                                                                                                CustomConnectorSerializer,
-                                                                                                                CustomEnergyMeterSerializer,
-                                                                                                                CustomTransparencySoftwareStatusSerializer,
-                                                                                                                CustomTransparencySoftwareSerializer,
-                                                                                                                CustomDisplayTextSerializer,
-                                                                                                                CustomBusinessDetailsSerializer,
-                                                                                                                CustomHoursSerializer,
-                                                                                                                CustomImageSerializer,
-                                                                                                                CustomEnergyMixSerializer,
-                                                                                                                CustomEnergySourceSerializer,
-                                                                                                                CustomEnvironmentalImpactSerializer)),
+                                 new JProperty("id",                       Id.                          ToString()),
+                                 new JProperty("start_date_time",          Start.                       ToIso8601()),
+                                 new JProperty("end_date_time",            End.                         ToIso8601()),
+                                 new JProperty("auth_id",                  AuthId.                      ToString()),
+                                 new JProperty("auth_method",              AuthMethod.                  ToString()),
+                                 new JProperty("location",                 Location.                    ToJSON(false,
+                                                                                                               EMPId,
+                                                                                                               CustomLocationSerializer,
+                                                                                                               CustomAdditionalGeoLocationSerializer,
+                                                                                                               CustomEVSESerializer,
+                                                                                                               CustomStatusScheduleSerializer,
+                                                                                                               CustomConnectorSerializer,
+                                                                                                               CustomEnergyMeterSerializer,
+                                                                                                               CustomTransparencySoftwareStatusSerializer,
+                                                                                                               CustomTransparencySoftwareSerializer,
+                                                                                                               CustomDisplayTextSerializer,
+                                                                                                               CustomBusinessDetailsSerializer,
+                                                                                                               CustomHoursSerializer,
+                                                                                                               CustomImageSerializer,
+                                                                                                               CustomEnergyMixSerializer,
+                                                                                                               CustomEnergySourceSerializer,
+                                                                                                               CustomEnvironmentalImpactSerializer)),
 
                            MeterId.HasValue
-                               ? new JProperty("meter_id",                  MeterId.               Value.ToString())
+                               ? new JProperty("meter_id",                 MeterId.               Value.ToString())
                                : null,
 
                            EnergyMeter is not null
-                               ? new JProperty("energy_meter",              EnergyMeter.                 ToJSON(CustomEnergyMeterSerializer))
+                               ? new JProperty("energy_meter",             EnergyMeter.                 ToJSON(CustomEnergyMeterSerializer))
                                : null,
 
                            SignedData is not null
-                               ? new JProperty("signed_data",               SignedData.                  ToJSON(CustomSignedDataSerializer,
-                                                                                                                CustomSignedValueSerializer))
+                               ? new JProperty("signed_data",              SignedData.                  ToJSON(CustomSignedDataSerializer,
+                                                                                                               CustomSignedValueSerializer))
                                : null,
 
                            TransparencySoftwares.Any()
-                               ? new JProperty("transparency_softwares",    new JArray(TransparencySoftwares.Select(transparencySoftwareStatus => transparencySoftwareStatus.ToJSON(CustomTransparencySoftwareStatusSerializer))))
+                               ? new JProperty("transparency_softwares",   new JArray(TransparencySoftwares.Select(transparencySoftwareStatus => transparencySoftwareStatus.ToJSON(CustomTransparencySoftwareStatusSerializer))))
                                : null,
 
-                                 new JProperty("currency",                  Currency.                    ToString()),
+                                 new JProperty("currency",                 Currency.                    ToString()),
 
                            Tariffs.Any()
-                               ? new JProperty("tariffs",                   new JArray(Tariffs.              Select(tariff               => tariff.              ToJSON(false,
-                                                                                                                                                                        CustomTariffSerializer,
-                                                                                                                                                                        CustomDisplayTextSerializer,
-                                                                                                                                                                        CustomTariffElementSerializer,
-                                                                                                                                                                        CustomPriceComponentSerializer,
-                                                                                                                                                                        CustomTariffRestrictionsSerializer,
-                                                                                                                                                                        CustomEnergyMixSerializer,
-                                                                                                                                                                        CustomEnergySourceSerializer,
-                                                                                                                                                                        CustomEnvironmentalImpactSerializer))))
+                               ? new JProperty("tariffs",                  new JArray(Tariffs.              Select(tariff               => tariff.              ToJSON(false,
+                                                                                                                                                                       CustomTariffSerializer,
+                                                                                                                                                                       CustomDisplayTextSerializer,
+                                                                                                                                                                       CustomTariffElementSerializer,
+                                                                                                                                                                       CustomPriceComponentSerializer,
+                                                                                                                                                                       CustomTariffRestrictionsSerializer,
+                                                                                                                                                                       CustomEnergyMixSerializer,
+                                                                                                                                                                       CustomEnergySourceSerializer,
+                                                                                                                                                                       CustomEnvironmentalImpactSerializer))))
                                : null,
 
                            ChargingPeriods.Any()
-                               ? new JProperty("charging_periods",          new JArray(ChargingPeriods.      Select(chargingPeriod             => chargingPeriod.            ToJSON(CustomChargingPeriodSerializer,
-                                                                                                                                                                                    CustomCDRDimensionSerializer))))
+                               ? new JProperty("charging_periods",         new JArray(ChargingPeriods.      Select(chargingPeriod             => chargingPeriod.            ToJSON(CustomChargingPeriodSerializer,
+                                                                                                                                                                                   CustomCDRDimensionSerializer))))
                                : null,
 
-                                 new JProperty("total_cost",                TotalCost),
-                                 new JProperty("total_energy",              TotalEnergy),
-                                 new JProperty("total_time",                TotalTime.                   TotalHours),
+                                 new JProperty("total_cost",               TotalCost),
+                                 new JProperty("total_energy",             TotalEnergy),
+                                 new JProperty("total_time",               TotalTime.                   TotalHours),
 
                            TotalParkingTime.HasValue
-                               ? new JProperty("total_parking_time",        TotalParkingTime.      Value.TotalHours)
+                               ? new JProperty("total_parking_time",       TotalParkingTime.      Value.TotalHours)
                                : null,
 
                            Remark.IsNotNullOrEmpty()
-                               ? new JProperty("remark",                    Remark)
+                               ? new JProperty("remark",                   Remark)
                                : null,
 
-                                 new JProperty("last_updated",              LastUpdated.                 ToIso8601())
+                                 new JProperty("last_updated",             LastUpdated.                 ToIso8601())
 
                        );
 
             return CustomCDRSerializer is not null
-                       ? CustomCDRSerializer(this, JSON)
-                       : JSON;
+                       ? CustomCDRSerializer(this, json)
+                       : json;
 
         }
 
@@ -1286,38 +1286,38 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 unchecked
                 {
 
-                    cachedHashCode = CountryCode.            GetHashCode()        * 73 ^
-                                     PartyId.                GetHashCode()        * 71 ^
-                                     Id.                     GetHashCode()        * 67 ^
-                                     Start.                  GetHashCode()        * 61 ^
-                                     End.                    GetHashCode()        * 59 ^
-                                     AuthId.                 GetHashCode()        * 53 ^
-                                     AuthMethod.             GetHashCode()        * 47 ^
-                                     Location.               GetHashCode()        * 43 ^
-                                     Currency.               GetHashCode()        * 41 ^
-                                     ChargingPeriods.        CalcHashCode()       * 37 ^
-                                     Tariffs.                CalcHashCode()       * 31 ^
-                                     TotalCost.              GetHashCode()        * 29 ^
-                                     TotalEnergy.            GetHashCode()        * 23 ^
-                                     TotalTime.              GetHashCode()        * 19 ^
-                                     LastUpdated.            GetHashCode()        * 17 ^
+                    cachedHashCode = CountryCode.           GetHashCode()        * 73 ^
+                                     PartyId.               GetHashCode()        * 71 ^
+                                     Id.                    GetHashCode()        * 67 ^
+                                     Start.                 GetHashCode()        * 61 ^
+                                     End.                   GetHashCode()        * 59 ^
+                                     AuthId.                GetHashCode()        * 53 ^
+                                     AuthMethod.            GetHashCode()        * 47 ^
+                                     Location.              GetHashCode()        * 43 ^
+                                     Currency.              GetHashCode()        * 41 ^
+                                     ChargingPeriods.       CalcHashCode()       * 37 ^
+                                     Tariffs.               CalcHashCode()       * 31 ^
+                                     TotalCost.             GetHashCode()        * 29 ^
+                                     TotalEnergy.           GetHashCode()        * 23 ^
+                                     TotalTime.             GetHashCode()        * 19 ^
+                                     LastUpdated.           GetHashCode()        * 17 ^
 
-                                     (MeterId?.              GetHashCode()  ?? 0) * 13 ^
-                                     (EnergyMeter?.          GetHashCode()  ?? 0) * 11 ^
-                                     (TransparencySoftwares?.CalcHashCode() ?? 0) *  7 ^
-                                     (SignedData?.           GetHashCode()  ?? 0) *  5 ^
-                                     (TotalParkingTime?.     GetHashCode()  ?? 0) *  3 ^
-                                      Remark?.               GetHashCode()  ?? 0;
+                                    (MeterId?.              GetHashCode()  ?? 0) * 13 ^
+                                    (EnergyMeter?.          GetHashCode()  ?? 0) * 11 ^
+                                    (TransparencySoftwares?.CalcHashCode() ?? 0) *  7 ^
+                                    (SignedData?.           GetHashCode()  ?? 0) *  5 ^
+                                    (TotalParkingTime?.     GetHashCode()  ?? 0) *  3 ^
+                                     Remark?.               GetHashCode()  ?? 0;
 
-                return cachedHashCode.Value;
+                    return cachedHashCode.Value;
+
+                }
 
             }
 
         }
 
-    }
-
-    #endregion
+        #endregion
 
         #region (override) ToString()
 

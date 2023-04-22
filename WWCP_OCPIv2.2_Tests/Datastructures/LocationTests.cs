@@ -63,7 +63,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
@@ -71,11 +71,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     )
                                 },
                                 ParkingType.PARKING_LOT,
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -108,7 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -120,7 +120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -141,7 +141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
@@ -149,7 +149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -162,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -202,24 +202,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -227,7 +227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -237,9 +237,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
                                     )
                                 },
-                                new EnergyMix(
+                                new(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -249,7 +249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1

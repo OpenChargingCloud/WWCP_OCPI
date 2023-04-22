@@ -25,11 +25,11 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 {
 
     public static class TestHelpers
@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
 
     /// <summary>
-    /// OCPI v2.1.1 Node test defaults.
+    /// OCPI v2.2 Node test defaults.
     /// </summary>
     public abstract class ANodeTests
     {
@@ -99,9 +99,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected          WebAPI.OCPIWebAPI?                                          emspWebAPI1;
         protected          WebAPI.OCPIWebAPI?                                          emspWebAPI2;
 
-        public             URL                                                         cpoVersionsAPIURL   = URL.Parse("http://127.0.0.1:7134/versions");
-        public             URL                                                         emspVersionsAPIURL1 = URL.Parse("http://127.0.0.1:7135/versions");
-        public             URL                                                         emspVersionsAPIURL2 = URL.Parse("http://127.0.0.1:7136/versions");
+        public             URL                                                         cpoVersionsAPIURL   = URL.Parse("http://127.0.0.1:7234/versions");
+        public             URL                                                         emspVersionsAPIURL1 = URL.Parse("http://127.0.0.1:7235/versions");
+        public             URL                                                         emspVersionsAPIURL2 = URL.Parse("http://127.0.0.1:7236/versions");
 
         //protected readonly Dictionary<Operator_Id, HashSet<EVSEDataRecord>>            EVSEDataRecords;
         //protected readonly Dictionary<Operator_Id, HashSet<EVSEStatusRecord>>          EVSEStatusRecords;
@@ -146,17 +146,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Timestamp.Reset();
 
             cpoHTTPServer    = new HTTPServer(
-                                   IPPort.Parse(7134),
+                                   IPPort.Parse(7234),
                                    Autostart: true
                                );
 
             emspHTTPServer1  = new HTTPServer(
-                                   IPPort.Parse(7135),
+                                   IPPort.Parse(7235),
                                    Autostart: true
                                );
 
             emspHTTPServer2  = new HTTPServer(
-                                   IPPort.Parse(7136),
+                                   IPPort.Parse(7236),
                                    Autostart: true
                                );
 
@@ -172,13 +172,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                   new CommonAPI(
 
                                       cpoVersionsAPIURL,
-                                      new BusinessDetails(
-                                          "GraphDefined CPO Services",
-                                          URL.Parse("https://www.graphdefined.com/cpo")
-                                      ),
-                                      CountryCode.Parse("DE"),
-                                      Party_Id.   Parse("GEF"),
-                                      Roles.      CPO,
+                                      new[] {
+                                          new CredentialsRole(
+                                               CountryCode.Parse("DE"),
+                                               Party_Id.   Parse("GEF"),
+                                               Roles.      CPO,
+                                               new BusinessDetails(
+                                                   "GraphDefined CPO Services",
+                                                   URL.Parse("https://www.graphdefined.com/cpo")
+                                               )
+                                          )
+                                      },
 
                                       HTTPServer:            cpoHTTPServer,
                                       HTTPHostname:          HTTPHostname.Any,
@@ -197,13 +201,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                   new CommonAPI(
 
                                       emspVersionsAPIURL1,
-                                      new BusinessDetails(
-                                          "GraphDefined EMSP #1 Services",
-                                          URL.Parse("https://www.graphdefined.com/emsp1")
-                                      ),
-                                      CountryCode.Parse("DE"),
-                                      Party_Id.   Parse("GDF"),
-                                      Roles.      EMSP,
+                                      new[] {
+                                          new CredentialsRole(
+                                               CountryCode.Parse("DE"),
+                                               Party_Id.   Parse("GDF"),
+                                               Roles.      EMSP,
+                                               new BusinessDetails(
+                                                   "GraphDefined EMSP #1 Services",
+                                                   URL.Parse("https://www.graphdefined.com/emsp1")
+                                               )
+                                          )
+                                      },
 
                                       HTTPServer:            emspHTTPServer1,
                                       HTTPHostname:          HTTPHostname.Any,
@@ -222,13 +230,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                   new CommonAPI(
 
                                       emspVersionsAPIURL2,
-                                      new BusinessDetails(
-                                          "GraphDefined EMSP #2 Services",
-                                          URL.Parse("https://www.graphdefined.com/emsp2")
-                                      ),
-                                      CountryCode.Parse("DE"),
-                                      Party_Id.   Parse("GD2"),
-                                      Roles.      EMSP,
+                                      new[] {
+                                          new CredentialsRole(
+                                               CountryCode.Parse("DE"),
+                                               Party_Id.   Parse("GD2"),
+                                               Roles.      EMSP,
+                                               new BusinessDetails(
+                                                   "GraphDefined EMSP #2 Services",
+                                                   URL.Parse("https://www.graphdefined.com/emsp2")
+                                               )
+                                          )
+                                      },
 
                                       HTTPServer:            emspHTTPServer2,
                                       HTTPHostname:          HTTPHostname.Any,
@@ -250,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        cpoWebAPI.CommonAPI,
                                        CountryCode.Parse("DE"),
                                        Party_Id.   Parse("GEF"),
-                                       URLPathPrefix:    HTTPPath.Parse("2.1.1/cpo"),
+                                       URLPathPrefix:    HTTPPath.Parse("2.2/cpo"),
                                        //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
                                        AllowDowngrades:  false
                                    );
@@ -259,7 +271,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        emspWebAPI1.CommonAPI,
                                        CountryCode.Parse("DE"),
                                        Party_Id.   Parse("GDF"),
-                                       URLPathPrefix:    HTTPPath.Parse("2.1.1/emsp1"),
+                                       URLPathPrefix:    HTTPPath.Parse("2.2/emsp1"),
                                        //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
                                        AllowDowngrades:  false
                                    );
@@ -268,7 +280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        emspWebAPI2.CommonAPI,
                                        CountryCode.Parse("DE"),
                                        Party_Id.   Parse("GD2"),
-                                       URLPathPrefix:    HTTPPath.Parse("2.1.1/emsp2"),
+                                       URLPathPrefix:    HTTPPath.Parse("2.2/emsp2"),
                                        //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
                                        AllowDowngrades:  false
                                    );
@@ -291,9 +303,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                              AccessToken:        AccessToken.Parse("yyyyyy"),
                                              VersionsURL:        emspVersionsAPIURL1,
                                              VersionIds:         new[] {
-                                                                     Version_Id.Parse("2.1.1")
+                                                                     Version_Id.Parse("2.2")
                                                                  },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             SelectedVersionId:  Version_Id.Parse("2.2"),
                                              Status:             RemoteAccessStatus.ONLINE
                                          )
                                      },
@@ -316,9 +328,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                              AccessToken:        AccessToken.Parse("ffffff"),
                                              VersionsURL:        emspVersionsAPIURL2,
                                              VersionIds:         new[] {
-                                                                     Version_Id.Parse("2.1.1")
+                                                                     Version_Id.Parse("2.2")
                                                                  },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             SelectedVersionId:  Version_Id.Parse("2.2"),
                                              Status:             RemoteAccessStatus.ONLINE
                                          )
                                      },
@@ -350,9 +362,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                              AccessToken:        AccessToken.Parse("xxxxxx"),
                                              VersionsURL:        cpoVersionsAPIURL,
                                              VersionIds:         new[] {
-                                                                     Version_Id.Parse("2.1.1")
+                                                                     Version_Id.Parse("2.2")
                                                                  },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             SelectedVersionId:  Version_Id.Parse("2.2"),
                                              Status:             RemoteAccessStatus.ONLINE
                                          )
                                      },
@@ -379,9 +391,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                              AccessToken:        AccessToken.Parse("eeeeee"),
                                              VersionsURL:        cpoVersionsAPIURL,
                                              VersionIds:         new[] {
-                                                                     Version_Id.Parse("2.1.1")
+                                                                     Version_Id.Parse("2.2")
                                                                  },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                             SelectedVersionId:  Version_Id.Parse("2.2"),
                                              Status:             RemoteAccessStatus.ONLINE
                                          )
                                      },

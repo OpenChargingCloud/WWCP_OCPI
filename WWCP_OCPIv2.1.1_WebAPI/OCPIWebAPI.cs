@@ -405,7 +405,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         public IEnumerable<EMSPClient>                      EMSPClients
             => emspClients;
 
-
         /// <summary>
         /// The default request timeout for new CPO/EMSP clients.
         /// </summary>

@@ -27,4 +27,8 @@
     <ProjectReference Include="..\WWCP_OCPIv2.2_WebAPI\WWCP_OCPIv2.2_WebAPI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="AdapterTests\" />
+  </ItemGroup>
+
 </Project>

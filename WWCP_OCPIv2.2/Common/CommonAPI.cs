@@ -141,7 +141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a post credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPostCredentialsRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnPostCredentialsRequest = new ();
 
         /// <summary>
         /// An event sent whenever a post credentials request was received.
@@ -164,7 +164,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a post credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPostCredentialsResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnPostCredentialsResponse = new ();
 
         /// <summary>
         /// An event sent whenever a post credentials response was sent.
@@ -191,7 +191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a put credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPutCredentialsRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnPutCredentialsRequest = new ();
 
         /// <summary>
         /// An event sent whenever a put credentials request was received.
@@ -214,7 +214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a put credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPutCredentialsResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnPutCredentialsResponse = new ();
 
         /// <summary>
         /// An event sent whenever a put credentials response was sent.
@@ -241,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnDeleteCredentialsRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnDeleteCredentialsRequest = new ();
 
         /// <summary>
         /// An event sent whenever a delete credentials request was received.
@@ -264,7 +264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnDeleteCredentialsResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnDeleteCredentialsResponse = new ();
 
         /// <summary>
         /// An event sent whenever a delete credentials response was sent.
@@ -315,14 +315,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          HTTPHostname?                 HTTPHostname              = null,
                          IPPort?                       HTTPServerPort            = null,
                          String                        HTTPServerName            = DefaultHTTPServerName,
-                         String                        ExternalDNSName           = null,
+                         String?                       ExternalDNSName           = null,
                          HTTPPath?                     URLPathPrefix             = null,
                          HTTPPath?                     BasePath                  = null,
                          String                        HTTPServiceName           = DefaultHTTPServiceName,
-                         DNSClient                     DNSClient                 = null,
+                         DNSClient?                    DNSClient                 = null,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
-                         Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
+                         Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
 
