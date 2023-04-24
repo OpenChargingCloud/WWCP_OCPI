@@ -29,8 +29,6 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
-using cloud.charging.open.protocols.WWCP;
-
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP

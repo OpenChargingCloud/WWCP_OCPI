@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>WWCP_OCPIv2._2_WebAPI</RootNamespace>
+    <TargetFramework>net7.0</TargetFramework>
+    <RootNamespace>cloud.charging.open.protocols.OCPIv2_2_1.WebAPI</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
