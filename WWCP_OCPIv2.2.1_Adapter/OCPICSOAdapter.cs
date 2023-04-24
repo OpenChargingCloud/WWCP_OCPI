@@ -20,6 +20,7 @@
 using org.GraphDefined.Vanaheimr.Illias;
 
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
@@ -402,6 +403,72 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         //    return Array.Empty<Tariff_Id>();
 
         //}
+
+
+        #region AddRemoteParty(...)
+
+        public Boolean AddRemoteParty(CountryCode               CountryCode,
+                                      Party_Id                  PartyId,
+                                      Roles                     Role,
+                                      BusinessDetails           BusinessDetails,
+
+                                      AccessToken               AccessToken,
+
+                                      AccessToken               RemoteAccessToken,
+                                      URL                       RemoteVersionsURL,
+                                      IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                      Version_Id?               SelectedVersionId           = null,
+
+                                      Boolean?                  AccessTokenBase64Encoding   = null,
+                                      AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
+                                      RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
+                                      PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
+        {
+
+            return CommonAPI.AddRemoteParty(CountryCode,
+                                            PartyId,
+                                            Role,
+                                            BusinessDetails,
+
+                                            AccessToken,
+
+                                            RemoteAccessToken,
+                                            RemoteVersionsURL,
+                                            RemoteVersionIds,
+                                            SelectedVersionId,
+
+                                            AccessTokenBase64Encoding,
+                                            AccessStatus,
+                                            RemoteStatus,
+                                            PartyStatus);
+
+        }
+
+        #endregion
+
+        #region AddRemoteParty(...)
+
+        public Boolean AddRemoteParty(CountryCode      CountryCode,
+                                      Party_Id         PartyId,
+                                      Roles            Role,
+                                      BusinessDetails  BusinessDetails,
+
+                                      AccessToken      AccessToken,
+                                      AccessStatus     AccessStatus   = AccessStatus.ALLOWED,
+
+                                      PartyStatus      PartyStatus    = PartyStatus. ENABLED)
+        {
+
+            return CommonAPI.AddRemoteParty(CountryCode,
+                                            PartyId,
+                                            Role,
+                                            BusinessDetails,
+                                            AccessToken,
+                                            AccessStatus,
+                                            PartyStatus);
+        }
+
+        #endregion
 
 
 

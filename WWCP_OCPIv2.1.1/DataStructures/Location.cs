@@ -1597,7 +1597,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null)
         {
 
-            this.ETag = SHA256.Create().ComputeHash(ToJSON(true,
+            this.ETag = SHA256.HashData(ToJSON(true,
                                                            EMPId,
                                                            CustomLocationSerializer,
                                                            CustomAdditionalGeoLocationSerializer,

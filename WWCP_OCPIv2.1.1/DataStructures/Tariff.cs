@@ -170,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.LastUpdated     = LastUpdated ?? Timestamp.Now;
 
-            this.ETag            = SHA256.Create().ComputeHash(ToJSON(true,
+            this.ETag            = SHA256.HashData(ToJSON(true,
                                                                       CustomTariffSerializer,
                                                                       CustomDisplayTextSerializer,
                                                                       CustomTariffElementSerializer,

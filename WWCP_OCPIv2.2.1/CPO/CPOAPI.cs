@@ -1166,7 +1166,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// The default CPO API logfile name.
         /// </summary>
-        public  const              String    DefaultLogfileName       = "OCPI_CPOAPI.log";
+        public     static readonly String    DefaultLogfileName       = $"OCPI{Version.Id}_CPOAPI.log";
+
+
+        protected Newtonsoft.Json.Formatting JSONFormat               = Newtonsoft.Json.Formatting.Indented;
 
         #endregion
 
@@ -2412,7 +2415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                       IEnumerable<String>?     DevelopmentServers        = null,
                       Boolean?                 DisableLogging            = false,
                       String?                  LoggingPath               = null,
-                      String?                  LogfileName               = DefaultLogfileName,
+                      String?                  LogfileName               = null,
                       LogfileCreatorDelegate?  LogfileCreator            = null,
                       Boolean                  Autostart                 = false)
 
@@ -4668,6 +4671,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         }
 
         #endregion
+
 
     }
 

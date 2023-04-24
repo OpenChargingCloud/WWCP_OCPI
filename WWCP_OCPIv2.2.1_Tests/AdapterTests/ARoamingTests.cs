@@ -25,18 +25,18 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.WWCP.Networking;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 {
 
     /// <summary>
     /// Roaming test defaults for a charging station operator connected
-    /// to two e-mobility providers via OCPI v2.1.1.
+    /// to two e-mobility providers via OCPI v2.2.1.
     /// </summary>
     public abstract class ARoamingTests
     {
@@ -156,14 +156,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             csoCommonAPI         = new CommonAPI(
 
                                        OurVersionsURL:                      URL.Parse("http://127.0.0.1:3301/ocpi/v2.1/versions"),
-                                       OurBusinessDetails:                  new BusinessDetails(
-                                                                                "GraphDefiend CSO",
-                                                                                URL.Parse("http://www.graphdefiend.com")
-                                                                            ),
-                                       OurCountryCode:                      CountryCode.Parse("DE"),
-                                       OurPartyId:                          Party_Id.   Parse("GEF"),
-                                       OurRole:                             Roles.      CPO,
-
+                                       OurCredentialRoles:                  new[] {
+                                                                                new CredentialsRole(
+                                                                                    CountryCode:       CountryCode.Parse("DE"),
+                                                                                    PartyId:           Party_Id.   Parse("GEF"),
+                                                                                    Role:              Roles.CPO,
+                                                                                    BusinessDetails:   new BusinessDetails(
+                                                                                                           "GraphDefiend CSO",
+                                                                                                           URL.Parse("http://www.graphdefiend.com")
+                                                                                                       )
+                                                                                )
+                                                                            },
                                        HTTPServer:                          csoHTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
@@ -178,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        BasePath:                            null,
 
                                        URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1"),
-                                       APIVersionHashes:                    null,
+                                       //APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
                                        MaintenanceInitialDelay:             null,
@@ -201,14 +204,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emp1CommonAPI        = new CommonAPI(
 
                                        OurVersionsURL:                      URL.Parse("http://127.0.0.1:3401/ocpi/v2.1/versions"),
-                                       OurBusinessDetails:                  new BusinessDetails(
-                                                                                "GraphDefiend EMP",
-                                                                                URL.Parse("http://www.graphdefiend.com")
-                                                                            ),
-                                       OurCountryCode:                      CountryCode.Parse("DE"),
-                                       OurPartyId:                          Party_Id.   Parse("GDF"),
-                                       OurRole:                             Roles.      EMSP,
-
+                                       OurCredentialRoles:                  new[] {
+                                                                                new CredentialsRole(
+                                                                                    CountryCode:       CountryCode.Parse("DE"),
+                                                                                    PartyId:           Party_Id.   Parse("GDF"),
+                                                                                    Role:              Roles.EMSP,
+                                                                                    BusinessDetails:   new BusinessDetails(
+                                                                                                           "GraphDefiend EMP",
+                                                                                                           URL.Parse("http://www.graphdefiend.com")
+                                                                                                       )
+                                                                                )
+                                                                            },
                                        HTTPServer:                          emp1HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
@@ -246,14 +252,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emp2CommonAPI        = new CommonAPI(
 
                                        OurVersionsURL:                      URL.Parse("http://127.0.0.1:3402/ocpi/v2.1/versions"),
-                                       OurBusinessDetails:                  new BusinessDetails(
-                                                                                "Example EMP",
-                                                                                URL.Parse("http://www.example.org")
-                                                                            ),
-                                       OurCountryCode:                      CountryCode.Parse("DE"),
-                                       OurPartyId:                          Party_Id.   Parse("EMP"),
-                                       OurRole:                             Roles.      EMSP,
-
+                                       OurCredentialRoles:                  new[] {
+                                                                                new CredentialsRole(
+                                                                                    CountryCode:       CountryCode.Parse("DE"),
+                                                                                    PartyId:           Party_Id.   Parse("EMP"),
+                                                                                    Role:              Roles.EMSP,
+                                                                                    BusinessDetails:   new BusinessDetails(
+                                                                                                           "GraphDefiend EMP",
+                                                                                                           URL.Parse("http://www.example.org")
+                                                                                                       )
+                                                                                )
+                                                                            },
                                        HTTPServer:                          emp2HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
@@ -299,8 +308,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             csoCPOAPI            = new CPOAPI(
 
                                        CommonAPI:                           csoCommonAPI,
-                                       DefaultCountryCode:                  csoCommonAPI.OurCountryCode,
-                                       DefaultPartyId:                      csoCommonAPI.OurPartyId,
+                                       DefaultCountryCode:                  csoCommonAPI.OurCredentialRoles.First().CountryCode,
+                                       DefaultPartyId:                      csoCommonAPI.OurCredentialRoles.First().PartyId,
                                        AllowDowngrades:                     null,
 
                                        HTTPHostname:                        null,
@@ -308,7 +317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.2"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
@@ -332,8 +341,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emp1EMSPAPI          = new EMSPAPI(
 
                                        CommonAPI:                           emp1CommonAPI,
-                                       DefaultCountryCode:                  emp1CommonAPI.OurCountryCode,
-                                       DefaultPartyId:                      emp1CommonAPI.OurPartyId,
+                                       DefaultCountryCode:                  emp1CommonAPI.OurCredentialRoles.First().CountryCode,
+                                       DefaultPartyId:                      emp1CommonAPI.OurCredentialRoles.First().PartyId,
                                        AllowDowngrades:                     null,
 
                                        HTTPHostname:                        null,
@@ -341,7 +350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/2.1.1/emsp"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.2/2.1.1/emsp"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
@@ -365,8 +374,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emp2EMSPAPI          = new EMSPAPI(
 
                                        CommonAPI:                           emp2CommonAPI,
-                                       DefaultCountryCode:                  emp2CommonAPI.OurCountryCode,
-                                       DefaultPartyId:                      emp2CommonAPI.OurPartyId,
+                                       DefaultCountryCode:                  emp2CommonAPI.OurCredentialRoles.First().CountryCode,
+                                       DefaultPartyId:                      emp2CommonAPI.OurCredentialRoles.First().PartyId,
                                        AllowDowngrades:                     null,
 
                                        HTTPHostname:                        null,
@@ -374,7 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/2.1.1/emsp"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.2/2.2.1/emsp"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
@@ -403,15 +412,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Create cso/emp1/emp2 adapter
 
-            csoAdapter           = csoRoamingNetwork.CreateOCPIv2_1_CSOAdapter(
+            csoAdapter           = csoRoamingNetwork.CreateOCPIv2_2_1_CSOAdapter(
 
-                                       Id:                                  EMPRoamingProvider_Id.Parse("OCPIv2.1_CSO_" + this.csoRoamingNetwork.Id),
-                                       Name:                                I18NString.Create(Languages.de, "OCPI v2.1 CSO"),
-                                       Description:                         I18NString.Create(Languages.de, "OCPI v2.1 CSO Roaming"),
+                                       Id:                                  EMPRoamingProvider_Id.Parse("OCPIv2.2.1_CSO_" + this.csoRoamingNetwork.Id),
+                                       Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 CSO"),
+                                       Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 CSO Roaming"),
 
                                        CommonAPI:                           csoCommonAPI,
-                                       DefaultCountryCode:                  csoCommonAPI.OurCountryCode,
-                                       DefaultPartyId:                      csoCommonAPI.OurPartyId,
+                                       DefaultCountryCode:                  csoCommonAPI.OurCredentialRoles.First().CountryCode,
+                                       DefaultPartyId:                      csoCommonAPI.OurCredentialRoles.First().PartyId,
 
                                        CustomEVSEIdConverter:               null,
                                        CustomEVSEConverter:                 null,
@@ -435,15 +444,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                    );
 
-            emp1Adapter          = emp1RoamingNetwork.CreateOCPIv2_1_EMPAdapter(
+            emp1Adapter          = emp1RoamingNetwork.CreateOCPIv2_2_1_EMPAdapter(
 
-                                       Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.1_EMP1_" + this.emp1RoamingNetwork.Id),
-                                       Name:                                I18NString.Create(Languages.de, "OCPI v2.1 EMP1"),
-                                       Description:                         I18NString.Create(Languages.de, "OCPI v2.1 EMP1 Roaming"),
+                                       Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.2.1_EMP1_" + this.emp1RoamingNetwork.Id),
+                                       Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 EMP1"),
+                                       Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 EMP1 Roaming"),
 
                                        CommonAPI:                           emp1CommonAPI,
-                                       DefaultCountryCode:                  emp1CommonAPI.OurCountryCode,
-                                       DefaultPartyId:                      emp1CommonAPI.OurPartyId,
+                                       DefaultCountryCode:                  emp1CommonAPI.OurCredentialRoles.First().CountryCode,
+                                       DefaultPartyId:                      emp1CommonAPI.OurCredentialRoles.First().PartyId,
 
                                        CustomEVSEIdConverter:               null,
                                        CustomEVSEConverter:                 null,
@@ -467,15 +476,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                    );
 
-            emp2Adapter          = emp2RoamingNetwork.CreateOCPIv2_1_EMPAdapter(
+            emp2Adapter          = emp2RoamingNetwork.CreateOCPIv2_2_1_EMPAdapter(
 
-                                       Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.1_EMP2_" + this.emp1RoamingNetwork.Id),
-                                       Name:                                I18NString.Create(Languages.de, "OCPI v2.1 EMP2"),
-                                       Description:                         I18NString.Create(Languages.de, "OCPI v2.1 EMP2 Roaming"),
+                                       Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.2.1_EMP2_" + this.emp1RoamingNetwork.Id),
+                                       Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 EMP2"),
+                                       Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 EMP2 Roaming"),
 
                                        CommonAPI:                           emp2CommonAPI,
-                                       DefaultCountryCode:                  emp2CommonAPI.OurCountryCode,
-                                       DefaultPartyId:                      emp2CommonAPI.OurPartyId,
+                                       DefaultCountryCode:                  emp2CommonAPI.OurCredentialRoles.First().CountryCode,
+                                       DefaultPartyId:                      emp2CommonAPI.OurCredentialRoles.First().PartyId,
 
                                        CustomEVSEIdConverter:               null,
                                        CustomEVSEConverter:                 null,
@@ -605,10 +614,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Add Remote Parties
 
-            csoAdapter!. AddRemoteParty(CountryCode:                 emp1CommonAPI.OurCountryCode,
-                                        PartyId:                     emp1CommonAPI.OurPartyId,
+            csoAdapter!. AddRemoteParty(CountryCode:                 emp1CommonAPI.OurCredentialRoles.First().CountryCode,
+                                        PartyId:                     emp1CommonAPI.OurCredentialRoles.First().PartyId,
                                         Role:                        Roles.EMSP,
-                                        BusinessDetails:             emp1CommonAPI.OurBusinessDetails,
+                                        BusinessDetails:             emp1CommonAPI.OurCredentialRoles.First().BusinessDetails,
 
                                         AccessToken:                 AccessToken.Parse("cso-2-emp1:token"),
                                         AccessStatus:                AccessStatus.ALLOWED,
@@ -621,10 +630,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                         PartyStatus:                 PartyStatus.ENABLED);
 
-            csoAdapter!. AddRemoteParty(CountryCode:                 emp2CommonAPI.OurCountryCode,
-                                        PartyId:                     emp2CommonAPI.OurPartyId,
+            csoAdapter!. AddRemoteParty(CountryCode:                 emp2CommonAPI.OurCredentialRoles.First().CountryCode,
+                                        PartyId:                     emp2CommonAPI.OurCredentialRoles.First().PartyId,
                                         Role:                        Roles.EMSP,
-                                        BusinessDetails:             emp2CommonAPI.OurBusinessDetails,
+                                        BusinessDetails:             emp2CommonAPI.OurCredentialRoles.First().BusinessDetails,
                                         AccessToken:                 AccessToken.Parse("cso-2-emp2:token"),
                                         AccessStatus:                AccessStatus.ALLOWED,
                                         RemoteAccessToken:           AccessToken.Parse("emp2-2-cso:token"),
@@ -636,10 +645,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
 
 
-            emp1Adapter!.AddRemoteParty(CountryCode:                 csoCommonAPI.OurCountryCode,
-                                        PartyId:                     csoCommonAPI.OurPartyId,
+            emp1Adapter!.AddRemoteParty(CountryCode:                 csoCommonAPI.OurCredentialRoles.First().CountryCode,
+                                        PartyId:                     csoCommonAPI.OurCredentialRoles.First().PartyId,
                                         Role:                        Roles.CPO,
-                                        BusinessDetails:             csoCommonAPI.OurBusinessDetails,
+                                        BusinessDetails:             csoCommonAPI.OurCredentialRoles.First().BusinessDetails,
 
                                         AccessToken:                 AccessToken.Parse("emp1-2-cso:token"),
                                         AccessStatus:                AccessStatus.ALLOWED,
@@ -653,10 +662,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         PartyStatus:                 PartyStatus.ENABLED);
 
 
-            emp2Adapter!.AddRemoteParty(CountryCode:                 csoCommonAPI.OurCountryCode,
-                                        PartyId:                     csoCommonAPI.OurPartyId,
+            emp2Adapter!.AddRemoteParty(CountryCode:                 csoCommonAPI.OurCredentialRoles.First().CountryCode,
+                                        PartyId:                     csoCommonAPI.OurCredentialRoles.First().PartyId,
                                         Role:                        Roles.CPO,
-                                        BusinessDetails:             csoCommonAPI.OurBusinessDetails,
+                                        BusinessDetails:             csoCommonAPI.OurCredentialRoles.First().BusinessDetails,
 
                                         AccessToken:                 AccessToken.Parse("emp2-2-cso:token"),
                                         AccessStatus:                AccessStatus.ALLOWED,

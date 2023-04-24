@@ -30,6 +30,8 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
+using org.GraphDefined.Vanaheimr.Hermod.Sockets;
+using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
 #endregion
 
@@ -77,10 +79,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// </summary>
         public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("io/OCPI/");
 
+        /// <summary>
+        /// The default log file name.
+        /// </summary>
+        public static readonly     String    DefaultLogfileName        = $"OCPI{Version.Id}-CommonAPI.log";
 
         private readonly URL OurBaseURL;
-
-        public const String LogfileName = "OCPICommonAPI.log";
 
 
         /// <summary>
@@ -128,9 +132,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Disable OCPI v2.1.1.
         /// </summary>
         public Boolean                       Disable_OCPIv2_1_1         { get; }
-
-
-        public GetTariffIds2_Delegate        GetTariffIdsDelegate       { get; set; }
 
         #endregion
 
@@ -309,24 +310,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public CommonAPI(URL                           OurVersionsURL,
-                         IEnumerable<CredentialsRole>  OurCredentialRoles,
+        public CommonAPI(URL                                    OurVersionsURL,
+                         IEnumerable<CredentialsRole>           OurCredentialRoles,
 
-                         HTTPHostname?                 HTTPHostname              = null,
-                         IPPort?                       HTTPServerPort            = null,
-                         String                        HTTPServerName            = DefaultHTTPServerName,
-                         String?                       ExternalDNSName           = null,
-                         HTTPPath?                     URLPathPrefix             = null,
-                         HTTPPath?                     BasePath                  = null,
-                         String                        HTTPServiceName           = DefaultHTTPServiceName,
-                         DNSClient?                    DNSClient                 = null,
+                         HTTPPath?                              AdditionalURLPathPrefix            = null,
+                         Func<EVSE, Boolean>?                   KeepRemovedEVSEs                   = null,
+                         Boolean                                LocationsAsOpenData                = true,
+                         Boolean?                               AllowDowngrades                    = null,
+                         Boolean                                Disable_RootServices               = true,
+                         Boolean                                Disable_OCPIv2_1_1                 = true,
 
-                         HTTPPath?                     AdditionalURLPathPrefix   = null,
-                         Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
-                         Boolean                       LocationsAsOpenData       = true,
-                         Boolean?                      AllowDowngrades           = null,
+                         HTTPHostname?                          HTTPHostname                       = null,
+                         String?                                ExternalDNSName                    = null,
+                         IPPort?                                HTTPServerPort                     = null,
+                         HTTPPath?                              BasePath                           = null,
+                         String?                                HTTPServerName                     = DefaultHTTPServerName,
 
-                         Boolean                       Disable_OCPIv2_1_1        = true)
+                         HTTPPath?                              URLPathPrefix                      = null,
+                         String?                                HTTPServiceName                    = DefaultHTTPServiceName,
+                         //String?                                HTMLTemplate                       = null,
+                         JObject?                               APIVersionHashes                   = null,
+
+                         ServerCertificateSelectorDelegate?     ServerCertificateSelector          = null,
+                         RemoteCertificateValidationCallback?   ClientCertificateValidator         = null,
+                         LocalCertificateSelectionCallback?     ClientCertificateSelector          = null,
+                         SslProtocols?                          AllowedTLSProtocols                = null,
+                         Boolean?                               ClientCertificateRequired          = null,
+                         Boolean?                               CheckCertificateRevocation         = null,
+
+                         String?                                ServerThreadName                   = null,
+                         ThreadPriority?                        ServerThreadPriority               = null,
+                         Boolean?                               ServerThreadIsBackground           = null,
+
+                         ConnectionIdBuilder?                   ConnectionIdBuilder                = null,
+                         TimeSpan?                              ConnectionTimeout                  = null,
+                         UInt32?                                MaxClientConnections               = null,
+
+                         Boolean?                               DisableMaintenanceTasks            = null,
+                         TimeSpan?                              MaintenanceInitialDelay            = null,
+                         TimeSpan?                              MaintenanceEvery                   = null,
+
+                         Boolean?                               DisableWardenTasks                 = null,
+                         TimeSpan?                              WardenInitialDelay                 = null,
+                         TimeSpan?                              WardenCheckEvery                   = null,
+
+                         Boolean?                               IsDevelopment                      = null,
+                         IEnumerable<String>?                   DevelopmentServers                 = null,
+                         Boolean?                               DisableLogging                     = null,
+                         String?                                LoggingPath                        = null,
+                         String?                                LogfileName                        = null,
+                         LogfileCreatorDelegate?                LogfileCreator                     = null,
+                         DNSClient?                             DNSClient                          = null,
+                         Boolean                                Autostart                          = false)
+
 
             : base(HTTPHostname,
                    ExternalDNSName,
@@ -337,41 +373,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    URLPathPrefix   ?? DefaultURLPathPrefix,
                    HTTPServiceName ?? DefaultHTTPServiceName,
                    null, // HTMLTemplate,
-                   null, // APIVersionHashes,
+                   APIVersionHashes,
 
-                   null, // ServerCertificateSelector,
-                   null, // ClientCertificateValidator,
-                   null, // ClientCertificateSelector,
-                   null, // AllowedTLSProtocols,
-                   null, // ClientCertificateRequired
-                   null, // CheckCertificateRevocation
+                   ServerCertificateSelector,
+                   ClientCertificateValidator,
+                   ClientCertificateSelector,
+                   AllowedTLSProtocols,
+                   ClientCertificateRequired,
+                   CheckCertificateRevocation,
 
-                   null, // ServerThreadName,
-                   null, // ServerThreadPriority,
-                   null, // ServerThreadIsBackground,
-                   null, // ConnectionIdBuilder,
-                   //null, // ConnectionThreadsNameBuilder,
-                   //null, // ConnectionThreadsPriorityBuilder,
-                   //null, // ConnectionThreadsAreBackground,
-                   null, // ConnectionTimeout,
-                   null, // MaxClientConnections,
+                   ServerThreadName,
+                   ServerThreadPriority,
+                   ServerThreadIsBackground,
+                   ConnectionIdBuilder,
+                   ConnectionTimeout,
+                   MaxClientConnections,
 
-                   null, // DisableMaintenanceTasks,
-                   null, // MaintenanceInitialDelay,
-                   null, // MaintenanceEvery,
+                   DisableMaintenanceTasks,
+                   MaintenanceInitialDelay,
+                   MaintenanceEvery,
 
-                   null, // DisableWardenTasks,
-                   null, // WardenInitialDelay,
-                   null, // WardenCheckEvery,
+                   DisableWardenTasks,
+                   WardenInitialDelay,
+                   WardenCheckEvery,
 
-                   null, // IsDevelopment,
-                   null, // DevelopmentServers,
-                   null, // DisableLogging,
-                   null, // LoggingPath,
-                   null, // LogfileName,
-                   null, // LogfileCreator,
+                   IsDevelopment,
+                   DevelopmentServers,
+                   DisableLogging,
+                   LoggingPath,
+                   LogfileName,
+                   LogfileCreator,
                    DNSClient,
-                   false)// Autostart
+                   Autostart)
 
         {
 
@@ -380,7 +413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             this.OurVersionsURL           = OurVersionsURL;
             this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
-            this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
+            this.OurCredentialRoles       = OurCredentialRoles.Distinct();
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
             this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
@@ -388,11 +421,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
 
-            this.remoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
+            this.remoteParties            = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
             this.tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this.chargingSessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this.tokenStatus                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
+            this.chargingSessions         = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this.tokenStatus              = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
             this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             RegisterURLTemplates();
@@ -433,15 +466,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
                          Boolean                       Disable_RootServices      = false,
-
                          Boolean                       Disable_OCPIv2_1_1        = true,
+
+                         JObject?                      APIVersionHashes          = null,
+
+                         Boolean?                      DisableMaintenanceTasks   = false,
+                         TimeSpan?                     MaintenanceInitialDelay   = null,
+                         TimeSpan?                     MaintenanceEvery          = null,
+
+                         Boolean?                      DisableWardenTasks        = false,
+                         TimeSpan?                     WardenInitialDelay        = null,
+                         TimeSpan?                     WardenCheckEvery          = null,
 
                          Boolean?                      IsDevelopment             = false,
                          IEnumerable<String>?          DevelopmentServers        = null,
                          Boolean?                      DisableLogging            = false,
                          String?                       LoggingPath               = null,
                          String?                       LogfileName               = null,
-                         LogfileCreatorDelegate?       LogfileCreator            = null)
+                         LogfileCreatorDelegate?       LogfileCreator            = null,
+                         Boolean                       Autostart                 = false)
 
             : base(HTTPServer,
                    HTTPHostname,
@@ -451,15 +494,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                    URLPathPrefix,
                    null, // HTMLTemplate,
-                   null, // APIVersionHashes,
+                   APIVersionHashes,
 
-                   null, // DisableMaintenanceTasks,
-                   null, // MaintenanceInitialDelay,
-                   null, // MaintenanceEvery,
+                   DisableMaintenanceTasks,
+                   MaintenanceInitialDelay,
+                   MaintenanceEvery,
 
-                   null, // DisableWardenTasks,
-                   null, // WardenInitialDelay,
-                   null, // WardenCheckEvery,
+                   DisableWardenTasks,
+                   WardenInitialDelay,
+                   WardenCheckEvery,
 
                    IsDevelopment,
                    DevelopmentServers,
@@ -467,7 +510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    LoggingPath,
                    LogfileName,
                    LogfileCreator,
-                   false) // Autostart
+                   Autostart)
 
         {
 
@@ -2433,12 +2476,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         public delegate Task OnLocationAddedDelegate(Location Location);
 
-        public event OnLocationAddedDelegate OnLocationAdded;
+        public event OnLocationAddedDelegate? OnLocationAdded;
 
 
         public delegate Task OnLocationChangedDelegate(Location Location);
 
-        public event OnLocationChangedDelegate OnLocationChanged;
+        public event OnLocationChangedDelegate? OnLocationChanged;
 
 
         #region AddLocation           (Location, SkipNotifications = false)
@@ -2817,21 +2860,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         public delegate Task OnEVSEAddedDelegate(EVSE EVSE);
 
-        public event OnEVSEAddedDelegate OnEVSEAdded;
+        public event OnEVSEAddedDelegate? OnEVSEAdded;
 
 
         public delegate Task OnEVSEChangedDelegate(EVSE EVSE);
 
-        public event OnEVSEChangedDelegate OnEVSEChanged;
+        public event OnEVSEChangedDelegate? OnEVSEChanged;
 
         public delegate Task OnEVSEStatusChangedDelegate(DateTime Timestamp, EVSE EVSE, StatusType OldEVSEStatus, StatusType NewEVSEStatus);
 
-        public event OnEVSEStatusChangedDelegate OnEVSEStatusChanged;
+        public event OnEVSEStatusChangedDelegate? OnEVSEStatusChanged;
 
 
         public delegate Task OnEVSERemovedDelegate(EVSE EVSE);
 
-        public event OnEVSERemovedDelegate OnEVSERemoved;
+        public event OnEVSERemovedDelegate? OnEVSERemoved;
 
 
         #region AddOrUpdateEVSE       (Location, newOrUpdatedEVSE, AllowDowngrades = false)
@@ -3519,12 +3562,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         public delegate Task OnTariffAddedDelegate(Tariff Tariff);
 
-        public event OnTariffAddedDelegate OnTariffAdded;
+        public event OnTariffAddedDelegate? OnTariffAdded;
 
 
         public delegate Task OnTariffChangedDelegate(Tariff Tariff);
 
-        public event OnTariffChangedDelegate OnTariffChanged;
+        public event OnTariffChangedDelegate? OnTariffChanged;
+
+
+        public GetTariffIds2_Delegate?        GetTariffIdsDelegate       { get; set; }
 
 
         #region AddTariff           (Tariff)
@@ -4163,11 +4209,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         public delegate Task OnSessionCreatedDelegate(Session Session);
 
-        public event OnSessionCreatedDelegate OnSessionCreated;
+        public event OnSessionCreatedDelegate? OnSessionCreated;
 
         public delegate Task OnSessionChangedDelegate(Session Session);
 
-        public event OnSessionChangedDelegate OnSessionChanged;
+        public event OnSessionChangedDelegate? OnSessionChanged;
 
 
         #region AddSession           (Session)
@@ -4787,19 +4833,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         public delegate Task OnTokenAddedDelegate(Token Token);
 
-        public event OnTokenAddedDelegate OnTokenAdded;
+        public event OnTokenAddedDelegate? OnTokenAdded;
 
 
         public delegate Task OnTokenChangedDelegate(Token Token);
 
-        public event OnTokenChangedDelegate OnTokenChanged;
+        public event OnTokenChangedDelegate? OnTokenChanged;
 
 
         public delegate Task<TokenStatus> OnVerifyTokenDelegate(CountryCode  CountryCode,
                                                                 Party_Id     PartyId,
                                                                 Token_Id     TokenId);
 
-        public event OnVerifyTokenDelegate OnVerifyToken;
+        public event OnVerifyTokenDelegate? OnVerifyToken;
 
 
         #region AddToken           (Token, Status = AllowedType.ALLOWED)
@@ -5434,19 +5480,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         public delegate Task OnChargeDetailRecordAddedDelegate(CDR CDR);
 
-        public event OnChargeDetailRecordAddedDelegate OnChargeDetailRecordAdded;
+        public event OnChargeDetailRecordAddedDelegate? OnChargeDetailRecordAdded;
 
 
         public delegate Task OnChargeDetailRecordChangedDelegate(CDR CDR);
 
-        public event OnChargeDetailRecordChangedDelegate OnChargeDetailRecordChanged;
+        public event OnChargeDetailRecordChangedDelegate? OnChargeDetailRecordChanged;
 
 
         public delegate Task<CDR> OnChargeDetailRecordLookupDelegate(CountryCode  CountryCode,
                                                                      Party_Id     PartyId,
                                                                      CDR_Id       CDRId);
 
-        public event OnChargeDetailRecordLookupDelegate OnChargeDetailRecordLookup;
+        public event OnChargeDetailRecordLookupDelegate? OnChargeDetailRecordLookup;
 
 
         #region AddCDR           (CDR)

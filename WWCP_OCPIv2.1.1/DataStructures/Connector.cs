@@ -182,7 +182,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.TermsAndConditionsURL  = TermsAndConditionsURL;
 
             this.LastUpdated            = LastUpdated ?? Timestamp.Now;
-            this.ETag                   = SHA256.Create().ComputeHash(ToJSON(EMPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();    //ToDo: EMP Id must not be null!
+            this.ETag                   = SHA256.HashData(ToJSON(EMPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();    //ToDo: EMP Id must not be null!
 
         }
 

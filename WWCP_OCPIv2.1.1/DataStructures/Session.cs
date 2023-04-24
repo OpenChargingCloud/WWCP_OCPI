@@ -930,7 +930,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                 = null)
         {
 
-            this.ETag = SHA256.Create().ComputeHash(ToJSON(true,
+            this.ETag = SHA256.HashData(ToJSON(true,
                                                            EMPId,
                                                            CustomSessionSerializer,
                                                            CustomLocationSerializer,

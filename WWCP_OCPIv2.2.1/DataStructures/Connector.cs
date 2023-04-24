@@ -192,7 +192,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.TermsAndConditionsURL  = TermsAndConditionsURL;
 
             this.LastUpdated            = LastUpdated ?? Timestamp.Now;
-            this.ETag                   = SHA256.Create().ComputeHash(ToJSON(EMPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();
+            this.ETag                   = SHA256.HashData(ToJSON(EMPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();
 
         }
 

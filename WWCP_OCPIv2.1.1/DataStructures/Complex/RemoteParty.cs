@@ -592,7 +592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null)
         {
 
-            this.ETag = SHA256.Create().ComputeHash(ToJSON(false, // always with @context!
+            this.ETag = SHA256.HashData(ToJSON(false, // always with @context!
                                                            CustomRemotePartySerializer,
                                                            CustomBusinessDetailsSerializer,
                                                            CustomAccessInfoStatusSerializer,

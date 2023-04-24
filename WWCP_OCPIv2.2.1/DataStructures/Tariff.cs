@@ -229,15 +229,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.LastUpdated     = LastUpdated ?? Timestamp.Now;
 
-            this.ETag            = SHA256.Create().ComputeHash(ToJSON(CustomTariffSerializer,
-                                                                      CustomDisplayTextSerializer,
-                                                                      CustomPriceSerializer,
-                                                                      CustomTariffElementSerializer,
-                                                                      CustomPriceComponentSerializer,
-                                                                      CustomTariffRestrictionsSerializer,
-                                                                      CustomEnergyMixSerializer,
-                                                                      CustomEnergySourceSerializer,
-                                                                      CustomEnvironmentalImpactSerializer).ToUTF8Bytes()).ToBase64();
+            this.ETag            = SHA256.HashData(ToJSON(CustomTariffSerializer,
+                                                          CustomDisplayTextSerializer,
+                                                          CustomPriceSerializer,
+                                                          CustomTariffElementSerializer,
+                                                          CustomPriceComponentSerializer,
+                                                          CustomTariffRestrictionsSerializer,
+                                                          CustomEnergyMixSerializer,
+                                                          CustomEnergySourceSerializer,
+                                                          CustomEnvironmentalImpactSerializer).ToUTF8Bytes()).ToBase64();
 
         }
 

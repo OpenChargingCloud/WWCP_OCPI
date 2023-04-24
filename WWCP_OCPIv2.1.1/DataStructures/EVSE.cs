@@ -1002,7 +1002,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
-            this.ETag = SHA256.Create().ComputeHash(ToJSON(EMPId,
+            this.ETag = SHA256.HashData(ToJSON(EMPId,
                                                            CustomEVSESerializer,
                                                            CustomStatusScheduleSerializer,
                                                            CustomConnectorSerializer,

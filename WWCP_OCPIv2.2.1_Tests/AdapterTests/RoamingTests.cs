@@ -21,15 +21,15 @@ using Newtonsoft.Json.Linq;
 
 using NUnit.Framework;
 
-using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Aegir;
+using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.WWCP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
+namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 {
 
     [TestFixture]
@@ -637,7 +637,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
 
                 #region Validate, that both locations have EVSEs
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1.Id.Suffix), out var location1) && location1 is not null)
+                if (csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                                        Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
+                                                        Location_Id.Parse(chargingPool1.Id.Suffix),
+                                                        out var location1) &&
+                    location1 is not null)
                 {
 
                     Assert.AreEqual(3, location1.EVSEs.Count());
@@ -647,7 +651,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                     Assert.Fail("location1 was not found!");
 
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool2.Id.Suffix), out var location2) && location2 is not null)
+                if (csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool2.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                                        Party_Id.   Parse(chargingPool2.Operator?.Id.Suffix                 ?? ""),
+                                                        Location_Id.Parse(chargingPool2.Id.Suffix),
+                                                        out var location2) &&
+                    location2 is not null)
                 {
 
                     Assert.AreEqual(1, location2.EVSEs.Count());
@@ -833,7 +841,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                 Assert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
                 Assert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
 
-                csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location);
+                csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                                    Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
+                                                    Location_Id.Parse(chargingPool1!.Id.Suffix),
+                                                    out var location);
+
                 Assert.AreEqual("Test pool #1 (updated)",                             location!.Name);
                 //Assert.AreEqual("GraphDefined Charging Pool für Tests #1",            location!.Name); // Not mapped to OCPI!
 
@@ -1194,7 +1206,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
 
                 #region Validate, that both locations have EVSEs
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1.Id.Suffix), out var location1) && location1 is not null)
+                if (csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                                        Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
+                                                        Location_Id.Parse(chargingPool1.Id.Suffix),
+                                                        out var location1) &&
+                    location1 is not null)
                 {
 
                     Assert.AreEqual(3, location1.EVSEs.Count());
@@ -1204,7 +1220,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                     Assert.Fail("location1 was not found!");
 
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool2.Id.Suffix), out var location2) && location2 is not null)
+                if (csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool2.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                                        Party_Id.   Parse(chargingPool2.Operator?.Id.Suffix                 ?? ""),
+                                                        Location_Id.Parse(chargingPool2.Id.Suffix),
+                                                        out var location2) &&
+                    location2 is not null)
                 {
 
                     Assert.AreEqual(1, location2.EVSEs.Count());
@@ -1283,7 +1303,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
 
                 {
                     if (evse1_UId.HasValue &&
-                        csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location) && location is not null &&
+                        csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                                            Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
+                                                            Location_Id.Parse(chargingPool1!.Id.Suffix),
+                                                            out var location) &&
+                        location is not null &&
                         location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
                     {
                         Assert.AreEqual(StatusType.AVAILABLE, ocpiEVSE.Status);
@@ -1299,11 +1323,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                 Assert.AreEqual(3, updatedEVSEStatus.    Count);
                 Assert.AreEqual(2, updatedOCPIEVSEStatus.Count);
 
-                Assert.AreEqual(EVSEStatusTypes.Charging,  graphDefinedCSO.GetEVSEById(evse1!.Id).Status.Value);
+                Assert.AreEqual(EVSEStatusTypes.Charging,  graphDefinedCSO.GetEVSEById(evse1!.Id)?.Status.Value);
 
                 {
                     if (evse1_UId.HasValue &&
-                        csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location) && location is not null &&
+                        csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                                            Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
+                                                            Location_Id.Parse(chargingPool1!.Id.Suffix),
+                                                            out var location) &&
+                        location is not null &&
                         location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
                     {
                         Assert.AreEqual(StatusType.CHARGING, ocpiEVSE.Status);
@@ -1604,52 +1632,124 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                 #endregion
 
 
-                emp1EMSPAPI.OnRFIDAuthToken += async (countryCode,
-                                                      partyId,
+                emp1EMSPAPI.OnRFIDAuthToken += async (From_CountryCode,
+                                                      From_PartyId,
+                                                      To_CountryCode,
+                                                      To_PartyId,
                                                       tokenId,
                                                       locationReference) => {
 
                     return tokenId.ToString() == "11223344"
 
                                ? new AuthorizationInfo(
-                                     Allowed:       AllowedType.ALLOWED,
-                                     Location:      locationReference,
-                                     Info:          DisplayText.Create(Languages.en, "Hello world!"),
-                                     RemoteParty:   null,
-                                     Runtime:       TimeSpan.FromMilliseconds(23.5)
+                                     Allowed:                  AllowedType.ALLOWED,
+                                     Token:                    new Token(
+                                                                   CountryCode:      To_CountryCode,
+                                                                   PartyId:          To_PartyId,
+                                                                   Id:               tokenId,
+                                                                   Type:             TokenType.RFID,
+                                                                   ContractId:       Contract_Id.Parse(""),
+                                                                   Issuer:           "",
+                                                                   IsValid:          true,
+                                                                   WhitelistType:    WhitelistTypes.NEVER,
+                                                                   VisualNumber:     null,
+                                                                   GroupId:          null,
+                                                                   UILanguage:       null,
+                                                                   DefaultProfile:   null,
+                                                                   EnergyContract:   null,
+                                                                   LastUpdated:      null
+                                                               ),
+                                     Location:                 locationReference,
+                                     AuthorizationReference:   null,
+                                     Info:                     DisplayText.Create(Languages.en, "Hello world!"),
+                                     RemoteParty:              null,
+                                     Runtime:                  TimeSpan.FromMilliseconds(23.5)
                                  )
 
                                : new AuthorizationInfo(
-                                     Allowed:       AllowedType.NOT_ALLOWED,
-                                     Location:      locationReference,
-                                     Info:          DisplayText.Create(Languages.en, "Go away!"),
-                                     RemoteParty:   null,
-                                     Runtime:       TimeSpan.FromMilliseconds(42)
+                                     Allowed:                  AllowedType.NOT_ALLOWED,
+                                     Token:                    new Token(
+                                                                   CountryCode:      To_CountryCode,
+                                                                   PartyId:          To_PartyId,
+                                                                   Id:               tokenId,
+                                                                   Type:             TokenType.RFID,
+                                                                   ContractId:       Contract_Id.Parse(""),
+                                                                   Issuer:           "",
+                                                                   IsValid:          true,
+                                                                   WhitelistType:    WhitelistTypes.NEVER,
+                                                                   VisualNumber:     null,
+                                                                   GroupId:          null,
+                                                                   UILanguage:       null,
+                                                                   DefaultProfile:   null,
+                                                                   EnergyContract:   null,
+                                                                   LastUpdated:      null
+                                                               ),
+                                     Location:                 locationReference,
+                                     AuthorizationReference:   null,
+                                     Info:                     DisplayText.Create(Languages.en, "Go away!"),
+                                     RemoteParty:              null,
+                                     Runtime:                  TimeSpan.FromMilliseconds(42)
                                  );
 
                 };
 
-                emp2EMSPAPI.OnRFIDAuthToken += async (countryCode,
-                                                      partyId,
+                emp2EMSPAPI.OnRFIDAuthToken += async (From_CountryCode,
+                                                      From_PartyId,
+                                                      To_CountryCode,
+                                                      To_PartyId,
                                                       tokenId,
                                                       locationReference) => {
 
                     return tokenId.ToString() == "55667788"
 
                                ? new AuthorizationInfo(
-                                     Allowed:       AllowedType.ALLOWED,
-                                     Location:      locationReference,
-                                     Info:          DisplayText.Create(Languages.en, "Hello world!"),
-                                     RemoteParty:   null,
-                                     Runtime:       TimeSpan.FromMilliseconds(23.5)
+                                     Allowed:                  AllowedType.ALLOWED,
+                                     Token:                    new Token(
+                                                                   CountryCode:      To_CountryCode,
+                                                                   PartyId:          To_PartyId,
+                                                                   Id:               tokenId,
+                                                                   Type:             TokenType.RFID,
+                                                                   ContractId:       Contract_Id.Parse(""),
+                                                                   Issuer:           "",
+                                                                   IsValid:          true,
+                                                                   WhitelistType:    WhitelistTypes.NEVER,
+                                                                   VisualNumber:     null,
+                                                                   GroupId:          null,
+                                                                   UILanguage:       null,
+                                                                   DefaultProfile:   null,
+                                                                   EnergyContract:   null,
+                                                                   LastUpdated:      null
+                                                               ),
+                                     Location:                 locationReference,
+                                     AuthorizationReference:   null,
+                                     Info:                     DisplayText.Create(Languages.en, "Hello world!"),
+                                     RemoteParty:              null,
+                                     Runtime:                  TimeSpan.FromMilliseconds(23.5)
                                  )
 
                                : new AuthorizationInfo(
-                                     Allowed:       AllowedType.NOT_ALLOWED,
-                                     Location:      locationReference,
-                                     Info:          DisplayText.Create(Languages.en, "Go away!"),
-                                     RemoteParty:   null,
-                                     Runtime:       TimeSpan.FromMilliseconds(42)
+                                     Allowed:                  AllowedType.NOT_ALLOWED,
+                                     Token:                    new Token(
+                                                                   CountryCode:      To_CountryCode,
+                                                                   PartyId:          To_PartyId,
+                                                                   Id:               tokenId,
+                                                                   Type:             TokenType.RFID,
+                                                                   ContractId:       Contract_Id.Parse(""),
+                                                                   Issuer:           "",
+                                                                   IsValid:          true,
+                                                                   WhitelistType:    WhitelistTypes.NEVER,
+                                                                   VisualNumber:     null,
+                                                                   GroupId:          null,
+                                                                   UILanguage:       null,
+                                                                   DefaultProfile:   null,
+                                                                   EnergyContract:   null,
+                                                                   LastUpdated:      null
+                                                               ),
+                                     Location:                 locationReference,
+                                     AuthorizationReference:   null,
+                                     Info:                     DisplayText.Create(Languages.en, "Go away!"),
+                                     RemoteParty:              null,
+                                     Runtime:                  TimeSpan.FromMilliseconds(42)
                                  );
 
                 };

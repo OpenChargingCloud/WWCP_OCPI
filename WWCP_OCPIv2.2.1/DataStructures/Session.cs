@@ -903,7 +903,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      CustomJObjectSerializerDelegate<Price>?           CustomPriceSerializer            = null)
         {
 
-            this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomSessionSerializer,
+            this.ETag = SHA256.HashData(ToJSON(CustomSessionSerializer,
                                                            CustomCDRTokenSerializer,
                                                            CustomChargingPeriodSerializer,
                                                            CustomCDRDimensionSerializer,

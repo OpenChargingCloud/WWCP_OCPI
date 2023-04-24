@@ -1383,7 +1383,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// </summary>
         public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("/emsp");
 
-        protected Newtonsoft.Json.Formatting JSONFormat = Newtonsoft.Json.Formatting.Indented;
+        /// <summary>
+        /// The default EMSP API logfile name.
+        /// </summary>
+        public     static readonly String    DefaultLogfileName       = $"OCPI{Version.Id}_EMSPAPI.log";
+
+
+        protected Newtonsoft.Json.Formatting JSONFormat               = Newtonsoft.Json.Formatting.Indented;
 
         #endregion
 
@@ -3152,7 +3158,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                         Token_Id            TokenId,
                                                                         LocationReference?  LocationReference);
 
-        public event OnRFIDAuthTokenDelegate OnRFIDAuthToken;
+        public event OnRFIDAuthTokenDelegate? OnRFIDAuthToken;
 
 
 
@@ -3428,46 +3434,57 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public EMSPAPI(CommonAPI                CommonAPI,
                        CountryCode              DefaultCountryCode,
                        Party_Id                 DefaultPartyId,
-                       Boolean?                 AllowDowngrades      = null,
+                       Boolean?                 AllowDowngrades           = null,
 
-                       HTTPHostname?            HTTPHostname         = null,
-                       String?                  ExternalDNSName      = null,
-                       HTTPPath?                URLPathPrefix        = null,
-                       HTTPPath?                BasePath             = null,
-                       String                   HTTPServiceName      = DefaultHTTPServerName,
+                       HTTPHostname?            HTTPHostname              = null,
+                       String?                  ExternalDNSName           = "",
+                       String?                  HTTPServiceName           = DefaultHTTPServiceName,
+                       HTTPPath?                BasePath                  = null,
 
-                       Boolean?                 IsDevelopment        = false,
-                       IEnumerable<String>?     DevelopmentServers   = null,
-                       Boolean?                 DisableLogging       = false,
-                       String?                  LoggingPath          = null,
-                       String?                  LogfileName          = null,
-                       LogfileCreatorDelegate?  LogfileCreator       = null)
+                       HTTPPath?                URLPathPrefix             = null,
+                       JObject?                 APIVersionHashes          = null,
 
-            : base(CommonAPI?.HTTPServer,
+                       Boolean?                 DisableMaintenanceTasks   = false,
+                       TimeSpan?                MaintenanceInitialDelay   = null,
+                       TimeSpan?                MaintenanceEvery          = null,
+
+                       Boolean?                 DisableWardenTasks        = false,
+                       TimeSpan?                WardenInitialDelay        = null,
+                       TimeSpan?                WardenCheckEvery          = null,
+
+                       Boolean?                 IsDevelopment             = false,
+                       IEnumerable<String>?     DevelopmentServers        = null,
+                       Boolean?                 DisableLogging            = false,
+                       String?                  LoggingPath               = null,
+                       String?                  LogfileName               = null,
+                       LogfileCreatorDelegate?  LogfileCreator            = null,
+                       Boolean                  Autostart                 = false)
+
+            : base(CommonAPI.HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,
-                   HTTPServiceName,
+                   HTTPServiceName ?? DefaultHTTPServiceName,
                    BasePath,
 
-                   URLPathPrefix ?? DefaultURLPathPrefix,
-                   null, // HTMLTemplate,
-                   null, // APIVersionHashes,
+                   URLPathPrefix   ?? DefaultURLPathPrefix,
+                   null, //HTMLTemplate,
+                   APIVersionHashes,
 
-                   null, // DisableMaintenanceTasks,
-                   null, // MaintenanceInitialDelay,
-                   null, // MaintenanceEvery,
+                   DisableMaintenanceTasks,
+                   MaintenanceInitialDelay,
+                   MaintenanceEvery,
 
-                   null, // DisableWardenTasks,
-                   null, // WardenInitialDelay,
-                   null, // WardenCheckEvery,
+                   DisableWardenTasks,
+                   WardenInitialDelay,
+                   WardenCheckEvery,
 
                    IsDevelopment,
                    DevelopmentServers,
                    DisableLogging,
                    LoggingPath,
-                   LogfileName,
+                   LogfileName     ?? DefaultLogfileName,
                    LogfileCreator,
-                   false) // Autostart
+                   Autostart)
 
         {
 

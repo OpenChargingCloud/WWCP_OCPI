@@ -1668,7 +1668,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null)
         {
 
-            this.ETag = SHA256.Create().ComputeHash(ToJSON(EMPId,
+            this.ETag = SHA256.HashData(ToJSON(EMPId,
                                                            CustomLocationSerializer,
                                                            CustomPublishTokenSerializer,
                                                            CustomAdditionalGeoLocationSerializer,
