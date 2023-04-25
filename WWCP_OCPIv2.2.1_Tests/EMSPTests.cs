@@ -79,8 +79,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 // 
                 // {
                 //     "data": [{
-                //         "version":  "2.1.1",
-                //         "url":      "http://127.0.0.1:7234/versions/2.1.1"
+                //         "version":  "2.2.1",
+                //         "url":      "http://127.0.0.1:7234/versions/2.2.1"
                 //     }],
                 //     "status_code":      1000,
                 //     "status_message":  "Hello world!",

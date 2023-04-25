@@ -7193,14 +7193,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         if (!Request.ParseTokenId(this,
                                                                   out var tokenId,
-                                                                  out var ocpiResponseBuilder))
+                                                                  out var ocpiResponseBuilder) ||
+                                             !tokenId.HasValue)
                                         {
                                             return ocpiResponseBuilder!;
                                         }
 
                                         #endregion
 
-                                        var requestedTokenType  = Request.QueryString.TryParseEnum<TokenType>("type") ?? TokenType.RFID;
+                                        var requestedTokenType  = Request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
 
                                         #region Parse optional LocationReference JSON
 
