@@ -43,7 +43,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         public async Task EMSP_GetVersions_Test()
         {
 
-            var graphDefinedCPO = emspWebAPI1?.GetEMSPClient(
+            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -116,7 +116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         public async Task EMSP_GetVersion_Test()
         {
 
-            var graphDefinedCPO = emspWebAPI1?.GetEMSPClient(
+            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -227,7 +227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         public async Task EMSP_GetVersion_UnknownVersion_Test()
         {
 
-            var graphDefinedCPO = emspWebAPI1?.GetEMSPClient(
+            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -274,7 +274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         public async Task EMSP_GetVersion_UnknownVersion_viaHTTP_Test()
         {
 
-            var graphDefinedCPO = emspWebAPI1?.GetEMSPClient(
+            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -342,7 +342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         public async Task EMSP_GetCredentials_Test1()
         {
 
-            var graphDefinedCPO = emspWebAPI1?.GetEMSPClient(
+            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -426,7 +426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         public async Task EMSP_GetCredentials_Test2()
         {
 
-            var graphDefinedCPO = emspWebAPI2?.GetEMSPClient(
+            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
@@ -511,258 +511,258 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         public async Task EMSP_GetLocations_Test1()
         {
 
-            var graphDefinedCPO = emspWebAPI1?.GetEMSPClient(
+            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
             Assert.IsNotNull(graphDefinedCPO);
 
-            if (cpoWebAPI       is not null &&
-                graphDefinedCPO is not null)
+            if (graphDefinedCPO is not null &&
+                cpoCommonAPI    is not null)
             {
 
                 #region Define Location1
 
-                cpoWebAPI.CommonAPI.AddLocation(new Location(
-                                                    CountryCode.Parse("DE"),
-                                                    Party_Id.   Parse("GEF"),
-                                                    Location_Id.Parse("LOC0001"),
-                                                    LocationType.PARKING_LOT,
-                                                    "Biberweg 18",
-                                                    "Jena",
-                                                    "07749",
-                                                    Country.Germany,
-                                                    GeoCoordinate.Parse(10, 20),
-                                                    "Location 0001",
-                                                    new[] {
-                                                        new AdditionalGeoLocation(
-                                                            Latitude.Parse(11),
-                                                            Longitude.Parse(22),
-                                                            Name: DisplayText.Create(Languages.de, "Postkasten")
-                                                        )
-                                                    },
-                                                    new[] {
-                                                        new EVSE(
-                                                            EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                                            StatusType.AVAILABLE,
-                                                            new[] {
-                                                                new Connector(
-                                                                    Connector_Id.Parse("1"),
-                                                                    ConnectorType.IEC_62196_T2,
-                                                                    ConnectorFormats.SOCKET,
-                                                                    PowerTypes.AC_3_PHASE,
-                                                                    400,
-                                                                    30,
-                                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                                    URL.Parse("https://open.charging.cloud/terms"),
-                                                                    DateTime.Parse("2020-09-21")
-                                                                ),
-                                                                new Connector(
-                                                                    Connector_Id.Parse("2"),
-                                                                    ConnectorType.IEC_62196_T2_COMBO,
-                                                                    ConnectorFormats.CABLE,
-                                                                    PowerTypes.AC_3_PHASE,
-                                                                    400,
-                                                                    20,
-                                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                                    URL.Parse("https://open.charging.cloud/terms"),
-                                                                    DateTime.Parse("2020-09-22")
-                                                                )
-                                                            },
-                                                            EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                                            new[] {
-                                                                new StatusSchedule(
-                                                                    StatusType.INOPERATIVE,
-                                                                    DateTime.Parse("2020-09-23"),
-                                                                    DateTime.Parse("2020-09-24")
-                                                                ),
-                                                                new StatusSchedule(
-                                                                    StatusType.OUTOFORDER,
-                                                                    DateTime.Parse("2020-12-30"),
-                                                                    DateTime.Parse("2020-12-31")
-                                                                )
-                                                            },
-                                                            new[] {
-                                                                Capability.RFID_READER,
-                                                                Capability.RESERVABLE
-                                                            },
+                cpoCommonAPI.AddLocation(new Location(
+                                             CountryCode.Parse("DE"),
+                                             Party_Id.   Parse("GEF"),
+                                             Location_Id.Parse("LOC0001"),
+                                             LocationType.PARKING_LOT,
+                                             "Biberweg 18",
+                                             "Jena",
+                                             "07749",
+                                             Country.Germany,
+                                             GeoCoordinate.Parse(10, 20),
+                                             "Location 0001",
+                                             new[] {
+                                                 new AdditionalGeoLocation(
+                                                     Latitude.Parse(11),
+                                                     Longitude.Parse(22),
+                                                     Name: DisplayText.Create(Languages.de, "Postkasten")
+                                                 )
+                                             },
+                                             new[] {
+                                                 new EVSE(
+                                                     EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
+                                                     StatusType.AVAILABLE,
+                                                     new[] {
+                                                         new Connector(
+                                                             Connector_Id.Parse("1"),
+                                                             ConnectorType.IEC_62196_T2,
+                                                             ConnectorFormats.SOCKET,
+                                                             PowerTypes.AC_3_PHASE,
+                                                             400,
+                                                             30,
+                                                             Tariff_Id.Parse("DE*GEF*T0001"),
+                                                             URL.Parse("https://open.charging.cloud/terms"),
+                                                             DateTime.Parse("2020-09-21")
+                                                         ),
+                                                         new Connector(
+                                                             Connector_Id.Parse("2"),
+                                                             ConnectorType.IEC_62196_T2_COMBO,
+                                                             ConnectorFormats.CABLE,
+                                                             PowerTypes.AC_3_PHASE,
+                                                             400,
+                                                             20,
+                                                             Tariff_Id.Parse("DE*GEF*T0003"),
+                                                             URL.Parse("https://open.charging.cloud/terms"),
+                                                             DateTime.Parse("2020-09-22")
+                                                         )
+                                                     },
+                                                     EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
+                                                     new[] {
+                                                         new StatusSchedule(
+                                                             StatusType.INOPERATIVE,
+                                                             DateTime.Parse("2020-09-23"),
+                                                             DateTime.Parse("2020-09-24")
+                                                         ),
+                                                         new StatusSchedule(
+                                                             StatusType.OUTOFORDER,
+                                                             DateTime.Parse("2020-12-30"),
+                                                             DateTime.Parse("2020-12-31")
+                                                         )
+                                                     },
+                                                     new[] {
+                                                         Capability.RFID_READER,
+                                                         Capability.RESERVABLE
+                                                     },
 
-                                                            // OCPI Computer Science Extensions
-                                                            new EnergyMeter(
-                                                                Meter_Id.Parse("Meter0815"),
-                                                                "EnergyMeter Model #1",
-                                                                null,
-                                                                "hw. v1.80",
-                                                                "fw. v1.20",
-                                                                "Energy Metering Services",
-                                                                null,
-                                                                null,
-                                                                null,
-                                                                new[] {
-                                                                    new TransparencySoftwareStatus(
-                                                                        new TransparencySoftware(
-                                                                            "Chargy Transparency Software Desktop Application",
-                                                                            "v1.00",
-                                                                            OpenSourceLicense.AGPL3,
-                                                                            "GraphDefined GmbH",
-                                                                            URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                            URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
-                                                                        ),
-                                                                        LegalStatus.GermanCalibrationLaw,
-                                                                        "cert",
-                                                                        "German PTB",
-                                                                        NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                        NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                    ),
-                                                                    new TransparencySoftwareStatus(
-                                                                        new TransparencySoftware(
-                                                                            "Chargy Transparency Software Mobile Application",
-                                                                            "v1.00",
-                                                                            OpenSourceLicense.AGPL3,
-                                                                            "GraphDefined GmbH",
-                                                                            URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                            URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
-                                                                        ),
-                                                                        LegalStatus.ForInformationOnly,
-                                                                        "no cert",
-                                                                        "GraphDefiend",
-                                                                        NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                        NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                    )
-                                                                }
-                                                            ),
+                                                     // OCPI Computer Science Extensions
+                                                     new EnergyMeter(
+                                                         Meter_Id.Parse("Meter0815"),
+                                                         "EnergyMeter Model #1",
+                                                         null,
+                                                         "hw. v1.80",
+                                                         "fw. v1.20",
+                                                         "Energy Metering Services",
+                                                         null,
+                                                         null,
+                                                         null,
+                                                         new[] {
+                                                             new TransparencySoftwareStatus(
+                                                                 new TransparencySoftware(
+                                                                     "Chargy Transparency Software Desktop Application",
+                                                                     "v1.00",
+                                                                     OpenSourceLicense.AGPL3,
+                                                                     "GraphDefined GmbH",
+                                                                     URL.Parse("https://open.charging.cloud/logo.svg"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy"),
+                                                                     URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
+                                                                 ),
+                                                                 LegalStatus.GermanCalibrationLaw,
+                                                                 "cert",
+                                                                 "German PTB",
+                                                                 NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                                                 NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                                             ),
+                                                             new TransparencySoftwareStatus(
+                                                                 new TransparencySoftware(
+                                                                     "Chargy Transparency Software Mobile Application",
+                                                                     "v1.00",
+                                                                     OpenSourceLicense.AGPL3,
+                                                                     "GraphDefined GmbH",
+                                                                     URL.Parse("https://open.charging.cloud/logo.svg"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy"),
+                                                                     URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
+                                                                 ),
+                                                                 LegalStatus.ForInformationOnly,
+                                                                 "no cert",
+                                                                 "GraphDefiend",
+                                                                 NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                                                 NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                                             )
+                                                         }
+                                                     ),
 
-                                                            "1. Stock",
-                                                            GeoCoordinate.Parse(10.1, 20.2),
-                                                            "Ladestation #1",
-                                                            new DisplayText[] {
-                                                                DisplayText.Create(Languages.de, "Bitte klingeln!"),
-                                                                DisplayText.Create(Languages.en, "Ken sent me!")
-                                                            },
-                                                            new[] {
-                                                                ParkingRestrictions.EV_ONLY,
-                                                                ParkingRestrictions.PLUGGED
-                                                            },
-                                                            new[] {
-                                                                new Image(
-                                                                    URL.Parse("http://example.com/pinguine.jpg"),
-                                                                    ImageFileType.jpeg,
-                                                                    ImageCategory.OPERATOR,
-                                                                    100,
-                                                                    150,
-                                                                    URL.Parse("http://example.com/kleine_pinguine.jpg")
-                                                                )
-                                                            },
-                                                            DateTime.Parse("2020-09-22")
-                                                        )
-                                                    },
-                                                    new[] {
-                                                        new DisplayText(Languages.de, "Hallo Welt!"),
-                                                        new DisplayText(Languages.en, "Hello world!")
-                                                    },
-                                                    new BusinessDetails(
-                                                        "Open Charging Cloud",
-                                                        URL.Parse("https://open.charging.cloud"),
-                                                        new Image(
-                                                            URL.Parse("http://open.charging.cloud/logo.svg"),
-                                                            ImageFileType.svg,
-                                                            ImageCategory.OPERATOR,
-                                                            1000,
-                                                            1500,
-                                                            URL.Parse("http://open.charging.cloud/logo_small.svg")
-                                                        )
-                                                    ),
-                                                    new BusinessDetails(
-                                                        "GraphDefined GmbH",
-                                                        URL.Parse("https://www.graphdefined.com"),
-                                                        new Image(
-                                                            URL.Parse("http://www.graphdefined.com/logo.png"),
-                                                            ImageFileType.png,
-                                                            ImageCategory.OPERATOR,
-                                                            2000,
-                                                            3000,
-                                                            URL.Parse("http://www.graphdefined.com/logo_small.png")
-                                                        )
-                                                    ),
-                                                    new BusinessDetails(
-                                                        "Achim Friedland",
-                                                        URL.Parse("https://ahzf.de"),
-                                                        new Image(
-                                                            URL.Parse("http://ahzf.de/logo.gif"),
-                                                            ImageFileType.gif,
-                                                            ImageCategory.OWNER,
-                                                            3000,
-                                                            4500,
-                                                            URL.Parse("http://ahzf.de/logo_small.gif")
-                                                        )
-                                                    ),
-                                                    new[] {
-                                                        Facilities.CAFE
-                                                    },
-                                                    "Europe/Berlin",
-                                                    new Hours(
-                                                        new[] {
-                                                            new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                                            new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                                            new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                                            new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                                            new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
-                                                        },
-                                                        new[] {
-                                                            new ExceptionalPeriod(
-                                                                DateTime.Parse("2020-09-21T00:00:00Z"),
-                                                                DateTime.Parse("2020-09-22T00:00:00Z")
-                                                            )
-                                                        },
-                                                        new[] {
-                                                            new ExceptionalPeriod(
-                                                                DateTime.Parse("2020-12-24T00:00:00Z"),
-                                                                DateTime.Parse("2020-12-26T00:00:00Z")
-                                                            )
-                                                        }
-                                                    ),
-                                                    false,
-                                                    new[] {
-                                                        new Image(
-                                                            URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
-                                                            ImageFileType.jpeg,
-                                                            ImageCategory.LOCATION,
-                                                            200,
-                                                            400,
-                                                            URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
-                                                        )
-                                                    },
-                                                    new EnergyMix(
-                                                        true,
-                                                        new[] {
-                                                            new EnergySource(
-                                                                EnergySourceCategory.SOLAR,
-                                                                80
-                                                            ),
-                                                            new EnergySource(
-                                                                EnergySourceCategory.WIND,
-                                                                20
-                                                            )
-                                                        },
-                                                        new[] {
-                                                            new EnvironmentalImpact(
-                                                                EnvironmentalImpactCategory.CARBON_DIOXIDE,
-                                                                0.1
-                                                            )
-                                                        },
-                                                        "Stadtwerke Jena-Ost",
-                                                        "New Green Deal"
-                                                    ),
-                                                    null,
-                                                    DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
-                                                ),
-                                                SkipNotifications: true
-                                            );
+                                                     "1. Stock",
+                                                     GeoCoordinate.Parse(10.1, 20.2),
+                                                     "Ladestation #1",
+                                                     new DisplayText[] {
+                                                         DisplayText.Create(Languages.de, "Bitte klingeln!"),
+                                                         DisplayText.Create(Languages.en, "Ken sent me!")
+                                                     },
+                                                     new[] {
+                                                         ParkingRestrictions.EV_ONLY,
+                                                         ParkingRestrictions.PLUGGED
+                                                     },
+                                                     new[] {
+                                                         new Image(
+                                                             URL.Parse("http://example.com/pinguine.jpg"),
+                                                             ImageFileType.jpeg,
+                                                             ImageCategory.OPERATOR,
+                                                             100,
+                                                             150,
+                                                             URL.Parse("http://example.com/kleine_pinguine.jpg")
+                                                         )
+                                                     },
+                                                     DateTime.Parse("2020-09-22")
+                                                 )
+                                             },
+                                             new[] {
+                                                 new DisplayText(Languages.de, "Hallo Welt!"),
+                                                 new DisplayText(Languages.en, "Hello world!")
+                                             },
+                                             new BusinessDetails(
+                                                 "Open Charging Cloud",
+                                                 URL.Parse("https://open.charging.cloud"),
+                                                 new Image(
+                                                     URL.Parse("http://open.charging.cloud/logo.svg"),
+                                                     ImageFileType.svg,
+                                                     ImageCategory.OPERATOR,
+                                                     1000,
+                                                     1500,
+                                                     URL.Parse("http://open.charging.cloud/logo_small.svg")
+                                                 )
+                                             ),
+                                             new BusinessDetails(
+                                                 "GraphDefined GmbH",
+                                                 URL.Parse("https://www.graphdefined.com"),
+                                                 new Image(
+                                                     URL.Parse("http://www.graphdefined.com/logo.png"),
+                                                     ImageFileType.png,
+                                                     ImageCategory.OPERATOR,
+                                                     2000,
+                                                     3000,
+                                                     URL.Parse("http://www.graphdefined.com/logo_small.png")
+                                                 )
+                                             ),
+                                             new BusinessDetails(
+                                                 "Achim Friedland",
+                                                 URL.Parse("https://ahzf.de"),
+                                                 new Image(
+                                                     URL.Parse("http://ahzf.de/logo.gif"),
+                                                     ImageFileType.gif,
+                                                     ImageCategory.OWNER,
+                                                     3000,
+                                                     4500,
+                                                     URL.Parse("http://ahzf.de/logo_small.gif")
+                                                 )
+                                             ),
+                                             new[] {
+                                                 Facilities.CAFE
+                                             },
+                                             "Europe/Berlin",
+                                             new Hours(
+                                                 new[] {
+                                                     new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                                     new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                                     new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                                     new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                                     new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                                 },
+                                                 new[] {
+                                                     new ExceptionalPeriod(
+                                                         DateTime.Parse("2020-09-21T00:00:00Z"),
+                                                         DateTime.Parse("2020-09-22T00:00:00Z")
+                                                     )
+                                                 },
+                                                 new[] {
+                                                     new ExceptionalPeriod(
+                                                         DateTime.Parse("2020-12-24T00:00:00Z"),
+                                                         DateTime.Parse("2020-12-26T00:00:00Z")
+                                                     )
+                                                 }
+                                             ),
+                                             false,
+                                             new[] {
+                                                 new Image(
+                                                     URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
+                                                     ImageFileType.jpeg,
+                                                     ImageCategory.LOCATION,
+                                                     200,
+                                                     400,
+                                                     URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
+                                                 )
+                                             },
+                                             new EnergyMix(
+                                                 true,
+                                                 new[] {
+                                                     new EnergySource(
+                                                         EnergySourceCategory.SOLAR,
+                                                         80
+                                                     ),
+                                                     new EnergySource(
+                                                         EnergySourceCategory.WIND,
+                                                         20
+                                                     )
+                                                 },
+                                                 new[] {
+                                                     new EnvironmentalImpact(
+                                                         EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                                         0.1
+                                                     )
+                                                 },
+                                                 "Stadtwerke Jena-Ost",
+                                                 "New Green Deal"
+                                             ),
+                                             null,
+                                             DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                         ),
+                                         SkipNotifications: true
+                                     );
 
                 #endregion
 
@@ -823,258 +823,258 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         public async Task EMSP_GetLocations_Test2()
         {
 
-            var graphDefinedCPO = emspWebAPI2?.GetEMSPClient(
+            var graphDefinedCPO = emsp2CommonAPI?.GetEMSPClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
             Assert.IsNotNull(graphDefinedCPO);
 
-            if (cpoWebAPI       is not null &&
-                graphDefinedCPO is not null)
+            if (graphDefinedCPO is not null &&
+                cpoCommonAPI    is not null)
             {
 
                 #region Define Location1
 
-                cpoWebAPI.CommonAPI.AddLocation(new Location(
-                                                    CountryCode.Parse("DE"),
-                                                    Party_Id.   Parse("GEF"),
-                                                    Location_Id.Parse("LOC0001"),
-                                                    LocationType.PARKING_LOT,
-                                                    "Biberweg 18",
-                                                    "Jena",
-                                                    "07749",
-                                                    Country.Germany,
-                                                    GeoCoordinate.Parse(10, 20),
-                                                    "Location 0001",
-                                                    new[] {
-                                                        new AdditionalGeoLocation(
-                                                            Latitude.Parse(11),
-                                                            Longitude.Parse(22),
-                                                            Name: DisplayText.Create(Languages.de, "Postkasten")
-                                                        )
-                                                    },
-                                                    new[] {
-                                                        new EVSE(
-                                                            EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                                            StatusType.AVAILABLE,
-                                                            new[] {
-                                                                new Connector(
-                                                                    Connector_Id.Parse("1"),
-                                                                    ConnectorType.IEC_62196_T2,
-                                                                    ConnectorFormats.SOCKET,
-                                                                    PowerTypes.AC_3_PHASE,
-                                                                    400,
-                                                                    30,
-                                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                                    URL.Parse("https://open.charging.cloud/terms"),
-                                                                    DateTime.Parse("2020-09-21")
-                                                                ),
-                                                                new Connector(
-                                                                    Connector_Id.Parse("2"),
-                                                                    ConnectorType.IEC_62196_T2_COMBO,
-                                                                    ConnectorFormats.CABLE,
-                                                                    PowerTypes.AC_3_PHASE,
-                                                                    400,
-                                                                    20,
-                                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                                    URL.Parse("https://open.charging.cloud/terms"),
-                                                                    DateTime.Parse("2020-09-22")
-                                                                )
-                                                            },
-                                                            EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                                            new[] {
-                                                                new StatusSchedule(
-                                                                    StatusType.INOPERATIVE,
-                                                                    DateTime.Parse("2020-09-23"),
-                                                                    DateTime.Parse("2020-09-24")
-                                                                ),
-                                                                new StatusSchedule(
-                                                                    StatusType.OUTOFORDER,
-                                                                    DateTime.Parse("2020-12-30"),
-                                                                    DateTime.Parse("2020-12-31")
-                                                                )
-                                                            },
-                                                            new Capability[] {
-                                                                Capability.RFID_READER,
-                                                                Capability.RESERVABLE
-                                                            },
+                cpoCommonAPI.AddLocation(new Location(
+                                             CountryCode.Parse("DE"),
+                                             Party_Id.   Parse("GEF"),
+                                             Location_Id.Parse("LOC0001"),
+                                             LocationType.PARKING_LOT,
+                                             "Biberweg 18",
+                                             "Jena",
+                                             "07749",
+                                             Country.Germany,
+                                             GeoCoordinate.Parse(10, 20),
+                                             "Location 0001",
+                                             new[] {
+                                                 new AdditionalGeoLocation(
+                                                     Latitude.Parse(11),
+                                                     Longitude.Parse(22),
+                                                     Name: DisplayText.Create(Languages.de, "Postkasten")
+                                                 )
+                                             },
+                                             new[] {
+                                                 new EVSE(
+                                                     EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
+                                                     StatusType.AVAILABLE,
+                                                     new[] {
+                                                         new Connector(
+                                                             Connector_Id.Parse("1"),
+                                                             ConnectorType.IEC_62196_T2,
+                                                             ConnectorFormats.SOCKET,
+                                                             PowerTypes.AC_3_PHASE,
+                                                             400,
+                                                             30,
+                                                             Tariff_Id.Parse("DE*GEF*T0001"),
+                                                             URL.Parse("https://open.charging.cloud/terms"),
+                                                             DateTime.Parse("2020-09-21")
+                                                         ),
+                                                         new Connector(
+                                                             Connector_Id.Parse("2"),
+                                                             ConnectorType.IEC_62196_T2_COMBO,
+                                                             ConnectorFormats.CABLE,
+                                                             PowerTypes.AC_3_PHASE,
+                                                             400,
+                                                             20,
+                                                             Tariff_Id.Parse("DE*GEF*T0003"),
+                                                             URL.Parse("https://open.charging.cloud/terms"),
+                                                             DateTime.Parse("2020-09-22")
+                                                         )
+                                                     },
+                                                     EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
+                                                     new[] {
+                                                         new StatusSchedule(
+                                                             StatusType.INOPERATIVE,
+                                                             DateTime.Parse("2020-09-23"),
+                                                             DateTime.Parse("2020-09-24")
+                                                         ),
+                                                         new StatusSchedule(
+                                                             StatusType.OUTOFORDER,
+                                                             DateTime.Parse("2020-12-30"),
+                                                             DateTime.Parse("2020-12-31")
+                                                         )
+                                                     },
+                                                     new Capability[] {
+                                                         Capability.RFID_READER,
+                                                         Capability.RESERVABLE
+                                                     },
 
-                                                            // OCPI Computer Science Extensions
-                                                            new EnergyMeter(
-                                                                Meter_Id.Parse("Meter0815"),
-                                                                "EnergyMeter Model #1",
-                                                                null,
-                                                                "hw. v1.80",
-                                                                "fw. v1.20",
-                                                                "Energy Metering Services",
-                                                                null,
-                                                                null,
-                                                                null,
-                                                                new[] {
-                                                                    new TransparencySoftwareStatus(
-                                                                        new TransparencySoftware(
-                                                                            "Chargy Transparency Software Desktop Application",
-                                                                            "v1.00",
-                                                                            OpenSourceLicense.AGPL3,
-                                                                            "GraphDefined GmbH",
-                                                                            URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                            URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
-                                                                        ),
-                                                                        LegalStatus.GermanCalibrationLaw,
-                                                                        "cert",
-                                                                        "German PTB",
-                                                                        NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                        NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                    ),
-                                                                    new TransparencySoftwareStatus(
-                                                                        new TransparencySoftware(
-                                                                            "Chargy Transparency Software Mobile Application",
-                                                                            "v1.00",
-                                                                            OpenSourceLicense.AGPL3,
-                                                                            "GraphDefined GmbH",
-                                                                            URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                            URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
-                                                                        ),
-                                                                        LegalStatus.ForInformationOnly,
-                                                                        "no cert",
-                                                                        "GraphDefiend",
-                                                                        NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                        NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                    )
-                                                                }
-                                                            ),
+                                                     // OCPI Computer Science Extensions
+                                                     new EnergyMeter(
+                                                         Meter_Id.Parse("Meter0815"),
+                                                         "EnergyMeter Model #1",
+                                                         null,
+                                                         "hw. v1.80",
+                                                         "fw. v1.20",
+                                                         "Energy Metering Services",
+                                                         null,
+                                                         null,
+                                                         null,
+                                                         new[] {
+                                                             new TransparencySoftwareStatus(
+                                                                 new TransparencySoftware(
+                                                                     "Chargy Transparency Software Desktop Application",
+                                                                     "v1.00",
+                                                                     OpenSourceLicense.AGPL3,
+                                                                     "GraphDefined GmbH",
+                                                                     URL.Parse("https://open.charging.cloud/logo.svg"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy"),
+                                                                     URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
+                                                                 ),
+                                                                 LegalStatus.GermanCalibrationLaw,
+                                                                 "cert",
+                                                                 "German PTB",
+                                                                 NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                                                 NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                                             ),
+                                                             new TransparencySoftwareStatus(
+                                                                 new TransparencySoftware(
+                                                                     "Chargy Transparency Software Mobile Application",
+                                                                     "v1.00",
+                                                                     OpenSourceLicense.AGPL3,
+                                                                     "GraphDefined GmbH",
+                                                                     URL.Parse("https://open.charging.cloud/logo.svg"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy"),
+                                                                     URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
+                                                                 ),
+                                                                 LegalStatus.ForInformationOnly,
+                                                                 "no cert",
+                                                                 "GraphDefiend",
+                                                                 NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                                                 NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                                             )
+                                                         }
+                                                     ),
 
-                                                            "1. Stock",
-                                                            GeoCoordinate.Parse(10.1, 20.2),
-                                                            "Ladestation #1",
-                                                            new[] {
-                                                                DisplayText.Create(Languages.de, "Bitte klingeln!"),
-                                                                DisplayText.Create(Languages.en, "Ken sent me!")
-                                                            },
-                                                            new[] {
-                                                                ParkingRestrictions.EV_ONLY,
-                                                                ParkingRestrictions.PLUGGED
-                                                            },
-                                                            new[] {
-                                                                new Image(
-                                                                    URL.Parse("http://example.com/pinguine.jpg"),
-                                                                    ImageFileType.jpeg,
-                                                                    ImageCategory.OPERATOR,
-                                                                    100,
-                                                                    150,
-                                                                    URL.Parse("http://example.com/kleine_pinguine.jpg")
-                                                                )
-                                                            },
-                                                            DateTime.Parse("2020-09-22")
-                                                        )
-                                                    },
-                                                    new[] {
-                                                        new DisplayText(Languages.de, "Hallo Welt!"),
-                                                        new DisplayText(Languages.en, "Hello world!")
-                                                    },
-                                                    new BusinessDetails(
-                                                        "Open Charging Cloud",
-                                                        URL.Parse("https://open.charging.cloud"),
-                                                        new Image(
-                                                            URL.Parse("http://open.charging.cloud/logo.svg"),
-                                                            ImageFileType.svg,
-                                                            ImageCategory.OPERATOR,
-                                                            1000,
-                                                            1500,
-                                                            URL.Parse("http://open.charging.cloud/logo_small.svg")
-                                                        )
-                                                    ),
-                                                    new BusinessDetails(
-                                                        "GraphDefined GmbH",
-                                                        URL.Parse("https://www.graphdefined.com"),
-                                                        new Image(
-                                                            URL.Parse("http://www.graphdefined.com/logo.png"),
-                                                            ImageFileType.png,
-                                                            ImageCategory.OPERATOR,
-                                                            2000,
-                                                            3000,
-                                                            URL.Parse("http://www.graphdefined.com/logo_small.png")
-                                                        )
-                                                    ),
-                                                    new BusinessDetails(
-                                                        "Achim Friedland",
-                                                        URL.Parse("https://ahzf.de"),
-                                                        new Image(
-                                                            URL.Parse("http://ahzf.de/logo.gif"),
-                                                            ImageFileType.gif,
-                                                            ImageCategory.OWNER,
-                                                            3000,
-                                                            4500,
-                                                            URL.Parse("http://ahzf.de/logo_small.gif")
-                                                        )
-                                                    ),
-                                                    new[] {
-                                                        Facilities.CAFE
-                                                    },
-                                                    "Europe/Berlin",
-                                                    new Hours(
-                                                        new[] {
-                                                            new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                                            new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                                            new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                                            new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                                            new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
-                                                        },
-                                                        new[] {
-                                                            new ExceptionalPeriod(
-                                                                DateTime.Parse("2020-09-21T00:00:00Z"),
-                                                                DateTime.Parse("2020-09-22T00:00:00Z")
-                                                            )
-                                                        },
-                                                        new[] {
-                                                            new ExceptionalPeriod(
-                                                                DateTime.Parse("2020-12-24T00:00:00Z"),
-                                                                DateTime.Parse("2020-12-26T00:00:00Z")
-                                                            )
-                                                        }
-                                                    ),
-                                                    false,
-                                                    new[] {
-                                                        new Image(
-                                                            URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
-                                                            ImageFileType.jpeg,
-                                                            ImageCategory.LOCATION,
-                                                            200,
-                                                            400,
-                                                            URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
-                                                        )
-                                                    },
-                                                    new EnergyMix(
-                                                        true,
-                                                        new[] {
-                                                            new EnergySource(
-                                                                EnergySourceCategory.SOLAR,
-                                                                80
-                                                            ),
-                                                            new EnergySource(
-                                                                EnergySourceCategory.WIND,
-                                                                20
-                                                            )
-                                                        },
-                                                        new[] {
-                                                            new EnvironmentalImpact(
-                                                                EnvironmentalImpactCategory.CARBON_DIOXIDE,
-                                                                0.1
-                                                            )
-                                                        },
-                                                        "Stadtwerke Jena-Ost",
-                                                        "New Green Deal"
-                                                    ),
-                                                    null,
-                                                    DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
-                                                ),
-                                                SkipNotifications: true
-                                            );
+                                                     "1. Stock",
+                                                     GeoCoordinate.Parse(10.1, 20.2),
+                                                     "Ladestation #1",
+                                                     new[] {
+                                                         DisplayText.Create(Languages.de, "Bitte klingeln!"),
+                                                         DisplayText.Create(Languages.en, "Ken sent me!")
+                                                     },
+                                                     new[] {
+                                                         ParkingRestrictions.EV_ONLY,
+                                                         ParkingRestrictions.PLUGGED
+                                                     },
+                                                     new[] {
+                                                         new Image(
+                                                             URL.Parse("http://example.com/pinguine.jpg"),
+                                                             ImageFileType.jpeg,
+                                                             ImageCategory.OPERATOR,
+                                                             100,
+                                                             150,
+                                                             URL.Parse("http://example.com/kleine_pinguine.jpg")
+                                                         )
+                                                     },
+                                                     DateTime.Parse("2020-09-22")
+                                                 )
+                                             },
+                                             new[] {
+                                                 new DisplayText(Languages.de, "Hallo Welt!"),
+                                                 new DisplayText(Languages.en, "Hello world!")
+                                             },
+                                             new BusinessDetails(
+                                                 "Open Charging Cloud",
+                                                 URL.Parse("https://open.charging.cloud"),
+                                                 new Image(
+                                                     URL.Parse("http://open.charging.cloud/logo.svg"),
+                                                     ImageFileType.svg,
+                                                     ImageCategory.OPERATOR,
+                                                     1000,
+                                                     1500,
+                                                     URL.Parse("http://open.charging.cloud/logo_small.svg")
+                                                 )
+                                             ),
+                                             new BusinessDetails(
+                                                 "GraphDefined GmbH",
+                                                 URL.Parse("https://www.graphdefined.com"),
+                                                 new Image(
+                                                     URL.Parse("http://www.graphdefined.com/logo.png"),
+                                                     ImageFileType.png,
+                                                     ImageCategory.OPERATOR,
+                                                     2000,
+                                                     3000,
+                                                     URL.Parse("http://www.graphdefined.com/logo_small.png")
+                                                 )
+                                             ),
+                                             new BusinessDetails(
+                                                 "Achim Friedland",
+                                                 URL.Parse("https://ahzf.de"),
+                                                 new Image(
+                                                     URL.Parse("http://ahzf.de/logo.gif"),
+                                                     ImageFileType.gif,
+                                                     ImageCategory.OWNER,
+                                                     3000,
+                                                     4500,
+                                                     URL.Parse("http://ahzf.de/logo_small.gif")
+                                                 )
+                                             ),
+                                             new[] {
+                                                 Facilities.CAFE
+                                             },
+                                             "Europe/Berlin",
+                                             new Hours(
+                                                 new[] {
+                                                     new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                                     new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                                     new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                                     new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                                     new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                                 },
+                                                 new[] {
+                                                     new ExceptionalPeriod(
+                                                         DateTime.Parse("2020-09-21T00:00:00Z"),
+                                                         DateTime.Parse("2020-09-22T00:00:00Z")
+                                                     )
+                                                 },
+                                                 new[] {
+                                                     new ExceptionalPeriod(
+                                                         DateTime.Parse("2020-12-24T00:00:00Z"),
+                                                         DateTime.Parse("2020-12-26T00:00:00Z")
+                                                     )
+                                                 }
+                                             ),
+                                             false,
+                                             new[] {
+                                                 new Image(
+                                                     URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
+                                                     ImageFileType.jpeg,
+                                                     ImageCategory.LOCATION,
+                                                     200,
+                                                     400,
+                                                     URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
+                                                 )
+                                             },
+                                             new EnergyMix(
+                                                 true,
+                                                 new[] {
+                                                     new EnergySource(
+                                                         EnergySourceCategory.SOLAR,
+                                                         80
+                                                     ),
+                                                     new EnergySource(
+                                                         EnergySourceCategory.WIND,
+                                                         20
+                                                     )
+                                                 },
+                                                 new[] {
+                                                     new EnvironmentalImpact(
+                                                         EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                                         0.1
+                                                     )
+                                                 },
+                                                 "Stadtwerke Jena-Ost",
+                                                 "New Green Deal"
+                                             ),
+                                             null,
+                                             DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                         ),
+                                         SkipNotifications: true
+                                     );
 
                 #endregion
 
@@ -1134,23 +1134,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         public async Task EMSP_GetLocations_TariffDelegate_Test1()
         {
 
-            var graphDefinedCPO = emspWebAPI1?.GetEMSPClient(
+            var graphDefinedCPO = emsp1CommonAPI?.GetEMSPClient(
                                       CountryCode: CountryCode.Parse("DE"),
                                       PartyId:     Party_Id.   Parse("GEF")
                                   );
 
             Assert.IsNotNull(graphDefinedCPO);
 
-            if (cpoWebAPI       is not null &&
-                graphDefinedCPO is not null)
+            if (graphDefinedCPO is not null &&
+                cpoCommonAPI    is not null)
             {
 
-                cpoWebAPI.CommonAPI.GetTariffIdsDelegate += (CPOCountryCode,
-                                                             CPOPartyId,
-                                                             Location,
-                                                             EVSEUId,
-                                                             ConnectorId,
-                                                             EMPId) => {
+                cpoCommonAPI.GetTariffIdsDelegate += (CPOCountryCode,
+                                                      CPOPartyId,
+                                                      Location,
+                                                      EVSEUId,
+                                                      ConnectorId,
+                                                      EMPId) => {
 
                     if (EMPId.ToString() == "DE-GDF")
                         return new[] { Tariff_Id.Parse("AC1") };
@@ -1163,245 +1163,245 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                 #region Define Location1 (tariffIds == null)
 
-                cpoWebAPI.CommonAPI.AddLocation(new Location(
-                                                    CountryCode.Parse("DE"),
-                                                    Party_Id.   Parse("GEF"),
-                                                    Location_Id.Parse("LOC0001"),
-                                                    LocationType.PARKING_LOT,
-                                                    "Biberweg 18",
-                                                    "Jena",
-                                                    "07749",
-                                                    Country.Germany,
-                                                    GeoCoordinate.Parse(10, 20),
-                                                    "Location 0001",
-                                                    new[] {
-                                                        new AdditionalGeoLocation(
-                                                            Latitude.Parse(11),
-                                                            Longitude.Parse(22),
-                                                            Name: DisplayText.Create(Languages.de, "Postkasten")
-                                                        )
-                                                    },
-                                                    new[] {
-                                                        new EVSE(
-                                                            EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                                            StatusType.AVAILABLE,
-                                                            new[] {
-                                                                new Connector(
-                                                                    Connector_Id.Parse("1"),
-                                                                    ConnectorType.IEC_62196_T2,
-                                                                    ConnectorFormats.SOCKET,
-                                                                    PowerTypes.AC_3_PHASE,
-                                                                    400,
-                                                                    30,
-                                                                    null,
-                                                                    URL.Parse("https://open.charging.cloud/terms"),
-                                                                    DateTime.Parse("2020-09-21")
-                                                                ),
-                                                                new Connector(
-                                                                    Connector_Id.Parse("2"),
-                                                                    ConnectorType.IEC_62196_T2_COMBO,
-                                                                    ConnectorFormats.CABLE,
-                                                                    PowerTypes.AC_3_PHASE,
-                                                                    400,
-                                                                    20,
-                                                                    null,
-                                                                    URL.Parse("https://open.charging.cloud/terms"),
-                                                                    DateTime.Parse("2020-09-22")
-                                                                )
-                                                            },
-                                                            EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                                            new[] {
-                                                                new StatusSchedule(
-                                                                    StatusType.INOPERATIVE,
-                                                                    DateTime.Parse("2020-09-23"),
-                                                                    DateTime.Parse("2020-09-24")
-                                                                ),
-                                                                new StatusSchedule(
-                                                                    StatusType.OUTOFORDER,
-                                                                    DateTime.Parse("2020-12-30"),
-                                                                    DateTime.Parse("2020-12-31")
-                                                                )
-                                                            },
-                                                            new[] {
-                                                                Capability.RFID_READER,
-                                                                Capability.RESERVABLE
-                                                            },
+                cpoCommonAPI.AddLocation(new Location(
+                                             CountryCode.Parse("DE"),
+                                             Party_Id.   Parse("GEF"),
+                                             Location_Id.Parse("LOC0001"),
+                                             LocationType.PARKING_LOT,
+                                             "Biberweg 18",
+                                             "Jena",
+                                             "07749",
+                                             Country.Germany,
+                                             GeoCoordinate.Parse(10, 20),
+                                             "Location 0001",
+                                             new[] {
+                                                 new AdditionalGeoLocation(
+                                                     Latitude.Parse(11),
+                                                     Longitude.Parse(22),
+                                                     Name: DisplayText.Create(Languages.de, "Postkasten")
+                                                 )
+                                             },
+                                             new[] {
+                                                 new EVSE(
+                                                     EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
+                                                     StatusType.AVAILABLE,
+                                                     new[] {
+                                                         new Connector(
+                                                             Connector_Id.Parse("1"),
+                                                             ConnectorType.IEC_62196_T2,
+                                                             ConnectorFormats.SOCKET,
+                                                             PowerTypes.AC_3_PHASE,
+                                                             400,
+                                                             30,
+                                                             null,
+                                                             URL.Parse("https://open.charging.cloud/terms"),
+                                                             DateTime.Parse("2020-09-21")
+                                                         ),
+                                                         new Connector(
+                                                             Connector_Id.Parse("2"),
+                                                             ConnectorType.IEC_62196_T2_COMBO,
+                                                             ConnectorFormats.CABLE,
+                                                             PowerTypes.AC_3_PHASE,
+                                                             400,
+                                                             20,
+                                                             null,
+                                                             URL.Parse("https://open.charging.cloud/terms"),
+                                                             DateTime.Parse("2020-09-22")
+                                                         )
+                                                     },
+                                                     EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
+                                                     new[] {
+                                                         new StatusSchedule(
+                                                             StatusType.INOPERATIVE,
+                                                             DateTime.Parse("2020-09-23"),
+                                                             DateTime.Parse("2020-09-24")
+                                                         ),
+                                                         new StatusSchedule(
+                                                             StatusType.OUTOFORDER,
+                                                             DateTime.Parse("2020-12-30"),
+                                                             DateTime.Parse("2020-12-31")
+                                                         )
+                                                     },
+                                                     new[] {
+                                                         Capability.RFID_READER,
+                                                         Capability.RESERVABLE
+                                                     },
 
-                                                            // OCPI Computer Science Extensions
-                                                            new EnergyMeter(
-                                                                Meter_Id.Parse("Meter0815"),
-                                                                "EnergyMeter Model #1",
-                                                                null,
-                                                                "hw. v1.80",
-                                                                "fw. v1.20",
-                                                                "Energy Metering Services",
-                                                                null,
-                                                                null,
-                                                                null,
-                                                                new[] {
-                                                                    new TransparencySoftwareStatus(
-                                                                        new TransparencySoftware(
-                                                                            "Chargy Transparency Software Desktop Application",
-                                                                            "v1.00",
-                                                                            OpenSourceLicense.AGPL3,
-                                                                            "GraphDefined GmbH",
-                                                                            URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                            URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
-                                                                        ),
-                                                                        LegalStatus.GermanCalibrationLaw,
-                                                                        "cert",
-                                                                        "German PTB",
-                                                                        NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                        NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                    ),
-                                                                    new TransparencySoftwareStatus(
-                                                                        new TransparencySoftware(
-                                                                            "Chargy Transparency Software Mobile Application",
-                                                                            "v1.00",
-                                                                            OpenSourceLicense.AGPL3,
-                                                                            "GraphDefined GmbH",
-                                                                            URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                                            URL.Parse("https://open.charging.cloud/Chargy"),
-                                                                            URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
-                                                                        ),
-                                                                        LegalStatus.ForInformationOnly,
-                                                                        "no cert",
-                                                                        "GraphDefiend",
-                                                                        NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                                        NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                                    )
-                                                                }
-                                                            ),
+                                                     // OCPI Computer Science Extensions
+                                                     new EnergyMeter(
+                                                         Meter_Id.Parse("Meter0815"),
+                                                         "EnergyMeter Model #1",
+                                                         null,
+                                                         "hw. v1.80",
+                                                         "fw. v1.20",
+                                                         "Energy Metering Services",
+                                                         null,
+                                                         null,
+                                                         null,
+                                                         new[] {
+                                                             new TransparencySoftwareStatus(
+                                                                 new TransparencySoftware(
+                                                                     "Chargy Transparency Software Desktop Application",
+                                                                     "v1.00",
+                                                                     OpenSourceLicense.AGPL3,
+                                                                     "GraphDefined GmbH",
+                                                                     URL.Parse("https://open.charging.cloud/logo.svg"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy"),
+                                                                     URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
+                                                                 ),
+                                                                 LegalStatus.GermanCalibrationLaw,
+                                                                 "cert",
+                                                                 "German PTB",
+                                                                 NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                                                 NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                                             ),
+                                                             new TransparencySoftwareStatus(
+                                                                 new TransparencySoftware(
+                                                                     "Chargy Transparency Software Mobile Application",
+                                                                     "v1.00",
+                                                                     OpenSourceLicense.AGPL3,
+                                                                     "GraphDefined GmbH",
+                                                                     URL.Parse("https://open.charging.cloud/logo.svg"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                                                     URL.Parse("https://open.charging.cloud/Chargy"),
+                                                                     URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
+                                                                 ),
+                                                                 LegalStatus.ForInformationOnly,
+                                                                 "no cert",
+                                                                 "GraphDefiend",
+                                                                 NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                                                 NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                                             )
+                                                         }
+                                                     ),
 
-                                                            "1. Stock",
-                                                            GeoCoordinate.Parse(10.1, 20.2),
-                                                            "Ladestation #1",
-                                                            new DisplayText[] {
-                                                                DisplayText.Create(Languages.de, "Bitte klingeln!"),
-                                                                DisplayText.Create(Languages.en, "Ken sent me!")
-                                                            },
-                                                            new[] {
-                                                                ParkingRestrictions.EV_ONLY,
-                                                                ParkingRestrictions.PLUGGED
-                                                            },
-                                                            new[] {
-                                                                new Image(
-                                                                    URL.Parse("http://example.com/pinguine.jpg"),
-                                                                    ImageFileType.jpeg,
-                                                                    ImageCategory.OPERATOR,
-                                                                    100,
-                                                                    150,
-                                                                    URL.Parse("http://example.com/kleine_pinguine.jpg")
-                                                                )
-                                                            },
-                                                            DateTime.Parse("2020-09-22")
-                                                        )
-                                                    },
-                                                    new[] {
-                                                        new DisplayText(Languages.de, "Hallo Welt!"),
-                                                        new DisplayText(Languages.en, "Hello world!")
-                                                    },
-                                                    new BusinessDetails(
-                                                        "Open Charging Cloud",
-                                                        URL.Parse("https://open.charging.cloud"),
-                                                        new Image(
-                                                            URL.Parse("http://open.charging.cloud/logo.svg"),
-                                                            ImageFileType.svg,
-                                                            ImageCategory.OPERATOR,
-                                                            1000,
-                                                            1500,
-                                                            URL.Parse("http://open.charging.cloud/logo_small.svg")
-                                                        )
-                                                    ),
-                                                    new BusinessDetails(
-                                                        "GraphDefined GmbH",
-                                                        URL.Parse("https://www.graphdefined.com"),
-                                                        new Image(
-                                                            URL.Parse("http://www.graphdefined.com/logo.png"),
-                                                            ImageFileType.png,
-                                                            ImageCategory.OPERATOR,
-                                                            2000,
-                                                            3000,
-                                                            URL.Parse("http://www.graphdefined.com/logo_small.png")
-                                                        )
-                                                    ),
-                                                    new BusinessDetails(
-                                                        "Achim Friedland",
-                                                        URL.Parse("https://ahzf.de"),
-                                                        new Image(
-                                                            URL.Parse("http://ahzf.de/logo.gif"),
-                                                            ImageFileType.gif,
-                                                            ImageCategory.OWNER,
-                                                            3000,
-                                                            4500,
-                                                            URL.Parse("http://ahzf.de/logo_small.gif")
-                                                        )
-                                                    ),
-                                                    new[] {
-                                                        Facilities.CAFE
-                                                    },
-                                                    "Europe/Berlin",
-                                                    new Hours(
-                                                        new[] {
-                                                            new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                                            new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                                            new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                                            new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                                            new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
-                                                        },
-                                                        new[] {
-                                                            new ExceptionalPeriod(
-                                                                DateTime.Parse("2020-09-21T00:00:00Z"),
-                                                                DateTime.Parse("2020-09-22T00:00:00Z")
-                                                            )
-                                                        },
-                                                        new[] {
-                                                            new ExceptionalPeriod(
-                                                                DateTime.Parse("2020-12-24T00:00:00Z"),
-                                                                DateTime.Parse("2020-12-26T00:00:00Z")
-                                                            )
-                                                        }
-                                                    ),
-                                                    false,
-                                                    new[] {
-                                                        new Image(
-                                                            URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
-                                                            ImageFileType.jpeg,
-                                                            ImageCategory.LOCATION,
-                                                            200,
-                                                            400,
-                                                            URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
-                                                        )
-                                                    },
-                                                    new EnergyMix(
-                                                        true,
-                                                        new[] {
-                                                            new EnergySource(
-                                                                EnergySourceCategory.SOLAR,
-                                                                80
-                                                            ),
-                                                            new EnergySource(
-                                                                EnergySourceCategory.WIND,
-                                                                20
-                                                            )
-                                                        },
-                                                        new[] {
-                                                            new EnvironmentalImpact(
-                                                                EnvironmentalImpactCategory.CARBON_DIOXIDE,
-                                                                0.1
-                                                            )
-                                                        },
-                                                        "Stadtwerke Jena-Ost",
-                                                        "New Green Deal"
-                                                    ),
-                                                    null,
-                                                    DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
-                                                ),
-                                                SkipNotifications: true
-                                            );
+                                                     "1. Stock",
+                                                     GeoCoordinate.Parse(10.1, 20.2),
+                                                     "Ladestation #1",
+                                                     new DisplayText[] {
+                                                         DisplayText.Create(Languages.de, "Bitte klingeln!"),
+                                                         DisplayText.Create(Languages.en, "Ken sent me!")
+                                                     },
+                                                     new[] {
+                                                         ParkingRestrictions.EV_ONLY,
+                                                         ParkingRestrictions.PLUGGED
+                                                     },
+                                                     new[] {
+                                                         new Image(
+                                                             URL.Parse("http://example.com/pinguine.jpg"),
+                                                             ImageFileType.jpeg,
+                                                             ImageCategory.OPERATOR,
+                                                             100,
+                                                             150,
+                                                             URL.Parse("http://example.com/kleine_pinguine.jpg")
+                                                         )
+                                                     },
+                                                     DateTime.Parse("2020-09-22")
+                                                 )
+                                             },
+                                             new[] {
+                                                 new DisplayText(Languages.de, "Hallo Welt!"),
+                                                 new DisplayText(Languages.en, "Hello world!")
+                                             },
+                                             new BusinessDetails(
+                                                 "Open Charging Cloud",
+                                                 URL.Parse("https://open.charging.cloud"),
+                                                 new Image(
+                                                     URL.Parse("http://open.charging.cloud/logo.svg"),
+                                                     ImageFileType.svg,
+                                                     ImageCategory.OPERATOR,
+                                                     1000,
+                                                     1500,
+                                                     URL.Parse("http://open.charging.cloud/logo_small.svg")
+                                                 )
+                                             ),
+                                             new BusinessDetails(
+                                                 "GraphDefined GmbH",
+                                                 URL.Parse("https://www.graphdefined.com"),
+                                                 new Image(
+                                                     URL.Parse("http://www.graphdefined.com/logo.png"),
+                                                     ImageFileType.png,
+                                                     ImageCategory.OPERATOR,
+                                                     2000,
+                                                     3000,
+                                                     URL.Parse("http://www.graphdefined.com/logo_small.png")
+                                                 )
+                                             ),
+                                             new BusinessDetails(
+                                                 "Achim Friedland",
+                                                 URL.Parse("https://ahzf.de"),
+                                                 new Image(
+                                                     URL.Parse("http://ahzf.de/logo.gif"),
+                                                     ImageFileType.gif,
+                                                     ImageCategory.OWNER,
+                                                     3000,
+                                                     4500,
+                                                     URL.Parse("http://ahzf.de/logo_small.gif")
+                                                 )
+                                             ),
+                                             new[] {
+                                                 Facilities.CAFE
+                                             },
+                                             "Europe/Berlin",
+                                             new Hours(
+                                                 new[] {
+                                                     new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                                     new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                                     new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                                     new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                                     new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                                 },
+                                                 new[] {
+                                                     new ExceptionalPeriod(
+                                                         DateTime.Parse("2020-09-21T00:00:00Z"),
+                                                         DateTime.Parse("2020-09-22T00:00:00Z")
+                                                     )
+                                                 },
+                                                 new[] {
+                                                     new ExceptionalPeriod(
+                                                         DateTime.Parse("2020-12-24T00:00:00Z"),
+                                                         DateTime.Parse("2020-12-26T00:00:00Z")
+                                                     )
+                                                 }
+                                             ),
+                                             false,
+                                             new[] {
+                                                 new Image(
+                                                     URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
+                                                     ImageFileType.jpeg,
+                                                     ImageCategory.LOCATION,
+                                                     200,
+                                                     400,
+                                                     URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
+                                                 )
+                                             },
+                                             new EnergyMix(
+                                                 true,
+                                                 new[] {
+                                                     new EnergySource(
+                                                         EnergySourceCategory.SOLAR,
+                                                         80
+                                                     ),
+                                                     new EnergySource(
+                                                         EnergySourceCategory.WIND,
+                                                         20
+                                                     )
+                                                 },
+                                                 new[] {
+                                                     new EnvironmentalImpact(
+                                                         EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                                         0.1
+                                                     )
+                                                 },
+                                                 "Stadtwerke Jena-Ost",
+                                                 "New Green Deal"
+                                             ),
+                                             null,
+                                             DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                         ),
+                                         SkipNotifications: true
+                                     );
 
                 #endregion
 

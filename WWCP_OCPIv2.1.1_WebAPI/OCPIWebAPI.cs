@@ -394,17 +394,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         public EMSPAPILogger                                EMSPAPILogger      { get; set; }
 
-
-        private readonly List<CPOClient>  cpoClients;
-
-        public IEnumerable<CPOClient>                       CPOClients
-            => cpoClients;
-
-
-        private readonly List<EMSPClient> emspClients;
-        public IEnumerable<EMSPClient>                      EMSPClients
-            => emspClients;
-
         /// <summary>
         /// The default request timeout for new CPO/EMSP clients.
         /// </summary>
@@ -503,8 +492,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
             this.HTTPRealm           = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
             this.HTTPLogins          = HTTPLogins    ?? Array.Empty<KeyValuePair<String, String>>();
 
-            this.cpoClients          = new List<CPOClient>();
-            this.emspClients         = new List<EMSPClient>();
+            //this.cpoClients          = new List<CPOClient>();
+            //this.emspClients         = new List<EMSPClient>();
 
             // Link HTTP events...
             HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -1493,7 +1482,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              #region Get EMSP client
 
-                                             var emspClient = GetEMSPClient(RemoteParty);
+                                             var emspClient = CommonAPI.GetEMSPClient(RemoteParty);
 
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
@@ -1833,7 +1822,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              #region Get EMSP client
 
-                                             var emspClient = GetEMSPClient(RemoteParty);
+                                             var emspClient = CommonAPI.GetEMSPClient(RemoteParty);
 
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
@@ -2225,7 +2214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              #region Get EMSP client
 
-                                             var emspClient = GetEMSPClient(RemoteParty);
+                                             var emspClient = CommonAPI.GetEMSPClient(RemoteParty);
 
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
@@ -2563,7 +2552,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              #region Get EMSP client
 
-                                             var emspClient = GetEMSPClient(RemoteParty);
+                                             var emspClient = CommonAPI.GetEMSPClient(RemoteParty);
 
                                              if (emspClient == null)
                                                  return new HTTPResponse.Builder(Request) {
@@ -2951,7 +2940,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              #region Get EMSP client
 
-                                             var emspClient = GetEMSPClient(RemoteParty);
+                                             var emspClient = CommonAPI.GetEMSPClient(RemoteParty);
 
                                              if (emspClient is null)
                                                  return new HTTPResponse.Builder(Request) {
@@ -3028,8 +3017,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                          HTTPDelegate: Request => {
 
                                              var clients = new List<CommonClient>();
-                                             clients.AddRange(CPOClients);
-                                             clients.AddRange(EMSPClients);
+                                             clients.AddRange(CommonAPI.CPOClients);
+                                             clients.AddRange(CommonAPI.EMSPClients);
 
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
@@ -3059,11 +3048,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request)
                                                  {
-                                                     HTTPStatusCode = HTTPStatusCode.OK,
-                                                     ContentType = HTTPContentType.JSON_UTF8,
-                                                     Content = new JArray(CPOClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
-                                                     AccessControlAllowMethods = "OPTIONS, GET",
-                                                     AccessControlAllowHeaders = "Authorization"
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     Content                    = new JArray(CommonAPI.CPOClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
+                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders  = "Authorization"
                                                      //LastModified               = Location.LastUpdated.ToIso8601(),
                                                      //ETag                       = Location.SHA256Hash
                                                  }.AsImmutable);
@@ -3086,7 +3075,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      ContentType                = HTTPContentType.JSON_UTF8,
-                                                     Content                    = new JArray(EMSPClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
+                                                     Content                    = new JArray(CommonAPI.EMSPClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
                                                      AccessControlAllowMethods  = "OPTIONS, GET",
                                                      AccessControlAllowHeaders  = "Authorization"
                                                      //LastModified               = Location.LastUpdated.ToIso8601(),
@@ -3103,116 +3092,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         #endregion
 
 
-        #region GetEMSPClient(CountryCode, PartyId)
-
-        /// <summary>
-        /// As an EMSP create a client to access a remote CPO.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the remote CPO.</param>
-        /// <param name="PartyId">The party identification of the remote CPO.</param>
-        public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
-                                         Party_Id     PartyId)
-        {
-
-            var remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
-                                                                                    remoteparty.PartyId     == PartyId);
-
-            if (remoteParty?.RemoteAccessInfos?.Any() == true)
-                return emspClients.AddAndReturnElement(
-                    new EMSPClient(
-                        remoteParty,
-                        CommonAPI
-                    ));
-
-            return null;
-
-        }
-
-        #endregion
-
-        #region GetEMSPClient(RemoteParty)
-
-        public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty)
-        {
-
-            if (RemoteParty is null)
-                return null;
-
-            var emspClient = EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                      emspclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
-
-            if (emspClient is not null)
-                return emspClient;
-
-            if (RemoteParty.RemoteAccessInfos?.Any() == true)
-                return emspClients.AddAndReturnElement(
-                    new EMSPClient(
-                        RemoteParty,
-                        CommonAPI
-                    ));
-
-            return null;
-
-        }
-
-        #endregion
-
-        #region GetEMSPClient(RemotePartyId)
-
-        public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId)
-        {
-
-            var remoteParty  = CommonAPI.RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
-                                                                                     remoteparty.PartyId     == RemotePartyId.PartyId);
-
-            var emspClient   = remoteParty is not null
-                                   ? EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                              emspclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
-                                   : null;
-
-            if (emspClient is not null)
-                return emspClient;
-
-            if (remoteParty?.RemoteAccessInfos?.Any() == true)
-                return emspClients.AddAndReturnElement(
-                    new EMSPClient(
-                        remoteParty,
-                        CommonAPI
-                    ));
-
-            return null;
-
-        }
-
-        #endregion
 
 
-        #region GetCPOClient (CountryCode, PartyId)
 
-        /// <summary>
-        /// As a CPO create a client to access a remote EMSP.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the remote EMSP.</param>
-        /// <param name="PartyId">The party identification of the remote EMSP.</param>
-        public CPOClient? GetCPOClient(CountryCode  CountryCode,
-                                       Party_Id     PartyId)
-        {
 
-            var remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
-                                                                                    remoteparty.PartyId     == PartyId);
-
-            if (remoteParty?.RemoteAccessInfos?.Any() == true)
-                return cpoClients.AddAndReturnElement(
-                    new CPOClient(
-                        remoteParty,
-                        CommonAPI
-                    ));
-
-            return null;
-
-        }
-
-        #endregion
 
 
     }

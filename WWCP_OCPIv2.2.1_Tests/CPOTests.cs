@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_GetVersions_Test()
         {
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -102,7 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                 var version = versions.First();
                 Assert.AreEqual (Version_Id.Parse("2.2"),     version.Id);
-                Assert.AreEqual (emspVersionsAPIURL1 + "2.2",  version.URL);
+                Assert.AreEqual (emsp1VersionsAPIURL.Value + "2.2",  version.URL);
 
             }
 
@@ -121,9 +121,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Change Access Token
 
-            cpoWebAPI.CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+            cpoCommonAPI?.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
 
-            var result = cpoWebAPI.CommonAPI.AddRemoteParty(
+            var result = cpoCommonAPI?.AddRemoteParty(
                 CountryCode:        CountryCode.Parse("DE"),
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
@@ -137,7 +137,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 RemoteAccessInfos:  new RemoteAccessInfo[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("bbbbbb"),
-                                            VersionsURL:        emspVersionsAPIURL1,
+                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                             VersionIds:         new Version_Id[] {
                                                                     Version_Id.Parse("2.2")
                                                                 },
@@ -150,7 +150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -199,7 +199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                 var version = versions.First();
                 Assert.AreEqual (Version_Id.Parse("2.2"),    version.Id);
-                Assert.AreEqual (emspVersionsAPIURL1 + "2.2", version.URL);
+                Assert.AreEqual (emsp1VersionsAPIURL.Value + "2.2", version.URL);
 
             }
 
@@ -218,10 +218,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Block Access Token
 
-            cpoWebAPI. CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
-            emspWebAPI1.CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
+            cpoCommonAPI?.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+            emsp1CommonAPI?.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
 
-            var addEMSPResult = cpoWebAPI.CommonAPI.AddRemoteParty(
+            var addEMSPResult = cpoCommonAPI?.AddRemoteParty(
                 CountryCode:        CountryCode.Parse("DE"),
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
@@ -235,7 +235,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 RemoteAccessInfos:  new RemoteAccessInfo[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("yyyyyy"),
-                                            VersionsURL:        emspVersionsAPIURL1,
+                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                             VersionIds:         new Version_Id[] {
                                                                     Version_Id.Parse("2.2")
                                                                 },
@@ -249,7 +249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             Assert.IsTrue(addEMSPResult);
 
 
-            var addCPOResult = emspWebAPI1.CommonAPI.AddRemoteParty(
+            var addCPOResult = emsp1CommonAPI?.AddRemoteParty(
                 CountryCode:        CountryCode.Parse("DE"),
                 PartyId:            Party_Id.   Parse("GEF"),
                 Role:               Roles.      CPO,
@@ -263,7 +263,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 RemoteAccessInfos:  new RemoteAccessInfo[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("xxxxxx"),
-                                            VersionsURL:        emspVersionsAPIURL1,
+                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                             VersionIds:         new Version_Id[] {
                                                                     Version_Id.Parse("2.2")
                                                                 },
@@ -278,7 +278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -336,7 +336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_GetVersion_Test()
         {
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -443,7 +443,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_GetCredentials_Test()
         {
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -529,9 +529,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Change Access Token
 
-            cpoWebAPI.CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+            cpoCommonAPI?.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
 
-            var result = cpoWebAPI.CommonAPI.AddRemoteParty(
+            var result = cpoCommonAPI?.AddRemoteParty(
                 CountryCode:        CountryCode.Parse("DE"),
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
@@ -545,7 +545,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 RemoteAccessInfos:  new RemoteAccessInfo[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("bbbbbb"),
-                                            VersionsURL:        emspVersionsAPIURL1,
+                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                             VersionIds:         new Version_Id[] {
                                                                     Version_Id.Parse("2.2")
                                                                 },
@@ -558,7 +558,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -636,10 +636,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Block Access Token
 
-            cpoWebAPI. CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
-            emspWebAPI1.CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
+            cpoCommonAPI?.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+            emsp1CommonAPI?.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
 
-            var addEMSPResult = cpoWebAPI.CommonAPI.AddRemoteParty(
+            var addEMSPResult = cpoCommonAPI?.AddRemoteParty(
                 CountryCode:        CountryCode.Parse("DE"),
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
@@ -653,7 +653,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 RemoteAccessInfos:  new[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("yyyyyy"),
-                                            VersionsURL:        emspVersionsAPIURL1,
+                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                             VersionIds:         new Version_Id[] {
                                                                     Version_Id.Parse("2.2")
                                                                 },
@@ -667,7 +667,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             Assert.IsTrue(addEMSPResult);
 
 
-            var addCPOResult = emspWebAPI1.CommonAPI.AddRemoteParty(
+            var addCPOResult = emsp1CommonAPI.AddRemoteParty(
                 CountryCode:        CountryCode.Parse("DE"),
                 PartyId:            Party_Id.   Parse("GEF"),
                 Role:               Roles.      CPO,
@@ -681,7 +681,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 RemoteAccessInfos:  new[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("xxxxxx"),
-                                            VersionsURL:        emspVersionsAPIURL1,
+                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                             VersionIds:         new Version_Id[] {
                                                                     Version_Id.Parse("2.2")
                                                                 },
@@ -696,7 +696,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -746,10 +746,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Block Access Token
 
-            cpoWebAPI. CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
-            emspWebAPI1.CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
+            cpoCommonAPI?.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+            emsp1CommonAPI?.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
 
-            var addEMSPResult = cpoWebAPI.CommonAPI.AddRemoteParty(
+            var addEMSPResult = cpoCommonAPI?.AddRemoteParty(
                 CountryCode:        CountryCode.Parse("DE"),
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
@@ -763,7 +763,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 RemoteAccessInfos:  new RemoteAccessInfo[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("yyyyyy"),
-                                            VersionsURL:        emspVersionsAPIURL1,
+                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                             VersionIds:         new Version_Id[] {
                                                                     Version_Id.Parse("2.2")
                                                                 },
@@ -777,7 +777,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             Assert.IsTrue(addEMSPResult);
 
 
-            var addCPOResult = emspWebAPI1.CommonAPI.AddRemoteParty(
+            var addCPOResult = emsp1CommonAPI.AddRemoteParty(
                 CountryCode:        CountryCode.Parse("DE"),
                 PartyId:            Party_Id.   Parse("GEF"),
                 Role:               Roles.      CPO,
@@ -791,7 +791,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 RemoteAccessInfos:  new RemoteAccessInfo[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("xxxxxx"),
-                                            VersionsURL:        emspVersionsAPIURL1,
+                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                             VersionIds:         new Version_Id[] {
                                                                     Version_Id.Parse("2.2")
                                                                 },
@@ -806,7 +806,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -847,10 +847,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Block Access Token
 
-            cpoWebAPI. CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
-            emspWebAPI1.CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
+            cpoCommonAPI?.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+            emsp1CommonAPI?.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
 
-            var addEMSPResult = cpoWebAPI.CommonAPI.AddRemoteParty(
+            var addEMSPResult = cpoCommonAPI?.AddRemoteParty(
                 CountryCode:        CountryCode.Parse("DE"),
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
@@ -864,7 +864,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 RemoteAccessInfos:  new RemoteAccessInfo[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("yyyyyy"),
-                                            VersionsURL:        emspVersionsAPIURL1,
+                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                             VersionIds:         new Version_Id[] {
                                                                     Version_Id.Parse("2.2")
                                                                 },
@@ -878,7 +878,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             Assert.IsTrue(addEMSPResult);
 
 
-            var addCPOResult = emspWebAPI1.CommonAPI.AddRemoteParty(
+            var addCPOResult = emsp1CommonAPI.AddRemoteParty(
                 CountryCode:        CountryCode.Parse("DE"),
                 PartyId:            Party_Id.   Parse("GEF"),
                 Role:               Roles.      CPO,
@@ -892,7 +892,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 RemoteAccessInfos:  new RemoteAccessInfo[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("xxxxxx"),
-                                            VersionsURL:        emspVersionsAPIURL1,
+                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                             VersionIds:         new Version_Id[] {
                                                                     Version_Id.Parse("2.2")
                                                                 },
@@ -954,7 +954,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_PutCredentials_NotYetRegistered_Test()
         {
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -1028,9 +1028,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Change Access Token
 
-            cpoWebAPI.CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+            cpoCommonAPI?.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
 
-            var result = cpoWebAPI.CommonAPI.AddRemoteParty(
+            var result = cpoCommonAPI?.AddRemoteParty(
                 CountryCode:        CountryCode.Parse("DE"),
                 PartyId:            Party_Id.   Parse("GDF"),
                 Role:               Roles.      EMSP,
@@ -1044,7 +1044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 RemoteAccessInfos:  new RemoteAccessInfo[] {
                                         new RemoteAccessInfo(
                                             AccessToken:        AccessToken.Parse("bbbbbb"),
-                                            VersionsURL:        emspVersionsAPIURL1,
+                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                             VersionIds:         new Version_Id[] {
                                                                     Version_Id.Parse("2.2")
                                                                 },
@@ -1057,7 +1057,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #endregion
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -1130,7 +1130,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_Register_RR_Test()
         {
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -1140,8 +1140,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             if (graphDefinedEMSP is not null)
             {
 
-                var remoteAccessInfoOld  = cpoWebAPI?.CommonAPI.RemoteParties.First().RemoteAccessInfos.First();
-                var accessInfoOld        = emspWebAPI1.CommonAPI.RemoteParties.First().AccessInfoStatus.       First();
+                var remoteAccessInfoOld  = cpoCommonAPI?.  RemoteParties.First().RemoteAccessInfos.First();
+                var accessInfoOld        = emsp1CommonAPI?.RemoteParties.First().AccessInfoStatus. First();
 
                 var response1            = await graphDefinedEMSP.GetVersions();
                 var response2            = await graphDefinedEMSP.Register();
@@ -1182,11 +1182,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                 //Assert.IsNotNull(response.Request);
 
-                var remoteAccessInfoNew  = cpoWebAPI?.CommonAPI.RemoteParties.First().RemoteAccessInfos.First();
+                var remoteAccessInfoNew  = cpoCommonAPI?.  RemoteParties.First().RemoteAccessInfos.First();
                 Assert.IsNotNull  (remoteAccessInfoNew);
                 Assert.AreNotEqual(remoteAccessInfoOld?.AccessToken.ToString(),  remoteAccessInfoNew?.AccessToken.ToString());
 
-                var accessInfoNew        = emspWebAPI1.CommonAPI.RemoteParties.First().AccessInfoStatus.       First();
+                var accessInfoNew        = emsp1CommonAPI?.RemoteParties.First().AccessInfoStatus. First();
 
             }
 
@@ -1204,7 +1204,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_PutLocation_Test()
         {
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -1472,7 +1472,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_PutEVSE_Test()
         {
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
@@ -1835,7 +1835,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         public async Task CPO_PostCDR_Test()
         {
 
-            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
                                        CountryCode: CountryCode.Parse("DE"),
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );

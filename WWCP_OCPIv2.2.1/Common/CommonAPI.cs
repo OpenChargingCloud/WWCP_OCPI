@@ -33,6 +33,9 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
+using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
@@ -2207,6 +2210,187 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         }
 
         #endregion
+
+
+        private readonly List<CPOClient> cpoClients = new();
+
+        public IEnumerable<CPOClient> CPOClients
+            => cpoClients;
+
+        #region GetCPOClient (CountryCode, PartyId)
+
+        /// <summary>
+        /// As a CPO create a client to access a remote EMSP.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the remote EMSP.</param>
+        /// <param name="PartyId">The party identification of the remote EMSP.</param>
+        public CPOClient? GetCPOClient(CountryCode  CountryCode,
+                                       Party_Id     PartyId)
+        {
+
+            var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
+                                                                          remoteparty.PartyId     == PartyId);
+
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
+                return cpoClients.AddAndReturnElement(
+                    new CPOClient(
+                        remoteParty,
+                        this
+                    ));
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetCPOClient(RemoteParty)
+
+        public CPOClient? GetCPOClient(RemoteParty  RemoteParty)
+        {
+
+            if (RemoteParty is null)
+                return null;
+
+            var cpoClient = CPOClients.FirstOrDefault(cpoclient => cpoclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                   cpoclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
+
+            if (cpoClient is not null)
+                return cpoClient;
+
+            if (RemoteParty.RemoteAccessInfos?.Any() == true)
+                return cpoClients.AddAndReturnElement(
+                    new CPOClient(
+                        RemoteParty,
+                        this
+                    ));
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetCPOClient(RemotePartyId)
+
+        public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId)
+        {
+
+            var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
+                                                                           remoteparty.PartyId     == RemotePartyId.PartyId);
+
+            var cpoClient   = remoteParty is not null
+                                   ? CPOClients.FirstOrDefault(cpoclient => cpoclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                            cpoclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
+                                   : null;
+
+            if (cpoClient is not null)
+                return cpoClient;
+
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
+                return cpoClients.AddAndReturnElement(
+                    new CPOClient(
+                        remoteParty,
+                        this
+                    ));
+
+            return null;
+
+        }
+
+        #endregion
+
+
+
+        private readonly List<EMSPClient> emspClients = new();
+        public IEnumerable<EMSPClient> EMSPClients
+            => emspClients;
+
+        #region GetEMSPClient(CountryCode, PartyId)
+
+        /// <summary>
+        /// As an EMSP create a client to access a remote CPO.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the remote CPO.</param>
+        /// <param name="PartyId">The party identification of the remote CPO.</param>
+        public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
+                                         Party_Id     PartyId)
+        {
+
+            var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
+                                                                          remoteparty.PartyId     == PartyId);
+
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
+                return emspClients.AddAndReturnElement(
+                    new EMSPClient(
+                        remoteParty,
+                        this
+                    ));
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetEMSPClient(RemoteParty)
+
+        public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty)
+        {
+
+            if (RemoteParty is null)
+                return null;
+
+            var emspClient = EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                      emspclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
+
+            if (emspClient is not null)
+                return emspClient;
+
+            if (RemoteParty.RemoteAccessInfos?.Any() == true)
+                return emspClients.AddAndReturnElement(
+                    new EMSPClient(
+                        RemoteParty,
+                        this
+                    ));
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetEMSPClient(RemotePartyId)
+
+        public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId)
+        {
+
+            var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
+                                                                           remoteparty.PartyId     == RemotePartyId.PartyId);
+
+            var emspClient   = remoteParty is not null
+                                   ? EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                              emspclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
+                                   : null;
+
+            if (emspClient is not null)
+                return emspClient;
+
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
+                return emspClients.AddAndReturnElement(
+                    new EMSPClient(
+                        remoteParty,
+                        this
+                    ));
+
+            return null;
+
+        }
+
+        #endregion
+
+
+
 
 
         #region RemoveRemoteParty(RemoteParty)

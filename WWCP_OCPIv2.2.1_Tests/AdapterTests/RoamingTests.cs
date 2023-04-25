@@ -318,7 +318,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 #region Validate, that locations had been sent to the e-mobility providers
 
-                //var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
+                //var allLocations  = cpoCommonAPI.GetLocations().ToArray();
                 //Assert.IsNotNull(allLocations);
                 //Assert.AreEqual (2, allLocations.Length);
 
@@ -326,7 +326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 #region Validate, that EVSEs had been sent to the e-mobility providers
 
-                //var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
+                //var allEVSEs      = cpoCommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
                 //Assert.IsNotNull(allEVSEs);
                 //Assert.AreEqual (4, allEVSEs.Length);
 
@@ -621,7 +621,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 #region Validate, that locations had been sent to the OCPI module
 
-                var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
+                var allLocations  = cpoCommonAPI.GetLocations().ToArray();
                 Assert.IsNotNull(allLocations);
                 Assert.AreEqual (2, allLocations.Length);
 
@@ -629,7 +629,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 #region Validate, that EVSEs had been sent to the OCPI module
 
-                var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
+                var allEVSEs      = cpoCommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
                 Assert.IsNotNull(allEVSEs);
                 Assert.AreEqual (4, allEVSEs.Length);
 
@@ -637,10 +637,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 #region Validate, that both locations have EVSEs
 
-                if (csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
-                                                        Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
-                                                        Location_Id.Parse(chargingPool1.Id.Suffix),
-                                                        out var location1) &&
+                if (cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                                Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
+                                                Location_Id.Parse(chargingPool1.Id.Suffix),
+                                                out var location1) &&
                     location1 is not null)
                 {
 
@@ -651,10 +651,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                     Assert.Fail("location1 was not found!");
 
 
-                if (csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool2.Operator?.Id.CountryCode.Alpha2Code ?? ""),
-                                                        Party_Id.   Parse(chargingPool2.Operator?.Id.Suffix                 ?? ""),
-                                                        Location_Id.Parse(chargingPool2.Id.Suffix),
-                                                        out var location2) &&
+                if (cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool2.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                                Party_Id.   Parse(chargingPool2.Operator?.Id.Suffix                 ?? ""),
+                                                Location_Id.Parse(chargingPool2.Id.Suffix),
+                                                out var location2) &&
                     location2 is not null)
                 {
 
@@ -830,8 +830,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 #endregion
 
-                csoAdapter.CommonAPI.OnLocationChanged += async (location) => { };
-                csoAdapter.CommonAPI.OnEVSEChanged     += async (evse)     => { };
+                cpoCommonAPI.OnLocationChanged += async (location) => { };
+                cpoCommonAPI.OnEVSEChanged     += async (evse)     => { };
 
 
                 chargingPool1!.Name.       Set(Languages.en, "Test pool #1 (updated)");
@@ -841,10 +841,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                 Assert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
                 Assert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
 
-                csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
-                                                    Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
-                                                    Location_Id.Parse(chargingPool1!.Id.Suffix),
-                                                    out var location);
+                cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                                            Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
+                                            Location_Id.Parse(chargingPool1!.Id.Suffix),
+                                            out var location);
 
                 Assert.AreEqual("Test pool #1 (updated)",                             location!.Name);
                 //Assert.AreEqual("GraphDefined Charging Pool für Tests #1",            location!.Name); // Not mapped to OCPI!
@@ -1190,7 +1190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 #region Validate, that locations had been sent to the OCPI module
 
-                var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
+                var allLocations  = cpoCommonAPI.GetLocations().ToArray();
                 Assert.IsNotNull(allLocations);
                 Assert.AreEqual (2, allLocations.Length);
 
@@ -1198,7 +1198,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 #region Validate, that EVSEs had been sent to the OCPI module
 
-                var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
+                var allEVSEs      = cpoCommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
                 Assert.IsNotNull(allEVSEs);
                 Assert.AreEqual (4, allEVSEs.Length);
 
@@ -1206,7 +1206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 #region Validate, that both locations have EVSEs
 
-                if (csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                if (cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
                                                         Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
                                                         Location_Id.Parse(chargingPool1.Id.Suffix),
                                                         out var location1) &&
@@ -1220,7 +1220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                     Assert.Fail("location1 was not found!");
 
 
-                if (csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool2.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                if (cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool2.Operator?.Id.CountryCode.Alpha2Code ?? ""),
                                                         Party_Id.   Parse(chargingPool2.Operator?.Id.Suffix                 ?? ""),
                                                         Location_Id.Parse(chargingPool2.Id.Suffix),
                                                         out var location2) &&
@@ -1280,14 +1280,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var updatedOCPIEVSEStatus = new List<StatusType>();
 
-                csoAdapter.CommonAPI.OnEVSEChanged += (evse) => {
+                cpoCommonAPI.OnEVSEChanged += (evse) => {
 
                     updatedOCPIEVSEStatus.Add(evse.Status);
                     return Task.CompletedTask;
 
                 };
 
-                csoAdapter.CommonAPI.OnEVSEStatusChanged += (timestamp,
+                cpoCommonAPI.OnEVSEStatusChanged += (timestamp,
                                                              evse,
                                                              oldEVSEStatus,
                                                              newEVSEStatus) => {
@@ -1303,7 +1303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 {
                     if (evse1_UId.HasValue &&
-                        csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                        cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
                                                             Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
                                                             Location_Id.Parse(chargingPool1!.Id.Suffix),
                                                             out var location) &&
@@ -1327,7 +1327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 {
                     if (evse1_UId.HasValue &&
-                        csoAdapter.CommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
+                        cpoCommonAPI.TryGetLocation(CountryCode.Parse(chargingPool1.Operator?.Id.CountryCode.Alpha2Code ?? ""),
                                                             Party_Id.   Parse(chargingPool1.Operator?.Id.Suffix                 ?? ""),
                                                             Location_Id.Parse(chargingPool1!.Id.Suffix),
                                                             out var location) &&
@@ -1363,9 +1363,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                 emp1RoamingNetwork is not null &&
                 emp2RoamingNetwork is not null &&
 
-                csoCPOAPI          is not null &&
-                emp1EMSPAPI        is not null &&
-                emp2EMSPAPI        is not null &&
+                cpoCPOAPI          is not null &&
+                emsp1EMSPAPI       is not null &&
+                emsp2EMSPAPI       is not null &&
 
                 graphDefinedCSO    is not null)
                 //graphDefinedEMP    is not null &&
@@ -1632,12 +1632,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                 #endregion
 
 
-                emp1EMSPAPI.OnRFIDAuthToken += async (From_CountryCode,
-                                                      From_PartyId,
-                                                      To_CountryCode,
-                                                      To_PartyId,
-                                                      tokenId,
-                                                      locationReference) => {
+                emsp1EMSPAPI.OnRFIDAuthToken += async (From_CountryCode,
+                                                       From_PartyId,
+                                                       To_CountryCode,
+                                                       To_PartyId,
+                                                       tokenId,
+                                                       locationReference) => {
 
                     return tokenId.ToString() == "11223344"
 
@@ -1693,12 +1693,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 };
 
-                emp2EMSPAPI.OnRFIDAuthToken += async (From_CountryCode,
-                                                      From_PartyId,
-                                                      To_CountryCode,
-                                                      To_PartyId,
-                                                      tokenId,
-                                                      locationReference) => {
+                emsp2EMSPAPI.OnRFIDAuthToken += async (From_CountryCode,
+                                                       From_PartyId,
+                                                       To_CountryCode,
+                                                       To_PartyId,
+                                                       tokenId,
+                                                       locationReference) => {
 
                     return tokenId.ToString() == "55667788"
 

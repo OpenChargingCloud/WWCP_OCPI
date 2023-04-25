@@ -372,7 +372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             public APICounterValues  Register       { get; }
 
             public CommonAPICounters(APICounterValues?  GetVersions   = null,
-                                  APICounterValues?  Register      = null)
+                                     APICounterValues?  Register      = null)
             {
 
                 this.GetVersions  = GetVersions ?? new APICounterValues();
@@ -391,23 +391,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Data
 
-        /// <summary>
-        /// The default HTTP port.
-        /// </summary>
-        public static readonly new IPPort    DefaultRemotePort       = IPPort.HTTPS;
+        protected          HTTPTokenAuthentication                TokenAuth;
 
-        /// <summary>
-        /// The default request timeout.
-        /// </summary>
-        public static readonly new TimeSpan  DefaultRequestTimeout   = TimeSpan.FromSeconds(180);
+        protected readonly Dictionary<Version_Id, URL>            Versions         = new ();
 
-
-        protected HTTPTokenAuthentication TokenAuth;
-
-
-        protected readonly Dictionary<Version_Id, URL>           Versions        = new Dictionary<Version_Id, URL>();
-
-        protected readonly Dictionary<Version_Id, VersionDetail> VersionDetails  = new Dictionary<Version_Id, VersionDetail>();
+        protected readonly Dictionary<Version_Id, VersionDetail>  VersionDetails   = new ();
 
 
         protected Newtonsoft.Json.Formatting JSONFormat = Newtonsoft.Json.Formatting.Indented;
@@ -415,6 +403,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// The remote party.
+        /// </summary>
+        public RemoteParty                          RemoteParty                   { get; }
 
         /// <summary>
         /// The access token.
@@ -638,6 +631,67 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// Create a new OCPI Common client.
         /// </summary>
+        /// <param name="RemoteParty">The remote party.</param>
+        /// <param name="MyCommonAPI">My Common API.</param>
+        /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
+        /// <param name="Description">An optional description of this CPO client.</param>
+        /// <param name="DisableLogging">Disable all logging.</param>
+        /// <param name="LoggingContext">An optional context for logging.</param>
+        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
+        /// <param name="DNSClient">The DNS client to use.</param>
+        public CommonClient(RemoteParty              RemoteParty,
+                            CommonAPI                MyCommonAPI,
+                            HTTPHostname?            VirtualHostname             = null,
+                            String?                  Description                 = null,
+                            HTTPClientLogger?        HTTPLogger                  = null,
+
+                            Boolean?                 DisableLogging              = false,
+                            String?                  LoggingPath                 = null,
+                            String?                  LoggingContext              = null,
+                            LogfileCreatorDelegate?  LogfileCreator              = null,
+                            DNSClient?               DNSClient                   = null)
+
+            : base(RemoteParty.RemoteAccessInfos.First().VersionsURL,
+                   VirtualHostname,
+                   Description,
+                   RemoteParty.RemoteCertificateValidator,
+                   RemoteParty.ClientCertificateSelector,
+                   RemoteParty.ClientCert,
+                   RemoteParty.TLSProtocol,
+                   RemoteParty.PreferIPv4,
+                   RemoteParty.HTTPUserAgent      ?? DefaultHTTPUserAgent,
+                   RemoteParty.RequestTimeout,
+                   RemoteParty.TransmissionRetryDelay,
+                   RemoteParty.MaxNumberOfRetries ?? DefaultMaxNumberOfRetries,
+                   RemoteParty.UseHTTPPipelining,
+                   HTTPLogger,
+                   DNSClient)
+
+        {
+
+            this.RemoteParty        = RemoteParty;
+            this.AccessToken        = RemoteParty.RemoteAccessInfos.First().AccessToken;
+            this.RemoteVersionsURL  = RemoteParty.RemoteAccessInfos.First().VersionsURL;
+            this.TokenAuth          = new HTTPTokenAuthentication(RemoteParty.RemoteAccessInfos.First().AccessTokenBase64Encoding
+                                                                      ? RemoteParty.RemoteAccessInfos.First().AccessToken.ToString().ToBase64()
+                                                                      : RemoteParty.RemoteAccessInfos.First().AccessToken.ToString());
+            this.MyCommonAPI        = MyCommonAPI;
+
+            this.Counters           = new CommonAPICounters();
+
+            base.HTTPLogger         = DisableLogging == false
+                                          ? new Logger(this,
+                                                       LoggingPath,
+                                                       LoggingContext,
+                                                       LogfileCreator)
+                                          : null;
+
+        }
+
+
+        /// <summary>
+        /// Create a new OCPI Common client.
+        /// </summary>
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
         /// <param name="AccessToken">The access token.</param>
         /// <param name="MyCommonAPI">My Common API.</param>
@@ -694,6 +748,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    DNSClient)
 
         {
+
+            this.RemoteParty        = new RemoteParty(
+                                          CountryCode:                 CountryCode.Parse("xx"),
+                                          PartyId:                     Party_Id.   Parse("xxx"),
+                                          Role:                        Roles.EMSP,
+                                          BusinessDetails:             new BusinessDetails("xxx"),
+
+                                          RemoteAccessToken:           AccessToken,
+                                          RemoteVersionsURL:           RemoteVersionsURL,
+                                          AccessTokenBase64Encoding:   AccessTokenBase64Encoding,
+                                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                                          Status:                      PartyStatus.ENABLED
+                                      );
 
             this.TokenAuth          = new HTTPTokenAuthentication(AccessTokenBase64Encoding
                                                                       ? AccessToken.ToString().ToBase64()

@@ -391,23 +391,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Data
 
-        /// <summary>
-        /// The default HTTP port.
-        /// </summary>
-        public static readonly IPPort    DefaultRemotePort       = IPPort.HTTPS;
-
-        /// <summary>
-        /// The default request timeout.
-        /// </summary>
-        public static readonly TimeSpan  DefaultRequestTimeout   = TimeSpan.FromSeconds(180);
-
-
         protected          HTTPTokenAuthentication                TokenAuth;
 
+        protected readonly Dictionary<Version_Id, URL>            Versions         = new ();
 
-        protected readonly Dictionary<Version_Id, URL>            Versions        = new();
-
-        protected readonly Dictionary<Version_Id, VersionDetail>  VersionDetails  = new();
+        protected readonly Dictionary<Version_Id, VersionDetail>  VersionDetails   = new ();
 
 
         protected Newtonsoft.Json.Formatting JSONFormat = Newtonsoft.Json.Formatting.Indented;
@@ -763,7 +751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             this.RemoteParty        = new RemoteParty(
                                           CountryCode:                 CountryCode.Parse("xx"),
-                                          PartyId:                     Party_Id.Parse("xxx"),
+                                          PartyId:                     Party_Id.   Parse("xxx"),
                                           Role:                        Roles.EMSP,
                                           BusinessDetails:             new BusinessDetails("xxx"),
 

@@ -2337,26 +2337,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                        var cpoClient = new CPO.HTTP.CPOClient(
 
-                                                                                                           remoteAccessInfo.VersionsURL,
-                                                                                                           remoteAccessInfo.AccessToken,
+                                                                                                           remoteParty,
                                                                                                            CommonAPI,
-                                                                                                           null, // VirtualHostname             
-                                                                                                           null, // Description                 
-                                                                                                           null, // RemoteCertificateValidator  
-                                                                                                           null, // ClientCertificateSelector   
-                                                                                                           null, // ClientCert                  
-                                                                                                           null, // TLSProtocol                 
-                                                                                                           null, // PreferIPv4                  
-                                                                                                           null, // HTTPUserAgent               
-                                                                                                           null, // RequestTimeout              
-                                                                                                           null, // TransmissionRetryDelay      
-                                                                                                           null, // MaxNumberOfRetries          
-                                                                                                           null, // UseHTTPPipelining           
-                                                                                                           null, // HTTPLogger                  
-                                                                                                           remoteAccessInfo.AccessTokenBase64Encoding,
+                                                                                                           null, // VirtualHostname
+                                                                                                           null, // Description
+                                                                                                           null, // HTTPLogger
 
                                                                                                            DisableLogging,
-                                                                                                           ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                           ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
                                                                                                            ClientsLoggingContext ?? DefaultLoggingContext,
                                                                                                            ClientsLogfileCreator,
                                                                                                            DNSClient
