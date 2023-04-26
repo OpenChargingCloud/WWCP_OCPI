@@ -2661,7 +2661,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #region Check location
 
                                         if (!Request.ParseLocation(this,
-                                                                   Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                                   //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
+                                                                   CommonAPI.OurCredentialRoles.Select(credentialRole => new Tuple<CountryCode, Party_Id>(credentialRole.CountryCode, credentialRole.PartyId)),
                                                                    out var locationId,
                                                                    out var location,
                                                                    out var ocpiResponseBuilder,
