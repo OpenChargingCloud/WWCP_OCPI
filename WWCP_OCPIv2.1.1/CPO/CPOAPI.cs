@@ -2573,41 +2573,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
                                                                               ToArray();
 
-                                        DebugX.Log($"OCPI 1: {sw.ElapsedMilliseconds} ms");
-
-                                        var aa = filteredLocations.SkipTakeFilter(filters.Offset,
-                                                                                                                      filters.Limit).
-                                                                                                       SafeSelect(location => location.ToJSON(false,
-                                                                                                                                              Request.EMPId,
-                                                                                                                                              CustomLocationSerializer,
-                                                                                                                                              CustomAdditionalGeoLocationSerializer,
-                                                                                                                                              CustomEVSESerializer,
-                                                                                                                                              CustomStatusScheduleSerializer,
-                                                                                                                                              CustomConnectorSerializer,
-                                                                                                                                              CustomEnergyMeterSerializer,
-                                                                                                                                              CustomTransparencySoftwareStatusSerializer,
-                                                                                                                                              CustomTransparencySoftwareSerializer,
-                                                                                                                                              CustomDisplayTextSerializer,
-                                                                                                                                              CustomBusinessDetailsSerializer,
-                                                                                                                                              CustomHoursSerializer,
-                                                                                                                                              CustomImageSerializer,
-                                                                                                                                              CustomEnergyMixSerializer,
-                                                                                                                                              CustomEnergySourceSerializer,
-                                                                                                                                              CustomEnvironmentalImpactSerializer));
-
-                                        DebugX.Log($"OCPI 2: {sw.ElapsedMilliseconds} ms");
-
-                                        var cc = new JArray(aa);
-
-                                        DebugX.Log($"OCPI 3: {sw.ElapsedMilliseconds} ms");
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = cc,
+                                                   Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
+                                                                                                                      filters.Limit).
+                                                                                                       SafeSelect    (location => location.ToJSON(false,
+                                                                                                                                                  Request.EMPId,
+                                                                                                                                                  CustomLocationSerializer,
+                                                                                                                                                  CustomAdditionalGeoLocationSerializer,
+                                                                                                                                                  CustomEVSESerializer,
+                                                                                                                                                  CustomStatusScheduleSerializer,
+                                                                                                                                                  CustomConnectorSerializer,
+                                                                                                                                                  CustomEnergyMeterSerializer,
+                                                                                                                                                  CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                                  CustomTransparencySoftwareSerializer,
+                                                                                                                                                  CustomDisplayTextSerializer,
+                                                                                                                                                  CustomBusinessDetailsSerializer,
+                                                                                                                                                  CustomHoursSerializer,
+                                                                                                                                                  CustomImageSerializer,
+                                                                                                                                                  CustomEnergyMixSerializer,
+                                                                                                                                                  CustomEnergySourceSerializer,
+                                                                                                                                                  CustomEnvironmentalImpactSerializer))),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       Server                     = DefaultHTTPServerName,
+                                                       Date                       = Timestamp.Now,
                                                        AccessControlAllowMethods  = "OPTIONS, GET",
                                                        AccessControlAllowHeaders  = "Authorization"
                                                        //LastModified               = ?
@@ -2683,8 +2676,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check location
 
                                         if (!Request.ParseLocation(this,
-                                                                   Request.AccessInfo.Value.CountryCode,
-                                                                   Request.AccessInfo.Value.PartyId,
+                                                                   CommonAPI.OurCountryCode,
+                                                                   CommonAPI.OurPartyId,
                                                                    out var locationId,
                                                                    out var location,
                                                                    out var ocpiResponseBuilder,
@@ -2720,6 +2713,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                           CustomEnvironmentalImpactSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       Server                     = ServiceName,
+                                                       Date                       = Timestamp.Now,
                                                        AccessControlAllowMethods  = "OPTIONS, GET",
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = location.LastUpdated.ToIso8601(),

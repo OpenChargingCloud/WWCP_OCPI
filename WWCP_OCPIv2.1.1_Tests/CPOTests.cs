@@ -1311,7 +1311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                                       ),
                                                                                                       LegalStatus.ForInformationOnly,
                                                                                                       "no cert",
-                                                                                                      "GraphDefiend",
+                                                                                                      "GraphDefined",
                                                                                                       NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
                                                                                                       NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
                                                                                                   )
@@ -1605,7 +1605,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                                       ),
                                                                                                       LegalStatus.ForInformationOnly,
                                                                                                       "no cert",
-                                                                                                      "GraphDefiend",
+                                                                                                      "GraphDefined",
                                                                                                       NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
                                                                                                       NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
                                                                                                   )
@@ -1824,7 +1824,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                           ),
                                                                                           LegalStatus.ForInformationOnly,
                                                                                           "no cert",
-                                                                                          "GraphDefiend",
+                                                                                          "GraphDefined",
                                                                                           NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
                                                                                           NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
                                                                                       )
@@ -2008,7 +2008,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                           ),
                                                                                           LegalStatus.ForInformationOnly,
                                                                                           "no cert",
-                                                                                          "GraphDefiend",
+                                                                                          "GraphDefined",
                                                                                           NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
                                                                                           NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
                                                                                       )

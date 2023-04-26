@@ -282,51 +282,61 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             public HTTPResponse.Builder ToHTTPResponseBuilder()
             {
 
-                Timestamp ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                Timestamp                                      ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
-                HTTPResponseBuilder.Server                    = Request.HTTPRequest.HTTPServer.DefaultServerName;
-                HTTPResponseBuilder.Date                      = Timestamp.Value;
-                HTTPResponseBuilder.AccessControlAllowOrigin  = "*";
-                HTTPResponseBuilder.Connection                = "close";
+                HTTPResponseBuilder.Server                     ??= Request?.HTTPRequest.HTTPServer.DefaultServerName;
+                HTTPResponseBuilder.Date                       ??= Timestamp.Value;
+                HTTPResponseBuilder.AccessControlAllowOrigin   ??= "*";
+                HTTPResponseBuilder.AccessControlAllowHeaders  ??= "Authorization";
+                HTTPResponseBuilder.Vary                       ??= "Accept";
+                HTTPResponseBuilder.Connection                 ??= "close";
 
-                if (Request.HTTPRequest.HTTPMethod != HTTPMethod.OPTIONS)
+                if (Request is not null)
                 {
 
-                    HTTPResponseBuilder.ContentType = HTTPContentType.JSON_UTF8;
+                    if (Request.HTTPRequest.HTTPMethod != HTTPMethod.OPTIONS)
+                    {
 
-                    if (HTTPResponseBuilder.Content is null)
-                        HTTPResponseBuilder.Content = JSONObject.Create(
+                        HTTPResponseBuilder.ContentType = HTTPContentType.JSON_UTF8;
 
-                                                          Data != null
-                                                              ? new JProperty("data",                    Data)
-                                                              : null,
+                        if (HTTPResponseBuilder.Content is null)
+                            HTTPResponseBuilder.Content = JSONObject.Create(
 
-                                                          new JProperty("status_code",                   StatusCode ?? 2000),
+                                                              Data is not null
+                                                                  ? new JProperty("data",                    Data)
+                                                                  : null,
 
-                                                          StatusMessage.IsNotNullOrEmpty()
-                                                              ? new JProperty("status_message",          StatusMessage)
-                                                              :  null,
+                                                              new JProperty("status_code",                   StatusCode ?? 2000),
 
-                                                          AdditionalInformation.IsNotNullOrEmpty()
-                                                              ? new JProperty("additionalInformation",   AdditionalInformation)
-                                                              : null,
+                                                              StatusMessage.IsNotNullOrEmpty()
+                                                                  ? new JProperty("status_message",          StatusMessage)
+                                                                  :  null,
 
-                                                          RequestId.HasValue
-                                                              ? new JProperty("requestId",               RequestId.    Value.ToString())
-                                                              : null,
+                                                              AdditionalInformation.IsNotNullOrEmpty()
+                                                                  ? new JProperty("additionalInformation",   AdditionalInformation)
+                                                                  : null,
 
-                                                          CorrelationId.HasValue
-                                                              ? new JProperty("correlationId",           CorrelationId.Value.ToString())
-                                                              : null,
+                                                              RequestId.HasValue
+                                                                  ? new JProperty("requestId",               RequestId.    Value.ToString())
+                                                                  : null,
 
-                                                          new JProperty("timestamp",                    (Timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now).ToIso8601())
+                                                              CorrelationId.HasValue
+                                                                  ? new JProperty("correlationId",           CorrelationId.Value.ToString())
+                                                                  : null,
 
-                                                      ).ToUTF8Bytes();
+                                                              new JProperty("timestamp",                     Timestamp.    Value.ToIso8601())
+
+                                                          ).ToUTF8Bytes();
+
+                    }
+
+                    if (Request.RequestId.    HasValue)
+                        HTTPResponseBuilder.Set("X-Request-ID",      Request.RequestId.    Value);
+
+                    if (Request.CorrelationId.HasValue)
+                        HTTPResponseBuilder.Set("X-Correlation-ID",  Request.CorrelationId.Value);
 
                 }
-
-                HTTPResponseBuilder.Set("X-Request-ID",      Request.RequestId).
-                                    Set("X-Correlation-ID",  Request.CorrelationId);
 
                 HTTPResponseBuilder.SubprotocolResponse = this;
 

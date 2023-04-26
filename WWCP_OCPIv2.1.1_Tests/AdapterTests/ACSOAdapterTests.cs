@@ -141,8 +141,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                    OurVersionsURL:                      URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/versions"),
                                    OurBusinessDetails:                  new BusinessDetails(
-                                                                            "GraphDefiend CSO",
-                                                                            URL.Parse("http://www.graphdefiend.com")
+                                                                            "GraphDefined CSO",
+                                                                            URL.Parse("https://www.graphdefined.com/cso")
                                                                         ),
                                    OurCountryCode:                      CountryCode.Parse("DE"),
                                    OurPartyId:                          Party_Id.   Parse("GEF"),

@@ -386,7 +386,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                PartyId:          Party_Id.Parse("GDF"),
                                Role:             Roles.EMSP,
                                BusinessDetails:  new BusinessDetails(
-                                                     "GraphDefiend EMSP"
+                                                     "GraphDefined EMSP"
                                                  ),
                                AccessToken:      AccessToken.Parse("1234xyz"),
                                AccessStatus:     AccessStatus.ALLOWED,
@@ -1041,7 +1041,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                PartyId:          Party_Id.Parse("GDF"),
                                Role:             Roles.EMSP,
                                BusinessDetails:  new BusinessDetails(
-                                                     "GraphDefiend EMSP"
+                                                     "GraphDefined EMSP"
                                                  ),
                                AccessToken:      AccessToken.Parse("1234xyz"),
                                AccessStatus:     AccessStatus.ALLOWED,
@@ -1578,7 +1578,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                PartyId:          Party_Id.Parse("GDF"),
                                Role:             Roles.EMSP,
                                BusinessDetails:  new BusinessDetails(
-                                                     "GraphDefiend EMSP"
+                                                     "GraphDefined EMSP"
                                                  ),
                                AccessToken:      AccessToken.Parse("1234xyz"),
                                AccessStatus:     AccessStatus.ALLOWED,

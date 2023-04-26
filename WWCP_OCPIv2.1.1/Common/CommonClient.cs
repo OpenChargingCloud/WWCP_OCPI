@@ -1125,7 +1125,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     try
                     {
 
-                        var requestId = RequestId ?? Request_Id.NewRandom();
+                        var requestId     = RequestId     ?? Request_Id.NewRandom();
                         var correlationId = CorrelationId ?? Correlation_Id.NewRandom();
 
                         // ToDo: Add request logging!

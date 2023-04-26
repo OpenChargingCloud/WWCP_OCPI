@@ -183,8 +183,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                        OurVersionsURL:                      cpoVersionsAPIURL.Value,
                                        OurBusinessDetails:                  new BusinessDetails(
-                                                                                "GraphDefiend CSO",
-                                                                                URL.Parse("http://www.graphdefiend.com")
+                                                                                "GraphDefined CSO Services",
+                                                                                URL.Parse("https://www.graphdefined.com/cso")
                                                                             ),
                                        OurCountryCode:                      CountryCode.Parse("DE"),
                                        OurPartyId:                          Party_Id.   Parse("GEF"),
@@ -231,8 +231,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                        OurVersionsURL:                      emsp1VersionsAPIURL.Value,
                                        OurBusinessDetails:                  new BusinessDetails(
-                                                                                "GraphDefiend EMP",
-                                                                                URL.Parse("http://www.graphdefiend.com")
+                                                                                "GraphDefined EMSP #1 Services",
+                                                                                URL.Parse("https://www.graphdefined.com/emsp1")
                                                                             ),
                                        OurCountryCode:                      CountryCode.Parse("DE"),
                                        OurPartyId:                          Party_Id.   Parse("GDF"),
@@ -279,11 +279,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                        OurVersionsURL:                      emsp2VersionsAPIURL.Value,
                                        OurBusinessDetails:                  new BusinessDetails(
-                                                                                "Example EMP",
-                                                                                URL.Parse("http://www.example.org")
+                                                                                "GraphDefined EMSP #2 Services",
+                                                                                URL.Parse("https://www.graphdefined.com/emsp2")
                                                                             ),
                                        OurCountryCode:                      CountryCode.Parse("DE"),
-                                       OurPartyId:                          Party_Id.   Parse("EMP"),
+                                       OurPartyId:                          Party_Id.   Parse("GD2"),
                                        OurRole:                             Roles.      EMSP,
 
                                        HTTPServer:                          emsp2HTTPAPI.HTTPServer,
@@ -344,7 +344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/v2.1.1/cpo"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
@@ -377,7 +377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/2.1.1/emsp"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/v2.1.1/emsp"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
@@ -410,7 +410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/2.1.1/emsp"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/v2.1.1/emsp"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
