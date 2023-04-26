@@ -60,90 +60,90 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The parent CommonAPI of this charging location.
         /// </summary>
-        internal CommonAPI?                        CommonAPI                { get; set; }
+        internal CommonAPI?                           CommonAPI                { get; set; }
 
         /// <summary>
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.
         /// </summary>
         [Mandatory]
-        public CountryCode                         CountryCode              { get; }
+        public   CountryCode                          CountryCode              { get; }
 
         /// <summary>
         /// The identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id                            PartyId                  { get; }
+        public    Party_Id                            PartyId                  { get; }
 
         /// <summary>
         /// The identification of the charging location within the CPOs platform (and suboperator platforms).
         /// This field can never be changed, modified or renamed.
         /// </summary>
         [Mandatory]
-        public Location_Id                         Id                       { get; }
+        public    Location_Id                         Id                       { get; }
 
         /// <summary>
         /// The general type of the charging location.
         /// </summary>
         [Mandatory]
-        public LocationType                        LocationType             { get; }
+        public    LocationType                        LocationType             { get; }
 
         /// <summary>
         /// The optional display name of the charging location.
         /// string(255)
         /// </summary>
         [Optional]
-        public String?                             Name                     { get; }
+        public    String?                             Name                     { get; }
 
         /// <summary>
         /// The address of the charging location.
         /// string(45)
         /// </summary>
         [Mandatory]
-        public String                              Address                  { get; }
+        public    String                              Address                  { get; }
 
         /// <summary>
         /// The city or town of the charging location.
         /// string(45)
         /// </summary>
         [Mandatory]
-        public String                              City                     { get; }
+        public    String                              City                     { get; }
 
         /// <summary>
         /// The postal code of the charging location.
         /// string(10)
         /// </summary>
         [Mandatory]
-        public String                              PostalCode               { get; }
+        public    String                              PostalCode               { get; }
 
         /// <summary>
         /// The country of the charging location.
         /// </summary>
         [Mandatory]
-        public Country                             Country                  { get; }
+        public    Country                             Country                  { get; }
 
         /// <summary>
         /// The geographical location of this charging location.
         /// </summary>
         [Mandatory]
-        public GeoCoordinate                       Coordinates              { get; }
+        public    GeoCoordinate                       Coordinates              { get; }
 
         /// <summary>
         /// The optional enumeration of additional geographical locations of related geo coordinates that might be relevant to the EV driver.
         /// </summary>
         [Optional]
-        public IEnumerable<AdditionalGeoLocation>  RelatedLocations         { get; }
+        public    IEnumerable<AdditionalGeoLocation>  RelatedLocations         { get; }
 
         /// <summary>
         /// The optional enumeration of Electric Vehicle Supply Equipments (EVSE) at this charging location.
         /// </summary>
         [Optional]
-        public IEnumerable<EVSE>                   EVSEs                    { get; private set; }
+        public    IEnumerable<EVSE>                   EVSEs                    { get; private set; }
 
         /// <summary>
         /// The optional enumeration of all EVSE identifications at this charging location.
         /// </summary>
         [Optional]
-        public IEnumerable<EVSE_Id>                EVSEIds
+        public    IEnumerable<EVSE_Id>                EVSEIds
             => EVSEs.Where (evse => evse.EVSEId.HasValue).
                      Select(evse => evse.EVSEId!.Value);
 
@@ -151,52 +151,52 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The enumeration of all internal EVSE (unique) identifications at this charging location.
         /// </summary>
         [Mandatory]
-        public IEnumerable<EVSE_UId>               EVSEUIds
+        public    IEnumerable<EVSE_UId>               EVSEUIds
             => EVSEs.Select(evse => evse.UId);
 
         /// <summary>
         /// The optional enumeration of human-readable directions on how to reach the location.
         /// </summary>
         [Optional]
-        public IEnumerable<DisplayText>            Directions               { get; }
+        public    IEnumerable<DisplayText>            Directions               { get; }
 
         /// <summary>
         /// Optional information about the charging station operator.
         /// </summary>
         /// <remarks>When not specified, the information retrieved from the credentials module matching the country_code and party_id should be used instead.</remarks>
         [Optional]
-        public BusinessDetails?                    Operator                 { get; }
+        public    BusinessDetails?                    Operator                 { get; }
 
         /// <summary>
         /// Optional information about the suboperator.
         /// </summary>
         [Optional]
-        public BusinessDetails?                    SubOperator              { get; }
+        public    BusinessDetails?                    SubOperator              { get; }
 
         /// <summary>
         /// Optional information about the owner.
         /// </summary>
         [Optional]
-        public BusinessDetails?                    Owner                    { get; }
+        public    BusinessDetails?                    Owner                    { get; }
 
         /// <summary>
         /// The optional enumeration of facilities this charging location directly belongs to.
         /// </summary>
         [Optional]
-        public IEnumerable<Facilities>             Facilities               { get; }
+        public    IEnumerable<Facilities>             Facilities               { get; }
 
         /// <summary>
         /// One of IANA tzdata’s TZ-values representing the time zone of the charging location (http://www.iana.org/time-zones).
         /// </summary>
         /// <example>"Europe/Oslo", "Europe/Zurich"</example>
         [Optional]
-        public String?                             Timezone                 { get; }
+        public    String?                             Timezone                 { get; }
 
         /// <summary>
         /// The optional times when the EVSEs at the charging location can be accessed for charging.
         /// </summary>
         [Optional]
-        public Hours?                              OpeningTimes             { get; }
+        public    Hours?                              OpeningTimes             { get; }
 
         /// <summary>
         /// Indicates if the EVSEs are still charging outside the opening
@@ -205,37 +205,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// morning? [Default: true]
         /// </summary>
         [Optional]
-        public Boolean?                            ChargingWhenClosed       { get; }
+        public    Boolean?                            ChargingWhenClosed       { get; }
 
         /// <summary>
         /// The optional enumeration of images related to the charging location such as photos or logos.
         /// </summary>
         [Optional]
-        public IEnumerable<Image>                  Images                   { get; }
+        public    IEnumerable<Image>                  Images                   { get; }
 
         /// <summary>
         /// Optional details on the energy supplied at this charging location.
         /// </summary>
         [Optional]
-        public EnergyMix?                          EnergyMix                { get; }
+        public    EnergyMix?                          EnergyMix                { get; }
 
         /// <summary>
         /// Whether this charging location may be published on an website or app etc., or not.
         /// </summary>
         [Optional, NonStandard("PlugSurfingExtension")]
-        public Boolean?                            Publish                  { get; }
+        public    Boolean?                            Publish                  { get; }
 
         /// <summary>
         /// The timestamp when this charging location was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                            LastUpdated              { get; }
+        public    DateTime                            LastUpdated              { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this location.
         /// </summary>
         [Optional, NonStandard("OCPIComputerScienceExtension")]
-        public String                              ETag                     { get; private set; }
+        public    String                              ETag                     { get; private set; }
 
         #endregion
 
@@ -1048,7 +1048,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  new JProperty("id",                     Id.          ToString()),
 
-                                 new JProperty("location_type",          LocationType.ToString()),
+                                 new JProperty("type",                   LocationType.ToString()),
 
                            Name.IsNotNullOrEmpty()
                                ? new JProperty("name",                   Name)
