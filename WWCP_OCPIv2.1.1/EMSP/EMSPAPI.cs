@@ -6113,7 +6113,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         if (!CDR.TryParse(jsonCDR,
                                                           out var newCDR,
-                                                          out var errorResponse) ||
+                                                          out var errorResponse,
+                                                          Request.RemoteParty?.CountryCode,
+                                                          Request.RemoteParty?.PartyId) ||
                                              newCDR is null)
                                         {
 

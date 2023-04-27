@@ -31,7 +31,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 {
 
     [TestFixture]
-    public class CDR_Tests : ANodeTests
+    public class CDRs_Tests : ANodeTests
     {
 
         #region EMSP_GetCDRs_Test1()
@@ -257,7 +257,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                 );
 
                 #endregion
-
 
                 var response = await graphDefinedCPO.GetCDRs();
 
@@ -543,7 +542,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                 );
 
                 #endregion
-
 
                 var response = await graphDefinedCPO.GetCDRs();
 
@@ -831,7 +829,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #endregion
 
-
                 var response = await graphDefinedCPO.GetCDR(CDR_Id.Parse("CDR0001"));
 
                 // GET /ocpi/v2.1/v2.1.1/cpo/locations/LOC0001 HTTP/1.1
@@ -1117,7 +1114,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                 );
 
                 #endregion
-
 
                 var response = await graphDefinedCPO.GetCDR(CDR_Id.Parse("CDR0001"));
 

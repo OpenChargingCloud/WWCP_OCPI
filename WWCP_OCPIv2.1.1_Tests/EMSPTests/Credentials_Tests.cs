@@ -30,7 +30,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 {
 
     [TestFixture]
-    public class Credential_Tests : ANodeTests
+    public class Credentials_Tests : ANodeTests
     {
 
         #region EMSP_GetCredentials_Test1()
@@ -95,6 +95,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 Assert.AreEqual (1000,           response.StatusCode);
                 Assert.AreEqual ("Hello world!", response.StatusMessage);
                 Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response.RequestId);
+                Assert.IsNotNull(response.CorrelationId);
 
                 var credentials = response.Data;
                 Assert.IsNotNull(credentials);
@@ -182,6 +185,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 Assert.AreEqual (1000,           response.StatusCode);
                 Assert.AreEqual ("Hello world!", response.StatusMessage);
                 Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response.RequestId);
+                Assert.IsNotNull(response.CorrelationId);
 
                 var credentials = response.Data;
                 Assert.IsNotNull(credentials);

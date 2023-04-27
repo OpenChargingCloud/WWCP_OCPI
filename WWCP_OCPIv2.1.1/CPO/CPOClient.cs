@@ -4219,7 +4219,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     response = OCPIResponse<CDR>.ParseJObject(HTTPResponse,
                                                               requestId,
                                                               correlationId,
-                                                              json => CDR.Parse(json));
+                                                              json => CDR.Parse(json,
+                                                                                RemoteParty.CountryCode,
+                                                                                RemoteParty.PartyId));
 
                     Counters.PostCDR.IncResponses_OK();
 

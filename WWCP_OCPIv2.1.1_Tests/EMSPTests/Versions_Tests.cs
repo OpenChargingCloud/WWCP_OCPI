@@ -30,7 +30,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 {
 
     [TestFixture]
-    public class Version_Tests : ANodeTests
+    public class Versions_Tests : ANodeTests
     {
 
         #region EMSP_GetVersions_Test()
