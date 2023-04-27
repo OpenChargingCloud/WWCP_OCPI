@@ -24,6 +24,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1
@@ -42,17 +44,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Properties
 
         /// <summary>
+        /// The parent CommonAPI of this charging location.
+        /// </summary>
+        internal CommonAPI?                          CommonAPI                   { get; set; }
+
+        /// <summary>
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charge detail record.
         /// </summary>
         [Mandatory]
-        public CountryCode                         CountryCode                 { get; }
+        public   CountryCode                         CountryCode                 { get; }
 
         /// <summary>
         /// The identification of the charge point operator that 'owns' this charge detail record
         /// (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id                            PartyId                     { get; }
+        public   Party_Id                            PartyId                     { get; }
 
         /// <summary>
         /// The identification of the charge detail record within the charge point operator's platform
@@ -60,14 +67,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// CiString(39)
         /// </summary>
         [Mandatory]
-        public CDR_Id                              Id                          { get; }
+        public   CDR_Id                              Id                          { get; }
 
         /// <summary>
         /// The start timestamp of the charging session, or in-case of a reservation
         /// (before the start of a session) the start of the reservation.
         /// </summary>
         [Mandatory]
-        public DateTime                            Start                       { get; }
+        public   DateTime                            Start                       { get; }
 
         /// <summary>
         /// The timestamp when the session was completed/finished.
@@ -75,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// EV is full, but parking cost also has to be paid.
         /// </summary>
         [Mandatory]
-        public DateTime                            End                         { get; }
+        public   DateTime                            End                         { get; }
 
         /// <summary>
         /// The optional unique identification of the charging session.
@@ -83,20 +90,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// charge detail record is the result of a reservation that never became a charging session.
         /// </summary>
         [Optional]
-        public Session_Id?                         SessionId                   { get; }
+        public   Session_Id?                         SessionId                   { get; }
 
         /// <summary>
         /// The token used to start this charging session, includes all relevant information
         /// to identify the unique token.
         /// </summary>
         [Mandatory]
-        public CDRToken                            CDRToken                    { get; }
+        public   CDRToken                            CDRToken                    { get; }
 
         /// <summary>
         /// The authentication method used.
         /// </summary>
         [Mandatory]
-        public AuthMethods                         AuthMethod                  { get; }
+        public   AuthMethods                         AuthMethod                  { get; }
 
         /// <summary>
         /// The optional reference to the authorization given by the eMSP.
@@ -106,45 +113,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// are relevant to this session, the last given value SHALL be used here.
         /// </summary>
         [Optional]
-        public AuthorizationReference?             AuthorizationReference      { get; }
+        public   AuthorizationReference?             AuthorizationReference      { get; }
 
         /// <summary>
         /// The location where the charging session took place, including only the relevant
         /// EVSE and connector.
         /// </summary>
         [Mandatory]
-        public CDRLocation                         Location                    { get; }
+        public   CDRLocation                         Location                    { get; }
 
         /// <summary>
         /// The optional identification of the energy meter.
         /// </summary>
         [Optional]
-        public Meter_Id?                           MeterId                     { get; }
+        public   Meter_Id?                           MeterId                     { get; }
 
         /// <summary>
         /// The optional energy meter.
         /// </summary>
         [Optional, NonStandard]
-        public EnergyMeter?                        EnergyMeter                 { get; }
+        public   EnergyMeter?                        EnergyMeter                 { get; }
 
         /// <summary>
         /// The enumeration of valid transparency softwares which can be used to validate
         /// the singed charging session and metering data.
         /// </summary>
         [Optional, NonStandard]
-        public IEnumerable<TransparencySoftware>   TransparencySoftwares        { get; }
+        public   IEnumerable<TransparencySoftware>   TransparencySoftwares        { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this charge detail record.
         /// </summary>
         [Mandatory]
-        public Currency                            Currency                    { get; }
+        public   Currency                            Currency                    { get; }
 
         /// <summary>
         /// The enumeration of relevant charging tariffs.
         /// </summary>
         [Optional]
-        public IEnumerable<Tariff>                 Tariffs                     { get; }
+        public   IEnumerable<Tariff>                 Tariffs                     { get; }
 
         /// <summary>
         /// The enumeration of charging periods that make up this charging session.
@@ -152,64 +159,64 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// different relevant charging tariff.
         /// </summary>
         [Mandatory]
-        public IEnumerable<ChargingPeriod>         ChargingPeriods             { get; }
+        public   IEnumerable<ChargingPeriod>         ChargingPeriods             { get; }
 
         /// <summary>
         /// The optional signed metering data that belongs to this charging session.
         /// </summary>
         [Optional]
-        public SignedData?                         SignedData                  { get; }
+        public   SignedData?                         SignedData                  { get; }
 
         /// <summary>
         /// The total sum of all the costs of this transaction in the specified currency.
         /// </summary>
         [Mandatory]
-        public Price                               TotalCosts                  { get; }
+        public   Price                               TotalCosts                  { get; }
 
         /// <summary>
         /// The optional total sum of all the costs of this transaction in the specified currency.
         /// </summary>
         [Optional]
-        public Price?                              TotalFixedCosts             { get; }
+        public   Price?                              TotalFixedCosts             { get; }
 
         /// <summary>
         /// The total energy charged in kWh.
         /// </summary>
         [Mandatory]
-        public Decimal                             TotalEnergy                 { get; }
+        public   Decimal                             TotalEnergy                 { get; }
 
         /// <summary>
         /// The optional total sum of all the cost of all the energy used, in the specified currency.
         /// </summary>
         [Optional]
-        public Price?                              TotalEnergyCost             { get; }
+        public   Price?                              TotalEnergyCost             { get; }
 
         /// <summary>
         /// The total duration of the charging session, including the duration of charging and not charging.
         /// </summary>
         [Mandatory]
-        public TimeSpan                            TotalTime                   { get; }
+        public   TimeSpan                            TotalTime                   { get; }
 
         /// <summary>
         /// The optional total sum of all the cost related to duration of charging during this transaction,
         /// in the specified currency.
         /// </summary>
         [Optional]
-        public Price?                              TotalTimeCost               { get; }
+        public   Price?                              TotalTimeCost               { get; }
 
         /// <summary>
         /// The optional total duration of the charging session where the EV was not charging
         /// (no energy was transferred between EVSE and EV).
         /// </summary>
         [Optional]
-        public TimeSpan?                           TotalParkingTime            { get; }
+        public   TimeSpan?                           TotalParkingTime            { get; }
 
         /// <summary>
         /// The optional total duration of the charging session where the EV was not charging
         /// (no energy was transferred between EVSE and EV).
         /// </summary>
         [Optional]
-        public TimeSpan                            TotalChargingTime
+        public   TimeSpan                            TotalChargingTime
             => TotalTime - (TotalParkingTime ?? TimeSpan.Zero);
 
         /// <summary>
@@ -217,14 +224,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// including fixed price components, in the specified currency.
         /// </summary>
         [Optional]
-        public Price?                              TotalParkingCost            { get; }
+        public   Price?                              TotalParkingCost            { get; }
 
         /// <summary>
         /// The optional total sum of all the cost related to a reservation of a charge point,
         /// including fixed price components, in the specified currency.
         /// </summary>
         [Optional]
-        public Price?                              TotalReservationCost        { get; }
+        public   Price?                              TotalReservationCost        { get; }
 
         /// <summary>
         /// The optional remark can be used to provide addition human
@@ -232,7 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// reason why a transaction was stopped.
         /// </summary>
         [Optional]
-        public String?                             Remark                      { get; }
+        public   String?                             Remark                      { get; }
 
         /// <summary>
         /// The optional invoice reference identification can be used to reference an invoice,
@@ -240,39 +247,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Might even group multiple charge detail records that will be on the same invoice.
         /// </summary>
         [Optional]
-        public InvoiceReference_Id?                InvoiceReferenceId          { get; }
+        public   InvoiceReference_Id?                InvoiceReferenceId          { get; }
 
         /// <summary>
         /// The optional indication, that this charge detail record is a "credit CDR".
         /// When set to true the field credit_reference_id needs to be set as well.
         /// </summary>
         [Optional]
-        public Boolean?                            Credit                      { get; }
+        public   Boolean?                            Credit                      { get; }
 
         /// <summary>
         /// The optional credit reference identification is required to be set for a "credit CDR".
         /// This SHALL contain the identification of the charge detail record for which this is a "credit CDR".
         /// </summary>
         [Optional]
-        public CreditReference_Id?                 CreditReferenceId           { get; }
+        public   CreditReference_Id?                 CreditReferenceId           { get; }
 
         /// <summary>
         /// When set to true, this charge detail record is for a charging session using the home charger
         /// of the EV driver for which the energy cost needs to be financial compensated to the EV driver.
         /// </summary>
         [Optional]
-        public Boolean?                            HomeChargingCompensation    { get; }
+        public   Boolean?                            HomeChargingCompensation    { get; }
 
         /// <summary>
         /// The timestamp when this charge detail record was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                            LastUpdated                 { get; }
+        public   DateTime                            LastUpdated                 { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charge detail record.
         /// </summary>
-        public String                              ETag                        { get; }
+        public   String                              ETag                        { get; }
 
         #endregion
 

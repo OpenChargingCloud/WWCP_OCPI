@@ -23,6 +23,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
@@ -39,109 +41,114 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly Object patchLock = new Object();
+        private readonly Object patchLock = new ();
 
         #endregion
 
         #region Properties
 
         /// <summary>
+        /// The parent CommonAPI of this charging location.
+        /// </summary>
+        internal CommonAPI?                          CommonAPI                    { get; set; }
+
+        /// <summary>
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this session.
         /// </summary>
         [Mandatory]
-        public CountryCode                         CountryCode                  { get; }
+        public   CountryCode                         CountryCode                  { get; }
 
         /// <summary>
         /// The identification of the charge point operator that 'owns' this session (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id                            PartyId                      { get; }
+        public   Party_Id                            PartyId                      { get; }
 
         /// <summary>
         /// The unique identification of the session within the CPOs platform (and suboperator platforms).
         /// </summary>
         [Mandatory]
-        public Session_Id                          Id                           { get; }
+        public   Session_Id                          Id                           { get; }
 
         /// <summary>
         /// The timestamp when the session became active.
         /// </summary>
         [Mandatory]
-        public DateTime                            Start                        { get; }
+        public   DateTime                            Start                        { get; }
 
         /// <summary>
         /// The optional timestamp when the session was completed.
         /// </summary>
         [Optional]
-        public DateTime?                           End                          { get; }
+        public   DateTime?                           End                          { get; }
 
 #pragma warning disable IDE1006 // Naming Styles
         /// <summary>
         /// The amount of kWhs that had been charged.
         /// </summary>
         [Mandatory]
-        public Decimal                             kWh                          { get; }
+        public   Decimal                             kWh                          { get; }
 #pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
         /// The authentication identification.
         /// </summary>
         [Mandatory]
-        public Auth_Id                             AuthId                       { get; }
+        public   Auth_Id                             AuthId                       { get; }
 
         /// <summary>
         /// The method used for authentication.
         /// </summary>
         [Mandatory]
-        public AuthMethods                         AuthMethod                   { get; }
+        public   AuthMethods                         AuthMethod                   { get; }
 
         /// <summary>
         /// The location where this session took place, including only the relevant EVSE and connector.
         /// </summary>
         [Mandatory]
-        public Location                            Location                     { get; }
+        public   Location                            Location                     { get; }
 
         /// <summary>
         /// The optional identification of the kWh energy meter.
         /// </summary>
         [Optional]
-        public Meter_Id?                           MeterId                      { get; }
+        public   Meter_Id?                           MeterId                      { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this session.
         /// </summary>
         [Mandatory]
-        public Currency                            Currency                     { get; }
+        public   Currency                            Currency                     { get; }
 
         /// <summary>
         /// The optional enumeration of charging periods that can be used to calculate and verify the total cost.
         /// </summary>
         [Optional]
-        public IEnumerable<ChargingPeriod>         ChargingPeriods              { get; }
+        public   IEnumerable<ChargingPeriod>         ChargingPeriods              { get; }
 
         /// <summary>
         /// The total cost (excluding VAT) of the session in the specified currency.
         /// This is the price that the eMSP will have to pay to the charge point operator.
         /// </summary>
         [Optional]
-        public Decimal?                            TotalCost                    { get; }
+        public   Decimal?                            TotalCost                    { get; }
 
         /// <summary>
         /// The status of the session.
         /// </summary>
         [Mandatory]
-        public SessionStatusTypes                  Status                       { get; }
+        public   SessionStatusTypes                  Status                       { get; }
 
         /// <summary>
         /// The timestamp when this session was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                            LastUpdated                  { get; }
+        public   DateTime                            LastUpdated                  { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charging session.
         /// </summary>
-        public String                              ETag                         { get; private set; }
+        public   String                              ETag                         { get; private set; }
 
         #endregion
 

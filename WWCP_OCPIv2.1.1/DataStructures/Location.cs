@@ -681,7 +681,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse LocationType          [mandatory]
 
-                if (!JSON.ParseMandatory("location_type",
+                if (!JSON.ParseMandatory("type",
                                          "location type",
                                          OCPIv2_1_1.LocationType.TryParse,
                                          out LocationType LocationType,

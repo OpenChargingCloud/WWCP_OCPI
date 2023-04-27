@@ -2788,8 +2788,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
-                                                                       Request.AccessInfo.Value.CountryCode,
-                                                                       Request.AccessInfo.Value.PartyId,
+                                                                       CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
+                                                                       CommonAPI.OurPartyId,      //Request.AccessInfo.Value.PartyId,
                                                                        out var locationId,
                                                                        out var location,
                                                                        out var evseUId,
@@ -2891,8 +2891,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check connector
 
                                         if (!Request.ParseLocationEVSEConnector(this,
-                                                                                Request.AccessInfo.Value.CountryCode,
-                                                                                Request.AccessInfo.Value.PartyId,
+                                                                                CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
+                                                                                CommonAPI.OurPartyId,      //Request.AccessInfo.Value.PartyId,
                                                                                 out var locationId,
                                                                                 out var location,
                                                                                 out var evseId,
@@ -2991,8 +2991,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters          = Request.GetDateAndPaginationFilters();
 
-                                        var allTariffs       = CommonAPI.GetTariffs(Request.AccessInfo.Value.CountryCode,
-                                                                                    Request.AccessInfo.Value.PartyId).ToArray();
+                                        var allTariffs       = CommonAPI.GetTariffs(CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
+                                                                                    CommonAPI.OurPartyId       //Request.AccessInfo.Value.PartyId
+                                                                                   ).ToArray();
 
                                         var filteredTariffs  = allTariffs.Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
                                                                           Where(tariff => !filters.To.  HasValue || tariff.LastUpdated <= filters.To.  Value).
@@ -3093,8 +3094,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check tariff
 
                                         if (!Request.ParseTariff(this,
-                                                                 Request.AccessInfo.Value.CountryCode,
-                                                                 Request.AccessInfo.Value.PartyId,
+                                                                 CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
+                                                                 CommonAPI.OurPartyId,      //Request.AccessInfo.Value.PartyId,
                                                                  out var tariffId,
                                                                  out var tariff,
                                                                  out var ocpiResponseBuilder,
@@ -3198,8 +3199,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters           = Request.GetDateAndPaginationFilters();
 
-                                        var allSessions       = CommonAPI.GetSessions(Request.AccessInfo.Value.CountryCode,
-                                                                                      Request.AccessInfo.Value.PartyId).ToArray();
+                                        var allSessions       = CommonAPI.GetSessions(CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
+                                                                                      CommonAPI.OurPartyId       //Request.AccessInfo.Value.PartyId
+                                                                                     ).ToArray();
 
                                         var filteredSessions  = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
                                                                             Where(session => !filters.To.  HasValue || session.LastUpdated <= filters.To.  Value).
@@ -3311,8 +3313,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check session
 
                                         if (!Request.ParseSession(this,
-                                                                  Request.AccessInfo.Value.CountryCode,
-                                                                  Request.AccessInfo.Value.PartyId,
+                                                                  CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
+                                                                  CommonAPI.OurPartyId,      //Request.AccessInfo.Value.PartyId,
                                                                   out var sessionId,
                                                                   out var session,
                                                                   out var ocpiResponseBuilder,
@@ -3437,8 +3439,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters       = Request.GetDateAndPaginationFilters();
 
-                                        var allCDRs       = CommonAPI.GetCDRs(Request.AccessInfo.Value.CountryCode,
-                                                                              Request.AccessInfo.Value.PartyId).ToArray();
+                                        var allCDRs       = CommonAPI.GetCDRs(CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
+                                                                              CommonAPI.OurPartyId       //Request.AccessInfo.Value.PartyId
+                                                                             ).ToArray();
 
                                         var filteredCDRs  = allCDRs.Where(CDR => !filters.From.HasValue || CDR.LastUpdated >  filters.From.Value).
                                                                     Where(CDR => !filters.To.  HasValue || CDR.LastUpdated <= filters.To.  Value).
@@ -3557,8 +3560,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check Charge Detail Record
 
                                         if (!Request.ParseCDR(this,
-                                                              Request.AccessInfo.Value.CountryCode,
-                                                              Request.AccessInfo.Value.PartyId,
+                                                              CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
+                                                              CommonAPI.OurPartyId,      //Request.AccessInfo.Value.PartyId,
                                                               out var cdrId,
                                                               out var cdr,
                                                               out var ocpiResponseBuilder,
@@ -3692,8 +3695,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters         = Request.GetDateAndPaginationFilters();
 
-                                        var allTokens       = CommonAPI.GetTokens(countryCode.Value,
-                                                                                  partyId.    Value).
+                                        var allTokens       = CommonAPI.GetTokens(CommonAPI.OurCountryCode,  //countryCode.Value,
+                                                                                  CommonAPI.OurPartyId       //partyId.    Value
+                                                                                 ).
                                                                         ToArray();
 
                                         var filteredTokens  = allTokens.Select(tokenStatus => tokenStatus.Token).

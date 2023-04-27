@@ -49,7 +49,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
         public static void CDR_SerializeDeserialize_Test01()
         {
 
-            #region Defined cdr1
+            #region Defined CDR1
 
             var cdr1 = new CDR(CountryCode.Parse("DE"),
                                Party_Id.   Parse("GEF"),
@@ -71,10 +71,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                ),
                                Currency.EUR,
 
-                               new ChargingPeriod[] {
+                               new[] {
                                    new ChargingPeriod(
                                        DateTime.Parse("2020-04-12T18:21:49Z"),
-                                       new CDRDimension[] {
+                                       new[] {
                                            new CDRDimension(
                                                CDRDimensionType.ENERGY,
                                                1.33M
@@ -83,7 +83,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                    ),
                                    new ChargingPeriod(
                                        DateTime.Parse("2020-04-12T18:21:50Z"),
-                                       new CDRDimension[] {
+                                       new[] {
                                            new CDRDimension(
                                                CDRDimensionType.TIME,
                                                5.12M
@@ -113,7 +113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                    null,
                                    null,
                                    null,
-                                   new TransparencySoftwareStatus[] {
+                                   new[] {
                                        new TransparencySoftwareStatus(
                                            new TransparencySoftware(
                                                "Chargy Transparency Software Desktop Application",
@@ -152,21 +152,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                ),
                                null,
 
-                               new Tariff[] {
+                               new[] {
                                    new Tariff(
                                        CountryCode.Parse("DE"),
                                        Party_Id.   Parse("GEF"),
                                        Tariff_Id.  Parse("TARIFF0001"),
                                        Currency.EUR,
-                                       new TariffElement[] {
+                                       new[] {
                                            new TariffElement(
-                                               new PriceComponent[] {
+                                               new[] {
                                                    PriceComponent.ChargingTime(
                                                        TimeSpan.FromSeconds(300),
                                                        2.00M
                                                    )
                                                },
-                                               new TariffRestrictions [] {
+                                               new[] {
                                                    new TariffRestrictions(
                                                        Time.FromHourMin(08,00),       // Start time
                                                        Time.FromHourMin(18,00),       // End time
@@ -186,14 +186,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                }
                                            )
                                        },
-                                       new DisplayText[] {
+                                       new[] {
                                            new DisplayText(Languages.de, "Hallo Welt!"),
                                            new DisplayText(Languages.en, "Hello world!"),
                                        },
                                        URL.Parse("https://open.charging.cloud"),
                                        new EnergyMix(
                                            true,
-                                           new EnergySource[] {
+                                           new[] {
                                                new EnergySource(
                                                    EnergySourceCategory.SOLAR,
                                                    80
@@ -203,7 +203,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                    20
                                                )
                                            },
-                                           new EnvironmentalImpact[] {
+                                           new[] {
                                                new EnvironmentalImpact(
                                                    EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                    0.1
@@ -218,7 +218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
                                new SignedData(
                                    EncodingMethod.GraphDefined,
-                                   new SignedValue[] {
+                                   new[] {
                                        new SignedValue(
                                            SignedValueNature.START,
                                            "PlainStartValue",

@@ -3659,9 +3659,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public event OnTariffChangedDelegate? OnTariffChanged;
 
 
-        #region AddTariff           (Tariff)
+        #region AddTariff           (Tariff, SkipNotifications = false)
 
-        public Tariff AddTariff(Tariff Tariff)
+        public Tariff AddTariff(Tariff   Tariff,
+                                Boolean  SkipNotifications   = false)
         {
 
             if (Tariff is null)
@@ -3674,20 +3675,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     tariffs.Add(Tariff.Id, Tariff);
+                    Tariff.CommonAPI = this;
 
-                    var OnTariffAddedLocal = OnTariffAdded;
-                    if (OnTariffAddedLocal is not null)
+                    if (!SkipNotifications)
                     {
-                        try
+
+                        var OnTariffAddedLocal = OnTariffAdded;
+                        if (OnTariffAddedLocal is not null)
                         {
-                            OnTariffAddedLocal(Tariff).Wait();
+                            try
+                            {
+                                OnTariffAddedLocal(Tariff).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTariff), " ", nameof(OnTariffAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTariff), " ", nameof(OnTariffAdded), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
-                        }
+
                     }
 
                     return Tariff;
@@ -3702,9 +3709,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region AddTariffIfNotExists(Tariff)
+        #region AddTariffIfNotExists(Tariff, SkipNotifications = false)
 
-        public Tariff AddTariffIfNotExists(Tariff Tariff)
+        public Tariff AddTariffIfNotExists(Tariff   Tariff,
+                                           Boolean  SkipNotifications   = false)
         {
 
             if (Tariff is null)
@@ -3717,20 +3725,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     tariffs.Add(Tariff.Id, Tariff);
+                    Tariff.CommonAPI = this;
 
-                    var OnTariffAddedLocal = OnTariffAdded;
-                    if (OnTariffAddedLocal is not null)
+                    if (!SkipNotifications)
                     {
-                        try
+
+                        var OnTariffAddedLocal = OnTariffAdded;
+                        if (OnTariffAddedLocal is not null)
                         {
-                            OnTariffAddedLocal(Tariff).Wait();
+                            try
+                            {
+                                OnTariffAddedLocal(Tariff).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTariffIfNotExists), " ", nameof(OnTariffAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTariffIfNotExists), " ", nameof(OnTariffAdded), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
-                        }
+
                     }
 
                 }
@@ -4119,9 +4133,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public event OnSessionChangedDelegate? OnSessionChanged;
 
 
-        #region AddSession           (Session)
+        #region AddSession           (Session, SkipNotifications = false)
 
-        public Session AddSession(Session Session)
+        public Session AddSession(Session  Session,
+                                  Boolean  SkipNotifications   = false)
         {
 
             if (Session is null)
@@ -4134,20 +4149,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     chargingSessions.Add(Session.Id, Session);
+                    Session.CommonAPI = this;
 
-                    var OnSessionCreatedLocal = OnSessionCreated;
-                    if (OnSessionCreatedLocal is not null)
+                    if (!SkipNotifications)
                     {
-                        try
+
+                        var OnSessionCreatedLocal = OnSessionCreated;
+                        if (OnSessionCreatedLocal is not null)
                         {
-                            OnSessionCreatedLocal(Session).Wait();
+                            try
+                            {
+                                OnSessionCreatedLocal(Session).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddSession), " ", nameof(OnSessionCreated), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddSession), " ", nameof(OnSessionCreated), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
-                        }
+
                     }
 
                     return Session;
@@ -4162,9 +4183,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region AddSessionIfNotExists(Session)
+        #region AddSessionIfNotExists(Session, SkipNotifications = false)
 
-        public Session AddSessionIfNotExists(Session Session)
+        public Session AddSessionIfNotExists(Session  Session,
+                                             Boolean  SkipNotifications   = false)
         {
 
             if (Session is null)
@@ -4177,20 +4199,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     chargingSessions.Add(Session.Id, Session);
+                    Session.CommonAPI = this;
 
-                    var OnSessionCreatedLocal = OnSessionCreated;
-                    if (OnSessionCreatedLocal is not null)
+                    if (!SkipNotifications)
                     {
-                        try
+
+                        var OnSessionCreatedLocal = OnSessionCreated;
+                        if (OnSessionCreatedLocal is not null)
                         {
-                            OnSessionCreatedLocal(Session).Wait();
+                            try
+                            {
+                                OnSessionCreatedLocal(Session).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddSessionIfNotExists), " ", nameof(OnSessionCreated), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddSessionIfNotExists), " ", nameof(OnSessionCreated), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
-                        }
+
                     }
 
                 }
@@ -4567,10 +4595,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public event OnVerifyTokenDelegate? OnVerifyToken;
 
 
-        #region AddToken           (Token, Status = AllowedTypes.ALLOWED)
+        #region AddToken           (Token, Status = AllowedTypes.ALLOWED, SkipNotifications = false)
 
         public Token AddToken(Token         Token,
-                              AllowedType?  Status = null)
+                              AllowedType?  Status              = null,
+                              Boolean       SkipNotifications   = false)
         {
 
             Status ??= AllowedType.ALLOWED;
@@ -4582,20 +4611,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     tokenStatus.Add(Token.Id, new TokenStatus(Token, Status.Value));
+                    Token.CommonAPI = this;
 
-                    var OnTokenAddedLocal = OnTokenAdded;
-                    if (OnTokenAddedLocal is not null)
+                    if (!SkipNotifications)
                     {
-                        try
+
+                        var OnTokenAddedLocal = OnTokenAdded;
+                        if (OnTokenAddedLocal is not null)
                         {
-                            OnTokenAddedLocal(Token).Wait();
+                            try
+                            {
+                                OnTokenAddedLocal(Token).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
-                        }
+
                     }
 
                     return Token;
@@ -4610,10 +4645,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region AddTokenIfNotExists(Token, Status = AllowedTypes.ALLOWED)
+        #region AddTokenIfNotExists(Token, Status = AllowedTypes.ALLOWED, SkipNotifications = false)
 
         public Token AddTokenIfNotExists(Token         Token,
-                                         AllowedType?  Status = null)
+                                         AllowedType?  Status              = null,
+                                         Boolean       SkipNotifications   = false)
         {
 
             Status ??= AllowedType.ALLOWED;
@@ -4625,20 +4661,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     tokenStatus.Add(Token.Id, new TokenStatus(Token, Status.Value));
+                    Token.CommonAPI = this;
 
-                    var OnTokenAddedLocal = OnTokenAdded;
-                    if (OnTokenAddedLocal is not null)
+                    if (!SkipNotifications)
                     {
-                        try
+
+                        var OnTokenAddedLocal = OnTokenAdded;
+                        if (OnTokenAddedLocal is not null)
                         {
-                            OnTokenAddedLocal(Token).Wait();
+                            try
+                            {
+                                OnTokenAddedLocal(Token).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTokenIfNotExists), " ", nameof(OnTokenAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTokenIfNotExists), " ", nameof(OnTokenAdded), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
-                        }
+
                     }
 
                 }
@@ -5020,9 +5062,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public event OnChargeDetailRecordChangedDelegate? OnChargeDetailRecordChanged;
 
 
-        #region AddCDR           (CDR)
+        #region AddCDR           (CDR, SkipNotifications = false)
 
-        public CDR AddCDR(CDR CDR)
+        public CDR AddCDR(CDR      CDR,
+                          Boolean  SkipNotifications   = false)
         {
 
             if (CDR is null)
@@ -5035,20 +5078,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     chargeDetailRecords.Add(CDR.Id, CDR);
+                    CDR.CommonAPI = this;
 
-                    var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
-                    if (OnChargeDetailRecordAddedLocal is not null)
+                    if (!SkipNotifications)
                     {
-                        try
+
+                        var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
+                        if (OnChargeDetailRecordAddedLocal is not null)
                         {
-                            OnChargeDetailRecordAddedLocal(CDR).Wait();
+                            try
+                            {
+                                OnChargeDetailRecordAddedLocal(CDR).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
-                        }
+
                     }
 
                     return CDR;
@@ -5063,9 +5112,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region AddCDRIfNotExists(CDR)
+        #region AddCDRIfNotExists(CDR, SkipNotifications = false)
 
-        public CDR AddCDRIfNotExists(CDR CDR)
+        public CDR AddCDRIfNotExists(CDR      CDR,
+                                     Boolean  SkipNotifications   = false)
         {
 
             if (CDR is null)
@@ -5078,20 +5128,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     chargeDetailRecords.Add(CDR.Id, CDR);
+                    CDR.CommonAPI = this;
 
-                    var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
-                    if (OnChargeDetailRecordAddedLocal is not null)
+                    if (!SkipNotifications)
                     {
-                        try
+
+                        var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
+                        if (OnChargeDetailRecordAddedLocal is not null)
                         {
-                            OnChargeDetailRecordAddedLocal(CDR).Wait();
+                            try
+                            {
+                                OnChargeDetailRecordAddedLocal(CDR).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddCDRIfNotExists), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddCDRIfNotExists), " ", nameof(OnChargeDetailRecordAdded), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
-                        }
+
                     }
 
                 }
@@ -5399,7 +5455,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
         #endregion
-
 
 
         #region Start()

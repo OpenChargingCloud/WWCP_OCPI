@@ -23,6 +23,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1
@@ -46,34 +48,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Properties
 
         /// <summary>
+        /// The parent CommonAPI of this charging location.
+        /// </summary>
+        internal CommonAPI?       CommonAPI         { get; set; }
+
+        /// <summary>
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this token.
         /// </summary>
         [Mandatory]
-        public CountryCode      CountryCode       { get; }
+        public   CountryCode      CountryCode       { get; }
 
         /// <summary>
         /// The party identification of the charge point operator that 'owns' this token (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id         PartyId           { get; }
+        public   Party_Id         PartyId           { get; }
 
         /// <summary>
         /// The unique identification of the token.
         /// </summary>
         [Mandatory]
-        public Token_Id         Id                { get; }
+        public   Token_Id         Id                { get; }
 
         /// <summary>
         /// The type of the token.
         /// </summary>
         [Mandatory]
-        public TokenType       Type              { get; }
+        public   TokenType        Type              { get; }
 
         /// <summary>
         /// The unique identification of the EV driver contract token within the eMSP’s platform.
         /// </summary>
         [Mandatory]
-        public Contract_Id      ContractId        { get; }
+        public   Contract_Id      ContractId        { get; }
 
         /// <summary>
         /// The token issuing company, most of the times the name of the company printed on
@@ -81,26 +88,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// string(64)
         /// </summary>
         [Mandatory]
-        public String           Issuer            { get; }
+        public   String           Issuer            { get; }
 
         /// <summary>
         /// Whether this token is valid.
         /// </summary>
         [Mandatory]
-        public Boolean          IsValid           { get; }
+        public   Boolean          IsValid           { get; }
 
         /// <summary>
         /// Indicates what type of white-listing is allowed.
         /// </summary>
         [Mandatory]
-        public WhitelistTypes   WhitelistType     { get; }
+        public   WhitelistTypes   WhitelistType     { get; }
 
         /// <summary>
         /// The optional visual readable number/identification as printed on the token/RFID card.
         /// string(64)
         /// </summary>
         [Optional]
-        public String?          VisualNumber      { get; }
+        public   String?          VisualNumber      { get; }
 
         /// <summary>
         /// the optional group identification that groups a couple of tokens.
@@ -109,13 +116,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// are given to the EV-driver.
         /// </summary>
         [Optional]
-        public Group_Id?        GroupId           { get; }
+        public   Group_Id?        GroupId           { get; }
 
         /// <summary>
         /// The optional ISO 639-1 language code of the token owner’s preferred interface language.
         /// </summary>
         [Optional]
-        public Languages?       UILanguage        { get; }
+        public   Languages?       UILanguage        { get; }
 
         /// <summary>
         /// The default charging preference. When this is provided, and a charging session
@@ -124,7 +131,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// set via: SetChargingPreferences.
         /// </summary>
         [Optional]
-        public ProfileTypes?    DefaultProfile    { get; }
+        public   ProfileTypes?    DefaultProfile    { get; }
 
         /// <summary>
         /// When the EVSE supports using your own energy supplier/contract, information about
@@ -132,18 +139,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// which energy supplier to use.
         /// </summary>
         [Optional]
-        public EnergyContract?  EnergyContract    { get; }
+        public   EnergyContract?  EnergyContract    { get; }
 
         /// <summary>
         /// Timestamp when this token was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime         LastUpdated       { get; }
+        public   DateTime         LastUpdated       { get; }
 
         /// <summary>
         /// The base64 encoded SHA256 hash of the JSON representation of this token.
         /// </summary>
-        public String           ETag              { get; }
+        public   String           ETag              { get; }
 
         #endregion
 
