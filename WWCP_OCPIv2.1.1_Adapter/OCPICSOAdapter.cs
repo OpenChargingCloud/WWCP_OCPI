@@ -17,9 +17,10 @@
 
 #region Usings
 
-using org.GraphDefined.Vanaheimr.Illias;
+using Org.BouncyCastle.Crypto.Parameters;
 
 using org.GraphDefined.Vanaheimr.Styx;
+using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
@@ -40,7 +41,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// Receive charging stations downstream from an OCPI partner...
     /// </summary>
-    public class OCPICSOAdapter : //AWWCPEMPAdapter<ChargeDetailRecord>,
+    public class OCPICSOAdapter : WWCP.AWWCPEMPAdapter<CDR>,
                                   WWCP.IEMPRoamingProvider,
                                   WWCP.ISendEnergyStatus,
                                   IEquatable <OCPICSOAdapter>,
@@ -54,9 +55,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         protected readonly  SemaphoreSlim  DataAndStatusLock            = new(1, 1);
 
         protected readonly  TimeSpan       MaxLockWaitingTime           = TimeSpan.FromSeconds(120);
-
-        protected readonly Dictionary<WWCP.IChargingPool, List<PropertyUpdateInfo>> chargingPoolsUpdateLog;
-
 
         /// <summary>
         /// The default logging context.
@@ -77,40 +75,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Properties
 
-        public HTTP.CommonAPI                               CommonAPI                            { get; }
-
-        public HTTP.CPOAPI                                  CPOAPI                               { get; }
-
-
-        /// <summary>
-        /// The global unique identification.
-        /// </summary>
-        [Mandatory]
-        public WWCP.EMPRoamingProvider_Id                   Id                                   { get; }
-
         public IId AuthId => Id;
 
         IId WWCP.ISendChargeDetailRecords.SendChargeDetailRecordsId => Id;
 
 
-        /// <summary>
-        /// The multi-language name.
-        /// </summary>
-        [Optional]
-        public I18NString                                   Name                                 { get; }
+        public HTTP.CommonAPI                               CommonAPI                            { get; }
 
-        /// <summary>
-        /// The multi-language description.
-        /// </summary>
-        [Optional]
-        public I18NString                                   Description                          { get; }
-
-        /// <summary>
-        /// The roaming network.
-        /// </summary>
-        [Mandatory]
-        public WWCP.IRoamingNetwork                         RoamingNetwork                       { get; }
-
+        public HTTP.CPOAPI                                  CPOAPI                               { get; }
 
 
         public GetTariffIds_Delegate?                       GetTariffIds                         { get; }
@@ -121,52 +93,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public WWCPEVSE_2_EVSE_Delegate?                    CustomEVSEConverter                  { get; }
         public WWCPEVSEStatusUpdate_2_StatusType_Delegate?  CustomEVSEStatusUpdateConverter      { get; }
         public WWCPChargeDetailRecord_2_CDR_Delegate?       CustomChargeDetailRecordConverter    { get; }
-
-        /// <summary>
-        /// A delegate for filtering charge detail records.
-        /// </summary>
-        public WWCP.ChargeDetailRecordFilterDelegate        ChargeDetailRecordFilter             { get; }
-
-
-
-        /// <summary>
-        /// This service can be disabled, e.g. for debugging reasons.
-        /// </summary>
-        public Boolean                                      DisablePushData                      { get; set; }
-
-        /// <summary>
-        /// This service can be disabled, e.g. for debugging reasons.
-        /// </summary>
-        public Boolean                                      DisablePushAdminStatus               { get; set; }
-
-        /// <summary>
-        /// This service can be disabled, e.g. for debugging reasons.
-        /// </summary>
-        public Boolean                                      DisablePushStatus                    { get; set; }
-
-        /// <summary>
-        /// This service can be disabled, e.g. for debugging reasons.
-        /// </summary>
-        public Boolean                                      DisablePushEnergyStatus              { get; set; }
-
-        /// <summary>
-        /// This service can be disabled, e.g. for debugging reasons.
-        /// </summary>
-        public Boolean                                      DisableAuthentication                { get; set; }
-
-        /// <summary>
-        /// This service can be disabled, e.g. for debugging reasons.
-        /// </summary>
-        public Boolean                                      DisableSendChargeDetailRecords       { get; set; }
-
-
-        public Boolean?                                     DisableLogging                       { get; set; }
-
-
-        public String?                                      ClientsLoggingPath                   { get; }
-        public String?                                      ClientsLoggingContext                { get; }
-        public LogfileCreatorDelegate?                      ClientsLogfileCreator                { get; }
-        public DNSClient?                                   DNSClient                            { get; }
 
         #endregion
 
@@ -289,12 +215,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               WWCP.IncludeEVSEDelegate?                       IncludeEVSEs                        = null,
                               WWCP.ChargeDetailRecordFilterDelegate?          ChargeDetailRecordFilter            = null,
 
+                              TimeSpan?                                       FlushEVSEDataAndStatusEvery         = null,
+                              TimeSpan?                                       FlushEVSEFastStatusEvery            = null,
+                              TimeSpan?                                       FlushChargeDetailRecordsEvery       = null,
+
                               Boolean                                         DisablePushData                     = false,
                               Boolean                                         DisablePushAdminStatus              = false,
                               Boolean                                         DisablePushStatus                   = false,
                               Boolean                                         DisablePushEnergyStatus             = false,
                               Boolean                                         DisableAuthentication               = false,
                               Boolean                                         DisableSendChargeDetailRecords      = false,
+
+                              String                                          EllipticCurve                       = "P-256",
+                              ECPrivateKeyParameters?                         PrivateKey                          = null,
+                              WWCP.PublicKeyCertificates?                     PublicKeyCertificates               = null,
 
                               Boolean?                                        IsDevelopment                       = null,
                               IEnumerable<String>?                            DevelopmentServers                  = null,
@@ -309,12 +243,53 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               LogfileCreatorDelegate?                         ClientsLogfileCreator               = null,
                               DNSClient?                                      DNSClient                           = null)
 
-        {
+            : base(Id,
+                   RoamingNetwork,
 
-            this.Id                                 = Id;
-            this.Name                               = Name;
-            this.Description                        = Description;
-            this.RoamingNetwork                     = RoamingNetwork;
+                   Name,
+                   Description,
+
+                   IncludeEVSEIds,
+                   IncludeEVSEs,
+                   IncludeChargingStationIds,
+                   IncludeChargingStations,
+                   IncludeChargingPoolIds,
+                   IncludeChargingPools,
+                   IncludeChargingStationOperatorIds,
+                   IncludeChargingStationOperators,
+                   ChargeDetailRecordFilter,
+
+                   FlushEVSEDataAndStatusEvery,
+                   FlushEVSEFastStatusEvery,
+                   null,
+                   FlushChargeDetailRecordsEvery,
+
+                   DisablePushData,
+                   DisablePushAdminStatus,
+                   DisablePushStatus,
+                   true,
+                   DisablePushEnergyStatus,
+                   DisableAuthentication,
+                   DisableSendChargeDetailRecords,
+
+                   EllipticCurve,
+                   PrivateKey,
+                   PublicKeyCertificates,
+
+                   IsDevelopment,
+                   DevelopmentServers,
+                   DisableLogging,
+                   LoggingPath,
+                   LoggingContext,
+                   LogfileName,
+                   LogfileCreator,
+
+                   ClientsLoggingPath,
+                   ClientsLoggingContext,
+                   ClientsLogfileCreator,
+                   DNSClient)
+
+        {
 
             this.CommonAPI                          = CommonAPI;
 
@@ -343,31 +318,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.CustomEVSEConverter                = CustomEVSEConverter;
             this.CustomEVSEStatusUpdateConverter    = CustomEVSEStatusUpdateConverter;
             this.CustomChargeDetailRecordConverter  = CustomChargeDetailRecordConverter;
-
-            this.IncludeChargingStationOperatorIds  = IncludeChargingStationOperatorIds ?? (chargingStationOperatorId  => true);
-            this.IncludeChargingStationOperators    = IncludeChargingStationOperators   ?? (chargingStationOperator    => true);
-            this.IncludeChargingPoolIds             = IncludeChargingPoolIds            ?? (chargingPoolId             => true);
-            this.IncludeChargingPools               = IncludeChargingPools              ?? (chargingPool               => true);
-            this.IncludeChargingStationIds          = IncludeChargingStationIds         ?? (chargingStationId          => true);
-            this.IncludeChargingStations            = IncludeChargingStations           ?? (chargingStation            => true);
-            this.IncludeEVSEIds                     = IncludeEVSEIds                    ?? (evseid                     => true);
-            this.IncludeEVSEs                       = IncludeEVSEs                      ?? (evse                       => true);
-            this.ChargeDetailRecordFilter           = ChargeDetailRecordFilter          ?? (chargeDetailRecord         => WWCP.ChargeDetailRecordFilters.forward);
-
-            this.DisablePushData                    = DisablePushData;
-            this.DisablePushAdminStatus             = DisablePushAdminStatus;
-            this.DisablePushStatus                  = DisablePushStatus;
-            this.DisablePushEnergyStatus            = DisablePushEnergyStatus;
-            this.DisableAuthentication              = DisableAuthentication;
-            this.DisableSendChargeDetailRecords     = DisableSendChargeDetailRecords;
-
-            this.chargingPoolsUpdateLog             = new Dictionary<WWCP.IChargingPool, List<PropertyUpdateInfo>>();
-
-            this.DisableLogging                     = DisableLogging;
-            this.ClientsLoggingPath                 = ClientsLoggingPath;
-            this.ClientsLoggingContext              = ClientsLoggingContext;
-            this.ClientsLogfileCreator              = ClientsLogfileCreator;
-            this.DNSClient                          = DNSClient;
 
             this.CPOAPI                             = new HTTP.CPOAPI(
 
@@ -543,18 +493,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region (Set/Add/Update/Delete) Charging station operator(s)...
 
-
-        /// <summary>
-        /// Only include charging station identifications matching the given delegate.
-        /// </summary>
-        public WWCP.IncludeChargingStationOperatorIdDelegate  IncludeChargingStationOperatorIds    { get; }
-
-        /// <summary>
-        /// Only include charging stations matching the given delegate.
-        /// </summary>
-        public WWCP.IncludeChargingStationOperatorDelegate    IncludeChargingStationOperators      { get; }
-
-
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.SetStaticData(WWCP.IChargingStationOperator  ChargingStationOperator,
                                                                       WWCP.TransmissionTypes         TransmissionType,
                                                                       DateTime?                      Timestamp,
@@ -668,17 +606,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
         #region (Set/Add/Update/Delete) Charging pool(s)...
-
-        /// <summary>
-        /// Only include charging pool identifications matching the given delegate.
-        /// </summary>
-        public WWCP.IncludeChargingPoolIdDelegate  IncludeChargingPoolIds    { get; }
-
-        /// <summary>
-        /// Only include charging pools matching the given delegate.
-        /// </summary>
-        public WWCP.IncludeChargingPoolDelegate    IncludeChargingPools      { get; }
-
 
         #region SetStaticData   (ChargingPool,  TransmissionType = Enqueue, ...)
 
@@ -1117,17 +1044,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region (Set/Add/Update/Delete) Charging station(s)...
 
-        /// <summary>
-        /// Only include charging station identifications matching the given delegate.
-        /// </summary>
-        public WWCP.IncludeChargingStationIdDelegate  IncludeChargingStationIds    { get; }
-
-        /// <summary>
-        /// Only include charging stations matching the given delegate.
-        /// </summary>
-        public WWCP.IncludeChargingStationDelegate    IncludeChargingStations      { get; }
-
-
         #region SetStaticData   (ChargingStation, TransmissionType = Enqueue, ...)
 
         /// <summary>
@@ -1522,17 +1438,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
         #region (Set/Add/Update/Delete) EVSE(s)...
-
-        /// <summary>
-        /// Only include EVSE identifications matching the given delegate.
-        /// </summary>
-        public WWCP.IncludeEVSEIdDelegate  IncludeEVSEIds    { get; }
-
-        /// <summary>
-        /// Only include EVSEs matching the given delegate.
-        /// </summary>
-        public WWCP.IncludeEVSEDelegate    IncludeEVSEs      { get; }
-
 
         #region SetStaticData   (EVSE, TransmissionType = Enqueue, ...)
 
@@ -2749,6 +2654,40 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        #region Skip/Flush
+
+        protected override Boolean SkipFlushEVSEDataAndStatusQueues()
+        {
+            return true;
+        }
+
+        protected override async Task FlushEVSEDataAndStatusQueues()
+        {
+            
+        }
+
+        protected override Boolean SkipFlushEVSEFastStatusQueues()
+        {
+            return true;
+        }
+
+        protected override async Task FlushEVSEFastStatusQueues()
+        {
+            
+        }
+
+        protected override Boolean SkipFlushChargeDetailRecordsQueues()
+        {
+            return true;
+        }
+
+        protected override async Task FlushChargeDetailRecordsQueues(IEnumerable<CDR> ChargeDetailsRecords)
+        {
+            
+        }
+
+        #endregion
+
 
         #region Operator overloading
 
@@ -2875,7 +2814,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two OCPI CSO adapters.
         /// </summary>
         /// <param name="Object">An OCPI CSO adapter to compare with.</param>
-        public Int32 CompareTo(Object? Object)
+        public override Int32 CompareTo(Object? Object)
 
             => Object is OCPICSOAdapter evseDataRecord
                    ? CompareTo(evseDataRecord)
@@ -2957,7 +2896,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             => Id.ToString();
 
         #endregion
-
 
     }
 

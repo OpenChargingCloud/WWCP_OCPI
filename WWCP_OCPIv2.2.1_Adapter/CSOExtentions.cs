@@ -63,9 +63,9 @@ namespace cloud.charging.open.protocols.WWCP
         public static OCPIv2_2_1.OCPICSOAdapter?
 
             CreateOCPIv2_2_1_CSOAdapter(this RoamingNetwork                                    RoamingNetwork,
-                                      EMPRoamingProvider_Id                                  Id,
-                                      I18NString                                             Name,
-                                      I18NString                                             Description,
+                                      EMPRoamingProvider_Id                                    Id,
+                                      I18NString                                               Name,
+                                      I18NString                                               Description,
 
                                       OCPIv2_2_1.HTTP.CommonAPI                                CommonAPI,
                                       OCPIv2_2_1.CountryCode                                   DefaultCountryCode,
@@ -79,49 +79,46 @@ namespace cloud.charging.open.protocols.WWCP
                                       OCPIv2_2_1.WWCPEVSEStatusUpdate_2_StatusType_Delegate?   CustomEVSEStatusUpdateConverter      = null,
                                       OCPIv2_2_1.WWCPChargeDetailRecord_2_CDR_Delegate?        CustomChargeDetailRecordConverter    = null,
 
-                                      //IChargingStationOperator?                              DefaultOperator                      = null,
-                                      //ChargingStationOperatorNameSelectorDelegate?           OperatorNameSelector                 = null,
+                                      IncludeEVSEIdDelegate?                                   IncludeEVSEIds                       = null,
+                                      IncludeEVSEDelegate?                                     IncludeEVSEs                         = null,
+                                      IncludeChargingStationIdDelegate?                        IncludeChargingStationIds            = null,
+                                      IncludeChargingStationDelegate?                          IncludeChargingStations              = null,
+                                      IncludeChargingPoolIdDelegate?                           IncludeChargingPoolIds               = null,
+                                      IncludeChargingPoolDelegate?                             IncludeChargingPools                 = null,
+                                      IncludeChargingStationOperatorIdDelegate?                IncludeChargingStationOperatorIds    = null,
+                                      IncludeChargingStationOperatorDelegate?                  IncludeChargingStationOperators      = null,
+                                      ChargeDetailRecordFilterDelegate?                        ChargeDetailRecordFilter             = null,
 
-                                      IncludeEVSEIdDelegate?                                 IncludeEVSEIds                       = null,
-                                      IncludeEVSEDelegate?                                   IncludeEVSEs                         = null,
-                                      IncludeChargingStationIdDelegate?                      IncludeChargingStationIds            = null,
-                                      IncludeChargingStationDelegate?                        IncludeChargingStations              = null,
-                                      IncludeChargingPoolIdDelegate?                         IncludeChargingPoolIds               = null,
-                                      IncludeChargingPoolDelegate?                           IncludeChargingPools                 = null,
-                                      IncludeChargingStationOperatorIdDelegate?              IncludeChargingStationOperatorIds    = null,
-                                      IncludeChargingStationOperatorDelegate?                IncludeChargingStationOperators      = null,
-                                      ChargeDetailRecordFilterDelegate?                      ChargeDetailRecordFilter             = null,
+                                      TimeSpan?                                                ServiceCheckEvery                    = null,
+                                      TimeSpan?                                                StatusCheckEvery                     = null,
+                                      TimeSpan?                                                CDRCheckEvery                        = null,
 
-                                      TimeSpan?                                              ServiceCheckEvery                    = null,
-                                      TimeSpan?                                              StatusCheckEvery                     = null,
-                                      TimeSpan?                                              CDRCheckEvery                        = null,
-
-                                      Boolean                                                DisablePushData                      = false,
-                                      Boolean                                                DisablePushStatus                    = false,
-                                      Boolean                                                DisablePushAdminStatus               = false,
-                                      Boolean                                                DisablePushEnergyStatus              = false,
-                                      Boolean                                                DisableAuthentication                = false,
-                                      Boolean                                                DisableSendChargeDetailRecords       = false,
+                                      Boolean                                                  DisablePushData                      = false,
+                                      Boolean                                                  DisablePushStatus                    = false,
+                                      Boolean                                                  DisablePushAdminStatus               = false,
+                                      Boolean                                                  DisablePushEnergyStatus              = false,
+                                      Boolean                                                  DisableAuthentication                = false,
+                                      Boolean                                                  DisableSendChargeDetailRecords       = false,
 
                                       Action<OCPIv2_2_1.OCPICSOAdapter>?                       OCPIConfigurator                     = null,
-                                      Action<IEMPRoamingProvider>?                           Configurator                         = null,
+                                      Action<IEMPRoamingProvider>?                             Configurator                         = null,
 
-                                      String                                                 EllipticCurve                        = "P-256",
-                                      ECPrivateKeyParameters?                                PrivateKey                           = null,
-                                      PublicKeyCertificates?                                 PublicKeyCertificates                = null,
+                                      String                                                   EllipticCurve                        = "P-256",
+                                      ECPrivateKeyParameters?                                  PrivateKey                           = null,
+                                      PublicKeyCertificates?                                   PublicKeyCertificates                = null,
 
-                                      Boolean?                                               IsDevelopment                        = null,
-                                      IEnumerable<String>?                                   DevelopmentServers                   = null,
-                                      Boolean?                                               DisableLogging                       = null,
-                                      String?                                                LoggingPath                          = null,
-                                      String?                                                LoggingContext                       = null,
-                                      String?                                                LogfileName                          = null,
-                                      LogfileCreatorDelegate?                                LogfileCreator                       = null,
+                                      Boolean?                                                 IsDevelopment                        = null,
+                                      IEnumerable<String>?                                     DevelopmentServers                   = null,
+                                      Boolean?                                                 DisableLogging                       = null,
+                                      String?                                                  LoggingPath                          = null,
+                                      String?                                                  LoggingContext                       = null,
+                                      String?                                                  LogfileName                          = null,
+                                      LogfileCreatorDelegate?                                  LogfileCreator                       = null,
 
-                                      String?                                                ClientsLoggingPath                   = null,
-                                      String?                                                ClientsLoggingContext                = null,
-                                      LogfileCreatorDelegate?                                ClientsLogfileCreator                = null,
-                                      DNSClient?                                             DNSClient                            = null)
+                                      String?                                                  ClientsLoggingPath                   = null,
+                                      String?                                                  ClientsLoggingContext                = null,
+                                      LogfileCreatorDelegate?                                  ClientsLogfileCreator                = null,
+                                      DNSClient?                                               DNSClient                            = null)
 
         {
 
@@ -161,9 +158,9 @@ namespace cloud.charging.open.protocols.WWCP
                                          IncludeEVSEs,
                                          ChargeDetailRecordFilter,
 
-                                         //ServiceCheckEvery,
-                                         //StatusCheckEvery,
-                                         //CDRCheckEvery,
+                                         ServiceCheckEvery,
+                                         StatusCheckEvery,
+                                         CDRCheckEvery,
 
                                          DisablePushData,
                                          DisablePushAdminStatus,
@@ -171,6 +168,10 @@ namespace cloud.charging.open.protocols.WWCP
                                          DisablePushEnergyStatus,
                                          DisableAuthentication,
                                          DisableSendChargeDetailRecords,
+
+                                         EllipticCurve,
+                                         PrivateKey,
+                                         PublicKeyCertificates,
 
                                          IsDevelopment,
                                          DevelopmentServers,

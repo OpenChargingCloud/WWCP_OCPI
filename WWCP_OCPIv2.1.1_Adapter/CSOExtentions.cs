@@ -79,9 +79,6 @@ namespace cloud.charging.open.protocols.WWCP
                                       OCPIv2_1_1.WWCPEVSEStatusUpdate_2_StatusType_Delegate?   CustomEVSEStatusUpdateConverter      = null,
                                       OCPIv2_1_1.WWCPChargeDetailRecord_2_CDR_Delegate?        CustomChargeDetailRecordConverter    = null,
 
-                                      //IChargingStationOperator?                                DefaultOperator                      = null,
-                                      //ChargingStationOperatorNameSelectorDelegate?             OperatorNameSelector                 = null,
-
                                       IncludeEVSEIdDelegate?                                   IncludeEVSEIds                       = null,
                                       IncludeEVSEDelegate?                                     IncludeEVSEs                         = null,
                                       IncludeChargingStationIdDelegate?                        IncludeChargingStationIds            = null,
@@ -161,9 +158,9 @@ namespace cloud.charging.open.protocols.WWCP
                                          IncludeEVSEs,
                                          ChargeDetailRecordFilter,
 
-                                         //ServiceCheckEvery,
-                                         //StatusCheckEvery,
-                                         //CDRCheckEvery,
+                                         ServiceCheckEvery,
+                                         StatusCheckEvery,
+                                         CDRCheckEvery,
 
                                          DisablePushData,
                                          DisablePushAdminStatus,
@@ -171,6 +168,10 @@ namespace cloud.charging.open.protocols.WWCP
                                          DisablePushEnergyStatus,
                                          DisableAuthentication,
                                          DisableSendChargeDetailRecords,
+
+                                         EllipticCurve,
+                                         PrivateKey,
+                                         PublicKeyCertificates,
 
                                          IsDevelopment,
                                          DevelopmentServers,
