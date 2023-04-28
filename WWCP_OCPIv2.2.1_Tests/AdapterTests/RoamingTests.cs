@@ -680,10 +680,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                      eventTrackingId,
                                                      chargingPool,
                                                      propertyName,
+                                                     newValue,
                                                      oldValue,
-                                                     newValue) => {
+                                                     dataSource) => {
 
-                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>((chargingPool as IChargingPool)!.Id, propertyName, oldValue, newValue));
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>((chargingPool as IChargingPool)!.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -692,10 +693,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                  eventTrackingId,
                                                  chargingPool,
                                                  propertyName,
+                                                 newValue,
                                                  oldValue,
-                                                 newValue) => {
+                                                 dataSource) => {
 
-                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, oldValue, newValue));
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -704,22 +706,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                               eventTrackingId,
                                                               chargingPool,
                                                               propertyName,
+                                                              newValue,
                                                               oldValue,
-                                                              newValue) => {
+                                                              dataSource) => {
 
-                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, oldValue, newValue));
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
 
                 csoRoamingNetwork.OnChargingPoolDataChanged  += (timestamp,
-                                                              eventTrackingId,
-                                                              chargingPool,
-                                                              propertyName,
-                                                              oldValue,
-                                                              newValue) => {
+                                                                 eventTrackingId,
+                                                                 chargingPool,
+                                                                 propertyName,
+                                                                 newValue,
+                                                                 oldValue,
+                                                                 dataSource) => {
 
-                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, oldValue, newValue));
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -732,10 +736,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                         eventTrackingId,
                                                         chargingStation,
                                                         propertyName,
+                                                        newValue,
                                                         oldValue,
-                                                        newValue) => {
+                                                        dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>((chargingStation as IChargingStation)!.Id, propertyName, oldValue, newValue));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>((chargingStation as IChargingStation)!.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -744,10 +749,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                     eventTrackingId,
                                                     chargingStation,
                                                     propertyName,
+                                                    newValue,
                                                     oldValue,
-                                                    newValue) => {
+                                                    dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, oldValue, newValue));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -756,22 +762,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                                  eventTrackingId,
                                                                  chargingStation,
                                                                  propertyName,
+                                                                 newValue,
                                                                  oldValue,
-                                                                 newValue) => {
+                                                                 dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, oldValue, newValue));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
 
                 csoRoamingNetwork.OnChargingStationDataChanged += (timestamp,
-                                                                eventTrackingId,
-                                                                chargingStation,
-                                                                propertyName,
-                                                                oldValue,
-                                                                newValue) => {
+                                                                   eventTrackingId,
+                                                                   chargingStation,
+                                                                   propertyName,
+                                                                   newValue,
+                                                                   oldValue,
+                                                                   dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, oldValue, newValue));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -784,10 +792,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                              eventTrackingId,
                                              evse,
                                              propertyName,
+                                             newValue,
                                              oldValue,
-                                             newValue) => {
+                                             dataSource) => {
 
-                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>((evse as IEVSE)!.Id, propertyName, oldValue, newValue));
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>((evse as IEVSE)!.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -796,10 +805,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                          eventTrackingId,
                                          evse,
                                          propertyName,
+                                         newValue,
                                          oldValue,
-                                         newValue) => {
+                                         dataSource) => {
 
-                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, oldValue, newValue));
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -808,10 +818,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                       eventTrackingId,
                                                       evse,
                                                       propertyName,
+                                                      newValue,
                                                       oldValue,
-                                                      newValue) => {
+                                                      dataSource) => {
 
-                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, oldValue, newValue));
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -821,9 +832,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                         evse,
                                                         propertyName,
                                                         newValue,
-                                                        oldValue) => {
+                                                        oldValue,
+                                                        dataSource) => {
 
-                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, oldValue, newValue));
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -1244,10 +1256,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                 evse1!.OnStatusChanged += (timestamp,
                                            eventTrackingId,
                                            evse,
+                                           newEVSEStatus,
                                            oldEVSEStatus,
-                                           newEVSEStatus) => {
+                                           dataSource) => {
 
-                    updatedEVSEStatus.Add(new EVSEStatusUpdate(evse.Id, oldEVSEStatus, newEVSEStatus));
+                    updatedEVSEStatus.Add(new EVSEStatusUpdate(evse.Id, newEVSEStatus, oldEVSEStatus, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -1255,21 +1268,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                 graphDefinedCSO.OnEVSEStatusChanged += (timestamp,
                                                         eventTrackingId,
                                                         evse,
+                                                        newEVSEStatus,
                                                         oldEVSEStatus,
-                                                        newEVSEStatus) => {
+                                                        dataSource) => {
 
-                    updatedEVSEStatus.Add(new EVSEStatusUpdate(evse.Id, oldEVSEStatus, newEVSEStatus));
+                    updatedEVSEStatus.Add(new EVSEStatusUpdate(evse.Id, newEVSEStatus, oldEVSEStatus, dataSource));
                     return Task.CompletedTask;
 
                 };
 
                 csoRoamingNetwork.OnEVSEStatusChanged += (timestamp,
-                                                       eventTrackingId,
-                                                       evse,
-                                                       oldEVSEStatus,
-                                                       newEVSEStatus) => {
+                                                          eventTrackingId,
+                                                          evse,
+                                                          newEVSEStatus,
+                                                          oldEVSEStatus,
+                                                          dataSource) => {
 
-                    updatedEVSEStatus.Add(new EVSEStatusUpdate(evse.Id, oldEVSEStatus, newEVSEStatus));
+                    updatedEVSEStatus.Add(new EVSEStatusUpdate(evse.Id, newEVSEStatus, oldEVSEStatus, dataSource));
                     return Task.CompletedTask;
 
                 };

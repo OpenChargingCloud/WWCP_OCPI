@@ -447,8 +447,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.UpdateStaticData(WWCP.IRoamingNetwork    RoamingNetwork,
                                                                          String                  PropertyName,
-                                                                         Object?                 OldValue,
                                                                          Object?                 NewValue,
+                                                                         Object?                 OldValue,
+                                                                         String?                 DataSource,
                                                                          WWCP.TransmissionTypes  TransmissionType,
                                                                          DateTime?               Timestamp,
                                                                          CancellationToken?      CancellationToken,
@@ -518,8 +519,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.UpdateStaticData(WWCP.IChargingStationOperator  ChargingStationOperator,
                                                                          String                         PropertyName,
-                                                                         Object?                        OldValue,
                                                                          Object?                        NewValue,
+                                                                         Object?                        OldValue,
+                                                                         String?                        DataSource,
                                                                          WWCP.TransmissionTypes         TransmissionType,
                                                                          DateTime?                      Timestamp,
                                                                          CancellationToken?             CancellationToken,
@@ -809,9 +811,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         async Task<WWCP.PushChargingPoolDataResult>
 
             WWCP.ISendPOIData.UpdateStaticData(WWCP.IChargingPool      ChargingPool,
-                                               String?                 PropertyName,
-                                               Object?                 OldValue,
+                                               String                  PropertyName,
                                                Object?                 NewValue,
+                                               Object?                 OldValue,
+                                               String?                 DataSource,
                                                WWCP.TransmissionTypes  TransmissionType,
                                                DateTime?               Timestamp,
                                                CancellationToken?      CancellationToken,
@@ -1246,9 +1249,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         async Task<WWCP.PushChargingStationDataResult>
 
             WWCP.ISendPOIData.UpdateStaticData(WWCP.IChargingStation    ChargingStation,
-                                               String?                  PropertyName,
-                                               Object?                  OldValue,
+                                               String                   PropertyName,
                                                Object?                  NewValue,
+                                               Object?                  OldValue,
+                                               String?                  DataSource,
                                                WWCP.TransmissionTypes   TransmissionType,
 
                                                DateTime?                Timestamp,
@@ -1709,9 +1713,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         async Task<WWCP.PushEVSEDataResult>
 
             WWCP.ISendPOIData.UpdateStaticData(WWCP.IEVSE              EVSE,
-                                               String?                 PropertyName,
-                                               Object?                 OldValue,
+                                               String                  PropertyName,
                                                Object?                 NewValue,
+                                               Object?                 OldValue,
+                                               String?                 DataSource,
                                                WWCP.TransmissionTypes  TransmissionType,
 
                                                DateTime?               Timestamp,
