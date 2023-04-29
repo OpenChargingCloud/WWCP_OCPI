@@ -1427,7 +1427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (class) Builder
 
         /// <summary>
-        /// A EVSE builder.
+        /// An EVSE builder.
         /// </summary>
         public class Builder
         {

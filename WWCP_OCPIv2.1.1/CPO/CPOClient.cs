@@ -333,22 +333,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #region OnGetEVSERequest/-Response
 
         /// <summary>
-        /// An event fired whenever a request getting a EVSE will be send.
+        /// An event fired whenever a request getting an EVSE will be send.
         /// </summary>
         public event OnGetEVSERequestDelegate?   OnGetEVSERequest;
 
         /// <summary>
-        /// An event fired whenever a HTTP request getting a EVSE will be send.
+        /// An event fired whenever a HTTP request getting an EVSE will be send.
         /// </summary>
         public event ClientRequestLogHandler?    OnGetEVSEHTTPRequest;
 
         /// <summary>
-        /// An event fired whenever a response to a getting a EVSE HTTP request had been received.
+        /// An event fired whenever a response to a getting an EVSE HTTP request had been received.
         /// </summary>
         public event ClientResponseLogHandler?   OnGetEVSEHTTPResponse;
 
         /// <summary>
-        /// An event fired whenever a response to a getting a EVSE request had been received.
+        /// An event fired whenever a response to a getting an EVSE request had been received.
         /// </summary>
         public event OnGetEVSEResponseDelegate?  OnGetEVSEResponse;
 
@@ -357,22 +357,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #region OnPutEVSERequest/-Response
 
         /// <summary>
-        /// An event fired whenever a request putting a EVSE will be send.
+        /// An event fired whenever a request putting an EVSE will be send.
         /// </summary>
         public event OnPutEVSERequestDelegate?   OnPutEVSERequest;
 
         /// <summary>
-        /// An event fired whenever a HTTP request putting a EVSE will be send.
+        /// An event fired whenever a HTTP request putting an EVSE will be send.
         /// </summary>
         public event ClientRequestLogHandler?    OnPutEVSEHTTPRequest;
 
         /// <summary>
-        /// An event fired whenever a response to a putting a EVSE HTTP request had been received.
+        /// An event fired whenever a response to a putting an EVSE HTTP request had been received.
         /// </summary>
         public event ClientResponseLogHandler?   OnPutEVSEHTTPResponse;
 
         /// <summary>
-        /// An event fired whenever a response to a putting a EVSE request had been received.
+        /// An event fired whenever a response to a putting an EVSE request had been received.
         /// </summary>
         public event OnPutEVSEResponseDelegate?  OnPutEVSEResponse;
 
@@ -381,22 +381,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #region OnPatchEVSERequest/-Response
 
         /// <summary>
-        /// An event fired whenever a request patching a EVSE will be send.
+        /// An event fired whenever a request patching an EVSE will be send.
         /// </summary>
         public event OnPatchEVSERequestDelegate?   OnPatchEVSERequest;
 
         /// <summary>
-        /// An event fired whenever a HTTP request patching a EVSE will be send.
+        /// An event fired whenever a HTTP request patching an EVSE will be send.
         /// </summary>
         public event ClientRequestLogHandler?      OnPatchEVSEHTTPRequest;
 
         /// <summary>
-        /// An event fired whenever a response to a patching a EVSE HTTP request had been received.
+        /// An event fired whenever a response to a patching an EVSE HTTP request had been received.
         /// </summary>
         public event ClientResponseLogHandler?     OnPatchEVSEHTTPResponse;
 
         /// <summary>
-        /// An event fired whenever a response to a patching a EVSE request had been received.
+        /// An event fired whenever a response to a patching an EVSE request had been received.
         /// </summary>
         public event OnPatchEVSEResponseDelegate?  OnPatchEVSEResponse;
 

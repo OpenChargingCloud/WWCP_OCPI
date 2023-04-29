@@ -256,22 +256,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         #region OnGetEVSERequest/-Response
 
         /// <summary>
-        /// An event fired whenever a request getting a EVSE by its identification will be send.
+        /// An event fired whenever a request getting an EVSE by its identification will be send.
         /// </summary>
         public event OnGetEVSERequestDelegate?   OnGetEVSERequest;
 
         /// <summary>
-        /// An event fired whenever a HTTP request getting a EVSE by its identification will be send.
+        /// An event fired whenever a HTTP request getting an EVSE by its identification will be send.
         /// </summary>
         public event ClientRequestLogHandler?    OnGetEVSEHTTPRequest;
 
         /// <summary>
-        /// An event fired whenever a response to a getting a EVSE by its identification HTTP request had been received.
+        /// An event fired whenever a response to a getting an EVSE by its identification HTTP request had been received.
         /// </summary>
         public event ClientResponseLogHandler?   OnGetEVSEHTTPResponse;
 
         /// <summary>
-        /// An event fired whenever a response to a getting a EVSE by its identification request had been received.
+        /// An event fired whenever a response to a getting an EVSE by its identification request had been received.
         /// </summary>
         public event OnGetEVSEResponseDelegate?  OnGetEVSEResponse;
 

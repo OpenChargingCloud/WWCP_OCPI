@@ -28,7 +28,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// This class references images related to a EVSE in terms of a file name or uri.
+    /// This class references images related to an EVSE in terms of a file name or uri.
     /// </summary>
     public class Image : IEquatable<Image>,
                          IComparable<Image>,

@@ -26,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using cloud.charging.open.protocols.OCPIv2_1_1.WebAPI;
 
 #endregion
 
@@ -97,16 +98,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         protected  HTTPAPI?         cpoHTTPAPI;
         protected  CommonAPI?       cpoCommonAPI;
+        protected  OCPIWebAPI?      cpoWebAPI;
         protected  CPOAPI?          cpoCPOAPI;
         protected  OCPICSOAdapter?  cpoAdapter;
 
         protected  HTTPAPI?         emsp1HTTPAPI;
         protected  CommonAPI?       emsp1CommonAPI;
+        protected  OCPIWebAPI?      emsp1WebAPI;
         protected  EMSPAPI?         emsp1EMSPAPI;
         protected  OCPIEMPAdapter?  emsp1Adapter;
 
         protected  HTTPAPI?         emsp2HTTPAPI;
         protected  CommonAPI?       emsp2CommonAPI;
+        protected  OCPIWebAPI?      emsp2WebAPI;
         protected  EMSPAPI?         emsp2EMSPAPI;
         protected  OCPIEMPAdapter?  emsp2Adapter;
 
@@ -152,7 +156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             Timestamp.Reset();
 
-            #region Create cpo/emp1/emp2 HTTP API
+            #region Create cpo/emsp1/emsp2 HTTP API
 
             cpoHTTPAPI           = new HTTPAPI(
                                        HTTPServerPort:                      IPPort.Parse(3301),
@@ -330,7 +334,57 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
-            #region Create cpo CPO API / emsp1 EMP API / emsp2 EMP API
+            #region Create cpo/emsp1/emsp2 OCPI WebAPI
+
+            cpoWebAPI            = new OCPIWebAPI(
+                                       HTTPServer:                          cpoHTTPAPI.HTTPServer,
+                                       CommonAPI:                           cpoCommonAPI,
+                                       URLPathPrefix1:                      HTTPPath.Parse("/ocpi/v2.1"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
+                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
+                                       HTTPRealm:                           "GraphDefined OCPI CPO WebAPI",
+                                       HTTPLogins:                          new[] {
+                                                                                new KeyValuePair<String, String>("a", "b")
+                                                                            },
+                                       HTMLTemplate:                        null,
+                                       RequestTimeout:                      null
+                                   );
+
+            emsp1WebAPI          = new OCPIWebAPI(
+                                       HTTPServer:                          emsp1HTTPAPI.HTTPServer,
+                                       CommonAPI:                           emsp1CommonAPI,
+                                       URLPathPrefix1:                      HTTPPath.Parse("/ocpi/v2.1"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
+                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
+                                       HTTPRealm:                           "GraphDefined OCPI EMSP #1 WebAPI",
+                                       HTTPLogins:                          new[] {
+                                                                                new KeyValuePair<String, String>("c", "d")
+                                                                            },
+                                       HTMLTemplate:                        null,
+                                       RequestTimeout:                      null
+                                   );
+
+            emsp2WebAPI          = new OCPIWebAPI(
+                                       HTTPServer:                          emsp2HTTPAPI.HTTPServer,
+                                       CommonAPI:                           emsp2CommonAPI,
+                                       URLPathPrefix1:                      HTTPPath.Parse("/ocpi/v2.1"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
+                                       BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
+                                       HTTPRealm:                           "GraphDefined OCPI EMSP #2 WebAPI",
+                                       HTTPLogins:                          new[] {
+                                                                                new KeyValuePair<String, String>("e", "f")
+                                                                            },
+                                       HTMLTemplate:                        null,
+                                       RequestTimeout:                      null
+                                   );
+
+            Assert.IsNotNull(cpoWebAPI);
+            Assert.IsNotNull(emsp1WebAPI);
+            Assert.IsNotNull(emsp2WebAPI);
+
+            #endregion
+
+            #region Create cpo CPOAPI & emsp1/emsp2 EMPAPI
 
             cpoCPOAPI            = new CPOAPI(
 
@@ -437,7 +491,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
-            #region Add Remote Parties
+            #region Define and connect Remote Parties
 
             cpoCommonAPI.AddRemoteParty  (CountryCode:                 emsp1CommonAPI.OurCountryCode,
                                           PartyId:                     emsp1CommonAPI.OurPartyId,

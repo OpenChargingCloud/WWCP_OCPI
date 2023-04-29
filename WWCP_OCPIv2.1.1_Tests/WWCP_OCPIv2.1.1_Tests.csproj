@@ -32,4 +32,8 @@
     <ProjectReference Include="..\WWCP_OCPIv2.1.1_WebAPI\WWCP_OCPIv2.1.1_WebAPI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="WebAPITests\" />
+  </ItemGroup>
+
 </Project>
