@@ -222,10 +222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //   "timestamp":       "2023-04-30T01:18:34.24Z"
                 // }
 
-                var httpBody    = response2.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(httpBody);
-
-                var json        = JObject.Parse(httpBody!);
+                var json        = response2.Content;
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual ("2.1.1",                                                  json["data"]?["version"]?.Value<String>());
@@ -283,10 +280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //   "timestamp":       "2023-04-30T01:18:34.24Z"
                 // }
 
-                var httpBody    = response2.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(httpBody);
-
-                var json        = JObject.Parse(httpBody!);
+                var json        = response2.Content;
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual ("2.1.1",                                                  json["data"]?["version"]?.Value<String>());
@@ -368,10 +362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-04-30T01:43:15.277Z"
                 // }
 
-                var httpBody    = response2.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(httpBody);
-
-                var json        = JObject.Parse(httpBody!);
+                var json        = response2.Content;
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual ("2.1.1",                                                  json["data"]?["version"]?.Value<String>());
@@ -451,10 +442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 Assert.AreEqual (403,            response2.HTTPStatusCode.Code);
                 Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
-                var httpBody    = response2.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(httpBody);
-
-                var json        = JObject.Parse(httpBody!);
+                var json        = response2.Content;
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual (2000,                                json["status_code"]?.   Value<UInt32>());
@@ -516,10 +504,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 Assert.AreEqual (404,            response2.HTTPStatusCode.Code);
                 Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
-                var httpBody    = response2.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(httpBody);
-
-                var json        = JObject.Parse(httpBody!);
+                var json        = response2.Content;
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual (2000,                                    json["status_code"]?.   Value<UInt32>());

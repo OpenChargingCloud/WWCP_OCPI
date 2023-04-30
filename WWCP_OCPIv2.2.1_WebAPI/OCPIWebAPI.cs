@@ -360,7 +360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
         /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
-        public HTTPPath?                                    URLPathPrefix1     { get; }
+        public HTTPPath?                                    OverlayURLPathPrefix     { get; }
 
         /// <summary>
         /// The HTTP realm, if HTTP Basic Authentication is used.
@@ -442,21 +442,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
         /// Attach the OCPI+ WebAPI to the given HTTP server.
         /// </summary>
         /// <param name="HTTPServer">A HTTP server.</param>
-        /// <param name="URLPathPrefix">An optional prefix for the HTTP URIs.</param>
+        /// <param name="WebAPIURLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
         public OCPIWebAPI(HTTPServer                                  HTTPServer,
 
                           CommonAPI                                   CommonAPI,
 
-                          HTTPPath?                                   URLPathPrefix1   = null,
-                          HTTPPath?                                   URLPathPrefix    = null,
-                          HTTPPath?                                   BasePath         = null,
-                          String                                      HTTPRealm        = DefaultHTTPRealm,
-                          IEnumerable<KeyValuePair<String, String>>?  HTTPLogins       = null,
-                          String?                                     HTMLTemplate     = null,
+                          HTTPPath?                                   OverlayURLPathPrefix   = null,
+                          HTTPPath?                                   WebAPIURLPathPrefix    = null,
+                          HTTPPath?                                   BasePath               = null,
+                          String                                      HTTPRealm              = DefaultHTTPRealm,
+                          IEnumerable<KeyValuePair<String, String>>?  HTTPLogins             = null,
+                          String?                                     HTMLTemplate           = null,
 
-                          TimeSpan?                                   RequestTimeout   = null)
+                          TimeSpan?                                   RequestTimeout         = null)
 
             : base(HTTPServer,
                    null,
@@ -464,7 +464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                    null, // HTTPServiceName,
                    BasePath,
 
-                   URLPathPrefix ?? DefaultURLPathPrefix,
+                   WebAPIURLPathPrefix ?? DefaultURLPathPrefix,
                    null, // HTMLTemplate,
                    null, // APIVersionHashes,
 
@@ -486,30 +486,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
         {
 
-            this.CommonAPI           = CommonAPI;
+            this.CommonAPI             = CommonAPI;
 
-            this.URLPathPrefix1      = URLPathPrefix1;
-            this.HTTPRealm           = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
-            this.HTTPLogins          = HTTPLogins    ?? Array.Empty<KeyValuePair<String, String>>();
+            this.OverlayURLPathPrefix  = OverlayURLPathPrefix;
+            this.HTTPRealm             = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
+            this.HTTPLogins            = HTTPLogins    ?? Array.Empty<KeyValuePair<String, String>>();
 
             // Link HTTP events...
-            HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            HTTPServer.ResponseLog  += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            HTTPServer.ErrorLog     += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
+            HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
+            HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
+            HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
-            var LogfilePrefix        = "HTTPSSEs" + Path.DirectorySeparatorChar;
+            var LogfilePrefix          = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
-            //this.DebugLog            = HTTPServer.AddJSONEventSource(EventIdentification:      DebugLogId,
-            //                                                         URLTemplate:              this.URLPathPrefix + "/DebugLog",
-            //                                                         MaxNumberOfCachedEvents:  10000,
-            //                                                         RetryIntervall:           TimeSpan.FromSeconds(5),
-            //                                                         EnableLogging:            true,
-            //                                                         LogfilePrefix:            LogfilePrefix);
+            //this.DebugLog              = HTTPServer.AddJSONEventSource(EventIdentification:      DebugLogId,
+            //                                                           URLTemplate:              this.URLPathPrefix + "/DebugLog",
+            //                                                           MaxNumberOfCachedEvents:  10000,
+            //                                                           RetryIntervall:           TimeSpan.FromSeconds(5),
+            //                                                           EnableLogging:            true,
+            //                                                           LogfilePrefix:            LogfilePrefix);
 
             RegisterURITemplates();
 
-            this.HTMLTemplate        = HTMLTemplate ?? GetResourceString("template.html");
-            this.RequestTimeout      = RequestTimeout;
+            this.HTMLTemplate          = HTMLTemplate ?? GetResourceString("template.html");
+            this.RequestTimeout        = RequestTimeout;
 
         }
 
@@ -604,11 +604,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                "cloud.charging.open.protocols.OCPIv2_2_1.WebAPI.HTTPRoot",
                                                DefaultFilename: "index.html");
 
-            if (URLPathPrefix1.HasValue)
+            if (OverlayURLPathPrefix.HasValue)
                 HTTPServer.AddMethodCallback(this,
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
-                                             URLPathPrefix1.Value,
+                                             OverlayURLPathPrefix.Value,
                                              HTTPContentType.HTML_UTF8,
                                              HTTPDelegate: Request => {
 
@@ -628,11 +628,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              });
 
-            if (URLPathPrefix1.HasValue)
+            if (OverlayURLPathPrefix.HasValue)
                 HTTPServer.AddMethodCallback(this,
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
-                                             URLPathPrefix1.Value + "/",
+                                             OverlayURLPathPrefix.Value + "/",
                                              HTTPContentType.HTML_UTF8,
                                              HTTPDelegate: Request => {
 
@@ -653,11 +653,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                              });
 
 
-            if (URLPathPrefix1.HasValue)
+            if (OverlayURLPathPrefix.HasValue)
                 HTTPServer.AddMethodCallback(this,
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
-                                             URLPathPrefix1.Value + "versions",
+                                             OverlayURLPathPrefix.Value + "versions",
                                              HTTPContentType.HTML_UTF8,
                                              HTTPDelegate: Request => {
 
@@ -678,11 +678,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                              });
 
 
-            if (URLPathPrefix1.HasValue)
+            if (OverlayURLPathPrefix.HasValue)
                 HTTPServer.AddMethodCallback(this,
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
-                                             URLPathPrefix1.Value + "versions/{versionId}",
+                                             OverlayURLPathPrefix.Value + "versions/{versionId}",
                                              HTTPContentType.HTML_UTF8,
                                              HTTPDelegate: Request => {
 

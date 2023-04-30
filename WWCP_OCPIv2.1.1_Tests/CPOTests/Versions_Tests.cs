@@ -207,13 +207,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                     BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
                     AccessInfoStatus:        new AccessInfoStatus[] {
                                             new AccessInfoStatus(
-                                                AccessToken.Parse("aaaaaa"),
+                                                AccessToken.Parse("aaaaaaaaaa"),
                                                 AccessStatus.ALLOWED
                                             )
                                         },
                     RemoteAccessInfos:  new RemoteAccessInfo[] {
                                             new RemoteAccessInfo(
-                                                AccessToken:        AccessToken.Parse("bbbbbb"),
+                                                AccessToken:        AccessToken.Parse("bbbbbbbbbb"),
                                                 VersionsURL:        emsp1VersionsAPIURL.Value,
                                                 VersionIds:         new Version_Id[] {
                                                                         Version_Id.Parse("2.1.1")
@@ -415,10 +415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //   "timestamp":       "2023-04-30T01:01:47.224Z"
                 // }
 
-                var httpBody   = response.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(httpBody);
-
-                var json       = JObject.Parse(httpBody!);
+                var json       = response.Content;
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual ("2.1.1",                                            json["data"]?[0]?["version"]?.Value<String>());
@@ -466,10 +463,199 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //   "timestamp":       "2023-04-30T01:01:47.224Z"
                 // }
 
-                var httpBody   = response.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(httpBody);
+                var json       = response.Content;
+                Assert.IsNotNull(json);
 
-                var json       = JObject.Parse(httpBody!);
+                Assert.AreEqual ("2.1.1",                                            json["data"]?[0]?["version"]?.Value<String>());
+                Assert.AreEqual ("http://127.0.0.1:3402/ocpi/v2.1/versions/2.1.1",   json["data"]?[0]?["url"]?.    Value<String>());
+                Assert.AreEqual (1000,                                               json["status_code"]?.         Value<UInt32>());
+                Assert.AreEqual ("Hello world!",                                     json["status_message"]?.      Value<String>());
+
+                var timestamp  = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetVersions_JSON_UnknownToken_Test1()
+
+        /// <summary>
+        /// CPO GetVersions JSON using an unknown access token (EMSP 1).
+        /// </summary>
+        [Test]
+        public async Task CPO_GetVersions_JSON_UnknownToken_Test1()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response  = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value, "bbbbbbbbbb");
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                // {
+                //   "data": [
+                //     {
+                //       "version":  "2.1.1",
+                //       "url":      "http://127.0.0.1:3401/ocpi/v2.1/versions/2.1.1"
+                //     }
+                //   ],
+                //   "status_code":      1000,
+                //   "status_message":  "Hello world!",
+                //   "timestamp":       "2023-04-30T01:01:47.224Z"
+                // }
+
+                var json       = response.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual ("2.1.1",                                            json["data"]?[0]?["version"]?.Value<String>());
+                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions/2.1.1",   json["data"]?[0]?["url"]?.    Value<String>());
+                Assert.AreEqual (1000,                                               json["status_code"]?.         Value<UInt32>());
+                Assert.AreEqual ("Hello world!",                                     json["status_message"]?.      Value<String>());
+
+                var timestamp  = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetVersions_JSON_UnknownToken_Test2()
+
+        /// <summary>
+        /// CPO GetVersions JSON using an unknown access token (EMSP 2).
+        /// </summary>
+        [Test]
+        public async Task CPO_GetVersions_JSON_UnknownToken_Test2()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response  = await TestHelpers.GetJSONRequest(emsp2VersionsAPIURL.Value, "bbbbbbbbbb");
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                // {
+                //   "data": [
+                //     {
+                //       "version":  "2.1.1",
+                //       "url":      "http://127.0.0.1:3402/ocpi/v2.1/versions/2.1.1"
+                //     }
+                //   ],
+                //   "status_code":      1000,
+                //   "status_message":  "Hello world!",
+                //   "timestamp":       "2023-04-30T01:01:47.224Z"
+                // }
+
+                var json       = response.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual ("2.1.1",                                            json["data"]?[0]?["version"]?.Value<String>());
+                Assert.AreEqual ("http://127.0.0.1:3402/ocpi/v2.1/versions/2.1.1",   json["data"]?[0]?["url"]?.    Value<String>());
+                Assert.AreEqual (1000,                                               json["status_code"]?.         Value<UInt32>());
+                Assert.AreEqual ("Hello world!",                                     json["status_message"]?.      Value<String>());
+
+                var timestamp  = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetVersions_JSON_RegisteredToken_Test1()
+
+        /// <summary>
+        /// CPO GetVersions JSON using a registered access token (EMSP 1).
+        /// </summary>
+        [Test]
+        public async Task CPO_GetVersions_JSON_RegisteredToken_Test1()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response  = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value, "emp1-2-cso:token");
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                // {
+                //   "data": [
+                //     {
+                //       "version":  "2.1.1",
+                //       "url":      "http://127.0.0.1:3401/ocpi/v2.1/versions/2.1.1"
+                //     }
+                //   ],
+                //   "status_code":      1000,
+                //   "status_message":  "Hello world!",
+                //   "timestamp":       "2023-04-30T01:01:47.224Z"
+                // }
+
+                var json       = response.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual ("2.1.1",                                            json["data"]?[0]?["version"]?.Value<String>());
+                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions/2.1.1",   json["data"]?[0]?["url"]?.    Value<String>());
+                Assert.AreEqual (1000,                                               json["status_code"]?.         Value<UInt32>());
+                Assert.AreEqual ("Hello world!",                                     json["status_message"]?.      Value<String>());
+
+                var timestamp  = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetVersions_JSON_RegisteredToken_Test2()
+
+        /// <summary>
+        /// CPO GetVersions JSON using a registered access token (EMSP 2).
+        /// </summary>
+        [Test]
+        public async Task CPO_GetVersions_JSON_RegisteredToken_Test2()
+        {
+
+            if (emsp2VersionsAPIURL.HasValue)
+            {
+
+                var response  = await TestHelpers.GetJSONRequest(emsp2VersionsAPIURL.Value, "emp2-2-cso:token");
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                // {
+                //   "data": [
+                //     {
+                //       "version":  "2.1.1",
+                //       "url":      "http://127.0.0.1:3402/ocpi/v2.1/versions/2.1.1"
+                //     }
+                //   ],
+                //   "status_code":      1000,
+                //   "status_message":  "Hello world!",
+                //   "timestamp":       "2023-04-30T01:01:47.224Z"
+                // }
+
+                var json       = response.Content;
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual ("2.1.1",                                            json["data"]?[0]?["version"]?.Value<String>());
@@ -524,16 +710,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 Assert.AreEqual (403,            response.HTTPStatusCode.Code);
                 Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
-                var httpBody    = response.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(httpBody);
-
-                var json        = JObject.Parse(httpBody!);
+                var json       = response.Content;
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual (2000,                                json["status_code"]?.   Value<UInt32>());
                 Assert.AreEqual ("Invalid or blocked access token!",  json["status_message"]?.Value<String>());
 
-                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                var timestamp  = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);
                 Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -580,16 +763,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 Assert.AreEqual (403,            response.HTTPStatusCode.Code);
                 Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
-                var httpBody    = response.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(httpBody);
-
-                var json        = JObject.Parse(httpBody!);
+                var json       = response.Content;
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual (2000,                                json["status_code"]?.   Value<UInt32>());
                 Assert.AreEqual ("Invalid or blocked access token!",  json["status_message"]?.Value<String>());
 
-                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                var timestamp  = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);
                 Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
@@ -600,13 +780,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         #endregion
 
 
-        #region CPO_GetVersions_HTML_Test1()
+        #region CPO_GetVersions_HTML_NoToken_Test1()
 
         /// <summary>
-        /// CPO GetVersions HTML Test 1.
+        /// CPO GetVersions HTML without an access token (EMSP 1).
         /// </summary>
         [Test]
-        public async Task CPO_GetVersions_HTML_Test1()
+        public async Task CPO_GetVersions_HTML_NoToken_Test1()
         {
 
             Assert.IsNotNull(emsp1WebAPI);
@@ -630,13 +810,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
         #endregion
 
-        #region CPO_GetVersions_HTML_Test2()
+        #region CPO_GetVersions_HTML_NoToken_Test2()
 
         /// <summary>
-        /// CPO GetVersions HTML Test 2.
+        /// CPO GetVersions HTML without an access token (EMSP 2).
         /// </summary>
         [Test]
-        public async Task CPO_GetVersions_HTML_Test2()
+        public async Task CPO_GetVersions_HTML_NoToken_Test2()
         {
 
             Assert.IsNotNull(emsp2WebAPI);
@@ -645,6 +825,186 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             {
 
                 var response  = await TestHelpers.GetHTMLRequest(emsp2VersionsAPIURL.Value);
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                var html      = response.HTTPBodyAsUTF8String;
+                Assert.IsNotNull(html);
+                Assert.IsTrue   (html?.Length > 0);
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetVersions_HTML_UnknownToken_Test1()
+
+        /// <summary>
+        /// CPO GetVersions HTML using an unknown access token (EMSP 1).
+        /// </summary>
+        [Test]
+        public async Task CPO_GetVersions_HTML_UnknownToken_Test1()
+        {
+
+            Assert.IsNotNull(emsp1WebAPI);
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response  = await TestHelpers.GetHTMLRequest(emsp1VersionsAPIURL.Value, "unkownunkownunkownunkown");
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                var html      = response.HTTPBodyAsUTF8String;
+                Assert.IsNotNull(html);
+                Assert.IsTrue   (html?.Length > 0);
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetVersions_HTML_UnknownToken_Test2()
+
+        /// <summary>
+        /// CPO GetVersions HTML using an unknown access token (EMSP 2).
+        /// </summary>
+        [Test]
+        public async Task CPO_GetVersions_HTML_UnknownToken_Test2()
+        {
+
+            Assert.IsNotNull(emsp2WebAPI);
+
+            if (emsp2VersionsAPIURL.HasValue)
+            {
+
+                var response  = await TestHelpers.GetHTMLRequest(emsp2VersionsAPIURL.Value, "unkownunkownunkownunkown");
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                var html      = response.HTTPBodyAsUTF8String;
+                Assert.IsNotNull(html);
+                Assert.IsTrue   (html?.Length > 0);
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetVersions_HTML_RegisteredToken_Test1()
+
+        /// <summary>
+        /// CPO GetVersions HTML using a registered access token (EMSP 1).
+        /// </summary>
+        [Test]
+        public async Task CPO_GetVersions_HTML_RegisteredToken_Test1()
+        {
+
+            Assert.IsNotNull(emsp1WebAPI);
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response  = await TestHelpers.GetHTMLRequest(emsp1VersionsAPIURL.Value, "emp1-2-cso:token");
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                var html      = response.HTTPBodyAsUTF8String;
+                Assert.IsNotNull(html);
+                Assert.IsTrue   (html?.Length > 0);
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetVersions_HTML_RegisteredToken_Test2()
+
+        /// <summary>
+        /// CPO GetVersions HTML using a registered access token (EMSP 2).
+        /// </summary>
+        [Test]
+        public async Task CPO_GetVersions_HTML_RegisteredToken_Test2()
+        {
+
+            Assert.IsNotNull(emsp2WebAPI);
+
+            if (emsp2VersionsAPIURL.HasValue)
+            {
+
+                var response  = await TestHelpers.GetHTMLRequest(emsp2VersionsAPIURL.Value, "emp2-2-cso:token");
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                var html      = response.HTTPBodyAsUTF8String;
+                Assert.IsNotNull(html);
+                Assert.IsTrue   (html?.Length > 0);
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetVersions_HTML_BlockedToken_Test1()
+
+        /// <summary>
+        /// CPO GetVersions HTML using a blocked access token (EMSP 1).
+        /// </summary>
+        [Test]
+        public async Task CPO_GetVersions_HTML_BlockedToken_Test1()
+        {
+
+            Assert.IsNotNull(emsp1WebAPI);
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response  = await TestHelpers.GetHTMLRequest(emsp1VersionsAPIURL.Value, BlockedCPOToken);
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                var html      = response.HTTPBodyAsUTF8String;
+                Assert.IsNotNull(html);
+                Assert.IsTrue   (html?.Length > 0);
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetVersions_HTML_BlockedToken_Test2()
+
+        /// <summary>
+        /// CPO GetVersions HTML using a blocked access token (EMSP 2).
+        /// </summary>
+        [Test]
+        public async Task CPO_GetVersions_HTML_BlockedToken_Test2()
+        {
+
+            Assert.IsNotNull(emsp2WebAPI);
+
+            if (emsp2VersionsAPIURL.HasValue)
+            {
+
+                var response  = await TestHelpers.GetHTMLRequest(emsp2VersionsAPIURL.Value, BlockedCPOToken);
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPStatusCode.Code);

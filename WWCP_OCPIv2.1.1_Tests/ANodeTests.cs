@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
     public static class TestHelpers
     {
 
-        #region GetJSONRequest(RemoteURL, Token = null)
+        #region GetJSONRequest     (RemoteURL, Token = null)
 
         public static async Task<HTTPResponse<JObject>> GetJSONRequest(URL      RemoteURL,
                                                                        String?  Token = null)
@@ -58,42 +58,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                               ConfigureAwait(false);
 
             return new HTTPResponse<JObject>(httpResponse,
-                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String));
+                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String!));
 
         }
 
         #endregion
 
-        #region PostJSONRequest(Method, RemoteURL, Token, JSON)
+        #region GetJSONArrayRequest(RemoteURL, Token = null)
 
-        public static async Task<HTTPResponse<JObject>> PostJSONRequest(HTTPMethod  Method,
-                                                                        URL         RemoteURL,
-                                                                        String      Token,
-                                                                        JObject     JSON)
+        public static async Task<HTTPResponse<JArray>> GetJSONArrayRequest(URL      RemoteURL,
+                                                                           String?  Token = null)
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
-                                              Execute(client => client.CreateRequest(Method,
+                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      RemoteURL.Path,
                                                                                      requestbuilder => {
-                                                                                         requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
-                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content        = JSON.ToUTF8Bytes();
+
+                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
+                                                                                             requestbuilder.Authorization = new HTTPTokenAuthentication(Token);
+
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
+
                                                                                      })).
                                               ConfigureAwait(false);
 
-            return new HTTPResponse<JObject>(httpResponse,
-                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String));
+            return new HTTPResponse<JArray>(httpResponse,
+                                            JArray.Parse(httpResponse.HTTPBodyAsUTF8String!));
 
         }
 
         #endregion
 
-
-        #region GetHTMLRequest(RemoteURL, Token = null)
+        #region GetHTMLRequest     (RemoteURL, Token = null)
 
         public static async Task<HTTPResponse<String>> GetHTMLRequest(URL      RemoteURL,
                                                                       String?  Token = null)
@@ -121,8 +120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         #endregion
 
-
-        #region GetTextRequest(RemoteURL, Token = null)
+        #region GetTextRequest     (RemoteURL, Token = null)
 
         public static async Task<HTTPResponse<String>> GetTextRequest(URL      RemoteURL,
                                                                       String?  Token = null)
@@ -145,6 +143,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             return new HTTPResponse<String>(httpResponse,
                                             httpResponse.HTTPBodyAsUTF8String);
+
+        }
+
+        #endregion
+
+
+        #region PostJSONRequest(Method, RemoteURL, Token, JSON)
+
+        public static async Task<HTTPResponse<JObject>> PostJSONRequest(HTTPMethod  Method,
+                                                                        URL         RemoteURL,
+                                                                        String      Token,
+                                                                        JObject     JSON)
+        {
+
+            var httpResponse  = await new HTTPClient(RemoteURL).
+                                              Execute(client => client.CreateRequest(Method,
+                                                                                     RemoteURL.Path,
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content        = JSON.ToUTF8Bytes();
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      "1234");
+                                                                                         requestbuilder.Set("X-Correlation-ID",  "5678");
+                                                                                     })).
+                                              ConfigureAwait(false);
+
+            return new HTTPResponse<JObject>(httpResponse,
+                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String!));
 
         }
 
@@ -231,18 +258,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Create cpo/emsp1/emsp2 HTTP API
 
             cpoHTTPAPI           = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(3301),
-                                       Autostart:                           true
+                                       HTTPServerPort:  IPPort.Parse(3301),
+                                       Autostart:       true
                                    );
 
             emsp1HTTPAPI          = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(3401),
-                                       Autostart:                           true
+                                       HTTPServerPort:  IPPort.Parse(3401),
+                                       Autostart:       true
                                    );
 
             emsp2HTTPAPI          = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(3402),
-                                       Autostart:                           true
+                                       HTTPServerPort:  IPPort.Parse(3402),
+                                       Autostart:       true
                                    );
 
             Assert.IsNotNull(cpoHTTPAPI);
@@ -411,8 +438,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             cpoWebAPI            = new OCPIWebAPI(
                                        HTTPServer:                          cpoHTTPAPI.HTTPServer,
                                        CommonAPI:                           cpoCommonAPI,
-                                       URLPathPrefix1:                      HTTPPath.Parse("/ocpi/v2.1"),
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
+                                       OverlayURLPathPrefix:                      HTTPPath.Parse("/ocpi/v2.1"),
+                                       WebAPIURLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
                                        BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
                                        HTTPRealm:                           "GraphDefined OCPI CPO WebAPI",
                                        HTTPLogins:                          new[] {
@@ -425,8 +452,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emsp1WebAPI          = new OCPIWebAPI(
                                        HTTPServer:                          emsp1HTTPAPI.HTTPServer,
                                        CommonAPI:                           emsp1CommonAPI,
-                                       URLPathPrefix1:                      HTTPPath.Parse("/ocpi/v2.1"),
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
+                                       OverlayURLPathPrefix:                      HTTPPath.Parse("/ocpi/v2.1"),
+                                       WebAPIURLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
                                        BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
                                        HTTPRealm:                           "GraphDefined OCPI EMSP #1 WebAPI",
                                        HTTPLogins:                          new[] {
@@ -439,8 +466,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emsp2WebAPI          = new OCPIWebAPI(
                                        HTTPServer:                          emsp2HTTPAPI.HTTPServer,
                                        CommonAPI:                           emsp2CommonAPI,
-                                       URLPathPrefix1:                      HTTPPath.Parse("/ocpi/v2.1"),
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
+                                       OverlayURLPathPrefix:                      HTTPPath.Parse("/ocpi/v2.1"),
+                                       WebAPIURLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
                                        BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
                                        HTTPRealm:                           "GraphDefined OCPI EMSP #2 WebAPI",
                                        HTTPLogins:                          new[] {
@@ -667,6 +694,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                           AccessToken:       AccessToken.Parse(BlockedCPOToken),
                                           AccessStatus:      AccessStatus.BLOCKED,
                                           PartyStatus:       PartyStatus. ENABLED);
+
+
+            Assert.AreEqual(3, cpoCommonAPI.  RemoteParties.Count());
+            Assert.AreEqual(2, emsp1CommonAPI.RemoteParties.Count());
+            Assert.AreEqual(2, emsp2CommonAPI.RemoteParties.Count());
 
             #endregion
 
