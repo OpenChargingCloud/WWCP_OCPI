@@ -36,18 +36,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
     public static class TestHelpers
     {
 
-        public static async Task<HTTPResponse<JObject>> JSONRequest(URL     RemoteURL,
-                                                                    String  Token)
+        #region GetJSONRequest(RemoteURL, Token = null)
+
+        public static async Task<HTTPResponse<JObject>> GetJSONRequest(URL      RemoteURL,
+                                                                       String?  Token = null)
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      RemoteURL.Path,
                                                                                      requestbuilder => {
-                                                                                         requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+
+                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
+                                                                                             requestbuilder.Authorization = new HTTPTokenAuthentication(Token);
+
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
+
                                                                                      })).
                                               ConfigureAwait(false);
 
@@ -56,10 +62,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         }
 
-        public static async Task<HTTPResponse<JObject>> JSONRequest(HTTPMethod  Method,
-                                                                    URL         RemoteURL,
-                                                                    String      Token,
-                                                                    JObject     JSON)
+        #endregion
+
+        #region PostJSONRequest(Method, RemoteURL, Token, JSON)
+
+        public static async Task<HTTPResponse<JObject>> PostJSONRequest(HTTPMethod  Method,
+                                                                        URL         RemoteURL,
+                                                                        String      Token,
+                                                                        JObject     JSON)
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
@@ -80,6 +90,65 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         }
 
+        #endregion
+
+
+        #region GetHTMLRequest(RemoteURL, Token = null)
+
+        public static async Task<HTTPResponse<String>> GetHTMLRequest(URL      RemoteURL,
+                                                                      String?  Token = null)
+        {
+
+            var httpResponse  = await new HTTPClient(RemoteURL).
+                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
+                                                                                     RemoteURL.Path,
+                                                                                     requestbuilder => {
+
+                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
+                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.HTML_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      "1234");
+                                                                                         requestbuilder.Set("X-Correlation-ID",  "5678");
+
+                                                                                     })).
+                                              ConfigureAwait(false);
+
+            return new HTTPResponse<String>(httpResponse,
+                                            httpResponse.HTTPBodyAsUTF8String);
+
+        }
+
+        #endregion
+
+
+        #region GetTextRequest(RemoteURL, Token = null)
+
+        public static async Task<HTTPResponse<String>> GetTextRequest(URL      RemoteURL,
+                                                                      String?  Token = null)
+        {
+
+            var httpResponse  = await new HTTPClient(RemoteURL).
+                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
+                                                                                     RemoteURL.Path,
+                                                                                     requestbuilder => {
+
+                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
+                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.TEXT_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      "1234");
+                                                                                         requestbuilder.Set("X-Correlation-ID",  "5678");
+
+                                                                                     })).
+                                              ConfigureAwait(false);
+
+            return new HTTPResponse<String>(httpResponse,
+                                            httpResponse.HTTPBodyAsUTF8String);
+
+        }
+
+        #endregion
 
     }
 
@@ -92,27 +161,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         #region Data
 
-        public     URL?             cpoVersionsAPIURL;
-        public     URL?             emsp1VersionsAPIURL;
-        public     URL?             emsp2VersionsAPIURL;
+        public          URL?              cpoVersionsAPIURL;
+        public          URL?              emsp1VersionsAPIURL;
+        public          URL?              emsp2VersionsAPIURL;
 
-        protected  HTTPAPI?         cpoHTTPAPI;
-        protected  CommonAPI?       cpoCommonAPI;
-        protected  OCPIWebAPI?      cpoWebAPI;
-        protected  CPOAPI?          cpoCPOAPI;
-        protected  OCPICSOAdapter?  cpoAdapter;
+        protected       HTTPAPI?          cpoHTTPAPI;
+        protected       CommonAPI?        cpoCommonAPI;
+        protected       OCPIWebAPI?       cpoWebAPI;
+        protected       CPOAPI?           cpoCPOAPI;
+        protected       OCPICSOAdapter?   cpoAdapter;
 
-        protected  HTTPAPI?         emsp1HTTPAPI;
-        protected  CommonAPI?       emsp1CommonAPI;
-        protected  OCPIWebAPI?      emsp1WebAPI;
-        protected  EMSPAPI?         emsp1EMSPAPI;
-        protected  OCPIEMPAdapter?  emsp1Adapter;
+        protected       HTTPAPI?          emsp1HTTPAPI;
+        protected       CommonAPI?        emsp1CommonAPI;
+        protected       OCPIWebAPI?       emsp1WebAPI;
+        protected       EMSPAPI?          emsp1EMSPAPI;
+        protected       OCPIEMPAdapter?   emsp1Adapter;
 
-        protected  HTTPAPI?         emsp2HTTPAPI;
-        protected  CommonAPI?       emsp2CommonAPI;
-        protected  OCPIWebAPI?      emsp2WebAPI;
-        protected  EMSPAPI?         emsp2EMSPAPI;
-        protected  OCPIEMPAdapter?  emsp2Adapter;
+        protected       HTTPAPI?          emsp2HTTPAPI;
+        protected       CommonAPI?        emsp2CommonAPI;
+        protected       OCPIWebAPI?       emsp2WebAPI;
+        protected       EMSPAPI?          emsp2EMSPAPI;
+        protected       OCPIEMPAdapter?   emsp2Adapter;
+
+        protected const String            BlockedCPOToken    = "blocked-cpo";
+        protected const String            BlockedEMSPToken   = "blocked-emsp";
 
         //protected readonly Dictionary<Operator_Id, HashSet<EVSEDataRecord>>            EVSEDataRecords;
         //protected readonly Dictionary<Operator_Id, HashSet<EVSEStatusRecord>>          EVSEStatusRecords;
@@ -561,6 +633,40 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual(2, cpoCommonAPI.  RemoteParties.Count());
             Assert.AreEqual(1, emsp1CommonAPI.RemoteParties.Count());
             Assert.AreEqual(1, emsp2CommonAPI.RemoteParties.Count());
+
+            #endregion
+
+            #region Define blocked Remote Parties
+
+            cpoCommonAPI.AddRemoteParty  (CountryCode:       CountryCode.Parse("XX"),
+                                          PartyId:           Party_Id.   Parse("BLE"),
+                                          Role:              Roles.EMSP,
+                                          BusinessDetails:   new BusinessDetails(
+                                                                 "Blocked EMSP"
+                                                             ),
+                                          AccessToken:       AccessToken.Parse(BlockedEMSPToken),
+                                          AccessStatus:      AccessStatus.BLOCKED,
+                                          PartyStatus:       PartyStatus. ENABLED);
+
+            emsp1CommonAPI.AddRemoteParty(CountryCode:       CountryCode.Parse("XX"),
+                                          PartyId:           Party_Id.   Parse("BLC"),
+                                          Role:              Roles.CPO,
+                                          BusinessDetails:   new BusinessDetails(
+                                                                 "Blocked CPO"
+                                                             ),
+                                          AccessToken:       AccessToken.Parse(BlockedCPOToken),
+                                          AccessStatus:      AccessStatus.BLOCKED,
+                                          PartyStatus:       PartyStatus. ENABLED);
+
+            emsp2CommonAPI.AddRemoteParty(CountryCode:       CountryCode.Parse("XX"),
+                                          PartyId:           Party_Id.   Parse("BLC"),
+                                          Role:              Roles.CPO,
+                                          BusinessDetails:   new BusinessDetails(
+                                                                 "Blocked CPO"
+                                                             ),
+                                          AccessToken:       AccessToken.Parse(BlockedCPOToken),
+                                          AccessStatus:      AccessStatus.BLOCKED,
+                                          PartyStatus:       PartyStatus. ENABLED);
 
             #endregion
 

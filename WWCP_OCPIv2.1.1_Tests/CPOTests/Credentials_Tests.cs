@@ -536,8 +536,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
             #endregion
 
-            var httpResponse = await TestHelpers.JSONRequest(URL.Parse("http://127.0.0.1:7135/2.1.1/credentials"),
-                                                             "yyyyyy");
+            var httpResponse = await TestHelpers.GetJSONRequest(URL.Parse("http://127.0.0.1:7135/2.1.1/credentials"),
+                                                                "yyyyyy");
 
             // HTTP/1.1 403 Forbidden
             // Date:                          Mon, 26 Dec 2022 15:43:44 GMT
