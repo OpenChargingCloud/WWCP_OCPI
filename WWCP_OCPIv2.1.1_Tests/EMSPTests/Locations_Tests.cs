@@ -76,7 +76,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                              },
                                              new[] {
                                                  new EVSE(
-                                                     EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
+                                                     EVSE_UId.Parse("UID-DE*GEF*E*LOC0001*1"),
                                                      StatusType.AVAILABLE,
                                                      new[] {
                                                          new Connector(
@@ -301,34 +301,276 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 var response = await graphDefinedCPO.GetLocations();
 
-                // GET /2.1.1/cpo/locations HTTP/1.1
-                // Date:                          Tue, 18 Apr 2023 03:41:25 GMT
-                // Accept:                        application/json; charset=utf-8;q=1
-                // Host:                          127.0.0.1:7134
-                // Authorization:                 Token xxxxxx
-                // Connection:                    close
-                // X-Request-ID:                  1pKzWGQQd7EhYr9t7zf8dA7njt7W9h
-                // X-Correlation-ID:              z5EKhQU7nK9UhYCMnCU4869zt5G882
+                #region Documentation
+
+                // GET /ocpi/v2.1/v2.1.1/cpo/locations HTTP/1.1
+                // Date:                            Sun, 30 Apr 2023 07:26:24 GMT
+                // Accept:                          application/json; charset=utf-8;q=1
+                // Host:                            localhost:3301
+                // Authorization:                   Token emp1-accessing-cso::token
+                // Connection:                      close
+                // X-Request-ID:                    5KKtp1dQSSt948x7M5zzhQ75SQfUE8
+                // X-Correlation-ID:                bCzY2217tvEK829hn7f7AW9Y29v56E
 
                 // HTTP/1.1 200 OK
-                // Date:                          Tue, 18 Apr 2023 03:41:28 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET
-                // Access-Control-Allow-Headers:  Authorization
-                // X-Total-Count:                 1
-                // Server:                        GraphDefined Hermod HTTP Server v1.0
-                // Access-Control-Allow-Origin:   *
-                // Connection:                    close
-                // Content-Type:                  application/json; charset=utf-8
-                // Content-Length:                5494
-                // X-Request-ID:                  1pKzWGQQd7EhYr9t7zf8dA7njt7W9h
-                // X-Correlation-ID:              z5EKhQU7nK9UhYCMnCU4869zt5G882
+                // Date:                            Sun, 30 Apr 2023 07:26:24 GMT
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Methods:    OPTIONS, GET
+                // Access-Control-Allow-Headers:    Authorization
+                // X-Total-Count:                   1
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  5485
+                // X-Request-ID:                    5KKtp1dQSSt948x7M5zzhQ75SQfUE8
+                // X-Correlation-ID:                bCzY2217tvEK829hn7f7AW9Y29v56E
                 // 
                 // {
-                //     "data":            [{"id":"LOC0001","location_type":"PARKING_LOT","name":"Location 0001","address":"Biberweg 18","city":"Jena","postal_code":"07749","country":"DEU","coordinates":{"latitude":"10.00000","longitude":"20.00000"},"related_locations":[{"latitude":"11","longitude":"22","name":{"language":"de","text":"Postkasten"}}],"evses":[{"uid":"DE*GEF*E*LOC0001*1","evse_id":"DE*GEF*E*LOC0001*1","status":"AVAILABLE","status_schedule":[{"period_begin":"2020-09-22T22:00:00.000Z","period_end":"2020-09-23T22:00:00.000Z","status":"INOPERATIVE"},{"period_begin":"2020-12-29T23:00:00.000Z","period_end":"2020-12-30T23:00:00.000Z","status":"OUTOFORDER"}],"capabilities":["RFID_READER","RESERVABLE"],"connectors":[{"id":"1","standard":"IEC_62196_T2","format":"SOCKET","power_type":"AC_3_PHASE","voltage":400,"amperage":30,"tariff_id":"DE*GEF*T0001","terms_and_conditions":"https://open.charging.cloud/terms","last_updated":"2020-09-20T22:00:00.000Z"},{"id":"2","standard":"IEC_62196_T2_COMBO","format":"CABLE","power_type":"AC_3_PHASE","voltage":400,"amperage":20,"tariff_id":"DE*GEF*T0003","terms_and_conditions":"https://open.charging.cloud/terms","last_updated":"2020-09-21T22:00:00.000Z"}],"energy_meter":{"id":"Meter0815","model":"EnergyMeter Model #1","hardware_version":"hw. v1.80","firmware_version":"fw. v1.20","manufacturer":"Energy Metering Services","transparency_softwares":[{"transparency_software":{"name":"Chargy Transparency Software Desktop Application","version":"v1.00","open_source_license":{"id":"AGPL-3.0","description":[{"language":"en","text":"GNU Affero General Public License version 3"}],"urls":["https://www.gnu.org/licenses/agpl-3.0.html","https://opensource.org/license/agpl-v3/"]},"vendor":"GraphDefined GmbH","logo":"https://open.charging.cloud/logo.svg","how_to_use":"https://open.charging.cloud/Chargy/howto","more_information":"https://open.charging.cloud/Chargy","source_code_repository":"https://github.com/OpenChargingCloud/ChargyDesktopApp"},"legal_status":"GermanCalibrationLaw","certificate":"cert","certificate_issuer":"German PTB","not_before":"2019-04-01T00:00:00.000Z","not_after":"2030-01-01T00:00:00.000Z"},{"transparency_software":{"name":"Chargy Transparency Software Mobile Application","version":"v1.00","open_source_license":{"id":"AGPL-3.0","description":[{"language":"en","text":"GNU Affero General Public License version 3"}],"urls":["https://www.gnu.org/licenses/agpl-3.0.html","https://opensource.org/license/agpl-v3/"]},"vendor":"GraphDefined GmbH","logo":"https://open.charging.cloud/logo.svg","how_to_use":"https://open.charging.cloud/Chargy/howto","more_information":"https://open.charging.cloud/Chargy","source_code_repository":"https://github.com/OpenChargingCloud/ChargyMobileApp"},"legal_status":"ForInformationOnly","certificate":"no cert","certificate_issuer":"GraphDefined","not_before":"2019-04-01T00:00:00.000Z","not_after":"2030-01-01T00:00:00.000Z"}],"last_updated":"2023-04-18T03:41:24.847Z"},"floor_level":"1. Stock","coordinates":{"latitude":"10.10000","longitude":"20.20000"},"physical_reference":"Ladestation #1","directions":[{"language":"de","text":"Bitte klingeln!"},{"language":"en","text":"Ken sent me!"}],"parking_restrictions":["EV_ONLY","PLUGGED"],"images":[{"url":"http://example.com/pinguine.jpg","category":"OPERATOR","type":"jpeg","thumbnail":"http://example.com/kleine_pinguine.jpg","width":100,"height":150}],"last_updated":"2020-09-21T22:00:00.000Z"}],"directions":[{"language":"de","text":"Hallo Welt!"},{"language":"en","text":"Hello world!"}],"operator":{"name":"Open Charging Cloud","website":"https://open.charging.cloud","logo":{"url":"http://open.charging.cloud/logo.svg","category":"OPERATOR","type":"svg","thumbnail":"http://open.charging.cloud/logo_small.svg","width":1000,"height":1500}},"suboperator":{"name":"GraphDefined GmbH","website":"https://www.graphdefined.com","logo":{"url":"http://www.graphdefined.com/logo.png","category":"OPERATOR","type":"png","thumbnail":"http://www.graphdefined.com/logo_small.png","width":2000,"height":3000}},"owner":{"name":"Achim Friedland","website":"https://ahzf.de","logo":{"url":"http://ahzf.de/logo.gif","category":"OWNER","type":"gif","thumbnail":"http://ahzf.de/logo_small.gif","width":3000,"height":4500}},"facilities":["CAFE"],"time_zone":"Europe/Berlin","opening_times":{"twentyfourseven":false,"regular_hours":[{"weekday":1,"period_begin":"08:00","period_end":"15:00"},{"weekday":2,"period_begin":"09:00","period_end":"16:00"},{"weekday":3,"period_begin":"10:00","period_end":"17:00"},{"weekday":4,"period_begin":"11:00","period_end":"18:00"},{"weekday":5,"period_begin":"12:00","period_end":"19:00"}],"exceptional_openings":[{"period_begin":"2020-09-21T00:00:00.000Z","period_end":"2020-09-22T00:00:00.000Z"}],"exceptional_closings":[{"period_begin":"2020-12-24T00:00:00.000Z","period_end":"2020-12-26T00:00:00.000Z"}]},"charging_when_closed":false,"images":[{"url":"http://open.charging.cloud/locations/location0001.jpg","category":"LOCATION","type":"jpeg","thumbnail":"http://open.charging.cloud/locations/location0001s.jpg","width":200,"height":400}],"energy_mix":{"is_green_energy":true,"energy_sources":[{"source":"SOLAR","percentage":80.0},{"source":"WIND","percentage":20.0}],"environ_impact":[{"category":"CARBON_DIOXIDE","amount":0.1}],"supplier_name":"Stadtwerke Jena-Ost","energy_product_name":"New Green Deal"},"last_updated":"2020-09-21T00:00:00.000Z"}],
+                //     "data": [{
+                //         "id":            "LOC0001",
+                //         "type":          "PARKING_LOT",
+                //         "name":          "Location 0001",
+                //         "address":       "Biberweg 18",
+                //         "city":          "Jena",
+                //         "postal_code":   "07749",
+                //         "country":       "DEU",
+                //         "coordinates": {
+                //             "latitude":      "10.00000",
+                //             "longitude":     "20.00000"
+                //         },
+                //         "related_locations": [{
+                //             "latitude":  "11",
+                //             "longitude": "22",
+                //             "name": {
+                //                 "language":  "de",
+                //                 "text":      "Postkasten"
+                //             }
+                //         }],
+                //         "evses": [{
+                //             "uid":       "UID-DE*GEF*E*LOC0001*1",
+                //             "evse_id":   "DE*GEF*E*LOC0001*1",
+                //             "status":    "AVAILABLE",
+                //             "status_schedule": [{
+                //                 "period_begin":  "2020-09-22T22:00:00.000Z",
+                //                 "period_end":    "2020-09-23T22:00:00.000Z",
+                //                 "status":        "INOPERATIVE"
+                //             }, {
+                //                 "period_begin":  "2020-12-29T23:00:00.000Z",
+                //                 "period_end":    "2020-12-30T23:00:00.000Z",
+                //                 "status":        "OUTOFORDER"
+                //             }],
+                //             "capabilities": ["RFID_READER", "RESERVABLE"],
+                //             "connectors": [{
+                //                 "id":                    "1",
+                //                 "standard":              "IEC_62196_T2",
+                //                 "format":                "SOCKET",
+                //                 "power_type":            "AC_3_PHASE",
+                //                 "voltage":                400,
+                //                 "amperage":               30,
+                //                 "tariff_id":             "DE*GEF*T0001",
+                //                 "terms_and_conditions":  "https://open.charging.cloud/terms",
+                //                 "last_updated":          "2020-09-20T22:00:00.000Z"
+                //             }, {
+                //                 "id":                    "2",
+                //                 "standard":              "IEC_62196_T2_COMBO",
+                //                 "format":                "CABLE",
+                //                 "power_type":            "AC_3_PHASE",
+                //                 "voltage":                400,
+                //                 "amperage":               20,
+                //                 "tariff_id":             "DE*GEF*T0003",
+                //                 "terms_and_conditions":  "https://open.charging.cloud/terms",
+                //                 "last_updated":          "2020-09-21T22:00:00.000Z"
+                //             }],
+                //             "energy_meter": {
+                //                 "id": "Meter0815",
+                //                 "model": "EnergyMeter Model #1",
+                //                 "hardware_version": "hw. v1.80",
+                //                 "firmware_version": "fw. v1.20",
+                //                 "manufacturer": "Energy Metering Services",
+                //                 "transparency_softwares": [{
+                //                     "transparency_software": {
+                //                         "name": "Chargy Transparency Software Desktop Application",
+                //                         "version": "v1.00",
+                //                         "open_source_license": {
+                //                             "id": "AGPL-3.0",
+                //                             "description": [{
+                //                                 "language": "en",
+                //                                 "text": "GNU Affero General Public License version 3"
+                //                             }],
+                //                             "urls": ["https://www.gnu.org/licenses/agpl-3.0.html", "https://opensource.org/license/agpl-v3/"]
+                //                         },
+                //                         "vendor": "GraphDefined GmbH",
+                //                         "logo": "https://open.charging.cloud/logo.svg",
+                //                         "how_to_use": "https://open.charging.cloud/Chargy/howto",
+                //                         "more_information": "https://open.charging.cloud/Chargy",
+                //                         "source_code_repository": "https://github.com/OpenChargingCloud/ChargyDesktopApp"
+                //                     },
+                //                     "legal_status": "GermanCalibrationLaw",
+                //                     "certificate": "cert",
+                //                     "certificate_issuer": "German PTB",
+                //                     "not_before": "2019-04-01T00:00:00.000Z",
+                //                     "not_after": "2030-01-01T00:00:00.000Z"
+                //                 }, {
+                //                     "transparency_software": {
+                //                         "name": "Chargy Transparency Software Mobile Application",
+                //                         "version": "v1.00",
+                //                         "open_source_license": {
+                //                             "id": "AGPL-3.0",
+                //                             "description": [{
+                //                                 "language": "en",
+                //                                 "text": "GNU Affero General Public License version 3"
+                //                             }],
+                //                             "urls": ["https://www.gnu.org/licenses/agpl-3.0.html", "https://opensource.org/license/agpl-v3/"]
+                //                         },
+                //                         "vendor": "GraphDefined GmbH",
+                //                         "logo": "https://open.charging.cloud/logo.svg",
+                //                         "how_to_use": "https://open.charging.cloud/Chargy/howto",
+                //                         "more_information": "https://open.charging.cloud/Chargy",
+                //                         "source_code_repository": "https://github.com/OpenChargingCloud/ChargyMobileApp"
+                //                     },
+                //                     "legal_status": "ForInformationOnly",
+                //                     "certificate": "no cert",
+                //                     "certificate_issuer": "GraphDefined",
+                //                     "not_before": "2019-04-01T00:00:00.000Z",
+                //                     "not_after": "2030-01-01T00:00:00.000Z"
+                //                 }],
+                //                 "last_updated": "2023-04-30T07:26:24.631Z"
+                //             },
+                //             "floor_level": "1. Stock",
+                //             "coordinates": {
+                //                 "latitude": "10.10000",
+                //                 "longitude": "20.20000"
+                //             },
+                //             "physical_reference": "Ladestation #1",
+                //             "directions": [{
+                //                 "language": "de",
+                //                 "text": "Bitte klingeln!"
+                //             }, {
+                //                 "language": "en",
+                //                 "text": "Ken sent me!"
+                //             }],
+                //             "parking_restrictions": ["EV_ONLY", "PLUGGED"],
+                //             "images": [{
+                //                 "url": "http://example.com/pinguine.jpg",
+                //                 "category": "OPERATOR",
+                //                 "type": "jpeg",
+                //                 "thumbnail": "http://example.com/kleine_pinguine.jpg",
+                //                 "width": 100,
+                //                 "height": 150
+                //             }],
+                //             "last_updated": "2020-09-21T22:00:00.000Z"
+                //         }],
+                //         "directions": [{
+                //             "language": "de",
+                //             "text": "Hallo Welt!"
+                //         }, {
+                //             "language": "en",
+                //             "text": "Hello world!"
+                //         }],
+                //         "operator": {
+                //             "name": "Open Charging Cloud",
+                //             "website": "https://open.charging.cloud",
+                //             "logo": {
+                //                 "url": "http://open.charging.cloud/logo.svg",
+                //                 "category": "OPERATOR",
+                //                 "type": "svg",
+                //                 "thumbnail": "http://open.charging.cloud/logo_small.svg",
+                //                 "width": 1000,
+                //                 "height": 1500
+                //             }
+                //         },
+                //         "suboperator": {
+                //             "name": "GraphDefined GmbH",
+                //             "website": "https://www.graphdefined.com",
+                //             "logo": {
+                //                 "url": "http://www.graphdefined.com/logo.png",
+                //                 "category": "OPERATOR",
+                //                 "type": "png",
+                //                 "thumbnail": "http://www.graphdefined.com/logo_small.png",
+                //                 "width": 2000,
+                //                 "height": 3000
+                //             }
+                //         },
+                //         "owner": {
+                //             "name": "Achim Friedland",
+                //             "website": "https://ahzf.de",
+                //             "logo": {
+                //                 "url": "http://ahzf.de/logo.gif",
+                //                 "category": "OWNER",
+                //                 "type": "gif",
+                //                 "thumbnail": "http://ahzf.de/logo_small.gif",
+                //                 "width": 3000,
+                //                 "height": 4500
+                //             }
+                //         },
+                //         "facilities": ["CAFE"],
+                //         "time_zone": "Europe/Berlin",
+                //         "opening_times": {
+                //             "twentyfourseven": false,
+                //             "regular_hours": [{
+                //                 "weekday": 1,
+                //                 "period_begin": "08:00",
+                //                 "period_end": "15:00"
+                //             }, {
+                //                 "weekday": 2,
+                //                 "period_begin": "09:00",
+                //                 "period_end": "16:00"
+                //             }, {
+                //                 "weekday": 3,
+                //                 "period_begin": "10:00",
+                //                 "period_end": "17:00"
+                //             }, {
+                //                 "weekday": 4,
+                //                 "period_begin": "11:00",
+                //                 "period_end": "18:00"
+                //             }, {
+                //                 "weekday": 5,
+                //                 "period_begin": "12:00",
+                //                 "period_end": "19:00"
+                //             }],
+                //             "exceptional_openings": [{
+                //                 "period_begin": "2020-09-21T00:00:00.000Z",
+                //                 "period_end": "2020-09-22T00:00:00.000Z"
+                //             }],
+                //             "exceptional_closings": [{
+                //                 "period_begin": "2020-12-24T00:00:00.000Z",
+                //                 "period_end": "2020-12-26T00:00:00.000Z"
+                //             }]
+                //         },
+                //         "charging_when_closed": false,
+                //         "images": [{
+                //             "url": "http://open.charging.cloud/locations/location0001.jpg",
+                //             "category": "LOCATION",
+                //             "type": "jpeg",
+                //             "thumbnail": "http://open.charging.cloud/locations/location0001s.jpg",
+                //             "width": 200,
+                //             "height": 400
+                //         }],
+                //         "energy_mix": {
+                //             "is_green_energy": true,
+                //             "energy_sources": [{
+                //                 "source": "SOLAR",
+                //                 "percentage": 80.0
+                //             }, {
+                //                 "source": "WIND",
+                //                 "percentage": 20.0
+                //             }],
+                //             "environ_impact": [{
+                //                 "category": "CARBON_DIOXIDE",
+                //                 "amount": 0.1
+                //             }],
+                //             "supplier_name": "Stadtwerke Jena-Ost",
+                //             "energy_product_name": "New Green Deal"
+                //         },
+                //         "last_updated": "2020-09-21T00:00:00.000Z"
+                //     }],
                 //     "status_code":      1000,
                 //     "status_message":  "Hello world!",
-                //     "timestamp":       "2023-04-18T03:41:28.838Z"
+                //     "timestamp":       "2023-04-30T07:26:24.918Z"
                 // }
+
+                #endregion
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
@@ -343,9 +585,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 if (response.Data is not null)
                 {
 
-                    Assert.AreEqual ("DE*GEF*T0001",   response.Data.First().EVSEs.First().Connectors.First().TariffId.ToString());
+                    Assert.AreEqual (1,                         response.Data.Count());
+                    var firstLocation = response.Data.First();
+                    Assert.IsNotNull(firstLocation);
 
-                    Assert.AreEqual (1,                response.Data.Count());
+                    Assert.AreEqual ("LOC0001",                 firstLocation.Id.            ToString());
+                    Assert.AreEqual ("PARKING_LOT",             firstLocation.LocationType.  ToString());
+
+                    Assert.AreEqual (1,                         firstLocation.EVSEs.         Count());
+
+                    var firstEVSE = firstLocation.EVSEs.First();
+                    Assert.IsNotNull(firstEVSE);
+                    Assert.AreEqual ("UID-DE*GEF*E*LOC0001*1",  firstEVSE.UId.               ToString());
+                    Assert.AreEqual ("DE*GEF*E*LOC0001*1",      firstEVSE.EVSEId.            ToString());
+
+                    Assert.AreEqual ("DE*GEF*T0001",            firstLocation.EVSEs.First().Connectors.First().TariffId.ToString());
+
 
                 }
 
@@ -1291,7 +1546,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                           Wed, 26 Apr 2023 05:07:21 GMT
                 // Accept:                         application/json; charset=utf-8;q=1
                 // Host:                           localhost:3301
-                // Authorization:                  Token cso-2-emp1:token
+                // Authorization:                  Token emp1-accessing-cso::token
                 // Connection:                     close
                 // X-Request-ID:                   5UAb53YK9533x9r1vAGG8G22K5M861
                 // X-Correlation-ID:               4M12E4Q4SMn8zMpxUxAz2d22b6n89j
@@ -1942,7 +2197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                           Wed, 26 Apr 2023 05:07:21 GMT
                 // Accept:                         application/json; charset=utf-8;q=1
                 // Host:                           localhost:3301
-                // Authorization:                  Token cso-2-emp1:token
+                // Authorization:                  Token emp1-accessing-cso::token
                 // Connection:                     close
                 // X-Request-ID:                   5UAb53YK9533x9r1vAGG8G22K5M861
                 // X-Correlation-ID:               4M12E4Q4SMn8zMpxUxAz2d22b6n89j
@@ -2594,7 +2849,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                           Wed, 26 Apr 2023 05:07:21 GMT
                 // Accept:                         application/json; charset=utf-8;q=1
                 // Host:                           localhost:3301
-                // Authorization:                  Token cso-2-emp1:token
+                // Authorization:                  Token emp1-accessing-cso::token
                 // Connection:                     close
                 // X-Request-ID:                   5UAb53YK9533x9r1vAGG8G22K5M861
                 // X-Correlation-ID:               4M12E4Q4SMn8zMpxUxAz2d22b6n89j

@@ -814,8 +814,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #region Check access token
 
-                                   if (Request.AccessInfo2.HasValue &&
-                                       Request.AccessInfo2.Value.Status != AccessStatus.ALLOWED)
+                                   if (Request.AccessInfoStatus.HasValue &&
+                                       Request.AccessInfoStatus.Value.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
@@ -902,8 +902,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #region Check access token
 
-                                   if (Request.AccessInfo2.HasValue &&
-                                       Request.AccessInfo2.Value.Status != AccessStatus.ALLOWED)
+                                   if (Request.AccessInfoStatus.HasValue &&
+                                       Request.AccessInfoStatus.Value.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
@@ -1124,6 +1124,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region GET         ~/{versionId}/credentials
 
+            // Retrieves the credentials object to access the server's platform.
+            // The response contains the credentials object to access the server's platform.
+            // This credentials object also contains extra information about the server such as its business details.
+
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
             // ---------------------------------------------------------------------------------
@@ -1133,10 +1137,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestHandler: Request => {
 
-                                   #region Check access token
+                                   #region Check access token... not allowed!
 
-                                   if (Request.AccessInfo2.HasValue &&
-                                       Request.AccessInfo2.Value.Status != AccessStatus.ALLOWED)
+                                   if (Request.AccessInfoStatus.HasValue &&
+                                       Request.AccessInfoStatus.Value.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
@@ -1172,18 +1176,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                            }
                                        });
 
-
-                                   //return Task.FromResult(
-                                   //    new OCPIResponse.Builder(Request) {
-                                   //        StatusCode           = 2000,
-                                   //        StatusMessage        = "You need to be registered before trying to invoke this protected method!",
-                                   //        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                   //            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                   //            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                   //            AccessControlAllowHeaders  = "Authorization"
-                                   //        }
-                                   //    });
-
                                });
 
             #endregion
@@ -1201,7 +1193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:   PostCredentialsRequest,
                                OCPIResponseLogger:  PostCredentialsResponse,
-                               OCPIRequestHandler:   async Request => {
+                               OCPIRequestHandler:  async Request => {
 
                                    var CREDENTIALS_TOKEN_A = Request.AccessToken;
 
@@ -1245,6 +1237,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             // UPDATE the registration of an existing OCPI party!
 
+            // Provides the server with updated credentials to access the client's system.
+            // This credentials object also contains extra information about the client such as its business details.
+
+            // A PUT will switch to the version that contains this credentials endpoint if it's different from the current version.
+            // The server must fetch the client's endpoints again, even if the version has not changed.
+
+            // If successful, the server must generate a new token for the client and respond with the client's updated credentials to access the server's system.
+            // The credentials object in the response also contains extra information about the server such as its business details.
+
+            // This must return a HTTP status code 405: method not allowed if the client was not registered yet.
+
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
             // ---------------------------------------------------------------------------------
@@ -1252,9 +1255,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPMethod.PUT,
                                URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.JSON_UTF8,
-                               OCPIRequestLogger:  PutCredentialsRequest,
-                               OCPIResponseLogger: PutCredentialsResponse,
-                               OCPIRequestHandler: async Request => {
+                               OCPIRequestLogger:   PutCredentialsRequest,
+                               OCPIResponseLogger:  PutCredentialsResponse,
+                               OCPIRequestHandler:  async Request => {
+
+                                   #region Check access token... known and access allowed!
 
                                    if (Request.AccessInfo.HasValue &&
                                        Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
@@ -1276,11 +1281,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    }
 
+                                   #endregion
+
                                    return new OCPIResponse.Builder(Request) {
                                                   StatusCode           = 2000,
                                                   StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                                      HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                       AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                       AccessControlAllowHeaders  = "Authorization"
                                                   }
@@ -1294,6 +1301,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             // UNREGISTER an existing OCPI party!
 
+            // Informs the server that its credentials to access the client's system are now invalid and can no longer be used.
+            // Both parties must end any automated communication.
+            // This is the unregistration process.
+
+            // This must return a HTTP status code 405: method not allowed if the client was not registered.
+
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
             // ---------------------------------------------------------------------------------
@@ -1301,9 +1314,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPMethod.DELETE,
                                URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.JSON_UTF8,
-                               OCPIRequestLogger:  DeleteCredentialsRequest,
-                               OCPIResponseLogger: DeleteCredentialsResponse,
-                               OCPIRequestHandler: async Request => {
+                               OCPIRequestLogger:   DeleteCredentialsRequest,
+                               OCPIResponseLogger:  DeleteCredentialsResponse,
+                               OCPIRequestHandler:  async Request => {
 
                                    if (Request.AccessInfo.HasValue &&
                                        Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
@@ -1345,7 +1358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               StatusCode           = 2000,
                                               StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                  HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                   AccessControlAllowHeaders  = "Authorization"
                                               }

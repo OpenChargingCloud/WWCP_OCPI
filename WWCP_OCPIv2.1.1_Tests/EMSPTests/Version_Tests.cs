@@ -58,7 +58,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                            Sun, 30 Apr 2023 01:43:15 GMT
                 // Accept:                          application/json; charset=utf-8;q=1
                 // Host:                            localhost:3301
-                // Authorization:                   Token cso-2-emp1:token
+                // Authorization:                   Token emp1-accessing-cso::token
                 // User-Agent:                      GraphDefined OCPI HTTP Client v1.0
                 // X-Request-ID:                    4xAAKvW377Cd7C7rn2fMC5xb1WYKS8
                 // X-Correlation-ID:                CWE5292n4bYbQ94M2p36GAdSnAS1b7
@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         #region EMSP_GetVersion_JSON_NoToken_Test()
 
         /// <summary>
-        /// EMSP GetVersion JSON usingout an access token.
+        /// EMSP GetVersion JSON without an access token.
         /// </summary>
         [Test]
         public async Task EMSP_GetVersion_JSON_NoToken_Test()
@@ -244,7 +244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.IsTrue   (Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -309,7 +309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.IsTrue   (Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -329,9 +329,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             if (cpoVersionsAPIURL.HasValue)
             {
 
-                var response1   = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, "cso-2-emp1:token");
+                var response1   = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, "emp1-accessing-cso::token");
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
-                var response2   = await TestHelpers.GetJSONRequest(versionURL,              "cso-2-emp1:token");
+                var response2   = await TestHelpers.GetJSONRequest(versionURL,              "emp1-accessing-cso::token");
 
                 Assert.IsNotNull(response2);
                 Assert.AreEqual (200,            response2.HTTPStatusCode.Code);
@@ -409,7 +409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.IsTrue   (Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -464,7 +464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.IsTrue   (Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -526,7 +526,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.IsTrue   (Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -613,9 +613,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             if (cpoVersionsAPIURL.HasValue)
             {
 
-                var response1   = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, "cso-2-emp1:token");
+                var response1   = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, "emp1-accessing-cso::token");
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
-                var response2   = await TestHelpers.GetHTMLRequest(versionURL,              "cso-2-emp1:token");
+                var response2   = await TestHelpers.GetHTMLRequest(versionURL,              "emp1-accessing-cso::token");
 
                 Assert.IsNotNull(response2);
                 Assert.AreEqual (200,            response2.HTTPStatusCode.Code);

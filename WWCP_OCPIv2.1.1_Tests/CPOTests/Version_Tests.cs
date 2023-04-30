@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         #region CPO_GetVersion_JSON_NoToken_Test()
 
         /// <summary>
-        /// CPO GetVersion JSON usingout an access token.
+        /// CPO GetVersion JSON without an access token.
         /// </summary>
         [Test]
         public async Task CPO_GetVersion_JSON_NoToken_Test()
@@ -599,9 +599,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             if (emsp1VersionsAPIURL.HasValue)
             {
 
-                var response1   = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value, "cso-2-emp1:token");
+                var response1   = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value, "emp1-accessing-cso::token");
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
-                var response2   = await TestHelpers.GetHTMLRequest(versionURL,              "cso-2-emp1:token");
+                var response2   = await TestHelpers.GetHTMLRequest(versionURL,              "emp1-accessing-cso::token");
 
                 Assert.IsNotNull(response2);
                 Assert.AreEqual (200,            response2.HTTPStatusCode.Code);

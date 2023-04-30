@@ -835,7 +835,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                           Wed, 26 Apr 2023 05:07:21 GMT
                 // Accept:                         application/json; charset=utf-8;q=1
                 // Host:                           localhost:3301
-                // Authorization:                  Token cso-2-emp1:token
+                // Authorization:                  Token emp1-accessing-cso::token
                 // Connection:                     close
                 // X-Request-ID:                   5UAb53YK9533x9r1vAGG8G22K5M861
                 // X-Correlation-ID:               4M12E4Q4SMn8zMpxUxAz2d22b6n89j
@@ -1121,7 +1121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                           Wed, 26 Apr 2023 05:07:21 GMT
                 // Accept:                         application/json; charset=utf-8;q=1
                 // Host:                           localhost:3301
-                // Authorization:                  Token cso-2-emp1:token
+                // Authorization:                  Token emp1-accessing-cso::token
                 // Connection:                     close
                 // X-Request-ID:                   5UAb53YK9533x9r1vAGG8G22K5M861
                 // X-Correlation-ID:               4M12E4Q4SMn8zMpxUxAz2d22b6n89j

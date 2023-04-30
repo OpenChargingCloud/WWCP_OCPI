@@ -51,14 +51,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<AccessInfoStatus>? CustomAccessInfoStatusSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("token",   Token. ToString()),
                            new JProperty("status",  Status.ToString())
                        );
 
             return CustomAccessInfoStatusSerializer is not null
-                       ? CustomAccessInfoStatusSerializer(this, JSON)
-                       : JSON;
+                       ? CustomAccessInfoStatusSerializer(this, json)
+                       : json;
 
         }
 
