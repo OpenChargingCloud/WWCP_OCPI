@@ -257,9 +257,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             if (emsp1VersionsAPIURL.HasValue)
             {
 
-                var response1   = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value, "unkownunkownunkownunkown");
+                var response1   = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
-                var response2   = await TestHelpers.GetJSONRequest(versionURL,                "unkownunkownunkownunkown");
+                var response2   = await TestHelpers.GetJSONRequest(versionURL, UnknownToken);
 
                 Assert.IsNotNull(response2);
                 Assert.AreEqual (200,            response2.HTTPStatusCode.Code);
@@ -567,9 +567,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             if (emsp1VersionsAPIURL.HasValue)
             {
 
-                var response1   = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value, "unkownunkownunkownunkown");
+                var response1   = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
-                var response2   = await TestHelpers.GetHTMLRequest(versionURL,              "unkownunkownunkownunkown");
+                var response2   = await TestHelpers.GetHTMLRequest(versionURL, UnknownToken);
 
                 Assert.IsNotNull(response2);
                 Assert.AreEqual (200,            response2.HTTPStatusCode.Code);

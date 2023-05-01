@@ -269,6 +269,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected const String            emp1_accessing_cso__token     = "emp1-accessing-cso::token";
         protected const String            emp2_accessing_cso__token     = "emp2-accessing-cso::token";
 
+        protected const String            UnknownToken                  = "UnknownUnknownUnknownToken";
+
         protected const String            BlockedCPOToken               = "blocked-cpo";
         protected const String            BlockedEMSPToken              = "blocked-emsp";
 

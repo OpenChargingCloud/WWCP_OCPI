@@ -207,13 +207,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                     BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
                     AccessInfoStatus:        new AccessInfoStatus[] {
                                             new AccessInfoStatus(
-                                                AccessToken.Parse("aaaaaaaaaa"),
+                                                AccessToken.Parse(UnknownToken),
                                                 AccessStatus.ALLOWED
                                             )
                                         },
                     RemoteAccessInfos:  new RemoteAccessInfo[] {
                                             new RemoteAccessInfo(
-                                                AccessToken:        AccessToken.Parse("bbbbbbbbbb"),
+                                                AccessToken:        AccessToken.Parse(UnknownToken),
                                                 VersionsURL:        emsp1VersionsAPIURL.Value,
                                                 VersionIds:         new Version_Id[] {
                                                                         Version_Id.Parse("2.1.1")
@@ -493,7 +493,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             if (emsp1VersionsAPIURL.HasValue)
             {
 
-                var response  = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value, "bbbbbbbbbb");
+                var response  = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value, UnknownToken);
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPStatusCode.Code);
@@ -538,10 +538,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         public async Task CPO_GetVersions_JSON_UnknownToken_Test2()
         {
 
-            if (emsp1VersionsAPIURL.HasValue)
+            if (emsp2VersionsAPIURL.HasValue)
             {
 
-                var response  = await TestHelpers.GetJSONRequest(emsp2VersionsAPIURL.Value, "bbbbbbbbbb");
+                var response  = await TestHelpers.GetJSONRequest(emsp2VersionsAPIURL.Value, UnknownToken);
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPStatusCode.Code);
@@ -854,7 +854,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             if (emsp1VersionsAPIURL.HasValue)
             {
 
-                var response  = await TestHelpers.GetHTMLRequest(emsp1VersionsAPIURL.Value, "unkownunkownunkownunkown");
+                var response  = await TestHelpers.GetHTMLRequest(emsp1VersionsAPIURL.Value, UnknownToken);
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPStatusCode.Code);
@@ -884,7 +884,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             if (emsp2VersionsAPIURL.HasValue)
             {
 
-                var response  = await TestHelpers.GetHTMLRequest(emsp2VersionsAPIURL.Value, "unkownunkownunkownunkown");
+                var response  = await TestHelpers.GetHTMLRequest(emsp2VersionsAPIURL.Value, UnknownToken);
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPStatusCode.Code);

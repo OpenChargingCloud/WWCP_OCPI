@@ -23,6 +23,7 @@ using NUnit.Framework;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using System.Linq;
 
 #endregion
 
@@ -308,7 +309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
                 var response2       = await TestHelpers.GetJSONRequest(versionURL);
                 var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
-                var response3       = await TestHelpers.GetJSONRequest(credentialsURL, "aaaaaaaaaaaa");
+                var response3       = await TestHelpers.GetJSONRequest(credentialsURL, UnknownToken);
 
                 // HTTP/1.1 200 OK
                 // Date:                            Sun, 30 Apr 2023 10:02:02 GMT
@@ -541,13 +542,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // X-Correlation-ID:                5678
 
                 Assert.IsNotNull(response3);
-                Assert.AreEqual (200,            response3.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.AreEqual (200,                      response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now -           response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 Assert.IsNotNull(response3.AccessControlAllowMethods);
-                Assert.AreEqual (new[] { "OPTIONS", "GET" }, response3.AccessControlAllowMethods);
-
-
+                if (response3.AccessControlAllowMethods is not null)
+                {
+                    Assert.AreEqual (2,                    response3.AccessControlAllowMethods.Count());
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("GET"));
+                }
 
                 Assert.IsNotNull(response3.Allow);
                 if (response3.Allow is not null)

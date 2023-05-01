@@ -156,13 +156,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
                                                AccessInfoStatus:   new[] {
                                                                        new AccessInfoStatus(
-                                                                           AccessToken.Parse("aaaaaa"),
+                                                                           AccessToken.Parse(UnknownToken),
                                                                            AccessStatus.ALLOWED
                                                                        )
                                                                    },
                                                RemoteAccessInfos:  new[] {
                                                                        new RemoteAccessInfo(
-                                                                           AccessToken:        AccessToken.Parse("bbbbbb"),
+                                                                           AccessToken:        AccessToken.Parse(UnknownToken),
                                                                            VersionsURL:        emsp1VersionsAPIURL.Value,
                                                                            VersionIds:         new[] {
                                                                                                    Version_Id.Parse("2.1.1")
@@ -694,7 +694,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var response1 = await graphDefinedEMSP.GetVersions();
                 var response2 = await graphDefinedEMSP.PutCredentials(
                                                            new Credentials(
-                                                               AccessToken.Parse("nnnnnn"),
+                                                               AccessToken.Parse(UnknownToken),
                                                                URL.Parse("http://example.org/versions"),
                                                                new BusinessDetails(
                                                                    "Example Org",

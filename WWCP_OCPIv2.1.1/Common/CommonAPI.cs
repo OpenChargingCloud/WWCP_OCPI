@@ -2163,6 +2163,79 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
+        #region UpdateRemoteParty(...)
+
+        public Boolean UpdateRemoteParty(CountryCode                           CountryCode,
+                                         Party_Id                              PartyId,
+                                         Roles                                 Role,
+                                         BusinessDetails                       BusinessDetails,
+
+                                         IEnumerable<AccessInfoStatus>         AccessInfoStatus,
+                                         IEnumerable<RemoteAccessInfo>         RemoteAccessInfos,
+
+                                         PartyStatus                           Status                       = PartyStatus.ENABLED,
+
+                                         RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
+                                         LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                         X509Certificate?                      ClientCert                   = null,
+                                         SslProtocols?                         TLSProtocol                  = null,
+                                         Boolean?                              PreferIPv4                   = null,
+                                         String?                               HTTPUserAgent                = null,
+                                         TimeSpan?                             RequestTimeout               = null,
+                                         TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
+                                         UInt16?                               MaxNumberOfRetries           = null,
+                                         Boolean?                              UseHTTPPipelining            = null,
+
+                                         DateTime?                             LastUpdated                  = null)
+        {
+
+            lock (remoteParties)
+            {
+
+                var newRemoteParty = new RemoteParty(CountryCode,
+                                                     PartyId,
+                                                     Role,
+                                                     BusinessDetails,
+
+                                                     AccessInfoStatus,
+                                                     RemoteAccessInfos,
+
+                                                     Status,
+
+                                                     RemoteCertificateValidator,
+                                                     ClientCertificateSelector,
+                                                     ClientCert,
+                                                     TLSProtocol,
+                                                     PreferIPv4,
+                                                     HTTPUserAgent,
+                                                     RequestTimeout,
+                                                     TransmissionRetryDelay,
+                                                     MaxNumberOfRetries,
+                                                     UseHTTPPipelining,
+
+                                                     LastUpdated);
+
+                if (!remoteParties.TryGetValue(newRemoteParty.Id, out var oldRemoteParty))
+                    return false;
+                else
+                    remoteParties.Remove(newRemoteParty.Id);
+
+                remoteParties.Add(newRemoteParty.Id,
+                                  newRemoteParty);
+
+                File.AppendAllText(LogfileName,
+                                   new JObject(new JProperty("updateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                   Encoding.UTF8);
+
+                return true;
+
+            }
+
+        }
+
+        #endregion
+
+
         #region ContainsRemoteParty(RemotePartyId)
 
         /// <summary>

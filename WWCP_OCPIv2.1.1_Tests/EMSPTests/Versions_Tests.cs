@@ -119,28 +119,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
             if (cpoCommonAPI   is not null &&
                 emsp1CommonAPI is not null &&
-                emsp1VersionsAPIURL.HasValue)
+                cpoVersionsAPIURL.HasValue)
             {
 
                 #region Change Access Token
 
-                emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
-
-                var addCPOResult = emsp1CommonAPI.AddRemoteParty(
+                var updateCPOResult = emsp1CommonAPI.UpdateRemoteParty(
                     CountryCode:        CountryCode.Parse("DE"),
                     PartyId:            Party_Id.   Parse("GEF"),
                     Role:               Roles.      CPO,
                     BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
                     AccessInfoStatus:   new[] {
                                             new AccessInfoStatus(
-                                                AccessToken.Parse("aaaaaaaaaaaa"),
-                                                AccessStatus.BLOCKED
+                                                AccessToken.Parse(UnknownToken),
+                                                AccessStatus.ALLOWED
                                             )
                                         },
                     RemoteAccessInfos:  new[] {
                                             new RemoteAccessInfo(
-                                                AccessToken:        AccessToken.Parse("bbbbbbbbbbbb"),
-                                                VersionsURL:        emsp1VersionsAPIURL.Value,
+                                                AccessToken:        AccessToken.Parse(UnknownToken),
+                                                VersionsURL:        cpoVersionsAPIURL.Value,
                                                 VersionIds:         new[] {
                                                                         Version_Id.Parse("2.1.1")
                                                                     },
@@ -151,7 +149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                     Status:             PartyStatus.ENABLED
                 );
 
-                Assert.IsTrue(addCPOResult);
+                Assert.IsTrue(updateCPOResult);
 
                 #endregion
 
@@ -170,8 +168,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                     // GET /ocpi/v2.1/versions HTTP/1.1
                     // Date:                            Sun, 30 Apr 2023 01:38:42 GMT
                     // Accept:                          application/json; charset=utf-8;q=1
-                    // Host:                            127.0.0.1:3401
-                    // Authorization:                   Token bbbbbbbbbbbb
+                    // Host:                            127.0.0.1:3301
+                    // Authorization:                   Token UnknownUnknownUnknownToken
                     // User-Agent:                      GraphDefined OCPI HTTP Client v1.0
                     // X-Request-ID:                    43EKp122t15Ad3hh1vxEj4Qvtht1hM
                     // X-Correlation-ID:                f1Qr44hnzYd2tWAKrjdjhU15CvW943
@@ -192,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                     // {
                     //     "data": [{
                     //         "version":  "2.1.1",
-                    //         "url":      "http://127.0.0.1:3401/ocpi/v2.1/versions/2.1.1"
+                    //         "url":      "http://127.0.0.1:3301/ocpi/v2.1/versions/2.1.1"
                     //     }],
                     //     "status_code":      1000,
                     //     "status_message":  "Hello world!",
@@ -211,7 +209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                     var version  = versions?.First();
                     Assert.IsTrue   (version?.Id == Version.Id);
-                    Assert.IsTrue   (URL.Parse("http://127.0.0.1:3401/ocpi/v2.1/versions/2.1.1") == version?.URL);
+                    Assert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.1/versions/2.1.1", version?.URL.ToString());
 
                     //Assert.IsNotNull(response.Request);
 
@@ -381,7 +379,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             if (cpoVersionsAPIURL.HasValue)
             {
 
-                var response = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, "unkownunkownunkownunkown");
+                var response = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, UnknownToken);
 
                 // {
                 //   "data": [
@@ -555,7 +553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             if (cpoVersionsAPIURL.HasValue)
             {
 
-                var response  = await TestHelpers.GetHTMLRequest(cpoVersionsAPIURL.Value, "unkownunkownunkownunkown");
+                var response  = await TestHelpers.GetHTMLRequest(cpoVersionsAPIURL.Value, UnknownToken);
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPStatusCode.Code);
