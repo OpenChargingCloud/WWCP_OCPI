@@ -721,7 +721,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                          Request_Id?         RequestId           = null,
                          Correlation_Id?     CorrelationId       = null,
 
-                         CancellationToken?  CancellationToken   = null,
+                         CancellationToken   CancellationToken   = default,
                          EventTracking_Id?   EventTrackingId     = null,
                          TimeSpan?           RequestTimeout      = null)
 
@@ -900,7 +900,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
 
-                        CancellationToken?  CancellationToken   = null,
+                        CancellationToken   CancellationToken   = default,
                         EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
@@ -1085,7 +1085,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
 
-                    CancellationToken?  CancellationToken   = null,
+                    CancellationToken   CancellationToken   = default,
                     EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
@@ -1272,7 +1272,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                          Request_Id?         RequestId           = null,
                          Correlation_Id?     CorrelationId       = null,
 
-                         CancellationToken?  CancellationToken   = null,
+                         CancellationToken   CancellationToken   = default,
                          EventTracking_Id?   EventTrackingId     = null,
                          TimeSpan?           RequestTimeout      = null)
 
@@ -1455,7 +1455,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                        Request_Id?         RequestId           = null,
                        Correlation_Id?     CorrelationId       = null,
 
-                       CancellationToken?  CancellationToken   = null,
+                       CancellationToken   CancellationToken   = default,
                        EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null)
 
@@ -1635,7 +1635,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                       Request_Id?         RequestId           = null,
                       Correlation_Id?     CorrelationId       = null,
 
-                      CancellationToken?  CancellationToken   = null,
+                      CancellationToken   CancellationToken   = default,
                       EventTracking_Id?   EventTrackingId     = null,
                       TimeSpan?           RequestTimeout      = null)
 
@@ -1816,7 +1816,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
 
-                        CancellationToken?  CancellationToken   = null,
+                        CancellationToken   CancellationToken   = default,
                         EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
@@ -1995,7 +1995,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                        Request_Id?         RequestId           = null,
                        Correlation_Id?     CorrelationId       = null,
 
-                       CancellationToken?  CancellationToken   = null,
+                       CancellationToken   CancellationToken   = default,
                        EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null)
 
@@ -2179,7 +2179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
 
-                    CancellationToken?  CancellationToken   = null,
+                    CancellationToken   CancellationToken   = default,
                     EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
@@ -2359,7 +2359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                    Request_Id?         RequestId           = null,
                    Correlation_Id?     CorrelationId       = null,
 
-                   CancellationToken?  CancellationToken   = null,
+                   CancellationToken   CancellationToken   = default,
                    EventTracking_Id?   EventTrackingId     = null,
                    TimeSpan?           RequestTimeout      = null)
 
@@ -2540,7 +2540,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                      Correlation_Id?     CorrelationId       = null,
                      Version_Id?         VersionId           = null,
 
-                     CancellationToken?  CancellationToken   = null,
+                     CancellationToken   CancellationToken   = default,
                      EventTracking_Id?   EventTrackingId     = null,
                      TimeSpan?           RequestTimeout      = null)
 
@@ -2722,7 +2722,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                      Correlation_Id?     CorrelationId       = null,
                      Version_Id?         VersionId           = null,
 
-                     CancellationToken?  CancellationToken   = null,
+                     CancellationToken   CancellationToken   = default,
                      EventTracking_Id?   EventTrackingId     = null,
                      TimeSpan?           RequestTimeout      = null)
 
@@ -2902,7 +2902,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                        Request_Id?         RequestId           = null,
                        Correlation_Id?     CorrelationId       = null,
 
-                       CancellationToken?  CancellationToken   = null,
+                       CancellationToken   CancellationToken   = default,
                        EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null)
 
@@ -3104,7 +3104,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                        Correlation_Id?          CorrelationId            = null,
                        Version_Id?              VersionId                = null,
 
-                       CancellationToken?       CancellationToken        = null,
+                       CancellationToken        CancellationToken        = default,
                        EventTracking_Id?        EventTrackingId          = null,
                        TimeSpan?                RequestTimeout           = null)
 
@@ -3310,7 +3310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                               Correlation_Id?     CorrelationId       = null,
                               Version_Id?         VersionId           = null,
 
-                              CancellationToken?  CancellationToken   = null,
+                              CancellationToken   CancellationToken   = default,
                               EventTracking_Id?   EventTrackingId     = null,
                               TimeSpan?           RequestTimeout      = null)
 
@@ -3505,7 +3505,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                          Correlation_Id?     CorrelationId       = null,
                          Version_Id?         VersionId           = null,
 
-                         CancellationToken?  CancellationToken   = null,
+                         CancellationToken   CancellationToken   = default,
                          EventTracking_Id?   EventTrackingId     = null,
                          TimeSpan?           RequestTimeout      = null)
 
@@ -3705,7 +3705,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                         Correlation_Id?     CorrelationId       = null,
                         Version_Id?         VersionId           = null,
 
-                        CancellationToken?  CancellationToken   = null,
+                        CancellationToken   CancellationToken   = default,
                         EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
@@ -3901,7 +3901,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                             Correlation_Id?     CorrelationId       = null,
                             Version_Id?         VersionId           = null,
 
-                            CancellationToken?  CancellationToken   = null,
+                            CancellationToken   CancellationToken   = default,
                             EventTracking_Id?   EventTrackingId     = null,
                             TimeSpan?           RequestTimeout      = null)
 

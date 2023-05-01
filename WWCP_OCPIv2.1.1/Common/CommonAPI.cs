@@ -35,6 +35,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
 using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
+using org.GraphDefined.Vanaheimr.Styx.Arrows;
 
 #endregion
 
@@ -228,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             => OnPutCredentialsRequest?.WhenAll(Timestamp,
                                                 API ?? this,
-                                                Request);
+                                                Request) ?? Task.CompletedTask;
 
         #endregion
 
@@ -254,7 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             => OnPutCredentialsResponse?.WhenAll(Timestamp,
                                                  API ?? this,
                                                  Request,
-                                                 Response);
+                                                 Response) ?? Task.CompletedTask;
 
         #endregion
 
@@ -701,7 +702,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      Server                     = ServiceName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                      Allow                      = new List<HTTPMethod> {
                                                                                      HTTPMethod.OPTIONS,
                                                                                      HTTPMethod.GET
@@ -757,7 +758,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      Server                     = ServiceName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                      AccessControlAllowHeaders  = "Authorization",
                                                      ContentType                = HTTPContentType.TEXT_UTF8,
                                                      Content                    = "This is an Open Charge Point Interface HTTP service!\r\nPlease check ~/versions!".ToUTF8Bytes(),
@@ -787,7 +788,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 HTTPStatusCode             = HTTPStatusCode.OK,
                                                 Server                     = ServiceName,
                                                 Date                       = Timestamp.Now,
-                                                AccessControlAllowMethods  = "OPTIONS, GET",
+                                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                 Allow                      = new List<HTTPMethod> {
                                                                                 HTTPMethod.OPTIONS,
                                                                                 HTTPMethod.GET
@@ -824,7 +825,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                StatusMessage        = "Invalid or blocked access token!",
                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                   AccessControlAllowMethods  = "OPTIONS, GET",
+                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                    AccessControlAllowHeaders  = "Authorization"
                                                }
                                            });
@@ -851,7 +852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                HTTPStatusCode             = HTTPStatusCode.OK,
                                         //       Server                     = ServiceName,
                                         //       Date                       = Timestamp.Now,
-                                               AccessControlAllowMethods  = "OPTIONS, GET",
+                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                AccessControlAllowHeaders  = "Authorization",
                                                Vary                       = "Accept"
                                            }
@@ -876,7 +877,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        new OCPIResponse.Builder(Request) {
                                            HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                               AccessControlAllowMethods  = "OPTIONS, GET",
+                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                Allow                      = new List<HTTPMethod> {
                                                                                 HTTPMethod.OPTIONS,
                                                                                 HTTPMethod.GET
@@ -912,7 +913,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               StatusMessage        = "Invalid or blocked access token!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                  AccessControlAllowMethods  = "OPTIONS, GET",
+                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                   AccessControlAllowHeaders  = "Authorization"
                                               }
                                           });
@@ -932,7 +933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               StatusMessage        = "Version identification is missing!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                  AccessControlAllowMethods  = "OPTIONS, GET",
+                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                   AccessControlAllowHeaders  = "Authorization"
                                               }
                                           });
@@ -948,7 +949,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               StatusMessage        = "Version identification is invalid!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                  AccessControlAllowMethods  = "OPTIONS, GET",
+                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                   AccessControlAllowHeaders  = "Authorization"
                                               }
                                           });
@@ -966,7 +967,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               StatusMessage        = "This OCPI version is not supported!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                  AccessControlAllowMethods  = "OPTIONS, GET",
+                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                   AccessControlAllowHeaders  = "Authorization"
                                               }
                                           });
@@ -1081,7 +1082,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                      ).ToJSON(),
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                  AccessControlAllowMethods  = "OPTIONS, GET",
+                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                   AccessControlAllowHeaders  = "Authorization",
                                                   Vary                       = "Accept"
                                               }
@@ -1102,21 +1103,58 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                URLPathPrefix + "{versionId}/credentials",
                                OCPIRequestHandler: Request => {
 
+                                   #region Defaults
+
+                                   var accessControlAllowMethods  = new List<String> {
+                                                                        "OPTIONS",
+                                                                        "GET"
+                                                                    };
+
+                                   var allow                      = new List<HTTPMethod> {
+                                                                        HTTPMethod.OPTIONS,
+                                                                        HTTPMethod.GET
+                                                                    };
+
+                                   #endregion
+
+                                   #region Check the access token whether the client is known, and its access is allowed!
+
+                                   if (Request.AccessInfo.HasValue &&
+                                       Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                   {
+
+                                       accessControlAllowMethods.Add("POST");
+
+                                       allow.Add(HTTPMethod.POST);
+
+                                       // Only when the party is fully registered!
+                                       if (Request.AccessInfo.Value.VersionsURL.HasValue)
+                                       {
+
+                                           accessControlAllowMethods.Add("PUT");
+                                           accessControlAllowMethods.Add("DELETE");
+
+                                           allow.Add(HTTPMethod.PUT);
+                                           allow.Add(HTTPMethod.DELETE);
+
+                                       }
+
+                                    }
+
+                                   #endregion
+
+
                                    return Task.FromResult(
-                                       new OCPIResponse.Builder(Request) {
-                                           HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                               Allow                      = new List<HTTPMethod> {
-                                                                                HTTPMethod.OPTIONS,
-                                                                                HTTPMethod.GET,
-                                                                                HTTPMethod.POST,
-                                                                                HTTPMethod.PUT,
-                                                                                HTTPMethod.DELETE
-                                                                            },
-                                               AccessControlAllowHeaders  = "Authorization"
-                                           }
-                                       });
+                                              new OCPIResponse.Builder(Request) {
+                                                  StatusCode           = 1000,
+                                                  StatusMessage        = "Hello world!",
+                                                  HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                                      AccessControlAllowHeaders  = "Authorization",
+                                                      AccessControlAllowMethods  = accessControlAllowMethods,
+                                                      Allow                      = allow
+                                                  }
+                                              });
 
                                });
 
@@ -1149,7 +1187,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               StatusMessage        = "Invalid or blocked access token!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                  AccessControlAllowMethods  = "OPTIONS, GET",
+                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                   AccessControlAllowHeaders  = "Authorization"
                                               }
                                           });
@@ -1171,7 +1209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                   ).ToJSON(),
                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                                                AccessControlAllowHeaders  = "Authorization"
                                            }
                                        });
@@ -1208,7 +1246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                       StatusMessage        = "The given access token '" + CREDENTIALS_TOKEN_A.Value.ToString() + "' is already registered!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                          AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                                                           AccessControlAllowHeaders  = "Authorization"
                                                       }
                                                   };
@@ -1224,7 +1262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                  AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                                                   AccessControlAllowHeaders  = "Authorization"
                                               }
                                           };
@@ -1272,7 +1310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                       StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                          AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
                                                           AccessControlAllowHeaders  = "Authorization"
                                                       }
                                                   };
@@ -1283,12 +1321,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #endregion
 
+
                                    return new OCPIResponse.Builder(Request) {
                                                   StatusCode           = 2000,
                                                   StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                      HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                      AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                                      AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                       AccessControlAllowHeaders  = "Authorization"
                                                   }
                                               };
@@ -1330,7 +1369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                       StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                          AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                                                           AccessControlAllowHeaders  = "Authorization"
                                                       }
                                                   };
@@ -1347,7 +1386,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   StatusMessage        = "The given access token was deleted!",
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                      AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                      AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                                                       AccessControlAllowHeaders  = "Authorization"
                                                   }
                                               };
@@ -1359,7 +1398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                  AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                                                   AccessControlAllowHeaders  = "Authorization"
                                               }
                                           };
@@ -1393,7 +1432,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                            StatusMessage        = "Could not parse the credentials JSON object! " + ErrorResponse,
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                                AccessControlAllowHeaders  = "Authorization"
                            }
                        };
@@ -1421,7 +1460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             //                       StatusMessage        = "The given combination of country code, party identification and role is unknown!",
             //                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-            //                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+            //                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
             //                           AccessControlAllowHeaders  = "Authorization"
             //                       }
             //                   };
@@ -1437,7 +1476,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             //                       StatusMessage        = "The given combination of country code, party identification and role is already registered!",
             //                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-            //                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+            //                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
             //                           AccessControlAllowHeaders  = "Authorization"
             //                       }
             //                   };
@@ -1467,7 +1506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                            StatusMessage        = "Could not fetch VERSIONS information from '" + receivedCredentials.URL + "'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                                AccessControlAllowHeaders  = "Authorization"
                            }
                        };
@@ -1489,7 +1528,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                            StatusMessage        = "Could not find OCPI v2.1.1 at '" + receivedCredentials.URL + "'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                                AccessControlAllowHeaders  = "Authorization"
                            }
                        };
@@ -1510,7 +1549,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                            StatusMessage        = "Could not fetch v2.2 information from '" + justVersion2_1_1.First().URL + "'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                                AccessControlAllowHeaders  = "Authorization"
                            }
                        };
@@ -1563,7 +1602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   ).ToJSON(),
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.OK,
-                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                                AccessControlAllowHeaders  = "Authorization"
                            }
                        };

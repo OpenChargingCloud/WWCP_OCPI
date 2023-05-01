@@ -78,7 +78,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Missing country code and/or party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid country code!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -116,7 +116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -181,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Missing country code, party identification and/or location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -200,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid country code!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -238,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -257,7 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Unknown location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -328,7 +328,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Missing country code, party identification, location identification and/or EVSE identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -347,7 +347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid country code!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -366,7 +366,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -384,7 +384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -403,7 +403,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid EVSE identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -424,7 +424,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Unknown location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -442,7 +442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Unknown EVSE identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -519,7 +519,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Missing country code, party identification, location identification, EVSE identification and/or connector identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -538,7 +538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid country code!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -557,7 +557,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -576,7 +576,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -595,7 +595,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid EVSE identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -614,7 +614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid connector identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -633,7 +633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Unknown location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -651,7 +651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Unknown EVSE identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -669,7 +669,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Unknown connector identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -735,7 +735,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Missing country code, party identification and/or session identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -754,7 +754,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid country code!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -773,7 +773,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -791,7 +791,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid session identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -810,7 +810,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Unknown session identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -865,7 +865,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Missing command identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -884,7 +884,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     StatusMessage        = "Invalid command identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
@@ -3085,7 +3085,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                        Allow                      = new List<HTTPMethod> {
                                                                                         HTTPMethod.OPTIONS,
                                                                                         HTTPMethod.GET,
@@ -3121,7 +3121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                                 });
@@ -3181,7 +3181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                           ),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                        //LastModified               = ?
                                                    }.
@@ -3215,7 +3215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -3247,7 +3247,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    StatusMessage        = "Hello world!",
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
                                                };
@@ -3271,7 +3271,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                        Allow                      = new List<HTTPMethod> {
                                                                                         HTTPMethod.OPTIONS,
                                                                                         HTTPMethod.GET,
@@ -3312,7 +3312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                                 });
@@ -3361,7 +3361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                           CustomEnvironmentalImpactSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = location.LastUpdated.ToIso8601(),
                                                        ETag                       = location.ETag
@@ -3393,7 +3393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -3436,7 +3436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Could not parse the given location JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -3475,7 +3475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                             ? HTTPStatusCode.Created
                                                                                             : HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
                                                            ETag                       = addOrUpdateResult.Data.ETag
@@ -3504,7 +3504,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                       CustomEnvironmentalImpactSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
                                                        ETag                       = addOrUpdateResult.Data.ETag
@@ -3536,7 +3536,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -3600,7 +3600,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                                      CustomEnvironmentalImpactSerializer),
                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedLocation.PatchedData.LastUpdated.ToIso8601(),
                                                                ETag                       = patchedLocation.PatchedData.ETag
@@ -3612,7 +3612,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = patchedLocation.ErrorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -3642,7 +3642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -3693,7 +3693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                               CustomEnvironmentalImpactSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = location.LastUpdated.ToIso8601(),
                                                            ETag                       = location.ETag
@@ -3719,7 +3719,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                        Allow                      = new List<HTTPMethod> {
                                                                                         HTTPMethod.OPTIONS,
                                                                                         HTTPMethod.GET,
@@ -3760,7 +3760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                                 });
@@ -3802,7 +3802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                       CustomImageSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = evse.LastUpdated.ToIso8601(),
                                                        ETag                       = evse.ETag
@@ -3834,7 +3834,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -3878,7 +3878,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Could not parse the given EVSE JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -3910,7 +3910,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                             ? HTTPStatusCode.Created
                                                                                             : HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = newOrUpdatedEVSE.LastUpdated.ToIso8601(),
                                                            ETag                       = newOrUpdatedEVSE.ETag
@@ -3931,7 +3931,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                   CustomImageSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = newOrUpdatedEVSE.LastUpdated.ToIso8601(),
                                                        ETag                       = newOrUpdatedEVSE.ETag
@@ -3963,7 +3963,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4019,7 +4019,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                                  CustomImageSerializer),
                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedEVSE.PatchedData.LastUpdated.ToIso8601(),
                                                                ETag                       = patchedEVSE.PatchedData.ETag
@@ -4031,7 +4031,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = patchedEVSE.ErrorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4061,7 +4061,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4105,7 +4105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                   CustomImageSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = existingEVSE.LastUpdated.ToIso8601(),
                                                            ETag                       = existingEVSE.ETag
@@ -4133,7 +4133,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    StatusMessage        = "Hello world!",
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                        Allow                      = new List<HTTPMethod> {
                                                                                         HTTPMethod.OPTIONS,
                                                                                         HTTPMethod.GET,
@@ -4174,7 +4174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                                 });
@@ -4211,7 +4211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                            CustomConnectorSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = connector.LastUpdated.ToIso8601(),
                                                        ETag                       = connector.ETag
@@ -4243,7 +4243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4290,7 +4290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Could not parse the given connector JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4316,7 +4316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                             ? HTTPStatusCode.Created
                                                                                             : HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = newOrUpdatedConnector.LastUpdated.ToIso8601(),
                                                            ETag                       = newOrUpdatedConnector.ETag
@@ -4330,7 +4330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                        CustomConnectorSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = newOrUpdatedConnector.LastUpdated.ToIso8601(),
                                                        ETag                       = newOrUpdatedConnector.ETag
@@ -4362,7 +4362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4414,7 +4414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                            Data                 = patchedConnector.PatchedData.ToJSON(),
                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedConnector.PatchedData.LastUpdated.ToIso8601(),
                                                                ETag                       = patchedConnector.PatchedData.ETag
@@ -4426,7 +4426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = patchedConnector.ErrorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4456,7 +4456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4495,7 +4495,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                        CustomConnectorSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = existingConnector.LastUpdated.ToIso8601(),
                                                            ETag                       = existingConnector.ETag
@@ -4522,7 +4522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, POST",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                        Allow                      = new List<HTTPMethod> {
                                                                                         HTTPMethod.OPTIONS,
                                                                                         HTTPMethod.POST
@@ -4559,7 +4559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, POST",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4601,7 +4601,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         //               StatusMessage        = "Could not parse the given EVSE JSON: " + ErrorResponse,
                                         //               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                         //                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                        //                   AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                        //                   AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                         //                   AccessControlAllowHeaders  = "Authorization"
                                         //               }
                                         //           };
@@ -4620,7 +4620,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        //Data                 = newOrUpdatedEVSE.ToJSON(),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, POST",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4646,7 +4646,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                              new OCPIResponse.Builder(Request) {
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                              });
@@ -4679,7 +4679,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                                 });
@@ -4716,7 +4716,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                           ),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                        //LastModified               = ?
                                                    }.
@@ -4753,7 +4753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                                 });
@@ -4804,7 +4804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                           ),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                        //LastModified               = ?
                                                    }.
@@ -4838,7 +4838,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4872,7 +4872,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    StatusMessage        = "Hello world!",
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
                                                };
@@ -4902,7 +4902,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -4935,7 +4935,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    StatusMessage        = "Hello world!",
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
                                                };
@@ -4959,7 +4959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                              new OCPIResponse.Builder(Request) {
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                         Allow                      = new List<HTTPMethod> {
                                                                                          HTTPMethod.OPTIONS,
                                                                                          HTTPMethod.GET,
@@ -5000,7 +5000,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                                 });
@@ -5037,7 +5037,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                       CustomPriceSerializer),
                                                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                     HTTPStatusCode             = HTTPStatusCode.OK,
-                                                    AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                    AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                     AccessControlAllowHeaders  = "Authorization",
                                                     LastModified               = session.LastUpdated.ToIso8601(),
                                                     ETag                       = session.ETag
@@ -5069,7 +5069,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -5112,7 +5112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Could not parse the given session JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -5139,7 +5139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                             ? HTTPStatusCode.Created
                                                                                             : HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
                                                            ETag                       = addOrUpdateResult.Data.ETag
@@ -5156,7 +5156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                      CustomPriceSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
                                                        ETag                       = addOrUpdateResult.Data.ETag
@@ -5188,7 +5188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -5237,7 +5237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                                     CustomPriceSerializer),
                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedSession.PatchedData.LastUpdated.ToIso8601(),
                                                                ETag                       = patchedSession.PatchedData.ETag
@@ -5249,7 +5249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = patchedSession.ErrorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -5279,7 +5279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -5319,7 +5319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                      CustomPriceSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization"
                                                            //LastModified               = Timestamp.Now.ToIso8601()
                                                        }

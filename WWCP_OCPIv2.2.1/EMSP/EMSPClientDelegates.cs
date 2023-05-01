@@ -69,7 +69,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                       Location_Id              LocationId,
 
-                                                      CancellationToken?       CancellationToken,
+                                                      CancellationToken        CancellationToken,
                                                       EventTracking_Id         EventTrackingId,
                                                       TimeSpan                 RequestTimeout);
 
@@ -83,7 +83,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                        Location_Id              LocationId,
 
-                                                       CancellationToken?       CancellationToken,
+                                                       CancellationToken        CancellationToken,
                                                        EventTracking_Id         EventTrackingId,
                                                        TimeSpan                 RequestTimeout,
 
@@ -105,7 +105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                   Location_Id              LocationId,
                                                   EVSE_UId                 EVSEUId,
 
-                                                  CancellationToken?       CancellationToken,
+                                                  CancellationToken        CancellationToken,
                                                   EventTracking_Id         EventTrackingId,
                                                   TimeSpan                 RequestTimeout);
 
@@ -120,7 +120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                    Location_Id              LocationId,
                                                    EVSE_UId                 EVSEUId,
 
-                                                   CancellationToken?       CancellationToken,
+                                                   CancellationToken        CancellationToken,
                                                    EventTracking_Id         EventTrackingId,
                                                    TimeSpan                 RequestTimeout,
 
@@ -143,7 +143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                        EVSE_UId                  EVSEUId,
                                                        Connector_Id              ConnectorId,
 
-                                                       CancellationToken?        CancellationToken,
+                                                       CancellationToken         CancellationToken,
                                                        EventTracking_Id          EventTrackingId,
                                                        TimeSpan                  RequestTimeout);
 
@@ -159,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                         EVSE_UId                  EVSEUId,
                                                         Connector_Id              ConnectorId,
 
-                                                        CancellationToken?        CancellationToken,
+                                                        CancellationToken         CancellationToken,
                                                         EventTracking_Id          EventTrackingId,
                                                         TimeSpan                  RequestTimeout,
 
@@ -212,7 +212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                     Tariff_Id                TariffId,
 
-                                                    CancellationToken?       CancellationToken,
+                                                    CancellationToken        CancellationToken,
                                                     EventTracking_Id         EventTrackingId,
                                                     TimeSpan                 RequestTimeout);
 
@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                      Tariff_Id                TariffId,
 
-                                                     CancellationToken?       CancellationToken,
+                                                     CancellationToken        CancellationToken,
                                                      EventTracking_Id         EventTrackingId,
                                                      TimeSpan                 RequestTimeout,
 
@@ -279,7 +279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                      Session_Id               SessionId,
 
-                                                     CancellationToken?       CancellationToken,
+                                                     CancellationToken        CancellationToken,
                                                      EventTracking_Id         EventTrackingId,
                                                      TimeSpan                 RequestTimeout);
 
@@ -293,7 +293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                       Session_Id               SessionId,
 
-                                                      CancellationToken?       CancellationToken,
+                                                      CancellationToken        CancellationToken,
                                                       EventTracking_Id         EventTrackingId,
                                                       TimeSpan                 RequestTimeout,
 
@@ -346,7 +346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                  CDR_Id                   CDRId,
 
-                                                 CancellationToken?       CancellationToken,
+                                                 CancellationToken        CancellationToken,
                                                  EventTracking_Id         EventTrackingId,
                                                  TimeSpan                 RequestTimeout);
 
@@ -360,7 +360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                   CDR_Id                   CDRId,
 
-                                                  CancellationToken?       CancellationToken,
+                                                  CancellationToken        CancellationToken,
                                                   EventTracking_Id         EventTrackingId,
                                                   TimeSpan                 RequestTimeout,
 
@@ -384,7 +384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                    Party_Id                 PartyId,
                                                    Token_Id                 TokenId,
 
-                                                   CancellationToken?       CancellationToken,
+                                                   CancellationToken        CancellationToken,
                                                    EventTracking_Id         EventTrackingId,
                                                    TimeSpan                 RequestTimeout);
 
@@ -400,7 +400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                     Party_Id                 PartyId,
                                                     Token_Id                 TokenId,
 
-                                                    CancellationToken?       CancellationToken,
+                                                    CancellationToken        CancellationToken,
                                                     EventTracking_Id         EventTrackingId,
                                                     TimeSpan                 RequestTimeout,
 
@@ -421,7 +421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                    Token                    Token,
 
-                                                   CancellationToken?       CancellationToken,
+                                                   CancellationToken        CancellationToken,
                                                    EventTracking_Id         EventTrackingId,
                                                    TimeSpan                 RequestTimeout);
 
@@ -435,7 +435,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                     Token                    Token,
 
-                                                    CancellationToken?       CancellationToken,
+                                                    CancellationToken        CancellationToken,
                                                     EventTracking_Id         EventTrackingId,
                                                     TimeSpan                 RequestTimeout,
 
@@ -459,7 +459,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                      Token_Id                  TokenId,
                                                      JObject                   TokenPatch,
 
-                                                     CancellationToken?        CancellationToken,
+                                                     CancellationToken         CancellationToken,
                                                      EventTracking_Id          EventTrackingId,
                                                      TimeSpan                  RequestTimeout);
 
@@ -476,7 +476,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                       Token_Id                  TokenId,
                                                       JObject                   TokenPatch,
 
-                                                      CancellationToken?        CancellationToken,
+                                                      CancellationToken         CancellationToken,
                                                       EventTracking_Id          EventTrackingId,
                                                       TimeSpan                  RequestTimeout,
 
@@ -503,7 +503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                      EVSE_UId?                                           EVSEUId,
                                                      AuthorizationReference?                             AuthorizationReference,
 
-                                                     CancellationToken?                                  CancellationToken,
+                                                     CancellationToken                                   CancellationToken,
                                                      EventTracking_Id                                    EventTrackingId,
                                                      TimeSpan                                            RequestTimeout);
 
@@ -522,7 +522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                       EVSE_UId?                                           EVSEUId,
                                                       AuthorizationReference?                             AuthorizationReference,
 
-                                                      CancellationToken?                                  CancellationToken,
+                                                      CancellationToken                                   CancellationToken,
                                                       EventTracking_Id                                    EventTrackingId,
                                                       TimeSpan                                            RequestTimeout,
 
@@ -697,7 +697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              EVSE_UId                                                    EVSEUId,
                                                              Connector_Id                                                ConnectorId,
 
-                                                             CancellationToken?                                          CancellationToken,
+                                                             CancellationToken                                           CancellationToken,
                                                              EventTracking_Id                                            EventTrackingId,
                                                              TimeSpan                                                    RequestTimeout);
 
@@ -713,7 +713,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                               EVSE_UId                                                    EVSEUId,
                                                               Connector_Id                                                ConnectorId,
 
-                                                              CancellationToken?                                          CancellationToken,
+                                                              CancellationToken                                           CancellationToken,
                                                               EventTracking_Id                                            EventTrackingId,
                                                               TimeSpan                                                    RequestTimeout,
 

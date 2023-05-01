@@ -502,6 +502,156 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
         #endregion
 
 
+
+        #region EMSP_OptionsCredentials_JSON_NoToken_Test()
+
+        /// <summary>
+        /// EMSP PutCredentials JSON without an access token.
+        /// </summary>
+        [Test]
+        public async Task EMSP_OptionsCredentials_JSON_NoToken_Test()
+        {
+
+            if (cpoVersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.OptionsRequest(credentialsURL);
+
+                // OPTIONS /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Mon, 01 May 2023 18:36:39 GMT
+                // Host:                            127.0.0.1:3301
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                // HTTP/1.1 200 OK
+                // Date: Mon, 01 May 2023 18:36:39 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET
+                // Allow:                           System.Collections.Generic.List`1[org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPMethod]
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (200,            response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response3.AccessControlAllowMethods);
+                Assert.AreEqual (new[] { "OPTIONS", "GET" }, response3.AccessControlAllowMethods);
+
+
+
+                Assert.IsNotNull(response3.Allow);
+                if (response3.Allow is not null)
+                {
+                    Assert.AreEqual (2,                    response3.Allow.Count);
+                    Assert.Contains (HTTPMethod.OPTIONS,   response3.Allow);
+                    Assert.Contains (HTTPMethod.GET,       response3.Allow);
+                }
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region EMSP_PutCredentials_JSON_NoToken_Test()
+
+        /// <summary>
+        /// EMSP PutCredentials JSON without an access token.
+        /// </summary>
+        [Test]
+        public async Task EMSP_PutCredentials_JSON_NoToken_Test()
+        {
+
+            if (cpoVersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()), //.Replace("3301", "3000")),
+                                                                       new Credentials(
+                                                                           AccessToken.Parse("1234"),
+                                                                           URL.Parse("http://localhost/versions"),
+                                                                           new BusinessDetails(
+                                                                               "GraphDefined",
+                                                                               URL.Parse("https://www.graphdefined.com")
+                                                                           ),
+                                                                           CountryCode.Parse("DE"),
+                                                                           Party_Id.   Parse("GEF")
+                                                                       ).ToJSON());
+
+                // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Mon, 01 May 2023 04:03:30 GMT
+                // Accept:                          application/json; charset=utf-8;q=1
+                // Host:                            127.0.0.1:3301
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  171
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "token":         "1234",
+                //     "url":           "http://localhost/versions",
+                //     "business_details": {
+                //         "name":      "GraphDefined",
+                //         "website":   "https://www.graphdefined.com"
+                //     },
+                //     "country_code":  "DE",
+                //     "party_id":      "GEF"
+                // }
+
+                // HTTP/1.1 405 Method Not Allowed
+                // Date:                            Mon, 01 May 2023 04:03:51 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  151
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      2000,
+                //     "status_message":  "You need to be registered before trying to invoke this protected method!",
+                //     "timestamp":       "2023-05-01T04:04:02.642Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                //Assert.AreEqual (405,            response3.HTTPStatusCode.Code);
+                //Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json        = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (2000,                                                                         json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("You need to be registered before trying to invoke this protected method!",   json["status_message"]?.Value<String>());
+
+                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
     }
 
 }

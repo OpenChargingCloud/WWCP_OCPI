@@ -845,7 +845,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         Correlation_Id?     CorrelationId       = null,
 
                         DateTime?           Timestamp           = null,
-                        CancellationToken?  CancellationToken   = null,
+                        CancellationToken   CancellationToken   = default,
                         EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
@@ -1057,15 +1057,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<Version_Id, VersionDetail>>
 
-            GetVersionDetails(Version_Id?         VersionId             = null,
-                              Boolean             SetAsDefaultVersion   = true,
-                              Request_Id?         RequestId             = null,
-                              Correlation_Id?     CorrelationId         = null,
+            GetVersionDetails(Version_Id?        VersionId             = null,
+                              Boolean            SetAsDefaultVersion   = true,
+                              Request_Id?        RequestId             = null,
+                              Correlation_Id?    CorrelationId         = null,
 
-                              DateTime?           Timestamp             = null,
-                              CancellationToken?  CancellationToken     = null,
-                              EventTracking_Id?   EventTrackingId       = null,
-                              TimeSpan?           RequestTimeout        = null)
+                              DateTime?          Timestamp             = null,
+                              CancellationToken  CancellationToken     = default,
+                              EventTracking_Id?  EventTrackingId       = null,
+                              TimeSpan?          RequestTimeout        = null)
 
         {
 
@@ -1166,11 +1166,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                               requestbuilder.Set("X-Correlation-ID", correlationId);
                                                                                           }),
 
-                                                         RequestLogDelegate: OnGetVersionDetailsHTTPRequest,
-                                                         ResponseLogDelegate: OnGetVersionDetailsHTTPResponse,
-                                                         CancellationToken: CancellationToken,
-                                                         EventTrackingId: EventTrackingId,
-                                                         RequestTimeout: RequestTimeout ?? this.RequestTimeout).
+                                                         RequestLogDelegate:   OnGetVersionDetailsHTTPRequest,
+                                                         ResponseLogDelegate:  OnGetVersionDetailsHTTPResponse,
+                                                         CancellationToken:    CancellationToken,
+                                                         EventTrackingId:      EventTrackingId,
+                                                         RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
 
                                                    ConfigureAwait(false);
 
@@ -1391,7 +1391,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            Correlation_Id?     CorrelationId       = null,
 
                            DateTime?           Timestamp           = null,
-                           CancellationToken?  CancellationToken   = null,
+                           CancellationToken   CancellationToken   = default,
                            EventTracking_Id?   EventTrackingId     = null,
                            TimeSpan?           RequestTimeout      = null)
 
@@ -1588,7 +1588,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             Correlation_Id?     CorrelationId       = null,
 
                             DateTime?           Timestamp           = null,
-                            CancellationToken?  CancellationToken   = null,
+                            CancellationToken   CancellationToken   = default,
                             EventTracking_Id?   EventTrackingId     = null,
                             TimeSpan?           RequestTimeout      = null)
 
@@ -1780,7 +1780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            Correlation_Id?     CorrelationId       = null,
 
                            DateTime?           Timestamp           = null,
-                           CancellationToken?  CancellationToken   = null,
+                           CancellationToken   CancellationToken   = default,
                            EventTracking_Id?   EventTrackingId     = null,
                            TimeSpan?           RequestTimeout      = null)
 
@@ -1996,7 +1996,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                               Correlation_Id?     CorrelationId       = null,
 
                               DateTime?           Timestamp           = null,
-                              CancellationToken?  CancellationToken   = null,
+                              CancellationToken   CancellationToken   = default,
                               EventTracking_Id    EventTrackingId     = null,
                               TimeSpan?           RequestTimeout      = null)
 
@@ -2208,7 +2208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                      Correlation_Id?                CorrelationId         = null,
 
                      DateTime?                      Timestamp             = null,
-                     CancellationToken?             CancellationToken     = null,
+                     CancellationToken              CancellationToken     = default,
                      EventTracking_Id?              EventTrackingId       = null,
                      TimeSpan?                      RequestTimeout        = null)
 

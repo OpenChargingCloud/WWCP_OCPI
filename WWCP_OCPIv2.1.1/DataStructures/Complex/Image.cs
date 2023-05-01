@@ -514,8 +514,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Object">An image to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is Image Image &&
-                   Equals(Image);
+            => Object is Image image &&
+                   Equals(image);
 
         #endregion
 

@@ -36,6 +36,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
     public static class TestHelpers
     {
 
+        #region OptionsRequest     (RemoteURL, Token = null)
+
+        public static async Task<HTTPResponse> OptionsRequest(URL      RemoteURL,
+                                                                  String?  Token = null)
+
+            => await new HTTPClient(RemoteURL).
+                         Execute(client => client.CreateRequest(HTTPMethod.OPTIONS,
+                                                                RemoteURL.Path,
+                                                                requestbuilder => {
+
+                                                                    if (Token is not null && Token.IsNotNullOrEmpty())
+                                                                        requestbuilder.Authorization = new HTTPTokenAuthentication(Token);
+
+                                                                    requestbuilder.Set("X-Request-ID",      "1234");
+                                                                    requestbuilder.Set("X-Correlation-ID",  "5678");
+
+                                                                })).
+                         ConfigureAwait(false);
+
+        #endregion
+
+
         #region GetJSONRequest     (RemoteURL, Token = null)
 
         public static async Task<HTTPResponse<JObject>> GetJSONRequest(URL      RemoteURL,
@@ -58,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                               ConfigureAwait(false);
 
             return new HTTPResponse<JObject>(httpResponse,
-                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String!));
+                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String ?? "{}"));
 
         }
 
@@ -86,7 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                               ConfigureAwait(false);
 
             return new HTTPResponse<JArray>(httpResponse,
-                                            JArray.Parse(httpResponse.HTTPBodyAsUTF8String!));
+                                            JArray.Parse(httpResponse.HTTPBodyAsUTF8String ?? "[]"));
 
         }
 
@@ -114,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                               ConfigureAwait(false);
 
             return new HTTPResponse<String>(httpResponse,
-                                            httpResponse.HTTPBodyAsUTF8String);
+                                            httpResponse.HTTPBodyAsUTF8String ?? "");
 
         }
 
@@ -142,36 +164,70 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                               ConfigureAwait(false);
 
             return new HTTPResponse<String>(httpResponse,
-                                            httpResponse.HTTPBodyAsUTF8String);
+                                            httpResponse.HTTPBodyAsUTF8String ?? "");
 
         }
 
         #endregion
 
 
-        #region PostJSONRequest(Method, RemoteURL, Token, JSON)
+        #region PutJSONRequest     (RemoteURL, JSON, Token = null)
 
-        public static async Task<HTTPResponse<JObject>> PostJSONRequest(HTTPMethod  Method,
-                                                                        URL         RemoteURL,
-                                                                        String      Token,
-                                                                        JObject     JSON)
+        public static async Task<HTTPResponse<JObject>> PutJSONRequest(URL      RemoteURL,
+                                                                       JObject  JSON,
+                                                                       String?  Token = null)
         {
 
             var httpResponse  = await new HTTPClient(RemoteURL).
-                                              Execute(client => client.CreateRequest(Method,
+                                              Execute(client => client.CreateRequest(HTTPMethod.PUT,
                                                                                      RemoteURL.Path,
                                                                                      requestbuilder => {
-                                                                                         requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+
+                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
+                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content        = JSON.ToUTF8Bytes();
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
+
                                                                                      })).
                                               ConfigureAwait(false);
 
             return new HTTPResponse<JObject>(httpResponse,
-                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String!));
+                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String ?? "{}"));
+
+        }
+
+        #endregion
+
+        #region PostJSONRequest    (RemoteURL, JSON, Token = null)
+
+        public static async Task<HTTPResponse<JObject>> PostJSONRequest(URL     RemoteURL,
+                                                                       JObject  JSON,
+                                                                       String?  Token = null)
+        {
+
+            var httpResponse  = await new HTTPClient(RemoteURL).
+                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
+                                                                                     RemoteURL.Path,
+                                                                                     requestbuilder => {
+
+                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
+                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+
+                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content        = JSON.ToUTF8Bytes();
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      "1234");
+                                                                                         requestbuilder.Set("X-Correlation-ID",  "5678");
+
+                                                                                     })).
+                                              ConfigureAwait(false);
+
+            return new HTTPResponse<JObject>(httpResponse,
+                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String ?? "{}"));
 
         }
 

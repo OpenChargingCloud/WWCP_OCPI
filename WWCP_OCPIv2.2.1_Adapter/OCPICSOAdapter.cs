@@ -451,7 +451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.SetStaticData(WWCP.IRoamingNetwork    RoamingNetwork,
                                                                       WWCP.TransmissionTypes  TransmissionType,
                                                                       DateTime?               Timestamp,
-                                                                      CancellationToken?      CancellationToken,
+                                                                      CancellationToken       CancellationToken,
                                                                       EventTracking_Id?       EventTrackingId,
                                                                       TimeSpan?               RequestTimeout)
         {
@@ -461,7 +461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.AddStaticData(WWCP.IRoamingNetwork    RoamingNetwork,
                                                                       WWCP.TransmissionTypes  TransmissionType,
                                                                       DateTime?               Timestamp,
-                                                                      CancellationToken?      CancellationToken,
+                                                                      CancellationToken       CancellationToken,
                                                                       EventTracking_Id?       EventTrackingId,
                                                                       TimeSpan?               RequestTimeout)
         {
@@ -475,7 +475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                          Context?                DataSource,
                                                                          WWCP.TransmissionTypes  TransmissionType,
                                                                          DateTime?               Timestamp,
-                                                                         CancellationToken?      CancellationToken,
+                                                                         CancellationToken       CancellationToken,
                                                                          EventTracking_Id?       EventTrackingId,
                                                                          TimeSpan?               RequestTimeout)
         {
@@ -485,7 +485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.DeleteStaticData(WWCP.IRoamingNetwork    RoamingNetwork,
                                                                          WWCP.TransmissionTypes  TransmissionType,
                                                                          DateTime?               Timestamp,
-                                                                         CancellationToken?      CancellationToken,
+                                                                         CancellationToken       CancellationToken,
                                                                          EventTracking_Id?       EventTrackingId,
                                                                          TimeSpan?               RequestTimeout)
         {
@@ -496,7 +496,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushRoamingNetworkAdminStatusResult> WWCP.ISendAdminStatus.UpdateAdminStatus(IEnumerable<WWCP.RoamingNetworkAdminStatusUpdate>  AdminStatusUpdates,
                                                                                                WWCP.TransmissionTypes                             TransmissionType,
                                                                                                DateTime?                                          Timestamp,
-                                                                                               CancellationToken?                                 CancellationToken,
+                                                                                               CancellationToken                                  CancellationToken,
                                                                                                EventTracking_Id?                                  EventTrackingId,
                                                                                                TimeSpan?                                          RequestTimeout)
         {
@@ -506,7 +506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushRoamingNetworkStatusResult> WWCP.ISendStatus.UpdateStatus(IEnumerable<WWCP.RoamingNetworkStatusUpdate>  StatusUpdates,
                                                                                 WWCP.TransmissionTypes                        TransmissionType,
                                                                                 DateTime?                                     Timestamp,
-                                                                                CancellationToken?                            CancellationToken,
+                                                                                CancellationToken                             CancellationToken,
                                                                                 EventTracking_Id?                             EventTrackingId,
                                                                                 TimeSpan?                                     RequestTimeout)
         {
@@ -520,7 +520,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.SetStaticData(WWCP.IChargingStationOperator  ChargingStationOperator,
                                                                       WWCP.TransmissionTypes         TransmissionType,
                                                                       DateTime?                      Timestamp,
-                                                                      CancellationToken?             CancellationToken,
+                                                                      CancellationToken              CancellationToken,
                                                                       EventTracking_Id?              EventTrackingId,
                                                                       TimeSpan?                      RequestTimeout)
         {
@@ -530,7 +530,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.AddStaticData(WWCP.IChargingStationOperator  ChargingStationOperator,
                                                                       WWCP.TransmissionTypes         TransmissionType,
                                                                       DateTime?                      Timestamp,
-                                                                      CancellationToken?             CancellationToken,
+                                                                      CancellationToken              CancellationToken,
                                                                       EventTracking_Id?              EventTrackingId,
                                                                       TimeSpan?                      RequestTimeout)
         {
@@ -544,7 +544,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                          Context?                       DataSource,
                                                                          WWCP.TransmissionTypes         TransmissionType,
                                                                          DateTime?                      Timestamp,
-                                                                         CancellationToken?             CancellationToken,
+                                                                         CancellationToken              CancellationToken,
                                                                          EventTracking_Id?              EventTrackingId,
                                                                          TimeSpan?                      RequestTimeout)
         {
@@ -554,7 +554,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.DeleteStaticData(WWCP.IChargingStationOperator  ChargingStationOperator,
                                                                          WWCP.TransmissionTypes         TransmissionType,
                                                                          DateTime?                      Timestamp,
-                                                                         CancellationToken?             CancellationToken,
+                                                                         CancellationToken              CancellationToken,
                                                                          EventTracking_Id?              EventTrackingId,
                                                                          TimeSpan?                      RequestTimeout)
         {
@@ -566,7 +566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.SetStaticData(IEnumerable<WWCP.IChargingStationOperator>  ChargingStationOperators,
                                                                       WWCP.TransmissionTypes                      TransmissionType,
                                                                       DateTime?                                   Timestamp,
-                                                                      CancellationToken?                          CancellationToken,
+                                                                      CancellationToken                           CancellationToken,
                                                                       EventTracking_Id?                           EventTrackingId,
                                                                       TimeSpan?                                   RequestTimeout)
         {
@@ -576,7 +576,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.AddStaticData(IEnumerable<WWCP.IChargingStationOperator>  ChargingStationOperators,
                                                                       WWCP.TransmissionTypes                      TransmissionType,
                                                                       DateTime?                                   Timestamp,
-                                                                      CancellationToken?                          CancellationToken,
+                                                                      CancellationToken                           CancellationToken,
                                                                       EventTracking_Id?                           EventTrackingId,
                                                                       TimeSpan?                                   RequestTimeout)
         {
@@ -586,7 +586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.UpdateStaticData(IEnumerable<WWCP.IChargingStationOperator>  ChargingStationOperators,
                                                                          WWCP.TransmissionTypes                      TransmissionType,
                                                                          DateTime?                                   Timestamp,
-                                                                         CancellationToken?                          CancellationToken,
+                                                                         CancellationToken                           CancellationToken,
                                                                          EventTracking_Id?                           EventTrackingId,
                                                                          TimeSpan?                                   RequestTimeout)
         {
@@ -596,7 +596,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.DeleteStaticData(IEnumerable<WWCP.IChargingStationOperator>  ChargingStationOperators,
                                                                          WWCP.TransmissionTypes                      TransmissionType,
                                                                          DateTime?                                   Timestamp,
-                                                                         CancellationToken?                          CancellationToken,
+                                                                         CancellationToken                           CancellationToken,
                                                                          EventTracking_Id?                           EventTrackingId,
                                                                          TimeSpan?                                   RequestTimeout)
         {
@@ -608,7 +608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushChargingStationOperatorAdminStatusResult> WWCP.ISendAdminStatus.UpdateAdminStatus(IEnumerable<WWCP.ChargingStationOperatorAdminStatusUpdate>  AdminStatusUpdates,
                                                                                                         WWCP.TransmissionTypes                                      TransmissionType,
                                                                                                         DateTime?                                                   Timestamp,
-                                                                                                        CancellationToken?                                          CancellationToken,
+                                                                                                        CancellationToken                                           CancellationToken,
                                                                                                         EventTracking_Id?                                           EventTrackingId,
                                                                                                         TimeSpan?                                                   RequestTimeout)
         {
@@ -618,7 +618,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         Task<WWCP.PushChargingStationOperatorStatusResult> WWCP.ISendStatus.UpdateStatus(IEnumerable<WWCP.ChargingStationOperatorStatusUpdate>  StatusUpdates,
                                                                                          WWCP.TransmissionTypes                                 TransmissionType,
                                                                                          DateTime?                                              Timestamp,
-                                                                                         CancellationToken?                                     CancellationToken,
+                                                                                         CancellationToken                                      CancellationToken,
                                                                                          EventTracking_Id?                                      EventTrackingId,
                                                                                          TimeSpan?                                              RequestTimeout)
         {
@@ -647,7 +647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes  TransmissionType,
 
                                             DateTime?               Timestamp,
-                                            CancellationToken?      CancellationToken,
+                                            CancellationToken       CancellationToken,
                                             EventTracking_Id?       EventTrackingId,
                                             TimeSpan?               RequestTimeout)
 
@@ -736,7 +736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes  TransmissionType,
 
                                             DateTime?               Timestamp,
-                                            CancellationToken?      CancellationToken,
+                                            CancellationToken       CancellationToken,
                                             EventTracking_Id?       EventTrackingId,
                                             TimeSpan?               RequestTimeout)
 
@@ -940,7 +940,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                WWCP.TransmissionTypes   TransmissionType,
 
                                                DateTime?                Timestamp,
-                                               CancellationToken?       CancellationToken,
+                                               CancellationToken        CancellationToken,
                                                EventTracking_Id?        EventTrackingId,
                                                TimeSpan?                RequestTimeout)
 
@@ -959,7 +959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes           TransmissionType,
 
                                             DateTime?                        Timestamp,
-                                            CancellationToken?               CancellationToken,
+                                            CancellationToken                CancellationToken,
                                             EventTracking_Id?                EventTrackingId,
                                             TimeSpan?                        RequestTimeout)
 
@@ -973,7 +973,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes           TransmissionType,
 
                                             DateTime?                        Timestamp,
-                                            CancellationToken?               CancellationToken,
+                                            CancellationToken                CancellationToken,
                                             EventTracking_Id?                EventTrackingId,
                                             TimeSpan?                        RequestTimeout)
 
@@ -987,7 +987,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                WWCP.TransmissionTypes           TransmissionType,
 
                                                DateTime?                        Timestamp,
-                                               CancellationToken?               CancellationToken,
+                                               CancellationToken                CancellationToken,
                                                EventTracking_Id?                EventTrackingId,
                                                TimeSpan?                        RequestTimeout)
 
@@ -1001,7 +1001,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                WWCP.TransmissionTypes           TransmissionType,
 
                                                DateTime?                        Timestamp,
-                                               CancellationToken?               CancellationToken,
+                                               CancellationToken                CancellationToken,
                                                EventTracking_Id?                EventTrackingId,
                                                TimeSpan?                        RequestTimeout)
 
@@ -1016,7 +1016,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                     WWCP.TransmissionTypes                           TransmissionType,
 
                                                     DateTime?                                        Timestamp,
-                                                    CancellationToken?                               CancellationToken,
+                                                    CancellationToken                                CancellationToken,
                                                     EventTracking_Id?                                EventTrackingId,
                                                     TimeSpan?                                        RequestTimeout)
 
@@ -1030,7 +1030,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                           WWCP.TransmissionTypes                      TransmissionType,
 
                                           DateTime?                                   Timestamp,
-                                          CancellationToken?                          CancellationToken,
+                                          CancellationToken                           CancellationToken,
                                           EventTracking_Id?                           EventTrackingId,
                                           TimeSpan?                                   RequestTimeout)
 
@@ -1060,7 +1060,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes  TransmissionType,
 
                                             DateTime?               Timestamp,
-                                            CancellationToken?      CancellationToken,
+                                            CancellationToken       CancellationToken,
                                             EventTracking_Id?       EventTrackingId,
                                             TimeSpan?               RequestTimeout)
 
@@ -1159,7 +1159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes   TransmissionType,
 
                                             DateTime?                Timestamp,
-                                            CancellationToken?       CancellationToken,
+                                            CancellationToken        CancellationToken,
                                             EventTracking_Id?        EventTrackingId,
                                             TimeSpan?                RequestTimeout)
 
@@ -1265,7 +1265,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                WWCP.TransmissionTypes   TransmissionType,
 
                                                DateTime?                Timestamp,
-                                               CancellationToken?       CancellationToken,
+                                               CancellationToken        CancellationToken,
                                                EventTracking_Id?        EventTrackingId,
                                                TimeSpan?                RequestTimeout)
 
@@ -1364,7 +1364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                WWCP.TransmissionTypes   TransmissionType,
 
                                                DateTime?                Timestamp,
-                                               CancellationToken?       CancellationToken,
+                                               CancellationToken        CancellationToken,
                                                EventTracking_Id?        EventTrackingId,
                                                TimeSpan?                RequestTimeout)
 
@@ -1383,7 +1383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes              TransmissionType,
 
                                             DateTime?                           Timestamp,
-                                            CancellationToken?                  CancellationToken,
+                                            CancellationToken                   CancellationToken,
                                             EventTracking_Id?                   EventTrackingId,
                                             TimeSpan?                           RequestTimeout)
 
@@ -1397,7 +1397,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes              TransmissionType,
 
                                             DateTime?                           Timestamp,
-                                            CancellationToken?                  CancellationToken,
+                                            CancellationToken                   CancellationToken,
                                             EventTracking_Id?                   EventTrackingId,
                                             TimeSpan?                           RequestTimeout)
 
@@ -1411,7 +1411,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                WWCP.TransmissionTypes              TransmissionType,
 
                                                DateTime?                           Timestamp,
-                                               CancellationToken?                  CancellationToken,
+                                               CancellationToken                   CancellationToken,
                                                EventTracking_Id?                   EventTrackingId,
                                                TimeSpan?                           RequestTimeout)
 
@@ -1425,7 +1425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                WWCP.TransmissionTypes              TransmissionType,
 
                                                DateTime?                           Timestamp,
-                                               CancellationToken?                  CancellationToken,
+                                               CancellationToken                   CancellationToken,
                                                EventTracking_Id?                   EventTrackingId,
                                                TimeSpan?                           RequestTimeout)
 
@@ -1440,7 +1440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                     WWCP.TransmissionTypes                              TransmissionType,
 
                                                     DateTime?                                           Timestamp,
-                                                    CancellationToken?                                  CancellationToken,
+                                                    CancellationToken                                   CancellationToken,
                                                     EventTracking_Id?                                   EventTrackingId,
                                                     TimeSpan?                                           RequestTimeout)
 
@@ -1453,7 +1453,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                           WWCP.TransmissionTypes                         TransmissionType,
 
                                           DateTime?                                      Timestamp,
-                                          CancellationToken?                             CancellationToken,
+                                          CancellationToken                              CancellationToken,
                                           EventTracking_Id?                              EventTrackingId,
                                           TimeSpan?                                      RequestTimeout)
 
@@ -1483,7 +1483,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes  TransmissionType,
 
                                             DateTime?               Timestamp,
-                                            CancellationToken?      CancellationToken,
+                                            CancellationToken       CancellationToken,
                                             EventTracking_Id?       EventTrackingId,
                                             TimeSpan?               RequestTimeout)
 
@@ -1616,7 +1616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes  TransmissionType,
 
                                             DateTime?               Timestamp,
-                                            CancellationToken?      CancellationToken,
+                                            CancellationToken       CancellationToken,
                                             EventTracking_Id?       EventTrackingId,
                                             TimeSpan?               RequestTimeout)
 
@@ -1756,7 +1756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                WWCP.TransmissionTypes  TransmissionType,
 
                                                DateTime?               Timestamp,
-                                               CancellationToken?      CancellationToken,
+                                               CancellationToken       CancellationToken,
                                                EventTracking_Id?       EventTrackingId,
                                                TimeSpan?               RequestTimeout)
 
@@ -1889,7 +1889,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                WWCP.TransmissionTypes   TransmissionType,
 
                                                DateTime?                Timestamp,
-                                               CancellationToken?       CancellationToken,
+                                               CancellationToken        CancellationToken,
                                                EventTracking_Id?        EventTrackingId,
                                                TimeSpan?                RequestTimeout)
 
@@ -1908,7 +1908,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes   TransmissionType,
 
                                             DateTime?                Timestamp,
-                                            CancellationToken?       CancellationToken,
+                                            CancellationToken        CancellationToken,
                                             EventTracking_Id?        EventTrackingId,
                                             TimeSpan?                RequestTimeout)
 
@@ -1922,7 +1922,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             WWCP.TransmissionTypes   TransmissionType,
 
                                             DateTime?                Timestamp,
-                                            CancellationToken?       CancellationToken,
+                                            CancellationToken        CancellationToken,
                                             EventTracking_Id?        EventTrackingId,
                                             TimeSpan?                RequestTimeout)
 
@@ -1936,7 +1936,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                WWCP.TransmissionTypes   TransmissionType,
 
                                                DateTime?                Timestamp,
-                                               CancellationToken?       CancellationToken,
+                                               CancellationToken        CancellationToken,
                                                EventTracking_Id?        EventTrackingId,
                                                TimeSpan?                RequestTimeout)
 
@@ -1950,7 +1950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                WWCP.TransmissionTypes   TransmissionType,
 
                                                DateTime?                Timestamp,
-                                               CancellationToken?       CancellationToken,
+                                               CancellationToken        CancellationToken,
                                                EventTracking_Id?        EventTrackingId,
                                                TimeSpan?                RequestTimeout)
 
@@ -1977,7 +1977,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                     WWCP.TransmissionTypes                   TransmissionType,
 
                                                     DateTime?                                Timestamp,
-                                                    CancellationToken?                       CancellationToken,
+                                                    CancellationToken                        CancellationToken,
                                                     EventTracking_Id?                        EventTrackingId,
                                                     TimeSpan?                                RequestTimeout)
 
@@ -2004,7 +2004,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                           WWCP.TransmissionTypes              TransmissionType,
 
                                           DateTime?                           Timestamp,
-                                          CancellationToken?                  CancellationToken,
+                                          CancellationToken                   CancellationToken,
                                           EventTracking_Id?                   EventTrackingId,
                                           TimeSpan?                           RequestTimeout)
 
@@ -2131,7 +2131,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                       WWCP.TransmissionTypes                    TransmissionType,
 
                                                       DateTime?                                 Timestamp,
-                                                      CancellationToken?                        CancellationToken,
+                                                      CancellationToken                         CancellationToken,
                                                       EventTracking_Id?                         EventTrackingId,
                                                       TimeSpan?                                 RequestTimeout)
 
@@ -2169,7 +2169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            WWCP.ChargingStationOperator_Id?  OperatorId            = null,
 
                            DateTime?                         Timestamp             = null,
-                           CancellationToken?                CancellationToken     = null,
+                           CancellationToken                 CancellationToken     = default,
                            EventTracking_Id?                 EventTrackingId       = null,
                            TimeSpan?                         RequestTimeout        = null)
 
@@ -2177,10 +2177,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region Initial checks
 
-            Timestamp         ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            CancellationToken ??= new CancellationTokenSource().Token;
-            EventTrackingId   ??= EventTracking_Id.New;
-            RequestTimeout    ??= this.RequestTimeout;
+            Timestamp       ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            EventTrackingId ??= EventTracking_Id.New;
+            RequestTimeout  ??= this.RequestTimeout;
 
             #endregion
 
@@ -2467,7 +2466,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-
         #region AuthorizeStop (SessionId, LocalAuthentication, 
 
         /// <summary>
@@ -2492,7 +2490,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                           WWCP.ChargingStationOperator_Id?  OperatorId            = null,
 
                           DateTime?                         Timestamp             = null,
-                          CancellationToken?                CancellationToken     = null,
+                          CancellationToken                 CancellationToken     = default,
                           EventTracking_Id?                 EventTrackingId       = null,
                           TimeSpan?                         RequestTimeout        = null)
 
@@ -2500,10 +2498,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region Initial checks
 
-            Timestamp         ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            CancellationToken ??= new CancellationTokenSource().Token;
-            EventTrackingId   ??= EventTracking_Id.New;
-            RequestTimeout    ??= this.RequestTimeout;
+            Timestamp       ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            EventTrackingId ??= EventTracking_Id.New;
+            RequestTimeout  ??= this.RequestTimeout;
 
             #endregion
 
@@ -2593,7 +2590,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-
         #region SendChargeDetailRecords
 
         /// <summary>
@@ -2612,7 +2608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                   WWCP.TransmissionTypes                TransmissionType,
 
                                                                   DateTime?                             Timestamp,
-                                                                  CancellationToken?                    CancellationToken,
+                                                                  CancellationToken                     CancellationToken,
                                                                   EventTracking_Id?                     EventTrackingId,
                                                                   TimeSpan?                             RequestTimeout)
 
@@ -2620,10 +2616,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region Initial checks
 
-            Timestamp         ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-            CancellationToken ??= new CancellationTokenSource().Token;
-            EventTrackingId   ??= EventTracking_Id.New;
-            RequestTimeout    ??= this.RequestTimeout;
+            Timestamp       ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            EventTrackingId ??= EventTracking_Id.New;
+            RequestTimeout  ??= this.RequestTimeout;
 
             #endregion
 

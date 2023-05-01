@@ -69,7 +69,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                                                       Location_Id              LocationId,
 
-                                                      CancellationToken?       CancellationToken,
+                                                      CancellationToken        CancellationToken,
                                                       EventTracking_Id         EventTrackingId,
                                                       TimeSpan                 RequestTimeout);
 
@@ -83,7 +83,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                                                        Location_Id              LocationId,
 
-                                                       CancellationToken?       CancellationToken,
+                                                       CancellationToken        CancellationToken,
                                                        EventTracking_Id         EventTrackingId,
                                                        TimeSpan                 RequestTimeout,
 
@@ -105,7 +105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                   Location_Id              LocationId,
                                                   EVSE_UId                 EVSEUId,
 
-                                                  CancellationToken?       CancellationToken,
+                                                  CancellationToken        CancellationToken,
                                                   EventTracking_Id         EventTrackingId,
                                                   TimeSpan                 RequestTimeout);
 
@@ -120,7 +120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                    Location_Id              LocationId,
                                                    EVSE_UId                 EVSEUId,
 
-                                                   CancellationToken?       CancellationToken,
+                                                   CancellationToken        CancellationToken,
                                                    EventTracking_Id         EventTrackingId,
                                                    TimeSpan                 RequestTimeout,
 
@@ -143,7 +143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                        EVSE_UId                  EVSEUId,
                                                        Connector_Id              ConnectorId,
 
-                                                       CancellationToken?        CancellationToken,
+                                                       CancellationToken         CancellationToken,
                                                        EventTracking_Id          EventTrackingId,
                                                        TimeSpan                  RequestTimeout);
 
@@ -159,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                         EVSE_UId                  EVSEUId,
                                                         Connector_Id              ConnectorId,
 
-                                                        CancellationToken?        CancellationToken,
+                                                        CancellationToken         CancellationToken,
                                                         EventTracking_Id          EventTrackingId,
                                                         TimeSpan                  RequestTimeout,
 
@@ -212,7 +212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                                                      Session_Id               SessionId,
 
-                                                     CancellationToken?       CancellationToken,
+                                                     CancellationToken        CancellationToken,
                                                      EventTracking_Id         EventTrackingId,
                                                      TimeSpan                 RequestTimeout);
 
@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                                                       Session_Id               SessionId,
 
-                                                      CancellationToken?       CancellationToken,
+                                                      CancellationToken        CancellationToken,
                                                       EventTracking_Id         EventTrackingId,
                                                       TimeSpan                 RequestTimeout,
 
@@ -250,7 +250,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                              EVSE_UId                                                    EVSEUId,
                                                              Connector_Id                                                ConnectorId,
 
-                                                             CancellationToken?                                          CancellationToken,
+                                                             CancellationToken                                           CancellationToken,
                                                              EventTracking_Id                                            EventTrackingId,
                                                              TimeSpan                                                    RequestTimeout);
 
@@ -266,7 +266,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                               EVSE_UId                                                    EVSEUId,
                                                               Connector_Id                                                ConnectorId,
 
-                                                              CancellationToken?                                          CancellationToken,
+                                                              CancellationToken                                           CancellationToken,
                                                               EventTracking_Id                                            EventTrackingId,
                                                               TimeSpan                                                    RequestTimeout,
 
