@@ -1297,25 +1297,48 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                OCPIResponseLogger:  PutCredentialsResponse,
                                OCPIRequestHandler:  async Request => {
 
-                                   #region Check access token... known and access allowed!
+                                   #region Check access token...
 
-                                   if (Request.AccessInfo.HasValue &&
-                                       Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                   if (Request.AccessInfo.HasValue)
                                    {
 
-                                       // The party is not yet fully registered!
-                                       if (!Request.AccessInfo.Value.VersionsURL.HasValue)
+                                       #region ...known and access blocked!
+
+                                       if (Request.AccessInfo.Value.Status == AccessStatus.BLOCKED)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
-                                                      StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
+                                                      StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is blocked!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                          HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                          HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
                                                           AccessControlAllowHeaders  = "Authorization"
                                                       }
                                                   };
 
-                                       return await POSTOrPUTCredentials(Request);
+                                       #endregion
+
+                                       #region ...known and access allowed!
+
+                                       if (Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                       {
+
+                                           // The party is not yet fully registered!
+                                           if (!Request.AccessInfo.Value.VersionsURL.HasValue)
+                                               return new OCPIResponse.Builder(Request) {
+                                                          StatusCode           = 2000,
+                                                          StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
+                                                          HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                              HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                              AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+                                                              AccessControlAllowHeaders  = "Authorization"
+                                                          }
+                                                      };
+
+                                           return await POSTOrPUTCredentials(Request);
+
+                                       }
+
+                                       #endregion
 
                                    }
 
@@ -1326,7 +1349,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   StatusCode           = 2000,
                                                   StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                                      HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                       AccessControlAllowHeaders  = "Authorization"
                                                   }
