@@ -398,7 +398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            AccessStatus
                        )
                    },
-                   new RemoteAccessInfo[] {
+                   new[] {
                        new RemoteAccessInfo(
                            RemoteAccessToken,
                            RemoteVersionsURL,
@@ -483,6 +483,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : new List<RemoteAccessInfo>();
 
             this.ETag                        = CalcSHA256Hash();
+
+            unchecked
+            {
+
+                this.hashCode = Id.               GetHashCode()  * 29 ^
+                                CountryCode.      GetHashCode()  * 23 ^
+                                PartyId.          GetHashCode()  * 19 ^
+                                Role.             GetHashCode()  * 17 ^
+                                BusinessDetails.  GetHashCode()  * 13 ^
+                                Status.           GetHashCode()  * 11 ^
+                                LastUpdated.      GetHashCode()  *  7 ^
+                                ETag.             GetHashCode()  *  5 ^
+                                accessInfoStatus. CalcHashCode() *  3 ^
+                                remoteAccessInfos.CalcHashCode();
+
+            }
 
         }
 
@@ -807,10 +823,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                ETag.           Equals(RemoteParty.ETag)            &&
 
                accessInfoStatus.Count.Equals(RemoteParty.accessInfoStatus.Count)     &&
-               accessInfoStatus. All(_accessInfoStatus => RemoteParty.accessInfoStatus. Contains(_accessInfoStatus)) &&
+               accessInfoStatus. All(RemoteParty.accessInfoStatus. Contains) &&
 
                remoteAccessInfos.Count.Equals(RemoteParty.remoteAccessInfos.Count)     &&
-               remoteAccessInfos.All(remoteAccessInfo  => RemoteParty.remoteAccessInfos.Contains(remoteAccessInfo));
+               remoteAccessInfos.All(RemoteParty.remoteAccessInfos.Contains);
 
         #endregion
 
@@ -818,27 +834,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Return the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Id.               GetHashCode()  * 29 ^
-                       CountryCode.      GetHashCode()  * 23 ^
-                       PartyId.          GetHashCode()  * 19 ^
-                       Role.             GetHashCode()  * 17 ^
-                       BusinessDetails.  GetHashCode()  * 13 ^
-                       Status.           GetHashCode()  * 11 ^
-                       LastUpdated.      GetHashCode()  *  7 ^
-                       ETag.             GetHashCode()  *  5 ^
-                       accessInfoStatus. CalcHashCode() *  3 ^
-                       remoteAccessInfos.CalcHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 
@@ -848,7 +850,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Return a text representation of this object.
         /// </summary>
         public override String ToString()
-
             => Id.ToString();
 
         #endregion

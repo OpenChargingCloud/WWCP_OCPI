@@ -839,6 +839,348 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
         #endregion
 
+        #region EMSP_PutCredentials_JSON_RegisteredToken_Test()
+
+        /// <summary>
+        /// EMSP PutCredentials JSON using a registered access token.
+        /// </summary>
+        [Test]
+        public async Task EMSP_PutCredentials_JSON_RegisteredToken_Test()
+        {
+
+            if (cpoVersionsAPIURL.HasValue &&
+                emsp1HTTPAPI   is not null &&
+                cpoCommonAPI   is not null &&
+                emsp1CommonAPI is not null)
+            {
+
+                var newAccessToken  = AccessToken.Parse("updatedAccessToken");
+
+                var response1       = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
+                                                                       new Credentials(
+                                                                           newAccessToken,
+                                                                           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                                           new BusinessDetails(
+                                                                               "GraphDefined EMSP #1 (NEW)",
+                                                                               URL.Parse("https://www.graphdefined.com/emsp/new")
+                                                                           ),
+                                                                           CountryCode.Parse("DE"),
+                                                                           Party_Id.   Parse("GDF")
+                                                                       ).ToJSON(),
+                                                                       emp1_accessing_cso__token);
+
+
+                // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Thu, 04 May 2023 04:35:10 GMT
+                // Accept:                          application/json; charset=utf-8; q=1
+                // Host:                            127.0.0.1:3301
+                // Authorization:                   Token emp1-accessing-cso::token
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  223
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "token":         "updatedAccessToken",
+                //     "url":           "http://localhost:3401/ocpi/v2.1/versions",
+                //     "business_details": {
+                //         "name":           "GraphDefined EMSP #1 (NEW)",
+                //         "website":        "https://www.graphdefined.com/emsp/new"
+                //     },
+                //     "country_code":  "DE",
+                //     "party_id":      "GDF"
+                // }
+
+                // HTTP/1.1 200 OK
+                // Date:                            Thu, 04 May 2023 04:35:16 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  348
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "data": {
+                //         "token":           "rMGz58G464SS2A9Y76A6G9CrjKEQdMn5pxdh1Wt2d2hMv6Epzx",
+                //         "url":             "http://127.0.0.1:3301/ocpi/v2.1/versions",
+                //         "business_details": {
+                //             "name":            "GraphDefined CSO Services",
+                //             "website":         "https://www.graphdefined.com/cso"
+                //         },
+                //         "country_code":    "DE",
+                //         "party_id":        "GEF"
+                //     },
+                //     "status_code":      1000,
+                //     "status_message":  "Hello world!",
+                //     "timestamp":       "2023-05-04T04:35:16.712Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (200,            response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json        = response3.Content;
+                Assert.IsNotNull(json);
+
+                var token       = json["data"]?["token"]?.Value<String>();
+                Assert.IsNotNull(token);
+                var accessToken = AccessToken.Parse(token!);
+
+                Assert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.1/versions",   json["data"]?["url"]?.                         Value<String>());
+
+                Assert.AreEqual ("GraphDefined CSO Services",                  json["data"]?["business_details"]?["name"]?.   Value<String>());
+                Assert.AreEqual ("https://www.graphdefined.com/cso",           json["data"]?["business_details"]?["website"]?.Value<String>());
+
+                Assert.AreEqual ("DE",                                         json["data"]?["country_code"]?.                Value<String>());
+                Assert.AreEqual ("GEF",                                        json["data"]?["party_id"]?.                    Value<String>());
+
+                Assert.AreEqual (1000,             json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("Hello world!",   json["status_message"]?.Value<String>());
+
+                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+
+                var remotePartyAtCPO   = cpoCommonAPI.  RemoteParties.FirstOrDefault(remoteParty => remoteParty.RemoteAccessInfos.Any(accessInfoStatus => accessInfoStatus.AccessToken == newAccessToken));
+                Assert.IsNotNull(remotePartyAtCPO);
+
+                Assert.AreEqual ("GraphDefined EMSP #1 (NEW)",                 remotePartyAtCPO!.BusinessDetails.Name);
+                Assert.AreEqual ("https://www.graphdefined.com/emsp/new",      remotePartyAtCPO!.BusinessDetails.Website.ToString());
+                Assert.AreEqual ("DE",                                         remotePartyAtCPO!.CountryCode.            ToString());
+                Assert.AreEqual ("GDF",                                        remotePartyAtCPO!.PartyId.                ToString());
+
+                //var remotePartyAtEMSP1 = emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.AccessInfoStatus. Any(remoteAccessInfo => remoteAccessInfo.Token       == accessToken));
+
+            }
+
+        }
+
+        #endregion
+
+        #region EMSP_PutCredentials_JSON_RegisteredToken_InvalidCountryCode_Test()
+
+        /// <summary>
+        /// EMSP PutCredentials JSON using a registered access token and
+        /// trying to update the country code.
+        /// </summary>
+        [Test]
+        public async Task EMSP_PutCredentials_JSON_RegisteredToken_InvalidCountryCode_Test()
+        {
+
+            if (cpoVersionsAPIURL.HasValue &&
+                emsp1HTTPAPI   is not null &&
+                cpoCommonAPI   is not null &&
+                emsp1CommonAPI is not null)
+            {
+
+                var newAccessToken  = AccessToken.Parse("updatedAccessToken");
+
+                var response1       = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
+                                                                       new Credentials(
+                                                                           newAccessToken,
+                                                                           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                                           new BusinessDetails(
+                                                                               "GraphDefined EMSP #1 (NEW)",
+                                                                               URL.Parse("https://www.graphdefined.com/emsp/new")
+                                                                           ),
+                                                                           CountryCode.Parse("FR"),
+                                                                           Party_Id.   Parse("GDF")
+                                                                       ).ToJSON(),
+                                                                       emp1_accessing_cso__token);
+
+
+                // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Thu, 04 May 2023 05:04:31 GMT
+                // Accept:                          application/json; charset=utf-8; q=1
+                // Host:                            127.0.0.1:3301
+                // Authorization:                   Token emp1-accessing-cso::token
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  223
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "token":         "updatedAccessToken",
+                //     "url":           "http://localhost:3401/ocpi/v2.1/versions",
+                //     "business_details": {
+                //         "name":           "GraphDefined EMSP #1 (NEW)",
+                //         "website":        "https://www.graphdefined.com/emsp/new"
+                //     },
+                //     "country_code":  "FR",
+                //     "party_id":      "GDF"
+                // }
+
+                // HTTP/1.1 400 Bad Request
+                // Date:                            Thu, 04 May 2023 05:04:32 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  138
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      2000,
+                //     "status_message":  "Updating the country code from 'DE' to 'FR' is not allowed!",
+                //     "timestamp":       "2023-05-04T05:04:32.071Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (400,            response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json              = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (2000,                                                            json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("Updating the country code from 'DE' to 'FR' is not allowed!",   json["status_message"]?.Value<String>());
+
+                var timestamp         = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+
+                var remotePartyAtCPO  = cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.RemoteAccessInfos.Any(accessInfoStatus => accessInfoStatus.AccessToken.ToString() == "emp1-2-cso:token"));
+                Assert.IsNotNull(remotePartyAtCPO);
+
+                Assert.AreEqual ("GraphDefined EMSP #1 Services",                                 remotePartyAtCPO!.BusinessDetails.Name);
+                Assert.AreEqual ("https://www.graphdefined.com/emsp1",                            remotePartyAtCPO!.BusinessDetails.Website.ToString());
+                Assert.AreEqual ("DE",                                                            remotePartyAtCPO!.CountryCode.            ToString());
+                Assert.AreEqual ("GDF",                                                           remotePartyAtCPO!.PartyId.                ToString());
+
+            }
+
+        }
+
+        #endregion
+
+        #region EMSP_PutCredentials_JSON_RegisteredToken_InvalidPartyId_Test()
+
+        /// <summary>
+        /// EMSP PutCredentials JSON using a registered access token and
+        /// trying to update the party identification.
+        /// </summary>
+        [Test]
+        public async Task EMSP_PutCredentials_JSON_RegisteredToken_InvalidPartyId_Test()
+        {
+
+            if (cpoVersionsAPIURL.HasValue &&
+                emsp1HTTPAPI   is not null &&
+                cpoCommonAPI   is not null &&
+                emsp1CommonAPI is not null)
+            {
+
+                var newAccessToken  = AccessToken.Parse("updatedAccessToken");
+
+                var response1       = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
+                                                                       new Credentials(
+                                                                           newAccessToken,
+                                                                           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                                           new BusinessDetails(
+                                                                               "GraphDefined EMSP #1 (NEW)",
+                                                                               URL.Parse("https://www.graphdefined.com/emsp/new")
+                                                                           ),
+                                                                           CountryCode.Parse("DE"),
+                                                                           Party_Id.   Parse("GXF")
+                                                                       ).ToJSON(),
+                                                                       emp1_accessing_cso__token);
+
+
+                // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Thu, 04 May 2023 05:04:31 GMT
+                // Accept:                          application/json; charset=utf-8; q=1
+                // Host:                            127.0.0.1:3301
+                // Authorization:                   Token emp1-accessing-cso::token
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  223
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "token":         "updatedAccessToken",
+                //     "url":           "http://localhost:3401/ocpi/v2.1/versions",
+                //     "business_details": {
+                //         "name":           "GraphDefined EMSP #1 (NEW)",
+                //         "website":        "https://www.graphdefined.com/emsp/new"
+                //     },
+                //     "country_code":  "DE",
+                //     "party_id":      "GXF"
+                // }
+
+                // HTTP/1.1 400 Bad Request
+                // Date:                            Thu, 04 May 2023 05:04:32 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  148
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      2000,
+                //     "status_message":  "Updating the party identification from 'GDF' to 'GXF' is not allowed!",
+                //     "timestamp":       "2023-05-04T05:04:32.071Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (400,            response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json              = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (2000,                                                                      json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("Updating the party identification from 'GDF' to 'GXF' is not allowed!",   json["status_message"]?.Value<String>());
+
+                var timestamp         = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+
+                var remotePartyAtCPO  = cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.RemoteAccessInfos.Any(accessInfoStatus => accessInfoStatus.AccessToken.ToString() == "emp1-2-cso:token"));
+                Assert.IsNotNull(remotePartyAtCPO);
+
+                Assert.AreEqual ("GraphDefined EMSP #1 Services",                                           remotePartyAtCPO!.BusinessDetails.Name);
+                Assert.AreEqual ("https://www.graphdefined.com/emsp1",                                      remotePartyAtCPO!.BusinessDetails.Website.ToString());
+                Assert.AreEqual ("DE",                                                                      remotePartyAtCPO!.CountryCode.            ToString());
+                Assert.AreEqual ("GDF",                                                                     remotePartyAtCPO!.PartyId.                ToString());
+
+            }
+
+        }
+
+        #endregion
+
+
     }
 
 }

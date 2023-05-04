@@ -663,7 +663,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                           RemoteAccessToken:           AccessToken.Parse("emp1-2-cso:token"),
                                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                          RemoteVersionIds:            null,
+                                          RemoteVersionIds:            new[] { Version.Id },
+                                          SelectedVersionId:           Version.Id,
                                           AccessTokenBase64Encoding:   false,
                                           RemoteStatus:                RemoteAccessStatus.ONLINE,
 
@@ -677,7 +678,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                           AccessStatus:                AccessStatus.ALLOWED,
                                           RemoteAccessToken:           AccessToken.Parse("emp2-2-cso:token"),
                                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                          RemoteVersionIds:            null,
+                                          RemoteVersionIds:            new[] { Version.Id },
+                                          SelectedVersionId:           Version.Id,
                                           AccessTokenBase64Encoding:   false,
                                           RemoteStatus:                RemoteAccessStatus.ONLINE,
                                           PartyStatus:                 PartyStatus.ENABLED);
@@ -694,7 +696,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                           RemoteAccessToken:           AccessToken.Parse(emp1_accessing_cso__token),
                                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                          RemoteVersionIds:            null,
+                                          RemoteVersionIds:            new[] { Version.Id },
+                                          SelectedVersionId:           Version.Id,
                                           AccessTokenBase64Encoding:   false,
                                           RemoteStatus:                RemoteAccessStatus.ONLINE,
 
@@ -711,7 +714,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                           RemoteAccessToken:           AccessToken.Parse(emp2_accessing_cso__token),
                                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                          RemoteVersionIds:            null,
+                                          RemoteVersionIds:            new[] { Version.Id },
+                                          SelectedVersionId:           Version.Id,
                                           AccessTokenBase64Encoding:   false,
                                           RemoteStatus:                RemoteAccessStatus.ONLINE,
 

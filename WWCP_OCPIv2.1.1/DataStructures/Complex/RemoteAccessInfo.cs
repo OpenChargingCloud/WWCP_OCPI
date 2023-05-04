@@ -30,7 +30,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// The remote access information.
     /// </summary>
-    public class RemoteAccessInfo
+    public class RemoteAccessInfo :  IEquatable<RemoteAccessInfo>,
+                                     IComparable<RemoteAccessInfo>,
+                                     IComparable
     {
 
         #region Properties
@@ -51,10 +53,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Boolean                  AccessTokenBase64Encoding    { get; }
 
         [Mandatory]
-        public RemoteAccessStatus       Status                       { get; set; }
+        public RemoteAccessStatus       Status                       { get; }
 
         [Mandatory]
-        public DateTime                 LastUpdate                   { get; }
+        public DateTime                 LastUpdated                  { get; }
 
         #endregion
 
@@ -69,21 +71,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="SelectedVersionId">A optional selected version identification.</param>
         /// <param name="AccessTokenBase64Encoding">Whether the access token is base64 encoded or not.</param>
         /// <param name="Status">A remote access status.</param>
+        /// <param name="LastUpdate">The optional timestamp of the last update.</param>
         public RemoteAccessInfo(AccessToken               AccessToken,
                                 URL                       VersionsURL,
                                 IEnumerable<Version_Id>?  VersionIds                  = null,
                                 Version_Id?               SelectedVersionId           = null,
                                 Boolean?                  AccessTokenBase64Encoding   = null,
-                                RemoteAccessStatus?       Status                      = RemoteAccessStatus.ONLINE)
+                                RemoteAccessStatus?       Status                      = RemoteAccessStatus.ONLINE,
+                                DateTime?                 LastUpdate                  = null)
         {
 
             this.AccessToken                = AccessToken;
             this.VersionsURL                = VersionsURL;
-            this.VersionIds                 = VersionIds?.Distinct() ?? Array.Empty<Version_Id>();
+            this.VersionIds                 = VersionIds?.Distinct()    ?? Array.Empty<Version_Id>();
             this.SelectedVersionId          = SelectedVersionId;
             this.AccessTokenBase64Encoding  = AccessTokenBase64Encoding ?? false;
-            this.Status                     = Status ?? RemoteAccessStatus.ONLINE;
-            this.LastUpdate                 = Timestamp.Now;
+            this.Status                     = Status                    ?? RemoteAccessStatus.ONLINE;
+            this.LastUpdated                 = LastUpdate                ?? Timestamp.Now;
 
         }
 
@@ -101,19 +105,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("token",                    AccessToken.      ToString()),
-                           new JProperty("versionsURL",              VersionsURL.      ToString()),
+                                 new JProperty("token",               AccessToken.      ToString()),
+                                 new JProperty("versionsURL",         VersionsURL.      ToString()),
 
                            VersionIds.IsNeitherNullNorEmpty()
-                               ? new JProperty("versionIds",         new JArray(VersionIds.Select(versionId => versionId.ToString())))
+                               ? new JProperty("versionIds",          new JArray(VersionIds.Select(versionId => versionId.ToString())))
                                : null,
 
                            SelectedVersionId.HasValue
-                               ? new JProperty("selectedVersionId",  SelectedVersionId.ToString())
+                               ? new JProperty("selectedVersionId",   SelectedVersionId.ToString())
                                : null,
 
-                           new JProperty("status",                   Status.           ToString()),
-                           new JProperty("lastUpdate",               LastUpdate.       ToIso8601())
+                                 new JProperty("status",              Status.           ToString()),
+                                 new JProperty("lastUpdate",          LastUpdated.      ToIso8601())
 
                        );
 
@@ -138,6 +142,234 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    SelectedVersionId,
                    AccessTokenBase64Encoding,
                    Status);
+
+        #endregion
+
+
+        #region Operator overloading
+
+        #region Operator == (RemoteAccessInfo1, RemoteAccessInfo2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="RemoteAccessInfo1">A remote access information.</param>
+        /// <param name="RemoteAccessInfo2">Another remote access information.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (RemoteAccessInfo RemoteAccessInfo1,
+                                           RemoteAccessInfo RemoteAccessInfo2)
+        {
+
+            if (Object.ReferenceEquals(RemoteAccessInfo1, RemoteAccessInfo2))
+                return true;
+
+            if ((RemoteAccessInfo1 is null) || (RemoteAccessInfo2 is null))
+                return false;
+
+            return RemoteAccessInfo1.Equals(RemoteAccessInfo2);
+
+        }
+
+        #endregion
+
+        #region Operator != (RemoteAccessInfo1, RemoteAccessInfo2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="RemoteAccessInfo1">A remote access information.</param>
+        /// <param name="RemoteAccessInfo2">Another remote access information.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (RemoteAccessInfo RemoteAccessInfo1,
+                                           RemoteAccessInfo RemoteAccessInfo2)
+
+            => !(RemoteAccessInfo1 == RemoteAccessInfo2);
+
+        #endregion
+
+        #region Operator <  (RemoteAccessInfo1, RemoteAccessInfo2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="RemoteAccessInfo1">A remote access information.</param>
+        /// <param name="RemoteAccessInfo2">Another remote access information.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (RemoteAccessInfo RemoteAccessInfo1,
+                                          RemoteAccessInfo RemoteAccessInfo2)
+
+            => RemoteAccessInfo1 is null
+                   ? throw new ArgumentNullException(nameof(RemoteAccessInfo1), "The given remote access information must not be null!")
+                   : RemoteAccessInfo1.CompareTo(RemoteAccessInfo2) < 0;
+
+        #endregion
+
+        #region Operator <= (RemoteAccessInfo1, RemoteAccessInfo2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="RemoteAccessInfo1">A remote access information.</param>
+        /// <param name="RemoteAccessInfo2">Another remote access information.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (RemoteAccessInfo RemoteAccessInfo1,
+                                           RemoteAccessInfo RemoteAccessInfo2)
+
+            => !(RemoteAccessInfo1 > RemoteAccessInfo2);
+
+        #endregion
+
+        #region Operator >  (RemoteAccessInfo1, RemoteAccessInfo2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="RemoteAccessInfo1">A remote access information.</param>
+        /// <param name="RemoteAccessInfo2">Another remote access information.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (RemoteAccessInfo RemoteAccessInfo1,
+                                          RemoteAccessInfo RemoteAccessInfo2)
+
+            => RemoteAccessInfo1 is null
+                   ? throw new ArgumentNullException(nameof(RemoteAccessInfo1), "The given remote access information must not be null!")
+                   : RemoteAccessInfo1.CompareTo(RemoteAccessInfo2) > 0;
+
+        #endregion
+
+        #region Operator >= (RemoteAccessInfo1, RemoteAccessInfo2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="RemoteAccessInfo1">A remote access information.</param>
+        /// <param name="RemoteAccessInfo2">Another remote access information.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (RemoteAccessInfo RemoteAccessInfo1,
+                                           RemoteAccessInfo RemoteAccessInfo2)
+
+            => !(RemoteAccessInfo1 < RemoteAccessInfo2);
+
+        #endregion
+
+        #endregion
+
+        #region IComparable<RemoteAccessInfo> Members
+
+        #region CompareTo(Object)
+
+        /// <summary>
+        /// Compares two remote access information.
+        /// </summary>
+        /// <param name="Object">A remote access information to compare with.</param>
+        public Int32 CompareTo(Object? Object)
+
+            => Object is RemoteAccessInfo remoteAccessInfo
+                   ? CompareTo(remoteAccessInfo)
+                   : throw new ArgumentException("The given object is not a remote access information!",
+                                                 nameof(Object));
+
+        #endregion
+
+        #region CompareTo(RemoteAccessInfo)
+
+        /// <summary>
+        /// Compares two remote access information.
+        /// </summary>
+        /// <param name="RemoteAccessInfo">A remote access information to compare with.</param>
+        public Int32 CompareTo(RemoteAccessInfo? RemoteAccessInfo)
+        {
+
+            if (RemoteAccessInfo is null)
+                throw new ArgumentNullException(nameof(RemoteAccessInfo), "The given remote access information must not be null!");
+
+            var c = AccessToken.              CompareTo(RemoteAccessInfo.AccessToken);
+
+            if (c == 0)
+                c = VersionsURL.              CompareTo(RemoteAccessInfo.VersionsURL);
+
+            if (c == 0)
+                c = AccessTokenBase64Encoding.CompareTo(RemoteAccessInfo.AccessTokenBase64Encoding);
+
+            if (c == 0)
+                c = Status.                   CompareTo(RemoteAccessInfo.Status);
+
+            if (c == 0)
+                c = LastUpdated.              CompareTo(RemoteAccessInfo.LastUpdated);
+
+            if (c == 0 && SelectedVersionId.HasValue && RemoteAccessInfo.SelectedVersionId.HasValue)
+                c = SelectedVersionId.Value.  CompareTo(RemoteAccessInfo.SelectedVersionId.Value);
+
+            // VersionIds
+
+            return c;
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region IEquatable<RemoteAccessInfo> Members
+
+        #region Equals(Object)
+
+        /// <summary>
+        /// Compares two remote access information for equality.
+        /// </summary>
+        /// <param name="Object">A remote access information to compare with.</param>
+        public override Boolean Equals(Object? Object)
+
+            => Object is RemoteAccessInfo remoteAccessInfo &&
+                   Equals(remoteAccessInfo);
+
+        #endregion
+
+        #region Equals(RemoteAccessInfo)
+
+        /// <summary>
+        /// Compares two remote access information for equality.
+        /// </summary>
+        /// <param name="RemoteAccessInfo">A remote access information to compare with.</param>
+        public Boolean Equals(RemoteAccessInfo? RemoteAccessInfo)
+
+            => RemoteAccessInfo is not null &&
+
+               AccessToken.              Equals(RemoteAccessInfo.AccessToken)               &&
+               VersionsURL.              Equals(RemoteAccessInfo.VersionsURL)               &&
+               AccessTokenBase64Encoding.Equals(RemoteAccessInfo.AccessTokenBase64Encoding) &&
+               Status.                   Equals(RemoteAccessInfo.Status)                    &&
+               LastUpdated.              Equals(RemoteAccessInfo.LastUpdated)               &&
+
+            ((!SelectedVersionId.HasValue && !RemoteAccessInfo.SelectedVersionId.HasValue) ||
+              (SelectedVersionId.HasValue &&  RemoteAccessInfo.SelectedVersionId.HasValue && SelectedVersionId.Value.Equals(RemoteAccessInfo.SelectedVersionId.Value))) &&
+
+               VersionIds.Count().Equals(RemoteAccessInfo.VersionIds.Count()) &&
+               VersionIds.All(RemoteAccessInfo.VersionIds.Contains);
+
+        #endregion
+
+        #endregion
+
+        #region GetHashCode()
+
+        private readonly Int32 hashCode;
+
+        /// <summary>
+        /// Return the hash code of this object.
+        /// </summary>
+        public override Int32 GetHashCode()
+            => hashCode;
+
+        #endregion
+
+        #region (override) ToString()
+
+        /// <summary>
+        /// Return a text representation of this object.
+        /// </summary>
+        public override String ToString()
+
+            => $"{AccessToken}{(AccessTokenBase64Encoding ? "[base64}" : "")} @ {VersionsURL} {Status}";
 
         #endregion
 

@@ -259,7 +259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 parties.First().CountryCode,
                                                 parties.First().PartyId,
                                                 parties.First().Role,
-                                                null,
+                                                parties.First().RemoteAccessInfos.FirstOrDefault()?.VersionsURL,
                                                 parties.First().BusinessDetails
                                             );
 

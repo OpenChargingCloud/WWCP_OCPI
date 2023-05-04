@@ -1297,12 +1297,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                OCPIResponseLogger:  PutCredentialsResponse,
                                OCPIRequestHandler:  async Request => {
 
-                                   #region Check access token...
+                                   #region The access token is known...
 
                                    if (Request.AccessInfo.HasValue)
                                    {
 
-                                       #region ...known and access blocked!
+                                       #region ...but access is blocked!
 
                                        if (Request.AccessInfo.Value.Status == AccessStatus.BLOCKED)
                                            return new OCPIResponse.Builder(Request) {
@@ -1317,7 +1317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                        #endregion
 
-                                       #region ...known and access allowed!
+                                       #region ...and access is allowed, but maybe not yet full registered!
 
                                        if (Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
                                        {
@@ -1440,19 +1440,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         private async Task<OCPIResponse.Builder> POSTOrPUTCredentials(OCPIRequest Request)
         {
 
+            #region Validate CREDENTIALS_TOKEN_A
+
             var CREDENTIALS_TOKEN_A     = Request.AccessToken;
+
+            if (!CREDENTIALS_TOKEN_A.HasValue)
+                return new OCPIResponse.Builder(Request) {
+                           StatusCode           = 2000,
+                           StatusMessage        = "The received credential token must not be null!",
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                               AccessControlAllowHeaders  = "Authorization"
+                           }
+                       };
+
+            #endregion
+
+            #region Validate old remote party
+
+            var oldRemoteParty = GetRemoteParties(remoteParty => remoteParty.AccessInfoStatus.Any(accessInfoStatus => accessInfoStatus.Token == CREDENTIALS_TOKEN_A.Value)).FirstOrDefault();
+
+            if (oldRemoteParty is null)
+                return new OCPIResponse.Builder(Request) {
+                           StatusCode           = 2000,
+                           StatusMessage        = $"There is no remote party having the given access token '{CREDENTIALS_TOKEN_A}'!",
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                               AccessControlAllowHeaders  = "Authorization"
+                           }
+                       };
+
+            #endregion
 
             #region Parse JSON
 
-            var ErrorResponse = String.Empty;
+            var errorResponse = String.Empty;
 
-            if (!Request.TryParseJObjectRequestBody(out JObject JSON, out OCPIResponse.Builder ResponseBuilder, AllowEmptyHTTPBody: false) ||
-                !Credentials.TryParse(JSON, out var receivedCredentials, out ErrorResponse))
+            if (!Request.TryParseJObjectRequestBody(out var JSON,
+                                                    out var responseBuilder,
+                                                    AllowEmptyHTTPBody: false))
+            {
+                return responseBuilder;
+            }
+
+            if (!Credentials.TryParse(JSON,
+                                      out var receivedCredentials,
+                                      out errorResponse) ||
+                receivedCredentials is null)
             {
 
                 return new OCPIResponse.Builder(Request) {
                            StatusCode           = 2000,
-                           StatusMessage        = "Could not parse the credentials JSON object! " + ErrorResponse,
+                           StatusMessage        = "Could not parse the received credentials JSON object: " + errorResponse,
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
@@ -1512,18 +1553,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
-            var commonClient            = new CommonClient(receivedCredentials.URL,
-                                                           receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
-                                                           this,
-                                                           DNSClient: HTTPServer.DNSClient);
+            var commonClient              = new CommonClient(receivedCredentials.URL,
+                                                             receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
+                                                             this,
+                                                             DNSClient: HTTPServer.DNSClient);
 
-            var otherVersions           = await commonClient.GetVersions();
+            var otherVersions             = await commonClient.GetVersions();
 
             #region ...or send error!
 
             if (otherVersions.StatusCode != 1000)
-            {
-
                 return new OCPIResponse.Builder(Request) {
                            StatusCode           = 2000,
                            StatusMessage        = "Could not fetch VERSIONS information from '" + receivedCredentials.URL + "'!",
@@ -1534,21 +1573,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                            }
                        };
 
-            }
-
             #endregion
 
-            var version2_1_1            = Version_Id.Parse("2.1.1");
-            var justVersion2_1_1        = otherVersions.Data.Where(version => version.Id == version2_1_1).ToArray();
+            var justMySupportedVersion    = otherVersions.Data?.Where(version => version.Id == Version.Id).ToArray() ?? Array.Empty<VersionInformation>();
 
             #region ...or send error!
 
-            if (justVersion2_1_1.Length == 0)
-            {
-
+            if (justMySupportedVersion.Length == 0)
                 return new OCPIResponse.Builder(Request) {
                            StatusCode           = 3003,
-                           StatusMessage        = "Could not find OCPI v2.1.1 at '" + receivedCredentials.URL + "'!",
+                           StatusMessage        = $"Could not find {Version.Number} at '{receivedCredentials.URL}'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
@@ -1556,20 +1590,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                            }
                        };
 
-            }
-
             #endregion
 
-            var otherVersion2_1_1Details  = await commonClient.GetVersionDetails(version2_1_1);
+            var otherVersion2_1_1Details  = await commonClient.GetVersionDetails(Version.Id);
 
             #region ...or send error!
 
             if (otherVersion2_1_1Details.StatusCode != 1000)
-            {
-
                 return new OCPIResponse.Builder(Request) {
                            StatusCode           = 3001,
-                           StatusMessage        = "Could not fetch v2.2 information from '" + justVersion2_1_1.First().URL + "'!",
+                           StatusMessage        = $"Could not fetch {Version.Number} information from '{justMySupportedVersion.First().URL}'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
@@ -1577,13 +1607,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                            }
                        };
 
-            }
-
             #endregion
 
 
+            #region Validate, that neither the country code nor the party identification was changed!
 
-            var CREDENTIALS_TOKEN_C = AccessToken.NewRandom();
+            if (oldRemoteParty.CountryCode != receivedCredentials.CountryCode)
+                return new OCPIResponse.Builder(Request) {
+                           StatusCode           = 2000,
+                           StatusMessage        = $"Updating the country code from '{oldRemoteParty.CountryCode}' to '{receivedCredentials.CountryCode}' is not allowed!",
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                               AccessControlAllowHeaders  = "Authorization"
+                           }
+                       };
+
+            if (oldRemoteParty.PartyId != receivedCredentials.PartyId)
+                return new OCPIResponse.Builder(Request) {
+                           StatusCode           = 2000,
+                           StatusMessage        = $"Updating the party identification from '{oldRemoteParty.PartyId}' to '{receivedCredentials.PartyId}' is not allowed!",
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                               AccessControlAllowHeaders  = "Authorization"
+                           }
+                       };
+
+            #endregion
+
+            var CREDENTIALS_TOKEN_C       = AccessToken.NewRandom();
+
+            // Remove the old access token
+            RemoveAccessToken(CREDENTIALS_TOKEN_A.Value);
 
             // Store credential of the other side!
             AddOrUpdateRemoteParty(receivedCredentials.CountryCode,
@@ -1594,23 +1650,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    receivedCredentials.Token,
                                    receivedCredentials.URL,
-                                   otherVersions.Data.Select(version => version.Id),
-                                   version2_1_1,
+                                   otherVersions.Data?.Select(version => version.Id) ?? Array.Empty<Version_Id>(),
+                                   Version.Id,
 
-                                   null, //receivedCredentials.Role,
+                                   oldRemoteParty.Role,
                                    null,
                                    AccessStatus.      ALLOWED,
                                    RemoteAccessStatus.ONLINE,
                                    PartyStatus.       ENABLED);
-
-            //SetIncomingAccessToken(CREDENTIALS_TOKEN_C,
-            //                       receivedCredentials.URL,
-            //                       receivedCredentials.Roles,
-            //                       AccessStatus.ALLOWED);
-
-
-            RemoveAccessToken(CREDENTIALS_TOKEN_A.Value);
-
 
 
             return new OCPIResponse.Builder(Request) {

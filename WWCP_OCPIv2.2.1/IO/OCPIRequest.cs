@@ -264,8 +264,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                         this.AccessInfo   = new AccessInfo(
                                                 AccessToken.Value,
-                                                parties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
-                                                null,
+                                                parties.First().AccessInfoStatus. First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
+                                                parties.First().RemoteAccessInfos.FirstOrDefault()?.VersionsURL,
                                                 new[] {
                                                     new CredentialsRole(
                                                         parties.First().CountryCode,
