@@ -3305,8 +3305,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -3327,8 +3327,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters            = Request.GetDateAndPaginationFilters();
 
-                                        var allLocations       = CommonAPI.GetLocations(Request.AccessInfo.Value.CountryCode,
-                                                                                        Request.AccessInfo.Value.PartyId).
+                                        var allLocations       = CommonAPI.GetLocations(Request.LocalAccessInfo.Value.CountryCode,
+                                                                                        Request.LocalAccessInfo.Value.PartyId).
                                                                            ToArray();
 
                                         var filteredLocations  = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
@@ -3389,8 +3389,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3472,8 +3472,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -3494,8 +3494,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check location
 
                                         if (!Request.ParseLocation(this,
-                                                                   Request.AccessInfo.Value.CountryCode,
-                                                                   Request.AccessInfo.Value.PartyId,
+                                                                   Request.LocalAccessInfo.Value.CountryCode,
+                                                                   Request.LocalAccessInfo.Value.PartyId,
                                                                    out var locationId,
                                                                    out var location,
                                                                    out var ocpiResponseBuilder,
@@ -3554,8 +3554,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3575,8 +3575,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing location
 
                                         if (!Request.ParseLocation(this,
-                                                                   Request.AccessInfo.Value.CountryCode,
-                                                                   Request.AccessInfo.Value.PartyId,
+                                                                   Request.LocalAccessInfo.Value.CountryCode,
+                                                                   Request.LocalAccessInfo.Value.PartyId,
                                                                    out var locationId,
                                                                    out var existingLocation,
                                                                    out var ocpiResponseBuilder,
@@ -3595,8 +3595,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         if (!Location.TryParse(locationJSON,
                                                                out var newOrUpdatedLocation,
                                                                out var errorResponse,
-                                                               Request.AccessInfo.Value.CountryCode,
-                                                               Request.AccessInfo.Value.PartyId,
+                                                               Request.LocalAccessInfo.Value.CountryCode,
+                                                               Request.LocalAccessInfo.Value.PartyId,
                                                                locationId) ||
                                              newOrUpdatedLocation is null)
                                         {
@@ -3697,8 +3697,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3718,8 +3718,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check location
 
                                         if (!Request.ParseLocation(this,
-                                                                   Request.AccessInfo.Value.CountryCode,
-                                                                   Request.AccessInfo.Value.PartyId,
+                                                                   Request.LocalAccessInfo.Value.CountryCode,
+                                                                   Request.LocalAccessInfo.Value.PartyId,
                                                                    out var locationId,
                                                                    out var location,
                                                                    out var ocpiResponseBuilder,
@@ -3802,8 +3802,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3823,8 +3823,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing location
 
                                         if (!Request.ParseLocation(this,
-                                                                   Request.AccessInfo.Value.CountryCode,
-                                                                   Request.AccessInfo.Value.PartyId,
+                                                                   Request.LocalAccessInfo.Value.CountryCode,
+                                                                   Request.LocalAccessInfo.Value.PartyId,
                                                                    out var locationId,
                                                                    out var location,
                                                                    out var ocpiResponseBuilder) ||
@@ -3919,8 +3919,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -3941,8 +3941,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
-                                                                       Request.AccessInfo.Value.CountryCode,
-                                                                       Request.AccessInfo.Value.PartyId,
+                                                                       Request.LocalAccessInfo.Value.CountryCode,
+                                                                       Request.LocalAccessInfo.Value.PartyId,
                                                                        out var locationId,
                                                                        out var location,
                                                                        out var evseUId,
@@ -3994,8 +3994,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4015,8 +4015,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
-                                                                       Request.AccessInfo.Value.CountryCode,
-                                                                       Request.AccessInfo.Value.PartyId,
+                                                                       Request.LocalAccessInfo.Value.CountryCode,
+                                                                       Request.LocalAccessInfo.Value.PartyId,
                                                                        out var locationId,
                                                                        out var existingLocation,
                                                                        out var evseUId,
@@ -4123,8 +4123,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4144,8 +4144,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
-                                                                       Request.AccessInfo.Value.CountryCode,
-                                                                       Request.AccessInfo.Value.PartyId,
+                                                                       Request.LocalAccessInfo.Value.CountryCode,
+                                                                       Request.LocalAccessInfo.Value.PartyId,
                                                                        out var locationId,
                                                                        out var existingLocation,
                                                                        out var eVSEUId,
@@ -4213,8 +4213,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4234,8 +4234,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing Location/EVSE(UId URI parameter)
 
                                         if (!Request.ParseLocationEVSE(this,
-                                                                       Request.AccessInfo.Value.CountryCode,
-                                                                       Request.AccessInfo.Value.PartyId,
+                                                                       Request.LocalAccessInfo.Value.CountryCode,
+                                                                       Request.LocalAccessInfo.Value.PartyId,
                                                                        out var locationId,
                                                                        out var existingLocation,
                                                                        out var eVSEUId,
@@ -4325,8 +4325,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -4347,8 +4347,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check connector
 
                                         if (!Request.ParseLocationEVSEConnector(this,
-                                                                                Request.AccessInfo.Value.CountryCode,
-                                                                                Request.AccessInfo.Value.PartyId,
+                                                                                Request.LocalAccessInfo.Value.CountryCode,
+                                                                                Request.LocalAccessInfo.Value.PartyId,
                                                                                 out var locationId,
                                                                                 out var location,
                                                                                 out var evseId,
@@ -4395,8 +4395,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4416,8 +4416,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check connector
 
                                         if (!Request.ParseLocationEVSEConnector(this,
-                                                                                Request.AccessInfo.Value.CountryCode,
-                                                                                Request.AccessInfo.Value.PartyId,
+                                                                                Request.LocalAccessInfo.Value.CountryCode,
+                                                                                Request.LocalAccessInfo.Value.PartyId,
                                                                                 out var locationId,
                                                                                 out var existingLocation,
                                                                                 out var eVSEUId,
@@ -4512,8 +4512,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4533,8 +4533,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check connector
 
                                         if (!Request.ParseLocationEVSEConnector(this,
-                                                                                Request.AccessInfo.Value.CountryCode,
-                                                                                Request.AccessInfo.Value.PartyId,
+                                                                                Request.LocalAccessInfo.Value.CountryCode,
+                                                                                Request.LocalAccessInfo.Value.PartyId,
                                                                                 out var locationId,
                                                                                 out var existingLocation,
                                                                                 out var eVSEUId,
@@ -4606,8 +4606,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4627,8 +4627,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing Location/EVSE/Connector(UId URI parameter)
 
                                         if (!Request.ParseLocationEVSEConnector(this,
-                                                                                Request.AccessInfo.Value.CountryCode,
-                                                                                Request.AccessInfo.Value.PartyId,
+                                                                                Request.LocalAccessInfo.Value.CountryCode,
+                                                                                Request.LocalAccessInfo.Value.PartyId,
                                                                                 out var locationId,
                                                                                 out var existingLocation,
                                                                                 out var eVSEUId,
@@ -4709,8 +4709,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4730,8 +4730,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
-                                                                       Request.AccessInfo.Value.CountryCode,
-                                                                       Request.AccessInfo.Value.PartyId,
+                                                                       Request.LocalAccessInfo.Value.CountryCode,
+                                                                       Request.LocalAccessInfo.Value.PartyId,
                                                                        out var locationId,
                                                                        out var existingLocation,
                                                                        out var eVSEUId,
@@ -4826,8 +4826,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -4848,8 +4848,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters          = Request.GetDateAndPaginationFilters();
 
-                                        var allTariffs       = CommonAPI.GetTariffs(Request.AccessInfo.Value.CountryCode,
-                                                                                    Request.AccessInfo.Value.PartyId).
+                                        var allTariffs       = CommonAPI.GetTariffs(Request.LocalAccessInfo.Value.CountryCode,
+                                                                                    Request.LocalAccessInfo.Value.PartyId).
                                                                          ToArray();
 
                                         var filteredTariffs  = allTariffs.Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
@@ -4902,8 +4902,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4983,8 +4983,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -5005,8 +5005,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check tariff
 
                                         if (!Request.ParseTariff(this,
-                                                                 Request.AccessInfo.Value.CountryCode,
-                                                                 Request.AccessInfo.Value.PartyId,
+                                                                 Request.LocalAccessInfo.Value.CountryCode,
+                                                                 Request.LocalAccessInfo.Value.PartyId,
                                                                  out var tariffId,
                                                                  out var tariff,
                                                                  out var ocpiResponseBuilder) ||
@@ -5056,8 +5056,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5077,8 +5077,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing tariff
 
                                         if (!Request.ParseTariff(this,
-                                                                 Request.AccessInfo.Value.CountryCode,
-                                                                 Request.AccessInfo.Value.PartyId,
+                                                                 Request.LocalAccessInfo.Value.CountryCode,
+                                                                 Request.LocalAccessInfo.Value.PartyId,
                                                                  out var tariffId,
                                                                  out var existingTariff,
                                                                  out var ocpiResponseBuilder,
@@ -5097,8 +5097,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         if (!Tariff.TryParse(tariffJSON,
                                                              out var newOrUpdatedTariff,
                                                              out var errorResponse,
-                                                             Request.AccessInfo.Value.CountryCode,
-                                                             Request.AccessInfo.Value.PartyId,
+                                                             Request.LocalAccessInfo.Value.CountryCode,
+                                                             Request.LocalAccessInfo.Value.PartyId,
                                                              tariffId) ||
                                              newOrUpdatedTariff is null)
                                         {
@@ -5173,8 +5173,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5194,8 +5194,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check tariff
 
                                         if (!Request.ParseTariff(this,
-                                                                 Request.AccessInfo.Value.CountryCode,
-                                                                 Request.AccessInfo.Value.PartyId,
+                                                                 Request.LocalAccessInfo.Value.CountryCode,
+                                                                 Request.LocalAccessInfo.Value.PartyId,
                                                                  out var tariffId,
                                                                  out var existingTariff,
                                                                  out var ocpiResponseBuilder,
@@ -5271,8 +5271,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5292,8 +5292,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing tariff
 
                                         if (!Request.ParseTariff(this,
-                                                                 Request.AccessInfo.Value.CountryCode,
-                                                                 Request.AccessInfo.Value.PartyId,
+                                                                 Request.LocalAccessInfo.Value.CountryCode,
+                                                                 Request.LocalAccessInfo.Value.PartyId,
                                                                  out var tariffId,
                                                                  out var existingTariff,
                                                                  out var ocpiResponseBuilder,
@@ -5373,8 +5373,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -5395,8 +5395,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters           = Request.GetDateAndPaginationFilters();
 
-                                        var allSessions       = CommonAPI.GetSessions(Request.AccessInfo.Value.CountryCode,
-                                                                                      Request.AccessInfo.Value.PartyId).
+                                        var allSessions       = CommonAPI.GetSessions(Request.LocalAccessInfo.Value.CountryCode,
+                                                                                      Request.LocalAccessInfo.Value.PartyId).
                                                                           ToArray();
 
                                         var filteredSessions  = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
@@ -5460,8 +5460,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5479,8 +5479,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     #endregion
 
 
-                                        CommonAPI.RemoveAllSessions(session => Request.AccessInfo.Value.CountryCode == session.CountryCode &&
-                                                                               Request.AccessInfo.Value.PartyId     == session.PartyId);
+                                        CommonAPI.RemoveAllSessions(session => Request.LocalAccessInfo.Value.CountryCode == session.CountryCode &&
+                                                                               Request.LocalAccessInfo.Value.PartyId     == session.PartyId);
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -5543,8 +5543,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -5565,8 +5565,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check session
 
                                         if (!Request.ParseSession(this,
-                                                                  Request.AccessInfo.Value.CountryCode,
-                                                                  Request.AccessInfo.Value.PartyId,
+                                                                  Request.LocalAccessInfo.Value.CountryCode,
+                                                                  Request.LocalAccessInfo.Value.PartyId,
                                                                   out var sessionId,
                                                                   out var session,
                                                                   out var ocpiResponseBuilder,
@@ -5628,8 +5628,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5649,8 +5649,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing session
 
                                         if (!Request.ParseSession(this,
-                                                                  Request.AccessInfo.Value.CountryCode,
-                                                                  Request.AccessInfo.Value.PartyId,
+                                                                  Request.LocalAccessInfo.Value.CountryCode,
+                                                                  Request.LocalAccessInfo.Value.PartyId,
                                                                   out var sessionId,
                                                                   out var existingSession,
                                                                   out var ocpiResponseBuilder,
@@ -5669,8 +5669,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         if (!Session.TryParse(sessionJSON,
                                                               out var newOrUpdatedSession,
                                                               out var errorResponse,
-                                                              Request.AccessInfo.Value.CountryCode,
-                                                              Request.AccessInfo.Value.PartyId,
+                                                              Request.LocalAccessInfo.Value.CountryCode,
+                                                              Request.LocalAccessInfo.Value.PartyId,
                                                               sessionId) ||
                                              newOrUpdatedSession is null)
                                         {
@@ -5777,8 +5777,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5798,8 +5798,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check session
 
                                         if (!Request.ParseSession(this,
-                                                                  Request.AccessInfo.Value.CountryCode,
-                                                                  Request.AccessInfo.Value.PartyId, 
+                                                                  Request.LocalAccessInfo.Value.CountryCode,
+                                                                  Request.LocalAccessInfo.Value.PartyId, 
                                                                   out var sessionId,
                                                                   out var existingSession,
                                                                   out var ocpiResponseBuilder,
@@ -5883,8 +5883,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5904,8 +5904,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing session
 
                                         if (!Request.ParseSession(this,
-                                                                  Request.AccessInfo.Value.CountryCode,
-                                                                  Request.AccessInfo.Value.PartyId, 
+                                                                  Request.LocalAccessInfo.Value.CountryCode,
+                                                                  Request.LocalAccessInfo.Value.PartyId, 
                                                                   out var sessionId,
                                                                   out var existingSession,
                                                                   out var ocpiResponseBuilder,
@@ -5995,8 +5995,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -6017,8 +6017,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters       = Request.GetDateAndPaginationFilters();
 
-                                        var allCDRs       = CommonAPI.GetCDRs(Request.AccessInfo.Value.CountryCode,
-                                                                              Request.AccessInfo.Value.PartyId).
+                                        var allCDRs       = CommonAPI.GetCDRs(Request.LocalAccessInfo.Value.CountryCode,
+                                                                              Request.LocalAccessInfo.Value.PartyId).
                                                                       ToArray();
 
                                         var filteredCDRs  = allCDRs.Where(cdr => !filters.From.HasValue || cdr.LastUpdated >  filters.From.Value).
@@ -6088,8 +6088,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6177,8 +6177,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6196,8 +6196,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        CommonAPI.RemoveAllCDRs(Request.AccessInfo.Value.CountryCode,
-                                                                Request.AccessInfo.Value.PartyId);
+                                        CommonAPI.RemoveAllCDRs(Request.LocalAccessInfo.Value.CountryCode,
+                                                                Request.LocalAccessInfo.Value.PartyId);
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -6258,8 +6258,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -6280,8 +6280,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing CDR
 
                                         if (!Request.ParseCDR(this,
-                                                              Request.AccessInfo.Value.CountryCode,
-                                                              Request.AccessInfo.Value.PartyId,
+                                                              Request.LocalAccessInfo.Value.CountryCode,
+                                                              Request.LocalAccessInfo.Value.PartyId,
                                                               out var cdrId,
                                                               out var cdr,
                                                               out var ocpiResponseBuilder,
@@ -6349,8 +6349,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6370,8 +6370,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing CDR
 
                                         if (!Request.ParseCDR(this,
-                                                              Request.AccessInfo.Value.CountryCode,
-                                                              Request.AccessInfo.Value.PartyId, 
+                                                              Request.LocalAccessInfo.Value.CountryCode,
+                                                              Request.LocalAccessInfo.Value.PartyId, 
                                                               out var cdrId,
                                                               out var existingCDR,
                                                               out var ocpiResponseBuilder,
@@ -6474,8 +6474,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -6574,8 +6574,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.AccessInfo?.Role   != Roles.CPO)
+                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6648,8 +6648,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             try
                                             {
 
-                                                var result = onRFIDAuthTokenLocal(Request.AccessInfo.Value.CountryCode,
-                                                                                  Request.AccessInfo.Value.PartyId,
+                                                var result = onRFIDAuthTokenLocal(Request.LocalAccessInfo.Value.CountryCode,
+                                                                                  Request.LocalAccessInfo.Value.PartyId,
                                                                                   tokenId.Value,
                                                                                   locationReference).Result;
 

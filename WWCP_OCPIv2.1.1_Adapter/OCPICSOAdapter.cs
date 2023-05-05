@@ -372,6 +372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       Version_Id?               SelectedVersionId           = null,
 
                                       Boolean?                  AccessTokenBase64Encoding   = null,
+                                      Boolean?                  AllowDowngrades             = false,
                                       AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
                                       RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
                                       PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
@@ -390,6 +391,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             SelectedVersionId,
 
                                             AccessTokenBase64Encoding,
+                                            AllowDowngrades,
                                             AccessStatus,
                                             RemoteStatus,
                                             PartyStatus);
@@ -406,9 +408,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       BusinessDetails  BusinessDetails,
 
                                       AccessToken      AccessToken,
-                                      AccessStatus     AccessStatus   = AccessStatus.ALLOWED,
+                                      Boolean?         AccessTokenBase64Encoding   = null,
+                                      Boolean?         AllowDowngrades             = false,
+                                      AccessStatus     AccessStatus                = AccessStatus.ALLOWED,
 
-                                      PartyStatus      PartyStatus    = PartyStatus. ENABLED)
+                                      PartyStatus      PartyStatus                 = PartyStatus. ENABLED)
         {
 
             return CommonAPI.AddRemoteParty(CountryCode,
@@ -416,6 +420,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             Role,
                                             BusinessDetails,
                                             AccessToken,
+                                            AccessTokenBase64Encoding,
+                                            AllowDowngrades,
                                             AccessStatus,
                                             PartyStatus);
         }
@@ -425,6 +431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
         #region (Set/Add/Update/Delete) Roaming network...
+
         Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.SetStaticData(WWCP.IRoamingNetwork    RoamingNetwork,
                                                                       WWCP.TransmissionTypes  TransmissionType,
                                                                       DateTime?               Timestamp,

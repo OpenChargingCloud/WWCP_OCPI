@@ -223,13 +223,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom images.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null,
                               CustomJObjectSerializerDelegate<Image>?            CustomImageSerializer             = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
-                           new JProperty("name",            Name),
+                                 new JProperty("name",      Name),
 
                            Website.HasValue
                                ? new JProperty("website",   Website.ToString())
@@ -242,8 +243,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomBusinessDetailsSerializer is not null
-                       ? CustomBusinessDetailsSerializer(this, JSON)
-                       : JSON;
+                       ? CustomBusinessDetailsSerializer(this, json)
+                       : json;
 
         }
 

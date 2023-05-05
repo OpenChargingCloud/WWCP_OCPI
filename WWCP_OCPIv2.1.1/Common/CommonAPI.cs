@@ -815,8 +815,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #region Check access token
 
-                                   if (Request.AccessInfoStatus.HasValue &&
-                                       Request.AccessInfoStatus.Value.Status != AccessStatus.ALLOWED)
+                                   if (Request.LocalAccessInfo.HasValue &&
+                                       Request.LocalAccessInfo.Value.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
@@ -903,8 +903,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #region Check access token
 
-                                   if (Request.AccessInfoStatus.HasValue &&
-                                       Request.AccessInfoStatus.Value.Status != AccessStatus.ALLOWED)
+                                   if (Request.LocalAccessInfo.HasValue &&
+                                       Request.LocalAccessInfo.Value.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
@@ -1119,8 +1119,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #region Check the access token whether the client is known, and its access is allowed!
 
-                                   if (Request.AccessInfo.HasValue &&
-                                       Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                   if (Request.LocalAccessInfo.HasValue &&
+                                       Request.LocalAccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 
                                        accessControlAllowMethods.Add("POST");
@@ -1128,7 +1128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                        allow.Add(HTTPMethod.POST);
 
                                        // Only when the party is fully registered!
-                                       if (Request.AccessInfo.Value.VersionsURL.HasValue)
+                                       if (Request.LocalAccessInfo.Value.VersionsURL.HasValue)
                                        {
 
                                            accessControlAllowMethods.Add("PUT");
@@ -1177,8 +1177,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #region Check access token... not allowed!
 
-                                   if (Request.AccessInfoStatus.HasValue &&
-                                       Request.AccessInfoStatus.Value.Status != AccessStatus.ALLOWED)
+                                   if (Request.LocalAccessInfo.HasValue &&
+                                       Request.LocalAccessInfo.Value.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
@@ -1201,7 +1201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                            StatusCode           = 1000,
                                            StatusMessage        = "Hello world!",
                                            Data                 = new Credentials(
-                                                                      Request.AccessInfo?.Token ?? AccessToken.Parse("<any>"),
+                                                                      Request.LocalAccessInfo?.AccessToken ?? AccessToken.Parse("<any>"),
                                                                       OurVersionsURL,
                                                                       OurBusinessDetails,
                                                                       OurCountryCode,
@@ -1236,11 +1236,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                    var CREDENTIALS_TOKEN_A = Request.AccessToken;
 
                                    if (Request.RemoteParty is not null &&
-                                       Request.AccessInfo.HasValue     &&
-                                       Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                       Request.LocalAccessInfo.HasValue     &&
+                                       Request.LocalAccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 
-                                       if (Request.AccessInfo.Value.VersionsURL.HasValue)
+                                       if (Request.LocalAccessInfo.Value.VersionsURL.HasValue)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
                                                       StatusMessage        = "The given access token '" + CREDENTIALS_TOKEN_A.Value.ToString() + "' is already registered!",
@@ -1299,18 +1299,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #region The access token is known...
 
-                                   if (Request.AccessInfo.HasValue)
+                                   if (Request.LocalAccessInfo.HasValue)
                                    {
 
                                        #region ...but access is blocked!
 
-                                       if (Request.AccessInfo.Value.Status == AccessStatus.BLOCKED)
+                                       if (Request.LocalAccessInfo.Value.Status == AccessStatus.BLOCKED)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
                                                       StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is blocked!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                           AccessControlAllowHeaders  = "Authorization"
                                                       }
                                                   };
@@ -1319,11 +1319,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                        #region ...and access is allowed, but maybe not yet full registered!
 
-                                       if (Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                       if (Request.LocalAccessInfo.Value.Status == AccessStatus.ALLOWED)
                                        {
 
                                            // The party is not yet fully registered!
-                                           if (!Request.AccessInfo.Value.VersionsURL.HasValue)
+                                           if (!Request.LocalAccessInfo.Value.VersionsURL.HasValue)
                                                return new OCPIResponse.Builder(Request) {
                                                           StatusCode           = 2000,
                                                           StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
@@ -1380,33 +1380,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                OCPIResponseLogger:  DeleteCredentialsResponse,
                                OCPIRequestHandler:  async Request => {
 
-                                   if (Request.AccessInfo.HasValue &&
-                                       Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                   if (Request.LocalAccessInfo.HasValue &&
+                                       Request.LocalAccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 
                                        #region Validations
 
-                                       if (!Request.AccessInfo.Value.VersionsURL.HasValue)
+                                       if (!Request.LocalAccessInfo.Value.VersionsURL.HasValue)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
-                                                      StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!",
+                                                      StatusMessage        = $"The given access token '{Request.LocalAccessInfo.Value.AccessToken}' is not fully registered!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "DELETE" },
                                                           AccessControlAllowHeaders  = "Authorization"
                                                       }
                                                   };
 
                                        #endregion
 
-
-                                       //ToDo: await...
-                                       RemoveAccessToken(Request.AccessToken.Value);
-
+                                       RemoveAccessToken(Request.LocalAccessInfo.Value.AccessToken);
 
                                        return new OCPIResponse.Builder(Request) {
                                                   StatusCode           = 1000,
-                                                  StatusMessage        = "The given access token was deleted!",
+                                                  StatusMessage        = $"The given access token '{Request.LocalAccessInfo.Value.AccessToken}' was deleted!",
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                       HTTPStatusCode             = HTTPStatusCode.OK,
                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
@@ -1421,7 +1418,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                   AccessControlAllowHeaders  = "Authorization"
                                               }
                                           };
@@ -1459,7 +1456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Validate old remote party
 
-            var oldRemoteParty = GetRemoteParties(remoteParty => remoteParty.AccessInfoStatus.Any(accessInfoStatus => accessInfoStatus.Token == CREDENTIALS_TOKEN_A.Value)).FirstOrDefault();
+            var oldRemoteParty = GetRemoteParties(remoteParty => remoteParty.LocalAccessInfos.Any(accessInfoStatus => accessInfoStatus.AccessToken == CREDENTIALS_TOKEN_A.Value)).FirstOrDefault();
 
             if (oldRemoteParty is null)
                 return new OCPIResponse.Builder(Request) {
@@ -1646,7 +1643,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                    receivedCredentials.PartyId,
                                    receivedCredentials.BusinessDetails,
 
-                                   CREDENTIALS_TOKEN_C, // -------------------------------------------------- !!!
+                                   CREDENTIALS_TOKEN_C,
 
                                    receivedCredentials.Token,
                                    receivedCredentials.URL,
@@ -1654,6 +1651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                    Version.Id,
 
                                    oldRemoteParty.Role,
+                                   null,
                                    null,
                                    AccessStatus.      ALLOWED,
                                    RemoteAccessStatus.ONLINE,
@@ -1683,6 +1681,134 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
         //ToDo: Wrap the following into a plugable interface!
+
+        #region AccessTokens
+
+        // An access token might be used by more than one CountryCode + PartyId + Role combination!
+
+        #region RemoveAccessToken(AccessToken)
+
+        public CommonAPI RemoveAccessToken(AccessToken AccessToken)
+        {
+            lock (remoteParties)
+            {
+
+                foreach (var remoteParty in remoteParties.Values.Where(party => party.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == AccessToken)))
+                {
+
+                    #region The remote party has only a single local access token, or...
+
+                    if (remoteParty.LocalAccessInfos.Count() <= 1)
+                    {
+
+                        remoteParties.Remove(remoteParty.Id);
+
+                        File.AppendAllText(LogfileName,
+                                           new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                           Encoding.UTF8);
+
+                    }
+
+                    #endregion
+
+                    #region ...the remote party has multiple local access tokens!
+
+                    else
+                    {
+
+                        remoteParties.Remove(remoteParty.Id);
+
+                        var newRemoteParty = new RemoteParty(
+                                                 remoteParty.CountryCode,
+                                                 remoteParty.PartyId,
+                                                 remoteParty.Role,
+                                                 remoteParty.BusinessDetails,
+                                                 remoteParty.LocalAccessInfos.Where(localAccessInfo => localAccessInfo.AccessToken != AccessToken),
+                                                 remoteParty.RemoteAccessInfos,
+                                                 remoteParty.Status
+                                             );
+
+                        remoteParties.Add(newRemoteParty.Id, newRemoteParty);
+
+                        File.AppendAllText(LogfileName,
+                                           new JObject(new JProperty("updateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                           Encoding.UTF8);
+
+                    }
+
+                    #endregion
+
+                }
+
+                return this;
+
+            }
+        }
+
+        #endregion
+
+        #region TryGetLocalAccessInfo(AccessToken, out LocalAccessInfo)
+
+        public Boolean TryGetLocalAccessInfo(AccessToken AccessToken, out LocalAccessInfo LocalAccessInfo)
+        {
+
+            lock (remoteParties)
+            {
+
+                var accessInfos = remoteParties.Values.Where     (remoteParty => remoteParty.LocalAccessInfos.Any(accessInfo => accessInfo.AccessToken == AccessToken)).
+                                                       SelectMany(remoteParty => remoteParty.LocalAccessInfos).
+                                                       ToArray();
+
+                if (accessInfos.Length == 1)
+                {
+                    LocalAccessInfo = accessInfos.First();
+                    return true;
+                }
+
+                LocalAccessInfo = default;
+                return false;
+
+            }
+
+        }
+
+        #endregion
+
+        #region GetLocalAccessInfos(AccessToken)
+
+        public IEnumerable<LocalAccessInfo> GetLocalAccessInfos(AccessToken AccessToken)
+        {
+            lock (remoteParties)
+            {
+
+                return remoteParties.Values.Where     (remoteParty => remoteParty.LocalAccessInfos.Any(accessInfo => accessInfo.AccessToken == AccessToken)).
+                                            SelectMany(remoteParty => remoteParty.LocalAccessInfos).
+                                            ToArray();
+
+            }
+        }
+
+        #endregion
+
+        #region GetLocalAccessInfos(AccessToken, AccessStatus)
+
+        public IEnumerable<LocalAccessInfo> GetLocalAccessInfos(AccessToken   AccessToken,
+                                                                AccessStatus  AccessStatus)
+        {
+            lock (remoteParties)
+            {
+
+                return remoteParties.Values.Where     (remoteParty => remoteParty.LocalAccessInfos.Any(accessInfo => accessInfo.AccessToken  == AccessToken &&
+                                                                                                                     accessInfo.Status       == AccessStatus)).
+                                            SelectMany(remoteParty => remoteParty.LocalAccessInfos).
+                                            ToArray();
+
+            }
+        }
+
+        #endregion
+
+        #endregion
 
         #region RemoteParties
 
@@ -1732,6 +1858,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       Version_Id?                           SelectedVersionId            = null,
 
                                       Boolean?                              AccessTokenBase64Encoding    = null,
+                                      Boolean?                              AllowDowngrades              = false,
                                       AccessStatus                          AccessStatus                 = AccessStatus.      ALLOWED,
                                       RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                                       PartyStatus                           PartyStatus                  = PartyStatus.       ENABLED,
@@ -1765,6 +1892,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      SelectedVersionId,
 
                                                      AccessTokenBase64Encoding,
+                                                     AllowDowngrades,
                                                      AccessStatus,
                                                      RemoteStatus,
                                                      PartyStatus,
@@ -1797,15 +1925,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode      CountryCode,
-                                      Party_Id         PartyId,
-                                      Roles            Role,
-                                      BusinessDetails  BusinessDetails,
+        public Boolean AddRemoteParty(CountryCode                           CountryCode,
+                                      Party_Id                              PartyId,
+                                      Roles                                 Role,
+                                      BusinessDetails                       BusinessDetails,
 
-                                      AccessToken      AccessToken,
-                                      AccessStatus     AccessStatus   = AccessStatus.ALLOWED,
+                                      AccessToken                           AccessToken,
+                                      Boolean?                              AccessTokenBase64Encoding    = null,
+                                      Boolean?                              AllowDowngrades              = false,
+                                      AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
 
-                                      PartyStatus      PartyStatus    = PartyStatus. ENABLED,
+                                      PartyStatus                           PartyStatus                  = PartyStatus. ENABLED,
 
                                       RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                       LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -1828,6 +1958,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      BusinessDetails,
 
                                                      AccessToken,
+                                                     AccessTokenBase64Encoding,
+                                                     AllowDowngrades,
                                                      AccessStatus,
 
                                                      PartyStatus,
@@ -1936,7 +2068,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       Roles                                 Role,
                                       BusinessDetails                       BusinessDetails,
 
-                                      IEnumerable<AccessInfoStatus>         AccessInfoStatus,
+                                      IEnumerable<LocalAccessInfo>          LocalAccessInfos,
                                       IEnumerable<RemoteAccessInfo>         RemoteAccessInfos,
 
                                       PartyStatus                           Status                       = PartyStatus.ENABLED,
@@ -1963,7 +2095,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      Role,
                                                      BusinessDetails,
 
-                                                     AccessInfoStatus,
+                                                     LocalAccessInfos,
                                                      RemoteAccessInfos,
 
                                                      Status,
@@ -2013,6 +2145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               Roles?                                Role                         = null,
 
                                               Boolean?                              AccessTokenBase64Encoding    = null,
+                                              Boolean?                              AllowDowngrades              = false,
                                               AccessStatus                          AccessStatus                 = AccessStatus.      ALLOWED,
                                               RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                                               PartyStatus                           PartyStatus                  = PartyStatus.       ENABLED,
@@ -2058,6 +2191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      SelectedVersionId,
 
                                                      AccessTokenBase64Encoding,
+                                                     AllowDowngrades,
                                                      AccessStatus,
                                                      RemoteStatus,
                                                      PartyStatus,
@@ -2096,6 +2230,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               BusinessDetails                       BusinessDetails,
 
                                               AccessToken                           AccessToken,
+                                              Boolean?                              AccessTokenBase64Encoding    = null,
+                                              Boolean?                              AllowDowngrades              = false,
                                               AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
 
                                               PartyStatus                           PartyStatus                  = PartyStatus. ENABLED,
@@ -2127,6 +2263,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      BusinessDetails,
 
                                                      AccessToken,
+                                                     AccessTokenBase64Encoding,
+                                                     AllowDowngrades,
                                                      AccessStatus,
 
                                                      PartyStatus,
@@ -2240,7 +2378,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                          Roles                                 Role,
                                          BusinessDetails                       BusinessDetails,
 
-                                         IEnumerable<AccessInfoStatus>         AccessInfoStatus,
+                                         IEnumerable<LocalAccessInfo>          LocalAccessInfos,
                                          IEnumerable<RemoteAccessInfo>         RemoteAccessInfos,
 
                                          PartyStatus                           Status                       = PartyStatus.ENABLED,
@@ -2267,7 +2405,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      Role,
                                                      BusinessDetails,
 
-                                                     AccessInfoStatus,
+                                                     LocalAccessInfos,
                                                      RemoteAccessInfos,
 
                                                      Status,
@@ -2447,184 +2585,55 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+        #region GetRemoteParties(AccessToken)
 
-        private readonly List<CPOClient> cpoClients = new();
-
-        public IEnumerable<CPOClient> CPOClients
-            => cpoClients;
-
-        #region GetCPOClient (CountryCode, PartyId)
-
-        /// <summary>
-        /// As a CPO create a client to access a remote EMSP.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the remote EMSP.</param>
-        /// <param name="PartyId">The party identification of the remote EMSP.</param>
-        public CPOClient? GetCPOClient(CountryCode  CountryCode,
-                                       Party_Id     PartyId)
+        public IEnumerable<RemoteParty> GetRemoteParties(AccessToken AccessToken)
         {
+            lock (remoteParties)
+            {
 
-            var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
-                                                                          remoteparty.PartyId     == PartyId);
+                return remoteParties.Values.Where(remoteParty => remoteParty.LocalAccessInfos.Any(accessInfo => accessInfo.AccessToken == AccessToken)).
+                                             ToArray();
 
-            if (remoteParty?.RemoteAccessInfos?.Any() == true)
-                return cpoClients.AddAndReturnElement(
-                    new CPOClient(
-                        remoteParty,
-                        this
-                    ));
-
-            return null;
-
+            }
         }
 
         #endregion
 
-        #region GetCPOClient(RemoteParty)
+        #region GetRemoteParties(AccessToken, AccessStatus)
 
-        public CPOClient? GetCPOClient(RemoteParty  RemoteParty)
+        public IEnumerable<RemoteParty> GetRemoteParties(AccessToken   AccessToken,
+                                                         AccessStatus  AccessStatus)
         {
+            lock (remoteParties)
+            {
 
-            if (RemoteParty is null)
-                return null;
+                return remoteParties.Values.Where(remoteParty => remoteParty.LocalAccessInfos.Any(accessInfo => accessInfo.AccessToken  == AccessToken &&
+                                                                                                           accessInfo.Status == AccessStatus)).
+                                             ToArray();
 
-            var cpoClient = CPOClients.FirstOrDefault(cpoclient => cpoclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                   cpoclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
-
-            if (cpoClient is not null)
-                return cpoClient;
-
-            if (RemoteParty.RemoteAccessInfos?.Any() == true)
-                return cpoClients.AddAndReturnElement(
-                    new CPOClient(
-                        RemoteParty,
-                        this
-                    ));
-
-            return null;
-
+            }
         }
 
         #endregion
 
-        #region GetCPOClient(RemotePartyId)
+        #region GetRemoteParties(AccessToken, out RemoteParties)
 
-        public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId)
+        public Boolean TryGetRemoteParties(AccessToken                   AccessToken,
+                                           out IEnumerable<RemoteParty>  RemoteParties)
         {
+            lock (remoteParties)
+            {
 
-            var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
-                                                                           remoteparty.PartyId     == RemotePartyId.PartyId);
+                RemoteParties = remoteParties.Values.Where(remoteParty => remoteParty.LocalAccessInfos.Any(accessInfo => accessInfo.AccessToken == AccessToken)).
+                                                     ToArray();
 
-            var cpoClient   = remoteParty is not null
-                                   ? CPOClients.FirstOrDefault(cpoclient => cpoclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                            cpoclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
-                                   : null;
+                return RemoteParties.Any();
 
-            if (cpoClient is not null)
-                return cpoClient;
-
-            if (remoteParty?.RemoteAccessInfos?.Any() == true)
-                return cpoClients.AddAndReturnElement(
-                    new CPOClient(
-                        remoteParty,
-                        this
-                    ));
-
-            return null;
-
+            }
         }
 
         #endregion
-
-
-
-        private readonly List<EMSPClient> emspClients = new();
-        public IEnumerable<EMSPClient> EMSPClients
-            => emspClients;
-
-        #region GetEMSPClient(CountryCode, PartyId)
-
-        /// <summary>
-        /// As an EMSP create a client to access a remote CPO.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the remote CPO.</param>
-        /// <param name="PartyId">The party identification of the remote CPO.</param>
-        public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
-                                         Party_Id     PartyId)
-        {
-
-            var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
-                                                                          remoteparty.PartyId     == PartyId);
-
-            if (remoteParty?.RemoteAccessInfos?.Any() == true)
-                return emspClients.AddAndReturnElement(
-                    new EMSPClient(
-                        remoteParty,
-                        this
-                    ));
-
-            return null;
-
-        }
-
-        #endregion
-
-        #region GetEMSPClient(RemoteParty)
-
-        public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty)
-        {
-
-            if (RemoteParty is null)
-                return null;
-
-            var emspClient = EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                      emspclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
-
-            if (emspClient is not null)
-                return emspClient;
-
-            if (RemoteParty.RemoteAccessInfos?.Any() == true)
-                return emspClients.AddAndReturnElement(
-                    new EMSPClient(
-                        RemoteParty,
-                        this
-                    ));
-
-            return null;
-
-        }
-
-        #endregion
-
-        #region GetEMSPClient(RemotePartyId)
-
-        public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId)
-        {
-
-            var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
-                                                                           remoteparty.PartyId     == RemotePartyId.PartyId);
-
-            var emspClient   = remoteParty is not null
-                                   ? EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                              emspclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
-                                   : null;
-
-            if (emspClient is not null)
-                return emspClient;
-
-            if (remoteParty?.RemoteAccessInfos?.Any() == true)
-                return emspClients.AddAndReturnElement(
-                    new EMSPClient(
-                        remoteParty,
-                        this
-                    ));
-
-            return null;
-
-        }
-
-        #endregion
-
 
 
         #region RemoveRemoteParty(RemoteParty)
@@ -2741,175 +2750,197 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #endregion
+        #region RemoveAllRemoteParties()
 
-        #region AccessTokens
-
-        // An access token might be used by more than one CountryCode + PartyId + Role combination!
-
-        #region RemoveAccessToken(AccessToken)
-
-        public CommonAPI RemoveAccessToken(AccessToken AccessToken)
-        {
-
-            lock (remoteParties)
-            {
-
-                foreach (var remoteParty in remoteParties.Values.Where(party => party.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)))
-                {
-
-                    if (remoteParty.AccessInfoStatus.Count() <= 1)
-                    {
-
-                        remoteParties.Remove(remoteParty.Id);
-
-                        File.AppendAllText(LogfileName,
-                                           new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
-                                           Encoding.UTF8);
-
-                    }
-
-                    else
-                    {
-
-                        remoteParties.Remove(remoteParty.Id);
-
-                        var newRemoteParty = new RemoteParty(
-                                                 remoteParty.CountryCode,
-                                                 remoteParty.PartyId,
-                                                 remoteParty.Role,
-                                                 remoteParty.BusinessDetails,
-                                                 remoteParty.AccessInfoStatus.Where(accessInfo => accessInfo.Token != AccessToken),
-                                                 remoteParty.RemoteAccessInfos,
-                                                 remoteParty.Status
-                                             );
-
-                        remoteParties.Add(newRemoteParty.Id, newRemoteParty);
-
-                        File.AppendAllText(LogfileName,
-                                           new JObject(new JProperty("updateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
-                                           Encoding.UTF8);
-
-                    }
-
-                }
-
-                return this;
-
-            }
-
-        }
-
-        #endregion
-
-        #region TryGetAccessInfo(AccessToken, out AccessInfo2)
-
-        public Boolean TryGetAccessInfo(AccessToken AccessToken, out AccessInfoStatus AccessInfo2)
-        {
-
-            lock (remoteParties)
-            {
-
-                var accessInfos = remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
-                                                       SelectMany(remoteParty => remoteParty.AccessInfoStatus).
-                                                       ToArray();
-
-                if (accessInfos.Length == 1)
-                {
-                    AccessInfo2 = accessInfos.First();
-                    return true;
-                }
-
-                AccessInfo2 = default;
-                return false;
-
-            }
-
-        }
-
-        #endregion
-
-        #region GetAccessInfos(AccessToken)
-
-        public IEnumerable<AccessInfoStatus> GetAccessInfos(AccessToken AccessToken)
+        public void RemoveAllRemoteParties()
         {
             lock (remoteParties)
             {
-
-                return remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
-                                            SelectMany(remoteParty => remoteParty.AccessInfoStatus).
-                                            ToArray();
-
+                remoteParties.Clear();
             }
         }
 
         #endregion
 
-        #region GetAccessInfos(AccessToken, AccessStatus)
+        #endregion
 
-        public IEnumerable<AccessInfoStatus> GetAccessInfos(AccessToken   AccessToken,
-                                                       AccessStatus  AccessStatus)
+        #region CPOClients
+
+        private readonly List<CPOClient> cpoClients = new();
+
+        public IEnumerable<CPOClient> CPOClients
+            => cpoClients;
+
+        #region GetCPOClient (CountryCode, PartyId)
+
+        /// <summary>
+        /// As a CPO create a client to access a remote EMSP.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the remote EMSP.</param>
+        /// <param name="PartyId">The party identification of the remote EMSP.</param>
+        public CPOClient? GetCPOClient(CountryCode  CountryCode,
+                                       Party_Id     PartyId)
         {
-            lock (remoteParties)
-            {
 
-                return remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token  == AccessToken &&
-                                                                                                               accessInfo.Status == AccessStatus)).
-                                            SelectMany(remoteParty => remoteParty.AccessInfoStatus).
-                                            ToArray();
+            var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
+                                                                          remoteparty.PartyId     == PartyId);
 
-            }
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
+                return cpoClients.AddAndReturnElement(
+                    new CPOClient(
+                        remoteParty,
+                        this
+                    ));
+
+            return null;
+
         }
 
         #endregion
 
+        #region GetCPOClient(RemoteParty)
 
-        #region GetRemoteParties(AccessToken)
-
-        public IEnumerable<RemoteParty> GetRemoteParties(AccessToken AccessToken)
+        public CPOClient? GetCPOClient(RemoteParty  RemoteParty)
         {
-            lock (remoteParties)
-            {
 
-                return remoteParties.Values.Where(remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
-                                             ToArray();
+            if (RemoteParty is null)
+                return null;
 
-            }
+            var cpoClient = CPOClients.FirstOrDefault(cpoclient => cpoclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                   cpoclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
+
+            if (cpoClient is not null)
+                return cpoClient;
+
+            if (RemoteParty.RemoteAccessInfos?.Any() == true)
+                return cpoClients.AddAndReturnElement(
+                    new CPOClient(
+                        RemoteParty,
+                        this
+                    ));
+
+            return null;
+
         }
 
         #endregion
 
-        #region GetRemoteParties(AccessToken, AccessStatus)
+        #region GetCPOClient(RemotePartyId)
 
-        public IEnumerable<RemoteParty> GetRemoteParties(AccessToken   AccessToken,
-                                                         AccessStatus  AccessStatus)
+        public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId)
         {
-            lock (remoteParties)
-            {
 
-                return remoteParties.Values.Where(remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token  == AccessToken &&
-                                                                                                           accessInfo.Status == AccessStatus)).
-                                             ToArray();
+            var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
+                                                                           remoteparty.PartyId     == RemotePartyId.PartyId);
 
-            }
+            var cpoClient   = remoteParty is not null
+                                   ? CPOClients.FirstOrDefault(cpoclient => cpoclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                            cpoclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
+                                   : null;
+
+            if (cpoClient is not null)
+                return cpoClient;
+
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
+                return cpoClients.AddAndReturnElement(
+                    new CPOClient(
+                        remoteParty,
+                        this
+                    ));
+
+            return null;
+
         }
 
         #endregion
 
-        #region GetRemoteParties(AccessToken, out RemoteParties)
+        #endregion
 
-        public Boolean TryGetRemoteParties(AccessToken                   AccessToken,
-                                           out IEnumerable<RemoteParty>  RemoteParties)
+        #region EMSPClients
+
+        private readonly List<EMSPClient> emspClients = new();
+        public IEnumerable<EMSPClient> EMSPClients
+            => emspClients;
+
+        #region GetEMSPClient(CountryCode, PartyId)
+
+        /// <summary>
+        /// As an EMSP create a client to access a remote CPO.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the remote CPO.</param>
+        /// <param name="PartyId">The party identification of the remote CPO.</param>
+        public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
+                                         Party_Id     PartyId)
         {
-            lock (remoteParties)
-            {
 
-                RemoteParties = remoteParties.Values.Where(remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
-                                                     ToArray();
+            var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
+                                                                          remoteparty.PartyId     == PartyId);
 
-                return RemoteParties.Any();
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
+                return emspClients.AddAndReturnElement(
+                    new EMSPClient(
+                        remoteParty,
+                        this
+                    ));
 
-            }
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetEMSPClient(RemoteParty)
+
+        public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty)
+        {
+
+            if (RemoteParty is null)
+                return null;
+
+            var emspClient = EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                      emspclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
+
+            if (emspClient is not null)
+                return emspClient;
+
+            if (RemoteParty.RemoteAccessInfos?.Any() == true)
+                return emspClients.AddAndReturnElement(
+                    new EMSPClient(
+                        RemoteParty,
+                        this
+                    ));
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetEMSPClient(RemotePartyId)
+
+        public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId)
+        {
+
+            var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
+                                                                           remoteparty.PartyId     == RemotePartyId.PartyId);
+
+            var emspClient   = remoteParty is not null
+                                   ? EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                              emspclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
+                                   : null;
+
+            if (emspClient is not null)
+                return emspClient;
+
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
+                return emspClients.AddAndReturnElement(
+                    new EMSPClient(
+                        remoteParty,
+                        this
+                    ));
+
+            return null;
+
         }
 
         #endregion

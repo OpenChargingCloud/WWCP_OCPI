@@ -38,25 +38,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Properties
 
         [Mandatory]
-        public AccessToken              AccessToken                  { get; }
+        public AccessToken              AccessToken                   { get; }
 
         [Mandatory]
-        public URL                      VersionsURL                  { get; }
+        public URL                      VersionsURL                   { get; }
 
         [Optional]
-        public IEnumerable<Version_Id>  VersionIds                   { get; }
+        public IEnumerable<Version_Id>  VersionIds                    { get; }
 
         [Optional]
-        public Version_Id?              SelectedVersionId            { get; }
+        public Version_Id?              SelectedVersionId             { get; }
 
         [Mandatory]
-        public Boolean                  AccessTokenBase64Encoding    { get; }
+        public Boolean                  AccessTokenIsBase64Encoded    { get; }
 
         [Mandatory]
-        public RemoteAccessStatus       Status                       { get; }
+        public RemoteAccessStatus       Status                        { get; }
 
         [Mandatory]
-        public DateTime                 LastUpdated                  { get; }
+        public DateTime                 LastUpdated                   { get; }
 
         #endregion
 
@@ -69,25 +69,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="VersionsURL">An OCPI vesions URL.</param>
         /// <param name="VersionIds">An optional enumeration of version identifications.</param>
         /// <param name="SelectedVersionId">A optional selected version identification.</param>
-        /// <param name="AccessTokenBase64Encoding">Whether the access token is base64 encoded or not.</param>
+        /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
         /// <param name="Status">A remote access status.</param>
-        /// <param name="LastUpdate">The optional timestamp of the last update.</param>
+        /// <param name="LastUpdated">The optional timestamp of the last update.</param>
         public RemoteAccessInfo(AccessToken               AccessToken,
                                 URL                       VersionsURL,
-                                IEnumerable<Version_Id>?  VersionIds                  = null,
-                                Version_Id?               SelectedVersionId           = null,
-                                Boolean?                  AccessTokenBase64Encoding   = null,
-                                RemoteAccessStatus?       Status                      = RemoteAccessStatus.ONLINE,
-                                DateTime?                 LastUpdate                  = null)
+                                IEnumerable<Version_Id>?  VersionIds                   = null,
+                                Version_Id?               SelectedVersionId            = null,
+                                Boolean?                  AccessTokenIsBase64Encoded   = null,
+                                RemoteAccessStatus?       Status                       = RemoteAccessStatus.ONLINE,
+                                DateTime?                 LastUpdated                  = null)
         {
 
-            this.AccessToken                = AccessToken;
-            this.VersionsURL                = VersionsURL;
-            this.VersionIds                 = VersionIds?.Distinct()    ?? Array.Empty<Version_Id>();
-            this.SelectedVersionId          = SelectedVersionId;
-            this.AccessTokenBase64Encoding  = AccessTokenBase64Encoding ?? true;
-            this.Status                     = Status                    ?? RemoteAccessStatus.ONLINE;
-            this.LastUpdated                 = LastUpdate                ?? Timestamp.Now;
+            this.AccessToken                 = AccessToken;
+            this.VersionsURL                 = VersionsURL;
+            this.VersionIds                  = VersionIds?.Distinct()    ?? Array.Empty<Version_Id>();
+            this.SelectedVersionId           = SelectedVersionId;
+            this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded ?? true;
+            this.Status                      = Status                    ?? RemoteAccessStatus.ONLINE;
+            this.LastUpdated                 = LastUpdated               ?? Timestamp.Now;
 
         }
 
@@ -140,7 +140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    VersionsURL.Clone,
                    VersionIds.Select(versionId => versionId.Clone).ToArray(),
                    SelectedVersionId,
-                   AccessTokenBase64Encoding,
+                   AccessTokenIsBase64Encoded,
                    Status);
 
         #endregion
@@ -288,7 +288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 c = VersionsURL.              CompareTo(RemoteAccessInfo.VersionsURL);
 
             if (c == 0)
-                c = AccessTokenBase64Encoding.CompareTo(RemoteAccessInfo.AccessTokenBase64Encoding);
+                c = AccessTokenIsBase64Encoded.CompareTo(RemoteAccessInfo.AccessTokenIsBase64Encoded);
 
             if (c == 0)
                 c = Status.                   CompareTo(RemoteAccessInfo.Status);
@@ -336,7 +336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                AccessToken.              Equals(RemoteAccessInfo.AccessToken)               &&
                VersionsURL.              Equals(RemoteAccessInfo.VersionsURL)               &&
-               AccessTokenBase64Encoding.Equals(RemoteAccessInfo.AccessTokenBase64Encoding) &&
+               AccessTokenIsBase64Encoded.Equals(RemoteAccessInfo.AccessTokenIsBase64Encoded) &&
                Status.                   Equals(RemoteAccessInfo.Status)                    &&
                LastUpdated.              Equals(RemoteAccessInfo.LastUpdated)               &&
 
@@ -369,7 +369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public override String ToString()
 
-            => $"{AccessToken}{(AccessTokenBase64Encoding ? "[base64}" : "")} @ {VersionsURL} {Status}";
+            => $"{AccessToken}{(AccessTokenIsBase64Encoded ? "[base64}" : "")} @ {VersionsURL} {Status}";
 
         #endregion
 

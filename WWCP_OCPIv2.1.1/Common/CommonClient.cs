@@ -672,7 +672,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.RemoteParty        = RemoteParty;
             this.AccessToken        = RemoteParty.RemoteAccessInfos.First().AccessToken;
             this.RemoteVersionsURL  = RemoteParty.RemoteAccessInfos.First().VersionsURL;
-            this.TokenAuth          = new HTTPTokenAuthentication(RemoteParty.RemoteAccessInfos.First().AccessTokenBase64Encoding
+            this.TokenAuth          = new HTTPTokenAuthentication(RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded
                                                                       ? RemoteParty.RemoteAccessInfos.First().AccessToken.ToString().ToBase64()
                                                                       : RemoteParty.RemoteAccessInfos.First().AccessToken.ToString());
             this.MyCommonAPI        = MyCommonAPI;
@@ -1975,16 +1975,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<Credentials>>
+        public async Task<OCPIResponse>
 
-            DeleteCredentials(Version_Id?         VersionId           = null,
-                              Request_Id?         RequestId           = null,
-                              Correlation_Id?     CorrelationId       = null,
+            DeleteCredentials(Version_Id?        VersionId           = null,
+                              Request_Id?        RequestId           = null,
+                              Correlation_Id?    CorrelationId       = null,
 
-                              DateTime?           Timestamp           = null,
-                              CancellationToken   CancellationToken   = default,
-                              EventTracking_Id?   EventTrackingId     = null,
-                              TimeSpan?           RequestTimeout      = null)
+                              DateTime?          Timestamp           = null,
+                              CancellationToken  CancellationToken   = default,
+                              EventTracking_Id?  EventTrackingId     = null,
+                              TimeSpan?          RequestTimeout      = null)
 
         {
 
@@ -2027,7 +2027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
-            OCPIResponse<Credentials> response;
+            OCPIResponse response;
 
             try
             {
@@ -2058,13 +2058,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              HTTPLogger,
                                                              DNSClient).
 
-                                              Execute(client => client.CreateRequest(HTTPMethod.PUT,
+                                              Execute(client => client.CreateRequest(HTTPMethod.DELETE,
                                                                                      remoteURL.Value.Path,
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          //requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
                                                                                          //requestbuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         //requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                                      }),
@@ -2079,21 +2079,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Credentials>.ParseJObject(httpResponse,
-                                                                      requestId,
-                                                                      correlationId,
-                                                                      json => Credentials.Parse(json));
+                    response = OCPIResponse.Parse(httpResponse,
+                                                  requestId,
+                                                  correlationId);
 
                 }
 
                 else
-                    response = OCPIResponse<String, Credentials>.Error("No remote URL available!");
+                    response = OCPIResponse.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-                response = OCPIResponse<String, Credentials>.Exception(e);
+                response = OCPIResponse.Exception(e);
             }
 
 

@@ -191,9 +191,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public AccessToken?       AccessToken         { get; }
 
-        public AccessInfo?        AccessInfo          { get; }
+        public LocalAccessInfo?   LocalAccessInfo     { get; }
 
-        public AccessInfoStatus?  AccessInfoStatus    { get; }
+        //public AccessInfoStatus?  AccessInfoStatus    { get; }
 
         public RemoteParty?       RemoteParty         { get; }
 
@@ -253,21 +253,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (parties.Count() == 1)
                     {
 
-                        this.AccessInfo   = new AccessInfo(
-                                                AccessToken.Value,
-                                                parties.First().AccessInfoStatus.First(accessInfoStatus => accessInfoStatus.Token == AccessToken).Status,
-                                                parties.First().CountryCode,
-                                                parties.First().PartyId,
-                                                parties.First().Role,
-                                                parties.First().RemoteAccessInfos.FirstOrDefault()?.VersionsURL,
-                                                parties.First().BusinessDetails
-                                            );
+                        this.LocalAccessInfo  = new LocalAccessInfo(
+                                                    AccessToken.Value,
+                                                    parties.First().LocalAccessInfos.First(accessInfoStatus => accessInfoStatus.AccessToken == AccessToken).Status,
+                                                    parties.First().CountryCode,
+                                                    parties.First().PartyId,
+                                                    parties.First().Role,
+                                                    parties.First().RemoteAccessInfos.FirstOrDefault()?.VersionsURL,
+                                                    parties.First().BusinessDetails
+                                                );
 
-                        this.AccessInfoStatus  = parties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken);
+                        //this.AccessInfoStatus  = parties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
 
-                        this.RemoteParty  = parties.First();
+                        this.RemoteParty      = parties.First();
 
-                        this.EMPId        = EMP_Id.Parse($"{this.AccessInfo.Value.CountryCode}-{this.AccessInfo.Value.PartyId}");
+                        this.EMPId            = EMP_Id.Parse($"{this.LocalAccessInfo.Value.CountryCode}-{this.LocalAccessInfo.Value.PartyId}");
 
                     }
 

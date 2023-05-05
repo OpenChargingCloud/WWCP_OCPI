@@ -195,9 +195,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         public AccessToken?       AccessToken         { get; }
 
-        public AccessInfo?        AccessInfo          { get; }
+        public LocalAccessInfo?   LocalAccessInfo     { get; }
 
-        public AccessInfoStatus?  AccessInfo2         { get; }
+        //public LocalAccessInfo?  AccessInfo2         { get; }
 
         public RemoteParty        RemoteParty         { get; }
 
@@ -262,26 +262,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     if (parties.Count() == 1)
                     {
 
-                        this.AccessInfo   = new AccessInfo(
-                                                AccessToken.Value,
-                                                parties.First().AccessInfoStatus. First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
-                                                parties.First().RemoteAccessInfos.FirstOrDefault()?.VersionsURL,
-                                                new[] {
-                                                    new CredentialsRole(
-                                                        parties.First().CountryCode,
-                                                        parties.First().PartyId,
-                                                        parties.First().Role,
-                                                        parties.First().BusinessDetails,
-                                                        null
-                                                    )
-                                                }
-                                            );
+                        this.LocalAccessInfo  = new LocalAccessInfo(
+                                                    AccessToken.Value,
+                                                    parties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status,
+                                                    new[] {
+                                                        new CredentialsRole(
+                                                            parties.First().CountryCode,
+                                                            parties.First().PartyId,
+                                                            parties.First().Role,
+                                                            parties.First().BusinessDetails,
+                                                            null
+                                                        )
+                                                    },
+                                                    parties.First().RemoteAccessInfos.FirstOrDefault()?.VersionsURL
+                                                );
 
-                        this.AccessInfo2  = parties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken);
+                        //this.AccessInfo2  = parties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
 
-                        this.RemoteParty  = parties.First();
+                        this.RemoteParty      = parties.First();
 
-                        this.EMPId        = EMP_Id.Parse($"{this.AccessInfo.Value.Roles.First().CountryCode}-{this.AccessInfo.Value.Roles.First().PartyId}");
+                        this.EMPId            = EMP_Id.Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}-{this.LocalAccessInfo.Value.Roles.First().PartyId}");
 
                     }
 
@@ -296,10 +296,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         if (filteredParties.Count() == 1)
                         {
 
-                            this.AccessInfo   = new AccessInfo(AccessToken.Value,
-                                                               filteredParties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken).Status);
+                            this.LocalAccessInfo   = new LocalAccessInfo(AccessToken.Value,
+                                                                         filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status);
 
-                            this.AccessInfo2  = filteredParties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken);
+                            //this.AccessInfo2  = filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
 
                             this.RemoteParty  = filteredParties.First();
 

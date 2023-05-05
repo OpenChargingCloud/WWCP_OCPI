@@ -171,6 +171,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         #endregion
 
 
+        #region DeleteJSONRequest  (RemoteURL, Token = null)
+
+        public static async Task<HTTPResponse<JObject>> DeleteJSONRequest(URL      RemoteURL,
+                                                                          String?  Token = null)
+        {
+
+            var httpResponse  = await new HTTPClient(RemoteURL).
+                                              Execute(client => client.CreateRequest(HTTPMethod.DELETE,
+                                                                                     RemoteURL.Path,
+                                                                                     requestbuilder => {
+
+                                                                                         if (Token is not null && Token.IsNotNullOrEmpty())
+                                                                                             requestbuilder.Authorization = new HTTPTokenAuthentication(Token);
+
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      "1234");
+                                                                                         requestbuilder.Set("X-Correlation-ID",  "5678");
+
+                                                                                     })).
+                                              ConfigureAwait(false);
+
+            return new HTTPResponse<JObject>(httpResponse,
+                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String ?? "{}"));
+
+        }
+
+        #endregion
+
+
         #region PutJSONRequest     (RemoteURL, JSON, Token = null)
 
         public static async Task<HTTPResponse<JObject>> PutJSONRequest(URL      RemoteURL,

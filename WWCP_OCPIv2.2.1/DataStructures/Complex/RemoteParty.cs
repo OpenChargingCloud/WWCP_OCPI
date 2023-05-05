@@ -26,6 +26,7 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using System.Drawing;
 
 #endregion
 
@@ -38,7 +39,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                       Boolean                                             Embedded                           = false,
                                                       CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
                                                       CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
-                                                      CustomJObjectSerializerDelegate<AccessInfoStatus>?  CustomAccessInfoStatusSerializer   = null,
+                                                      CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
+                                                      CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
                                                       CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null);
 
 
@@ -63,7 +65,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Boolean                                             Embedded                           = false,
                                     CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
                                     CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
-                                    CustomJObjectSerializerDelegate<AccessInfoStatus>?  CustomAccessInfoStatusSerializer   = null,
+                                    CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
+                                    CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
                                     CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null,
                                     RemotePartyToJSONDelegate?                          RemotePartyToJSON                  = null)
 
@@ -81,13 +84,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                            Embedded,
                                                                                            CustomRemotePartySerializer,
                                                                                            CustomBusinessDetailsSerializer,
-                                                                                           CustomAccessInfoStatusSerializer,
+                                                                                           CustomImageSerializer,
+                                                                                           CustomLocalAccessInfoSerializer,
                                                                                            CustomRemoteAccessInfoSerializer)
 
                                                                       : remoteParty.ToJSON(Embedded,
                                                                                            CustomRemotePartySerializer,
                                                                                            CustomBusinessDetailsSerializer,
-                                                                                           CustomAccessInfoStatusSerializer,
+                                                                                           CustomImageSerializer,
+                                                                                           CustomLocalAccessInfoSerializer,
                                                                                            CustomRemoteAccessInfoSerializer)));
 
         #endregion
@@ -218,10 +223,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
 
-        private readonly List<AccessInfoStatus> accessInfoStatus;
+        private readonly List<LocalAccessInfo> localAccessInfos;
 
-        public IEnumerable<AccessInfoStatus> AccessInfoStatus
-            => accessInfoStatus;
+        public IEnumerable<LocalAccessInfo> LocalAccessInfos
+            => localAccessInfos;
 
 
 
@@ -242,6 +247,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            BusinessDetails                       BusinessDetails,
 
                            AccessToken                           AccessToken,
+                           Boolean?                              AccessTokenBase64Encoding    = null,
                            AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
                            PartyStatus                           Status                       = PartyStatus. ENABLED,
 
@@ -264,9 +270,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    BusinessDetails,
 
                    new[] {
-                       new AccessInfoStatus(
+                       new LocalAccessInfo(
                            AccessToken,
-                           AccessStatus
+                           AccessStatus,
+                           AccessTokenIsBase64Encoded: AccessTokenBase64Encoding ?? true
                        )
                    },
                    Array.Empty<RemoteAccessInfo>(),
@@ -323,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    Role,
                    BusinessDetails,
 
-                   Array.Empty<AccessInfoStatus>(),
+                   Array.Empty<LocalAccessInfo>(),
                    new[] {
                        new RemoteAccessInfo(
                            RemoteAccessToken,
@@ -367,7 +374,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            IEnumerable<Version_Id>?              RemoteVersionIds             = null,
                            Version_Id?                           SelectedVersionId            = null,
 
-                           Boolean?                              AccessTokenBase64Encoding    = null,
+                           Boolean?                              AccessTokenIsBase64Encoded   = null,
                            AccessStatus                          AccessStatus                 = AccessStatus.      ALLOWED,
                            RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                            PartyStatus                           Status                       = PartyStatus.       ENABLED,
@@ -391,9 +398,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    BusinessDetails,
 
                    new[] {
-                       new AccessInfoStatus(
+                       new LocalAccessInfo(
                            AccessToken,
-                           AccessStatus
+                           AccessStatus,
+                           AccessTokenIsBase64Encoded: AccessTokenIsBase64Encoded ?? false
                        )
                    },
                    new[] {
@@ -402,7 +410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            RemoteVersionsURL,
                            RemoteVersionIds,
                            SelectedVersionId,
-                           AccessTokenBase64Encoding,
+                           AccessTokenIsBase64Encoded,
                            RemoteStatus
                        )
                    },
@@ -432,7 +440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            Roles                                 Role,
                            BusinessDetails                       BusinessDetails,
 
-                           IEnumerable<AccessInfoStatus>         AccessInfos,
+                           IEnumerable<LocalAccessInfo>          LocalAccessInfos,
                            IEnumerable<RemoteAccessInfo>         RemoteAccessInfos,
 
                            PartyStatus                           Status                       = PartyStatus.ENABLED,
@@ -478,7 +486,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.LastUpdated                 = LastUpdated ?? Timestamp.Now;
 
-            this.accessInfoStatus            = AccessInfos.      IsNeitherNullNorEmpty() ? new List<AccessInfoStatus>     (AccessInfos)  : new List<AccessInfoStatus>();
+            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? new List<LocalAccessInfo> (LocalAccessInfos)  : new List<LocalAccessInfo>();
             this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : new List<RemoteAccessInfo>();
 
             this.ETag                        = CalcSHA256Hash();
@@ -494,7 +502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 Status.           GetHashCode()  * 11 ^
                                 LastUpdated.      GetHashCode()  *  7 ^
                                 ETag.             GetHashCode()  *  5 ^
-                                accessInfoStatus. CalcHashCode() *  3 ^
+                                localAccessInfos. CalcHashCode() *  3 ^
                                 remoteAccessInfos.CalcHashCode();
 
             }
@@ -514,47 +522,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Embedded">Whether this data is embedded into another data structure.</param>
         /// <param name="CustomRemotePartySerializer">A delegate to serialize custom remote party JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        /// <param name="CustomAccessInfoStatusSerializer">A delegate to serialize custom access information status JSON objects.</param>
+        /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
         /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
         public JObject ToJSON(Boolean                                             Embedded,
                               CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
                               CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
-                              CustomJObjectSerializerDelegate<AccessInfoStatus>?  CustomAccessInfoStatusSerializer   = null,
+                              CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
+                              CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
                               CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
-                           new JProperty("@id",                      Id.                  ToString()),
+                                 new JProperty("@id",                 Id.                  ToString()),
 
                            Embedded
-                               ? new JProperty("@context",           DefaultJSONLDContext.ToString())
+                               ? new JProperty("@context",            DefaultJSONLDContext.ToString())
                                : null,
 
-                           new JProperty("countryCode",              CountryCode.         ToString()),
-                           new JProperty("partyId",                  PartyId.             ToString()),
-                           new JProperty("role",                     Role.                ToString()),
-                           new JProperty("partyStatus",              Status.              ToString()),
+                                 new JProperty("countryCode",         CountryCode.         ToString()),
+                                 new JProperty("partyId",             PartyId.             ToString()),
+                                 new JProperty("role",                Role.                ToString()),
+                                 new JProperty("partyStatus",         Status.              ToString()),
 
                            BusinessDetails is not null
-                               ? new JProperty("businessDetails",    BusinessDetails.     ToJSON(CustomBusinessDetailsSerializer))
+                               ? new JProperty("businessDetails",     BusinessDetails.     ToJSON(CustomBusinessDetailsSerializer,
+                                                                                                  CustomImageSerializer))
                                : null,
 
-                           accessInfoStatus.Any()
-                               ? new JProperty("accessInfos",        new JArray(accessInfoStatus. Select(_accessInfoStatus => _accessInfoStatus.ToJSON(CustomAccessInfoStatusSerializer))))
+                           localAccessInfos.Any()
+                               ? new JProperty("accessInfos",         new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
                                : null,
 
                            remoteAccessInfos.Any()
-                               ? new JProperty("remoteAccessInfos",  new JArray(remoteAccessInfos.Select(remoteAccessInfo  => remoteAccessInfo. ToJSON(CustomRemoteAccessInfoSerializer))))
+                               ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos.Select(remoteAccessInfo => remoteAccessInfo.ToJSON(CustomRemoteAccessInfoSerializer))))
                                : null,
 
-                           new JProperty("last_updated",             LastUpdated.         ToIso8601())
+                                 new JProperty("last_updated",        LastUpdated.         ToIso8601())
 
                        );
 
             return CustomRemotePartySerializer is not null
-                       ? CustomRemotePartySerializer(this, JSON)
-                       : JSON;
+                       ? CustomRemotePartySerializer(this, json)
+                       : json;
 
         }
 
@@ -572,7 +582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     Role,
                     BusinessDetails.Clone(),
 
-                    AccessInfoStatus. Select(accessInfoStatus  => accessInfoStatus. Clone()),
+                    LocalAccessInfos. Select(accessInfoStatus  => accessInfoStatus. Clone()),
                     RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
                     Status,
 
@@ -599,19 +609,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="CustomRemotePartySerializer">A delegate to serialize custom remote party JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        /// <param name="CustomAccessInfoStatusSerializer">A delegate to serialize custom access information status JSON objects.</param>
+        /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
         /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
         public String CalcSHA256Hash(CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
                                      CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
-                                     CustomJObjectSerializerDelegate<AccessInfoStatus>?  CustomAccessInfoStatusSerializer   = null,
+                                     CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
+                                     CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
                                      CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null)
         {
 
             this.ETag = SHA256.HashData(ToJSON(false, // always with @context!
-                                                           CustomRemotePartySerializer,
-                                                           CustomBusinessDetailsSerializer,
-                                                           CustomAccessInfoStatusSerializer,
-                                                           CustomRemoteAccessInfoSerializer).ToUTF8Bytes()).ToBase64();
+                                               CustomRemotePartySerializer,
+                                               CustomBusinessDetailsSerializer,
+                                               CustomImageSerializer,
+                                               CustomLocalAccessInfoSerializer,
+                                               CustomRemoteAccessInfoSerializer).ToUTF8Bytes()).ToBase64();
 
             return this.ETag;
 
@@ -821,8 +833,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                LastUpdated.    Equals(RemoteParty.LastUpdated)     &&
                ETag.           Equals(RemoteParty.ETag)            &&
 
-               accessInfoStatus.Count.Equals(RemoteParty.accessInfoStatus.Count)     &&
-               accessInfoStatus. All(_accessInfoStatus => RemoteParty.accessInfoStatus. Contains(_accessInfoStatus)) &&
+               localAccessInfos.Count.Equals(RemoteParty.localAccessInfos.Count)     &&
+               localAccessInfos. All(_accessInfoStatus => RemoteParty.localAccessInfos. Contains(_accessInfoStatus)) &&
 
                remoteAccessInfos.Count.Equals(RemoteParty.remoteAccessInfos.Count)     &&
                remoteAccessInfos.All(remoteAccessInfo  => RemoteParty.remoteAccessInfos.Contains(remoteAccessInfo));

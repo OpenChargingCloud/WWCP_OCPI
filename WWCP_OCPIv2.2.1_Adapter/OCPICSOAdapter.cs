@@ -429,9 +429,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       BusinessDetails  BusinessDetails,
 
                                       AccessToken      AccessToken,
-                                      AccessStatus     AccessStatus   = AccessStatus.ALLOWED,
+                                      Boolean?         AccessTokenBase64Encoding   = null,
+                                      AccessStatus     AccessStatus                = AccessStatus.ALLOWED,
 
-                                      PartyStatus      PartyStatus    = PartyStatus. ENABLED)
+                                      PartyStatus      PartyStatus                 = PartyStatus. ENABLED)
         {
 
             return CommonAPI.AddRemoteParty(CountryCode,
@@ -439,6 +440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                             Role,
                                             BusinessDetails,
                                             AccessToken,
+                                            AccessTokenBase64Encoding,
                                             AccessStatus,
                                             PartyStatus);
         }

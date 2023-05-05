@@ -125,28 +125,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 #region Change Access Token
 
                 var updateCPOResult = emsp1CommonAPI.UpdateRemoteParty(
-                    CountryCode:        CountryCode.Parse("DE"),
-                    PartyId:            Party_Id.   Parse("GEF"),
-                    Role:               Roles.      CPO,
-                    BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
-                    AccessInfoStatus:   new[] {
-                                            new AccessInfoStatus(
-                                                AccessToken.Parse(UnknownToken),
-                                                AccessStatus.ALLOWED
-                                            )
-                                        },
-                    RemoteAccessInfos:  new[] {
-                                            new RemoteAccessInfo(
-                                                AccessToken:        AccessToken.Parse(UnknownToken),
-                                                VersionsURL:        cpoVersionsAPIURL.Value,
-                                                VersionIds:         new[] {
-                                                                        Version_Id.Parse("2.1.1")
-                                                                    },
-                                                SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                                Status:             RemoteAccessStatus.ONLINE
-                                            )
-                                        },
-                    Status:             PartyStatus.ENABLED
+                    CountryCode:         CountryCode.Parse("DE"),
+                    PartyId:             Party_Id.   Parse("GEF"),
+                    Role:                Roles.      CPO,
+                    BusinessDetails:     new BusinessDetails("GraphDefined CPO Services"),
+                    LocalAccessInfos:    new[] {
+                                             new LocalAccessInfo(
+                                                 AccessToken.Parse(UnknownToken),
+                                                 AccessStatus.ALLOWED,
+                                                 CountryCode.Parse("DE"),
+                                                 Party_Id.   Parse("GEF"),
+                                                 Roles.      CPO
+                                             )
+                                         },
+                    RemoteAccessInfos:   new[] {
+                                             new RemoteAccessInfo(
+                                                 AccessToken:        AccessToken.Parse(UnknownToken),
+                                                 VersionsURL:        cpoVersionsAPIURL.Value,
+                                                 VersionIds:         new[] {
+                                                                         Version_Id.Parse("2.1.1")
+                                                                     },
+                                                 SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                                 Status:             RemoteAccessStatus.ONLINE
+                                             )
+                                         },
+                    Status:              PartyStatus.ENABLED
                 );
 
                 Assert.IsTrue(updateCPOResult);
@@ -240,28 +243,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
 
                 var addCPOResult = emsp1CommonAPI.AddRemoteParty(
-                    CountryCode:        CountryCode.Parse("DE"),
-                    PartyId:            Party_Id.   Parse("GEF"),
-                    Role:               Roles.      CPO,
-                    BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
-                    AccessInfoStatus:   new[] {
-                                            new AccessInfoStatus(
-                                                AccessToken.Parse(BlockedEMSPToken),
-                                                AccessStatus.BLOCKED
-                                            )
-                                        },
-                    RemoteAccessInfos:  new[] {
-                                            new RemoteAccessInfo(
-                                                AccessToken:        AccessToken.Parse(BlockedCPOToken),
-                                                VersionsURL:        emsp1VersionsAPIURL.Value,
-                                                VersionIds:         new[] {
-                                                                        Version_Id.Parse("2.1.1")
-                                                                    },
-                                                SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                                Status:             RemoteAccessStatus.ONLINE
-                                            )
-                                        },
-                    Status:             PartyStatus.ENABLED
+                    CountryCode:         CountryCode.Parse("DE"),
+                    PartyId:             Party_Id.   Parse("GEF"),
+                    Role:                Roles.      CPO,
+                    BusinessDetails:     new BusinessDetails("GraphDefined CPO Services"),
+                    LocalAccessInfos:    new[] {
+                                             new LocalAccessInfo(
+                                                 AccessToken.Parse(BlockedEMSPToken),
+                                                 AccessStatus.BLOCKED,
+                                                 CountryCode.Parse("DE"),
+                                                 Party_Id.   Parse("GEF"),
+                                                 Roles.      CPO
+                                             )
+                                         },
+                    RemoteAccessInfos:   new[] {
+                                             new RemoteAccessInfo(
+                                                 AccessToken:        AccessToken.Parse(BlockedCPOToken),
+                                                 VersionsURL:        emsp1VersionsAPIURL.Value,
+                                                 VersionIds:         new[] {
+                                                                         Version_Id.Parse("2.1.1")
+                                                                     },
+                                                 SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                                 Status:             RemoteAccessStatus.ONLINE
+                                             )
+                                         },
+                    Status:              PartyStatus.ENABLED
                 );
 
                 Assert.IsTrue(addCPOResult);

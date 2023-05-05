@@ -408,7 +408,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
         public CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer         { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer     { get; set; }
-        public CustomJObjectSerializerDelegate<AccessInfoStatus>?  CustomAccessInfoStatusSerializer    { get; set; }
+        public CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer     { get; set; }
         public CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer    { get; set; }
 
         #endregion
@@ -971,7 +972,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
-                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomImageSerializer,
+                                                                                                                  CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
@@ -1165,7 +1167,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
-                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomImageSerializer,
+                                                                                                                  CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
@@ -1530,7 +1533,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
-                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomImageSerializer,
+                                                                                                                  CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
@@ -1647,7 +1651,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
-                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomImageSerializer,
+                                                                                                                  CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
@@ -1866,7 +1871,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
-                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomImageSerializer,
+                                                                                                                  CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
@@ -1983,7 +1989,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
-                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomImageSerializer,
+                                                                                                                  CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
@@ -2321,7 +2328,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
-                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomImageSerializer,
+                                                                                                                  CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
@@ -2438,7 +2446,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
-                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomImageSerializer,
+                                                                                                                  CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
@@ -2770,7 +2779,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
-                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomImageSerializer,
+                                                                                                                  CustomLocalAccessInfoSerializer,
                                                                                                                   CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
