@@ -52,7 +52,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    Location_Id?   LocationId    = null,
                                                                    EVSE_UId?      EVSEUId       = null,
                                                                    Connector_Id?  ConnectorId   = null,
-                                                                   EMP_Id?        EMPId         = null);
+                                                                   EMSP_Id?        EMPId         = null);
 
 
     /// <summary>
@@ -2625,7 +2625,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (remoteParties)
             {
 
-                RemoteParties = remoteParties.Values.Where(remoteParty => remoteParty.LocalAccessInfos.Any(accessInfo => accessInfo.AccessToken == AccessToken)).
+                RemoteParties = remoteParties.Values.Where(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == AccessToken)).
                                                      ToArray();
 
                 return RemoteParties.Any();
@@ -2768,19 +2768,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         private readonly List<CPOClient> cpoClients = new();
 
+        /// <summary>
+        /// Return an enumeration of all CPO clients.
+        /// </summary>
         public IEnumerable<CPOClient> CPOClients
             => cpoClients;
 
-        #region GetCPOClient (CountryCode, PartyId)
+
+        #region GetCPOClient(CountryCode, PartyId, AllowCachedClients = true)
 
         /// <summary>
-        /// As a CPO create a client to access a remote EMSP.
+        /// As a CPO create a client to access e.g. a remote EMSP.
         /// </summary>
         /// <param name="CountryCode">The country code of the remote EMSP.</param>
         /// <param name="PartyId">The party identification of the remote EMSP.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
         public CPOClient? GetCPOClient(CountryCode  CountryCode,
-                                       Party_Id     PartyId)
+                                       Party_Id     PartyId,
+                                       Boolean      AllowCachedClients = true)
         {
+
+            if (AllowCachedClients)
+            {
+
+                var cachedCPOClient = cpoClients.Where(client => client.RemoteParty.CountryCode == CountryCode &&
+                                                                 client.RemoteParty.PartyId     == PartyId).FirstOrDefault();
+
+                if (cachedCPOClient is not null)
+                    return cachedCPOClient;
+
+            }
 
             var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
                                                                           remoteparty.PartyId     == PartyId);
@@ -2798,19 +2815,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetCPOClient(RemoteParty)
+        #region GetCPOClient(RemoteParty,          AllowCachedClients = true)
 
-        public CPOClient? GetCPOClient(RemoteParty  RemoteParty)
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote EMSP.
+        /// </summary>
+        /// <param name="RemoteParty">A remote party.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPOClient? GetCPOClient(RemoteParty  RemoteParty,
+                                       Boolean      AllowCachedClients = true)
         {
 
-            if (RemoteParty is null)
-                return null;
+            if (AllowCachedClients)
+            {
 
-            var cpoClient = CPOClients.FirstOrDefault(cpoclient => cpoclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                   cpoclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
+                var cachedCPOClient = cpoClients.FirstOrDefault(cpoClient => cpoClient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                             cpoClient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
 
-            if (cpoClient is not null)
-                return cpoClient;
+                if (cachedCPOClient is not null)
+                    return cachedCPOClient;
+
+            }
 
             if (RemoteParty.RemoteAccessInfos?.Any() == true)
                 return cpoClients.AddAndReturnElement(
@@ -2825,21 +2850,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetCPOClient(RemotePartyId)
+        #region GetCPOClient(RemotePartyId,        AllowCachedClients = true)
 
-        public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId)
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote EMSP.
+        /// </summary>
+        /// <param name="RemotePartyId">A remote party identification.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
+                                       Boolean         AllowCachedClients = true)
         {
 
             var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
                                                                            remoteparty.PartyId     == RemotePartyId.PartyId);
 
-            var cpoClient   = remoteParty is not null
-                                   ? CPOClients.FirstOrDefault(cpoclient => cpoclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                            cpoclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
-                                   : null;
+            if (remoteParty is null)
+                return null;
 
-            if (cpoClient is not null)
-                return cpoClient;
+            if (AllowCachedClients)
+            {
+
+                var cachedCPOClient = cpoClients.FirstOrDefault(cpoClient => cpoClient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                             cpoClient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken);
+
+                if (cachedCPOClient is not null)
+                    return cachedCPOClient;
+
+            }
 
             if (remoteParty?.RemoteAccessInfos?.Any() == true)
                 return cpoClients.AddAndReturnElement(
@@ -2859,19 +2896,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region EMSPClients
 
         private readonly List<EMSPClient> emspClients = new();
+
+        /// <summary>
+        /// Return an enumeration of all EMSP clients.
+        /// </summary>
         public IEnumerable<EMSPClient> EMSPClients
             => emspClients;
 
-        #region GetEMSPClient(CountryCode, PartyId)
+
+        #region GetEMSPClient(CountryCode, PartyId, AllowCachedClients = true)
 
         /// <summary>
-        /// As an EMSP create a client to access a remote CPO.
+        /// As an EMSP create a client to access e.g. a remote CPO.
         /// </summary>
         /// <param name="CountryCode">The country code of the remote CPO.</param>
         /// <param name="PartyId">The party identification of the remote CPO.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
         public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
-                                         Party_Id     PartyId)
+                                         Party_Id     PartyId,
+                                         Boolean      AllowCachedClients = true)
         {
+
+            if (AllowCachedClients)
+            {
+
+                var cachedEMSPClient = emspClients.Where(client => client.RemoteParty.CountryCode == CountryCode &&
+                                                                   client.RemoteParty.PartyId     == PartyId).FirstOrDefault();
+
+                if (cachedEMSPClient is not null)
+                    return cachedEMSPClient;
+
+            }
 
             var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
                                                                           remoteparty.PartyId     == PartyId);
@@ -2889,19 +2944,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetEMSPClient(RemoteParty)
+        #region GetEMSPClient(RemoteParty,          AllowCachedClients = true)
 
-        public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty)
+        /// <summary>
+        /// As an EMSP create a client to access e.g. a remote CPO.
+        /// </summary>
+        /// <param name="RemoteParty">A remote party.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
+        public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty,
+                                         Boolean      AllowCachedClients = true)
         {
 
-            if (RemoteParty is null)
-                return null;
+            if (AllowCachedClients)
+            {
 
-            var emspClient = EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                      emspclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
+                var cachedEMSPClient = emspClients.FirstOrDefault(emspClient => emspClient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                                emspClient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
 
-            if (emspClient is not null)
-                return emspClient;
+                if (cachedEMSPClient is not null)
+                    return cachedEMSPClient;
+
+            }
 
             if (RemoteParty.RemoteAccessInfos?.Any() == true)
                 return emspClients.AddAndReturnElement(
@@ -2916,21 +2979,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetEMSPClient(RemotePartyId)
+        #region GetEMSPClient(RemotePartyId,        AllowCachedClients = true)
 
-        public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId)
+        /// <summary>
+        /// As an EMSP create a client to access e.g. a remote CPO.
+        /// </summary>
+        /// <param name="RemotePartyId">A remote party identification.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
+        public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId,
+                                         Boolean         AllowCachedClients = true)
         {
 
             var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
                                                                            remoteparty.PartyId     == RemotePartyId.PartyId);
 
-            var emspClient   = remoteParty is not null
-                                   ? EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                              emspclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
-                                   : null;
+            if (remoteParty is null)
+                return null;
 
-            if (emspClient is not null)
-                return emspClient;
+            if (AllowCachedClients)
+            {
+
+                var cachedEMSPClient = emspClients.FirstOrDefault(emspClient => emspClient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                                emspClient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken);
+
+                if (cachedEMSPClient is not null)
+                    return cachedEMSPClient;
+
+            }
 
             if (remoteParty?.RemoteAccessInfos?.Any() == true)
                 return emspClients.AddAndReturnElement(
@@ -4241,7 +4316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    Location_Id?   LocationId,
                                                    EVSE_UId?      EVSEUId,
                                                    Connector_Id?  ConnectorId,
-                                                   EMP_Id?        EMPId)
+                                                   EMSP_Id?        EMPId)
 
             => GetTariffIdsDelegate?.Invoke(CountryCode,
                                             PartyId,

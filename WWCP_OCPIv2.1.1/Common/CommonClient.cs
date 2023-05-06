@@ -21,6 +21,7 @@ using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -391,14 +392,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Data
 
-        protected          HTTPTokenAuthentication                TokenAuth;
+        protected readonly Dictionary<Version_Id, URL>            Versions         = new();
 
-        protected readonly Dictionary<Version_Id, URL>            Versions         = new ();
-
-        protected readonly Dictionary<Version_Id, VersionDetail>  VersionDetails   = new ();
-
-
-        protected Newtonsoft.Json.Formatting JSONFormat = Newtonsoft.Json.Formatting.Indented;
+        protected readonly Dictionary<Version_Id, VersionDetail>  VersionDetails   = new();
 
         #endregion
 
@@ -407,38 +403,44 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The remote party.
         /// </summary>
-        public RemoteParty        RemoteParty              { get; }
+        public RemoteParty              RemoteParty              { get; }
 
         /// <summary>
         /// The access token.
         /// (Might be updated during the REGISTRATION process!)
         /// </summary>
-        public AccessToken        AccessToken              { get; private set; }
+        public AccessToken              AccessToken              { get; private set; }
+
+        /// <summary>
+        /// The access token.
+        /// (Might be updated during the REGISTRATION process!)
+        /// </summary>
+        public HTTPTokenAuthentication  TokenAuth                { get; private set; }
 
         /// <summary>
         /// The selected OCPI version.
         /// </summary>
-        public Version_Id?        SelectedOCPIVersionId    { get; set; }
+        public Version_Id?              SelectedOCPIVersionId    { get; set; }
 
         /// <summary>
         /// The remote URL of the VERSIONS endpoint to connect to.
         /// </summary>
-        public URL                RemoteVersionsURL        { get; }
+        public URL                      RemoteVersionsURL        { get; }
 
         /// <summary>
         /// My Common API.
         /// </summary>
-        public CommonAPI          MyCommonAPI              { get; }
+        public CommonAPI                MyCommonAPI              { get; }
 
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public CommonAPICounters  Counters                 { get; }
+        public CommonAPICounters        Counters                 { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new Logger?        HTTPLogger
+        public new Logger?              HTTPLogger
         {
             get
             {
@@ -449,6 +451,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 base.HTTPLogger = value;
             }
         }
+
+        public Formatting               JSONFormat               { get; set; } = Formatting.None;
 
         #endregion
 
@@ -2148,7 +2152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region Register(VersionId, ...)
+        #region Register(VersionId, SetAsDefaultVersion = true, RemoteRole = null, CredentialTokenB = null, ...)
 
         //  1. We create <CREDENTIALS_TOKEN_A> and associate it with <CountryCode> + <PartyId>.
         //  2. We send <CREDENTIALS_TOKEN_A> and <VERSIONS endpoint> to the other party... e.g. via e-mail.
@@ -2171,27 +2175,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         //
         // 11. Other party will replace <CREDENTIALS_TOKEN_A> with <CREDENTIALS_TOKEN_C>.
 
-
         /// <summary>
-        /// Post the given credentials.
+        /// Register this OCPI client at the given remote party.
         /// </summary>
+        /// <param name="VersionId"></param>
+        /// <param name="SetAsDefaultVersion"></param>
+        /// <param name="RemoteRole">The optional new role of the just registered partner.</param>
+        /// <param name="CredentialTokenB"></param>
+        /// 
+        /// <param name="RequestId"></param>
+        /// <param name="CorrelationId"></param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
             Register(Version_Id?         VersionId             = null,
                      Boolean             SetAsDefaultVersion   = true,
+                     Roles?              RemoteRole            = null,
                      AccessToken?        CredentialTokenB      = null,
 
                      Request_Id?         RequestId             = null,
                      Correlation_Id?     CorrelationId         = null,
 
                      DateTime?           Timestamp             = null,
-                     CancellationToken   CancellationToken     = default,
                      EventTracking_Id?   EventTrackingId       = null,
-                     TimeSpan?           RequestTimeout        = null)
+                     TimeSpan?           RequestTimeout        = null,
+                     CancellationToken   CancellationToken     = default)
 
         {
 
@@ -2334,25 +2346,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (response.Data is not null)
                     {
 
-                        SelectedOCPIVersionId = versionId;
-                        TokenAuth             = new HTTPTokenAuthentication(response.Data.Token.ToString());
+                        SelectedOCPIVersionId  = versionId;
+                        AccessToken            = response.Data.Token;
+                        TokenAuth              = new HTTPTokenAuthentication(response.Data.Token.ToString());
 
-                        //ToDo: Store the new access token on disc.
+                        MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:         response.Data.CountryCode,
+                                                           PartyId:             response.Data.PartyId,
+                                                           Role:                RemoteRole ?? (MyCommonAPI.OurRole == Roles.EMSP
+                                                                                                   ? Roles.CPO
+                                                                                                   : Roles.EMSP),
+                                                           BusinessDetails:     response.Data.BusinessDetails,
 
-                        MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:        response.Data.CountryCode,
-                                                           PartyId:            response.Data.PartyId,
-                                                           BusinessDetails:    response.Data.BusinessDetails,
+                                                           AccessToken:         credentialTokenB,
+                                                           AccessStatus:        AccessStatus.ALLOWED,
 
-                                                           AccessToken:        response.Data.Token, // credentialTokenB,
-                                                           AccessStatus:       AccessStatus.ALLOWED,
+                                                           RemoteAccessToken:   response.Data.Token,
+                                                           RemoteVersionsURL:   response.Data.URL,
+                                                           RemoteVersionIds:    new[] { versionId.Value },
+                                                           SelectedVersionId:   versionId.Value,
 
-                                                           RemoteAccessToken:  credentialTokenB,    // response.Data.Token,
-                                                           RemoteVersionsURL:  response.Data.URL,
-                                                           RemoteVersionIds:   new Version_Id[] { versionId.Value },
-                                                           SelectedVersionId:  versionId.Value,
-
-                                                           PartyStatus:        PartyStatus.ENABLED,
-                                                           RemoteStatus:       RemoteAccessStatus.ONLINE);
+                                                           PartyStatus:         PartyStatus.ENABLED,
+                                                           RemoteStatus:        RemoteAccessStatus.ONLINE);
 
                     }
 

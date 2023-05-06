@@ -312,7 +312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         Boolean?                                                      Publish                                      = null,
 
                         DateTime?                                                     LastUpdated                                  = null,
-                        EMP_Id?                                                       EMPId                                        = null,
+                        EMSP_Id?                                                       EMPId                                        = null,
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                         CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -445,7 +445,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         Boolean?                                                      Publish                                      = null,
 
                         DateTime?                                                     LastUpdated                                  = null,
-                        EMP_Id?                                                       EMPId                                        = null,
+                        EMSP_Id?                                                       EMPId                                        = null,
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                         CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -1018,7 +1018,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
-                              EMP_Id?                                                       EMPId                                        = null,
+                              EMSP_Id?                                                       EMPId                                        = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -1377,7 +1377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         internal IEnumerable<Tariff_Id> GetTariffIds(EVSE_UId?      EVSEUId       = null,
                                                      Connector_Id?  ConnectorId   = null,
-                                                     EMP_Id?        EMPId         = null)
+                                                     EMSP_Id?        EMPId         = null)
 
             => CommonAPI?.GetTariffIds(CountryCode,
                                        PartyId,
@@ -1581,7 +1581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
-        public String CalcSHA256Hash(EMP_Id?                                                       EMPId                                        = null,
+        public String CalcSHA256Hash(EMSP_Id?                                                       EMPId                                        = null,
                                      CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                                      CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                                      CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,

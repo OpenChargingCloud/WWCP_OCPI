@@ -2581,7 +2581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
                                                                                                                       filters.Limit).
                                                                                                        SafeSelect    (location => location.ToJSON(false,
-                                                                                                                                                  Request.EMPId,
+                                                                                                                                                  Request.EMSPId,
                                                                                                                                                   CustomLocationSerializer,
                                                                                                                                                   CustomAdditionalGeoLocationSerializer,
                                                                                                                                                   CustomEVSESerializer,
@@ -2695,7 +2695,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = location.ToJSON(false,
-                                                                                          Request.EMPId,
+                                                                                          Request.EMSPId,
                                                                                           CustomLocationSerializer,
                                                                                           CustomAdditionalGeoLocationSerializer,
                                                                                           CustomEVSESerializer,
@@ -2807,7 +2807,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = evse.ToJSON(Request.EMPId,
+                                                   Data                 = evse.ToJSON(Request.EMSPId,
                                                                                       CustomEVSESerializer,
                                                                                       CustomStatusScheduleSerializer,
                                                                                       CustomConnectorSerializer,
@@ -2912,7 +2912,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = connector.ToJSON(Request.EMPId,
+                                                   Data                 = connector.ToJSON(Request.EMSPId,
                                                                                            CustomConnectorSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
@@ -3217,7 +3217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
                                                                                   Select(session => session.ToJSON(false,
-                                                                                                                   Request.EMPId,
+                                                                                                                   Request.EMSPId,
                                                                                                                    CustomSessionSerializer,
                                                                                                                    CustomLocationSerializer,
                                                                                                                    CustomAdditionalGeoLocationSerializer,
@@ -3332,7 +3332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = session.ToJSON(false,
-                                                                                         Request.EMPId,
+                                                                                         Request.EMSPId,
                                                                                          CustomSessionSerializer,
                                                                                          CustomLocationSerializer,
                                                                                          CustomAdditionalGeoLocationSerializer,
@@ -3457,7 +3457,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
                                                                                   Select(CDR => CDR.ToJSON(false,
-                                                                                                           Request.EMPId,
+                                                                                                           Request.EMSPId,
                                                                                                            CustomCDRSerializer,
                                                                                                            CustomLocationSerializer,
                                                                                                            CustomAdditionalGeoLocationSerializer,
@@ -3579,7 +3579,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = cdr.ToJSON(false,
-                                                                                     Request.EMPId,
+                                                                                     Request.EMSPId,
                                                                                      CustomCDRSerializer,
                                                                                      CustomLocationSerializer,
                                                                                      CustomAdditionalGeoLocationSerializer,

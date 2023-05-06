@@ -51,7 +51,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                    Location_Id?   Location      = null,
                                                                    EVSE_UId?      EVSEUId       = null,
                                                                    Connector_Id?  ConnectorId   = null,
-                                                                   EMP_Id?        EMPId         = null);
+                                                                   EMSP_Id?        EMPId         = null);
 
 
     /// <summary>
@@ -4293,7 +4293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    Location_Id?   LocationId,
                                                    EVSE_UId?      EVSEUId,
                                                    Connector_Id?  ConnectorId,
-                                                   EMP_Id?        EMPId)
+                                                   EMSP_Id?        EMPId)
 
             => GetTariffIdsDelegate?.Invoke(CountryCode,
                                             PartyId,

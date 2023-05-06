@@ -201,7 +201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         public RemoteParty        RemoteParty         { get; }
 
-        public EMP_Id?            EMPId               { get; }
+        public EMSP_Id?            EMPId               { get; }
 
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                         this.RemoteParty      = parties.First();
 
-                        this.EMPId            = EMP_Id.Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}-{this.LocalAccessInfo.Value.Roles.First().PartyId}");
+                        this.EMPId            = EMSP_Id.Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}-{this.LocalAccessInfo.Value.Roles.First().PartyId}");
 
                     }
 

@@ -38,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                    Location_Id?   Location      = null,
                                                                    EVSE_UId?      EVSEUId       = null,
                                                                    Connector_Id?  ConnectorId   = null,
-                                                                   EMP_Id?        EMPId         = null);
+                                                                   EMSP_Id?        EMPId         = null);
 
 
     /// <summary>
@@ -338,7 +338,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         EnergyMix?                                                    EnergyMix                                    = null,
 
                         DateTime?                                                     LastUpdated                                  = null,
-                        EMP_Id?                                                       EMPId                                        = null,
+                        EMSP_Id?                                                       EMPId                                        = null,
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                         CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -482,7 +482,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         EnergyMix?                                                    EnergyMix                                    = null,
 
                         DateTime?                                                     LastUpdated                                  = null,
-                        EMP_Id?                                                       EMPId                                        = null,
+                        EMSP_Id?                                                       EMPId                                        = null,
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                         CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -1080,7 +1080,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public JObject ToJSON(EMP_Id?                                                       EMPId                                        = null,
+        public JObject ToJSON(EMSP_Id?                                                       EMPId                                        = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -1442,7 +1442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         internal IEnumerable<Tariff_Id> GetTariffIds(EVSE_UId?      EVSEUId       = null,
                                                      Connector_Id?  ConnectorId   = null,
-                                                     EMP_Id?        EMPId         = null)
+                                                     EMSP_Id?        EMPId         = null)
 
             => CommonAPI?.GetTariffIds(CountryCode,
                                        PartyId,
@@ -1649,7 +1649,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public String CalcSHA256Hash(EMP_Id?                                                       EMPId                                        = null,
+        public String CalcSHA256Hash(EMSP_Id?                                                       EMPId                                        = null,
                                      CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                                      CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
                                      CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,

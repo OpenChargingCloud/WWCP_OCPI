@@ -197,7 +197,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public RemoteParty?       RemoteParty         { get; }
 
-        public EMP_Id?            EMPId               { get; }
+        public EMSP_Id?           EMSPId              { get; }
+
+        public CPO_Id?            CPOId               { get; }
 
 
         /// <summary>
@@ -263,11 +265,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     parties.First().BusinessDetails
                                                 );
 
-                        //this.AccessInfoStatus  = parties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
-
                         this.RemoteParty      = parties.First();
 
-                        this.EMPId            = EMP_Id.Parse($"{this.LocalAccessInfo.Value.CountryCode}-{this.LocalAccessInfo.Value.PartyId}");
+                        this.CPOId            = this.RemoteParty.Role == Roles.CPO
+                                                   ? CPO_Id. Parse($"{this.LocalAccessInfo.Value.CountryCode}*{this.LocalAccessInfo.Value.PartyId}")
+                                                   : null;
+
+                        this.EMSPId           = this.RemoteParty.Role == Roles.EMSP
+                                                   ? EMSP_Id.Parse($"{this.LocalAccessInfo.Value.CountryCode}-{this.LocalAccessInfo.Value.PartyId}")
+                                                   : null;
 
                     }
 

@@ -1043,7 +1043,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<Location>>
 
             PutLocation(Location            Location,
-                        EMP_Id?             EMPId               = null,
+                        EMSP_Id?             EMPId               = null,
 
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
@@ -1608,7 +1608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE                EVSE,
-                    EMP_Id?             EMPId               = null,
+                    EMSP_Id?             EMPId               = null,
 
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
@@ -1654,7 +1654,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             PutEVSE(EVSE                EVSE,
                     Location_Id         LocationId,
-                    EMP_Id?             EMPId               = null,
+                    EMSP_Id?             EMPId               = null,
 
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
@@ -2222,7 +2222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<Connector>>
 
             PutConnector(Connector           Connector,
-                         EMP_Id?             EMPId               = null,
+                         EMSP_Id?             EMPId               = null,
 
                          Request_Id?         RequestId           = null,
                          Correlation_Id?     CorrelationId       = null,
@@ -4087,7 +4087,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<CDR>>
 
             PostCDR(CDR                 CDR,
-                    EMP_Id?             EMPId               = null,
+                    EMSP_Id?             EMPId               = null,
 
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,

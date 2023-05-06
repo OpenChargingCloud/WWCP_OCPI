@@ -278,7 +278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    String?                                                       Remark                                       = null,
 
                    DateTime?                                                     LastUpdated                                  = null,
-                   EMP_Id?                                                       EMPId                                        = null,
+                   EMSP_Id?                                                       EMPId                                        = null,
                    CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
                    CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                    CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -861,7 +861,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
-                              EMP_Id?                                                       EMPId                                        = null,
+                              EMSP_Id?                                                       EMPId                                        = null,
                               CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,

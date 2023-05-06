@@ -208,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                       IEnumerable<Image>?                                           Images                                       = null,
 
                       DateTime?                                                     LastUpdated                                  = null,
-                      EMP_Id?                                                       EMPId                                        = null,
+                      EMSP_Id?                                                       EMPId                                        = null,
                       CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                       CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                       CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -295,7 +295,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     IEnumerable<Image>?                                           Images                                       = null,
 
                     DateTime?                                                     LastUpdated                                  = null,
-                    EMP_Id?                                                       EMPId                                        = null,
+                    EMSP_Id?                                                       EMPId                                        = null,
                     CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                     CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                     CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -654,7 +654,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(EMP_Id?                                                       EMPId                                        = null,
+        public JObject ToJSON(EMSP_Id?                                                       EMPId                                        = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -949,7 +949,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
         internal IEnumerable<Tariff_Id> GetTariffIds(Connector_Id?  ConnectorId   = null,
-                                                     EMP_Id?        EMPId         = null)
+                                                     EMSP_Id?        EMPId         = null)
 
             => ParentLocation?.GetTariffIds(UId,
                                             ConnectorId,
@@ -990,7 +990,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public String CalcSHA256Hash(EMP_Id?                                                       EMPId                                        = null,
+        public String CalcSHA256Hash(EMSP_Id?                                                       EMPId                                        = null,
                                      CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                                      CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                                      CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,

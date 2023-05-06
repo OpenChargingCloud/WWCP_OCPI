@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         [Optional]
         public UInt32?                 MaxElectricPower         { get; }
 
-        public EMP_Id?                 EMPId                    { get; }
+        public EMSP_Id?                 EMPId                    { get; }
 
         private readonly IEnumerable<Tariff_Id> tariffIds;
 
@@ -174,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            URL?                                         TermsAndConditionsURL       = null,
 
                            DateTime?                                    LastUpdated                 = null,
-                           EMP_Id?                                      EMPId                       = null,
+                           EMSP_Id?                                      EMPId                       = null,
                            CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
         {
@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          URL?                                         TermsAndConditionsURL       = null,
 
                          DateTime?                                    LastUpdated                 = null,
-                         EMP_Id?                                      EMPId                       = null,
+                         EMSP_Id?                                      EMPId                       = null,
                          CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
             : this(null,
@@ -492,7 +492,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        public JObject ToJSON(EMP_Id?                                      EMPId                       = null,
+        public JObject ToJSON(EMSP_Id?                                      EMPId                       = null,
                               CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
@@ -675,7 +675,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffIds(EMP_Id? EMPId = null)
+        internal IEnumerable<Tariff_Id> GetTariffIds(EMSP_Id? EMPId = null)
 
             => ParentEVSE?.GetTariffIds(Id,
                                         EMPId) ?? Array.Empty<Tariff_Id>();
