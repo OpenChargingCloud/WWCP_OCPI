@@ -17,7 +17,6 @@
 
 #region Usings
 
-using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
@@ -58,8 +57,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Constructor(s)
 
-            #region Logger(CommonClient, Context = DefaultContext, LogfileCreator = null)
-
             /// <summary>
             /// Create a new common client logger using the default logging delegates.
             /// </summary>
@@ -67,89 +64,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public Logger(CommonClient            CommonClient,
-                          String                  LoggingPath,
-                          String                  Context         = DefaultContext,
-                          LogfileCreatorDelegate  LogfileCreator  = null)
-
-                : this(CommonClient,
-                       LoggingPath,
-                       Context.IsNotNullOrEmpty() ? Context : DefaultContext,
-                       null,
-                       null,
-                       null,
-                       null,
-
-                       LogfileCreator: LogfileCreator)
-
-            { }
-
-            #endregion
-
-            #region Logger(CommonClient, Context, ... Logging delegates ...)
-
-            /// <summary>
-            /// Create a new common client logger using the given logging delegates.
-            /// </summary>
-            /// <param name="CommonClient">A common client.</param>
-            /// <param name="LoggingPath">The logging path.</param>
-            /// <param name="Context">A context of this API.</param>
-            /// 
-            /// <param name="LogHTTPRequest_toConsole">A delegate to log incoming HTTP requests to console.</param>
-            /// <param name="LogHTTPResponse_toConsole">A delegate to log HTTP requests/responses to console.</param>
-            /// <param name="LogHTTPRequest_toDisc">A delegate to log incoming HTTP requests to disc.</param>
-            /// <param name="LogHTTPResponse_toDisc">A delegate to log HTTP requests/responses to disc.</param>
-            /// 
-            /// <param name="LogHTTPRequest_toNetwork">A delegate to log incoming HTTP requests to a network target.</param>
-            /// <param name="LogHTTPResponse_toNetwork">A delegate to log HTTP requests/responses to a network target.</param>
-            /// <param name="LogHTTPRequest_toHTTPSSE">A delegate to log incoming HTTP requests to a HTTP client sent events source.</param>
-            /// <param name="LogHTTPResponse_toHTTPSSE">A delegate to log HTTP requests/responses to a HTTP client sent events source.</param>
-            /// 
-            /// <param name="LogHTTPError_toConsole">A delegate to log HTTP errors to console.</param>
-            /// <param name="LogHTTPError_toDisc">A delegate to log HTTP errors to disc.</param>
-            /// <param name="LogHTTPError_toNetwork">A delegate to log HTTP errors to a network target.</param>
-            /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP client sent events source.</param>
-            /// 
-            /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public Logger(CommonClient                 CommonClient,
-                          String                       LoggingPath,
-                          String                       Context,
-
-                          HTTPRequestLoggerDelegate?   LogHTTPRequest_toConsole,
-                          HTTPResponseLoggerDelegate?  LogHTTPResponse_toConsole,
-                          HTTPRequestLoggerDelegate?   LogHTTPRequest_toDisc,
-                          HTTPResponseLoggerDelegate?  LogHTTPResponse_toDisc,
-
-                          HTTPRequestLoggerDelegate?   LogHTTPRequest_toNetwork    = null,
-                          HTTPResponseLoggerDelegate?  LogHTTPResponse_toNetwork   = null,
-                          HTTPRequestLoggerDelegate?   LogHTTPRequest_toHTTPSSE    = null,
-                          HTTPResponseLoggerDelegate?  LogHTTPResponse_toHTTPSSE   = null,
-
-                          HTTPResponseLoggerDelegate?  LogHTTPError_toConsole      = null,
-                          HTTPResponseLoggerDelegate?  LogHTTPError_toDisc         = null,
-                          HTTPResponseLoggerDelegate?  LogHTTPError_toNetwork      = null,
-                          HTTPResponseLoggerDelegate?  LogHTTPError_toHTTPSSE      = null,
-
-                          LogfileCreatorDelegate?      LogfileCreator              = null)
+            public Logger(CommonClient             CommonClient,
+                          String                   LoggingPath,
+                          String                   Context          = DefaultContext,
+                          LogfileCreatorDelegate?  LogfileCreator   = null)
 
                 : base(CommonClient,
                        LoggingPath,
-                       Context.IsNotNullOrEmpty() ? Context : DefaultContext,
+                       Context ?? DefaultContext,
 
-                       LogHTTPRequest_toConsole,
-                       LogHTTPResponse_toConsole,
-                       LogHTTPRequest_toDisc,
-                       LogHTTPResponse_toDisc,
+                       null,
+                       null,
+                       null,
+                       null,
 
-                       LogHTTPRequest_toNetwork,
-                       LogHTTPResponse_toNetwork,
-                       LogHTTPRequest_toHTTPSSE,
-                       LogHTTPResponse_toHTTPSSE,
+                       null,
+                       null,
+                       null,
+                       null,
 
-                       LogHTTPError_toConsole,
-                       LogHTTPError_toDisc,
-                       LogHTTPError_toNetwork,
-                       LogHTTPError_toHTTPSSE,
+                       null,
+                       null,
+                       null,
+                       null,
 
                        LogfileCreator)
 
@@ -269,8 +206,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 #endregion
 
             }
-
-            #endregion
 
             #endregion
 

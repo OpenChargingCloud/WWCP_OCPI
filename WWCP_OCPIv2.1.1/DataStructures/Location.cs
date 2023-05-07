@@ -1754,7 +1754,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given connector must not be null!");
+                throw new ArgumentNullException(nameof(Location), "The given charging location must not be null!");
 
             var c = CountryCode. CompareTo(Location.CountryCode);
 

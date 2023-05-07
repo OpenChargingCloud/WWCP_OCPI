@@ -50,8 +50,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Constructor(s)
 
-        #region SCSPAPILogger(SCSPAPI, Context = DefaultContext, LogfileCreator = null)
-
         /// <summary>
         /// Create a new SCSP API logger using the default logging delegates.
         /// </summary>
@@ -63,83 +61,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                              String?                  Context          = DefaultContext,
                              LogfileCreatorDelegate?  LogfileCreator   = null)
 
-            : this(SCSPAPI,
-                   LoggingPath,
-                   Context ?? DefaultContext,
-                   null,
-                   null,
-                   null,
-                   null,
-                   LogfileCreator: LogfileCreator)
-
-        { }
-
-        #endregion
-
-        #region SCSPAPILogger(SCSPAPI, Context, ... Logging delegates ...)
-
-        /// <summary>
-        /// Create a new SCSP API logger using the given logging delegates.
-        /// </summary>
-        /// <param name="SCSPAPI">An SCSP API.</param>
-        /// <param name="Context">A context of this API.</param>
-        /// 
-        /// <param name="LogHTTPRequest_toConsole">A delegate to log incoming HTTP requests to console.</param>
-        /// <param name="LogHTTPResponse_toConsole">A delegate to log HTTP requests/responses to console.</param>
-        /// <param name="LogHTTPRequest_toDisc">A delegate to log incoming HTTP requests to disc.</param>
-        /// <param name="LogHTTPResponse_toDisc">A delegate to log HTTP requests/responses to disc.</param>
-        /// 
-        /// <param name="LogHTTPRequest_toNetwork">A delegate to log incoming HTTP requests to a network target.</param>
-        /// <param name="LogHTTPResponse_toNetwork">A delegate to log HTTP requests/responses to a network target.</param>
-        /// <param name="LogHTTPRequest_toHTTPSSE">A delegate to log incoming HTTP requests to a HTTP server sent events source.</param>
-        /// <param name="LogHTTPResponse_toHTTPSSE">A delegate to log HTTP requests/responses to a HTTP server sent events source.</param>
-        /// 
-        /// <param name="LogHTTPError_toConsole">A delegate to log HTTP errors to console.</param>
-        /// <param name="LogHTTPError_toDisc">A delegate to log HTTP errors to disc.</param>
-        /// <param name="LogHTTPError_toNetwork">A delegate to log HTTP errors to a network target.</param>
-        /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP server sent events source.</param>
-        /// 
-        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public SCSPAPILogger(SCSPAPI                      SCSPAPI,
-                             String                       LoggingPath,
-                             String                       Context,
-
-                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toConsole,
-                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toConsole,
-                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toDisc,
-                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toDisc,
-
-                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toNetwork    = null,
-                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toNetwork   = null,
-                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toHTTPSSE    = null,
-                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toHTTPSSE   = null,
-
-                             OCPIResponseLoggerDelegate?  LogHTTPError_toConsole      = null,
-                             OCPIResponseLoggerDelegate?  LogHTTPError_toDisc         = null,
-                             OCPIResponseLoggerDelegate?  LogHTTPError_toNetwork      = null,
-                             OCPIResponseLoggerDelegate?  LogHTTPError_toHTTPSSE      = null,
-
-                             LogfileCreatorDelegate?      LogfileCreator              = null)
-
             : base(SCSPAPI.HTTPServer,
                    LoggingPath,
                    Context ?? DefaultContext,
-
-                   LogHTTPRequest_toConsole,
-                   LogHTTPResponse_toConsole,
-                   LogHTTPRequest_toDisc,
-                   LogHTTPResponse_toDisc,
-
-                   LogHTTPRequest_toNetwork,
-                   LogHTTPResponse_toNetwork,
-                   LogHTTPRequest_toHTTPSSE,
-                   LogHTTPResponse_toHTTPSSE,
-
-                   LogHTTPError_toConsole,
-                   LogHTTPError_toDisc,
-                   LogHTTPError_toNetwork,
-                   LogHTTPError_toHTTPSSE,
-
                    LogfileCreator)
 
         {
@@ -151,14 +75,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("DeleteLocationsRequest",
                           handler => SCSPAPI.OnDeleteLocationsRequest += handler,
                           handler => SCSPAPI.OnDeleteLocationsRequest -= handler,
-                          "DeleteLocations", "Locations", "Delete", "Request",  "All").
+                          "DeleteLocations", "Locations", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteLocationsResponse",
                           handler => SCSPAPI.OnDeleteLocationsResponse += handler,
                           handler => SCSPAPI.OnDeleteLocationsResponse -= handler,
-                          "DeleteLocations", "Locations", "Delete", "Response", "All").
+                          "DeleteLocations", "Locations", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -166,14 +90,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("PutLocationRequest",
                           handler => SCSPAPI.OnPutLocationRequest += handler,
                           handler => SCSPAPI.OnPutLocationRequest -= handler,
-                          "PutLocation", "Locations", "Put", "Request",  "All").
+                          "PutLocation", "Locations", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PutLocationResponse",
                           handler => SCSPAPI.OnPutLocationResponse += handler,
                           handler => SCSPAPI.OnPutLocationResponse -= handler,
-                          "PutLocation", "Locations", "Put", "Response", "All").
+                          "PutLocation", "Locations", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -181,14 +105,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("PatchLocationRequest",
                           handler => SCSPAPI.OnPatchLocationRequest += handler,
                           handler => SCSPAPI.OnPatchLocationRequest -= handler,
-                          "PatchLocation", "Locations", "Patch", "Request",  "All").
+                          "PatchLocation", "Locations", "Patch", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PatchLocationResponse",
                           handler => SCSPAPI.OnPatchLocationResponse += handler,
                           handler => SCSPAPI.OnPatchLocationResponse -= handler,
-                          "PatchLocation", "Locations", "Patch", "Response", "All").
+                          "PatchLocation", "Locations", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -196,14 +120,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("DeleteLocationRequest",
                           handler => SCSPAPI.OnDeleteLocationRequest += handler,
                           handler => SCSPAPI.OnDeleteLocationRequest -= handler,
-                          "DeleteLocation", "Locations", "Delete", "Request",  "All").
+                          "DeleteLocation", "Locations", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteLocationResponse",
                           handler => SCSPAPI.OnDeleteLocationResponse += handler,
                           handler => SCSPAPI.OnDeleteLocationResponse -= handler,
-                          "DeleteLocation", "Locations", "Delete", "Response", "All").
+                          "DeleteLocation", "Locations", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -214,14 +138,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("PutEVSERequest",
                           handler => SCSPAPI.OnPutEVSERequest += handler,
                           handler => SCSPAPI.OnPutEVSERequest -= handler,
-                          "PutEVSE", "EVSEs", "Put", "Request",  "All").
+                          "PutEVSE", "EVSEs", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PutEVSEResponse",
                           handler => SCSPAPI.OnPutEVSEResponse += handler,
                           handler => SCSPAPI.OnPutEVSEResponse -= handler,
-                          "PutEVSE", "EVSEs", "Put", "Response", "All").
+                          "PutEVSE", "EVSEs", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -229,14 +153,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("PatchEVSERequest",
                           handler => SCSPAPI.OnPatchEVSERequest += handler,
                           handler => SCSPAPI.OnPatchEVSERequest -= handler,
-                          "PatchEVSE", "EVSEs", "Patch", "Request",  "All").
+                          "PatchEVSE", "EVSEs", "Patch", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PatchEVSEResponse",
                           handler => SCSPAPI.OnPatchEVSEResponse += handler,
                           handler => SCSPAPI.OnPatchEVSEResponse -= handler,
-                          "PatchEVSE", "EVSEs", "Patch", "Response", "All").
+                          "PatchEVSE", "EVSEs", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -244,14 +168,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("DeleteEVSERequest",
                           handler => SCSPAPI.OnDeleteEVSERequest += handler,
                           handler => SCSPAPI.OnDeleteEVSERequest -= handler,
-                          "DeleteEVSE", "EVSEs", "Delete", "Request",  "All").
+                          "DeleteEVSE", "EVSEs", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteEVSEResponse",
                           handler => SCSPAPI.OnDeleteEVSEResponse += handler,
                           handler => SCSPAPI.OnDeleteEVSEResponse -= handler,
-                          "DeleteEVSE", "EVSEs", "Delete", "Response", "All").
+                          "DeleteEVSE", "EVSEs", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -262,14 +186,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("PutConnectorRequest",
                           handler => SCSPAPI.OnPutConnectorRequest += handler,
                           handler => SCSPAPI.OnPutConnectorRequest -= handler,
-                          "PutConnector", "Connectors", "Put", "Request",  "All").
+                          "PutConnector", "Connectors", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PutConnectorResponse",
                           handler => SCSPAPI.OnPutConnectorResponse += handler,
                           handler => SCSPAPI.OnPutConnectorResponse -= handler,
-                          "PutConnector", "Connectors", "Put", "Response", "All").
+                          "PutConnector", "Connectors", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -277,14 +201,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("PatchConnectorRequest",
                           handler => SCSPAPI.OnPatchConnectorRequest += handler,
                           handler => SCSPAPI.OnPatchConnectorRequest -= handler,
-                          "PatchConnector", "Connectors", "Patch", "Request",  "All").
+                          "PatchConnector", "Connectors", "Patch", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PatchConnectorResponse",
                           handler => SCSPAPI.OnPatchConnectorResponse += handler,
                           handler => SCSPAPI.OnPatchConnectorResponse -= handler,
-                          "PatchConnector", "Connectors", "Patch", "Response", "All").
+                          "PatchConnector", "Connectors", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -292,14 +216,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("DeleteConnectorRequest",
                           handler => SCSPAPI.OnDeleteConnectorRequest += handler,
                           handler => SCSPAPI.OnDeleteConnectorRequest -= handler,
-                          "DeleteConnector", "Connectors", "Delete", "Request",  "All").
+                          "DeleteConnector", "Connectors", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteConnectorResponse",
                           handler => SCSPAPI.OnDeleteConnectorResponse += handler,
                           handler => SCSPAPI.OnDeleteConnectorResponse -= handler,
-                          "DeleteConnector", "Connectors", "Delete", "Response", "All").
+                          "DeleteConnector", "Connectors", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -310,14 +234,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("DeleteSessionsRequest",
                           handler => SCSPAPI.OnDeleteSessionsRequest += handler,
                           handler => SCSPAPI.OnDeleteSessionsRequest -= handler,
-                          "DeleteSessions", "Sessions", "Delete", "Request",  "All").
+                          "DeleteSessions", "Sessions", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteSessionsResponse",
                           handler => SCSPAPI.OnDeleteSessionsResponse += handler,
                           handler => SCSPAPI.OnDeleteSessionsResponse -= handler,
-                          "DeleteSessions", "Sessions", "Delete", "Response", "All").
+                          "DeleteSessions", "Sessions", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -325,14 +249,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("PutSessionRequest",
                           handler => SCSPAPI.OnPutSessionRequest += handler,
                           handler => SCSPAPI.OnPutSessionRequest -= handler,
-                          "PutSession", "Sessions", "Put", "Request",  "All").
+                          "PutSession", "Sessions", "Put", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PutSessionResponse",
                           handler => SCSPAPI.OnPutSessionResponse += handler,
                           handler => SCSPAPI.OnPutSessionResponse -= handler,
-                          "PutSession", "Sessions", "Put", "Response", "All").
+                          "PutSession", "Sessions", "Put", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -340,14 +264,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("PatchSessionRequest",
                           handler => SCSPAPI.OnPatchSessionRequest += handler,
                           handler => SCSPAPI.OnPatchSessionRequest -= handler,
-                          "PatchSession", "Sessions", "Patch", "Request",  "All").
+                          "PatchSession", "Sessions", "Patch", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("PatchSessionResponse",
                           handler => SCSPAPI.OnPatchSessionResponse += handler,
                           handler => SCSPAPI.OnPatchSessionResponse -= handler,
-                          "PatchSession", "Sessions", "Patch", "Response", "All").
+                          "PatchSession", "Sessions", "Patch", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
@@ -355,22 +279,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             RegisterEvent("DeleteSessionRequest",
                           handler => SCSPAPI.OnDeleteSessionRequest += handler,
                           handler => SCSPAPI.OnDeleteSessionRequest -= handler,
-                          "DeleteSession", "Sessions", "Delete", "Request",  "All").
+                          "DeleteSession", "Sessions", "Delete", "Request",  "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             RegisterEvent("DeleteSessionResponse",
                           handler => SCSPAPI.OnDeleteSessionResponse += handler,
                           handler => SCSPAPI.OnDeleteSessionResponse -= handler,
-                          "DeleteSession", "Sessions", "Delete", "Response", "All").
+                          "DeleteSession", "Sessions", "Delete", "Response", "all").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
             #endregion
 
         }
-
-        #endregion
 
         #endregion
 

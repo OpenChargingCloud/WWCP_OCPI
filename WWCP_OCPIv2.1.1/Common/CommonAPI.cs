@@ -160,15 +160,165 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Events
 
+        #region (protected internal) GetVersionsRequest       (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET versions request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetVersionsRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET versions request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetVersionsRequest(DateTime     Timestamp,
+                                                   HTTPAPI      API,
+                                                   OCPIRequest  Request)
+
+            => OnGetVersionsRequest.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
+
+        #endregion
+
+        #region (protected internal) GetVersionsResponse      (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET versions response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetVersionsResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET versions response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetVersionsResponse(DateTime      Timestamp,
+                                                    HTTPAPI       API,
+                                                    OCPIRequest   Request,
+                                                    OCPIResponse  Response)
+
+            => OnGetVersionsResponse.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
+
+        #endregion
+
+
+        #region (protected internal) GetVersionRequest        (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET version request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetVersionRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET version request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetVersionRequest(DateTime     Timestamp,
+                                                  HTTPAPI      API,
+                                                  OCPIRequest  Request)
+
+            => OnGetVersionRequest.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
+
+        #endregion
+
+        #region (protected internal) GetVersionResponse       (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET version response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetVersionResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET version response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetVersionResponse(DateTime      Timestamp,
+                                                   HTTPAPI       API,
+                                                   OCPIRequest   Request,
+                                                   OCPIResponse  Response)
+
+            => OnGetVersionResponse.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
+
+        #endregion
+
+
+        #region (protected internal) GetCredentialsRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET credentials request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetCredentialsRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET credentials request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetCredentialsRequest(DateTime     Timestamp,
+                                                      HTTPAPI      API,
+                                                      OCPIRequest  Request)
+
+            => OnGetCredentialsRequest.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request);
+
+        #endregion
+
+        #region (protected internal) GetCredentialsResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET credentials response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetCredentialsResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET credentials response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetCredentialsResponse(DateTime      Timestamp,
+                                                       HTTPAPI       API,
+                                                       OCPIRequest   Request,
+                                                       OCPIResponse  Response)
+
+            => OnGetCredentialsResponse.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request,
+                                                Response);
+
+        #endregion
+
+
         #region (protected internal) PostCredentialsRequest   (Request)
 
         /// <summary>
-        /// An event sent whenever a post credentials request was received.
+        /// An event sent whenever a POST credentials request was received.
         /// </summary>
         public OCPIRequestLogEvent OnPostCredentialsRequest = new ();
 
         /// <summary>
-        /// An event sent whenever a post credentials request was received.
+        /// An event sent whenever a POST credentials request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
@@ -177,21 +327,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        HTTPAPI      API,
                                                        OCPIRequest  Request)
 
-            => OnPostCredentialsRequest?.WhenAll(Timestamp,
-                                                 API ?? this,
-                                                 Request);
+            => OnPostCredentialsRequest.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request);
 
         #endregion
 
         #region (protected internal) PostCredentialsResponse  (Response)
 
         /// <summary>
-        /// An event sent whenever a post credentials response was sent.
+        /// An event sent whenever a POST credentials response was sent.
         /// </summary>
         public OCPIResponseLogEvent OnPostCredentialsResponse = new ();
 
         /// <summary>
-        /// An event sent whenever a post credentials response was sent.
+        /// An event sent whenever a POST credentials response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
@@ -202,10 +352,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                         OCPIRequest   Request,
                                                         OCPIResponse  Response)
 
-            => OnPostCredentialsResponse?.WhenAll(Timestamp,
-                                                  API ?? this,
-                                                  Request,
-                                                  Response);
+            => OnPostCredentialsResponse.WhenAll(Timestamp,
+                                                 API ?? this,
+                                                 Request,
+                                                 Response);
 
         #endregion
 
@@ -213,12 +363,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region (protected internal) PutCredentialsRequest    (Request)
 
         /// <summary>
-        /// An event sent whenever a put credentials request was received.
+        /// An event sent whenever a PUT credentials request was received.
         /// </summary>
         public OCPIRequestLogEvent OnPutCredentialsRequest = new ();
 
         /// <summary>
-        /// An event sent whenever a put credentials request was received.
+        /// An event sent whenever a PUT credentials request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
@@ -227,21 +377,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                       HTTPAPI      API,
                                                       OCPIRequest  Request)
 
-            => OnPutCredentialsRequest?.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request) ?? Task.CompletedTask;
+            => OnPutCredentialsRequest.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request) ?? Task.CompletedTask;
 
         #endregion
 
         #region (protected internal) PutCredentialsResponse   (Response)
 
         /// <summary>
-        /// An event sent whenever a put credentials response was sent.
+        /// An event sent whenever a PUT credentials response was sent.
         /// </summary>
         public OCPIResponseLogEvent OnPutCredentialsResponse = new ();
 
         /// <summary>
-        /// An event sent whenever a put credentials response was sent.
+        /// An event sent whenever a PUT credentials response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
@@ -252,10 +402,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        OCPIRequest   Request,
                                                        OCPIResponse  Response)
 
-            => OnPutCredentialsResponse?.WhenAll(Timestamp,
-                                                 API ?? this,
-                                                 Request,
-                                                 Response) ?? Task.CompletedTask;
+            => OnPutCredentialsResponse.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request,
+                                                Response) ?? Task.CompletedTask;
 
         #endregion
 
@@ -263,12 +413,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region (protected internal) DeleteCredentialsRequest (Request)
 
         /// <summary>
-        /// An event sent whenever a delete credentials request was received.
+        /// An event sent whenever a DELETE credentials request was received.
         /// </summary>
         public OCPIRequestLogEvent OnDeleteCredentialsRequest = new ();
 
         /// <summary>
-        /// An event sent whenever a delete credentials request was received.
+        /// An event sent whenever a DELETE credentials request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
@@ -277,21 +427,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                          HTTPAPI      API,
                                                          OCPIRequest  Request)
 
-            => OnDeleteCredentialsRequest?.WhenAll(Timestamp,
-                                                   API ?? this,
-                                                   Request);
+            => OnDeleteCredentialsRequest.WhenAll(Timestamp,
+                                                  API ?? this,
+                                                  Request);
 
         #endregion
 
         #region (protected internal) DeleteCredentialsResponse(Response)
 
         /// <summary>
-        /// An event sent whenever a delete credentials response was sent.
+        /// An event sent whenever a DELETE credentials response was sent.
         /// </summary>
         public OCPIResponseLogEvent OnDeleteCredentialsResponse = new ();
 
         /// <summary>
-        /// An event sent whenever a delete credentials response was sent.
+        /// An event sent whenever a DELETE credentials response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The Common API.</param>
@@ -302,10 +452,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           OCPIRequest   Request,
                                                           OCPIResponse  Response)
 
-            => OnDeleteCredentialsResponse?.WhenAll(Timestamp,
-                                                    API ?? this,
-                                                    Request,
-                                                    Response);
+            => OnDeleteCredentialsResponse.WhenAll(Timestamp,
+                                                   API ?? this,
+                                                   Request,
+                                                   Response);
 
         #endregion
 
@@ -811,7 +961,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPMethod.GET,
                                URLPathPrefix + "versions",
                                HTTPContentType.JSON_UTF8,
-                               OCPIRequestHandler: Request => {
+                               OCPIRequestLogger:   GetVersionsRequest,
+                               OCPIResponseLogger:  GetVersionsResponse,
+                               OCPIRequestHandler:  Request => {
 
                                    #region Check access token
 
@@ -899,7 +1051,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPMethod.GET,
                                URLPathPrefix + "versions/{versionId}",
                                HTTPContentType.JSON_UTF8,
-                               OCPIRequestHandler: Request => {
+                               OCPIRequestLogger:   GetVersionRequest,
+                               OCPIResponseLogger:  GetVersionResponse,
+                               OCPIRequestHandler:  Request => {
 
                                    #region Check access token
 
@@ -1173,7 +1327,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPMethod.GET,
                                URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.JSON_UTF8,
-                               OCPIRequestHandler: Request => {
+                               OCPIRequestLogger:   GetCredentialsRequest,
+                               OCPIResponseLogger:  GetCredentialsResponse,
+                               OCPIRequestHandler:  Request => {
 
                                    #region Check access token... not allowed!
 
@@ -2766,7 +2922,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region CPOClients
 
-        private readonly List<CPOClient> cpoClients = new();
+        private readonly List<CPOClient> cpoClients = new ();
 
         /// <summary>
         /// Return an enumeration of all CPO clients.
@@ -2895,7 +3051,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region EMSPClients
 
-        private readonly List<EMSPClient> emspClients = new();
+        private readonly List<EMSPClient> emspClients = new ();
 
         /// <summary>
         /// Return an enumeration of all EMSP clients.

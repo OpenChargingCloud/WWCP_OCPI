@@ -1473,7 +1473,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Events
 
-        #region Locations
+        #region Location(s)
 
         #region (protected internal) GetLocationsRequest    (Request)
 
@@ -1492,9 +1492,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
-            => OnGetLocationsRequest?.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request);
+            => OnGetLocationsRequest.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request);
 
         #endregion
 
@@ -1517,10 +1517,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      OCPIRequest   Request,
                                                      OCPIResponse  Response)
 
-            => OnGetLocationsResponse?.WhenAll(Timestamp,
-                                               API ?? this,
-                                               Request,
-                                               Response);
+            => OnGetLocationsResponse.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request,
+                                              Response);
 
         #endregion
 
@@ -1542,9 +1542,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        HTTPAPI      API,
                                                        OCPIRequest  Request)
 
-            => OnDeleteLocationsRequest?.WhenAll(Timestamp,
-                                                 API ?? this,
-                                                 Request);
+            => OnDeleteLocationsRequest.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request);
 
         #endregion
 
@@ -1567,10 +1567,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                         OCPIRequest   Request,
                                                         OCPIResponse  Response)
 
-            => OnDeleteLocationsResponse?.WhenAll(Timestamp,
-                                                  API ?? this,
-                                                  Request,
-                                                  Response);
+            => OnDeleteLocationsResponse.WhenAll(Timestamp,
+                                                 API ?? this,
+                                                 Request,
+                                                 Response);
 
         #endregion
 
@@ -1593,9 +1593,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
-            => OnGetLocationRequest?.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request);
+            => OnGetLocationRequest.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
 
         #endregion
 
@@ -1618,10 +1618,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     OCPIRequest   Request,
                                                     OCPIResponse  Response)
 
-            => OnGetLocationResponse?.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request,
-                                              Response);
+            => OnGetLocationResponse.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
 
         #endregion
 
@@ -1643,9 +1643,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
-            => OnPutLocationRequest?.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request);
+            => OnPutLocationRequest.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
 
         #endregion
 
@@ -1668,10 +1668,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     OCPIRequest   Request,
                                                     OCPIResponse  Response)
 
-            => OnPutLocationResponse?.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request,
-                                              Response);
+            => OnPutLocationResponse.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
 
         #endregion
 
@@ -1693,9 +1693,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      HTTPAPI      API,
                                                      OCPIRequest  Request)
 
-            => OnPatchLocationRequest?.WhenAll(Timestamp,
-                                               API ?? this,
-                                               Request);
+            => OnPatchLocationRequest.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request);
 
         #endregion
 
@@ -1718,10 +1718,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                       OCPIRequest   Request,
                                                       OCPIResponse  Response)
 
-            => OnPatchLocationResponse?.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request,
-                                                Response);
+            => OnPatchLocationResponse.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request,
+                                               Response);
 
         #endregion
 
@@ -1743,9 +1743,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                       HTTPAPI      API,
                                                       OCPIRequest  Request)
 
-            => OnDeleteLocationRequest?.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request);
+            => OnDeleteLocationRequest.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request);
 
         #endregion
 
@@ -1768,16 +1768,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        OCPIRequest   Request,
                                                        OCPIResponse  Response)
 
-            => OnDeleteLocationResponse?.WhenAll(Timestamp,
-                                                 API ?? this,
-                                                 Request,
-                                                 Response);
+            => OnDeleteLocationResponse.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request,
+                                                Response);
 
         #endregion
 
         #endregion
 
-        #region EVSEs
+        #region EVSE/EVSE status
 
         #region (protected internal) GetEVSERequest    (Request)
 
@@ -1796,9 +1796,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                HTTPAPI      API,
                                                OCPIRequest  Request)
 
-            => OnGetEVSERequest?.WhenAll(Timestamp,
-                                         API ?? this,
-                                         Request);
+            => OnGetEVSERequest.WhenAll(Timestamp,
+                                        API ?? this,
+                                        Request);
 
         #endregion
 
@@ -1821,10 +1821,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                 OCPIRequest   Request,
                                                 OCPIResponse  Response)
 
-            => OnGetEVSEResponse?.WhenAll(Timestamp,
-                                          API ?? this,
-                                          Request,
-                                          Response);
+            => OnGetEVSEResponse.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request,
+                                         Response);
 
         #endregion
 
@@ -1846,9 +1846,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                HTTPAPI      API,
                                                OCPIRequest  Request)
 
-            => OnPutEVSERequest?.WhenAll(Timestamp,
-                                         API ?? this,
-                                         Request);
+            => OnPutEVSERequest.WhenAll(Timestamp,
+                                        API ?? this,
+                                        Request);
 
         #endregion
 
@@ -1871,10 +1871,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                 OCPIRequest   Request,
                                                 OCPIResponse  Response)
 
-            => OnPutEVSEResponse?.WhenAll(Timestamp,
-                                          API ?? this,
-                                          Request,
-                                          Response);
+            => OnPutEVSEResponse.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request,
+                                         Response);
 
         #endregion
 
@@ -1896,9 +1896,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  HTTPAPI      API,
                                                  OCPIRequest  Request)
 
-            => OnPatchEVSERequest?.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request);
+            => OnPatchEVSERequest.WhenAll(Timestamp,
+                                          API ?? this,
+                                          Request);
 
         #endregion
 
@@ -1921,10 +1921,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   OCPIRequest   Request,
                                                   OCPIResponse  Response)
 
-            => OnPatchEVSEResponse?.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request,
-                                            Response);
+            => OnPatchEVSEResponse.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request,
+                                           Response);
 
         #endregion
 
@@ -1946,9 +1946,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   HTTPAPI      API,
                                                   OCPIRequest  Request)
 
-            => OnDeleteEVSERequest?.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnDeleteEVSERequest.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
 
         #endregion
 
@@ -1971,10 +1971,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    OCPIRequest   Request,
                                                    OCPIResponse  Response)
 
-            => OnDeleteEVSEResponse?.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnDeleteEVSEResponse.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
 
         #endregion
 
@@ -1997,9 +1997,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                       HTTPAPI      API,
                                                       OCPIRequest  Request)
 
-            => OnPostEVSEStatusRequest?.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request);
+            => OnPostEVSEStatusRequest.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request);
 
         #endregion
 
@@ -2022,16 +2022,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        OCPIRequest   Request,
                                                        OCPIResponse  Response)
 
-            => OnPostEVSEStatusResponse?.WhenAll(Timestamp,
-                                                 API ?? this,
-                                                 Request,
-                                                 Response);
+            => OnPostEVSEStatusResponse.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request,
+                                                Response);
 
         #endregion
 
         #endregion
 
-        #region Connectors
+        #region Connector
 
         #region (protected internal) GetConnectorRequest    (Request)
 
@@ -2050,9 +2050,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
-            => OnGetConnectorRequest?.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request);
+            => OnGetConnectorRequest.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request);
 
         #endregion
 
@@ -2075,10 +2075,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      OCPIRequest   Request,
                                                      OCPIResponse  Response)
 
-            => OnGetConnectorResponse?.WhenAll(Timestamp,
-                                               API ?? this,
-                                               Request,
-                                               Response);
+            => OnGetConnectorResponse.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request,
+                                              Response);
 
         #endregion
 
@@ -2100,9 +2100,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
-            => OnPutConnectorRequest?.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request);
+            => OnPutConnectorRequest.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request);
 
         #endregion
 
@@ -2125,10 +2125,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      OCPIRequest   Request,
                                                      OCPIResponse  Response)
 
-            => OnPutConnectorResponse?.WhenAll(Timestamp,
-                                               API ?? this,
-                                               Request,
-                                               Response);
+            => OnPutConnectorResponse.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request,
+                                              Response);
 
         #endregion
 
@@ -2150,9 +2150,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                       HTTPAPI      API,
                                                       OCPIRequest  Request)
 
-            => OnPatchConnectorRequest?.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request);
+            => OnPatchConnectorRequest.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request);
 
         #endregion
 
@@ -2175,10 +2175,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        OCPIRequest   Request,
                                                        OCPIResponse  Response)
 
-            => OnPatchConnectorResponse?.WhenAll(Timestamp,
-                                                 API ?? this,
-                                                 Request,
-                                                 Response);
+            => OnPatchConnectorResponse.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request,
+                                                Response);
 
         #endregion
 
@@ -2200,9 +2200,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        HTTPAPI      API,
                                                        OCPIRequest  Request)
 
-            => OnDeleteConnectorRequest?.WhenAll(Timestamp,
-                                                 API ?? this,
-                                                 Request);
+            => OnDeleteConnectorRequest.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request);
 
         #endregion
 
@@ -2225,16 +2225,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                         OCPIRequest   Request,
                                                         OCPIResponse  Response)
 
-            => OnDeleteConnectorResponse?.WhenAll(Timestamp,
-                                                  API ?? this,
-                                                  Request,
-                                                  Response);
+            => OnDeleteConnectorResponse.WhenAll(Timestamp,
+                                                 API ?? this,
+                                                 Request,
+                                                 Response);
 
         #endregion
 
         #endregion
 
-        #region Tariffs
+        #region Tariff(s)
 
         #region (protected internal) GetTariffsRequest (Request)
 
@@ -2253,9 +2253,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   HTTPAPI      API,
                                                   OCPIRequest  Request)
 
-            => OnGetTariffsRequest?.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnGetTariffsRequest.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
 
         #endregion
 
@@ -2278,10 +2278,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    OCPIRequest   Request,
                                                    OCPIResponse  Response)
 
-            => OnGetTariffsResponse?.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnGetTariffsResponse.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
 
         #endregion
 
@@ -2303,9 +2303,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      HTTPAPI      API,
                                                      OCPIRequest  Request)
 
-            => OnDeleteTariffsRequest?.WhenAll(Timestamp,
-                                               API ?? this,
-                                               Request);
+            => OnDeleteTariffsRequest.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request);
 
         #endregion
 
@@ -2328,10 +2328,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                       OCPIRequest   Request,
                                                       OCPIResponse  Response)
 
-            => OnDeleteTariffsResponse?.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request,
-                                                Response);
+            => OnDeleteTariffsResponse.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request,
+                                               Response);
 
         #endregion
 
@@ -2354,9 +2354,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  HTTPAPI      API,
                                                  OCPIRequest  Request)
 
-            => OnGetTariffRequest?.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request);
+            => OnGetTariffRequest.WhenAll(Timestamp,
+                                          API ?? this,
+                                          Request);
 
         #endregion
 
@@ -2379,10 +2379,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   OCPIRequest   Request,
                                                   OCPIResponse  Response)
 
-            => OnGetTariffResponse?.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request,
-                                            Response);
+            => OnGetTariffResponse.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request,
+                                           Response);
 
         #endregion
 
@@ -2404,9 +2404,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  HTTPAPI      API,
                                                  OCPIRequest  Request)
 
-            => OnPutTariffRequest?.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request);
+            => OnPutTariffRequest.WhenAll(Timestamp,
+                                          API ?? this,
+                                          Request);
 
         #endregion
 
@@ -2429,10 +2429,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   OCPIRequest   Request,
                                                   OCPIResponse  Response)
 
-            => OnPutTariffResponse?.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request,
-                                            Response);
+            => OnPutTariffResponse.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request,
+                                           Response);
 
         #endregion
 
@@ -2454,9 +2454,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
-            => OnPatchTariffRequest?.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request);
+            => OnPatchTariffRequest.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
 
         #endregion
 
@@ -2479,10 +2479,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     OCPIRequest   Request,
                                                     OCPIResponse  Response)
 
-            => OnPatchTariffResponse?.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request,
-                                              Response);
+            => OnPatchTariffResponse.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
 
         #endregion
 
@@ -2504,9 +2504,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
-            => OnDeleteTariffRequest?.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request);
+            => OnDeleteTariffRequest.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request);
 
         #endregion
 
@@ -2529,10 +2529,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      OCPIRequest   Request,
                                                      OCPIResponse  Response)
 
-            => OnDeleteTariffResponse?.WhenAll(Timestamp,
-                                               API ?? this,
-                                               Request,
-                                               Response);
+            => OnDeleteTariffResponse.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request,
+                                              Response);
 
         #endregion
 
@@ -2557,9 +2557,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
-            => OnGetSessionsRequest?.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request);
+            => OnGetSessionsRequest.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
 
         #endregion
 
@@ -2582,10 +2582,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     OCPIRequest   Request,
                                                     OCPIResponse  Response)
 
-            => OnGetSessionsResponse?.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request,
-                                              Response);
+            => OnGetSessionsResponse.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
 
         #endregion
 
@@ -2607,9 +2607,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                       HTTPAPI      API,
                                                       OCPIRequest  Request)
 
-            => OnDeleteSessionsRequest?.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request);
+            => OnDeleteSessionsRequest.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request);
 
         #endregion
 
@@ -2632,10 +2632,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        OCPIRequest   Request,
                                                        OCPIResponse  Response)
 
-            => OnDeleteSessionsResponse?.WhenAll(Timestamp,
-                                                 API ?? this,
-                                                 Request,
-                                                 Response);
+            => OnDeleteSessionsResponse.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request,
+                                                Response);
 
         #endregion
 
@@ -2658,9 +2658,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   HTTPAPI      API,
                                                   OCPIRequest  Request)
 
-            => OnGetSessionRequest?.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnGetSessionRequest.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
 
         #endregion
 
@@ -2683,10 +2683,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    OCPIRequest   Request,
                                                    OCPIResponse  Response)
 
-            => OnGetSessionResponse?.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnGetSessionResponse.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
 
         #endregion
 
@@ -2708,9 +2708,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   HTTPAPI      API,
                                                   OCPIRequest  Request)
 
-            => OnPutSessionRequest?.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnPutSessionRequest.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
 
         #endregion
 
@@ -2733,10 +2733,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    OCPIRequest   Request,
                                                    OCPIResponse  Response)
 
-            => OnPutSessionResponse?.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnPutSessionResponse.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
 
         #endregion
 
@@ -2758,9 +2758,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
-            => OnPatchSessionRequest?.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request);
+            => OnPatchSessionRequest.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request);
 
         #endregion
 
@@ -2783,10 +2783,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      OCPIRequest   Request,
                                                      OCPIResponse  Response)
 
-            => OnPatchSessionResponse?.WhenAll(Timestamp,
-                                               API ?? this,
-                                               Request,
-                                               Response);
+            => OnPatchSessionResponse.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request,
+                                              Response);
 
         #endregion
 
@@ -2808,9 +2808,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      HTTPAPI      API,
                                                      OCPIRequest  Request)
 
-            => OnDeleteSessionRequest?.WhenAll(Timestamp,
-                                               API ?? this,
-                                               Request);
+            => OnDeleteSessionRequest.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request);
 
         #endregion
 
@@ -2833,10 +2833,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                       OCPIRequest   Request,
                                                       OCPIResponse  Response)
 
-            => OnDeleteSessionResponse?.WhenAll(Timestamp,
-                                                API ?? this,
-                                                Request,
-                                                Response);
+            => OnDeleteSessionResponse.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request,
+                                               Response);
 
         #endregion
 
@@ -2861,9 +2861,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                HTTPAPI      API,
                                                OCPIRequest  Request)
 
-            => OnGetCDRsRequest?.WhenAll(Timestamp,
-                                         API ?? this,
-                                         Request);
+            => OnGetCDRsRequest.WhenAll(Timestamp,
+                                        API ?? this,
+                                        Request);
 
         #endregion
 
@@ -2886,10 +2886,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                 OCPIRequest   Request,
                                                 OCPIResponse  Response)
 
-            => OnGetCDRsResponse?.WhenAll(Timestamp,
-                                          API ?? this,
-                                          Request,
-                                          Response);
+            => OnGetCDRsResponse.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request,
+                                         Response);
 
         #endregion
 
@@ -2911,9 +2911,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   HTTPAPI      API,
                                                   OCPIRequest  Request)
 
-            => OnDeleteCDRsRequest?.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request);
+            => OnDeleteCDRsRequest.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
 
         #endregion
 
@@ -2936,10 +2936,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    OCPIRequest   Request,
                                                    OCPIResponse  Response)
 
-            => OnDeleteCDRsResponse?.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request,
-                                             Response);
+            => OnDeleteCDRsResponse.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
 
         #endregion
 
@@ -2962,9 +2962,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                               HTTPAPI      API,
                                               OCPIRequest  Request)
 
-            => OnGetCDRRequest?.WhenAll(Timestamp,
-                                        API ?? this,
-                                        Request);
+            => OnGetCDRRequest.WhenAll(Timestamp,
+                                       API ?? this,
+                                       Request);
 
         #endregion
 
@@ -2987,10 +2987,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                OCPIRequest   Request,
                                                OCPIResponse  Response)
 
-            => OnGetCDRResponse?.WhenAll(Timestamp,
-                                         API ?? this,
-                                         Request,
-                                         Response);
+            => OnGetCDRResponse.WhenAll(Timestamp,
+                                        API ?? this,
+                                        Request,
+                                        Response);
 
         #endregion
 
@@ -3012,9 +3012,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                HTTPAPI      API,
                                                OCPIRequest  Request)
 
-            => OnPostCDRRequest?.WhenAll(Timestamp,
-                                         API ?? this,
-                                         Request);
+            => OnPostCDRRequest.WhenAll(Timestamp,
+                                        API ?? this,
+                                        Request);
 
         #endregion
 
@@ -3037,10 +3037,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                 OCPIRequest   Request,
                                                 OCPIResponse  Response)
 
-            => OnPostCDRResponse?.WhenAll(Timestamp,
-                                          API ?? this,
-                                          Request,
-                                          Response);
+            => OnPostCDRResponse.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request,
+                                         Response);
 
         #endregion
 
@@ -3062,9 +3062,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  HTTPAPI      API,
                                                  OCPIRequest  Request)
 
-            => OnDeleteCDRRequest?.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request);
+            => OnDeleteCDRRequest.WhenAll(Timestamp,
+                                          API ?? this,
+                                          Request);
 
         #endregion
 
@@ -3087,16 +3087,66 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   OCPIRequest   Request,
                                                   OCPIResponse  Response)
 
-            => OnDeleteCDRResponse?.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request,
-                                            Response);
+            => OnDeleteCDRResponse.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request,
+                                           Response);
 
         #endregion
 
         #endregion
 
         #region Tokens
+
+        #region (protected internal) GetTokensRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET Tokens request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetTokensRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET Tokens request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetTokensRequest(DateTime     Timestamp,
+                                                 HTTPAPI      API,
+                                                 OCPIRequest  Request)
+
+            => OnGetTokensRequest.WhenAll(Timestamp,
+                                          API ?? this,
+                                          Request);
+
+        #endregion
+
+        #region (protected internal) GetTokensResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a GET Tokens response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetTokensResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET Tokens response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetTokensResponse(DateTime      Timestamp,
+                                                  HTTPAPI       API,
+                                                  OCPIRequest   Request,
+                                                  OCPIResponse  Response)
+
+            => OnGetTokensResponse.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request,
+                                           Response);
+
+        #endregion
+
 
         #region (protected internal) PostTokenRequest (Request)
 
@@ -3115,9 +3165,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  HTTPAPI      API,
                                                  OCPIRequest  Request)
 
-            => OnPostTokenRequest?.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request);
+            => OnPostTokenRequest.WhenAll(Timestamp,
+                                          API ?? this,
+                                          Request);
 
         #endregion
 
@@ -3140,15 +3190,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   OCPIRequest   Request,
                                                   OCPIResponse  Response)
 
-            => OnPostTokenResponse?.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request,
-                                            Response);
+            => OnPostTokenResponse.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request,
+                                           Response);
 
         #endregion
 
         #endregion
-
 
 
         public delegate Task<AuthorizationInfo> OnRFIDAuthTokenDelegate(CountryCode         From_CountryCode,
@@ -3181,9 +3230,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                           HTTPAPI      API,
                                                           OCPIRequest  Request)
 
-            => OnReserveNowCallbackRequest?.WhenAll(Timestamp,
-                                                    API ?? this,
-                                                    Request);
+            => OnReserveNowCallbackRequest.WhenAll(Timestamp,
+                                                   API ?? this,
+                                                   Request);
 
         #endregion
 
@@ -3206,10 +3255,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                            OCPIRequest   Request,
                                                            OCPIResponse  Response)
 
-            => OnReserveNowCallbackResponse?.WhenAll(Timestamp,
-                                                     API ?? this,
-                                                     Request,
-                                                     Response);
+            => OnReserveNowCallbackResponse.WhenAll(Timestamp,
+                                                    API ?? this,
+                                                    Request,
+                                                    Response);
 
         #endregion
 
@@ -3231,9 +3280,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                  HTTPAPI      API,
                                                                  OCPIRequest  Request)
 
-            => OnCancelReservationCallbackRequest?.WhenAll(Timestamp,
-                                                           API ?? this,
-                                                           Request);
+            => OnCancelReservationCallbackRequest.WhenAll(Timestamp,
+                                                          API ?? this,
+                                                          Request);
 
         #endregion
 
@@ -3256,10 +3305,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                   OCPIRequest   Request,
                                                                   OCPIResponse  Response)
 
-            => OnCancelReservationCallbackResponse?.WhenAll(Timestamp,
-                                                            API ?? this,
-                                                            Request,
-                                                            Response);
+            => OnCancelReservationCallbackResponse.WhenAll(Timestamp,
+                                                           API ?? this,
+                                                           Request,
+                                                           Response);
 
         #endregion
 
@@ -3281,9 +3330,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                             HTTPAPI      API,
                                                             OCPIRequest  Request)
 
-            => OnStartSessionCallbackRequest?.WhenAll(Timestamp,
-                                                      API ?? this,
-                                                      Request);
+            => OnStartSessionCallbackRequest.WhenAll(Timestamp,
+                                                     API ?? this,
+                                                     Request);
 
         #endregion
 
@@ -3306,10 +3355,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                              OCPIRequest   Request,
                                                              OCPIResponse  Response)
 
-            => OnStartSessionCallbackResponse?.WhenAll(Timestamp,
-                                                       API ?? this,
-                                                       Request,
-                                                       Response);
+            => OnStartSessionCallbackResponse.WhenAll(Timestamp,
+                                                      API ?? this,
+                                                      Request,
+                                                      Response);
 
         #endregion
 
@@ -3331,9 +3380,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                            HTTPAPI      API,
                                                            OCPIRequest  Request)
 
-            => OnStopSessionCallbackRequest?.WhenAll(Timestamp,
-                                                     API ?? this,
-                                                     Request);
+            => OnStopSessionCallbackRequest.WhenAll(Timestamp,
+                                                    API ?? this,
+                                                    Request);
 
         #endregion
 
@@ -3356,10 +3405,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                             OCPIRequest   Request,
                                                             OCPIResponse  Response)
 
-            => OnStopSessionCallbackResponse?.WhenAll(Timestamp,
-                                                      API ?? this,
-                                                      Request,
-                                                      Response);
+            => OnStopSessionCallbackResponse.WhenAll(Timestamp,
+                                                     API ?? this,
+                                                     Request,
+                                                     Response);
 
         #endregion
 
@@ -3381,9 +3430,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                HTTPAPI      API,
                                                                OCPIRequest  Request)
 
-            => OnUnlockConnectorCallbackRequest?.WhenAll(Timestamp,
-                                                         API ?? this,
-                                                         Request);
+            => OnUnlockConnectorCallbackRequest.WhenAll(Timestamp,
+                                                        API ?? this,
+                                                        Request);
 
         #endregion
 
@@ -3406,10 +3455,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                 OCPIRequest   Request,
                                                                 OCPIResponse  Response)
 
-            => OnUnlockConnectorCallbackResponse?.WhenAll(Timestamp,
-                                                          API ?? this,
-                                                          Request,
-                                                          Response);
+            => OnUnlockConnectorCallbackResponse.WhenAll(Timestamp,
+                                                         API ?? this,
+                                                         Request,
+                                                         Response);
 
         #endregion
 

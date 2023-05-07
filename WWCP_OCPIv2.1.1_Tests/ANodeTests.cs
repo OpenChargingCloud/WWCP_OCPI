@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Collections.Concurrent;
+
 using Newtonsoft.Json.Linq;
 
 using NUnit.Framework;
@@ -24,9 +26,12 @@ using NUnit.Framework;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 using cloud.charging.open.protocols.OCPIv2_1_1.WebAPI;
+using Org.BouncyCastle.Asn1.Ocsp;
+using System.Collections.Generic;
 
 #endregion
 
@@ -273,35 +278,44 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         #region Data
 
-        public          URL?              cpoVersionsAPIURL;
-        public          URL?              emsp1VersionsAPIURL;
-        public          URL?              emsp2VersionsAPIURL;
+        public          URL?                                           cpoVersionsAPIURL;
+        public          URL?                                           emsp1VersionsAPIURL;
+        public          URL?                                           emsp2VersionsAPIURL;
 
-        protected       HTTPAPI?          cpoHTTPAPI;
-        protected       CommonAPI?        cpoCommonAPI;
-        protected       OCPIWebAPI?       cpoWebAPI;
-        protected       CPOAPI?           cpoCPOAPI;
-        protected       OCPICSOAdapter?   cpoAdapter;
+        protected       HTTPAPI?                                       cpoHTTPAPI;
+        protected       CommonAPI?                                     cpoCommonAPI;
+        protected       OCPIWebAPI?                                    cpoWebAPI;
+        protected       CPOAPI?                                        cpoCPOAPI;
+        protected       OCPICSOAdapter?                                cpoAdapter;
+        protected       CPOAPILogger?                                  cpoAPILogger;
+        protected       ConcurrentDictionary<DateTime, OCPIRequest>    cpoAPIRequestLogs;
+        protected       ConcurrentDictionary<DateTime, OCPIResponse>   cpoAPIResponseLogs;
 
-        protected       HTTPAPI?          emsp1HTTPAPI;
-        protected       CommonAPI?        emsp1CommonAPI;
-        protected       OCPIWebAPI?       emsp1WebAPI;
-        protected       EMSPAPI?          emsp1EMSPAPI;
-        protected       OCPIEMPAdapter?   emsp1Adapter;
+        protected       HTTPAPI?                                       emsp1HTTPAPI;
+        protected       CommonAPI?                                     emsp1CommonAPI;
+        protected       OCPIWebAPI?                                    emsp1WebAPI;
+        protected       EMSPAPI?                                       emsp1EMSPAPI;
+        protected       OCPIEMPAdapter?                                emsp1Adapter;
+        protected       EMSPAPILogger?                                 emsp1APILogger;
+        protected       ConcurrentDictionary<DateTime, OCPIRequest>    emsp1APIRequestLogs;
+        protected       ConcurrentDictionary<DateTime, OCPIResponse>   emsp1APIResponseLogs;
 
-        protected       HTTPAPI?          emsp2HTTPAPI;
-        protected       CommonAPI?        emsp2CommonAPI;
-        protected       OCPIWebAPI?       emsp2WebAPI;
-        protected       EMSPAPI?          emsp2EMSPAPI;
-        protected       OCPIEMPAdapter?   emsp2Adapter;
+        protected       HTTPAPI?                                       emsp2HTTPAPI;
+        protected       CommonAPI?                                     emsp2CommonAPI;
+        protected       OCPIWebAPI?                                    emsp2WebAPI;
+        protected       EMSPAPI?                                       emsp2EMSPAPI;
+        protected       OCPIEMPAdapter?                                emsp2Adapter;
+        protected       EMSPAPILogger?                                 emsp2APILogger;
+        protected       ConcurrentDictionary<DateTime, OCPIRequest>    emsp2APIRequestLogs;
+        protected       ConcurrentDictionary<DateTime, OCPIResponse>   emsp2APIResponseLogs;
 
-        protected const String            emp1_accessing_cso__token     = "emp1-accessing-cso::token";
-        protected const String            emp2_accessing_cso__token     = "emp2-accessing-cso::token";
+        protected const String                                         emp1_accessing_cso__token     = "emp1-accessing-cso::token";
+        protected const String                                         emp2_accessing_cso__token     = "emp2-accessing-cso::token";
 
-        protected const String            UnknownToken                  = "UnknownUnknownUnknownToken";
+        protected const String                                         UnknownToken                  = "UnknownUnknownUnknownToken";
 
-        protected const String            BlockedCPOToken               = "blocked-cpo";
-        protected const String            BlockedEMSPToken              = "blocked-emsp";
+        protected const String                                         BlockedCPOToken               = "blocked-cpo";
+        protected const String                                         BlockedEMSPToken              = "blocked-emsp";
 
         //protected readonly Dictionary<Operator_Id, HashSet<EVSEDataRecord>>            EVSEDataRecords;
         //protected readonly Dictionary<Operator_Id, HashSet<EVSEStatusRecord>>          EVSEStatusRecords;
@@ -793,6 +807,82 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual(3, cpoCommonAPI.  RemoteParties.Count());
             Assert.AreEqual(2, emsp1CommonAPI.RemoteParties.Count());
             Assert.AreEqual(2, emsp2CommonAPI.RemoteParties.Count());
+
+            #endregion
+
+            #region Defined API loggers
+
+            // CPO
+            cpoAPIRequestLogs     = new ConcurrentDictionary<DateTime, OCPIRequest>();
+            cpoAPIResponseLogs    = new ConcurrentDictionary<DateTime, OCPIResponse>();
+
+            cpoAPILogger          = new CPOAPILogger(
+                                        cpoCPOAPI,
+                                        AppContext.BaseDirectory
+                                    );
+
+            cpoAPILogger.RegisterLogTarget(LogTargets.Network,
+                                           (loggingPath, context, logEventName, request) => {
+                                               cpoAPIRequestLogs. TryAdd(Timestamp.Now, request);
+                                               return Task.CompletedTask;
+                                           });
+
+            cpoAPILogger.RegisterLogTarget(LogTargets.Network,
+                                           (loggingPath, context, logEventName, request, response) => {
+                                               cpoAPIResponseLogs.TryAdd(Timestamp.Now, response);
+                                               return Task.CompletedTask;
+                                           });
+
+            cpoAPILogger.Debug("all", LogTargets.Network);
+
+
+
+            // EMSP #1
+            emsp1APIRequestLogs   = new ConcurrentDictionary<DateTime, OCPIRequest>();
+            emsp1APIResponseLogs  = new ConcurrentDictionary<DateTime, OCPIResponse>();
+
+            emsp1APILogger        = new EMSPAPILogger(
+                                        emsp1EMSPAPI,
+                                        AppContext.BaseDirectory
+                                    );
+
+            emsp1APILogger.RegisterLogTarget(LogTargets.Network,
+                                             (loggingPath, context, logEventName, request) => {
+                                                 emsp1APIRequestLogs. TryAdd(Timestamp.Now, request);
+                                                 return Task.CompletedTask;
+                                             });
+
+            emsp1APILogger.RegisterLogTarget(LogTargets.Network,
+                                             (loggingPath, context, logEventName, request, response) => {
+                                                 emsp1APIResponseLogs.TryAdd(Timestamp.Now, response);
+                                                 return Task.CompletedTask;
+                                             });
+
+            emsp1APILogger.Debug("all", LogTargets.Network);
+
+
+
+            // EMSP #2
+            emsp2APIRequestLogs = new ConcurrentDictionary<DateTime, OCPIRequest>();
+            emsp2APIResponseLogs  = new ConcurrentDictionary<DateTime, OCPIResponse>();
+
+            emsp2APILogger        = new EMSPAPILogger(
+                                        emsp2EMSPAPI,
+                                        AppContext.BaseDirectory);
+
+            emsp2APILogger.RegisterLogTarget(LogTargets.Network,
+                                             (loggingPath, context, logEventName, request) => {
+                                                 emsp2APIRequestLogs. TryAdd(Timestamp.Now, request);
+                                                 return Task.CompletedTask;
+                                             });
+
+            emsp2APILogger.RegisterLogTarget(LogTargets.Network,
+                                             (loggingPath, context, logEventName, request, response) => {
+                                                 emsp2APIResponseLogs.TryAdd(Timestamp.Now, response);
+                                                 return Task.CompletedTask;
+                                             });
+
+            emsp2APILogger.Debug("all", LogTargets.Network);
 
             #endregion
 

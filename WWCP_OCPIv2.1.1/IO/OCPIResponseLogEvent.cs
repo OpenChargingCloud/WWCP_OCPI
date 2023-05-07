@@ -17,11 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
@@ -57,33 +52,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region + / Add
 
-        public static OCPIResponseLogEvent operator + (OCPIResponseLogEvent e, OCPIResponseLogHandler callback)
+        public static OCPIResponseLogEvent operator + (OCPIResponseLogEvent    ResponseLogEvent,
+                                                       OCPIResponseLogHandler  ResponseLogHandler)
         {
 
-            if (callback == null)
-                throw new NullReferenceException("callback is null");
+            ResponseLogEvent.Add(ResponseLogHandler);
+            //ResponseLogEvent.Add((timestamp, api, request, response) => ResponseLogHandler(timestamp, api, request, response));
 
-            if (e == null)
-                e = new OCPIResponseLogEvent();
-
-            lock (e.subscribers)
-            {
-                e.subscribers.Add((timestamp, api, request, response) => callback(timestamp, api, request, response));
-            }
-
-            return e;
+            return ResponseLogEvent;
 
         }
 
-        public OCPIResponseLogEvent Add(OCPIResponseLogHandler callback)
+        public OCPIResponseLogEvent Add(OCPIResponseLogHandler ResponseLogHandler)
         {
-
-            if (callback == null)
-                throw new NullReferenceException("callback is null");
 
             lock (subscribers)
             {
-                subscribers.Add(callback);
+                subscribers.Add(ResponseLogHandler);
             }
 
             return this;
@@ -94,33 +79,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region - / Remove
 
-        public static OCPIResponseLogEvent operator - (OCPIResponseLogEvent e, OCPIResponseLogHandler callback)
+        public static OCPIResponseLogEvent operator - (OCPIResponseLogEvent    ResponseLogEvent,
+                                                       OCPIResponseLogHandler  ResponseLogHandler)
         {
 
-            if (callback == null)
-                throw new NullReferenceException("callback is null");
+            ResponseLogEvent.Remove(ResponseLogHandler);
 
-            if (e == null)
-                return null;
-
-            lock (e.subscribers)
-            {
-                e.subscribers.Remove(callback);
-            }
-
-            return e;
+            return ResponseLogEvent;
 
         }
 
-        public OCPIResponseLogEvent Remove(OCPIResponseLogHandler callback)
+        public OCPIResponseLogEvent Remove(OCPIResponseLogHandler ResponseLogHandler)
         {
-
-            if (callback == null)
-                throw new NullReferenceException("callback is null");
 
             lock (subscribers)
             {
-                subscribers.Remove(callback);
+                subscribers.Remove(ResponseLogHandler);
             }
 
             return this;
@@ -145,14 +119,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       OCPIResponse  Response)
         {
 
-            OCPIResponseLogHandler[] _invocationList;
+            OCPIResponseLogHandler[] invocationList;
 
             lock (subscribers)
             {
-                _invocationList = subscribers.ToArray();
+                invocationList = subscribers.ToArray();
             }
 
-            foreach (var callback in _invocationList)
+            foreach (var callback in invocationList)
                 await callback(ServerTimestamp, OCPIAPI, Request, Response).ConfigureAwait(false);
 
         }
@@ -176,21 +150,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             TimeSpan?     Timeout = null)
         {
 
-            List<Task> _invocationList;
+            List<Task> invocationList;
 
             lock (subscribers)
             {
 
-                _invocationList = subscribers.
-                                        Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response)).
-                                        ToList();
+                invocationList = subscribers.
+                                     Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response)).
+                                     ToList();
 
                 if (Timeout.HasValue)
-                    _invocationList.Add(Task.Delay(Timeout.Value));
+                    invocationList.Add(Task.Delay(Timeout.Value));
 
             }
 
-            return Task.WhenAny(_invocationList);
+            return Task.WhenAny(invocationList);
 
         }
 
@@ -207,36 +181,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Request">The incoming request.</param>
         /// <param name="Response">The outgoing response.</param>
         /// <param name="VerifyResult">A delegate to verify and filter results.</param>
-        /// <param name="Timeout">A timeout for this operation.</param>
         /// <param name="DefaultResult">A default result in case of errors or a timeout.</param>
+        /// <param name="Timeout">A timeout for this operation.</param>
         public Task<T> WhenFirst<T>(DateTime           ServerTimestamp,
                                     HTTPAPI            OCPIAPI,
                                     OCPIRequest        Request,
                                     OCPIResponse       Response,
                                     Func<T, Boolean>   VerifyResult,
-                                    TimeSpan?          Timeout        = null,
-                                    Func<TimeSpan, T>  DefaultResult  = null)
+                                    Func<TimeSpan, T>  DefaultResult,
+                                    TimeSpan?          Timeout   = null)
         {
 
             #region Data
 
-            List<Task>  _invocationList;
-            Task        WorkDone;
+            List<Task>  invocationList;
+            Task?       WorkDone;
             Task<T>     Result;
-            DateTime    StartTime    = Timestamp.Now;
-            Task        TimeoutTask  = null;
+            DateTime    StartTime     = Timestamp.Now;
+            Task?       TimeoutTask   = null;
 
             #endregion
 
             lock (subscribers)
             {
 
-                _invocationList = subscribers.
-                                        Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response)).
-                                        ToList();
+                invocationList = subscribers.
+                                     Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response)).
+                                     ToList();
 
                 if (Timeout.HasValue)
-                    _invocationList.Add(TimeoutTask = Task.Run(() => System.Threading.Thread.Sleep(Timeout.Value)));
+                    invocationList.Add(TimeoutTask = Task.Run(() => Thread.Sleep(Timeout.Value)));
 
             }
 
@@ -246,9 +220,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 try
                 {
 
-                    WorkDone = Task.WhenAny(_invocationList);
+                    WorkDone = Task.WhenAny(invocationList);
 
-                    _invocationList.Remove(WorkDone);
+                    invocationList.Remove(WorkDone);
 
                     if (WorkDone != TimeoutTask)
                     {
@@ -272,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
             }
-            while (!(WorkDone == TimeoutTask || _invocationList.Count == 0));
+            while (!(WorkDone == TimeoutTask || invocationList.Count == 0));
 
             return Task.FromResult(DefaultResult(Timestamp.Now - StartTime));
 
@@ -295,16 +269,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             OCPIResponse  Response)
         {
 
-            Task[] _invocationList;
+            Task[] invocationList;
 
             lock (subscribers)
             {
-                _invocationList = subscribers.
-                                      Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response)).
-                                      ToArray();
+                invocationList = subscribers.
+                                     Select (callback => callback(ServerTimestamp, OCPIAPI, Request, Response)).
+                                     ToArray();
             }
 
-            return Task.WhenAll(_invocationList);
+            return Task.WhenAll(invocationList);
 
         }
 
