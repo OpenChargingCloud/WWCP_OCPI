@@ -287,7 +287,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected       OCPIWebAPI?                                    cpoWebAPI;
         protected       CPOAPI?                                        cpoCPOAPI;
         protected       OCPICSOAdapter?                                cpoAdapter;
-        protected       CPOAPILogger?                                  cpoAPILogger;
         protected       ConcurrentDictionary<DateTime, OCPIRequest>    cpoAPIRequestLogs;
         protected       ConcurrentDictionary<DateTime, OCPIResponse>   cpoAPIResponseLogs;
 
@@ -296,7 +295,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected       OCPIWebAPI?                                    emsp1WebAPI;
         protected       EMSPAPI?                                       emsp1EMSPAPI;
         protected       OCPIEMPAdapter?                                emsp1Adapter;
-        protected       EMSPAPILogger?                                 emsp1APILogger;
         protected       ConcurrentDictionary<DateTime, OCPIRequest>    emsp1APIRequestLogs;
         protected       ConcurrentDictionary<DateTime, OCPIResponse>   emsp1APIResponseLogs;
 
@@ -305,7 +303,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected       OCPIWebAPI?                                    emsp2WebAPI;
         protected       EMSPAPI?                                       emsp2EMSPAPI;
         protected       OCPIEMPAdapter?                                emsp2Adapter;
-        protected       EMSPAPILogger?                                 emsp2APILogger;
         protected       ConcurrentDictionary<DateTime, OCPIRequest>    emsp2APIRequestLogs;
         protected       ConcurrentDictionary<DateTime, OCPIResponse>   emsp2APIResponseLogs;
 
@@ -542,8 +539,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             cpoWebAPI            = new OCPIWebAPI(
                                        HTTPServer:                          cpoHTTPAPI.HTTPServer,
                                        CommonAPI:                           cpoCommonAPI,
-                                       OverlayURLPathPrefix:                      HTTPPath.Parse("/ocpi/v2.1"),
-                                       WebAPIURLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
+                                       OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
+                                       WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
                                        BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
                                        HTTPRealm:                           "GraphDefined OCPI CPO WebAPI",
                                        HTTPLogins:                          new[] {
@@ -556,8 +553,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emsp1WebAPI          = new OCPIWebAPI(
                                        HTTPServer:                          emsp1HTTPAPI.HTTPServer,
                                        CommonAPI:                           emsp1CommonAPI,
-                                       OverlayURLPathPrefix:                      HTTPPath.Parse("/ocpi/v2.1"),
-                                       WebAPIURLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
+                                       OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
+                                       WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
                                        BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
                                        HTTPRealm:                           "GraphDefined OCPI EMSP #1 WebAPI",
                                        HTTPLogins:                          new[] {
@@ -570,8 +567,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emsp2WebAPI          = new OCPIWebAPI(
                                        HTTPServer:                          emsp2HTTPAPI.HTTPServer,
                                        CommonAPI:                           emsp2CommonAPI,
-                                       OverlayURLPathPrefix:                      HTTPPath.Parse("/ocpi/v2.1"),
-                                       WebAPIURLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1/webapi"),
+                                       OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
+                                       WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
                                        BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
                                        HTTPRealm:                           "GraphDefined OCPI EMSP #2 WebAPI",
                                        HTTPLogins:                          new[] {
@@ -816,24 +813,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             cpoAPIRequestLogs     = new ConcurrentDictionary<DateTime, OCPIRequest>();
             cpoAPIResponseLogs    = new ConcurrentDictionary<DateTime, OCPIResponse>();
 
-            cpoAPILogger          = new CPOAPILogger(
-                                        cpoCPOAPI,
-                                        AppContext.BaseDirectory
-                                    );
+            cpoCPOAPI.CPOAPILogger.RegisterLogTarget(LogTargets.Debug,
+                                                     (loggingPath, context, logEventName, request) => {
+                                                         cpoAPIRequestLogs. TryAdd(Timestamp.Now, request);
+                                                         return Task.CompletedTask;
+                                                     });
 
-            cpoAPILogger.RegisterLogTarget(LogTargets.Network,
-                                           (loggingPath, context, logEventName, request) => {
-                                               cpoAPIRequestLogs. TryAdd(Timestamp.Now, request);
-                                               return Task.CompletedTask;
-                                           });
+            cpoCPOAPI.CPOAPILogger.RegisterLogTarget(LogTargets.Debug,
+                                                     (loggingPath, context, logEventName, request, response) => {
+                                                         cpoAPIResponseLogs.TryAdd(Timestamp.Now, response);
+                                                         return Task.CompletedTask;
+                                                     });
 
-            cpoAPILogger.RegisterLogTarget(LogTargets.Network,
-                                           (loggingPath, context, logEventName, request, response) => {
-                                               cpoAPIResponseLogs.TryAdd(Timestamp.Now, response);
-                                               return Task.CompletedTask;
-                                           });
-
-            cpoAPILogger.Debug("all", LogTargets.Network);
+            cpoCPOAPI.CPOAPILogger.Debug("all", LogTargets.Debug);
 
 
 
@@ -841,48 +833,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emsp1APIRequestLogs   = new ConcurrentDictionary<DateTime, OCPIRequest>();
             emsp1APIResponseLogs  = new ConcurrentDictionary<DateTime, OCPIResponse>();
 
-            emsp1APILogger        = new EMSPAPILogger(
-                                        emsp1EMSPAPI,
-                                        AppContext.BaseDirectory
-                                    );
+            emsp1EMSPAPI.EMSPAPILogger.RegisterLogTarget(LogTargets.Debug,
+                                                         (loggingPath, context, logEventName, request) => {
+                                                             emsp1APIRequestLogs. TryAdd(Timestamp.Now, request);
+                                                             return Task.CompletedTask;
+                                                         });
 
-            emsp1APILogger.RegisterLogTarget(LogTargets.Network,
-                                             (loggingPath, context, logEventName, request) => {
-                                                 emsp1APIRequestLogs. TryAdd(Timestamp.Now, request);
-                                                 return Task.CompletedTask;
-                                             });
+            emsp1EMSPAPI.EMSPAPILogger.RegisterLogTarget(LogTargets.Debug,
+                                                         (loggingPath, context, logEventName, request, response) => {
+                                                             emsp1APIResponseLogs.TryAdd(Timestamp.Now, response);
+                                                             return Task.CompletedTask;
+                                                         });
 
-            emsp1APILogger.RegisterLogTarget(LogTargets.Network,
-                                             (loggingPath, context, logEventName, request, response) => {
-                                                 emsp1APIResponseLogs.TryAdd(Timestamp.Now, response);
-                                                 return Task.CompletedTask;
-                                             });
-
-            emsp1APILogger.Debug("all", LogTargets.Network);
+            emsp1EMSPAPI.EMSPAPILogger.Debug("all", LogTargets.Debug);
 
 
 
             // EMSP #2
-            emsp2APIRequestLogs = new ConcurrentDictionary<DateTime, OCPIRequest>();
+            emsp2APIRequestLogs   = new ConcurrentDictionary<DateTime, OCPIRequest>();
             emsp2APIResponseLogs  = new ConcurrentDictionary<DateTime, OCPIResponse>();
 
-            emsp2APILogger        = new EMSPAPILogger(
-                                        emsp2EMSPAPI,
-                                        AppContext.BaseDirectory);
+            emsp2EMSPAPI.EMSPAPILogger.RegisterLogTarget(LogTargets.Debug,
+                                                         (loggingPath, context, logEventName, request) => {
+                                                             emsp2APIRequestLogs. TryAdd(Timestamp.Now, request);
+                                                             return Task.CompletedTask;
+                                                         });
 
-            emsp2APILogger.RegisterLogTarget(LogTargets.Network,
-                                             (loggingPath, context, logEventName, request) => {
-                                                 emsp2APIRequestLogs. TryAdd(Timestamp.Now, request);
-                                                 return Task.CompletedTask;
-                                             });
+            emsp2EMSPAPI.EMSPAPILogger.RegisterLogTarget(LogTargets.Debug,
+                                                         (loggingPath, context, logEventName, request, response) => {
+                                                             emsp2APIResponseLogs.TryAdd(Timestamp.Now, response);
+                                                             return Task.CompletedTask;
+                                                         });
 
-            emsp2APILogger.RegisterLogTarget(LogTargets.Network,
-                                             (loggingPath, context, logEventName, request, response) => {
-                                                 emsp2APIResponseLogs.TryAdd(Timestamp.Now, response);
-                                                 return Task.CompletedTask;
-                                             });
-
-            emsp2APILogger.Debug("all", LogTargets.Network);
+            emsp2EMSPAPI.EMSPAPILogger.Debug("all", LogTargets.Debug);
 
             #endregion
 

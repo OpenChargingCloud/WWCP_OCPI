@@ -27,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// A EMSP API logger.
     /// </summary>
-    public class EMSPAPILogger : CommonAPILogger
+    public sealed class EMSPAPILogger : CommonAPILogger
     {
 
         #region Data
@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The default context of this logger.
         /// </summary>
-        public new const String DefaultContext = "EMSPAPI";
+        public new const String  DefaultContext   = $"OCPI{Version.Number}_EMSPAPI";
 
         #endregion
 
@@ -57,13 +57,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         public EMSPAPILogger(EMSPAPI                  EMSPAPI,
-                             String                   LoggingPath,
-                             String                   Context          = DefaultContext,
+                             String?                  Context          = DefaultContext,
+                             String?                  LoggingPath      = null,
                              LogfileCreatorDelegate?  LogfileCreator   = null)
 
             : base(EMSPAPI.CommonAPI,
+                   Context ?? DefaultContext,
                    LoggingPath,
-                   Context,
                    LogfileCreator)
 
         {

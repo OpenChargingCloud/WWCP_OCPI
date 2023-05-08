@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The default context of this logger.
         /// </summary>
-        public new const String DefaultContext = "CommonAPI";
+        public new const String  DefaultContext   = $"OCPI{Version.Number}_CommonAPI";
 
         #endregion
 
@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The linked Common API.
         /// </summary>
-        public CommonAPI  CommonAPI  { get; }
+        public CommonAPI  CommonAPI    { get; }
 
         #endregion
 
@@ -57,13 +57,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         public CommonAPILogger(CommonAPI                CommonAPI,
-                               String                   LoggingPath,
-                               String                   Context          = DefaultContext,
+                               String?                  Context          = DefaultContext,
+                               String?                  LoggingPath      = null,
                                LogfileCreatorDelegate?  LogfileCreator   = null)
 
             : base(CommonAPI.HTTPServer,
-                   LoggingPath,
                    Context ?? DefaultContext,
+                   LoggingPath,
                    LogfileCreator)
 
         {

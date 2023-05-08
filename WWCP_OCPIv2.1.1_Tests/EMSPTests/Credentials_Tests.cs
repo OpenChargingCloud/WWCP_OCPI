@@ -121,6 +121,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 }
 
+
+                // GET ~/versions, GET ~/version/2.1.1, GET ~/v2.1.1/credentials
+                Assert.AreEqual(3,  cpoAPIRequestLogs. Count);
+                Assert.AreEqual(3,  cpoAPIResponseLogs.Count);
+
             }
 
         }
@@ -1055,6 +1060,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                     Assert.Contains (HTTPMethod.PUT,       response3.Allow);
                     Assert.Contains (HTTPMethod.DELETE,    response3.Allow);
                 }
+
+
+                // GET ~/versions, GET ~/version/2.1.1
+                Assert.AreEqual(2,  cpoAPIRequestLogs. Count);
+                Assert.AreEqual(2,  cpoAPIResponseLogs.Count);
 
             }
 

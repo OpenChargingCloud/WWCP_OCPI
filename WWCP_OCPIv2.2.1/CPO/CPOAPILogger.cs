@@ -27,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     /// <summary>
     /// A CPO API logger.
     /// </summary>
-    public class CPOAPILogger : CommonAPILogger
+    public sealed class CPOAPILogger : CommonAPILogger
     {
 
         #region Data
@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// The default context of this logger.
         /// </summary>
-        public new const String DefaultContext = "CPOAPI";
+        public new const String  DefaultContext   = $"OCPI{Version.Number}_CPOAPI";
 
         #endregion
 
@@ -57,13 +57,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         public CPOAPILogger(CPOAPI                   CPOAPI,
-                            String                   LoggingPath,
                             String?                  Context          = DefaultContext,
+                            String?                  LoggingPath      = null,
                             LogfileCreatorDelegate?  LogfileCreator   = null)
 
             : base(CPOAPI.CommonAPI,
-                   LoggingPath,
                    Context ?? DefaultContext,
+                   LoggingPath,
                    LogfileCreator)
 
         {

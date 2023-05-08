@@ -136,6 +136,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// </summary>
         public Boolean                       Disable_OCPIv2_1_1         { get; }
 
+
+        /// <summary>
+        /// The Common API logger.
+        /// </summary>
+        public CommonAPILogger               CommonAPILogger            { get; }
+
         #endregion
 
         #region Events
@@ -575,7 +581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
 
             this.remoteParties            = new Dictionary<RemoteParty_Id, RemoteParty>();
-            this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this.locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
             this.tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
             this.chargingSessions         = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
             this.tokenStatus              = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
@@ -682,7 +688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
 
             this.remoteParties            = new Dictionary<RemoteParty_Id, RemoteParty>();
-            this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this.locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
             this.tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
             this.chargingSessions         = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
             this.tokenStatus              = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
@@ -692,6 +698,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
             HTTPServer.ResponseLog       += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
             HTTPServer.ErrorLog          += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
+
+            this.CommonAPILogger          = new CommonAPILogger(
+                                                this,
+                                                LoggingPath,
+                                                "OCPIv2.2.1CommonAPI",
+                                                LogfileCreator
+                                            );
 
             RegisterURLTemplates();
 
@@ -2856,7 +2869,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Locations
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> Locations;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> locations;
 
 
         public delegate Task OnLocationAddedDelegate(Location Location);
@@ -2878,13 +2891,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (Location is null)
                 throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
 
-            lock (Locations)
+            lock (locations)
             {
 
-                if (!Locations.TryGetValue(Location.CountryCode, out var parties))
+                if (!this.locations.TryGetValue(Location.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                    Locations.Add(Location.CountryCode, parties);
+                    this.locations.Add(Location.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Location.PartyId, out var locations))
@@ -2940,13 +2953,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (Location is null)
                 throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
 
-            lock (Locations)
+            lock (locations)
             {
 
-                if (!Locations.TryGetValue(Location.CountryCode, out var parties))
+                if (!this.locations.TryGetValue(Location.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                    Locations.Add(Location.CountryCode, parties);
+                    this.locations.Add(Location.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Location.PartyId, out var locations))
@@ -3002,10 +3015,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                           "The given location must not be null!");
 
 
-            if (!Locations.TryGetValue(newOrUpdatedLocation.CountryCode, out var parties))
+            if (!this.locations.TryGetValue(newOrUpdatedLocation.CountryCode, out var parties))
             {
                 parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                Locations.Add(newOrUpdatedLocation.CountryCode, parties);
+                this.locations.Add(newOrUpdatedLocation.CountryCode, parties);
             }
 
             if (!parties.TryGetValue(newOrUpdatedLocation.PartyId, out var locations))
@@ -3101,7 +3114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (Locations)
+            lock (locations)
             {
                 return __addOrUpdateLocation(newOrUpdatedLocation,
                                              AllowDowngrades);
@@ -3119,15 +3132,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (Location is null)
                 throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
 
-            lock (Locations)
+            lock (locations)
             {
 
-                if (Locations.TryGetValue(Location.CountryCode, out var parties)   &&
-                    parties.  TryGetValue(Location.PartyId,     out var locations) &&
-                    locations.ContainsKey(Location.Id))
+                if (locations.TryGetValue(Location.CountryCode, out var parties)   &&
+                    parties.  TryGetValue(Location.PartyId,     out var _locations) &&
+                    _locations.ContainsKey(Location.Id))
                 {
 
-                    locations[Location.Id] = Location;
+                    _locations[Location.Id] = Location;
                     Location.CommonAPI = this;
 
                     var OnEVSEChangedLocal = OnEVSEChanged;
@@ -3142,7 +3155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         {
                             DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(UpdateLocation), " ", nameof(OnEVSEChanged), ": ",
                                         Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
+                                        Environment.NewLine, e.StackTrace ?? "");
                         }
                     }
 
@@ -3177,12 +3190,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (Locations)
+            lock (locations)
             {
 
-                if (Locations.TryGetValue(Location.CountryCode, out var parties)   &&
-                    parties.  TryGetValue(Location.PartyId,     out var locations) &&
-                    locations.TryGetValue(Location.Id,          out var existingLocation))
+                if (locations. TryGetValue(Location.CountryCode, out var parties)   &&
+                    parties.   TryGetValue(Location.PartyId,     out var _locations) &&
+                    _locations.TryGetValue(Location.Id,          out var existingLocation))
                 {
 
                     var patchResult = existingLocation.TryPatch(LocationPatch,
@@ -3191,7 +3204,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     if (patchResult.IsSuccess)
                     {
 
-                        locations[Location.Id] = patchResult.PatchedData;
+                        _locations[Location.Id] = patchResult.PatchedData;
 
                         var OnLocationChangedLocal = OnLocationChanged;
                         if (OnLocationChangedLocal is not null)
@@ -3204,7 +3217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             {
                                 DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchLocation), " ", nameof(OnLocationChanged), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -3221,7 +3234,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             {
                                 DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchLocation), " ", nameof(OnEVSEChanged), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -3421,7 +3434,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (Locations)
+            lock (locations)
             {
                 return __addOrUpdateEVSE(Location,
                                          newOrUpdatedEVSE,
@@ -3447,7 +3460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (Locations)
+            lock (locations)
             {
 
                 var patchResult        = EVSE.TryPatch(EVSEPatch,
@@ -3579,7 +3592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (Locations)
+            lock (locations)
             {
 
                 var ConnectorExistedBefore = EVSE.TryGetConnector(newOrUpdatedConnector.Id, out var existingConnector);
@@ -3661,7 +3674,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (Locations)
+            lock (locations)
             {
 
                 var patchResult = Connector.TryPatch(ConnectorPatch,
@@ -3695,10 +3708,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                       Location_Id   LocationId)
         {
 
-            lock (Locations)
+            lock (locations)
             {
 
-                if (Locations.TryGetValue(CountryCode, out var parties))
+                if (locations.TryGetValue(CountryCode, out var parties))
                 {
                     if (parties.TryGetValue(PartyId, out var locations))
                     {
@@ -3722,10 +3735,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                       out Location?  Location)
         {
 
-            lock (Locations)
+            lock (locations)
             {
 
-                if (Locations.TryGetValue(CountryCode, out var parties))
+                if (locations.TryGetValue(CountryCode, out var parties))
                 {
                     if (parties.TryGetValue(PartyId, out var locations))
                     {
@@ -3748,12 +3761,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public IEnumerable<Location> GetLocations(Func<Location, Boolean> IncludeLocation)
         {
 
-            lock (Locations)
+            lock (locations)
             {
 
                 var allLocations = new List<Location>();
 
-                foreach (var party in Locations.Values)
+                foreach (var party in locations.Values)
                 {
                     foreach (var partyLocations in party.Values)
                     {
@@ -3782,12 +3795,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   Party_Id?    PartyId       = null)
         {
 
-            lock (Locations)
+            lock (locations)
             {
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (Locations.TryGetValue(CountryCode.Value, out var parties))
+                    if (locations.TryGetValue(CountryCode.Value, out var parties))
                     {
                         if (parties.TryGetValue(PartyId.Value, out var locations))
                         {
@@ -3801,7 +3814,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                     var allLocations = new List<Location>();
 
-                    foreach (var party in Locations.Values)
+                    foreach (var party in locations.Values)
                     {
                         if (party.TryGetValue(PartyId.Value, out var locations))
                         {
@@ -3815,7 +3828,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (Locations.TryGetValue(CountryCode.Value, out var parties))
+                    if (locations.TryGetValue(CountryCode.Value, out var parties))
                     {
 
                         var allLocations = new List<Location>();
@@ -3835,7 +3848,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                     var allLocations = new List<Location>();
 
-                    foreach (var party in Locations.Values)
+                    foreach (var party in locations.Values)
                     {
                         foreach (var locations in party.Values)
                         {
@@ -3861,10 +3874,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public Location RemoveLocation(Location Location)
         {
 
-            lock (Locations)
+            lock (locations)
             {
 
-                if (Locations.TryGetValue(Location.CountryCode, out var parties))
+                if (locations.TryGetValue(Location.CountryCode, out var parties))
                 {
 
                     if (parties.TryGetValue(Location.PartyId, out var locations))
@@ -3881,7 +3894,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
 
                     if (!parties.Any())
-                        Locations.Remove(Location.CountryCode);
+                        this.locations.Remove(Location.CountryCode);
 
                 }
 
@@ -3901,9 +3914,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public void RemoveAllLocations()
         {
 
-            lock (Locations)
+            lock (locations)
             {
-                Locations.Clear();
+                locations.Clear();
             }
 
         }
@@ -3921,10 +3934,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                        Party_Id     PartyId)
         {
 
-            lock (Locations)
+            lock (locations)
             {
 
-                if (Locations.TryGetValue(CountryCode, out var parties))
+                if (locations.TryGetValue(CountryCode, out var parties))
                 {
                     if (parties.TryGetValue(PartyId, out var locations))
                     {

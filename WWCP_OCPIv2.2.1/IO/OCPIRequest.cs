@@ -155,6 +155,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     public class OCPIRequest // : HTTPRequest
     {
 
+        #region DateAndPaginationFilters
+
         public readonly struct DateAndPaginationFilters
         {
 
@@ -179,6 +181,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         }
 
+        public DateAndPaginationFilters GetDateAndPaginationFilters()
+
+            => new (HTTPRequest.QueryString.GetDateTime("date_from"),
+                    HTTPRequest.QueryString.GetDateTime("date_to"),
+                    HTTPRequest.QueryString.GetUInt64  ("offset"),
+                    HTTPRequest.QueryString.GetUInt64  ("limit"));
+
+        #endregion
+
 
         #region Properties
 
@@ -197,11 +208,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         public LocalAccessInfo?   LocalAccessInfo     { get; }
 
-        //public LocalAccessInfo?  AccessInfo2         { get; }
-
         public RemoteParty        RemoteParty         { get; }
 
-        public EMSP_Id?            EMPId               { get; }
+        public EMSP_Id?           EMSPId               { get; }
+
+        public CPO_Id?            CPOId               { get; }
 
 
         /// <summary>
@@ -262,26 +273,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     if (parties.Count() == 1)
                     {
 
+                        this.RemoteParty      = parties.First();
+
                         this.LocalAccessInfo  = new LocalAccessInfo(
                                                     AccessToken.Value,
-                                                    parties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status,
+                                                    this.RemoteParty.LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status,
                                                     new[] {
                                                         new CredentialsRole(
-                                                            parties.First().CountryCode,
-                                                            parties.First().PartyId,
-                                                            parties.First().Role,
-                                                            parties.First().BusinessDetails,
+                                                            this.RemoteParty.CountryCode,
+                                                            this.RemoteParty.PartyId,
+                                                            this.RemoteParty.Role,
+                                                            this.RemoteParty.BusinessDetails,
                                                             null
                                                         )
                                                     },
-                                                    parties.First().RemoteAccessInfos.FirstOrDefault()?.VersionsURL
+                                                    this.RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
                                                 );
 
-                        //this.AccessInfo2  = parties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);
+                        this.CPOId            = this.RemoteParty.Role == Roles.CPO
+                                                   ? CPO_Id. Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}*{this.LocalAccessInfo.Value.Roles.First().PartyId}")
+                                                   : null;
 
-                        this.RemoteParty      = parties.First();
-
-                        this.EMPId            = EMSP_Id.Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}-{this.LocalAccessInfo.Value.Roles.First().PartyId}");
+                        this.EMSPId           = this.RemoteParty.Role == Roles.EMSP
+                                                   ? EMSP_Id.Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}-{this.LocalAccessInfo.Value.Roles.First().PartyId}")
+                                                   : null;
 
                     }
 
@@ -340,14 +355,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.HTTPRequest.SubprotocolRequest = this;
 
         }
-
-        public DateAndPaginationFilters GetDateAndPaginationFilters()
-
-            => new (HTTPRequest.QueryString.GetDateTime("date_from"),
-                    HTTPRequest.QueryString.GetDateTime("date_to"),
-                    HTTPRequest.QueryString.GetUInt64  ("offset"),
-                    HTTPRequest.QueryString.GetUInt64  ("limit"));
-
 
 
 

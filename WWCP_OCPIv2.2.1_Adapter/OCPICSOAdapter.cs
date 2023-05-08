@@ -346,6 +346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           IsDevelopment,
                                                           DevelopmentServers,
                                                           DisableLogging,
+                                                          LoggingContext,
                                                           LoggingPath,
                                                           LogfileName,
                                                           LogfileCreator

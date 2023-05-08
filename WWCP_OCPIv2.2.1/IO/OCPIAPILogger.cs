@@ -29,9 +29,6 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 {
 
-    public delegate Task OCPIRequestLoggerDelegate (String LoggingPath, String Context, String LogEventName, OCPIRequest Request);
-    public delegate Task OCPIResponseLoggerDelegate(String LoggingPath, String Context, String LogEventName, OCPIRequest Request, OCPIResponse Response);
-
     public static class OCPIAPILoggerExtensions
     {
 
@@ -279,7 +276,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// A wrapper class to manage OCPI API event subscriptions
         /// for logging purposes.
         /// </summary>
-        public class OCPIAPIRequestLogger
+        public sealed class OCPIAPIRequestLogger
         {
 
             #region Data
@@ -451,7 +448,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// A wrapper class to manage OCPI API event subscriptions
         /// for logging purposes.
         /// </summary>
-        public class OCPIAPIResponseLogger
+        public sealed class OCPIAPIResponseLogger
         {
 
             #region Data
@@ -967,17 +964,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         public OCPIAPILogger(IHTTPServer              HTTPServer,
-                             String                   LoggingPath,
                              String                   Context,
+                             String?                  LoggingPath      = null,
                              LogfileCreatorDelegate?  LogfileCreator   = null)
         {
 
             this.HTTPServer       = HTTPServer  ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
+            this.Context          = Context     ?? $"OCPI{Version.Number}_Logger";
             this.LoggingPath      = LoggingPath ?? AppContext.BaseDirectory;
+
             this.requestLoggers   = new ConcurrentDictionary<String, OCPIAPIRequestLogger>();
             this.responseLoggers  = new ConcurrentDictionary<String, OCPIAPIResponseLogger>();
-
-            this.Context          = Context ?? "";
             this.groupTags        = new ConcurrentDictionary<String, HashSet<String>>();
 
             this.LogfileCreator   = LogfileCreator ?? ((loggingPath, context, logfilename) => String.Concat(loggingPath,

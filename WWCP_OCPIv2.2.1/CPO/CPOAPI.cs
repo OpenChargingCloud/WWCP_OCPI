@@ -1178,23 +1178,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// The CommonAPI.
         /// </summary>
-        public CommonAPI    CommonAPI             { get; }
+        public CommonAPI     CommonAPI             { get; }
 
         /// <summary>
         /// The default country code to use.
         /// </summary>
-        public CountryCode  DefaultCountryCode    { get; }
+        public CountryCode   DefaultCountryCode    { get; }
 
         /// <summary>
         /// The default party identification to use.
         /// </summary>
-        public Party_Id     DefaultPartyId        { get; }
+        public Party_Id      DefaultPartyId        { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?     AllowDowngrades       { get; }
+        public Boolean?      AllowDowngrades       { get; }
+
+        /// <summary>
+        /// The CPO API logger.
+        /// </summary>
+        public CPOAPILogger  CPOAPILogger          { get; }
 
         #endregion
 
@@ -2415,6 +2420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                       Boolean?                 IsDevelopment             = false,
                       IEnumerable<String>?     DevelopmentServers        = null,
                       Boolean?                 DisableLogging            = false,
+                      String?                  LoggingContext            = null,
                       String?                  LoggingPath               = null,
                       String?                  LogfileName               = null,
                       LogfileCreatorDelegate?  LogfileCreator            = null,
@@ -2452,6 +2458,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.DefaultCountryCode  = DefaultCountryCode;
             this.DefaultPartyId      = DefaultPartyId;
             this.AllowDowngrades     = AllowDowngrades;
+
+            this.CPOAPILogger        = new CPOAPILogger(
+                                           this,
+                                           LoggingContext,
+                                           LoggingPath,
+                                           LogfileCreator
+                                       );
 
             RegisterURLTemplates();
 
@@ -2572,7 +2585,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Hello world!",
                                                     Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
                                                                                                                        filters.Limit).
-                                                                                                        SafeSelect(location => location.ToJSON(Request.EMPId,
+                                                                                                        SafeSelect(location => location.ToJSON(Request.EMSPId,
                                                                                                                                                CustomLocationSerializer,
                                                                                                                                                CustomPublishTokenSerializer,
                                                                                                                                                CustomAdditionalGeoLocationSerializer,
@@ -2680,7 +2693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = location.ToJSON(Request.EMPId,
+                                                   Data                 = location.ToJSON(Request.EMSPId,
                                                                                           CustomLocationSerializer,
                                                                                           CustomPublishTokenSerializer,
                                                                                           CustomAdditionalGeoLocationSerializer,
@@ -2785,7 +2798,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = evse.ToJSON(Request.EMPId,
+                                                   Data                 = evse.ToJSON(Request.EMSPId,
                                                                                       CustomEVSESerializer,
                                                                                       CustomStatusScheduleSerializer,
                                                                                       CustomConnectorSerializer,
@@ -2884,7 +2897,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = connector.ToJSON(Request.EMPId,
+                                                   Data                 = connector.ToJSON(Request.EMSPId,
                                                                                            CustomConnectorSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,

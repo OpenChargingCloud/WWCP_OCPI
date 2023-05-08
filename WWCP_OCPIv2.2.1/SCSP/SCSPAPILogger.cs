@@ -27,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     /// <summary>
     /// A SCSP API logger.
     /// </summary>
-    public class SCSPAPILogger : OCPIAPILogger
+    public sealed class SCSPAPILogger : CommonAPILogger
     {
 
         #region Data
@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// The default context of this logger.
         /// </summary>
-        public const String DefaultContext = "SCSPAPI";
+        public new const String  DefaultContext   = $"OCPI{Version.Number}_SCSPAPI";
 
         #endregion
 
@@ -57,13 +57,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         public SCSPAPILogger(SCSPAPI                  SCSPAPI,
-                             String                   LoggingPath,
                              String?                  Context          = DefaultContext,
+                             String?                  LoggingPath      = null,
                              LogfileCreatorDelegate?  LogfileCreator   = null)
 
-            : base(SCSPAPI.HTTPServer,
-                   LoggingPath,
+            : base(SCSPAPI.CommonAPI,
                    Context ?? DefaultContext,
+                   LoggingPath,
                    LogfileCreator)
 
         {

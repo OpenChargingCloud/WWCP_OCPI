@@ -1059,28 +1059,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The CommonAPI.
         /// </summary>
-        public CommonAPI    CommonAPI             { get; }
+        public CommonAPI      CommonAPI             { get; }
 
         /// <summary>
         /// The default country code to use.
         /// </summary>
-        public CountryCode  DefaultCountryCode    { get; }
+        public CountryCode    DefaultCountryCode    { get; }
 
         /// <summary>
         /// The default party identification to use.
         /// </summary>
-        public Party_Id     DefaultPartyId        { get; }
+        public Party_Id       DefaultPartyId        { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?     AllowDowngrades       { get; }
+        public Boolean?       AllowDowngrades       { get; }
 
                 /// <summary>
         /// The timeout for upstream requests.
         /// </summary>
-        public TimeSpan     RequestTimeout        { get; set; }
+        public TimeSpan       RequestTimeout        { get; set; }
+
+        /// <summary>
+        /// The EMSP API logger.
+        /// </summary>
+        public EMSPAPILogger  EMSPAPILogger         { get; }
 
         #endregion
 
@@ -2864,7 +2869,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                         Token_Id            TokenId,
                                                                         LocationReference?  LocationReference);
 
-        public event OnRFIDAuthTokenDelegate OnRFIDAuthToken;
+        public event OnRFIDAuthTokenDelegate? OnRFIDAuthToken;
 
 
 
@@ -3179,6 +3184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                        Boolean?                 IsDevelopment             = false,
                        IEnumerable<String>?     DevelopmentServers        = null,
                        Boolean?                 DisableLogging            = false,
+                       String?                  LoggingContext            = null,
                        String?                  LoggingPath               = null,
                        String?                  LogfileName               = DefaultLogfileName,
                        LogfileCreatorDelegate?  LogfileCreator            = null,
@@ -3217,6 +3223,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.DefaultPartyId      = DefaultPartyId;
             this.AllowDowngrades     = AllowDowngrades;
             this.RequestTimeout      = TimeSpan.FromSeconds(30);
+
+            this.EMSPAPILogger       = new EMSPAPILogger(
+                                           this,
+                                           LoggingContext,
+                                           LoggingPath,
+                                           LogfileCreator
+                                       );
 
             RegisterURLTemplates();
 

@@ -28,7 +28,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// <summary>
     /// An async event notifying about OCPI requests.
     /// </summary>
-    public class OCPIRequestLogEvent
+    public sealed class OCPIRequestLogEvent
     {
 
         #region Data
@@ -40,7 +40,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new async event notifying about incoming HTTP requests.
+        /// Create a new async event notifying about incoming OCPI requests.
         /// </summary>
         public OCPIRequestLogEvent()
         {

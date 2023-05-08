@@ -17,15 +17,18 @@
 
 #region Usings
 
-using System;
-using System.Threading.Tasks;
-
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 {
+
+    public delegate Task OCPIResponseLoggerDelegate(String        LoggingPath,
+                                                    String        Context,
+                                                    String        LogEventName,
+                                                    OCPIRequest   Request,
+                                                    OCPIResponse  Response);
 
     /// <summary>
     /// The delegate for OCPI/HTTP response logs.
