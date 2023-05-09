@@ -940,33 +940,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// The CommonAPI.
         /// </summary>
-        public CommonAPI      CommonAPI             { get; }
+        public CommonAPI       CommonAPI             { get; }
 
         /// <summary>
         /// The default country code to use.
         /// </summary>
-        public CountryCode    DefaultCountryCode    { get; }
+        public CountryCode     DefaultCountryCode    { get; }
 
         /// <summary>
         /// The default party identification to use.
         /// </summary>
-        public Party_Id       DefaultPartyId        { get; }
+        public Party_Id        DefaultPartyId        { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?       AllowDowngrades       { get; }
+        public Boolean?        AllowDowngrades       { get; }
 
                 /// <summary>
         /// The timeout for upstream requests.
         /// </summary>
-        public TimeSpan       RequestTimeout        { get; set; }
+        public TimeSpan        RequestTimeout        { get; set; }
 
         /// <summary>
         /// The SCSP API logger.
         /// </summary>
-        public SCSPAPILogger  SCSPAPILogger         { get; }
+        public SCSPAPILogger?  SCSPAPILogger         { get; }
 
         #endregion
 
@@ -2697,18 +2697,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #endregion
 
 
-
-        public delegate Task<AuthorizationInfo> OnRFIDAuthTokenDelegate(CountryCode         From_CountryCode,
-                                                                        Party_Id            From_PartyId,
-                                                                        CountryCode         To_CountryCode,
-                                                                        Party_Id            To_PartyId,
-                                                                        Token_Id            TokenId,
-                                                                        LocationReference?  LocationReference);
-
-        public event OnRFIDAuthTokenDelegate OnRFIDAuthToken;
-
-
-
         // Command callbacks
 
         #region (protected internal) ReserveNowCallbackRequest        (Request)
@@ -2997,7 +2985,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                        String?                  LogfileName               = null,
                        LogfileCreatorDelegate?  LogfileCreator            = null)
 
-            : base(CommonAPI?.HTTPServer,
+            : base(CommonAPI.HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,
                    HTTPServiceName,
@@ -3031,12 +3019,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.AllowDowngrades     = AllowDowngrades;
             this.RequestTimeout      = TimeSpan.FromSeconds(60);
 
-            this.SCSPAPILogger       = new SCSPAPILogger(
-                                           this,
-                                           LoggingContext,
-                                           LoggingPath,
-                                           LogfileCreator
-                                       );
+            this.SCSPAPILogger       = this.DisableLogging == false
+                                           ? new SCSPAPILogger(
+                                                 this,
+                                                 LoggingContext,
+                                                 LoggingPath,
+                                                 LogfileCreator
+                                             )
+                                           : null;
 
             RegisterURLTemplates();
 

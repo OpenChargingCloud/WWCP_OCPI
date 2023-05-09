@@ -907,7 +907,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Data
 
-        private static readonly Object         lockObject                   = new();
+        private static readonly Object         lockObject                   = new ();
         private static readonly SemaphoreSlim  logHTTPRequest_toDisc_Lock   = new(1,1);
         private static readonly SemaphoreSlim  logHTTPResponse_toDisc_Lock  = new(1,1);
 

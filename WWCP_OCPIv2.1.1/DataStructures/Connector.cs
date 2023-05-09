@@ -43,7 +43,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly Object patchLock = new();
+        private readonly Object patchLock = new ();
 
         #endregion
 
@@ -861,7 +861,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         private Int32? cachedHashCode;
 
-        private readonly Object hashSync = new();
+        private readonly Object hashSync = new ();
 
         /// <summary>
         /// Get the hashcode of this object.

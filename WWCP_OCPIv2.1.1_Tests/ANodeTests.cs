@@ -813,19 +813,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             cpoAPIRequestLogs     = new ConcurrentDictionary<DateTime, OCPIRequest>();
             cpoAPIResponseLogs    = new ConcurrentDictionary<DateTime, OCPIResponse>();
 
-            cpoCPOAPI.CPOAPILogger.RegisterLogTarget(LogTargets.Debug,
-                                                     (loggingPath, context, logEventName, request) => {
-                                                         cpoAPIRequestLogs. TryAdd(Timestamp.Now, request);
-                                                         return Task.CompletedTask;
-                                                     });
+            cpoCPOAPI.CPOAPILogger?.RegisterLogTarget(LogTargets.Debug,
+                                                      (loggingPath, context, logEventName, request) => {
+                                                          cpoAPIRequestLogs. TryAdd(Timestamp.Now, request);
+                                                          return Task.CompletedTask;
+                                                      });
 
-            cpoCPOAPI.CPOAPILogger.RegisterLogTarget(LogTargets.Debug,
-                                                     (loggingPath, context, logEventName, request, response) => {
-                                                         cpoAPIResponseLogs.TryAdd(Timestamp.Now, response);
-                                                         return Task.CompletedTask;
-                                                     });
+            cpoCPOAPI.CPOAPILogger?.RegisterLogTarget(LogTargets.Debug,
+                                                      (loggingPath, context, logEventName, request, response) => {
+                                                          cpoAPIResponseLogs.TryAdd(Timestamp.Now, response);
+                                                          return Task.CompletedTask;
+                                                      });
 
-            cpoCPOAPI.CPOAPILogger.Debug("all", LogTargets.Debug);
+            cpoCPOAPI.CPOAPILogger?.Debug("all", LogTargets.Debug);
+
+            cpoCommonAPI.ClientConfigurations.Description = (countryCode, partyId) => $"CPO Client for {countryCode}-{partyId}";
 
 
 
@@ -833,19 +835,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emsp1APIRequestLogs   = new ConcurrentDictionary<DateTime, OCPIRequest>();
             emsp1APIResponseLogs  = new ConcurrentDictionary<DateTime, OCPIResponse>();
 
-            emsp1EMSPAPI.EMSPAPILogger.RegisterLogTarget(LogTargets.Debug,
-                                                         (loggingPath, context, logEventName, request) => {
-                                                             emsp1APIRequestLogs. TryAdd(Timestamp.Now, request);
-                                                             return Task.CompletedTask;
-                                                         });
+            emsp1EMSPAPI.EMSPAPILogger?.RegisterLogTarget(LogTargets.Debug,
+                                                          (loggingPath, context, logEventName, request) => {
+                                                              emsp1APIRequestLogs. TryAdd(Timestamp.Now, request);
+                                                              return Task.CompletedTask;
+                                                          });
 
-            emsp1EMSPAPI.EMSPAPILogger.RegisterLogTarget(LogTargets.Debug,
-                                                         (loggingPath, context, logEventName, request, response) => {
-                                                             emsp1APIResponseLogs.TryAdd(Timestamp.Now, response);
-                                                             return Task.CompletedTask;
-                                                         });
+            emsp1EMSPAPI.EMSPAPILogger?.RegisterLogTarget(LogTargets.Debug,
+                                                          (loggingPath, context, logEventName, request, response) => {
+                                                              emsp1APIResponseLogs.TryAdd(Timestamp.Now, response);
+                                                              return Task.CompletedTask;
+                                                          });
 
-            emsp1EMSPAPI.EMSPAPILogger.Debug("all", LogTargets.Debug);
+            emsp1EMSPAPI.EMSPAPILogger?.Debug("all", LogTargets.Debug);
+
+            emsp1CommonAPI.ClientConfigurations.Description = (countryCode, partyId) => $"EMSP #1 Client for {countryCode}*{partyId}";
 
 
 
@@ -853,19 +857,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emsp2APIRequestLogs   = new ConcurrentDictionary<DateTime, OCPIRequest>();
             emsp2APIResponseLogs  = new ConcurrentDictionary<DateTime, OCPIResponse>();
 
-            emsp2EMSPAPI.EMSPAPILogger.RegisterLogTarget(LogTargets.Debug,
-                                                         (loggingPath, context, logEventName, request) => {
-                                                             emsp2APIRequestLogs. TryAdd(Timestamp.Now, request);
-                                                             return Task.CompletedTask;
-                                                         });
+            emsp2EMSPAPI.EMSPAPILogger?.RegisterLogTarget(LogTargets.Debug,
+                                                          (loggingPath, context, logEventName, request) => {
+                                                              emsp2APIRequestLogs. TryAdd(Timestamp.Now, request);
+                                                              return Task.CompletedTask;
+                                                          });
 
-            emsp2EMSPAPI.EMSPAPILogger.RegisterLogTarget(LogTargets.Debug,
-                                                         (loggingPath, context, logEventName, request, response) => {
-                                                             emsp2APIResponseLogs.TryAdd(Timestamp.Now, response);
-                                                             return Task.CompletedTask;
-                                                         });
+            emsp2EMSPAPI.EMSPAPILogger?.RegisterLogTarget(LogTargets.Debug,
+                                                          (loggingPath, context, logEventName, request, response) => {
+                                                              emsp2APIResponseLogs.TryAdd(Timestamp.Now, response);
+                                                              return Task.CompletedTask;
+                                                          });
 
-            emsp2EMSPAPI.EMSPAPILogger.Debug("all", LogTargets.Debug);
+            emsp2EMSPAPI.EMSPAPILogger?.Debug("all", LogTargets.Debug);
+
+            emsp2CommonAPI.ClientConfigurations.Description = (countryCode, partyId) => $"EMSP #2 Client for {countryCode}*{partyId}";
 
             #endregion
 

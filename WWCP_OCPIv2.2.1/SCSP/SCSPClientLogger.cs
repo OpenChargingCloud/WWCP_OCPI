@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
         /// <summary>
         /// The OCPI SCSP HTTP client logger.
         /// </summary>
-        public new class Logger : CommonClient.Logger
+        public new sealed class Logger : CommonClient.Logger
         {
 
             #region Data
@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public const String  DefaultContext  = "OCPISCSPClient";
+            public new const String  DefaultContext   = $"OCPI{Version.Number}_SCSPClient";
 
             #endregion
 
@@ -67,8 +67,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
             public Logger(SCSPClient               SCSPClient,
-                          String                   LoggingPath,
-                          String                   Context,
+                          String?                  LoggingPath,
+                          String?                  Context          = DefaultContext,
                           LogfileCreatorDelegate?  LogfileCreator   = null)
 
                 : base(SCSPClient,

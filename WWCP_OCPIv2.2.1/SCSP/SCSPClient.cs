@@ -402,7 +402,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                           HTTPClientLogger?                     HTTPLogger                   = null,
                           Boolean                               AccessTokenBase64Encoding    = true,
 
-                          Boolean                               DisableLogging               = false,
+                          Boolean?                              DisableLogging               = false,
                           String?                               LoggingPath                  = null,
                           String?                               LoggingContext               = null,
                           LogfileCreatorDelegate?               LogfileCreator               = null,
@@ -436,11 +436,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
             this.Counters    = new APICounters();
 
-            base.HTTPLogger  = DisableLogging == false
-                                   ? new Logger(this,
-                                                LoggingPath,
-                                                LoggingContext,
-                                                LogfileCreator)
+            base.HTTPLogger  = this.DisableLogging == false
+                                   ? new Logger(
+                                         this,
+                                         LoggingPath,
+                                         LoggingContext,
+                                         LogfileCreator
+                                     )
                                    : null;
 
         }
@@ -542,6 +544,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
                                                              UseHTTPPipelining,
+                                                             DisableLogging,
                                                              HTTPLogger,
                                                              DNSClient).
 
@@ -722,6 +725,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                                  TransmissionRetryDelay,
                                                                  MaxNumberOfRetries,
                                                                  UseHTTPPipelining,
+                                                                 DisableLogging,
                                                                  HTTPLogger,
                                                                  DNSClient).
 
@@ -907,6 +911,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                                  TransmissionRetryDelay,
                                                                  MaxNumberOfRetries,
                                                                  UseHTTPPipelining,
+                                                                 DisableLogging,
                                                                  HTTPLogger,
                                                                  DNSClient).
 
@@ -1096,6 +1101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                                  TransmissionRetryDelay,
                                                                  MaxNumberOfRetries,
                                                                  UseHTTPPipelining,
+                                                                 DisableLogging,
                                                                  HTTPLogger,
                                                                  DNSClient).
 
@@ -1276,6 +1282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                                  TransmissionRetryDelay,
                                                                  MaxNumberOfRetries,
                                                                  UseHTTPPipelining,
+                                                                 DisableLogging,
                                                                  HTTPLogger,
                                                                  DNSClient).
 
@@ -1456,6 +1463,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                                                                  TransmissionRetryDelay,
                                                                  MaxNumberOfRetries,
                                                                  UseHTTPPipelining,
+                                                                 DisableLogging,
                                                                  HTTPLogger,
                                                                  DNSClient).
 

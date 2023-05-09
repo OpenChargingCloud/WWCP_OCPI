@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <summary>
         /// The OCPI CPO HTTP client logger.
         /// </summary>
-        public new class Logger : CommonClient.Logger
+        public new sealed class Logger : CommonClient.Logger
         {
 
             #region Data
@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public new const String  DefaultContext   = "OCPICPOClient";
+            public new const String  DefaultContext   = $"OCPI{Version.Number}_CPOClient";
 
             #endregion
 
@@ -67,8 +67,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
             public Logger(CPOClient                CPOClient,
-                          String                   LoggingPath,
-                          String                   Context          = DefaultContext,
+                          String?                  LoggingPath,
+                          String?                  Context          = DefaultContext,
                           LogfileCreatorDelegate?  LogfileCreator   = null)
 
                 : base(CPOClient,

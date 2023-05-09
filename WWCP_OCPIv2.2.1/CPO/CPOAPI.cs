@@ -1178,28 +1178,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// The CommonAPI.
         /// </summary>
-        public CommonAPI     CommonAPI             { get; }
+        public CommonAPI      CommonAPI             { get; }
 
         /// <summary>
         /// The default country code to use.
         /// </summary>
-        public CountryCode   DefaultCountryCode    { get; }
+        public CountryCode    DefaultCountryCode    { get; }
 
         /// <summary>
         /// The default party identification to use.
         /// </summary>
-        public Party_Id      DefaultPartyId        { get; }
+        public Party_Id       DefaultPartyId        { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?      AllowDowngrades       { get; }
+        public Boolean?       AllowDowngrades       { get; }
 
         /// <summary>
         /// The CPO API logger.
         /// </summary>
-        public CPOAPILogger  CPOAPILogger          { get; }
+        public CPOAPILogger?  CPOAPILogger          { get; }
 
         #endregion
 
@@ -2459,12 +2459,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.DefaultPartyId      = DefaultPartyId;
             this.AllowDowngrades     = AllowDowngrades;
 
-            this.CPOAPILogger        = new CPOAPILogger(
-                                           this,
-                                           LoggingContext,
-                                           LoggingPath,
-                                           LogfileCreator
-                                       );
+            this.CPOAPILogger        = this.DisableLogging == false
+                                           ? new CPOAPILogger(
+                                                 this,
+                                                 LoggingContext,
+                                                 LoggingPath,
+                                                 LogfileCreator
+                                             )
+                                           : null;
 
             RegisterURLTemplates();
 

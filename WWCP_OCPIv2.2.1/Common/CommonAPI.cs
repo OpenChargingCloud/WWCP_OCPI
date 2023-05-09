@@ -60,6 +60,43 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     public class CommonAPI : HTTPAPI
     {
 
+        #region (class) ClientConfigurator
+
+        /// <summary>
+        /// A OCPI client configurator.
+        /// </summary>
+        public sealed class ClientConfigurator
+        {
+
+            /// <summary>
+            /// The description of the OCPI client.
+            /// </summary>
+            public Func<CountryCode, Party_Id, String>?                  Description       { get; set; }
+
+            /// <summary>
+            /// Whether logging is disabled for this OCPI client.
+            /// </summary>
+            public Func<CountryCode, Party_Id, Boolean>?                 DisableLogging    { get; set; }
+
+            /// <summary>
+            /// The logging path for this OCPI client.
+            /// </summary>
+            public Func<CountryCode, Party_Id, String>?                  LoggingPath       { get; set; }
+
+            /// <summary>
+            /// The logging context for this OCPI client.
+            /// </summary>
+            public Func<CountryCode, Party_Id, String>?                  LoggingContext    { get; set; }
+
+            /// <summary>
+            /// The logfile creator for this OCPI client.
+            /// </summary>
+            public Func<CountryCode, Party_Id, LogfileCreatorDelegate>?  LogfileCreator    { get; set; }
+
+        }
+
+        #endregion
+
         #region Data
 
         /// <summary>
@@ -140,7 +177,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// The Common API logger.
         /// </summary>
-        public CommonAPILogger               CommonAPILogger            { get; }
+        public CommonAPILogger?              CommonAPILogger            { get; }
+
+        /// <summary>
+        /// A template for OCPI client configurations.
+        /// </summary>
+        public ClientConfigurator           ClientConfigurations       { get; }
 
         #endregion
 
@@ -151,7 +193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET versions request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetVersionsRequest = new();
+        public OCPIRequestLogEvent OnGetVersionsRequest = new ();
 
         /// <summary>
         /// An event sent whenever a GET versions request was received.
@@ -174,7 +216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET versions response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetVersionsResponse = new();
+        public OCPIResponseLogEvent OnGetVersionsResponse = new ();
 
         /// <summary>
         /// An event sent whenever a GET versions response was sent.
@@ -201,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET version request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetVersionRequest = new();
+        public OCPIRequestLogEvent OnGetVersionRequest = new ();
 
         /// <summary>
         /// An event sent whenever a GET version request was received.
@@ -224,7 +266,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET version response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetVersionResponse = new();
+        public OCPIResponseLogEvent OnGetVersionResponse = new ();
 
         /// <summary>
         /// An event sent whenever a GET version response was sent.
@@ -251,7 +293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnGetCredentialsRequest = new();
+        public OCPIRequestLogEvent OnGetCredentialsRequest = new ();
 
         /// <summary>
         /// An event sent whenever a GET credentials request was received.
@@ -274,7 +316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a GET credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnGetCredentialsResponse = new();
+        public OCPIResponseLogEvent OnGetCredentialsResponse = new ();
 
         /// <summary>
         /// An event sent whenever a GET credentials response was sent.
@@ -301,7 +343,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a POST credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPostCredentialsRequest = new();
+        public OCPIRequestLogEvent OnPostCredentialsRequest = new ();
 
         /// <summary>
         /// An event sent whenever a POST credentials request was received.
@@ -324,7 +366,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a POST credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPostCredentialsResponse = new();
+        public OCPIResponseLogEvent OnPostCredentialsResponse = new ();
 
         /// <summary>
         /// An event sent whenever a POST credentials response was sent.
@@ -351,7 +393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a PUT credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPutCredentialsRequest = new();
+        public OCPIRequestLogEvent OnPutCredentialsRequest = new ();
 
         /// <summary>
         /// An event sent whenever a PUT credentials request was received.
@@ -374,7 +416,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a PUT credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPutCredentialsResponse = new();
+        public OCPIResponseLogEvent OnPutCredentialsResponse = new ();
 
         /// <summary>
         /// An event sent whenever a PUT credentials response was sent.
@@ -401,7 +443,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a DELETE credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnDeleteCredentialsRequest = new();
+        public OCPIRequestLogEvent OnDeleteCredentialsRequest = new ();
 
         /// <summary>
         /// An event sent whenever a DELETE credentials request was received.
@@ -424,7 +466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// An event sent whenever a DELETE credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnDeleteCredentialsResponse = new();
+        public OCPIResponseLogEvent OnDeleteCredentialsResponse = new ();
 
         /// <summary>
         /// An event sent whenever a DELETE credentials response was sent.
@@ -487,7 +529,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                          HTTPPath?                              URLPathPrefix                      = null,
                          String?                                HTTPServiceName                    = DefaultHTTPServiceName,
-                         //String?                                HTMLTemplate                       = null,
                          JObject?                               APIVersionHashes                   = null,
 
                          ServerCertificateSelectorDelegate?     ServerCertificateSelector          = null,
@@ -516,6 +557,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          Boolean?                               IsDevelopment                      = null,
                          IEnumerable<String>?                   DevelopmentServers                 = null,
                          Boolean?                               DisableLogging                     = null,
+                         String?                                LoggingContext                     = null,
                          String?                                LoggingPath                        = null,
                          String?                                LogfileName                        = null,
                          LogfileCreatorDelegate?                LogfileCreator                     = null,
@@ -587,6 +629,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.tokenStatus              = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
             this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
+            this.ClientConfigurations     = new ClientConfigurator();
+
+            this.CommonAPILogger          = this.DisableLogging == false
+                                                ? null
+                                                : new CommonAPILogger(
+                                                      this,
+                                                      LoggingContext,
+                                                      LoggingPath,
+                                                      LogfileCreator
+                                                  );
+
             RegisterURLTemplates();
 
         }
@@ -640,6 +693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          Boolean?                      IsDevelopment             = false,
                          IEnumerable<String>?          DevelopmentServers        = null,
                          Boolean?                      DisableLogging            = false,
+                         String?                       LoggingContext            = null,
                          String?                       LoggingPath               = null,
                          String?                       LogfileName               = null,
                          LogfileCreatorDelegate?       LogfileCreator            = null,
@@ -699,12 +753,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             HTTPServer.ResponseLog       += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
             HTTPServer.ErrorLog          += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
-            this.CommonAPILogger          = new CommonAPILogger(
-                                                this,
-                                                LoggingPath,
-                                                "OCPIv2.2.1CommonAPI",
-                                                LogfileCreator
-                                            );
+            this.ClientConfigurations     = new ClientConfigurator();
+
+            this.CommonAPILogger          = this.DisableLogging == false
+                                                ? new CommonAPILogger(
+                                                      this,
+                                                      LoggingContext,
+                                                      LoggingPath,
+                                                      LogfileCreator
+                                                  )
+                                                : null;
 
             RegisterURLTemplates();
 
@@ -715,50 +773,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #endregion
 
 
-        #region GetModuleURL(ModuleId, Stuff = "")
+        #region GetModuleURL(ModuleId, Prefix = "")
 
+        /// <summary>
+        /// Return the URL of an OCPI module.
+        /// </summary>
+        /// <param name="ModuleId">The identification of an OCPI module.</param>
+        /// <param name="Prefix">An optional prefix.</param>
         public URL GetModuleURL(Module_Id  ModuleId,
-                                String     Stuff   = "")
-        {
+                                String     Prefix   = "")
 
-            return OurBaseURL + Stuff + ModuleId.ToString();
-
-            //switch (ModuleId)
-            //{
-
-            //    case Module_Id.CDRs:
-            //        return OurBaseURL + Stuff + "cdrs";
-
-            //    case Module_Id.ChargingProfiles:
-            //        return OurBaseURL + Stuff + "chargingprofiles";
-
-            //    case Module_Id.Commands:
-            //        return OurBaseURL + Stuff + "commands";
-
-            //    case Module_Id.Credentials:
-            //        return OurBaseURL + Stuff + "credentials";
-
-            //    case Module_Id.HubClientInfo:
-            //        return OurBaseURL + Stuff + "hubclientinfo";
-
-            //    case Module_Id.Locations:
-            //        return OurBaseURL + Stuff + "locations";
-
-            //    case Module_Id.Sessions:
-            //        return OurBaseURL + Stuff + "sessions";
-
-            //    case Module_Id.Tariffs:
-            //        return OurBaseURL + Stuff + "tariffs";
-
-            //    case Module_Id.Tokens:
-            //        return OurBaseURL + Stuff + "tokens";
-
-            //    default:
-            //        return OurVersionsURL;
-
-            //}
-
-        }
+            => OurBaseURL + Prefix + ModuleId.ToString();
 
         #endregion
 
@@ -2683,21 +2708,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region CPOClients
 
-        private readonly List<CPOClient> cpoClients = new();
+        private readonly List<CPOClient> cpoClients = new ();
 
+        /// <summary>
+        /// Return an enumeration of all CPO clients.
+        /// </summary>
         public IEnumerable<CPOClient> CPOClients
             => cpoClients;
 
-        #region GetCPOClient (CountryCode, PartyId)
+
+        #region GetCPOClient(CountryCode, PartyId, AllowCachedClients = true)
 
         /// <summary>
-        /// As a CPO create a client to access a remote EMSP.
+        /// As a CPO create a client to access e.g. a remote EMSP.
         /// </summary>
         /// <param name="CountryCode">The country code of the remote EMSP.</param>
         /// <param name="PartyId">The party identification of the remote EMSP.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
         public CPOClient? GetCPOClient(CountryCode  CountryCode,
-                                       Party_Id     PartyId)
+                                       Party_Id     PartyId,
+                                       Boolean      AllowCachedClients = true)
         {
+
+            if (AllowCachedClients)
+            {
+
+                var cachedCPOClient = cpoClients.Where(client => client.RemoteParty.CountryCode == CountryCode &&
+                                                                 client.RemoteParty.PartyId     == PartyId).FirstOrDefault();
+
+                if (cachedCPOClient is not null)
+                    return cachedCPOClient;
+
+            }
 
             var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
                                                                           remoteparty.PartyId     == PartyId);
@@ -2706,7 +2748,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 return cpoClients.AddAndReturnElement(
                     new CPOClient(
                         remoteParty,
-                        this
+                        this,
+                        null,
+                        ClientConfigurations.Description?.   Invoke(CountryCode, PartyId),
+                        null,
+                        ClientConfigurations.DisableLogging?.Invoke(CountryCode, PartyId),
+                        ClientConfigurations.LoggingPath?.   Invoke(CountryCode, PartyId),
+                        ClientConfigurations.LoggingContext?.Invoke(CountryCode, PartyId),
+                        ClientConfigurations.LogfileCreator?.Invoke(CountryCode, PartyId),
+                        DNSClient
                     ));
 
             return null;
@@ -2715,25 +2765,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region GetCPOClient(RemoteParty)
+        #region GetCPOClient(RemoteParty,          AllowCachedClients = true)
 
-        public CPOClient? GetCPOClient(RemoteParty  RemoteParty)
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote EMSP.
+        /// </summary>
+        /// <param name="RemoteParty">A remote party.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPOClient? GetCPOClient(RemoteParty  RemoteParty,
+                                       Boolean      AllowCachedClients = true)
         {
 
-            if (RemoteParty is null)
-                return null;
+            if (AllowCachedClients)
+            {
 
-            var cpoClient = CPOClients.FirstOrDefault(cpoclient => cpoclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                   cpoclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
+                var cachedCPOClient = cpoClients.FirstOrDefault(cpoClient => cpoClient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                             cpoClient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
 
-            if (cpoClient is not null)
-                return cpoClient;
+                if (cachedCPOClient is not null)
+                    return cachedCPOClient;
+
+            }
 
             if (RemoteParty.RemoteAccessInfos?.Any() == true)
                 return cpoClients.AddAndReturnElement(
                     new CPOClient(
                         RemoteParty,
-                        this
+                        this,
+                        null,
+                        ClientConfigurations.Description?.   Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                        null,
+                        ClientConfigurations.DisableLogging?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                        ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                        ClientConfigurations.LoggingContext?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                        ClientConfigurations.LogfileCreator?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                        DNSClient
                     ));
 
             return null;
@@ -2742,27 +2808,47 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region GetCPOClient(RemotePartyId)
+        #region GetCPOClient(RemotePartyId,        AllowCachedClients = true)
 
-        public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId)
+        /// <summary>
+        /// As a CPO create a client to access e.g. a remote EMSP.
+        /// </summary>
+        /// <param name="RemotePartyId">A remote party identification.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
+        public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
+                                       Boolean         AllowCachedClients = true)
         {
 
             var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
                                                                            remoteparty.PartyId     == RemotePartyId.PartyId);
 
-            var cpoClient   = remoteParty is not null
-                                   ? CPOClients.FirstOrDefault(cpoclient => cpoclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                            cpoclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
-                                   : null;
+            if (remoteParty is null)
+                return null;
 
-            if (cpoClient is not null)
-                return cpoClient;
+            if (AllowCachedClients)
+            {
+
+                var cachedCPOClient = cpoClients.FirstOrDefault(cpoClient => cpoClient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                             cpoClient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken);
+
+                if (cachedCPOClient is not null)
+                    return cachedCPOClient;
+
+            }
 
             if (remoteParty?.RemoteAccessInfos?.Any() == true)
                 return cpoClients.AddAndReturnElement(
                     new CPOClient(
                         remoteParty,
-                        this
+                        this,
+                        null,
+                        ClientConfigurations.Description?.   Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                        null,
+                        ClientConfigurations.DisableLogging?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                        ClientConfigurations.LoggingPath?.   Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                        ClientConfigurations.LoggingContext?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                        ClientConfigurations.LogfileCreator?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                        DNSClient
                     ));
 
             return null;
@@ -2775,20 +2861,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region EMSPClients
 
-        private readonly List<EMSPClient> emspClients = new();
+        private readonly List<EMSPClient> emspClients = new ();
+
+        /// <summary>
+        /// Return an enumeration of all EMSP clients.
+        /// </summary>
         public IEnumerable<EMSPClient> EMSPClients
             => emspClients;
 
-        #region GetEMSPClient(CountryCode, PartyId)
+
+        #region GetEMSPClient(CountryCode, PartyId, AllowCachedClients = true)
 
         /// <summary>
-        /// As an EMSP create a client to access a remote CPO.
+        /// As an EMSP create a client to access e.g. a remote CPO.
         /// </summary>
         /// <param name="CountryCode">The country code of the remote CPO.</param>
         /// <param name="PartyId">The party identification of the remote CPO.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
         public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
-                                         Party_Id     PartyId)
+                                         Party_Id     PartyId,
+                                         Boolean      AllowCachedClients = true)
         {
+
+            if (AllowCachedClients)
+            {
+
+                var cachedEMSPClient = emspClients.Where(client => client.RemoteParty.CountryCode == CountryCode &&
+                                                                   client.RemoteParty.PartyId     == PartyId).FirstOrDefault();
+
+                if (cachedEMSPClient is not null)
+                    return cachedEMSPClient;
+
+            }
 
             var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
                                                                           remoteparty.PartyId     == PartyId);
@@ -2797,7 +2901,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 return emspClients.AddAndReturnElement(
                     new EMSPClient(
                         remoteParty,
-                        this
+                        this,
+                        null,
+                        ClientConfigurations.Description?.   Invoke(CountryCode, PartyId),
+                        null,
+                        ClientConfigurations.DisableLogging?.Invoke(CountryCode, PartyId),
+                        ClientConfigurations.LoggingPath?.   Invoke(CountryCode, PartyId),
+                        ClientConfigurations.LoggingContext?.Invoke(CountryCode, PartyId),
+                        ClientConfigurations.LogfileCreator?.Invoke(CountryCode, PartyId),
+                        DNSClient
                     ));
 
             return null;
@@ -2806,25 +2918,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region GetEMSPClient(RemoteParty)
+        #region GetEMSPClient(RemoteParty,          AllowCachedClients = true)
 
-        public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty)
+        /// <summary>
+        /// As an EMSP create a client to access e.g. a remote CPO.
+        /// </summary>
+        /// <param name="RemoteParty">A remote party.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
+        public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty,
+                                         Boolean      AllowCachedClients = true)
         {
 
-            if (RemoteParty is null)
-                return null;
+            if (AllowCachedClients)
+            {
 
-            var emspClient = EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                      emspclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
+                var cachedEMSPClient = emspClients.FirstOrDefault(emspClient => emspClient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                                emspClient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
 
-            if (emspClient is not null)
-                return emspClient;
+                if (cachedEMSPClient is not null)
+                    return cachedEMSPClient;
+
+            }
 
             if (RemoteParty.RemoteAccessInfos?.Any() == true)
                 return emspClients.AddAndReturnElement(
                     new EMSPClient(
                         RemoteParty,
-                        this
+                        this,
+                        null,
+                        ClientConfigurations.Description?.   Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                        null,
+                        ClientConfigurations.DisableLogging?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                        ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                        ClientConfigurations.LoggingContext?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                        ClientConfigurations.LogfileCreator?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                        DNSClient
                     ));
 
             return null;
@@ -2833,27 +2961,47 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region GetEMSPClient(RemotePartyId)
+        #region GetEMSPClient(RemotePartyId,        AllowCachedClients = true)
 
-        public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId)
+        /// <summary>
+        /// As an EMSP create a client to access e.g. a remote CPO.
+        /// </summary>
+        /// <param name="RemotePartyId">A remote party identification.</param>
+        /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
+        public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId,
+                                         Boolean         AllowCachedClients = true)
         {
 
             var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
                                                                            remoteparty.PartyId     == RemotePartyId.PartyId);
 
-            var emspClient   = remoteParty is not null
-                                   ? EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                              emspclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
-                                   : null;
+            if (remoteParty is null)
+                return null;
 
-            if (emspClient is not null)
-                return emspClient;
+            if (AllowCachedClients)
+            {
+
+                var cachedEMSPClient = emspClients.FirstOrDefault(emspClient => emspClient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                                emspClient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken);
+
+                if (cachedEMSPClient is not null)
+                    return cachedEMSPClient;
+
+            }
 
             if (remoteParty?.RemoteAccessInfos?.Any() == true)
                 return emspClients.AddAndReturnElement(
                     new EMSPClient(
                         remoteParty,
-                        this
+                        this,
+                        null,
+                        ClientConfigurations.Description?.   Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                        null,
+                        ClientConfigurations.DisableLogging?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                        ClientConfigurations.LoggingPath?.   Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                        ClientConfigurations.LoggingContext?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                        ClientConfigurations.LogfileCreator?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                        DNSClient
                     ));
 
             return null;
@@ -2865,7 +3013,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #endregion
 
 
-        // Add last modified timestamp to locations!
+        //ToDo: Add last modified timestamp to locations!
+        //ToDo: Refactor async!
 
         #region Locations
 
@@ -2924,9 +3073,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -2986,9 +3135,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddLocationIfNotExists), " ", nameof(OnLocationAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddLocationIfNotExists), " ", nameof(OnLocationAdded), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -3053,9 +3202,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationChanged), ": ",
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationChanged), ": ",
                                     Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace);
+                                    Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
@@ -3069,9 +3218,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateLocation), " ", nameof(OnEVSEChanged), ": ",
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateLocation), " ", nameof(OnEVSEChanged), ": ",
                                     Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace);
+                                    Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
@@ -3092,9 +3241,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 }
                 catch (Exception e)
                 {
-                    DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationAdded), ": ",
+                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationAdded), ": ",
                                 Environment.NewLine, e.Message,
-                                Environment.NewLine, e.StackTrace);
+                                Environment.NewLine, e.StackTrace ?? "");
                 }
             }
 
@@ -3153,7 +3302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(UpdateLocation), " ", nameof(OnEVSEChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateLocation), " ", nameof(OnEVSEChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -3215,7 +3364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchLocation), " ", nameof(OnLocationChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchLocation), " ", nameof(OnLocationChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -3232,7 +3381,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchLocation), " ", nameof(OnEVSEChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchLocation), " ", nameof(OnEVSEChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -3317,7 +3466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 }
                 catch (Exception e)
                 {
-                    DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnLocationChanged), ": ",
+                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnLocationChanged), ": ",
                                 Environment.NewLine, e.Message,
                                 e.StackTrace is not null
                                             ? Environment.NewLine + e.StackTrace
@@ -3341,7 +3490,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         e.StackTrace is not null
                                             ? Environment.NewLine + e.StackTrace
@@ -3366,7 +3515,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             e.StackTrace is not null
                                                 ? Environment.NewLine + e.StackTrace
@@ -3391,7 +3540,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSERemoved), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSERemoved), ": ",
                                         Environment.NewLine, e.Message,
                                         e.StackTrace is not null
                                             ? Environment.NewLine + e.StackTrace
@@ -3412,7 +3561,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEAdded), ": ",
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEAdded), ": ",
                                     Environment.NewLine, e.Message,
                                     e.StackTrace is not null
                                             ? Environment.NewLine + e.StackTrace
@@ -3504,7 +3653,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 }
                                 catch (Exception e)
                                 {
-                                    DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
+                                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
                                                 Environment.NewLine, e.Message,
                                                 e.StackTrace is not null
                                                     ? Environment.NewLine + e.StackTrace
@@ -3525,7 +3674,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 }
                                 catch (Exception e)
                                 {
-                                    DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchEVSE), " ", nameof(OnEVSEChanged), ": ",
+                                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEChanged), ": ",
                                                 Environment.NewLine, e.Message,
                                                 e.StackTrace is not null
                                                     ? Environment.NewLine + e.StackTrace
@@ -3548,7 +3697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchEVSE), " ", nameof(OnEVSERemoved), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSERemoved), ": ",
                                             Environment.NewLine, e.Message,
                                             e.StackTrace is not null
                                                 ? Environment.NewLine + e.StackTrace
@@ -3630,9 +3779,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateConnector), " ", nameof(OnLocationChanged), ": ",
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateConnector), " ", nameof(OnLocationChanged), ": ",
                                     Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace);
+                                    Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
@@ -4013,9 +4162,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTariff), " ", nameof(OnTariffAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddTariff), " ", nameof(OnTariffAdded), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -4075,9 +4224,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTariffIfNotExists), " ", nameof(OnTariffAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddTariffIfNotExists), " ", nameof(OnTariffAdded), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -4138,9 +4287,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffChanged), ": ",
                                         Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
+                                        Environment.NewLine, e.StackTrace ?? "");
                         }
                     }
 
@@ -4160,9 +4309,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffAdded), ": ",
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffAdded), ": ",
                                     Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace);
+                                    Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
@@ -4202,9 +4351,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(UpdateTariff), " ", nameof(OnTariffChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateTariff), " ", nameof(OnTariffChanged), ": ",
                                         Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
+                                        Environment.NewLine, e.StackTrace ?? "");
                         }
                     }
 
@@ -4264,9 +4413,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchTariff), " ", nameof(OnTariffChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchTariff), " ", nameof(OnTariffChanged), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -4670,9 +4819,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddSession), " ", nameof(OnSessionCreated), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSession), " ", nameof(OnSessionCreated), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -4732,9 +4881,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddSessionIfNotExists), " ", nameof(OnSessionCreated), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSessionIfNotExists), " ", nameof(OnSessionCreated), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -4795,9 +4944,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateSession), " ", nameof(OnSessionChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionChanged), ": ",
                                         Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
+                                        Environment.NewLine, e.StackTrace ?? "");
                         }
                     }
 
@@ -4817,9 +4966,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateSession), " ", nameof(OnSessionCreated), ": ",
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionCreated), ": ",
                                     Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace);
+                                    Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
@@ -4859,9 +5008,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(UpdateSession), " ", nameof(OnSessionChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnSessionChanged), ": ",
                                         Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
+                                        Environment.NewLine, e.StackTrace ?? "");
                         }
                     }
 
@@ -4921,9 +5070,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchSession), " ", nameof(OnSessionChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchSession), " ", nameof(OnSessionChanged), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -5316,9 +5465,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -5378,9 +5527,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTokenIfNotExists), " ", nameof(OnTokenAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddTokenIfNotExists), " ", nameof(OnTokenAdded), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -5445,9 +5594,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateToken), " ", nameof(OnTokenChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenChanged), ": ",
                                         Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
+                                        Environment.NewLine, e.StackTrace ?? "");
                         }
                     }
 
@@ -5468,9 +5617,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateToken), " ", nameof(OnTokenAdded), ": ",
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenAdded), ": ",
                                     Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace);
+                                    Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
@@ -5528,9 +5677,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchToken), " ", nameof(OnTokenChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchToken), " ", nameof(OnTokenChanged), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -5977,9 +6126,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -6039,9 +6188,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddCDRIfNotExists), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDRIfNotExists), " ", nameof(OnChargeDetailRecordAdded), ": ",
                                             Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                            Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
@@ -6102,9 +6251,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
                                         Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
+                                        Environment.NewLine, e.StackTrace ?? "");
                         }
                     }
 
@@ -6124,9 +6273,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
                                     Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace);
+                                    Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
@@ -6166,9 +6315,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(UpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
                                         Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
+                                        Environment.NewLine, e.StackTrace ?? "");
                         }
                     }
 
@@ -6250,9 +6399,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryGetCDR), " ", nameof(OnChargeDetailRecordLookup), ": ",
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryGetCDR), " ", nameof(OnChargeDetailRecordLookup), ": ",
                                     Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace);
+                                    Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 

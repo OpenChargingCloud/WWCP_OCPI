@@ -42,7 +42,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public const String DefaultContext = "OCPICommonClient";
+            public const String  DefaultContext   = $"OCPI{Version.Number}_CommonClient";
 
             #endregion
 
@@ -65,8 +65,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
             public Logger(CommonClient             CommonClient,
-                          String                   LoggingPath,
-                          String                   Context          = DefaultContext,
+                          String?                  LoggingPath,
+                          String?                  Context          = DefaultContext,
                           LogfileCreatorDelegate?  LogfileCreator   = null)
 
                 : base(CommonClient,
