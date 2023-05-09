@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Text.RegularExpressions;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -55,45 +57,108 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        /// <summary>
-        /// The internal identification.
-        /// </summary>
-        private readonly String InternalId;
+        public static readonly Regex CPOId_RegEx = new("^([a-zA-Z0-9]{2})\\*([a-zA-Z0-9]{2,10})$");
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Indicates whether this CPO identification is null or empty.
+        /// The country code.
+        /// </summary>
+        public CountryCode  CountryCode    { get;}
+
+        /// <summary>
+        /// The party identification.
+        /// </summary>
+        public Party_Id     PartyId        { get;}
+
+
+        /// <summary>
+        /// Indicates whether this identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-            => InternalId.IsNullOrEmpty();
+            => CountryCode.IsNullOrEmpty || PartyId.IsNullOrEmpty;
 
         /// <summary>
-        /// Indicates whether this CPO identification is NOT null or empty.
+        /// Indicates whether this identification is NOT null or empty.
         /// </summary>
         public Boolean IsNotNullOrEmpty
-            => InternalId.IsNotNullOrEmpty();
+            => CountryCode.IsNotNullOrEmpty && PartyId.IsNotNullOrEmpty;
 
         /// <summary>
-        /// The length of the CPO identification.
+        /// The length of the remote party identification.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) ToString().Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new CPO identification based on the given text.
+        /// Create a new CPO identification
         /// </summary>
-        /// <param name="Text">A text representation of a CPO identification.</param>
-        private CPO_Id(String Text)
+        /// <param name="CountryCode">A country code.</param>
+        /// <param name="PartyId">A party identification.</param>
+        private CPO_Id(CountryCode  CountryCode,
+                       Party_Id     PartyId)
         {
-            this.InternalId = Text;
+
+            this.CountryCode  = CountryCode;
+            this.PartyId      = PartyId;
+
+            unchecked
+            {
+
+                this.hashCode = this.CountryCode.GetHashCode() * 3 ^
+                                this.PartyId.    GetHashCode();
+
+            }
+
         }
+
+        #endregion
+
+
+        #region (static) Parse   (CountryCode, PartyId)
+
+        /// <summary>
+        /// Parse the given country code and party identification as a CPO identification.
+        /// </summary>
+        /// <param name="CountryCode">A country code.</param>
+        /// <param name="PartyId">A party identification.</param>
+        public static CPO_Id Parse(CountryCode  CountryCode,
+                                   Party_Id     PartyId)
+
+            => new (CountryCode,
+                    PartyId);
+
+        #endregion
+
+        #region (static) From    (RemotePartyId)
+
+        /// <summary>
+        /// Convert the given remote party identification into a CPO identification.
+        /// </summary>
+        /// <param name="RemotePartyId">A remote party identification.</param>
+        public static CPO_Id From(RemoteParty_Id RemotePartyId)
+
+            => new (RemotePartyId.CountryCode,
+                    RemotePartyId.PartyId);
+
+        #endregion
+
+        #region (static) From    (RemoteParty)
+
+        /// <summary>
+        /// Convert the given remote party into a CPO identification.
+        /// </summary>
+        /// <param name="RemoteParty">A remote party.</param>
+        public static CPO_Id From(RemoteParty RemoteParty)
+
+            => new (RemoteParty.Id.CountryCode,
+                    RemoteParty.Id.PartyId);
 
         #endregion
 
@@ -110,7 +175,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(Text, out var CPOId))
                 return CPOId;
 
-            throw new ArgumentException("Invalid text representation of a CPO identification: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a CPO identification: '{Text}'!",
                                         nameof(Text));
 
         }
@@ -145,16 +210,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean TryParse(String Text, out CPO_Id CPOId)
         {
 
-            Text = Text.Trim();
-
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    CPOId = new CPO_Id(Text);
-                    return true;
+
+                    var matchCollection = CPOId_RegEx.Matches(Text);
+
+                    if (matchCollection.Count == 1 &&
+                        CountryCode.    TryParse(matchCollection[0].Groups[1].Value, out var countryCode) &&
+                        Party_Id.       TryParse(matchCollection[0].Groups[2].Value, out var partyId))
+                    {
+
+                        CPOId = new CPO_Id(countryCode,
+                                           partyId);
+
+                        return true;
+
+                    }
+
                 }
-                catch (Exception)
+                catch
                 { }
             }
 
@@ -172,9 +248,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public CPO_Id Clone
 
-            => new (
-                   new String(InternalId?.ToCharArray())
-               );
+            => new (CountryCode.Clone,
+                    PartyId.    Clone);
 
         #endregion
 
@@ -283,8 +358,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Object">A CPO identification to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is CPO_Id CPOId
-                   ? CompareTo(CPOId)
+            => Object is CPO_Id cpoId
+                   ? CompareTo(cpoId)
                    : throw new ArgumentException("The given object is not a CPO identification!",
                                                  nameof(Object));
 
@@ -297,10 +372,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="CPOId">A CPO identification to compare with.</param>
         public Int32 CompareTo(CPO_Id CPOId)
+{
 
-            => String.Compare(InternalId,
-                              CPOId.InternalId,
-                              StringComparison.OrdinalIgnoreCase);
+            var c = CountryCode.CompareTo(CPOId.CountryCode);
+
+            if (c == 0)
+                c = PartyId.    CompareTo(CPOId.PartyId);
+
+            return c;
+
+        }
 
         #endregion
 
@@ -316,8 +397,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Object">A CPO identification to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is CPO_Id CPOId &&
-                   Equals(CPOId);
+            => Object is CPO_Id cpoId &&
+                   Equals(cpoId);
 
         #endregion
 
@@ -329,9 +410,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CPOId">A CPO identification to compare with.</param>
         public Boolean Equals(CPO_Id CPOId)
 
-            => String.Equals(InternalId,
-                             CPOId.InternalId,
-                             StringComparison.OrdinalIgnoreCase);
+            => CountryCode.Equals(CPOId.CountryCode) &&
+               PartyId.    Equals(CPOId.PartyId);
 
         #endregion
 
@@ -339,13 +419,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-
-            => InternalId?.ToLower().GetHashCode() ?? 0;
+            => hashCode;
 
         #endregion
 
@@ -356,7 +436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => InternalId ?? "";
+            => $"{CountryCode}*{PartyId}";
 
         #endregion
 

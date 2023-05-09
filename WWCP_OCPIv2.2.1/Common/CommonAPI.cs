@@ -1352,17 +1352,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                OCPIResponseLogger:  PostCredentialsResponse,
                                OCPIRequestHandler:   async Request => {
 
-                                   var CREDENTIALS_TOKEN_A = Request.AccessToken;
-
-                                   if (Request.RemoteParty is not null &&
-                                       Request.LocalAccessInfo.HasValue     &&
+                                   if (Request.AccessToken is not null  && // CREDENTIALS_TOKEN_A
+                                       Request.RemoteParty is not null  &&
+                                       Request.LocalAccessInfo.HasValue &&
                                        Request.LocalAccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 
                                        if (Request.LocalAccessInfo.Value.VersionsURL.HasValue)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
-                                                      StatusMessage        = "The given access token '" + CREDENTIALS_TOKEN_A.Value.ToString() + "' is already registered!",
+                                                      StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is already registered!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
@@ -1370,9 +1369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                       }
                                                   };
 
-
                                        return await POSTOrPUTCredentials(Request);
-
 
                                    }
 
@@ -2708,56 +2705,61 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region CPOClients
 
-        private readonly List<CPOClient> cpoClients = new ();
+        private readonly ConcurrentDictionary<CPO_Id, CPOClient> cpoClients = new ();
 
         /// <summary>
         /// Return an enumeration of all CPO clients.
         /// </summary>
         public IEnumerable<CPOClient> CPOClients
-            => cpoClients;
+            => cpoClients.Values;
 
 
-        #region GetCPOClient(CountryCode, PartyId, AllowCachedClients = true)
+        #region GetCPOClient(CountryCode, PartyId, Description = null, AllowCachedClients = true)
 
         /// <summary>
         /// As a CPO create a client to access e.g. a remote EMSP.
         /// </summary>
         /// <param name="CountryCode">The country code of the remote EMSP.</param>
         /// <param name="PartyId">The party identification of the remote EMSP.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
         public CPOClient? GetCPOClient(CountryCode  CountryCode,
                                        Party_Id     PartyId,
-                                       Boolean      AllowCachedClients = true)
+                                       String?      Description          = null,
+                                       Boolean      AllowCachedClients   = true)
         {
 
-            if (AllowCachedClients)
+            var cpoId = CPO_Id.Parse(CountryCode,
+                                     PartyId);
+
+            if (AllowCachedClients &&
+                cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
             {
-
-                var cachedCPOClient = cpoClients.Where(client => client.RemoteParty.CountryCode == CountryCode &&
-                                                                 client.RemoteParty.PartyId     == PartyId).FirstOrDefault();
-
-                if (cachedCPOClient is not null)
-                    return cachedCPOClient;
-
+                return cachedCPOClient;
             }
 
-            var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
-                                                                          remoteparty.PartyId     == PartyId);
+            if (remoteParties.TryGetValue(RemoteParty_Id.From(cpoId), out var remoteParty) &&
+                remoteParty?.RemoteAccessInfos?.Any() == true)
+            {
 
-            if (remoteParty?.RemoteAccessInfos?.Any() == true)
-                return cpoClients.AddAndReturnElement(
-                    new CPOClient(
-                        remoteParty,
-                        this,
-                        null,
-                        ClientConfigurations.Description?.   Invoke(CountryCode, PartyId),
-                        null,
-                        ClientConfigurations.DisableLogging?.Invoke(CountryCode, PartyId),
-                        ClientConfigurations.LoggingPath?.   Invoke(CountryCode, PartyId),
-                        ClientConfigurations.LoggingContext?.Invoke(CountryCode, PartyId),
-                        ClientConfigurations.LogfileCreator?.Invoke(CountryCode, PartyId),
-                        DNSClient
-                    ));
+                var cpoClient = new CPOClient(
+                                    remoteParty,
+                                    this,
+                                    null,
+                                    Description ?? ClientConfigurations.Description?.Invoke(CountryCode, PartyId),
+                                    null,
+                                    ClientConfigurations.DisableLogging?.Invoke(CountryCode, PartyId),
+                                    ClientConfigurations.LoggingPath?.   Invoke(CountryCode, PartyId),
+                                    ClientConfigurations.LoggingContext?.Invoke(CountryCode, PartyId),
+                                    ClientConfigurations.LogfileCreator?.Invoke(CountryCode, PartyId),
+                                    DNSClient
+                                );
+
+                cpoClients.TryAdd(cpoId, cpoClient);
+
+                return cpoClient;
+
+            }
 
             return null;
 
@@ -2765,42 +2767,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region GetCPOClient(RemoteParty,          AllowCachedClients = true)
+        #region GetCPOClient(RemoteParty,          Description = null, AllowCachedClients = true)
 
         /// <summary>
         /// As a CPO create a client to access e.g. a remote EMSP.
         /// </summary>
         /// <param name="RemoteParty">A remote party.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
         public CPOClient? GetCPOClient(RemoteParty  RemoteParty,
-                                       Boolean      AllowCachedClients = true)
+                                       String?      Description          = null,
+                                       Boolean      AllowCachedClients   = true)
         {
 
-            if (AllowCachedClients)
+            var cpoId = CPO_Id.From(RemoteParty);
+
+            if (AllowCachedClients &&
+                cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
             {
-
-                var cachedCPOClient = cpoClients.FirstOrDefault(cpoClient => cpoClient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                             cpoClient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
-
-                if (cachedCPOClient is not null)
-                    return cachedCPOClient;
-
+                return cachedCPOClient;
             }
 
-            if (RemoteParty.RemoteAccessInfos?.Any() == true)
-                return cpoClients.AddAndReturnElement(
-                    new CPOClient(
-                        RemoteParty,
-                        this,
-                        null,
-                        ClientConfigurations.Description?.   Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
-                        null,
-                        ClientConfigurations.DisableLogging?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
-                        ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
-                        ClientConfigurations.LoggingContext?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
-                        ClientConfigurations.LogfileCreator?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
-                        DNSClient
-                    ));
+            if (RemoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var cpoClient = new CPOClient(
+                                    RemoteParty,
+                                    this,
+                                    null,
+                                    Description ?? ClientConfigurations.Description?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                                    null,
+                                    ClientConfigurations.DisableLogging?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                                    ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                                    ClientConfigurations.LoggingContext?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                                    ClientConfigurations.LogfileCreator?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                                    DNSClient
+                                );
+
+                cpoClients.TryAdd(cpoId, cpoClient);
+
+                return cpoClient;
+
+            }
 
             return null;
 
@@ -2808,48 +2816,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region GetCPOClient(RemotePartyId,        AllowCachedClients = true)
+        #region GetCPOClient(RemotePartyId,        Description = null, AllowCachedClients = true)
 
         /// <summary>
         /// As a CPO create a client to access e.g. a remote EMSP.
         /// </summary>
         /// <param name="RemotePartyId">A remote party identification.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
         public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
-                                       Boolean         AllowCachedClients = true)
+                                       String?         Description          = null,
+                                       Boolean         AllowCachedClients   = true)
         {
 
-            var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
-                                                                           remoteparty.PartyId     == RemotePartyId.PartyId);
+            var cpoId = CPO_Id.From(RemotePartyId);
 
-            if (remoteParty is null)
-                return null;
-
-            if (AllowCachedClients)
+            if (AllowCachedClients &&
+                cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
             {
-
-                var cachedCPOClient = cpoClients.FirstOrDefault(cpoClient => cpoClient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                             cpoClient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken);
-
-                if (cachedCPOClient is not null)
-                    return cachedCPOClient;
-
+                return cachedCPOClient;
             }
 
-            if (remoteParty?.RemoteAccessInfos?.Any() == true)
-                return cpoClients.AddAndReturnElement(
-                    new CPOClient(
-                        remoteParty,
-                        this,
-                        null,
-                        ClientConfigurations.Description?.   Invoke(remoteParty.CountryCode, remoteParty.PartyId),
-                        null,
-                        ClientConfigurations.DisableLogging?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
-                        ClientConfigurations.LoggingPath?.   Invoke(remoteParty.CountryCode, remoteParty.PartyId),
-                        ClientConfigurations.LoggingContext?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
-                        ClientConfigurations.LogfileCreator?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
-                        DNSClient
-                    ));
+            if (remoteParties.TryGetValue(RemotePartyId, out var remoteParty) &&
+                remoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var cpoClient = new CPOClient(
+                                    remoteParty,
+                                    this,
+                                    null,
+                                    Description ?? ClientConfigurations.Description?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                                    null,
+                                    ClientConfigurations.DisableLogging?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                                    ClientConfigurations.LoggingPath?.   Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                                    ClientConfigurations.LoggingContext?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                                    ClientConfigurations.LogfileCreator?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                                    DNSClient
+                                );
+
+                cpoClients.TryAdd(cpoId, cpoClient);
+
+                return cpoClient;
+
+            }
 
             return null;
 
@@ -2861,56 +2870,61 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region EMSPClients
 
-        private readonly List<EMSPClient> emspClients = new ();
+        private readonly ConcurrentDictionary<EMSP_Id, EMSPClient> emspClients = new ();
 
         /// <summary>
         /// Return an enumeration of all EMSP clients.
         /// </summary>
         public IEnumerable<EMSPClient> EMSPClients
-            => emspClients;
+            => emspClients.Values;
 
 
-        #region GetEMSPClient(CountryCode, PartyId, AllowCachedClients = true)
+        #region GetEMSPClient(CountryCode, PartyId, Description = null, AllowCachedClients = true)
 
         /// <summary>
-        /// As an EMSP create a client to access e.g. a remote CPO.
+        /// As a EMSP create a client to access e.g. a remote EMSP.
         /// </summary>
-        /// <param name="CountryCode">The country code of the remote CPO.</param>
-        /// <param name="PartyId">The party identification of the remote CPO.</param>
+        /// <param name="CountryCode">The country code of the remote EMSP.</param>
+        /// <param name="PartyId">The party identification of the remote EMSP.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
         public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
                                          Party_Id     PartyId,
-                                         Boolean      AllowCachedClients = true)
+                                         String?      Description          = null,
+                                         Boolean      AllowCachedClients   = true)
         {
 
-            if (AllowCachedClients)
+            var emspId = EMSP_Id.Parse(CountryCode,
+                                       PartyId);
+
+            if (AllowCachedClients &&
+                emspClients.TryGetValue(emspId, out var cachedEMSPClient))
             {
-
-                var cachedEMSPClient = emspClients.Where(client => client.RemoteParty.CountryCode == CountryCode &&
-                                                                   client.RemoteParty.PartyId     == PartyId).FirstOrDefault();
-
-                if (cachedEMSPClient is not null)
-                    return cachedEMSPClient;
-
+                return cachedEMSPClient;
             }
 
-            var remoteParty = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
-                                                                          remoteparty.PartyId     == PartyId);
+            if (remoteParties.TryGetValue(RemoteParty_Id.From(emspId), out var remoteParty) &&
+                remoteParty?.RemoteAccessInfos?.Any() == true)
+            {
 
-            if (remoteParty?.RemoteAccessInfos?.Any() == true)
-                return emspClients.AddAndReturnElement(
-                    new EMSPClient(
-                        remoteParty,
-                        this,
-                        null,
-                        ClientConfigurations.Description?.   Invoke(CountryCode, PartyId),
-                        null,
-                        ClientConfigurations.DisableLogging?.Invoke(CountryCode, PartyId),
-                        ClientConfigurations.LoggingPath?.   Invoke(CountryCode, PartyId),
-                        ClientConfigurations.LoggingContext?.Invoke(CountryCode, PartyId),
-                        ClientConfigurations.LogfileCreator?.Invoke(CountryCode, PartyId),
-                        DNSClient
-                    ));
+                var emspClient = new EMSPClient(
+                                     remoteParty,
+                                     this,
+                                     null,
+                                     Description ?? ClientConfigurations.Description?.Invoke(CountryCode, PartyId),
+                                     null,
+                                     ClientConfigurations.DisableLogging?.Invoke(CountryCode, PartyId),
+                                     ClientConfigurations.LoggingPath?.   Invoke(CountryCode, PartyId),
+                                     ClientConfigurations.LoggingContext?.Invoke(CountryCode, PartyId),
+                                     ClientConfigurations.LogfileCreator?.Invoke(CountryCode, PartyId),
+                                     DNSClient
+                                 );
+
+                emspClients.TryAdd(emspId, emspClient);
+
+                return emspClient;
+
+            }
 
             return null;
 
@@ -2918,42 +2932,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region GetEMSPClient(RemoteParty,          AllowCachedClients = true)
+        #region GetEMSPClient(RemoteParty,          Description = null, AllowCachedClients = true)
 
         /// <summary>
-        /// As an EMSP create a client to access e.g. a remote CPO.
+        /// As a EMSP create a client to access e.g. a remote EMSP.
         /// </summary>
         /// <param name="RemoteParty">A remote party.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
         public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty,
-                                         Boolean      AllowCachedClients = true)
+                                         String?      Description          = null,
+                                         Boolean      AllowCachedClients   = true)
         {
 
-            if (AllowCachedClients)
+            var emspId = EMSP_Id.From(RemoteParty);
+
+            if (AllowCachedClients &&
+                emspClients.TryGetValue(emspId, out var cachedEMSPClient))
             {
-
-                var cachedEMSPClient = emspClients.FirstOrDefault(emspClient => emspClient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                                emspClient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
-
-                if (cachedEMSPClient is not null)
-                    return cachedEMSPClient;
-
+                return cachedEMSPClient;
             }
 
-            if (RemoteParty.RemoteAccessInfos?.Any() == true)
-                return emspClients.AddAndReturnElement(
-                    new EMSPClient(
-                        RemoteParty,
-                        this,
-                        null,
-                        ClientConfigurations.Description?.   Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
-                        null,
-                        ClientConfigurations.DisableLogging?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
-                        ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
-                        ClientConfigurations.LoggingContext?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
-                        ClientConfigurations.LogfileCreator?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
-                        DNSClient
-                    ));
+            if (RemoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var emspClient = new EMSPClient(
+                                     RemoteParty,
+                                     this,
+                                     null,
+                                     Description ?? ClientConfigurations.Description?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                                     null,
+                                     ClientConfigurations.DisableLogging?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                                     ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                                     ClientConfigurations.LoggingContext?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                                     ClientConfigurations.LogfileCreator?.Invoke(RemoteParty.CountryCode, RemoteParty.PartyId),
+                                     DNSClient
+                                 );
+
+                emspClients.TryAdd(emspId, emspClient);
+
+                return emspClient;
+
+            }
 
             return null;
 
@@ -2961,48 +2981,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region GetEMSPClient(RemotePartyId,        AllowCachedClients = true)
+        #region GetEMSPClient(RemotePartyId,        Description = null, AllowCachedClients = true)
 
         /// <summary>
-        /// As an EMSP create a client to access e.g. a remote CPO.
+        /// As a EMSP create a client to access e.g. a remote EMSP.
         /// </summary>
         /// <param name="RemotePartyId">A remote party identification.</param>
+        /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
         public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId,
-                                         Boolean         AllowCachedClients = true)
+                                         String?         Description          = null,
+                                         Boolean         AllowCachedClients   = true)
         {
 
-            var remoteParty  = RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
-                                                                           remoteparty.PartyId     == RemotePartyId.PartyId);
+            var emspId = EMSP_Id.From(RemotePartyId);
 
-            if (remoteParty is null)
-                return null;
-
-            if (AllowCachedClients)
+            if (AllowCachedClients &&
+                emspClients.TryGetValue(emspId, out var cachedEMSPClient))
             {
-
-                var cachedEMSPClient = emspClients.FirstOrDefault(emspClient => emspClient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                                emspClient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken);
-
-                if (cachedEMSPClient is not null)
-                    return cachedEMSPClient;
-
+                return cachedEMSPClient;
             }
 
-            if (remoteParty?.RemoteAccessInfos?.Any() == true)
-                return emspClients.AddAndReturnElement(
-                    new EMSPClient(
-                        remoteParty,
-                        this,
-                        null,
-                        ClientConfigurations.Description?.   Invoke(remoteParty.CountryCode, remoteParty.PartyId),
-                        null,
-                        ClientConfigurations.DisableLogging?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
-                        ClientConfigurations.LoggingPath?.   Invoke(remoteParty.CountryCode, remoteParty.PartyId),
-                        ClientConfigurations.LoggingContext?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
-                        ClientConfigurations.LogfileCreator?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
-                        DNSClient
-                    ));
+            if (remoteParties.TryGetValue(RemotePartyId, out var remoteParty) &&
+                remoteParty?.RemoteAccessInfos?.Any() == true)
+            {
+
+                var emspClient = new EMSPClient(
+                                     remoteParty,
+                                     this,
+                                     null,
+                                     Description ?? ClientConfigurations.Description?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                                     null,
+                                     ClientConfigurations.DisableLogging?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                                     ClientConfigurations.LoggingPath?.   Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                                     ClientConfigurations.LoggingContext?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                                     ClientConfigurations.LogfileCreator?.Invoke(remoteParty.CountryCode, remoteParty.PartyId),
+                                     DNSClient
+                                 );
+
+                emspClients.TryAdd(emspId, emspClient);
+
+                return emspClient;
+
+            }
 
             return null;
 

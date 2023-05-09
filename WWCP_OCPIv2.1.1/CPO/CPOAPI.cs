@@ -4025,7 +4025,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        StatusMessage        = "Hello world!",
                                                        Data                 = addOrUpdateResult.Data.ToJSON(false,
                                                                                                             CustomTokenSerializer),
-                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                             ? HTTPStatusCode.Created
                                                                                             : HTTPStatusCode.OK,
@@ -4241,18 +4241,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/RESERVE_NOW",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestHandler: Request =>
 
-                                        return Task.FromResult(
+                                        Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
-                                            });
+                                            })
 
-                                    });
+                                    );
 
             #endregion
 
@@ -4292,7 +4292,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         if (!ReserveNowCommand.TryParse(reserveNowJSON,
                                                                         out var reserveNowCommand,
-                                                                        out var errorResponse))
+                                                                        out var errorResponse) ||
+                                             reserveNowCommand is null)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4317,7 +4318,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    reserveNowCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
                                                                    Timeout: TimeSpan.FromSeconds(15),
-                                                                   Message: new DisplayText[] {
+                                                                   Message: new[] {
                                                                                 new DisplayText(Languages.en, "Not supported!")
                                                                             }
                                                                );
@@ -4348,18 +4349,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/CANCEL_RESERVATION",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestHandler: Request =>
 
-                                        return Task.FromResult(
+                                        Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
-                                            });
+                                            })
 
-                                    });
+                                    );
 
             #endregion
 
@@ -4399,12 +4400,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         if (!CancelReservationCommand.TryParse(cancelReservationJSON,
                                                                                out var cancelReservationCommand,
-                                                                               out var ErrorResponse))
+                                                                               out var errorResponse) ||
+                                             cancelReservationCommand is null)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'CANCEL_RESERVATION' command JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given 'CANCEL_RESERVATION' command JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
@@ -4424,7 +4426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    cancelReservationCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
                                                                    Timeout: TimeSpan.FromSeconds(15),
-                                                                   Message: new DisplayText[] {
+                                                                   Message: new[] {
                                                                                 new DisplayText(Languages.en, "Not supported!")
                                                                             }
                                                                );
@@ -4455,18 +4457,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/START_SESSION",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestHandler: Request =>
 
-                                        return Task.FromResult(
+                                        Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
-                                            });
+                                            })
 
-                                    });
+                                    );
 
             #endregion
 
@@ -4506,7 +4508,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         if (!StartSessionCommand.TryParse(startSessionJSON,
                                                                           out var startSessionCommand,
-                                                                          out var errorResponse))
+                                                                          out var errorResponse) ||
+                                             startSessionCommand is null)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4531,7 +4534,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    startSessionCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
                                                                    Timeout: TimeSpan.FromSeconds(15),
-                                                                   Message: new DisplayText[] {
+                                                                   Message: new[] {
                                                                                 new DisplayText(Languages.en, "Not supported!")
                                                                             }
                                                                );
@@ -4562,18 +4565,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/STOP_SESSION",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestHandler: Request =>
 
-                                        return Task.FromResult(
+                                        Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
-                                            });
+                                            })
 
-                                    });
+                                    );
 
             #endregion
 
@@ -4613,7 +4616,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         if (!StopSessionCommand.TryParse(stopSessionJSON,
                                                                           out var stopSessionCommand,
-                                                                          out var errorResponse))
+                                                                          out var errorResponse) ||
+                                             stopSessionCommand is null)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4638,7 +4642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    stopSessionCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
                                                                    Timeout: TimeSpan.FromSeconds(15),
-                                                                   Message: new DisplayText[] {
+                                                                   Message: new[] {
                                                                                 new DisplayText(Languages.en, "Not supported!")
                                                                             }
                                                                );
@@ -4669,18 +4673,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestHandler: Request =>
 
-                                        return Task.FromResult(
+                                        Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
-                                            });
+                                            })
 
-                                    });
+                                    );
 
             #endregion
 
@@ -4720,7 +4724,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         if (!UnlockConnectorCommand.TryParse(unlockConnectorJSON,
                                                                              out var unlockConnectorCommand,
-                                                                             out var errorResponse))
+                                                                             out var errorResponse) ||
+                                             unlockConnectorCommand is null)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4745,7 +4750,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    unlockConnectorCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
                                                                    Timeout: TimeSpan.FromSeconds(15),
-                                                                   Message: new DisplayText[] {
+                                                                   Message: new[] {
                                                                                 new DisplayText(Languages.en, "Not supported!")
                                                                             }
                                                                );

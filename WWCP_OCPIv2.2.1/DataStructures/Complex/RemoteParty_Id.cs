@@ -17,15 +17,37 @@
 
 #region Usings
 
-using System;
 using System.Text.RegularExpressions;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1
+namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
+
+    /// <summary>
+    /// Extension methods for remote party identifications.
+    /// </summary>
+    public static class RemotePartyIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this remote party identification is null or empty.
+        /// </summary>
+        /// <param name="RemotePartyId">A remote party identification.</param>
+        public static Boolean IsNullOrEmpty(this RemoteParty_Id? RemotePartyId)
+            => !RemotePartyId.HasValue || RemotePartyId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this remote party identification is NOT null or empty.
+        /// </summary>
+        /// <param name="RemotePartyId">A remote party identification.</param>
+        public static Boolean IsNotNullOrEmpty(this RemoteParty_Id? RemotePartyId)
+            => RemotePartyId.HasValue && RemotePartyId.Value.IsNotNullOrEmpty;
+
+    }
+
 
     /// <summary>
     /// The unique identification of a remote party.
@@ -35,43 +57,56 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        public static readonly Regex RemotePartyId_RegEx = new ("^([a-zA-Z0-9]{2,5})\\-([a-zA-Z0-9]{2,10})_([a-zA-Z0-9]{2,10})$");
-
-        /// <summary>
-        /// The internal identification.
-        /// </summary>
-        private readonly String InternalId;
+        public static readonly Regex RemotePartyId_RegEx = new ("^([a-zA-Z0-9]{2})\\-([a-zA-Z0-9]{2,10})_([a-zA-Z0-9]{2,10})$");
 
         #endregion
 
         #region Properties
 
         /// <summary>
+        /// The country code.
+        /// </summary>
+        public CountryCode  CountryCode    { get;}
+
+        /// <summary>
+        /// The party identification.
+        /// </summary>
+        public Party_Id     PartyId        { get;}
+
+        /// <summary>
+        /// The party role.
+        /// </summary>
+        public Roles        Role           { get;}
+
+
+        /// <summary>
         /// Indicates whether this identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
+            => CountryCode.IsNullOrEmpty || PartyId.IsNullOrEmpty;
 
-            => InternalId.IsNullOrEmpty();
+        /// <summary>
+        /// Indicates whether this identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => CountryCode.IsNotNullOrEmpty && PartyId.IsNotNullOrEmpty;
 
         /// <summary>
         /// The length of the remote party identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
-
-
-        public CountryCode  CountryCode    { get;}
-        public Party_Id     PartyId        { get;}
-        public Roles        Role           { get;}
+            => (UInt64) ToString().Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new remote party identification based on the given text.
+        /// Create a new remote party identification.
         /// </summary>
+        /// <param name="CountryCode">A country code.</param>
+        /// <param name="PartyId">A party identification.</param>
+        /// <param name="Role">A party role.</param>
         private RemoteParty_Id(CountryCode  CountryCode,
                                Party_Id     PartyId,
                                Roles        Role)
@@ -80,9 +115,64 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.CountryCode  = CountryCode;
             this.PartyId      = PartyId;
             this.Role         = Role;
-            this.InternalId   = String.Concat(CountryCode, "-", PartyId, "_", Role);
+
+            unchecked
+            {
+
+                this.hashCode = this.CountryCode.GetHashCode() * 5 ^
+                                this.PartyId.    GetHashCode() * 3 ^
+                                this.Role.       GetHashCode();
+
+            }
 
         }
+
+        #endregion
+
+
+        #region (static) Parse   (CountryCode, PartyId, Role)
+
+        /// <summary>
+        /// Parse the given country code and party identification as a remote party identification.
+        /// </summary>
+        /// <param name="CountryCode">A country code.</param>
+        /// <param name="PartyId">A party identification.</param>
+        /// <param name="Role">A party role.</param>
+        public static RemoteParty_Id Parse(CountryCode  CountryCode,
+                                           Party_Id     PartyId,
+                                           Roles        Role)
+
+            => new (CountryCode,
+                    PartyId,
+                    Role);
+
+        #endregion
+
+        #region (static) From    (CPOId)
+
+        /// <summary>
+        /// Convert the given CPO identification into a remote party identification.
+        /// </summary>
+        /// <param name="CPOId">A CPO identification.</param>
+        public static RemoteParty_Id From(CPO_Id CPOId)
+
+            => new (CPOId.CountryCode,
+                    CPOId.PartyId,
+                    Roles.CPO);
+
+        #endregion
+
+        #region (static) From    (EMSPId)
+
+        /// <summary>
+        /// Convert the given EMSP identification into a remote party identification.
+        /// </summary>
+        /// <param name="EMSPId">A EMSP identification.</param>
+        public static RemoteParty_Id From(EMSP_Id EMSPId)
+
+            => new (EMSPId.CountryCode,
+                    EMSPId.PartyId,
+                    Roles.EMSP);
 
         #endregion
 
@@ -90,7 +180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a remote party identification.
+        /// Parse the given text as a remote party identification.
         /// </summary>
         /// <param name="Text">A text representation of a remote party identification.</param>
         public static RemoteParty_Id Parse(String Text)
@@ -99,10 +189,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(Text, out var remotePartyId))
                 return remotePartyId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a remote party identification must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a remote party identification is invalid!", nameof(Text));
+            throw new ArgumentException($"Invalid text representation of a remote party identification: '{Text}'!",
+                                        nameof(Text));
 
         }
 
@@ -141,12 +229,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 try
                 {
 
-                    var MatchCollection = RemotePartyId_RegEx.Matches(Text);
+                    var matchCollection = RemotePartyId_RegEx.Matches(Text);
 
-                    if (MatchCollection.Count == 1 &&
-                        CountryCode.    TryParse(MatchCollection[0].Groups[1].Value, out var countryCode) &&
-                        Party_Id.       TryParse(MatchCollection[0].Groups[2].Value, out var partyId)     &&
-                        RolesExtensions.TryParse(MatchCollection[0].Groups[3].Value, out var role))
+                    if (matchCollection.Count == 1 &&
+                        CountryCode.    TryParse(matchCollection[0].Groups[1].Value, out var countryCode) &&
+                        Party_Id.       TryParse(matchCollection[0].Groups[2].Value, out var partyId)     &&
+                        RolesExtensions.TryParse(matchCollection[0].Groups[3].Value, out var role))
                     {
 
                         RemotePartyId = new RemoteParty_Id(countryCode,
@@ -158,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     }
 
                 }
-                catch (Exception)
+                catch
                 { }
             }
 
@@ -176,11 +264,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public RemoteParty_Id Clone
 
-            => new (
-                   CountryCode.Clone,
-                   PartyId.    Clone,
-                   Role
-               );
+            => new (CountryCode.Clone,
+                    PartyId.    Clone,
+                    Role);
 
         #endregion
 
@@ -213,7 +299,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator != (RemoteParty_Id RemotePartyId1,
                                            RemoteParty_Id RemotePartyId2)
 
-            => !(RemotePartyId1 == RemotePartyId2);
+            => !RemotePartyId1.Equals(RemotePartyId2);
 
         #endregion
 
@@ -243,7 +329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator <= (RemoteParty_Id RemotePartyId1,
                                            RemoteParty_Id RemotePartyId2)
 
-            => !(RemotePartyId1 > RemotePartyId2);
+            => RemotePartyId1.CompareTo(RemotePartyId2) <= 0;
 
         #endregion
 
@@ -273,7 +359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator >= (RemoteParty_Id RemotePartyId1,
                                            RemoteParty_Id RemotePartyId2)
 
-            => !(RemotePartyId1 < RemotePartyId2);
+            => RemotePartyId1.CompareTo(RemotePartyId2) >= 0;
 
         #endregion
 
@@ -284,9 +370,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two remote party identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
+        /// <param name="Object">A remote party identification to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
             => Object is RemoteParty_Id remotePartyId
@@ -299,14 +385,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(RemotePartyId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two remote party identifications.
         /// </summary>
-        /// <param name="RemotePartyId">An object to compare with.</param>
+        /// <param name="RemotePartyId">A remote party identification to compare with.</param>
         public Int32 CompareTo(RemoteParty_Id RemotePartyId)
+        {
 
-            => String.Compare(InternalId,
-                              RemotePartyId.InternalId,
-                              StringComparison.OrdinalIgnoreCase);
+            var c = CountryCode.CompareTo(RemotePartyId.CountryCode);
+
+            if (c == 0)
+                c = PartyId.    CompareTo(RemotePartyId.PartyId);
+
+            if (c == 0)
+                c = Role.       CompareTo(RemotePartyId.Role);
+
+            return c;
+
+        }
 
         #endregion
 
@@ -317,10 +412,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two remote party identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
+        /// <param name="Object">A remote party identification to compare with.</param>
         public override Boolean Equals(Object? Object)
 
             => Object is RemoteParty_Id remotePartyId &&
@@ -333,13 +427,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two remote party identifications for equality.
         /// </summary>
-        /// <param name="RemotePartyId">An remote party identification to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="RemotePartyId">A remote party identification to compare with.</param>
         public Boolean Equals(RemoteParty_Id RemotePartyId)
 
-            => String.Equals(InternalId,
-                             RemotePartyId.InternalId,
-                             StringComparison.OrdinalIgnoreCase);
+            => CountryCode.Equals(RemotePartyId.CountryCode) &&
+               PartyId.    Equals(RemotePartyId.PartyId)     &&
+               Role.       Equals(RemotePartyId.Role);
 
         #endregion
 
@@ -347,13 +440,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-
-            => InternalId?.ToLower().GetHashCode() ?? 0;
+            => hashCode;
 
         #endregion
 
@@ -364,7 +457,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => InternalId ?? "";
+            => $"{CountryCode}-{PartyId}_{Role}";
 
         #endregion
 
