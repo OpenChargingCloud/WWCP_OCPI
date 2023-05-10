@@ -53,8 +53,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             if (graphDefinedEMSP is not null)
             {
 
-                var response1            = await graphDefinedEMSP.GetVersions();
-                var response2            = await graphDefinedEMSP.Register();
+                //var response1            = await graphDefinedEMSP.GetVersions();
+                //var response2            = await graphDefinedEMSP.Register();
                 var response3            = await graphDefinedEMSP.PutLocation(new Location(
                                                                                   CountryCode.Parse("DE"),
                                                                                   Party_Id.   Parse("GEF"),
@@ -66,18 +66,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                   Country.Germany,
                                                                                   GeoCoordinate.Parse(10, 20),
                                                                                   "Location 0001",
-                                                                                  new AdditionalGeoLocation[] {
+                                                                                  new[] {
                                                                                       new AdditionalGeoLocation(
-                                                                                          Latitude.Parse(11),
+                                                                                          Latitude. Parse(11),
                                                                                           Longitude.Parse(22),
                                                                                           Name: DisplayText.Create(Languages.de, "Postkasten")
                                                                                       )
                                                                                   },
-                                                                                  new EVSE[] {
+                                                                                  new[] {
                                                                                       new EVSE(
                                                                                           EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                                                           StatusType.AVAILABLE,
-                                                                                          new Connector[] {
+                                                                                          new[] {
                                                                                               new Connector(
                                                                                                   Connector_Id.Parse("1"),
                                                                                                   ConnectorType.IEC_62196_T2,
@@ -102,7 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                               )
                                                                                           },
                                                                                           EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                                                                          new StatusSchedule[] {
+                                                                                          new[] {
                                                                                               new StatusSchedule(
                                                                                                   StatusType.INOPERATIVE,
                                                                                                   DateTime.Parse("2020-09-23"),
@@ -114,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                                   DateTime.Parse("2020-12-31")
                                                                                               )
                                                                                           },
-                                                                                          new Capability[] {
+                                                                                          new[] {
                                                                                               Capability.RFID_READER,
                                                                                               Capability.RESERVABLE
                                                                                           },
@@ -130,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                               null,
                                                                                               null,
                                                                                               null,
-                                                                                              new TransparencySoftwareStatus[] {
+                                                                                              new[] {
                                                                                                   new TransparencySoftwareStatus(
                                                                                                       new TransparencySoftware(
                                                                                                           "Chargy Transparency Software Desktop Application",
@@ -171,15 +171,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                           "1. Stock",
                                                                                           GeoCoordinate.Parse(10.1, 20.2),
                                                                                           "Ladestation #1",
-                                                                                          new DisplayText[] {
+                                                                                          new[] {
                                                                                               DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                                                               DisplayText.Create(Languages.en, "Ken sent me!")
                                                                                           },
-                                                                                          new ParkingRestrictions[] {
+                                                                                          new[] {
                                                                                               ParkingRestrictions.EV_ONLY,
                                                                                               ParkingRestrictions.PLUGGED
                                                                                           },
-                                                                                          new Image[] {
+                                                                                          new[] {
                                                                                               new Image(
                                                                                                   URL.Parse("http://example.com/pinguine.jpg"),
                                                                                                   ImageFileType.jpeg,
@@ -192,7 +192,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                           DateTime.Parse("2020-09-22")
                                                                                       )
                                                                                   },
-                                                                                  new DisplayText[] {
+                                                                                  new[] {
                                                                                       new DisplayText(Languages.de, "Hallo Welt!"),
                                                                                       new DisplayText(Languages.en, "Hello world!")
                                                                                   },
@@ -232,25 +232,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                           URL.Parse("http://ahzf.de/logo_small.gif")
                                                                                       )
                                                                                   ),
-                                                                                  new Facilities[] {
+                                                                                  new[] {
                                                                                       Facilities.CAFE
                                                                                   },
                                                                                   "Europe/Berlin",
                                                                                   new Hours(
-                                                                                      new RegularHours[] {
+                                                                                      new[] {
                                                                                           new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                                                                           new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                                                                           new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                                                                           new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                                                                           new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                                                                       },
-                                                                                      new ExceptionalPeriod[] {
+                                                                                      new[] {
                                                                                           new ExceptionalPeriod(
                                                                                               DateTime.Parse("2020-09-21T00:00:00Z"),
                                                                                               DateTime.Parse("2020-09-22T00:00:00Z")
                                                                                           )
                                                                                       },
-                                                                                      new ExceptionalPeriod[] {
+                                                                                      new[] {
                                                                                           new ExceptionalPeriod(
                                                                                               DateTime.Parse("2020-12-24T00:00:00Z"),
                                                                                               DateTime.Parse("2020-12-26T00:00:00Z")
@@ -258,7 +258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                       }
                                                                                   ),
                                                                                   false,
-                                                                                  new Image[] {
+                                                                                  new[] {
                                                                                       new Image(
                                                                                           URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                                                                           ImageFileType.jpeg,
@@ -270,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                   },
                                                                                   new EnergyMix(
                                                                                       true,
-                                                                                      new EnergySource[] {
+                                                                                      new[] {
                                                                                           new EnergySource(
                                                                                               EnergySourceCategory.SOLAR,
                                                                                               80
@@ -280,7 +280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                               20
                                                                                           )
                                                                                       },
-                                                                                      new EnvironmentalImpact[] {
+                                                                                      new[] {
                                                                                           new EnvironmentalImpact(
                                                                                               EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                                                               0.1
@@ -315,10 +315,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // }
 
                 Assert.IsNotNull(response3);
-                Assert.AreEqual (201,             response3.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,            response3.StatusCode);
-                Assert.AreEqual ("Hello world!",  response3.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now -  response3.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.AreEqual (201,            response3.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (1000,           response3.StatusCode);
+                Assert.AreEqual ("Hello world!", response3.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 //Assert.IsNotNull(response.Request);
 

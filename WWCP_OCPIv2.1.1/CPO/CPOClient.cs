@@ -933,7 +933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -970,7 +970,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Location>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Location>.ParseJObject(httpResponse,
                                                                    requestId,
                                                                    correlationId,
                                                                    json => Location.Parse(json));
@@ -1112,7 +1112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -1167,10 +1167,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Location>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Location>.ParseJObject(httpResponse,
                                                                    requestId,
                                                                    correlationId,
-                                                                   json => Location.Parse(json));
+                                                                   json => Location.Parse(json,
+                                                                                          MyCommonAPI.OurCountryCode,
+                                                                                          MyCommonAPI.OurPartyId));
 
                     Counters.PutLocation.IncResponses_OK();
 
@@ -1315,7 +1317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -1354,7 +1356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Location>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Location>.ParseJObject(httpResponse,
                                                                    requestId,
                                                                    correlationId,
                                                                    json => Location.Parse(json));
@@ -1498,7 +1500,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -1536,7 +1538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<EVSE>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<EVSE>.ParseJObject(httpResponse,
                                                                requestId,
                                                                correlationId,
                                                                json => EVSE.Parse(json));
@@ -1726,7 +1728,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -1774,7 +1776,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<EVSE>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<EVSE>.ParseJObject(httpResponse,
                                                                requestId,
                                                                correlationId,
                                                                json => EVSE.Parse(json));
@@ -1927,7 +1929,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -1967,7 +1969,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<EVSE>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<EVSE>.ParseJObject(httpResponse,
                                                                requestId,
                                                                correlationId,
                                                                json => EVSE.Parse(json));
@@ -2113,7 +2115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -2152,7 +2154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Connector>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Connector>.ParseJObject(httpResponse,
                                                                     requestId,
                                                                     correlationId,
                                                                     json => Connector.Parse(json));
@@ -2306,7 +2308,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -2348,7 +2350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Connector>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Connector>.ParseJObject(httpResponse,
                                                                     requestId,
                                                                     correlationId,
                                                                     json => Connector.Parse(json));
@@ -2493,7 +2495,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -2534,7 +2536,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Connector>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Connector>.ParseJObject(httpResponse,
                                                                     requestId,
                                                                     correlationId,
                                                                     json => Connector.Parse(json));
@@ -2682,7 +2684,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -2721,7 +2723,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Tariff>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Tariff>.ParseJObject(httpResponse,
                                                                  requestId,
                                                                  correlationId,
                                                                  json => Tariff.Parse(json));
@@ -2864,7 +2866,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -2903,7 +2905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Tariff>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Tariff>.ParseJObject(httpResponse,
                                                                  requestId,
                                                                  correlationId,
                                                                  json => Tariff.Parse(json));
@@ -3055,7 +3057,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -3096,7 +3098,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Tariff>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Tariff>.ParseJObject(httpResponse,
                                                                  requestId,
                                                                  correlationId,
                                                                  json => Tariff.Parse(json));
@@ -3242,7 +3244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -3281,7 +3283,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Tariff>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Tariff>.ParseJObject(httpResponse,
                                                                  requestId,
                                                                  correlationId,
                                                                  json => Tariff.Parse(json));
@@ -3428,7 +3430,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -3467,7 +3469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Session>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Session>.ParseJObject(httpResponse,
                                                                  requestId,
                                                                  correlationId,
                                                                  json => Session.Parse(json));
@@ -3610,7 +3612,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -3649,7 +3651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Session>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Session>.ParseJObject(httpResponse,
                                                                   requestId,
                                                                   correlationId,
                                                                   json => Session.Parse(json));
@@ -3801,7 +3803,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -3842,7 +3844,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Session>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Session>.ParseJObject(httpResponse,
                                                                  requestId,
                                                                  correlationId,
                                                                  json => Session.Parse(json));
@@ -3988,7 +3990,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -4027,7 +4029,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Session>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Session>.ParseJObject(httpResponse,
                                                                  requestId,
                                                                  correlationId,
                                                                  json => Session.Parse(json));
@@ -4171,7 +4173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -4235,7 +4237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<CDR>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<CDR>.ParseJObject(httpResponse,
                                                               requestId,
                                                               correlationId,
                                                               json => CDR.Parse(json,
@@ -4376,7 +4378,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -4413,7 +4415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<CDR>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<CDR>.ParseJObject(httpResponse,
                                                                  requestId,
                                                                  correlationId,
                                                                  json => CDR.Parse(json));
@@ -4573,7 +4575,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -4610,10 +4612,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Token>.ParseJArray(HTTPResponse,
-                                                             requestId,
-                                                             correlationId,
-                                                             json => Token.Parse(json));
+                    response = OCPIResponse<Token>.ParseJArray(httpResponse,
+                                                               requestId,
+                                                               correlationId,
+                                                               json => Token.Parse(json));
 
                     Counters.GetTokens.IncResponses_OK();
 
@@ -4754,7 +4756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
                                                              RemoteCertificateValidator,
@@ -4828,7 +4830,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                     //
                     // }
 
-                    response = OCPIResponse<AuthorizationInfo>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<AuthorizationInfo>.ParseJObject(httpResponse,
                                                                             requestId,
                                                                             correlationId,
                                                                             json => AuthorizationInfo.Parse(json));

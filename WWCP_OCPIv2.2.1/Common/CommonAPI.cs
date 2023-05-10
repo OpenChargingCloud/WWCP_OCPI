@@ -2705,7 +2705,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region CPOClients
 
-        private readonly ConcurrentDictionary<CPO_Id, CPOClient> cpoClients = new ();
+        private readonly ConcurrentDictionary<EMSP_Id, CPOClient> cpoClients = new ();
 
         /// <summary>
         /// Return an enumeration of all CPO clients.
@@ -2729,16 +2729,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                        Boolean      AllowCachedClients   = true)
         {
 
-            var cpoId = CPO_Id.Parse(CountryCode,
-                                     PartyId);
+            var emspId = EMSP_Id.Parse(CountryCode,
+                                       PartyId);
 
             if (AllowCachedClients &&
-                cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
+                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
             {
                 return cachedCPOClient;
             }
 
-            if (remoteParties.TryGetValue(RemoteParty_Id.From(cpoId), out var remoteParty) &&
+            if (remoteParties.TryGetValue(RemoteParty_Id.From(emspId), out var remoteParty) &&
                 remoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
@@ -2755,7 +2755,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     DNSClient
                                 );
 
-                cpoClients.TryAdd(cpoId, cpoClient);
+                cpoClients.TryAdd(emspId, cpoClient);
 
                 return cpoClient;
 
@@ -2780,10 +2780,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                        Boolean      AllowCachedClients   = true)
         {
 
-            var cpoId = CPO_Id.From(RemoteParty);
+            var emspId = EMSP_Id.From(RemoteParty);
 
             if (AllowCachedClients &&
-                cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
+                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
             {
                 return cachedCPOClient;
             }
@@ -2804,7 +2804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     DNSClient
                                 );
 
-                cpoClients.TryAdd(cpoId, cpoClient);
+                cpoClients.TryAdd(emspId, cpoClient);
 
                 return cpoClient;
 
@@ -2829,10 +2829,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                        Boolean         AllowCachedClients   = true)
         {
 
-            var cpoId = CPO_Id.From(RemotePartyId);
+            var emspId = EMSP_Id.From(RemotePartyId);
 
             if (AllowCachedClients &&
-                cpoClients.TryGetValue(cpoId, out var cachedCPOClient))
+                cpoClients.TryGetValue(emspId, out var cachedCPOClient))
             {
                 return cachedCPOClient;
             }
@@ -2854,7 +2854,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     DNSClient
                                 );
 
-                cpoClients.TryAdd(cpoId, cpoClient);
+                cpoClients.TryAdd(emspId, cpoClient);
 
                 return cpoClient;
 
@@ -2870,7 +2870,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region EMSPClients
 
-        private readonly ConcurrentDictionary<EMSP_Id, EMSPClient> emspClients = new ();
+        private readonly ConcurrentDictionary<CPO_Id, EMSPClient> emspClients = new ();
 
         /// <summary>
         /// Return an enumeration of all EMSP clients.
@@ -2894,16 +2894,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                          Boolean      AllowCachedClients   = true)
         {
 
-            var emspId = EMSP_Id.Parse(CountryCode,
-                                       PartyId);
+            var cpoId = CPO_Id.Parse(CountryCode,
+                                     PartyId);
 
             if (AllowCachedClients &&
-                emspClients.TryGetValue(emspId, out var cachedEMSPClient))
+                emspClients.TryGetValue(cpoId, out var cachedEMSPClient))
             {
                 return cachedEMSPClient;
             }
 
-            if (remoteParties.TryGetValue(RemoteParty_Id.From(emspId), out var remoteParty) &&
+            if (remoteParties.TryGetValue(RemoteParty_Id.From(cpoId), out var remoteParty) &&
                 remoteParty?.RemoteAccessInfos?.Any() == true)
             {
 
@@ -2920,7 +2920,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                      DNSClient
                                  );
 
-                emspClients.TryAdd(emspId, emspClient);
+                emspClients.TryAdd(cpoId, emspClient);
 
                 return emspClient;
 
@@ -2945,10 +2945,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                          Boolean      AllowCachedClients   = true)
         {
 
-            var emspId = EMSP_Id.From(RemoteParty);
+            var cpoId = CPO_Id.From(RemoteParty);
 
             if (AllowCachedClients &&
-                emspClients.TryGetValue(emspId, out var cachedEMSPClient))
+                emspClients.TryGetValue(cpoId, out var cachedEMSPClient))
             {
                 return cachedEMSPClient;
             }
@@ -2969,7 +2969,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                      DNSClient
                                  );
 
-                emspClients.TryAdd(emspId, emspClient);
+                emspClients.TryAdd(cpoId, emspClient);
 
                 return emspClient;
 
@@ -2994,10 +2994,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                          Boolean         AllowCachedClients   = true)
         {
 
-            var emspId = EMSP_Id.From(RemotePartyId);
+            var cpoId = CPO_Id.From(RemotePartyId);
 
             if (AllowCachedClients &&
-                emspClients.TryGetValue(emspId, out var cachedEMSPClient))
+                emspClients.TryGetValue(cpoId, out var cachedEMSPClient))
             {
                 return cachedEMSPClient;
             }
@@ -3019,7 +3019,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                      DNSClient
                                  );
 
-                emspClients.TryAdd(emspId, emspClient);
+                emspClients.TryAdd(cpoId, emspClient);
 
                 return emspClient;
 

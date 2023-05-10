@@ -3983,7 +3983,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                                     AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
 
-                                        if (addOrUpdateResult.IsSuccess)
+                                        if (addOrUpdateResult.IsSuccess &&
+                                            addOrUpdateResult.Data is not null)
+                                        {
+
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
@@ -4015,6 +4018,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        }
                                                    };
 
+                                        }
+
                                         return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 2000,
                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
@@ -4038,9 +4043,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
-                                                       AccessControlAllowHeaders  = "Authorization",
-                                                       LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
-                                                       ETag                       = addOrUpdateResult.Data.ETag
+                                                       AccessControlAllowHeaders  = "Authorization"
                                                    }
                                                };
 
