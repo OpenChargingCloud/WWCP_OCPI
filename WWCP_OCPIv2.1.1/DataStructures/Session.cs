@@ -206,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        Decimal?                                                      TotalCost                                    = null,
 
                        DateTime?                                                     LastUpdated                                  = null,
-                       EMSP_Id?                                                       EMPId                                        = null,
+                       EMSP_Id?                                                      EMSPId                                       = null,
                        CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                      = null,
                        CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                        CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -246,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.LastUpdated      = LastUpdated ?? Timestamp.Now;
 
-            this.ETag             = CalcSHA256Hash(EMPId,
+            this.ETag             = CalcSHA256Hash(EMSPId,
                                                    CustomSessionSerializer,
                                                    CustomLocationSerializer,
                                                    CustomAdditionalGeoLocationSerializer,
@@ -265,6 +265,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    CustomEnvironmentalImpactSerializer,
                                                    CustomChargingPeriodSerializer,
                                                    CustomCDRDimensionSerializer);
+
+            unchecked
+            {
+
+                hashCode = this.CountryCode.    GetHashCode()       * 47 ^
+                           this.PartyId.        GetHashCode()       * 43 ^
+                           this.Id.             GetHashCode()       * 41 ^
+                           this.Start.          GetHashCode()       * 37 ^
+                           this.kWh.            GetHashCode()       * 31 ^
+                           this.AuthId.         GetHashCode()       * 29 ^
+                           this.AuthMethod.     GetHashCode()       * 23 ^
+                           this.Location.       GetHashCode()       * 19 ^
+                           this.Currency.       GetHashCode()       * 17 ^
+                           this.Status.         GetHashCode()       * 13 ^
+                           this.LastUpdated.    GetHashCode()       * 11 ^
+
+                          (this.End?.           GetHashCode() ?? 0) *  7 ^
+                          (this.MeterId?.       GetHashCode() ?? 0) *  5 ^
+                           this.ChargingPeriods.CalcHashCode()      *  3 ^
+                           this.TotalCost?.     GetHashCode() ?? 0;
+
+            }
 
         }
 
@@ -651,7 +673,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
-                              EMSP_Id?                                                       EMPId                                        = null,
+                              EMSP_Id?                                                      EMSPId                                       = null,
                               CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                      = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -696,7 +718,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  new JProperty("auth_method",                    AuthMethod.            ToString()),
 
                                  new JProperty("location",                       Location.              ToJSON(false,
-                                                                                                               EMPId,
+                                                                                                               EMSPId,
                                                                                                                CustomLocationSerializer,
                                                                                                                CustomAdditionalGeoLocationSerializer,
                                                                                                                CustomEVSESerializer,
@@ -916,7 +938,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
-        public String CalcSHA256Hash(EMSP_Id?                                                       EMPId                                        = null,
+        public String CalcSHA256Hash(EMSP_Id?                                                      EMSPId                                       = null,
                                      CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                      = null,
                                      CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                                      CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -938,25 +960,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.ETag = SHA256.HashData(ToJSON(true,
-                                                           EMPId,
-                                                           CustomSessionSerializer,
-                                                           CustomLocationSerializer,
-                                                           CustomAdditionalGeoLocationSerializer,
-                                                           CustomEVSESerializer,
-                                                           CustomStatusScheduleSerializer,
-                                                           CustomConnectorSerializer,
-                                                           CustomEnergyMeterSerializer,
-                                                           CustomTransparencySoftwareStatusSerializer,
-                                                           CustomTransparencySoftwareSerializer,
-                                                           CustomDisplayTextSerializer,
-                                                           CustomBusinessDetailsSerializer,
-                                                           CustomHoursSerializer,
-                                                           CustomImageSerializer,
-                                                           CustomEnergyMixSerializer,
-                                                           CustomEnergySourceSerializer,
-                                                           CustomEnvironmentalImpactSerializer,
-                                                           CustomChargingPeriodSerializer,
-                                                           CustomCDRDimensionSerializer).ToUTF8Bytes()).ToBase64();
+                                               EMSPId,
+                                               CustomSessionSerializer,
+                                               CustomLocationSerializer,
+                                               CustomAdditionalGeoLocationSerializer,
+                                               CustomEVSESerializer,
+                                               CustomStatusScheduleSerializer,
+                                               CustomConnectorSerializer,
+                                               CustomEnergyMeterSerializer,
+                                               CustomTransparencySoftwareStatusSerializer,
+                                               CustomTransparencySoftwareSerializer,
+                                               CustomDisplayTextSerializer,
+                                               CustomBusinessDetailsSerializer,
+                                               CustomHoursSerializer,
+                                               CustomImageSerializer,
+                                               CustomEnergyMixSerializer,
+                                               CustomEnergySourceSerializer,
+                                               CustomEnvironmentalImpactSerializer,
+                                               CustomChargingPeriodSerializer,
+                                               CustomCDRDimensionSerializer).ToUTF8Bytes()).ToBase64();
 
             return this.ETag;
 
@@ -1202,49 +1224,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
-        private Int32? cachedHashCode;
-
-        private readonly Object hashSync = new ();
+        private readonly Int32 hashCode;
 
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Return the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-
-            if (cachedHashCode.HasValue)
-                return cachedHashCode.Value;
-
-            lock (hashSync)
-            {
-
-                unchecked
-                {
-
-                    cachedHashCode = CountryCode.     GetHashCode()       * 59 ^
-                                     PartyId.         GetHashCode()       * 53 ^
-                                     Id.              GetHashCode()       * 47 ^
-                                     Start.           GetHashCode()       * 43 ^
-                                     kWh.             GetHashCode()       * 41 ^
-                                     AuthId.          GetHashCode()       * 37 ^
-                                     AuthMethod.      GetHashCode()       * 31 ^
-                                     Location.        GetHashCode()       * 29 ^
-                                     Currency.        GetHashCode()       * 23 ^
-                                     Status.          GetHashCode()       * 19 ^
-                                     LastUpdated.     GetHashCode()       * 17 ^
-
-                                    (End?.            GetHashCode() ?? 0) * 13 ^
-                                    (MeterId?.        GetHashCode() ?? 0) * 11 ^
-                                    (ChargingPeriods?.GetHashCode() ?? 0) *  3 ^
-                                     TotalCost?.      GetHashCode() ?? 0;
-
-                    return cachedHashCode.Value;
-
-                }
-
-            }
-
-        }
+            => hashCode;
 
         #endregion
 

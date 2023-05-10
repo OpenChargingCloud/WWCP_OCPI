@@ -181,6 +181,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.ETag           = SHA256.HashData(ToJSON(true,
                                                          CustomTokenSerializer).ToUTF8Bytes()).ToBase64();
 
+            unchecked
+            {
+
+                hashCode =  this.CountryCode.  GetHashCode()       * 31 ^
+                            this.PartyId.      GetHashCode()       * 29 ^
+                            this.Id.           GetHashCode()       * 23 ^
+                            this.Type.         GetHashCode()       * 19 ^
+                            this.AuthId.       GetHashCode()       * 17 ^
+                            this.Issuer.       GetHashCode()       * 13 ^
+                            this.IsValid.      GetHashCode()       * 11 ^
+                            this.WhitelistType.GetHashCode()       *  7 ^
+                            this.LastUpdated.  GetHashCode()       *  5 ^
+                           (this.VisualNumber?.GetHashCode() ?? 0) *  3 ^
+                           (this.UILanguage?.  GetHashCode() ?? 0);
+
+            }
+
         }
 
         #endregion
@@ -885,44 +902,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
-        private Int32? cachedHashCode;
-
-        private readonly Object hashSync = new ();
+        private readonly Int32 hashCode;
 
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Return the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-
-            if (cachedHashCode.HasValue)
-                return cachedHashCode.Value;
-
-            lock (hashSync)
-            {
-
-                unchecked
-                {
-
-                    cachedHashCode =  CountryCode.  GetHashCode()       * 31 ^
-                                      PartyId.      GetHashCode()       * 29 ^
-                                      Id.           GetHashCode()       * 23 ^
-                                      Type.         GetHashCode()       * 19 ^
-                                      AuthId.       GetHashCode()       * 17 ^
-                                      Issuer.       GetHashCode()       * 13 ^
-                                      IsValid.      GetHashCode()       * 11 ^
-                                      WhitelistType.GetHashCode()       *  7 ^
-                                      LastUpdated.  GetHashCode()       *  5 ^
-                                     (VisualNumber?.GetHashCode() ?? 0) *  3 ^
-                                     (UILanguage?.  GetHashCode() ?? 0);
-
-                    return cachedHashCode.Value;
-
-                }
-
-            }
-
-        }
+            => hashCode;
 
         #endregion
 

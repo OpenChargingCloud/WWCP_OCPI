@@ -4573,21 +4573,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetTariffIds(CountryCode?, PartyId?, LocationId?, EVSEUId?, ConnectorId?, EMPId?)
+        #region GetTariffIds(CountryCode?, PartyId?, LocationId?, EVSEUId?, ConnectorId?, EMSPId?)
 
         public IEnumerable<Tariff_Id> GetTariffIds(CountryCode    CountryCode,
                                                    Party_Id       PartyId,
                                                    Location_Id?   LocationId,
                                                    EVSE_UId?      EVSEUId,
                                                    Connector_Id?  ConnectorId,
-                                                   EMSP_Id?        EMPId)
+                                                   EMSP_Id?       EMSPId)
 
             => GetTariffIdsDelegate?.Invoke(CountryCode,
                                             PartyId,
                                             LocationId,
                                             EVSEUId,
                                             ConnectorId,
-                                            EMPId) ?? Array.Empty<Tariff_Id>();
+                                            EMSPId) ?? Array.Empty<Tariff_Id>();
 
         #endregion
 

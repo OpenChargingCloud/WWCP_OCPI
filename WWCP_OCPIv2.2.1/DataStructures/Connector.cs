@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         [Optional]
         public UInt32?                 MaxElectricPower         { get; }
 
-        public EMSP_Id?                 EMPId                    { get; }
+        public EMSP_Id?                EMSPId                   { get; }
 
         private readonly IEnumerable<Tariff_Id> tariffIds;
 
@@ -116,7 +116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (tariffIds.Any())
                     return tariffIds;
 
-                return ParentEVSE?.GetTariffIds(Id, EMPId) ?? Array.Empty<Tariff_Id>();
+                return ParentEVSE?.GetTariffIds(Id, EMSPId) ?? Array.Empty<Tariff_Id>();
 
             }
         }
@@ -174,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            URL?                                         TermsAndConditionsURL       = null,
 
                            DateTime?                                    LastUpdated                 = null,
-                           EMSP_Id?                                      EMPId                       = null,
+                           EMSP_Id?                                     EMSPId                      = null,
                            CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
         {
@@ -192,7 +192,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.TermsAndConditionsURL  = TermsAndConditionsURL;
 
             this.LastUpdated            = LastUpdated ?? Timestamp.Now;
-            this.ETag                   = SHA256.HashData(ToJSON(EMPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();
+
+            this.ETag                   = SHA256.HashData(ToJSON(EMSPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();
+
+            unchecked
+            {
+
+                hashCode = this.Id.                    GetHashCode()       * 29 ^
+                           this.Standard.              GetHashCode()       * 23 ^
+                           this.Format.                GetHashCode()       * 19 ^
+                           this.PowerType.             GetHashCode()       * 17 ^
+                           this.MaxVoltage.            GetHashCode()       * 13 ^
+                           this.MaxAmperage.           GetHashCode()       * 11 ^
+                           this.TariffIds.             CalcHashCode()      *  7 ^
+                          (this.MaxElectricPower?.     GetHashCode() ?? 0) *  5 ^
+                          (this.TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
+                           this.LastUpdated.           GetHashCode();
+
+            }
 
         }
 
@@ -226,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          URL?                                         TermsAndConditionsURL       = null,
 
                          DateTime?                                    LastUpdated                 = null,
-                         EMSP_Id?                                      EMPId                       = null,
+                         EMSP_Id?                                     EMSPId                      = null,
                          CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
             : this(null,
@@ -242,7 +259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    TermsAndConditionsURL,
 
                    LastUpdated,
-                   EMPId,
+                   EMSPId,
                    CustomConnectorSerializer)
 
         { }
@@ -492,14 +509,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        public JObject ToJSON(EMSP_Id?                                      EMPId                       = null,
+        public JObject ToJSON(EMSP_Id?                                     EMSPId                      = null,
                               CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
             var tariffIds  = this.tariffIds;
 
             if (!tariffIds.Any())
-                tariffIds  = GetTariffIds(EMPId);
+                tariffIds  = GetTariffIds(EMSPId);
 
             var json       = JSONObject.Create(
 
@@ -675,10 +692,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffIds(EMSP_Id? EMPId = null)
+        internal IEnumerable<Tariff_Id> GetTariffIds(EMSP_Id? EMSPId = null)
 
             => ParentEVSE?.GetTariffIds(Id,
-                                        EMPId) ?? Array.Empty<Tariff_Id>();
+                                        EMSPId) ?? Array.Empty<Tariff_Id>();
 
 
         #region Operator overloading
@@ -894,43 +911,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region GetHashCode()
 
-        private Int32? cachedHashCode;
-
-        private readonly Object hashSync = new ();
+        private readonly Int32 hashCode;
 
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Return the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-
-            if (cachedHashCode.HasValue)
-                return cachedHashCode.Value;
-
-            lock (hashSync)
-            {
-
-                unchecked
-                {
-
-                    cachedHashCode = Id.                    GetHashCode()       * 29 ^
-                                     Standard.              GetHashCode()       * 23 ^
-                                     Format.                GetHashCode()       * 19 ^
-                                     PowerType.             GetHashCode()       * 17 ^
-                                     MaxVoltage.            GetHashCode()       * 13 ^
-                                     MaxAmperage.           GetHashCode()       * 11 ^
-                                     TariffIds.             CalcHashCode()      *  7 ^
-                                    (MaxElectricPower?.     GetHashCode() ?? 0) *  5 ^
-                                    (TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
-                                     LastUpdated.           GetHashCode();
-
-                    return cachedHashCode.Value;
-
-                }
-
-            }
-
-        }
+            => hashCode;
 
         #endregion
 

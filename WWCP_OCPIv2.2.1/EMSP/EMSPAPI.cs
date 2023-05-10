@@ -7698,18 +7698,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/RESERVE_NOW/{commandId}",
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestHandler: Request =>
 
-                                        return Task.FromResult(
+                                        Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
-                                            });
+                                            })
 
-                                    });
+                                    );
 
             #endregion
 
@@ -7721,15 +7721,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   ReserveNowCallbackRequest,
                                     OCPIResponseLogger:  ReserveNowCallbackResponse,
-                                    OCPIRequestHandler:  async Request => {
+                                    OCPIRequestHandler:  Request => {
 
                                         #region Check command identification
 
                                         if (!Request.ParseCommandId(this,
                                                                     out var commandId,
-                                                                    out var ocpiResponseBuilder))
+                                                                    out var ocpiResponseBuilder) ||
+                                            !commandId.HasValue)
                                         {
-                                            return ocpiResponseBuilder;
+                                            return Task.FromResult(ocpiResponseBuilder!);
                                         }
 
                                         #endregion
@@ -7737,22 +7738,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #region Parse command result JSON
 
                                         if (!Request.TryParseJObjectRequestBody(out var json, out ocpiResponseBuilder))
-                                            return ocpiResponseBuilder;
+                                            return Task.FromResult(ocpiResponseBuilder);
 
                                         if (!CommandResult.TryParse(json,
                                                                     out var commandResult,
                                                                     out var errorResponse))
                                         {
 
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + errorResponse,
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                           AccessControlAllowHeaders  = "Authorization"
+                                            return Task.FromResult(
+                                                       new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 2001,
+                                                           StatusMessage        = "Could not parse the given 'RESERVE NOW' command result JSON: " + errorResponse,
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                               AccessControlAllowHeaders  = "Authorization"
+                                                           }
                                                        }
-                                                   };
+                                                   );
 
                                         }
 
@@ -7764,80 +7767,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                             commandValues.Result = commandResult;
 
-                                            #region Sending upstream command response...
-
-                                            if (commandValues.UpstreamCommand is not null)
-                                            {
-
-                                                try
-                                                {
-
-                                                    var HTTPResponse = await HTTPClientFactory.Create(commandValues.UpstreamCommand.ResponseURL,
-                                                                                                      //null,
-                                                                                                      //default,
-                                                                                                      //RemoteCertificateValidator,
-                                                                                                      //ClientCertificateSelector,
-                                                                                                      //ClientCert,
-                                                                                                      //HTTPUserAgent,
-                                                                                                      //RequestTimeout,
-                                                                                                      //TransmissionRetryDelay,
-                                                                                                      //MaxNumberOfRetries,
-                                                                                                      //UseHTTPPipelining,
-                                                                                                      //HTTPLogger,
-                                                                                                      DNSClient: DNSClient).
-
-                                                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                                                     commandValues.UpstreamCommand.ResponseURL.Path,
-                                                                                                                     requestbuilder => {
-                                                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                                                         requestbuilder.Content       = commandValues.Response.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                                                         requestbuilder.Set("X-Request-ID",      commandValues.UpstreamCommand.RequestId);
-                                                                                                                         requestbuilder.Set("X-Correlation-ID",  commandValues.UpstreamCommand.CorrelationId);
-                                                                                                                     }),
-
-                                                                                      //RequestLogDelegate:   OnStartSessionHTTPRequest,
-                                                                                      //ResponseLogDelegate:  OnStartSessionHTTPResponse,
-                                                                                      //CancellationToken:    CancellationToken,
-                                                                                      //EventTrackingId:      EventTrackingId,
-                                                                                      RequestTimeout:       this.RequestTimeout).
-
-                                                                              ConfigureAwait(false);
-
-
-                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_RESERVE_NOW.log");
-
-
-                                                } catch (Exception e)
-                                                {
-                                                    DebugX.Log("[" + nameof(EMSPAPI), "] Sending upstream RESERVE_NOW command response failed!");
-                                                }
-
-                                            }
-
-                                            #endregion
-
-
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 1000,
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.Accepted,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                           AccessControlAllowHeaders  = "Authorization"
+                                            return Task.FromResult(
+                                                       new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 1000,
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.Accepted,
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                               AccessControlAllowHeaders  = "Authorization"
+                                                           }
                                                        }
-                                                   };
+                                                   );
 
                                         }
 
-                                        return new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 2000,
-                                                   StatusMessage        = "Unknown 'reserve now' command identification!",
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                       AccessControlAllowHeaders  = "Authorization"
+                                        return Task.FromResult(
+                                                   new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 2000,
+                                                       StatusMessage        = "Unknown 'RESERVE NOW' command identification!",
+                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                           AccessControlAllowHeaders  = "Authorization"
+                                                       }
                                                    }
-                                               };
+                                               );
 
                                     });
 
@@ -7852,18 +7805,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/CANCEL_RESERVATION/{commandId}",
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestHandler: Request =>
 
-                                        return Task.FromResult(
+                                        Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
-                                            });
+                                            })
 
-                                    });
+                                    );
 
             #endregion
 
@@ -7875,15 +7828,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   CancelReservationCallbackRequest,
                                     OCPIResponseLogger:  CancelReservationCallbackResponse,
-                                    OCPIRequestHandler:  async Request => {
+                                    OCPIRequestHandler:  Request => {
 
                                         #region Check command identification
 
                                         if (!Request.ParseCommandId(this,
                                                                     out var commandId,
-                                                                    out var ocpiResponseBuilder))
+                                                                    out var ocpiResponseBuilder) ||
+                                            !commandId.HasValue)
                                         {
-                                            return ocpiResponseBuilder;
+                                            return Task.FromResult(ocpiResponseBuilder!);
                                         }
 
                                         #endregion
@@ -7891,22 +7845,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #region Parse command result JSON
 
                                         if (!Request.TryParseJObjectRequestBody(out var json, out ocpiResponseBuilder))
-                                            return ocpiResponseBuilder;
+                                            return Task.FromResult(ocpiResponseBuilder);
 
                                         if (!CommandResult.TryParse(json,
-                                                                    out CommandResult  commandResult,
-                                                                    out String         ErrorResponse))
+                                                                    out var commandResult,
+                                                                    out var errorResponse))
                                         {
 
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                           AccessControlAllowHeaders  = "Authorization"
+                                            return Task.FromResult(
+                                                       new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 2001,
+                                                           StatusMessage        = "Could not parse the given 'CANCEL RESERVATION' command result JSON: " + errorResponse,
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                               AccessControlAllowHeaders  = "Authorization"
+                                                           }
                                                        }
-                                                   };
+                                                   );
 
                                         }
 
@@ -7918,80 +7874,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                             commandValues.Result = commandResult;
 
-                                            #region Sending upstream command response...
-
-                                            if (commandValues.UpstreamCommand is not null)
-                                            {
-
-                                                try
-                                                {
-
-                                                    var HTTPResponse = await HTTPClientFactory.Create(commandValues.UpstreamCommand.ResponseURL,
-                                                                                                      //null,
-                                                                                                      //default,
-                                                                                                      //RemoteCertificateValidator,
-                                                                                                      //ClientCertificateSelector,
-                                                                                                      //ClientCert,
-                                                                                                      //HTTPUserAgent,
-                                                                                                      //RequestTimeout,
-                                                                                                      //TransmissionRetryDelay,
-                                                                                                      //MaxNumberOfRetries,
-                                                                                                      //UseHTTPPipelining,
-                                                                                                      //HTTPLogger,
-                                                                                                      DNSClient: DNSClient).
-
-                                                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                                                     commandValues.UpstreamCommand.ResponseURL.Path,
-                                                                                                                     requestbuilder => {
-                                                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                                                         requestbuilder.Content       = commandValues.Response.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                                                         requestbuilder.Set("X-Request-ID",      commandValues.UpstreamCommand.RequestId);
-                                                                                                                         requestbuilder.Set("X-Correlation-ID",  commandValues.UpstreamCommand.CorrelationId);
-                                                                                                                     }),
-
-                                                                                      //RequestLogDelegate:   OnStartSessionHTTPRequest,
-                                                                                      //ResponseLogDelegate:  OnStartSessionHTTPResponse,
-                                                                                      //CancellationToken:    CancellationToken,
-                                                                                      //EventTrackingId:      EventTrackingId,
-                                                                                      RequestTimeout:       this.RequestTimeout).
-
-                                                                              ConfigureAwait(false);
-
-
-                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_CANCEL_RESERVATION.log");
-
-
-                                                } catch (Exception e)
-                                                {
-                                                    DebugX.Log("[" + nameof(EMSPAPI), "] Sending upstream CANCEL_RESERVATION command response failed!");
-                                                }
-
-                                            }
-
-                                            #endregion
-
-
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 1000,
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.Accepted,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                           AccessControlAllowHeaders  = "Authorization"
+                                            return Task.FromResult(
+                                                       new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 1000,
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.Accepted,
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                               AccessControlAllowHeaders  = "Authorization"
+                                                           }
                                                        }
-                                                   };
+                                                   );
 
                                         }
 
-                                        return new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 2000,
-                                                   StatusMessage        = "Unknown 'cancel reservation' command identification!",
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                       AccessControlAllowHeaders  = "Authorization"
+                                        return Task.FromResult(
+                                                   new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 2000,
+                                                       StatusMessage        = "Unknown 'CANCEL RESERVATION' command identification!",
+                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                           AccessControlAllowHeaders  = "Authorization"
+                                                       }
                                                    }
-                                               };
+                                               );
 
                                     });
 
@@ -8006,18 +7912,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/START_SESSION/{commandId}",
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestHandler: Request =>
 
-                                        return Task.FromResult(
+                                        Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
-                                            });
+                                            })
 
-                                    });
+                                    );
 
             #endregion
 
@@ -8029,15 +7935,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   StartSessionCallbackRequest,
                                     OCPIResponseLogger:  StartSessionCallbackResponse,
-                                    OCPIRequestHandler:  async Request => {
+                                    OCPIRequestHandler:  Request => {
 
                                         #region Check command identification
 
                                         if (!Request.ParseCommandId(this,
                                                                     out var commandId,
-                                                                    out var ocpiResponseBuilder))
+                                                                    out var ocpiResponseBuilder) ||
+                                            !commandId.HasValue)
                                         {
-                                            return ocpiResponseBuilder;
+                                            return Task.FromResult(ocpiResponseBuilder!);
                                         }
 
                                         #endregion
@@ -8045,22 +7952,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #region Parse command result JSON
 
                                         if (!Request.TryParseJObjectRequestBody(out var json, out ocpiResponseBuilder))
-                                            return ocpiResponseBuilder;
+                                            return Task.FromResult(ocpiResponseBuilder);
 
                                         if (!CommandResult.TryParse(json,
                                                                     out var commandResult,
                                                                     out var errorResponse))
                                         {
 
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + errorResponse,
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                           AccessControlAllowHeaders  = "Authorization"
+                                            return Task.FromResult(
+                                                       new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 2001,
+                                                           StatusMessage        = "Could not parse the given 'START SESSION' command result JSON: " + errorResponse,
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                               AccessControlAllowHeaders  = "Authorization"
+                                                           }
                                                        }
-                                                   };
+                                                   );
 
                                         }
 
@@ -8072,80 +7981,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                             commandValues.Result = commandResult;
 
-                                            #region Sending upstream command response...
-
-                                            if (commandValues.UpstreamCommand is not null)
-                                            {
-
-                                                try
-                                                {
-
-                                                    var HTTPResponse = await HTTPClientFactory.Create(commandValues.UpstreamCommand.ResponseURL,
-                                                                                                      //null,
-                                                                                                      //default,
-                                                                                                      //RemoteCertificateValidator,
-                                                                                                      //ClientCertificateSelector,
-                                                                                                      //ClientCert,
-                                                                                                      //HTTPUserAgent,
-                                                                                                      //RequestTimeout,
-                                                                                                      //TransmissionRetryDelay,
-                                                                                                      //MaxNumberOfRetries,
-                                                                                                      //UseHTTPPipelining,
-                                                                                                      //HTTPLogger,
-                                                                                                      DNSClient: DNSClient).
-
-                                                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                                                     commandValues.UpstreamCommand.ResponseURL.Path,
-                                                                                                                     requestbuilder => {
-                                                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                                                         requestbuilder.Content       = commandResult.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                                                         requestbuilder.Set("X-Request-ID",      commandValues.UpstreamCommand.RequestId);
-                                                                                                                         requestbuilder.Set("X-Correlation-ID",  commandValues.UpstreamCommand.CorrelationId);
-                                                                                                                     }),
-
-                                                                                      //RequestLogDelegate:   OnStartSessionHTTPRequest,
-                                                                                      //ResponseLogDelegate:  OnStartSessionHTTPResponse,
-                                                                                      //CancellationToken:    CancellationToken,
-                                                                                      //EventTrackingId:      EventTrackingId,
-                                                                                      RequestTimeout:       this.RequestTimeout).
-
-                                                                              ConfigureAwait(false);
-
-
-                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_START_SESSION.log");
-
-
-                                                } catch (Exception e)
-                                                {
-                                                    DebugX.Log("[" + nameof(EMSPAPI), "] Sending upstream START_SESSION command response failed!");
-                                                }
-
-                                            }
-
-                                            #endregion
-
-
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 1000,
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.Accepted,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                           AccessControlAllowHeaders  = "Authorization"
+                                            return Task.FromResult(
+                                                       new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 1000,
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.Accepted,
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                               AccessControlAllowHeaders  = "Authorization"
+                                                           }
                                                        }
-                                                   };
+                                                   );
 
                                         }
 
-                                        return new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 2000,
-                                                   StatusMessage        = "Unknown 'start session' command identification!",
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                       AccessControlAllowHeaders  = "Authorization"
+                                        return Task.FromResult(
+                                                   new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 2000,
+                                                       StatusMessage        = "Unknown 'START SESSION' command identification!",
+                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                           AccessControlAllowHeaders  = "Authorization"
+                                                       }
                                                    }
-                                               };
+                                               );
 
                                     });
 
@@ -8160,18 +8019,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/STOP_SESSION/{commandId}",
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestHandler: Request =>
 
-                                        return Task.FromResult(
+                                        Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
-                                            });
+                                            })
 
-                                    });
+                                    );
 
             #endregion
 
@@ -8183,15 +8042,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   StopSessionCallbackRequest,
                                     OCPIResponseLogger:  StopSessionCallbackResponse,
-                                    OCPIRequestHandler:  async Request => {
+                                    OCPIRequestHandler:  Request => {
 
                                         #region Check command identification
 
                                         if (!Request.ParseCommandId(this,
                                                                     out var commandId,
-                                                                    out var ocpiResponseBuilder))
+                                                                    out var ocpiResponseBuilder) ||
+                                            !commandId.HasValue)
                                         {
-                                            return ocpiResponseBuilder;
+                                            return Task.FromResult(ocpiResponseBuilder!);
                                         }
 
                                         #endregion
@@ -8199,22 +8059,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #region Parse command result JSON
 
                                         if (!Request.TryParseJObjectRequestBody(out var json, out ocpiResponseBuilder))
-                                            return ocpiResponseBuilder;
+                                            return Task.FromResult(ocpiResponseBuilder);
 
                                         if (!CommandResult.TryParse(json,
                                                                     out var commandResult,
                                                                     out var errorResponse))
                                         {
 
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + errorResponse,
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                           AccessControlAllowHeaders  = "Authorization"
+                                            return Task.FromResult(
+                                                       new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 2001,
+                                                           StatusMessage        = "Could not parse the given 'STOP SESSION' command result JSON: " + errorResponse,
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                               AccessControlAllowHeaders  = "Authorization"
+                                                           }
                                                        }
-                                                   };
+                                                   );
 
                                         }
 
@@ -8226,80 +8088,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                             commandValues.Result = commandResult;
 
-                                            #region Sending upstream command response...
-
-                                            if (commandValues.UpstreamCommand is not null)
-                                            {
-
-                                                try
-                                                {
-
-                                                    var HTTPResponse = await HTTPClientFactory.Create(commandValues.UpstreamCommand.ResponseURL,
-                                                                                                      //null,
-                                                                                                      //default,
-                                                                                                      //RemoteCertificateValidator,
-                                                                                                      //ClientCertificateSelector,
-                                                                                                      //ClientCert,
-                                                                                                      //HTTPUserAgent,
-                                                                                                      //RequestTimeout,
-                                                                                                      //TransmissionRetryDelay,
-                                                                                                      //MaxNumberOfRetries,
-                                                                                                      //UseHTTPPipelining,
-                                                                                                      //HTTPLogger,
-                                                                                                      DNSClient: DNSClient).
-
-                                                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                                                     commandValues.UpstreamCommand.ResponseURL.Path,
-                                                                                                                     requestbuilder => {
-                                                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                                                         requestbuilder.Content       = commandValues.Response.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                                                         requestbuilder.Set("X-Request-ID",      commandValues.UpstreamCommand.RequestId);
-                                                                                                                         requestbuilder.Set("X-Correlation-ID",  commandValues.UpstreamCommand.CorrelationId);
-                                                                                                                     }),
-
-                                                                                      //RequestLogDelegate:   OnStartSessionHTTPRequest,
-                                                                                      //ResponseLogDelegate:  OnStartSessionHTTPResponse,
-                                                                                      //CancellationToken:    CancellationToken,
-                                                                                      //EventTrackingId:      EventTrackingId,
-                                                                                      RequestTimeout:       this.RequestTimeout).
-
-                                                                              ConfigureAwait(false);
-
-
-                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_STOP_SESSION.log");
-
-
-                                                } catch (Exception e)
-                                                {
-                                                    DebugX.Log("[" + nameof(EMSPAPI), "] Sending upstream STOP_SESSION command response failed!");
-                                                }
-
-                                            }
-
-                                            #endregion
-
-
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 1000,
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.Accepted,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                           AccessControlAllowHeaders  = "Authorization"
+                                            return Task.FromResult(
+                                                       new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 1000,
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.Accepted,
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                               AccessControlAllowHeaders  = "Authorization"
+                                                           }
                                                        }
-                                                   };
+                                                   );
 
                                         }
 
-                                        return new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 2000,
-                                                   StatusMessage        = "Unknown 'stop session' command identification!",
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                       AccessControlAllowHeaders  = "Authorization"
+                                        return Task.FromResult(
+                                                   new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 2000,
+                                                       StatusMessage        = "Unknown 'STOP SESSION' command identification!",
+                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                           AccessControlAllowHeaders  = "Authorization"
+                                                       }
                                                    }
-                                               };
+                                               );
 
                                     });
 
@@ -8314,18 +8126,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR/{commandId}",
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestHandler: Request =>
 
-                                        return Task.FromResult(
+                                        Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
-                                            });
+                                            })
 
-                                    });
+                                    );
 
             #endregion
 
@@ -8337,15 +8149,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   UnlockConnectorCallbackRequest,
                                     OCPIResponseLogger:  UnlockConnectorCallbackResponse,
-                                    OCPIRequestHandler:  async Request => {
+                                    OCPIRequestHandler:  Request => {
 
                                         #region Check command identification
 
                                         if (!Request.ParseCommandId(this,
                                                                     out var commandId,
-                                                                    out var ocpiResponseBuilder))
+                                                                    out var ocpiResponseBuilder) ||
+                                            !commandId.HasValue)
                                         {
-                                            return ocpiResponseBuilder;
+                                            return Task.FromResult(ocpiResponseBuilder!);
                                         }
 
                                         #endregion
@@ -8353,22 +8166,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #region Parse command result JSON
 
                                         if (!Request.TryParseJObjectRequestBody(out var json, out ocpiResponseBuilder))
-                                            return ocpiResponseBuilder;
+                                            return Task.FromResult(ocpiResponseBuilder);
 
                                         if (!CommandResult.TryParse(json,
                                                                     out var commandResult,
                                                                     out var errorResponse))
                                         {
 
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + errorResponse,
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                           AccessControlAllowHeaders  = "Authorization"
+                                            return Task.FromResult(
+                                                       new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 2001,
+                                                           StatusMessage        = "Could not parse the given 'UNLOCK CONNECTOR' command result JSON: " + errorResponse,
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                               AccessControlAllowHeaders  = "Authorization"
+                                                           }
                                                        }
-                                                   };
+                                                   );
 
                                         }
 
@@ -8380,80 +8195,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                             commandValues.Result = commandResult;
 
-                                            #region Sending upstream command response...
-
-                                            if (commandValues.UpstreamCommand is not null)
-                                            {
-
-                                                try
-                                                {
-
-                                                    var HTTPResponse = await HTTPClientFactory.Create(commandValues.UpstreamCommand.ResponseURL,
-                                                                                                      //null,
-                                                                                                      //default,
-                                                                                                      //RemoteCertificateValidator,
-                                                                                                      //ClientCertificateSelector,
-                                                                                                      //ClientCert,
-                                                                                                      //HTTPUserAgent,
-                                                                                                      //RequestTimeout,
-                                                                                                      //TransmissionRetryDelay,
-                                                                                                      //MaxNumberOfRetries,
-                                                                                                      //UseHTTPPipelining,
-                                                                                                      //HTTPLogger,
-                                                                                                      DNSClient: DNSClient).
-
-                                                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                                                     commandValues.UpstreamCommand.ResponseURL.Path,
-                                                                                                                     requestbuilder => {
-                                                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                                                         requestbuilder.Content       = commandValues.Response.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                                                         requestbuilder.Set("X-Request-ID",      commandValues.UpstreamCommand.RequestId);
-                                                                                                                         requestbuilder.Set("X-Correlation-ID",  commandValues.UpstreamCommand.CorrelationId);
-                                                                                                                     }),
-
-                                                                                      //RequestLogDelegate:   OnStartSessionHTTPRequest,
-                                                                                      //ResponseLogDelegate:  OnStartSessionHTTPResponse,
-                                                                                      //CancellationToken:    CancellationToken,
-                                                                                      //EventTrackingId:      EventTrackingId,
-                                                                                      RequestTimeout:       this.RequestTimeout).
-
-                                                                              ConfigureAwait(false);
-
-
-                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_UNLOCK_CONNECTOR.log");
-
-
-                                                } catch (Exception e)
-                                                {
-                                                    DebugX.Log("[" + nameof(EMSPAPI), "] Sending upstream UNLOCK_CONNECTOR command response failed!");
-                                                }
-
-                                            }
-
-                                            #endregion
-
-
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 1000,
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.Accepted,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                           AccessControlAllowHeaders  = "Authorization"
+                                            return Task.FromResult(
+                                                       new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 1000,
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.Accepted,
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                               AccessControlAllowHeaders  = "Authorization"
+                                                           }
                                                        }
-                                                   };
+                                                   );
 
                                         }
 
-                                        return new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 2000,
-                                                   StatusMessage        = "Unknown 'unlock connector' command identification!",
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                       AccessControlAllowHeaders  = "Authorization"
+                                        return Task.FromResult(
+                                                   new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 2000,
+                                                       StatusMessage        = "Unknown 'UNLOCK CONNECTOR' command identification!",
+                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
+                                                           AccessControlAllowHeaders  = "Authorization"
+                                                       }
                                                    }
-                                               };
+                                               );
 
                                     });
 

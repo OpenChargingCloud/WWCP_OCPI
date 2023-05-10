@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -91,6 +89,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.Token       = Token;
             this.LocationId  = LocationId;
             this.EVSEUId     = EVSEUId;
+
+            unchecked
+            {
+
+                hashCode = this.Token.        GetHashCode()       * 17 ^
+                           this.LocationId.   GetHashCode()       * 13 ^
+                          (this.EVSEUId?.     GetHashCode() ?? 0) * 11 ^
+
+                           this.ResponseURL.  GetHashCode()       *  7 ^
+                           this.Id.           GetHashCode()       *  5 ^
+                           this.RequestId.    GetHashCode()       *  3 ^
+                           this.CorrelationId.GetHashCode();
+
+            }
 
         }
 
@@ -540,26 +552,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Token.        GetHashCode()       * 17 ^
-                       LocationId.   GetHashCode()       * 13 ^
-                      (EVSEUId?.     GetHashCode() ?? 0) * 11 ^
-
-                       ResponseURL.  GetHashCode()       *  7 ^
-                       Id.           GetHashCode()       *  5 ^
-                       RequestId.    GetHashCode()       *  3 ^
-                       CorrelationId.GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

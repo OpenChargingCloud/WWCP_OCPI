@@ -29,7 +29,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
-    public delegate IEnumerable<Tariff_Id> GetTariffIdsForEMP_Delegate(EMSP_Id? EMPId);
+    public delegate IEnumerable<Tariff_Id> GetTariffIdsForEMP_Delegate(EMSP_Id? EMSPId);
 
 
     /// <summary>
@@ -92,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         [Mandatory]
         public UInt16            Amperage                 { get; }
 
-        public EMSP_Id?           EMPId                    { get; }
+        public EMSP_Id?          EMSPId                   { get; }
 
         private readonly Tariff_Id? tariffId;
 
@@ -109,7 +109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (tariffId.HasValue)
                     return tariffId;
 
-                return ParentEVSE?.GetTariffIds(Id, EMPId)?.FirstOrDefault();
+                return ParentEVSE?.GetTariffIds(Id, EMSPId)?.FirstOrDefault();
 
             }
         }
@@ -165,7 +165,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            URL?                                         TermsAndConditionsURL       = null,
 
                            DateTime?                                    LastUpdated                 = null,
-                           EMSP_Id?                                      EMPId                       = null,
+                           EMSP_Id?                                     EMSPId                      = null,
                            CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
         {
@@ -182,7 +182,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.TermsAndConditionsURL  = TermsAndConditionsURL;
 
             this.LastUpdated            = LastUpdated ?? Timestamp.Now;
-            this.ETag                   = SHA256.HashData(ToJSON(EMPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();    //ToDo: EMP Id must not be null!
+
+            this.ETag                   = SHA256.HashData(ToJSON(EMSPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();    //ToDo: EMP Id must not be null!
+
+            unchecked
+            {
+
+                hashCode = this.Id.                    GetHashCode()       * 23 ^
+                           this.Standard.              GetHashCode()       * 19 ^
+                           this.Format.                GetHashCode()       * 17 ^
+                           this.PowerType.             GetHashCode()       * 13 ^
+                           this.Voltage.               GetHashCode()       * 11 ^
+                           this.Amperage.              GetHashCode()       *  7 ^
+                          (this.tariffId?.             GetHashCode() ?? 0) *  5 ^
+                          (this.TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
+                           this.LastUpdated.           GetHashCode();
+
+            }
 
         }
 
@@ -214,7 +230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          URL?                                         TermsAndConditionsURL       = null,
 
                          DateTime?                                    LastUpdated                 = null,
-                         EMSP_Id?                                      EMPId                       = null,
+                         EMSP_Id?                                     EMSPId                      = null,
                          CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
             : this(null,
@@ -229,7 +245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    TermsAndConditionsURL,
 
                    LastUpdated,
-                   EMPId,
+                   EMSPId,
                    CustomConnectorSerializer)
 
         { }
@@ -457,17 +473,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToJSON(EMPId = null, CustomConnectorSerializer = null)
+        #region ToJSON(EMSPId = null, CustomConnectorSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        public JObject ToJSON(EMSP_Id?                                      EMPId                       = null,
+        public JObject ToJSON(EMSP_Id?                                     EMSPId                      = null,
                               CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
-            var tariffIds  = GetTariffIds(EMPId);
+            var tariffIds  = GetTariffIds(EMSPId);
             var tariffId   = this.tariffId ?? (tariffIds.Any()
                                                    ? tariffIds.First()
                                                    : null);
@@ -641,10 +657,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffIds(EMSP_Id? EMPId = null)
+        internal IEnumerable<Tariff_Id> GetTariffIds(EMSP_Id? EMSPId = null)
 
             => ParentEVSE?.GetTariffIds(Id,
-                                        EMPId) ?? Array.Empty<Tariff_Id>();
+                                        EMSPId) ?? Array.Empty<Tariff_Id>();
 
 
         #region Operator overloading
@@ -859,42 +875,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
-        private Int32? cachedHashCode;
-
-        private readonly Object hashSync = new ();
+        private readonly Int32 hashCode;
 
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Return the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-
-            if (cachedHashCode.HasValue)
-                return cachedHashCode.Value;
-
-            lock (hashSync)
-            {
-
-                unchecked
-                {
-
-                    cachedHashCode = Id.                    GetHashCode()       * 23 ^
-                                     Standard.              GetHashCode()       * 19 ^
-                                     Format.                GetHashCode()       * 17 ^
-                                     PowerType.             GetHashCode()       * 13 ^
-                                     Voltage.               GetHashCode()       * 11 ^
-                                     Amperage.              GetHashCode()       *  7 ^
-                                    (tariffId?.             GetHashCode() ?? 0) *  5 ^
-                                    (TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
-                                     LastUpdated.           GetHashCode();
-
-                    return cachedHashCode.Value;
-
-                }
-
-            }
-
-        }
+            => hashCode;
 
         #endregion
 

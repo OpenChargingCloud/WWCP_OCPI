@@ -209,7 +209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       IEnumerable<Image>?                                           Images                                       = null,
 
                       DateTime?                                                     LastUpdated                                  = null,
-                      EMSP_Id?                                                       EMPId                                        = null,
+                      EMSP_Id?                                                      EMSPId                                       = null,
                       CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                       CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                       CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -243,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             foreach (var connector in this.Connectors)
                 connector.ParentEVSE = this;
 
-            this.ETag                  = CalcSHA256Hash(EMPId,
+            this.ETag                  = CalcSHA256Hash(EMSPId,
                                                         CustomEVSESerializer,
                                                         CustomStatusScheduleSerializer,
                                                         CustomConnectorSerializer,
@@ -302,7 +302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     IEnumerable<Image>?                                           Images                                       = null,
 
                     DateTime?                                                     LastUpdated                                  = null,
-                    EMSP_Id?                                                       EMPId                                        = null,
+                    EMSP_Id?                                                      EMSPId                                       = null,
                     CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                     CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                     CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -330,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    Images,
 
                    LastUpdated,
-                   EMPId,
+                   EMSPId,
                    CustomEVSESerializer,
                    CustomStatusScheduleSerializer,
                    CustomConnectorSerializer,
@@ -661,7 +661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(EMSP_Id?                                                       EMPId                                        = null,
+        public JObject ToJSON(EMSP_Id?                                                      EMSPId                                       = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -691,7 +691,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                : null,
 
                            Connectors.Any()
-                               ? new JProperty("connectors",            new JArray(Connectors.         Select(connector          => connector.         ToJSON(EMPId,
+                               ? new JProperty("connectors",            new JArray(Connectors.         Select(connector          => connector.         ToJSON(EMSPId,
                                                                                                                                                               CustomConnectorSerializer))))
                                : null,
 
@@ -955,11 +955,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
         internal IEnumerable<Tariff_Id> GetTariffIds(Connector_Id?  ConnectorId   = null,
-                                                     EMSP_Id?        EMPId         = null)
+                                                     EMSP_Id?       EMSPId        = null)
 
             => ParentLocation?.GetTariffIds(UId,
                                             ConnectorId,
-                                            EMPId) ?? Array.Empty<Tariff_Id>();
+                                            EMSPId) ?? Array.Empty<Tariff_Id>();
 
 
         #region (internal) UpdateConnector(Connector)
@@ -996,7 +996,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public String CalcSHA256Hash(EMSP_Id?                                                       EMPId                                        = null,
+        public String CalcSHA256Hash(EMSP_Id?                                                      EMSPId                                       = null,
                                      CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                                      CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                                      CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -1007,15 +1007,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                      CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null)
         {
 
-            this.ETag = SHA256.HashData(ToJSON(EMPId,
-                                                           CustomEVSESerializer,
-                                                           CustomStatusScheduleSerializer,
-                                                           CustomConnectorSerializer,
-                                                           CustomEnergyMeterSerializer,
-                                                           CustomTransparencySoftwareStatusSerializer,
-                                                           CustomTransparencySoftwareSerializer,
-                                                           CustomDisplayTextSerializer,
-                                                           CustomImageSerializer).ToUTF8Bytes()).ToBase64();
+            this.ETag = SHA256.HashData(ToJSON(EMSPId,
+                                               CustomEVSESerializer,
+                                               CustomStatusScheduleSerializer,
+                                               CustomConnectorSerializer,
+                                               CustomEnergyMeterSerializer,
+                                               CustomTransparencySoftwareStatusSerializer,
+                                               CustomTransparencySoftwareSerializer,
+                                               CustomDisplayTextSerializer,
+                                               CustomImageSerializer).ToUTF8Bytes()).ToBase64();
 
             return this.ETag;
 

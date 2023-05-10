@@ -257,6 +257,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                    CustomEnergySourceSerializer,
                                                    CustomEnvironmentalImpactSerializer).ToUTF8Bytes()).ToBase64();
 
+            unchecked
+            {
+
+                hashCode = this.CountryCode.   GetHashCode()        * 23 ^
+                           this.PartyId.       GetHashCode()        * 19 ^
+                           this.Id.            GetHashCode()        * 17 ^
+                           this.Currency.      GetHashCode()        * 13 ^
+                           this.TariffElements.CalcHashCode()       * 11 ^
+                           this.LastUpdated.   GetHashCode()        *  7 ^
+                           this.TariffAltText. CalcHashCode()       *  5 ^
+                          (this.TariffAltURL?. GetHashCode()  ?? 0) *  3 ^
+                           this.EnergyMix?.    GetHashCode()  ?? 0;
+
+            }
+
         }
 
         #endregion
@@ -970,42 +985,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
-        private Int32? cachedHashCode;
-
-        private readonly Object hashSync = new ();
+        private readonly Int32 hashCode;
 
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Return the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-
-            if (cachedHashCode.HasValue)
-                return cachedHashCode.Value;
-
-            lock (hashSync)
-            {
-
-                unchecked
-                {
-
-                    cachedHashCode = CountryCode.   GetHashCode()        * 23 ^
-                                     PartyId.       GetHashCode()        * 19 ^
-                                     Id.            GetHashCode()        * 17 ^
-                                     Currency.      GetHashCode()        * 13 ^
-                                     TariffElements.CalcHashCode()       * 11 ^
-                                     LastUpdated.   GetHashCode()        *  7 ^
-                                     TariffAltText. CalcHashCode()       *  5 ^
-                                    (TariffAltURL?. GetHashCode()  ?? 0) *  3 ^
-                                     EnergyMix?.    GetHashCode()  ?? 0;
-
-                    return cachedHashCode.Value;
-
-                }
-
-            }
-
-        }
+            => hashCode;
 
         #endregion
 

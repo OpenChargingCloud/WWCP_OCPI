@@ -452,6 +452,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                 CustomSignedDataSerializer,
                                                                                 CustomSignedValueSerializer).ToUTF8Bytes()).ToBase64();
 
+            unchecked
+            {
+
+                hashCode = this.CountryCode.               GetHashCode()        * 131 ^
+                           this.PartyId.                   GetHashCode()        * 127 ^
+                           this.Id.                        GetHashCode()        * 113 ^
+                           this.Start.                     GetHashCode()        * 109 ^
+                           this.End.                       GetHashCode()        * 107 ^
+                           this.CDRToken.                  GetHashCode()        * 103 ^
+                           this.AuthMethod.                GetHashCode()        * 101 ^
+                           this.Location.                  GetHashCode()        *  97 ^
+                           this.Currency.                  GetHashCode()        *  89 ^
+                           this.ChargingPeriods.           CalcHashCode()       *  83 ^
+                           this.Tariffs.                   CalcHashCode()       *  79 ^
+                           this.TotalCosts.                GetHashCode()        *  73 ^
+                           this.TotalEnergy.               GetHashCode()        *  71 ^
+                           this.TotalTime.                 GetHashCode()        *  67 ^
+                           this.LastUpdated.               GetHashCode()        *  61 ^
+
+                           (this.SessionId?.               GetHashCode()  ?? 0) *  59 ^
+                           (this.AuthorizationReference?.  GetHashCode()  ?? 0) *  53 ^
+                           (this.MeterId?.                 GetHashCode()  ?? 0) *  47 ^
+                           (this.EnergyMeter?.             GetHashCode()  ?? 0) *  43 ^
+                            this.TransparencySoftwares.    CalcHashCode()       *  41 ^
+                           (this.SignedData?.              GetHashCode()  ?? 0) *  37 ^
+                           (this.TotalFixedCosts?.         GetHashCode()  ?? 0) *  31 ^
+                           (this.TotalEnergyCost?.         GetHashCode()  ?? 0) *  29 ^
+                           (this.TotalTimeCost?.           GetHashCode()  ?? 0) *  23 ^
+                           (this.TotalParkingTime?.        GetHashCode()  ?? 0) *  19 ^
+                           (this.TotalParkingCost?.        GetHashCode()  ?? 0) *  17 ^
+                           (this.TotalReservationCost?.    GetHashCode()  ?? 0) *  13 ^
+                           (this.Remark?.                  GetHashCode()  ?? 0) *  11 ^
+                           (this.InvoiceReferenceId?.      GetHashCode()  ?? 0) *   7 ^
+                           (this.Credit?.                  GetHashCode()  ?? 0) *   5 ^
+                           (this.CreditReferenceId?.       GetHashCode()  ?? 0) *   3 ^
+                            this.HomeChargingCompensation?.GetHashCode()  ?? 0;
+
+            }
+
         }
 
         #endregion
@@ -1577,66 +1616,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region GetHashCode()
 
-        private Int32? cachedHashCode;
-
-        private readonly Object hashSync = new ();
+        private readonly Int32 hashCode;
 
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Return the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-
-            if (cachedHashCode.HasValue)
-                return cachedHashCode.Value;
-
-            lock (hashSync)
-            {
-
-                unchecked
-                {
-
-                    cachedHashCode = CountryCode.               GetHashCode()        * 131 ^
-                                     PartyId.                   GetHashCode()        * 127 ^
-                                     Id.                        GetHashCode()        * 113 ^
-                                     Start.                     GetHashCode()        * 109 ^
-                                     End.                       GetHashCode()        * 107 ^
-                                     CDRToken.                  GetHashCode()        * 103 ^
-                                     AuthMethod.                GetHashCode()        * 101 ^
-                                     Location.                  GetHashCode()        *  97 ^
-                                     Currency.                  GetHashCode()        *  89 ^
-                                     ChargingPeriods.           CalcHashCode()       *  83 ^
-                                     Tariffs.                   CalcHashCode()       *  79 ^
-                                     TotalCosts.                GetHashCode()        *  73 ^
-                                     TotalEnergy.               GetHashCode()        *  71 ^
-                                     TotalTime.                 GetHashCode()        *  67 ^
-                                     LastUpdated.               GetHashCode()        *  61 ^
-
-                                     (SessionId?.               GetHashCode()  ?? 0) *  59 ^
-                                     (AuthorizationReference?.  GetHashCode()  ?? 0) *  53 ^
-                                     (MeterId?.                 GetHashCode()  ?? 0) *  47 ^
-                                     (EnergyMeter?.             GetHashCode()  ?? 0) *  43 ^
-                                     (TransparencySoftwares?.   CalcHashCode() ?? 0) *  41 ^
-                                     (SignedData?.              GetHashCode()  ?? 0) *  37 ^
-                                     (TotalFixedCosts?.         GetHashCode()  ?? 0) *  31 ^
-                                     (TotalEnergyCost?.         GetHashCode()  ?? 0) *  29 ^
-                                     (TotalTimeCost?.           GetHashCode()  ?? 0) *  23 ^
-                                     (TotalParkingTime?.        GetHashCode()  ?? 0) *  19 ^
-                                     (TotalParkingCost?.        GetHashCode()  ?? 0) *  17 ^
-                                     (TotalReservationCost?.    GetHashCode()  ?? 0) *  13 ^
-                                     (Remark?.                  GetHashCode()  ?? 0) *  11 ^
-                                     (InvoiceReferenceId?.      GetHashCode()  ?? 0) *   7 ^
-                                     (Credit?.                  GetHashCode()  ?? 0) *   5 ^
-                                     (CreditReferenceId?.       GetHashCode()  ?? 0) *   3 ^
-                                      HomeChargingCompensation?.GetHashCode()  ?? 0;
-
-                    return cachedHashCode.Value;
-
-                }
-
-            }
-
-        }
+            => hashCode;
 
         #endregion
 

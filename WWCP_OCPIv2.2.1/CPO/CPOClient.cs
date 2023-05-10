@@ -1052,7 +1052,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         public async Task<OCPIResponse<Location>>
 
             PutLocation(Location            Location,
-                        EMSP_Id?             EMPId               = null,
+                        EMSP_Id?            EMSPId              = null,
 
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
@@ -1143,7 +1143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content        = Location.ToJSON(EMPId,
+                                                                                         requestbuilder.Content        = Location.ToJSON(EMSPId,
                                                                                                                                          CustomLocationSerializer,
                                                                                                                                          CustomPublishTokenSerializer,
                                                                                                                                          CustomAdditionalGeoLocationSerializer,
@@ -1633,7 +1633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE                EVSE,
-                    EMSP_Id?             EMPId               = null,
+                    EMSP_Id?            EMSPId              = null,
 
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
@@ -1652,7 +1652,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                  EVSE.ParentLocation.CountryCode,
                                  EVSE.ParentLocation.PartyId,
                                  EVSE.ParentLocation.Id,
-                                 EMPId,
+                                 EMSPId,
 
                                  RequestId,
                                  CorrelationId,
@@ -1685,7 +1685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                     CountryCode         CountryCode,
                     Party_Id            PartyId,
                     Location_Id         LocationId,
-                    EMSP_Id?             EMPId               = null,
+                    EMSP_Id?            EMSPId              = null,
 
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
@@ -1780,7 +1780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content        = EVSE.ToJSON(EMPId,
+                                                                                         requestbuilder.Content        = EVSE.ToJSON(EMSPId,
                                                                                                                                      CustomEVSESerializer,
                                                                                                                                      CustomStatusScheduleSerializer,
                                                                                                                                      CustomConnectorSerializer,
@@ -2280,7 +2280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         public async Task<OCPIResponse<Connector>>
 
             PutConnector(Connector           Connector,
-                         EMSP_Id?             EMPId               = null,
+                         EMSP_Id?            EMSPId              = null,
 
                          Request_Id?         RequestId           = null,
                          Correlation_Id?     CorrelationId       = null,
@@ -2383,7 +2383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content        = Connector.ToJSON(EMPId, CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Content        = Connector.ToJSON(EMSPId, CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Connection     = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);

@@ -15,6 +15,13 @@
  * limitations under the License.
  */
 
+#region Usings
+
+using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+
+#endregion
+
 namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
@@ -41,10 +48,84 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public CommandResponse?  Response           { get; internal set; }
 
+        private CommandResult? result;
+
         /// <summary>
         /// The (later async) command result.
         /// </summary>
-        public CommandResult?    Result             { get; internal set; }
+        public CommandResult? Result
+        {
+            get
+            {
+                return result;
+            }
+
+            internal set
+            {
+
+                result = value;
+
+                #region Sending upstream command result...
+
+                if (result is not null &&
+                    UpstreamCommand is not null)
+                {
+
+                    Task.Run(async () => {
+
+                        try
+                        {
+
+                            var httpResponse = await HTTPClientFactory.Create(UpstreamCommand.ResponseURL
+                                                                             //null,
+                                                                             //default,
+                                                                             //RemoteCertificateValidator,
+                                                                             //ClientCertificateSelector,
+                                                                             //ClientCert,
+                                                                             //HTTPUserAgent,
+                                                                             //RequestTimeout,
+                                                                             //TransmissionRetryDelay,
+                                                                             //MaxNumberOfRetries,
+                                                                             //UseHTTPPipelining,
+                                                                             //HTTPLogger,
+                                                                             //DNSClient: DNSClient
+                                                                             ).
+
+                                                     Execute(client => client.CreateRequest(HTTPMethod.POST,
+                                                                                            UpstreamCommand.ResponseURL.Path,
+                                                                                            requestbuilder => {
+                                                                                                requestbuilder.ContentType = HTTPContentType.JSON_UTF8;
+                                                                                                requestbuilder.Content = result?.ToJSON().ToUTF8Bytes(Newtonsoft.Json.Formatting.None);
+                                                                                                requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                                requestbuilder.Set("X-Request-ID", UpstreamCommand.RequestId);
+                                                                                                requestbuilder.Set("X-Correlation-ID", UpstreamCommand.CorrelationId);
+                                                                                            })
+
+                                                            //RequestLogDelegate:   OnStartSessionHTTPRequest,
+                                                            //ResponseLogDelegate:  OnStartSessionHTTPResponse,
+                                                            //CancellationToken:    CancellationToken,
+                                                            //EventTrackingId:      EventTrackingId,
+                                                            //RequestTimeout: this.RequestTimeout
+                                                            );
+
+                            httpResponse.AppendToLogfile("Send_CommandResultsUpstream.log");
+
+
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogException(e, "[CommandResults] Sending upstream command result failed");
+                        }
+
+                    });
+
+                }
+
+                #endregion
+
+            }
+
+        }
 
         #endregion
 
@@ -88,14 +169,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region FromUpstreamCommand(UpstreamCommand)
 
-        /// <summary>
-        /// Create new command values.
-        /// </summary>
-        /// <param name="UpstreamCommand">The received upstream command.</param>
-        public static CommandValues FromUpstreamCommand(IOCPICommand UpstreamCommand)
+        ///// <summary>
+        ///// Create new command values.
+        ///// </summary>
+        ///// <param name="UpstreamCommand">The received upstream command.</param>
+        //public static CommandValues FromUpstreamCommand(IOCPICommand UpstreamCommand)
 
-            => new (null,
-                    UpstreamCommand);
+        //    => new (null,
+        //            UpstreamCommand);
 
         #endregion
 

@@ -2152,6 +2152,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
+        #region OnReserveNowCommand
+
+        public delegate Task<CommandResponse> OnReserveNowCommandDelegate(EMSP_Id            EMSPId,
+                                                                          ReserveNowCommand  ReserveNowCommand);
+
+        public event OnReserveNowCommandDelegate? OnReserveNowCommand;
+
+        #endregion
+
         #region (protected internal) ReserveNowResponse       (Response)
 
         /// <summary>
@@ -2199,6 +2208,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             => OnCancelReservationRequest.WhenAll(Timestamp,
                                                   API ?? this,
                                                   Request);
+
+        #endregion
+
+        #region OnCancelReservationCommand
+
+        public delegate Task<CommandResponse> OnCancelReservationCommandDelegate(EMSP_Id                   EMSPId,
+                                                                                 CancelReservationCommand  CancelReservationCommand);
+
+        public event OnCancelReservationCommandDelegate? OnCancelReservationCommand;
 
         #endregion
 
@@ -2252,6 +2270,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
+        #region OnStartSessionCommand
+
+        public delegate Task<CommandResponse> OnStartSessionCommandDelegate(EMSP_Id              EMSPId,
+                                                                            StartSessionCommand  StartSessionCommand);
+
+        public event OnStartSessionCommandDelegate? OnStartSessionCommand;
+
+        #endregion
+
         #region (protected internal) StartSessionResponse     (Response)
 
         /// <summary>
@@ -2302,6 +2329,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
+        #region OnStopSessionCommand
+
+        public delegate Task<CommandResponse> OnStopSessionCommandDelegate(EMSP_Id             EMSPId,
+                                                                           StopSessionCommand  StopSessionCommand);
+
+        public event OnStopSessionCommandDelegate? OnStopSessionCommand;
+
+        #endregion
+
         #region (protected internal) StopSessionResponse      (Response)
 
         /// <summary>
@@ -2349,6 +2385,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             => OnUnlockConnectorRequest.WhenAll(Timestamp,
                                                 API ?? this,
                                                 Request);
+
+        #endregion
+
+        #region OnUnlockConnectorCommand
+
+        public delegate Task<CommandResponse> OnUnlockConnectorCommandDelegate(EMSP_Id                 EMSPId,
+                                                                               UnlockConnectorCommand  UnlockConnectorCommand);
+
+        public event OnUnlockConnectorCommandDelegate? OnUnlockConnectorCommand;
 
         #endregion
 
@@ -4168,6 +4213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/RESERVE_NOW",
+                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request =>
 
                                         Task.FromResult(
@@ -4189,13 +4235,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     HTTPMethod.POST,
                                     URLPathPrefix + "commands/RESERVE_NOW",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestLogger:  ReserveNowRequest,
-                                    OCPIResponseLogger: ReserveNowResponse,
+                                    OCPIRequestLogger:   ReserveNowRequest,
+                                    OCPIResponseLogger:  ReserveNowResponse,
                                     OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.RemoteParty is null ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -4239,17 +4285,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #endregion
 
 
-                                        // ToDo: RESERVE_NOW!
+                                        CommandResponse? commandResponse = null;
 
+                                        if (OnReserveNowCommand is not null)
+                                            commandResponse = await OnReserveNowCommand.Invoke(EMSP_Id.From(Request.RemoteParty.Id),
+                                                                                               reserveNowCommand);
 
-                                        var commandResponse  = new CommandResponse(
-                                                                   reserveNowCommand,
-                                                                   CommandResponseTypes.NOT_SUPPORTED,
-                                                                   Timeout: TimeSpan.FromSeconds(15),
-                                                                   Message: new[] {
-                                                                                new DisplayText(Languages.en, "Not supported!")
-                                                                            }
-                                                               );
+                                        commandResponse ??= new CommandResponse(
+                                                                reserveNowCommand,
+                                                                CommandResponseTypes.NOT_SUPPORTED,
+                                                                Timeout: TimeSpan.FromSeconds(15),
+                                                                Message: new[] {
+                                                                             new DisplayText(Languages.en, "Not supported!")
+                                                                         }
+                                                            );
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -4276,6 +4325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/CANCEL_RESERVATION",
+                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request =>
 
                                         Task.FromResult(
@@ -4297,13 +4347,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     HTTPMethod.POST,
                                     URLPathPrefix + "commands/CANCEL_RESERVATION",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestLogger:  CancelReservationRequest,
-                                    OCPIResponseLogger: CancelReservationResponse,
+                                    OCPIRequestLogger:   CancelReservationRequest,
+                                    OCPIResponseLogger:  CancelReservationResponse,
                                     OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.RemoteParty is null ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -4347,17 +4397,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #endregion
 
 
-                                        // ToDo: CANCEL_RESERVATION!
+                                        CommandResponse? commandResponse = null;
 
+                                        if (OnCancelReservationCommand is not null)
+                                            commandResponse = await OnCancelReservationCommand.Invoke(EMSP_Id.From(Request.RemoteParty.Id),
+                                                                                                      cancelReservationCommand);
 
-                                        var commandResponse  = new CommandResponse(
-                                                                   cancelReservationCommand,
-                                                                   CommandResponseTypes.NOT_SUPPORTED,
-                                                                   Timeout: TimeSpan.FromSeconds(15),
-                                                                   Message: new[] {
-                                                                                new DisplayText(Languages.en, "Not supported!")
-                                                                            }
-                                                               );
+                                        commandResponse ??= new CommandResponse(
+                                                                cancelReservationCommand,
+                                                                CommandResponseTypes.NOT_SUPPORTED,
+                                                                Timeout: TimeSpan.FromSeconds(15),
+                                                                Message: new[] {
+                                                                             new DisplayText(Languages.en, "Not supported!")
+                                                                         }
+                                                            );
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -4384,6 +4437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/START_SESSION",
+                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request =>
 
                                         Task.FromResult(
@@ -4405,13 +4459,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     HTTPMethod.POST,
                                     URLPathPrefix + "commands/START_SESSION",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestLogger:  StartSessionRequest,
-                                    OCPIResponseLogger: StartSessionResponse,
+                                    OCPIRequestLogger:   StartSessionRequest,
+                                    OCPIResponseLogger:  StartSessionResponse,
                                     OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.RemoteParty is null ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -4455,17 +4509,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #endregion
 
 
-                                        // ToDo: START_SESSION!
+                                        CommandResponse? commandResponse = null;
 
+                                        if (OnStartSessionCommand is not null)
+                                            commandResponse = await OnStartSessionCommand.Invoke(EMSP_Id.From(Request.RemoteParty.Id),
+                                                                                                 startSessionCommand);
 
-                                        var commandResponse  = new CommandResponse(
-                                                                   startSessionCommand,
-                                                                   CommandResponseTypes.NOT_SUPPORTED,
-                                                                   Timeout: TimeSpan.FromSeconds(15),
-                                                                   Message: new[] {
-                                                                                new DisplayText(Languages.en, "Not supported!")
-                                                                            }
-                                                               );
+                                        commandResponse ??= new CommandResponse(
+                                                                startSessionCommand,
+                                                                CommandResponseTypes.NOT_SUPPORTED,
+                                                                Timeout: TimeSpan.FromSeconds(15),
+                                                                Message: new[] {
+                                                                             new DisplayText(Languages.en, "Not supported!")
+                                                                         }
+                                                            );
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -4492,6 +4549,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/STOP_SESSION",
+                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request =>
 
                                         Task.FromResult(
@@ -4513,13 +4571,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     HTTPMethod.POST,
                                     URLPathPrefix + "commands/STOP_SESSION",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestLogger:  StopSessionRequest,
-                                    OCPIResponseLogger: StopSessionResponse,
+                                    OCPIRequestLogger:   StopSessionRequest,
+                                    OCPIResponseLogger:  StopSessionResponse,
                                     OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.RemoteParty is null ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -4543,8 +4601,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             return ocpiResponse;
 
                                         if (!StopSessionCommand.TryParse(stopSessionJSON,
-                                                                         out var stopSessionCommand,
-                                                                         out var errorResponse) ||
+                                                                          out var stopSessionCommand,
+                                                                          out var errorResponse) ||
                                              stopSessionCommand is null)
                                         {
 
@@ -4563,17 +4621,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #endregion
 
 
-                                        // ToDo: STOP_SESSION!
+                                        CommandResponse? commandResponse = null;
 
+                                        if (OnStopSessionCommand is not null)
+                                            commandResponse = await OnStopSessionCommand.Invoke(EMSP_Id.From(Request.RemoteParty.Id),
+                                                                                                stopSessionCommand);
 
-                                        var commandResponse  = new CommandResponse(
-                                                                   stopSessionCommand,
-                                                                   CommandResponseTypes.NOT_SUPPORTED,
-                                                                   Timeout: TimeSpan.FromSeconds(15),
-                                                                   Message: new[] {
-                                                                                new DisplayText(Languages.en, "Not supported!")
-                                                                            }
-                                                               );
+                                        commandResponse ??= new CommandResponse(
+                                                                stopSessionCommand,
+                                                                CommandResponseTypes.NOT_SUPPORTED,
+                                                                Timeout: TimeSpan.FromSeconds(15),
+                                                                Message: new[] {
+                                                                             new DisplayText(Languages.en, "Not supported!")
+                                                                         }
+                                                            );
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -4600,6 +4661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR",
+                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request =>
 
                                         Task.FromResult(
@@ -4621,13 +4683,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                     HTTPMethod.POST,
                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestLogger:  UnlockConnectorRequest,
-                                    OCPIResponseLogger: UnlockConnectorResponse,
+                                    OCPIRequestLogger:   UnlockConnectorRequest,
+                                    OCPIResponseLogger:  UnlockConnectorResponse,
                                     OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.RemoteParty is null ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -4671,17 +4733,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #endregion
 
 
-                                        // ToDo: UNLOCK_CONNECTOR!
+                                        CommandResponse? commandResponse = null;
 
+                                        if (OnUnlockConnectorCommand is not null)
+                                            commandResponse = await OnUnlockConnectorCommand.Invoke(EMSP_Id.From(Request.RemoteParty.Id),
+                                                                                                    unlockConnectorCommand);
 
-                                        var commandResponse  = new CommandResponse(
-                                                                   unlockConnectorCommand,
-                                                                   CommandResponseTypes.NOT_SUPPORTED,
-                                                                   Timeout: TimeSpan.FromSeconds(15),
-                                                                   Message: new[] {
-                                                                                new DisplayText(Languages.en, "Not supported!")
-                                                                            }
-                                                               );
+                                        commandResponse ??= new CommandResponse(
+                                                                unlockConnectorCommand,
+                                                                CommandResponseTypes.NOT_SUPPORTED,
+                                                                Timeout: TimeSpan.FromSeconds(15),
+                                                                Message: new[] {
+                                                                             new DisplayText(Languages.en, "Not supported!")
+                                                                         }
+                                                            );
 
 
                                         return new OCPIResponse.Builder(Request) {

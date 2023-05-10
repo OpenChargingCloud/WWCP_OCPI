@@ -1046,7 +1046,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<Location>>
 
             PutLocation(Location            Location,
-                        EMSP_Id?             EMPId               = null,
+                        EMSP_Id?            EMSPId              = null,
 
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
@@ -1135,7 +1135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content        = Location.ToJSON(false,
-                                                                                                                                         EMPId,
+                                                                                                                                         EMSPId,
                                                                                                                                          CustomLocationSerializer,
                                                                                                                                          CustomAdditionalGeoLocationSerializer,
                                                                                                                                          CustomEVSESerializer,
@@ -1607,14 +1607,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// </summary>
         /// <param name="EVSE">The EVSE to store/put at/onto the remote API.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional location to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE                EVSE,
-                    EMSP_Id?             EMPId               = null,
+                    EMSP_Id?            EMSPId              = null,
 
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
@@ -1631,7 +1630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             return await PutEVSE(EVSE,
                                  EVSE.ParentLocation.Id,
-                                 EMPId,
+                                 EMSPId,
 
                                  RequestId,
                                  CorrelationId,
@@ -1660,7 +1659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             PutEVSE(EVSE                EVSE,
                     Location_Id         LocationId,
-                    EMSP_Id?             EMPId               = null,
+                    EMSP_Id?            EMSPId              = null,
 
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
@@ -1750,7 +1749,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content        = EVSE.ToJSON(EMPId,
+                                                                                         requestbuilder.Content        = EVSE.ToJSON(EMSPId,
                                                                                                                                      CustomEVSESerializer,
                                                                                                                                      CustomStatusScheduleSerializer,
                                                                                                                                      CustomConnectorSerializer,
@@ -2231,7 +2230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<Connector>>
 
             PutConnector(Connector           Connector,
-                         EMSP_Id?             EMPId               = null,
+                         EMSP_Id?            EMSPId              = null,
 
                          Request_Id?         RequestId           = null,
                          Correlation_Id?     CorrelationId       = null,
@@ -2331,7 +2330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content        = Connector.ToJSON(EMPId,
+                                                                                         requestbuilder.Content        = Connector.ToJSON(EMSPId,
                                                                                                                                           CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Connection     = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
@@ -4106,7 +4105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public async Task<OCPIResponse<CDR>>
 
             PostCDR(CDR                 CDR,
-                    EMSP_Id?             EMPId               = null,
+                    EMSP_Id?            EMSPId              = null,
 
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
@@ -4195,7 +4194,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content        = CDR.ToJSON(false,
-                                                                                                                                    EMPId,
+                                                                                                                                    EMSPId,
                                                                                                                                     CustomCDRSerializer,
                                                                                                                                     CustomLocationSerializer,
                                                                                                                                     CustomAdditionalGeoLocationSerializer,

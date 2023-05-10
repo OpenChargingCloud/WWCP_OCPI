@@ -259,6 +259,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           CustomCDRDimensionSerializer,
                                                           CustomPriceSerializer);
 
+            unchecked
+            {
+
+                hashCode = this.CountryCode.            GetHashCode()       * 61 ^
+                           this.PartyId.                GetHashCode()       * 59 ^
+                           this.Id.                     GetHashCode()       * 53 ^
+                           this.Start.                  GetHashCode()       * 47 ^
+                           this.kWh.                    GetHashCode()       * 43 ^
+                           this.CDRToken.               GetHashCode()       * 41 ^
+                           this.AuthMethod.             GetHashCode()       * 37 ^
+                           this.LocationId.             GetHashCode()       * 31 ^
+                           this.EVSEUId.                GetHashCode()       * 29 ^
+                           this.ConnectorId.            GetHashCode()       * 23 ^
+                           this.Currency.               GetHashCode()       * 19 ^
+                           this.Status.                 GetHashCode()       * 17 ^
+                           this.LastUpdated.            GetHashCode()       * 13 ^
+
+                          (this.End?.                   GetHashCode() ?? 0) * 11 ^
+                          (this.AuthorizationReference?.GetHashCode() ?? 0) *  7 ^
+                          (this.MeterId?.               GetHashCode() ?? 0) *  5 ^
+                           this.ChargingPeriods.        GetHashCode()       *  3 ^
+                           this.TotalCosts?.            GetHashCode() ?? 0;
+
+            }
+
         }
 
         #endregion
@@ -1171,52 +1196,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region GetHashCode()
 
-        private Int32? cachedHashCode;
-
-        private readonly Object hashSync = new ();
+        private readonly Int32 hashCode;
 
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Return the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-
-            if (cachedHashCode.HasValue)
-                return cachedHashCode.Value;
-
-            lock (hashSync)
-            {
-
-                unchecked
-                {
-
-                    cachedHashCode = CountryCode.            GetHashCode()       * 61 ^
-                                     PartyId.                GetHashCode()       * 59 ^
-                                     Id.                     GetHashCode()       * 53 ^
-                                     Start.                  GetHashCode()       * 47 ^
-                                     kWh.                    GetHashCode()       * 43 ^
-                                     CDRToken.               GetHashCode()       * 41 ^
-                                     AuthMethod.             GetHashCode()       * 37 ^
-                                     LocationId.             GetHashCode()       * 31 ^
-                                     EVSEUId.                GetHashCode()       * 29 ^
-                                     ConnectorId.            GetHashCode()       * 23 ^
-                                     Currency.               GetHashCode()       * 19 ^
-                                     Status.                 GetHashCode()       * 17 ^
-                                     LastUpdated.            GetHashCode()       * 13 ^
-
-                                    (End?.                   GetHashCode() ?? 0) * 11 ^
-                                    (AuthorizationReference?.GetHashCode() ?? 0) *  7 ^
-                                    (MeterId?.               GetHashCode() ?? 0) *  5 ^
-                                    (ChargingPeriods?.       GetHashCode() ?? 0) *  3 ^
-                                     TotalCosts?.            GetHashCode() ?? 0;
-
-                    return cachedHashCode.Value;
-
-                }
-
-            }
-
-        }
+            => hashCode;
 
         #endregion
 
