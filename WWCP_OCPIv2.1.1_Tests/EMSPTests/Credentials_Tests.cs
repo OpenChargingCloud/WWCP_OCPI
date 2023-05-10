@@ -61,7 +61,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                            Sun, 30 Apr 2023 08:03:44 GMT
                 // Accept:                          application/json; charset=utf-8;q=1
                 // Host:                            localhost:3301
-                // Authorization:                   Token emp1-accessing-cso::token
+                // Authorization:                   Token emsp1_accessing_cpo::token
                 // X-Request-ID:                    ACjnj252Gvr647rW86KYxWYMCdjv6U
                 // X-Correlation-ID:                jM2KMp89jK575MfMf67Kjfr2CM5EW7
 
@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // 
                 // {
                 //     "data": {
-                //         "token":         "emp1-accessing-cso::token",
+                //         "token":         "emsp1_accessing_cpo::token",
                 //         "url":           "http://127.0.0.1:3301/ocpi/v2.1/versions",
                 //         "business_details": {
                 //             "name":          "GraphDefined CSO Services",
@@ -109,7 +109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 if (credentials is not null)
                 {
 
-                    Assert.AreEqual (emp1_accessing_cso__token,                    credentials.    Token.      ToString());
+                    Assert.AreEqual (emsp1_accessing_cpo__token,                    credentials.    Token.      ToString());
                     Assert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.1/versions",   credentials.    URL.        ToString());
                     Assert.AreEqual ("DE",                                         credentials.    CountryCode.ToString());
                     Assert.AreEqual ("GEF",                                        credentials.    PartyId.    ToString());
@@ -157,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                            Sun, 30 Apr 2023 08:07:42 GMT
                 // Accept:                          application/json; charset=utf-8;q=1
                 // Host:                            localhost:3301
-                // Authorization:                   Token emp2-accessing-cso::token
+                // Authorization:                   Token emsp2_accessing_cpo::token
                 // X-Request-ID:                    xt167nt9WCjzKpfp5btn3CG4bzM3dS
                 // X-Correlation-ID:                732phS8A686tMb4hE82982ftYbp38S
 
@@ -176,7 +176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // 
                 // {
                 //     "data": {
-                //         "token":         "emp2-accessing-cso::token",
+                //         "token":         "emsp2_accessing_cpo::token",
                 //         "url":           "http://127.0.0.1:3301/ocpi/v2.1/versions",
                 //         "business_details": {
                 //             "name":          "GraphDefined CSO Services",
@@ -205,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 if (credentials is not null)
                 {
 
-                    Assert.AreEqual (emp2_accessing_cso__token,                    credentials.    Token.      ToString());
+                    Assert.AreEqual (emsp2_accessing_cpo__token,                    credentials.    Token.      ToString());
                     Assert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.1/versions",   credentials.    URL.        ToString());
                     Assert.AreEqual ("DE",                                         credentials.    CountryCode.ToString());
                     Assert.AreEqual ("GEF",                                        credentials.    PartyId.    ToString());
@@ -257,7 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                               Role:              Roles.EMSP,
                                               BusinessDetails:   emsp1CommonAPI.OurBusinessDetails,
 
-                                              AccessToken:       AccessToken.Parse(emp1_accessing_cso__token),
+                                              AccessToken:       AccessToken.Parse(emsp1_accessing_cpo__token),
                                               AccessStatus:      AccessStatus.ALLOWED,
 
                                               PartyStatus:       PartyStatus.ENABLED);
@@ -270,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:               Sat, 06 May 2023 02:40:46 GMT
                 // Accept:             application/json; charset=utf-8; q=1
                 // Host:               localhost:3301
-                // Authorization:      Token emp1-accessing-cso::token
+                // Authorization:      Token emsp1_accessing_cpo::token
                 // Content-Type:       application/json; charset=utf-8
                 // Content-Length:     300
                 // X-Request-ID:       72fQ7S1fAKC1trnv2zECGv14tfn5Y8
@@ -334,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                     #region Validate Credentials
 
                     Assert.IsNotNull  (credentials.Token);
-                    Assert.AreNotEqual(emp1_accessing_cso__token,                    credentials.    Token.      ToString());
+                    Assert.AreNotEqual(emsp1_accessing_cpo__token,                    credentials.    Token.      ToString());
                     Assert.AreEqual   ("http://127.0.0.1:3301/ocpi/v2.1/versions",   credentials.    URL.        ToString());
                     Assert.AreEqual   ("DE",                                         credentials.    CountryCode.ToString());
                     Assert.AreEqual   ("GEF",                                        credentials.    PartyId.    ToString());
@@ -454,7 +454,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 cpoCommonAPI is not null)
             {
 
-                Func<RemoteParty?> remotePartyAtCPO = () => cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == emp1_accessing_cso__token));
+                RemoteParty? remotePartyAtCPO() => cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == emsp1_accessing_cpo__token));
 
                 var remotePartyAtCPO_before  = remotePartyAtCPO();
                 Assert.IsNotNull(remotePartyAtCPO_before);
@@ -465,7 +465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                            Fri, 05 May 2023 12:31:07 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3301
-                // Authorization:                   Token emp1-accessing-cso::token
+                // Authorization:                   Token emsp1_accessing_cpo::token
                 // X-Request-ID:                    1234
                 // X-Correlation-ID:                5678
 
@@ -484,14 +484,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // 
                 // {
                 //     "status_code":      1000,
-                //     "status_message":  "The given access token 'emp1-accessing-cso::token' was deleted!",
+                //     "status_message":  "The given access token 'emsp1_accessing_cpo::token' was deleted!",
                 //     "timestamp":       "2023-05-05T12:31:07.181Z"
                 // }
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,                                                                 response.HTTPResponse?.HTTPStatusCode.Code);
                 Assert.AreEqual (1000,                                                                response.StatusCode);
-                Assert.AreEqual ("The given access token 'emp1-accessing-cso::token' was deleted!",   response.StatusMessage);
+                Assert.AreEqual ("The given access token 'emsp1_accessing_cpo::token' was deleted!",   response.StatusMessage);
                 Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 Assert.IsNotNull(response.RequestId);
@@ -685,6 +685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 var response3       = await TestHelpers.GetJSONRequest(credentialsURL,
                                                                        BlockedEMSPToken);
 
+
                 // HTTP/1.1 403 Forbidden
                 // Date:                            Sun, 30 Apr 2023 10:14:01 GMT
                 // Access-Control-Allow-Methods:    OPTIONS, GET
@@ -711,8 +712,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 var json        = response3.Content;
                 Assert.IsNotNull(json);
 
-                Assert.AreEqual (2000,                                         json["status_code"]?.                          Value<UInt32>());
-                Assert.AreEqual ("Invalid or blocked access token!",           json["status_message"]?.                       Value<String>());
+                Assert.AreEqual (2000,                                 json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("Invalid or blocked access token!",   json["status_message"]?.Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);
@@ -742,7 +743,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
 
                 var response3       = await TestHelpers.GetJSONRequest(credentialsURL,
-                                                                       emp1_accessing_cso__token);
+                                                                       emsp1_accessing_cpo__token);
 
                 // HTTP/1.1 200 OK
                 // Date:                            Sun, 30 Apr 2023 10:24:16 GMT
@@ -759,7 +760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // 
                 // {
                 //     "data": {
-                //         "token":         "emp1-accessing-cso::token",
+                //         "token":         "emsp1_accessing_cpo::token",
                 //         "url":           "http://127.0.0.1:3301/ocpi/v2.1/versions",
                 //         "business_details": {
                 //             "name":          "GraphDefined CSO Services",
@@ -780,7 +781,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 var json        = response3.Content;
                 Assert.IsNotNull(json);
 
-                Assert.AreEqual (emp1_accessing_cso__token,                    json["data"]?["token"]?.                       Value<String>());
+                Assert.AreEqual (emsp1_accessing_cpo__token,                    json["data"]?["token"]?.                       Value<String>());
                 Assert.AreEqual ("http://127.0.0.1:3301/ocpi/v2.1/versions",   json["data"]?["url"]?.                         Value<String>());
 
                 Assert.AreEqual ("GraphDefined CSO Services",                  json["data"]?["business_details"]?["name"]?.   Value<String>());
@@ -1014,12 +1015,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
 
                 var response3       = await TestHelpers.OptionsRequest(credentialsURL,
-                                                                       emp1_accessing_cso__token);
+                                                                       emsp1_accessing_cpo__token);
 
                 // OPTIONS /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
                 // Date:                            Sat, 06 May 2023 02:16:02 GMT
                 // Host:                            127.0.0.1:3301
-                // Authorization:                   Token emp1-accessing-cso::token
+                // Authorization:                   Token emsp1_accessing_cpo::token
                 // X-Request-ID:                    1234
                 // X-Correlation-ID:                5678
 
@@ -1386,14 +1387,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                                            CountryCode.Parse("DE"),
                                                                            Party_Id.   Parse("GDF")
                                                                        ).ToJSON(),
-                                                                       emp1_accessing_cso__token);
+                                                                       emsp1_accessing_cpo__token);
 
 
                 // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
                 // Date:                            Thu, 04 May 2023 04:35:10 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3301
-                // Authorization:                   Token emp1-accessing-cso::token
+                // Authorization:                   Token emsp1_accessing_cpo::token
                 // Content-Type:                    application/json; charset=utf-8
                 // Content-Length:                  223
                 // X-Request-ID:                    1234
@@ -1525,14 +1526,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                                            CountryCode.Parse("FR"),
                                                                            Party_Id.   Parse("GDF")
                                                                        ).ToJSON(),
-                                                                       emp1_accessing_cso__token);
+                                                                       emsp1_accessing_cpo__token);
 
 
                 // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
                 // Date:                            Thu, 04 May 2023 05:04:31 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3301
-                // Authorization:                   Token emp1-accessing-cso::token
+                // Authorization:                   Token emsp1_accessing_cpo::token
                 // Content-Type:                    application/json; charset=utf-8
                 // Content-Length:                  223
                 // X-Request-ID:                    1234
@@ -1590,7 +1591,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
 
                 // Validate, that the remote party was not updated!
-                var remotePartyAtCPO  = cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == emp1_accessing_cso__token));
+                var remotePartyAtCPO  = cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == emsp1_accessing_cpo__token));
                 Assert.IsNotNull(remotePartyAtCPO);
 
                 if (remotePartyAtCPO is not null)
@@ -1641,14 +1642,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                                            CountryCode.Parse("DE"),
                                                                            Party_Id.   Parse("GXF")
                                                                        ).ToJSON(),
-                                                                       emp1_accessing_cso__token);
+                                                                       emsp1_accessing_cpo__token);
 
 
                 // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
                 // Date:                            Thu, 04 May 2023 05:04:31 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3301
-                // Authorization:                   Token emp1-accessing-cso::token
+                // Authorization:                   Token emsp1_accessing_cpo::token
                 // Content-Type:                    application/json; charset=utf-8
                 // Content-Length:                  223
                 // X-Request-ID:                    1234
@@ -1706,7 +1707,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
 
                 // Validate, that the remote party was not updated!
-                var remotePartyAtCPO  = cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == emp1_accessing_cso__token));
+                var remotePartyAtCPO  = cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == emsp1_accessing_cpo__token));
                 Assert.IsNotNull(remotePartyAtCPO);
 
                 if (remotePartyAtCPO is not null)
@@ -1745,10 +1746,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                             Role:                        Roles.EMSP,
                                             BusinessDetails:             emsp1CommonAPI.OurBusinessDetails,
 
-                                            AccessToken:                 AccessToken.Parse(emp1_accessing_cso__token),
+                                            AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo__token),
                                             AccessStatus:                AccessStatus.ALLOWED,
 
-                                            //RemoteAccessToken:           AccessToken.Parse("emp1-2-cso:token"),
+                                            //RemoteAccessToken:           AccessToken.Parse("cpo_accessing_emsp1::token"),
                                             //RemoteVersionsURL:           null, // 
                                             //RemoteVersionIds:            new[] { Version.Id },
                                             //SelectedVersionId:           Version.Id,
@@ -1776,14 +1777,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                                            CountryCode.Parse("DE"),
                                                                            Party_Id.   Parse("GDF")
                                                                        ).ToJSON(),
-                                                                       emp1_accessing_cso__token);
+                                                                       emsp1_accessing_cpo__token);
 
 
                 // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
                 // Date:                            Fri, 05 May 2023 10:19:29 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3301
-                // Authorization:                   Token emp1-accessing-cso::token
+                // Authorization:                   Token emsp1_accessing_cpo::token
                 // Content-Type:                    application/json; charset=utf-8
                 // Content-Length:                  223
                 // X-Request-ID:                    1234
@@ -1815,7 +1816,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // 
                 // {
                 //     "status_code":      2000,
-                //     "status_message":  "The given access token 'emp1-accessing-cso::token' is not yet registered!",
+                //     "status_message":  "The given access token 'emsp1_accessing_cpo::token' is not yet registered!",
                 //     "timestamp":       "2023-05-05T10:19:29.735Z"
                 // }
 
@@ -1831,7 +1832,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual (2000,                                                                          json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("The given access token 'emp1-accessing-cso::token' is not yet registered!",   json["status_message"]?.Value<String>());
+                Assert.AreEqual ("The given access token 'emsp1_accessing_cpo::token' is not yet registered!",   json["status_message"]?.Value<String>());
 
                 var timestamp         = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);
@@ -1839,7 +1840,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
 
                 // Validate, that the remote party was not updated!
-                var remotePartyAtCPO  = cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == emp1_accessing_cso__token));
+                var remotePartyAtCPO  = cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == emsp1_accessing_cpo__token));
                 Assert.IsNotNull(remotePartyAtCPO);
 
                 if (remotePartyAtCPO is not null)
@@ -1872,7 +1873,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 emsp1CommonAPI is not null)
             {
 
-                Func<RemoteParty?> remotePartyAtCPO = () => cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == emp1_accessing_cso__token));
+                Func<RemoteParty?> remotePartyAtCPO = () => cpoCommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == emsp1_accessing_cpo__token));
 
                 var remotePartyAtCPO_before  = remotePartyAtCPO();
                 Assert.IsNotNull(remotePartyAtCPO_before);
@@ -1883,14 +1884,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 var credentialsURL           = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
 
                 var response3                = await TestHelpers.DeleteJSONRequest(URL.Parse(credentialsURL.ToString()),
-                                                                                   emp1_accessing_cso__token);
+                                                                                   emsp1_accessing_cpo__token);
 
 
                 // DELETE /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
                 // Date:                            Fri, 05 May 2023 12:31:07 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3301
-                // Authorization:                   Token emp1-accessing-cso::token
+                // Authorization:                   Token emsp1_accessing_cpo::token
                 // X-Request-ID:                    1234
                 // X-Correlation-ID:                5678
 
@@ -1909,7 +1910,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // 
                 // {
                 //     "status_code":      1000,
-                //     "status_message":  "The given access token 'emp1-accessing-cso::token' was deleted!",
+                //     "status_message":  "The given access token 'emsp1_accessing_cpo::token' was deleted!",
                 //     "timestamp":       "2023-05-05T12:31:07.181Z"
                 // }
 
@@ -1927,7 +1928,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual (1000,                                                                json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("The given access token 'emp1-accessing-cso::token' was deleted!",   json["status_message"]?.Value<String>());
+                Assert.AreEqual ("The given access token 'emsp1_accessing_cpo::token' was deleted!",   json["status_message"]?.Value<String>());
 
                 var timestamp                = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);

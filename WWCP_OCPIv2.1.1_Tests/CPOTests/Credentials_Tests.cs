@@ -29,807 +29,1460 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 {
 
+    /// <summary>
+    /// CPO tests for the OCPI Credentials module.
+    /// </summary>
     [TestFixture]
     public class Credentials_Tests : ANodeTests
     {
 
-        #region CPO_GetCredentials_Test1()
+        #region CPO_GetCredentials_RegisteredToken_Test1()
 
         /// <summary>
-        /// CPO GetCredentials Test 1.
+        /// CPO GetCredentials Test (EMSP 1).
         /// </summary>
         [Test]
-        public async Task CPO_GetCredentials_Test1()
+        public async Task CPO_GetCredentials_RegisteredToken_Test1()
         {
 
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
-                                       CountryCode:  CountryCode.Parse("DE"),
-                                       PartyId:      Party_Id.   Parse("GDF")
-                                   );
+            var graphDefinedEMSP1 = cpoCommonAPI?.GetCPOClient(
+                                        CountryCode: CountryCode.Parse("DE"),
+                                        PartyId:     Party_Id.   Parse("GDF")
+                                    );
 
-            Assert.IsNotNull(graphDefinedEMSP);
+            Assert.IsNotNull(graphDefinedEMSP1);
 
-            if (graphDefinedEMSP is not null)
+            if (graphDefinedEMSP1 is not null)
             {
 
-                var response = await graphDefinedEMSP.GetCredentials();
+                var response = await graphDefinedEMSP1.GetCredentials();
 
-                // GET /2.1.1/credentials HTTP/1.1
-                // Date:                          Mon, 26 Dec 2022 10:29:48 GMT
-                // Accept:                        application/json; charset=utf-8;q=1
-                // Host:                          127.0.0.1:7135
-                // Authorization:                 Token yyyyyy
-                // X-Request-ID:                  7AYph123pWAUt7j1Ad3n1jh1G279xG
-                // X-Correlation-ID:              jhz1GGj3j83SE7Wrf42p8hM82rM3A3
+                // GET /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Sun, 30 Apr 2023 08:03:44 GMT
+                // Accept:                          application/json; charset=utf-8;q=1
+                // Host:                            localhost:3401
+                // Authorization:                   Token cpo-accessing-emsp1::token
+                // X-Request-ID:                    ACjnj252Gvr647rW86KYxWYMCdjv6U
+                // X-Correlation-ID:                jM2KMp89jK575MfMf67Kjfr2CM5EW7
 
                 // HTTP/1.1 200 OK
-                // Date:                          Mon, 26 Dec 2022 10:29:49 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET, POST, PUT, DELETE
-                // Access-Control-Allow-Headers:  Authorization
-                // Server:                        GraphDefined Hermod HTTP Server v1.0
-                // Access-Control-Allow-Origin:   *
-                // Connection:                    close
-                // Content-Type:                  application/json; charset=utf-8
-                // Content-Length:                296
-                // X-Request-ID:                  7AYph123pWAUt7j1Ad3n1jh1G279xG
-                // X-Correlation-ID:              jhz1GGj3j83SE7Wrf42p8hM82rM3A3
-                // 
-                // {
-                //    "data": {
-                //        "token":         "yyyyyy",
-                //        "url":           "http://127.0.0.1:7135/versions",
-                //        "business_details": {
-                //            "name":           "GraphDefined EMSP Services",
-                //            "website":        "https://www.graphdefined.com/emsp"
-                //        },
-                //        "country_code":  "DE",
-                //        "party_id":      "GDF"
-                //    },
-                //    "status_code":      1000,
-                //    "status_message":  "Hello world!",
-                //    "timestamp":       "2022-12-26T10:29:49.143Z"
-                //}
-
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,             response.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,            response.StatusCode);
-                Assert.AreEqual ("Hello world!",  response.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
-
-                Assert.IsNotNull(response.RequestId);
-                Assert.IsNotNull(response.CorrelationId);
-
-                var credentials = response.Data;
-                Assert.IsNotNull(credentials);
-
-                if (credentials is not null)
-                {
-
-                    Assert.AreEqual("emp1-2-cso:token",                           credentials.    Token.      ToString());
-                    Assert.AreEqual("http://127.0.0.1:3401/ocpi/v2.1/versions",   credentials.    URL.        ToString());
-                    Assert.AreEqual("DE",                                         credentials.    CountryCode.ToString());
-                    Assert.AreEqual("GDF",                                        credentials.    PartyId.    ToString());
-
-                    var businessDetails = credentials.BusinessDetails;
-                    Assert.IsNotNull(businessDetails);
-                    Assert.AreEqual("GraphDefined EMSP #1 Services",              businessDetails.Name);
-                    Assert.AreEqual("https://www.graphdefined.com/emsp1",         businessDetails.Website.    ToString());
-
-                }
-
-                //Assert.IsNotNull(response.Request);
-
-            }
-
-        }
-
-        #endregion
-
-
-        #region CPO_GetCredentials_UnknownToken_Test1()
-
-        /// <summary>
-        /// CPO GetCredentials Unknown Token Test 1.
-        /// </summary>
-        [Test]
-        public async Task CPO_GetCredentials_UnknownToken_Test1()
-        {
-
-            #region Change Access Token
-
-            Assert.IsNotNull(cpoCommonAPI);
-            Assert.IsNotNull(emsp1VersionsAPIURL);
-
-            if (cpoCommonAPI is not null &&
-                emsp1VersionsAPIURL.HasValue)
-            {
-
-                Assert.IsTrue(cpoCommonAPI.RemoveRemoteParty(
-                                               CountryCode.Parse("DE"),
-                                               Party_Id.   Parse("GDF")
-                                           ));
-
-                Assert.IsTrue(cpoCommonAPI.AddRemoteParty(
-                                               CountryCode:         CountryCode.Parse("DE"),
-                                               PartyId:             Party_Id.   Parse("GDF"),
-                                               Role:                Roles.      EMSP,
-                                               BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services"),
-                                               LocalAccessInfos:    new[] {
-                                                                        new LocalAccessInfo(
-                                                                            AccessToken.Parse(UnknownToken),
-                                                                            AccessStatus.ALLOWED,
-                                                                            CountryCode.Parse("DE"),
-                                                                            Party_Id.   Parse("GDF"),
-                                                                            Roles.      EMSP
-                                                                        )
-                                                                    },
-                                               RemoteAccessInfos:   new[] {
-                                                                        new RemoteAccessInfo(
-                                                                            AccessToken:        AccessToken.Parse(UnknownToken),
-                                                                            VersionsURL:        emsp1VersionsAPIURL.Value,
-                                                                            VersionIds:         new[] {
-                                                                                                    Version_Id.Parse("2.1.1")
-                                                                                                },
-                                                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                                                            Status:             RemoteAccessStatus.ONLINE
-                                                                        )
-                                                                    },
-                                               Status:              PartyStatus.ENABLED
-                                           ));
-
-            }
-
-            #endregion
-
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
-                                       CountryCode:  CountryCode.Parse("DE"),
-                                       PartyId:      Party_Id.   Parse("GDF")
-                                   );
-
-            Assert.IsNotNull(graphDefinedEMSP);
-
-            if (graphDefinedEMSP is not null)
-            {
-
-                var response = await graphDefinedEMSP.GetCredentials();
-
-                // HTTP/1.1 200 OK
-                // Date:                          Mon, 26 Dec 2022 15:14:30 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET, POST, PUT, DELETE
-                // Access-Control-Allow-Headers:  Authorization
-                // Server:                        GraphDefined Hermod HTTP Server v1.0
-                // Access-Control-Allow-Origin:   *
-                // Connection:                    close
-                // Content-Type:                  application/json; charset=utf-8
-                // Content-Length:                296
-                // X-Request-ID:                  7AYph123pWAUt7j1Ad3n1jh1G279xG
-                // X-Correlation-ID:              jhz1GGj3j83SE7Wrf42p8hM82rM3A3
-                // 
-                // {
-                //    "data": {
-                //        "token":         "<any>",
-                //        "url":           "http://127.0.0.1:7135/versions",
-                //        "business_details": {
-                //            "name":           "GraphDefined EMSP Services",
-                //            "website":        "https://www.graphdefined.com/emsp"
-                //        },
-                //        "country_code":  "DE",
-                //        "party_id":      "GDF"
-                //    },
-                //    "status_code":      1000,
-                //    "status_message":  "Hello world!",
-                //    "timestamp":       "2022-12-26T15:14:30.143Z"
-                //}
-
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,             response.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,            response.StatusCode);
-                Assert.AreEqual ("Hello world!",  response.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
-
-                Assert.IsNotNull(response.RequestId);
-                Assert.IsNotNull(response.CorrelationId);
-
-                var credentials = response.Data;
-                Assert.IsNotNull(credentials);
-
-                if (credentials is not null)
-                {
-
-                    Assert.AreEqual("<any>",                                      credentials.    Token.      ToString());
-                    Assert.AreEqual("http://127.0.0.1:3401/ocpi/v2.1/versions",   credentials.    URL.        ToString());
-                    Assert.AreEqual("DE",                                         credentials.    CountryCode.ToString());
-                    Assert.AreEqual("GDF",                                        credentials.    PartyId.    ToString());
-
-                    var businessDetails = credentials.BusinessDetails;
-                    Assert.IsNotNull(businessDetails);
-                    Assert.AreEqual("GraphDefined EMSP #1 Services",              businessDetails.Name);
-                    Assert.AreEqual("https://www.graphdefined.com/emsp1",         businessDetails.Website.    ToString());
-
-                }
-
-                //Assert.IsNotNull(response.Request);
-
-            }
-
-        }
-
-        #endregion
-
-
-        #region CPO_GetCredentials_BlockedToken1_Test()
-
-        /// <summary>
-        /// CPO GetCredentials Blocked Token Test1.
-        /// </summary>
-        [Test]
-        public async Task CPO_GetCredentials_BlockedToken1_Test()
-        {
-
-            #region Block Access Token
-
-            Assert.IsNotNull(cpoCommonAPI);
-            Assert.IsNotNull(emsp1CommonAPI);
-            Assert.IsNotNull(emsp1VersionsAPIURL);
-
-            if (cpoCommonAPI   is not null &&
-                emsp1CommonAPI is not null &&
-                emsp1VersionsAPIURL.HasValue)
-            {
-
-                cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
-                emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
-
-                Assert.IsTrue(cpoCommonAPI.  AddRemoteParty(
-                                                 CountryCode:         CountryCode.Parse("DE"),
-                                                 PartyId:             Party_Id.   Parse("GDF"),
-                                                 Role:                Roles.      EMSP,
-                                                 BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services"),
-                                                 LocalAccessInfos:    new[] {
-                                                                          new LocalAccessInfo(
-                                                                              AccessToken.Parse("xxxxxx"),
-                                                                              AccessStatus.ALLOWED,
-                                                                              CountryCode.Parse("DE"),
-                                                                              Party_Id.   Parse("GDF"),
-                                                                              Roles.      EMSP
-                                                                          )
-                                                                      },
-                                                 RemoteAccessInfos:   new[] {
-                                                                          new RemoteAccessInfo(
-                                                                              AccessToken:        AccessToken.Parse("yyyyyy"),
-                                                                              VersionsURL:        emsp1VersionsAPIURL.Value,
-                                                                              VersionIds:         new[] {
-                                                                                                      Version_Id.Parse("2.1.1")
-                                                                                                  },
-                                                                              SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                                                              Status:             RemoteAccessStatus.ONLINE
-                                                                          )
-                                                                      },
-                                                 Status:              PartyStatus.ENABLED
-                                             ));
-
-                Assert.IsTrue(emsp1CommonAPI.AddRemoteParty(
-                                                 CountryCode:         CountryCode.Parse("DE"),
-                                                 PartyId:             Party_Id.   Parse("GEF"),
-                                                 Role:                Roles.      CPO,
-                                                 BusinessDetails:     new BusinessDetails("GraphDefined CPO Services"),
-                                                 LocalAccessInfos:    new[] {
-                                                                          new LocalAccessInfo(
-                                                                              AccessToken.Parse("yyyyyy"),
-                                                                              AccessStatus.BLOCKED,
-                                                                              CountryCode.Parse("DE"),
-                                                                              Party_Id.   Parse("GDF"),
-                                                                              Roles.      EMSP
-                                                                          )
-                                                                      },
-                                                 RemoteAccessInfos:   new[] {
-                                                                          new RemoteAccessInfo(
-                                                                              AccessToken:        AccessToken.Parse("xxxxxx"),
-                                                                              VersionsURL:        emsp1VersionsAPIURL.Value,
-                                                                              VersionIds:         new[] {
-                                                                                                      Version_Id.Parse("2.1.1")
-                                                                                                  },
-                                                                              SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                                                              Status:             RemoteAccessStatus.ONLINE
-                                                                          )
-                                                                      },
-                                                 Status:              PartyStatus.ENABLED
-                                             ));
-
-            }
-
-            #endregion
-
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
-                                       CountryCode:  CountryCode.Parse("DE"),
-                                       PartyId:      Party_Id.   Parse("GDF")
-                                   );
-
-            Assert.IsNotNull(graphDefinedEMSP);
-
-            if (graphDefinedEMSP is not null)
-            {
-
-                var response = await graphDefinedEMSP.GetCredentials();
-
-                Assert.IsNotNull(response);
-                Assert.IsNull   (response.HTTPResponse);
-                Assert.AreEqual (-1,                         response.StatusCode);
-                Assert.AreEqual ("No versionId available!",  response.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
-
-                // This is not a real network request, so no
-                // requestId and no correlationId are available!
-                Assert.IsNull   (response.RequestId);
-                Assert.IsNull   (response.CorrelationId);
-
-                var credentials = response.Data;
-                Assert.IsNull   (credentials);
-
-                //Assert.IsNotNull(response.Request);
-
-            }
-
-        }
-
-        #endregion
-
-        #region CPO_GetCredentials_BlockedToken2_Test()
-
-        /// <summary>
-        /// CPO Test 01.
-        /// </summary>
-        [Test]
-        public async Task CPO_GetCredentials_BlockedToken2_Test()
-        {
-
-            #region Block Access Token
-
-            cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
-            emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
-
-            var addEMSPResult = cpoCommonAPI.AddRemoteParty(
-                CountryCode:         CountryCode.Parse("DE"),
-                PartyId:             Party_Id.   Parse("GDF"),
-                Role:                Roles.      EMSP,
-                BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services"),
-                LocalAccessInfos:    new[] {
-                                         new LocalAccessInfo(
-                                             AccessToken.Parse("xxxxxx"),
-                                             AccessStatus.ALLOWED,
-                                             CountryCode.Parse("DE"),
-                                             Party_Id.   Parse("GDF"),
-                                             Roles.      EMSP
-                                         )
-                                     },
-                RemoteAccessInfos:   new[] {
-                                         new RemoteAccessInfo(
-                                             AccessToken:        AccessToken.Parse("yyyyyy"),
-                                             VersionsURL:        emsp1VersionsAPIURL.Value,
-                                             VersionIds:         new Version_Id[] {
-                                                                     Version_Id.Parse("2.1.1")
-                                                                 },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                             Status:             RemoteAccessStatus.ONLINE
-                                         )
-                                     },
-                Status:              PartyStatus.ENABLED
-            );
-
-            Assert.IsTrue(addEMSPResult);
-
-
-            var addCPOResult = emsp1CommonAPI.AddRemoteParty(
-                CountryCode:         CountryCode.Parse("DE"),
-                PartyId:             Party_Id.   Parse("GEF"),
-                Role:                Roles.      CPO,
-                BusinessDetails:     new BusinessDetails("GraphDefined CPO Services"),
-                LocalAccessInfos:    new[] {
-                                         new LocalAccessInfo(
-                                             AccessToken.Parse("yyyyyy"),
-                                             AccessStatus.BLOCKED,
-                                             CountryCode.Parse("DE"),
-                                             Party_Id.   Parse("GEF"),
-                                             Roles.      CPO
-                                         )
-                                     },
-                RemoteAccessInfos:   new[] {
-                                         new RemoteAccessInfo(
-                                             AccessToken:        AccessToken.Parse("xxxxxx"),
-                                             VersionsURL:        emsp1VersionsAPIURL.Value,
-                                             VersionIds:         new Version_Id[] {
-                                                                     Version_Id.Parse("2.1.1")
-                                                                 },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                             Status:             RemoteAccessStatus.ONLINE
-                                         )
-                                     },
-                Status:              PartyStatus.ENABLED
-            );
-
-            Assert.IsTrue(addCPOResult);
-
-            #endregion
-
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
-                                       CountryCode: CountryCode.Parse("DE"),
-                                       PartyId:     Party_Id.   Parse("GDF")
-                                   );
-
-            Assert.IsNotNull(graphDefinedEMSP);
-
-            if (graphDefinedEMSP is not null)
-            {
-
-                var response = await graphDefinedEMSP.GetCredentials(Version_Id.Parse("2.1.1"));
-
-                Assert.IsNotNull(response);
-                Assert.IsNull   (response.HTTPResponse);
-                Assert.AreEqual (-1,                          response.StatusCode);
-                Assert.AreEqual ("No remote URL available!",  response.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
-
-                //Assert.IsNotNull(response.Request);
-
-                var credentials = response.Data;
-                Assert.IsNull(credentials);
-
-            }
-
-        }
-
-        #endregion
-
-        #region CPO_GetCredentials_BlockedToken3_Test()
-
-        /// <summary>
-        /// CPO Test 01.
-        /// </summary>
-        [Test]
-        public async Task CPO_GetCredentials_BlockedToken3_Test()
-        {
-
-            #region Block Access Token
-
-            cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
-            emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
-
-            var addEMSPResult = cpoCommonAPI.AddRemoteParty(
-                CountryCode:         CountryCode.Parse("DE"),
-                PartyId:             Party_Id.   Parse("GDF"),
-                Role:                Roles.      EMSP,
-                BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services"),
-                LocalAccessInfos:    new[] {
-                                         new LocalAccessInfo(
-                                             AccessToken.Parse("xxxxxx"),
-                                             AccessStatus.ALLOWED,
-                                             CountryCode.Parse("DE"),
-                                             Party_Id.   Parse("GDF"),
-                                             Roles.      EMSP
-                                         )
-                                     },
-                RemoteAccessInfos:   new[] {
-                                         new RemoteAccessInfo(
-                                             AccessToken:        AccessToken.Parse("yyyyyy"),
-                                             VersionsURL:        emsp1VersionsAPIURL.Value,
-                                             VersionIds:         new Version_Id[] {
-                                                                     Version_Id.Parse("2.1.1")
-                                                                 },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                             Status:             RemoteAccessStatus.ONLINE
-                                         )
-                                     },
-                Status:              PartyStatus.ENABLED
-            );
-
-            Assert.IsTrue(addEMSPResult);
-
-
-            var addCPOResult = emsp1CommonAPI.AddRemoteParty(
-                CountryCode:         CountryCode.Parse("DE"),
-                PartyId:             Party_Id.   Parse("GEF"),
-                Role:                Roles.      CPO,
-                BusinessDetails:     new BusinessDetails("GraphDefined CPO Services"),
-                LocalAccessInfos:    new[] {
-                                         new LocalAccessInfo(
-                                             AccessToken.Parse("yyyyyy"),
-                                             AccessStatus.BLOCKED,
-                                             CountryCode.Parse("DE"),
-                                             Party_Id.   Parse("GEF"),
-                                             Roles.      CPO
-                                         )
-                                     },
-                RemoteAccessInfos:   new[] {
-                                         new RemoteAccessInfo(
-                                             AccessToken:        AccessToken.Parse("xxxxxx"),
-                                             VersionsURL:        emsp1VersionsAPIURL.Value,
-                                             VersionIds:         new Version_Id[] {
-                                                                     Version_Id.Parse("2.1.1")
-                                                                 },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                             Status:             RemoteAccessStatus.ONLINE
-                                         )
-                                     },
-                Status:              PartyStatus.ENABLED
-            );
-
-            Assert.IsTrue(addCPOResult);
-
-            #endregion
-
-            var httpResponse = await TestHelpers.GetJSONRequest(URL.Parse("http://127.0.0.1:7135/2.1.1/credentials"),
-                                                                "yyyyyy");
-
-            // HTTP/1.1 403 Forbidden
-            // Date:                          Mon, 26 Dec 2022 15:43:44 GMT
-            // Access-Control-Allow-Methods:  OPTIONS, GET
-            // Access-Control-Allow-Headers:  Authorization
-            // Server:                        GraphDefined Hermod HTTP Server v1.0
-            // Access-Control-Allow-Origin:   *
-            // Connection:                    close
-            // Content-Type:                  application/json; charset=utf-8
-            // Content-Length:                111
-            // X-Request-ID:                  1234
-            // X-Correlation-ID:              5678
-            // 
-            // {
-            //     "status_code":      2000,
-            //     "status_message":  "Invalid or blocked access token!",
-            //     "timestamp":       "2022-12-26T15:43:44.533Z"
-            // }
-
-            Assert.IsNotNull(httpResponse);
-            Assert.AreEqual (403,  httpResponse.HTTPStatusCode.Code);
-
-            var jsonResponse = JObject.Parse(httpResponse.HTTPBodyAsUTF8String);
-            Assert.IsNotNull(jsonResponse);
-
-            Assert.AreEqual (2000,                                jsonResponse["status_code"]?.   Value<Int32>());
-            Assert.AreEqual ("Invalid or blocked access token!",  jsonResponse["status_message"]?.Value<String>());
-            Assert.IsTrue   (Timestamp.Now - jsonResponse["timestamp"]?.Value<DateTime>() < TimeSpan.FromSeconds(10));
-
-            //Assert.IsNotNull(response.Request);
-
-        }
-
-        #endregion
-
-
-        #region CPO_PutCredentials_NotYetRegistered_Test()
-
-        /// <summary>
-        /// CPO Test 01.
-        /// </summary>
-        [Test]
-        public async Task CPO_PutCredentials_NotYetRegistered_Test()
-        {
-
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
-                                       CountryCode: CountryCode.Parse("DE"),
-                                       PartyId:     Party_Id.   Parse("GDF")
-                                   );
-
-            Assert.IsNotNull(graphDefinedEMSP);
-
-            if (graphDefinedEMSP is not null)
-            {
-
-                var response1 = await graphDefinedEMSP.GetVersions();
-                var response2 = await graphDefinedEMSP.PutCredentials(
-                                                           new Credentials(
-                                                               AccessToken.Parse("nnnnnn"),
-                                                               URL.Parse("http://example.org/versions"),
-                                                               new BusinessDetails(
-                                                                   "Example Org",
-                                                                   URL.Parse("http://example.org")
-                                                               ),
-                                                               CountryCode.Parse("DE"),
-                                                               Party_Id.   Parse("EXP")
-                                                           )
-                                                       );
-
-                // HTTP/1.1 405 Method Not Allowed
-                // Date:                          Mon, 26 Dec 2022 15:29:55 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET, POST, PUT, DELETE
-                // Access-Control-Allow-Headers:  Authorization
-                // Server:                        GraphDefined Hermod HTTP Server v1.0
-                // Access-Control-Allow-Origin:   *
-                // Connection:                    close
-                // Content-Type:                  application/json; charset=utf-8
-                // Content-Length:                151
-                // X-Request-ID:                  zd4A4h2Kp6vY28nYQC1j616bd6569d
-                // X-Correlation-ID:              An625Y7Yv1Un5K8AS33G2pUCbpCpjC
-                // 
-                // {
-                //     "status_code":     2000,
-                //     "status_message": "You need to be registered before trying to invoke this protected method!",
-                //     "timestamp":      "2022-12-26T15:29:55.424Z"
-                // }
-
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (405,                                                                         response2.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (2000,                                                                        response2.StatusCode);
-                Assert.AreEqual ("You need to be registered before trying to invoke this protected method!",  response2.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
-
-                //Assert.IsNotNull(response.Request);
-
-                Assert.IsNull   (response2.Data);
-
-            }
-
-        }
-
-        #endregion
-
-        #region CPO_PutCredentials_UnknownToken_Test()
-
-        /// <summary>
-        /// CPO Test 01.
-        /// </summary>
-        [Test]
-        public async Task CPO_PutCredentials_UnknownToken_Test()
-        {
-
-            #region Change Access Token
-
-            cpoCommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
-
-            var result = cpoCommonAPI.AddRemoteParty(
-                CountryCode:         CountryCode.Parse("DE"),
-                PartyId:             Party_Id.   Parse("GDF"),
-                Role:                Roles.      EMSP,
-                BusinessDetails:     new BusinessDetails("GraphDefined EMSP Services"),
-                LocalAccessInfos:    new[] {
-                                         new LocalAccessInfo(
-                                             AccessToken.Parse("aaaaaa"),
-                                             AccessStatus.ALLOWED,
-                                             CountryCode.Parse("DE"),
-                                             Party_Id.   Parse("GDF"),
-                                             Roles.      EMSP
-                                         )
-                                     },
-                RemoteAccessInfos:   new[] {
-                                         new RemoteAccessInfo(
-                                             AccessToken:        AccessToken.Parse("bbbbbb"),
-                                             VersionsURL:        emsp1VersionsAPIURL.Value,
-                                             VersionIds:         new Version_Id[] {
-                                                                     Version_Id.Parse("2.1.1")
-                                                                 },
-                                             SelectedVersionId:  Version_Id.Parse("2.1.1"),
-                                             Status:             RemoteAccessStatus.ONLINE
-                                         )
-                                     },
-                Status:              PartyStatus.ENABLED
-            );
-
-            #endregion
-
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
-                                       CountryCode: CountryCode.Parse("DE"),
-                                       PartyId:     Party_Id.   Parse("GDF")
-                                   );
-
-            Assert.IsNotNull(graphDefinedEMSP);
-
-            if (graphDefinedEMSP is not null)
-            {
-
-                var response1 = await graphDefinedEMSP.GetVersions();
-                var response2 = await graphDefinedEMSP.PutCredentials(
-                                                           new Credentials(
-                                                               AccessToken.Parse(UnknownToken),
-                                                               URL.Parse("http://example.org/versions"),
-                                                               new BusinessDetails(
-                                                                   "Example Org",
-                                                                   URL.Parse("http://example.org")
-                                                               ),
-                                                               CountryCode.Parse("DE"),
-                                                               Party_Id.   Parse("EXP")
-                                                           )
-                                                       );
-
-                // HTTP/1.1 405 Method Not Allowed
-                // Date:                          Mon, 26 Dec 2022 15:29:55 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET, POST, PUT, DELETE
-                // Access-Control-Allow-Headers:  Authorization
-                // Server:                        GraphDefined Hermod HTTP Server v1.0
-                // Access-Control-Allow-Origin:   *
-                // Connection:                    close
-                // Content-Type:                  application/json; charset=utf-8
-                // Content-Length:                151
-                // X-Request-ID:                  zd4A4h2Kp6vY28nYQC1j616bd6569d
-                // X-Correlation-ID:              An625Y7Yv1Un5K8AS33G2pUCbpCpjC
-                // 
-                // {
-                //     "status_code":     2000,
-                //     "status_message": "You need to be registered before trying to invoke this protected method!",
-                //     "timestamp":      "2022-12-26T15:29:55.424Z"
-                // }
-
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (405,                                                                         response2.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (2000,                                                                        response2.StatusCode);
-                Assert.AreEqual ("You need to be registered before trying to invoke this protected method!",  response2.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
-
-                //Assert.IsNotNull(response.Request);
-
-                Assert.IsNull   (response2.Data);
-
-            }
-
-        }
-
-        #endregion
-
-
-        #region CPO_Register_RR_Test()
-
-        /// <summary>
-        /// CPO Test 01.
-        /// </summary>
-        [Test]
-        public async Task CPO_Register_RR_Test()
-        {
-
-            var graphDefinedEMSP = cpoCommonAPI?.GetCPOClient(
-                                       CountryCode: CountryCode.Parse("DE"),
-                                       PartyId:     Party_Id.   Parse("GDF")
-                                   );
-
-            Assert.IsNotNull(graphDefinedEMSP);
-
-            if (graphDefinedEMSP is not null)
-            {
-
-                var remoteAccessInfoOld  = cpoCommonAPI?.  RemoteParties.First().RemoteAccessInfos.First();
-                var accessInfoOld        = emsp1CommonAPI?.RemoteParties.First().LocalAccessInfos. First();
-
-                var response1            = await graphDefinedEMSP.GetVersions();
-                var response2            = await graphDefinedEMSP.Register();
-
-                // HTTP/1.1 200 OK
-                // Date:                          Tue, 27 Dec 2022 09:16:14 GMT
-                // Access-Control-Allow-Methods:  OPTIONS, GET, POST, PUT, DELETE
-                // Access-Control-Allow-Headers:  Authorization
-                // Server:                        GraphDefined Hermod HTTP Server v1.0
-                // Access-Control-Allow-Origin:   *
-                // Connection:                    close
-                // Content-Type:                  application/json; charset=utf-8
-                // Content-Length:                340
-                // X-Request-ID:                  vzY6jY44Gjf995rAC14487f3K1Wpr5
-                // X-Correlation-ID:              Ev63U91239t523E1Q9xb41fA3dCzC4
+                // Date:                            Sun, 30 Apr 2023 08:03:44 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  330
+                // X-Request-ID:                    ACjnj252Gvr647rW86KYxWYMCdjv6U
+                // X-Correlation-ID:                jM2KMp89jK575MfMf67Kjfr2CM5EW7
                 // 
                 // {
                 //     "data": {
-                //         "token":         "tM1bM71zW39f9W46WM5K9W46h6rYtdYfK1nS46rjA6Cf9ffY9h",
-                //         "url":           "http://127.0.0.1:7135/versions",
+                //         "token":         "cpo-accessing-emsp1::token",
+                //         "url":           "http://127.0.0.1:3401/ocpi/v2.1/versions",
                 //         "business_details": {
-                //             "name":            "GraphDefined EMSP Services",
-                //             "website":         "https://www.graphdefined.com/emsp"
+                //             "name":          "GraphDefined EMSP #1 Services",
+                //             "website":       "https://www.graphdefined.com/emsp1"
+                //         },
+                //         "country_code":  "DE",
+                //         "party_id":      "GDF"
+                //     },
+                //     "status_code":        1000,
+                //     "status_message":    "Hello world!",
+                //     "timestamp":         "2023-04-30T08:03:44.581Z"
+                // }
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (1000,           response.StatusCode);
+                Assert.AreEqual ("Hello world!", response.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response.RequestId);
+                Assert.IsNotNull(response.CorrelationId);
+
+                var credentials = response.Data;
+                Assert.IsNotNull(credentials);
+
+                if (credentials is not null)
+                {
+
+                    Assert.AreEqual (cpo_accessing_emsp1__token,                   credentials.    Token.      ToString());
+                    Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   credentials.    URL.        ToString());
+                    Assert.AreEqual ("DE",                                         credentials.    CountryCode.ToString());
+                    Assert.AreEqual ("GDF",                                        credentials.    PartyId.    ToString());
+
+                    var businessDetails = credentials.BusinessDetails;
+                    Assert.IsNotNull(businessDetails);
+                    Assert.AreEqual ("GraphDefined EMSP #1 Services",              businessDetails.Name);
+                    Assert.AreEqual ("https://www.graphdefined.com/emsp1",         businessDetails.Website.    ToString());
+
+                }
+
+
+                // GET ~/versions, GET ~/version/2.1.1, GET ~/v2.1.1/credentials
+                Assert.AreEqual(3,  emsp1APIRequestLogs. Count);
+                Assert.AreEqual(3,  emsp1APIResponseLogs.Count);
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetCredentials_RegisteredToken_Test2()
+
+        /// <summary>
+        /// CPO GetCredentials Test (EMSP 2).
+        /// </summary>
+        [Test]
+        public async Task CPO_GetCredentials_RegisteredToken_Test2()
+        {
+
+            var graphDefinedEMSP2 = cpoCommonAPI?.GetCPOClient(
+                                        CountryCode: CountryCode.Parse("DE"),
+                                        PartyId:     Party_Id.   Parse("GD2")
+                                    );
+
+            Assert.IsNotNull(graphDefinedEMSP2);
+
+            if (graphDefinedEMSP2 is not null)
+            {
+
+                var response = await graphDefinedEMSP2.GetCredentials();
+
+                // GET /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Sun, 30 Apr 2023 08:07:42 GMT
+                // Accept:                          application/json; charset=utf-8;q=1
+                // Host:                            localhost:3402
+                // Authorization:                   Token cpo-accessing-emsp2::token
+                // X-Request-ID:                    xt167nt9WCjzKpfp5btn3CG4bzM3dS
+                // X-Correlation-ID:                732phS8A686tMb4hE82982ftYbp38S
+
+                // HTTP/1.1 200 OK
+                // Date:                            Sun, 30 Apr 2023 08:07:42 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  330
+                // X-Request-ID:                    xt167nt9WCjzKpfp5btn3CG4bzM3dS
+                // X-Correlation-ID:                732phS8A686tMb4hE82982ftYbp38S
+                // 
+                // {
+                //     "data": {
+                //         "token":         "cpo-accessing-emsp2::token",
+                //         "url":           "http://127.0.0.1:3402/ocpi/v2.1/versions",
+                //         "business_details": {
+                //             "name":          "GraphDefined EMSP #2 Services",
+                //             "website":       "https://www.graphdefined.com/emsp2"
+                //         },
+                //         "country_code":  "DE",
+                //         "party_id":      "GD2"
+                //     },
+                //     "status_code":        1000,
+                //     "status_message":    "Hello world!",
+                //     "timestamp":         "2023-04-30T08:07:42.354Z"
+                // }
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (1000,           response.StatusCode);
+                Assert.AreEqual ("Hello world!", response.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response.RequestId);
+                Assert.IsNotNull(response.CorrelationId);
+
+                var credentials = response.Data;
+                Assert.IsNotNull(credentials);
+
+                if (credentials is not null)
+                {
+
+                    Assert.AreEqual (cpo_accessing_emsp2__token,                   credentials.    Token.      ToString());
+                    Assert.AreEqual ("http://127.0.0.1:3402/ocpi/v2.1/versions",   credentials.    URL.        ToString());
+                    Assert.AreEqual ("DE",                                         credentials.    CountryCode.ToString());
+                    Assert.AreEqual ("GD2",                                        credentials.    PartyId.    ToString());
+
+                    var businessDetails = credentials.BusinessDetails;
+                    Assert.IsNotNull(businessDetails);
+                    Assert.AreEqual ("GraphDefined EMSP #2 Services",              businessDetails.Name);
+                    Assert.AreEqual ("https://www.graphdefined.com/emsp2",         businessDetails.Website.    ToString());
+
+                }
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region CPO_Register_PreRegisteredToken_Test1()
+
+        /// <summary>
+        /// CPO Register using a pre registered access token (CPO).
+        /// </summary>
+        [Test]
+        public async Task CPO_Register_PreRegisteredToken_Test1()
+        {
+
+            var graphDefinedEMSP1 = cpoCommonAPI?.GetCPOClient(
+                                        CountryCode: CountryCode.Parse("DE"),
+                                        PartyId:     Party_Id.   Parse("GDF")
+                                    );
+
+            Assert.IsNotNull(graphDefinedEMSP1);
+
+            if (graphDefinedEMSP1 is not null &&
+                cpoVersionsAPIURL.HasValue &&
+                emsp1HTTPAPI   is not null &&
+                cpoCommonAPI   is not null &&
+                emsp1CommonAPI is not null)
+            {
+
+                #region Configure Remote Parties
+
+                cpoCommonAPI.  RemoveAllRemoteParties();
+                emsp1CommonAPI.RemoveAllRemoteParties();
+
+                cpoCommonAPI.  AddRemoteParty(CountryCode:       emsp1CommonAPI.OurCountryCode,
+                                              PartyId:           emsp1CommonAPI.OurPartyId,
+                                              Role:              Roles.EMSP,
+                                              BusinessDetails:   emsp1CommonAPI.OurBusinessDetails,
+
+                                              AccessToken:       AccessToken.Parse(emsp1_accessing_cpo__token),
+                                              AccessStatus:      AccessStatus.ALLOWED,
+
+                                              PartyStatus:       PartyStatus.ENABLED);
+
+                #endregion
+
+                var response = await graphDefinedEMSP1.Register();
+
+                // POST /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:               Sat, 06 May 2023 02:40:46 GMT
+                // Accept:             application/json; charset=utf-8; q=1
+                // Host:               localhost:3301
+                // Authorization:      Token emsp1_accessing_cpo::token
+                // Content-Type:       application/json; charset=utf-8
+                // Content-Length:     300
+                // X-Request-ID:       72fQ7S1fAKC1trnv2zECGv14tfn5Y8
+                // X-Correlation-ID:   hE8Ktb1MfKt6Q1df17A1K4z7QnG18v
+                // 
+                // {
+                //     "token":         "Gnf45791nft78Qjz68U2MS9fG2fhM8f1U515GUv8QWA4Azr4hx",
+                //     "url":           "http://127.0.0.1:3401/ocpi/v2.1/versions",
+                //     "business_details": {
+                //         "name":          "GraphDefined EMSP #1 Services",
+                //         "website":       "https://www.graphdefined.com/emsp1"
+                //     },
+                //     "country_code":  "DE",
+                //     "party_id":      "GDF"
+                // }
+
+                // HTTP/1.1 200 OK
+                // Date:                           Sat, 06 May 2023 02:40:56 GMT
+                // Access-Control-Allow-Methods:   OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:   Authorization
+                // Server:                         GraphDefined HTTP API
+                // Access-Control-Allow-Origin:    *
+                // Vary:                           Accept
+                // Connection:                     close
+                // Content-Type:                   application/json; charset=utf-8
+                // Content-Length:                 348
+                // X-Request-ID:                   72fQ7S1fAKC1trnv2zECGv14tfn5Y8
+                // X-Correlation-ID:               hE8Ktb1MfKt6Q1df17A1K4z7QnG18v
+                // 
+                // {
+                //     "data": {
+                //         "token":           "7bKWv58h56r3fzCjGYCjSbn1QQ6hWpvQ98rG97YM9MMSz95j4n",
+                //         "url":             "http://127.0.0.1:3301/ocpi/v2.1/versions",
+                //         "business_details": {
+                //             "name":            "GraphDefined CSO Services",
+                //             "website":         "https://www.graphdefined.com/cso"
+                //         },
+                //         "country_code":    "DE",
+                //         "party_id":        "GEF"
+                //     },
+                //     "status_code":      1000,
+                //     "status_message":  "Hello world!",
+                //     "timestamp":       "2023-05-06T02:41:08.016Z"
+                // }
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (1000,           response.StatusCode);
+                Assert.AreEqual ("Hello world!", response.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response.RequestId);
+                Assert.IsNotNull(response.CorrelationId);
+
+                var credentials = response.Data;
+                Assert.IsNotNull(credentials);
+
+                if (credentials is not null)
+                {
+
+                    #region Validate Credentials
+
+                    Assert.IsNotNull  (credentials.Token);
+                    Assert.AreNotEqual(emsp1_accessing_cpo__token,                    credentials.    Token.      ToString());
+                    Assert.AreEqual   ("http://127.0.0.1:3301/ocpi/v2.1/versions",   credentials.    URL.        ToString());
+                    Assert.AreEqual   ("DE",                                         credentials.    CountryCode.ToString());
+                    Assert.AreEqual   ("GEF",                                        credentials.    PartyId.    ToString());
+
+                    var businessDetails = credentials.BusinessDetails;
+                    Assert.IsNotNull  (businessDetails);
+                    Assert.AreEqual   ("GraphDefined CSO Services",                  businessDetails.Name);
+                    Assert.AreEqual   ("https://www.graphdefined.com/cso",           businessDetails.Website.    ToString());
+
+                    #endregion
+
+                    #region Cross-Validate CPO and EMSP1 access tokens
+
+                    // Validate CPO
+                    Assert.AreEqual(1,           cpoCommonAPI.  RemoteParties.    Count());
+                    var emsp1                  = cpoCommonAPI.  RemoteParties.    First();
+                    Assert.IsNotNull(emsp1);
+
+                    Assert.AreEqual(1,           emsp1.         LocalAccessInfos. Count());
+                    Assert.AreEqual(1,           emsp1.         RemoteAccessInfos.Count());
+
+                    var cpoLocalAccessInfo     = emsp1.         LocalAccessInfos. First();
+                    var cpoRemoteAccessInfo    = emsp1.         RemoteAccessInfos.First();
+
+
+                    // Validate EMSP1
+                    Assert.AreEqual(1,           emsp1CommonAPI.RemoteParties.    Count());
+                    var cpo                    = emsp1CommonAPI.RemoteParties.    First();
+                    Assert.IsNotNull(cpo);
+
+                    Assert.AreEqual(1,           cpo.           LocalAccessInfos. Count());
+                    Assert.AreEqual(1,           cpo.           RemoteAccessInfos.Count());
+
+                    var emsp1LocalAccessInfo   = cpo.           LocalAccessInfos. First();
+                    var emsp1RemoteAccessInfo  = cpo.           RemoteAccessInfos.First();
+
+
+                    // Cross-Validate CPO and EMSP1 access tokens
+                    Assert.AreEqual(cpoLocalAccessInfo. AccessToken.ToString(),   credentials.          Token.      ToString());
+                    Assert.AreEqual(cpoLocalAccessInfo. AccessToken.ToString(),   emsp1RemoteAccessInfo.AccessToken.ToString());
+                    Assert.AreEqual(cpoRemoteAccessInfo.AccessToken.ToString(),   emsp1LocalAccessInfo. AccessToken.ToString());
+
+                    #endregion
+
+                    #region Validate, that the existing EMSPClient updated the internal access token(s)
+
+                    var graphDefinedEMSP1_AccessToken   = graphDefinedEMSP1.AccessToken.ToString();
+                    var graphDefinedEMSP1_TokenAuth     = graphDefinedEMSP1.TokenAuth.Token;
+
+                    var response2                       = await graphDefinedEMSP1.GetTokens();
+
+                    var emsp1AccessTokenReallyUsed    = (response2.HTTPResponse?.HTTPRequest?.Authorization as HTTPTokenAuthentication)?.Token;
+
+                    // Cross-Validate CPO and EMSP1 access tokens
+                    Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    graphDefinedEMSP1_AccessToken);
+                    Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    graphDefinedEMSP1_TokenAuth);
+                    Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    emsp1AccessTokenReallyUsed);
+
+                    #endregion
+
+                    #region Get a new CPOClient and validate, that it is using the new access token
+
+                    var graphDefinedEMSP1b = cpoCommonAPI?.GetCPOClient(
+                                                 CountryCode: CountryCode.Parse("DE"),
+                                                 PartyId:     Party_Id.   Parse("GDF")
+                                             );
+
+                    Assert.IsNotNull(graphDefinedEMSP1b);
+
+                    if (graphDefinedEMSP1b is not null)
+                    {
+
+                        var graphDefinedEMSP1b_AccessToken  = graphDefinedEMSP1b.AccessToken.ToString();
+                        var graphDefinedEMSP1b_TokenAuth    = graphDefinedEMSP1b.TokenAuth.Token;
+
+                        var response3                       = await graphDefinedEMSP1b.GetTokens();
+
+                        var emsp1AccessTokenReallyUsed2     = (response3.HTTPResponse?.HTTPRequest?.Authorization as HTTPTokenAuthentication)?.Token;
+
+
+                        // Cross-Validate CPO and EMSP1 access tokens
+                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    graphDefinedEMSP1b_AccessToken);
+                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    graphDefinedEMSP1b_TokenAuth);
+                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    emsp1AccessTokenReallyUsed2);
+
+                    }
+
+                    #endregion
+
+                }
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region CPO_DeleteCredentials_RegisteredToken_Test1()
+
+        /// <summary>
+        /// CPO GetCredentials Test (CPO).
+        /// </summary>
+        [Test]
+        public async Task CPO_DeleteCredentials_RegisteredToken_Test1()
+        {
+
+            var graphDefinedEMSP1 = cpoCommonAPI?.GetCPOClient(
+                                      CountryCode: CountryCode.Parse("DE"),
+                                      PartyId:     Party_Id.   Parse("GDF")
+                                  );
+
+            Assert.IsNotNull(graphDefinedEMSP1);
+
+            if (graphDefinedEMSP1 is not null &&
+                emsp1CommonAPI is not null)
+            {
+
+                RemoteParty? remotePartyAtEMSP1() => emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == cpo_accessing_emsp1__token));
+
+                var remotePartyAtEMSP1_before  = remotePartyAtEMSP1();
+                Assert.IsNotNull(remotePartyAtEMSP1_before);
+
+                var response                 = await graphDefinedEMSP1.DeleteCredentials();
+
+                // DELETE /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Fri, 05 May 2023 12:31:07 GMT
+                // Accept:                          application/json; charset=utf-8; q=1
+                // Host:                            127.0.0.1:3401
+                // Authorization:                   Token cpo_accessing_emsp1::token
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                // HTTP/1.1 200 OK
+                // Date:                            Fri, 05 May 2023 12:31:07 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  143
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      1000,
+                //     "status_message":  "The given access token 'cpo_accessing_emsp1::token' was deleted!",
+                //     "timestamp":       "2023-05-05T12:31:07.181Z"
+                // }
+
+                Assert.IsNotNull(response);
+                Assert.AreEqual (200,                                                                  response.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (1000,                                                                 response.StatusCode);
+                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1::token' was deleted!",   response.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response.RequestId);
+                Assert.IsNotNull(response.CorrelationId);
+
+
+                // Validate, that the remote party was deleted!
+                var remotePartyAtEMSP1_after  = remotePartyAtEMSP1();
+                Assert.IsNull(remotePartyAtEMSP1_after);
+
+            }
+
+        }
+
+        #endregion
+
+
+        // HTTP client JSON tests
+
+        #region CPO_GetCredentials_JSON_NoToken_Test()
+
+        /// <summary>
+        /// CPO GetCredentials JSON without an access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_GetCredentials_JSON_NoToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+                var response3       = await TestHelpers.GetJSONRequest(credentialsURL);
+
+                // HTTP/1.1 200 OK
+                // Date:                            Sun, 30 Apr 2023 10:02:02 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  309
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "data": {
+                //         "token":         "<any>",
+                //         "url":           "http://127.0.0.1:3401/ocpi/v2.1/versions",
+                //         "business_details": {
+                //             "name":          "GraphDefined EMSP #1 Services",
+                //             "website":       "https://www.graphdefined.com/emsp1"
+                //         },
+                //         "country_code":  "DE",
+                //         "party_id":      "GDF"
+                //     },
+                //     "status_code":        1000,
+                //     "status_message":    "Hello world!",
+                //     "timestamp":         "2023-04-30T10:02:02.264Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (200,            response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json        = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual ("<any>",                                      json["data"]?["token"]?.                       Value<String>());
+                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   json["data"]?["url"]?.                         Value<String>());
+
+                Assert.AreEqual ("GraphDefined EMSP #1 Services",              json["data"]?["business_details"]?["name"]?.   Value<String>());
+                Assert.AreEqual ("https://www.graphdefined.com/emsp1",         json["data"]?["business_details"]?["website"]?.Value<String>());
+
+                Assert.AreEqual ("DE",                                         json["data"]?["country_code"]?.                Value<String>());
+                Assert.AreEqual ("GDF",                                        json["data"]?["party_id"]?.                    Value<String>());
+
+                Assert.AreEqual (1000,                                         json["status_code"]?.                          Value<UInt32>());
+                Assert.AreEqual ("Hello world!",                               json["status_message"]?.                       Value<String>());
+
+                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetCredentials_JSON_UnknownToken_Test()
+
+        /// <summary>
+        /// CPO GetCredentials JSON using an unknown access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_GetCredentials_JSON_UnknownToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.GetJSONRequest(credentialsURL,
+                                                                       UnknownToken);
+
+                // HTTP/1.1 200 OK
+                // Date:                            Sun, 30 Apr 2023 10:02:02 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  303
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "data": {
+                //         "token":         "<any>",
+                //         "url":           "http://127.0.0.1:3401/ocpi/v2.1/versions",
+                //         "business_details": {
+                //             "name":          "GraphDefined EMSP #1 Services",
+                //             "website":       "https://www.graphdefined.com/emsp1"
+                //         },
+                //         "country_code":  "DE",
+                //         "party_id":      "GDF"
+                //     },
+                //     "status_code":        1000,
+                //     "status_message":    "Hello world!",
+                //     "timestamp":         "2023-04-30T10:02:02.264Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (200,            response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json        = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual ("<any>",                                      json["data"]?["token"]?.                       Value<String>());
+                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   json["data"]?["url"]?.                         Value<String>());
+
+                Assert.AreEqual ("GraphDefined EMSP #1 Services",              json["data"]?["business_details"]?["name"]?.   Value<String>());
+                Assert.AreEqual ("https://www.graphdefined.com/emsp1",         json["data"]?["business_details"]?["website"]?.Value<String>());
+
+                Assert.AreEqual ("DE",                                         json["data"]?["country_code"]?.                Value<String>());
+                Assert.AreEqual ("GDF",                                        json["data"]?["party_id"]?.                    Value<String>());
+
+                Assert.AreEqual (1000,                                         json["status_code"]?.                          Value<UInt32>());
+                Assert.AreEqual ("Hello world!",                               json["status_message"]?.                       Value<String>());
+
+                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetCredentials_JSON_BlockedToken_Test()
+
+        /// <summary>
+        /// CPO GetCredentials JSON using a blocked access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_GetCredentials_JSON_BlockedToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.GetJSONRequest(credentialsURL,
+                                                                       BlockedCPOToken);
+
+                // HTTP/1.1 403 Forbidden
+                // Date:                            Sun, 30 Apr 2023 10:14:01 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  111
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      2000,
+                //     "status_message":  "Invalid or blocked access token!",
+                //     "timestamp":       "2023-04-30T10:14:01.041Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (403,            response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json        = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (2000,                                 json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("Invalid or blocked access token!",   json["status_message"]?.Value<String>());
+
+                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue   (Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetCredentials_JSON_RegisteredToken_Test()
+
+        /// <summary>
+        /// CPO GetCredentials JSON using a registered access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_GetCredentials_JSON_RegisteredToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.GetJSONRequest(credentialsURL,
+                                                                       cpo_accessing_emsp1__token);
+
+                // HTTP/1.1 200 OK
+                // Date:                            Sun, 30 Apr 2023 10:24:16 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  330
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "data": {
+                //         "token":         "cpo_accessing_emsp1::token",
+                //         "url":           "http://127.0.0.1:3401/ocpi/v2.1/versions",
+                //         "business_details": {
+                //             "name":          "GraphDefined EMSP #1 Services",
+                //             "website":       "https://www.graphdefined.com/emsp1"
+                //         },
+                //         "country_code":  "DE",
+                //         "party_id":      "GDF"
+                //     },
+                //     "status_code":        1000,
+                //     "status_message":    "Hello world!",
+                //     "timestamp":         "2023-04-30T10:24:16.022Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (200,            response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json        = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (cpo_accessing_emsp1__token,                   json["data"]?["token"]?.                       Value<String>());
+                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   json["data"]?["url"]?.                         Value<String>());
+
+                Assert.AreEqual ("GraphDefined EMSP #1 Services",              json["data"]?["business_details"]?["name"]?.   Value<String>());
+                Assert.AreEqual ("https://www.graphdefined.com/emsp1",         json["data"]?["business_details"]?["website"]?.Value<String>());
+
+                Assert.AreEqual ("DE",                                         json["data"]?["country_code"]?.                Value<String>());
+                Assert.AreEqual ("GDF",                                        json["data"]?["party_id"]?.                    Value<String>());
+
+                Assert.AreEqual (1000,                                         json["status_code"]?.                          Value<UInt32>());
+                Assert.AreEqual ("Hello world!",                               json["status_message"]?.                       Value<String>());
+
+                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region CPO_OptionsCredentials_JSON_NoToken_Test()
+
+        /// <summary>
+        /// CPO PutCredentials JSON without an access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_OptionsCredentials_JSON_NoToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.OptionsRequest(credentialsURL);
+
+                // OPTIONS /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Sat, 06 May 2023 02:19:38 GMT
+                // Host:                            127.0.0.1:3301
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                // HTTP/1.1 200 OK
+                // Date:                            Sat, 06 May 2023 02:19:38 GMT
+                // Access-Control-Allow-Headers:    Authorization
+                // Access-Control-Allow-Methods:    OPTIONS, GET
+                // Allow:                           OPTIONS, GET
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (200,                      response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now -           response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response3.AccessControlAllowMethods);
+                if (response3.AccessControlAllowMethods is not null)
+                {
+                    Assert.AreEqual (2,                    response3.AccessControlAllowMethods.Count());
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("GET"));
+                }
+
+                Assert.IsNotNull(response3.Allow);
+                if (response3.Allow is not null)
+                {
+                    Assert.AreEqual (2,                    response3.Allow.Count);
+                    Assert.Contains (HTTPMethod.OPTIONS,   response3.Allow);
+                    Assert.Contains (HTTPMethod.GET,       response3.Allow);
+                }
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_OptionsCredentials_JSON_UnknownToken_Test()
+
+        /// <summary>
+        /// CPO PutCredentials JSON using an unknown access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_OptionsCredentials_JSON_UnknownToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.OptionsRequest(credentialsURL,
+                                                                       UnknownToken);
+
+                // OPTIONS /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Sat, 06 May 2023 02:24:17 GMT
+                // Host:                            127.0.0.1:3301
+                // Authorization:                   Token UnknownUnknownUnknownToken
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                // HTTP/1.1 200 OK
+                // Date:                            Sat, 06 May 2023 02:24:17 GMT
+                // Access-Control-Allow-Headers:    Authorization
+                // Access-Control-Allow-Methods:    OPTIONS, GET
+                // Allow:                           OPTIONS, GET
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (200,                      response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now -           response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response3.AccessControlAllowMethods);
+                if (response3.AccessControlAllowMethods is not null)
+                {
+                    Assert.AreEqual (2,                    response3.AccessControlAllowMethods.Count());
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("GET"));
+                }
+
+                Assert.IsNotNull(response3.Allow);
+                if (response3.Allow is not null)
+                {
+                    Assert.AreEqual (2,                    response3.Allow.Count);
+                    Assert.Contains (HTTPMethod.OPTIONS,   response3.Allow);
+                    Assert.Contains (HTTPMethod.GET,       response3.Allow);
+                }
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_OptionsCredentials_JSON_BlockedToken_Test()
+
+        /// <summary>
+        /// CPO PutCredentials JSON using a blocked access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_OptionsCredentials_JSON_BlockedToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.OptionsRequest(credentialsURL,
+                                                                       BlockedEMSPToken);
+
+                // OPTIONS /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Sat, 06 May 2023 02:26:16 GMT
+                // Host:                            127.0.0.1:3301
+                // Authorization:                   Token blocked-emsp
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                // HTTP/1.1 200 OK
+                // Date:                            Sat, 06 May 2023 02:26:16 GMT
+                // Access-Control-Allow-Headers:    Authorization
+                // Access-Control-Allow-Methods:    OPTIONS, GET
+                // Allow:                           OPTIONS, GET
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (200,                      response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now -           response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response3.AccessControlAllowMethods);
+                if (response3.AccessControlAllowMethods is not null)
+                {
+                    Assert.AreEqual (2,                    response3.AccessControlAllowMethods.Count());
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("GET"));
+                }
+
+                Assert.IsNotNull(response3.Allow);
+                if (response3.Allow is not null)
+                {
+                    Assert.AreEqual (2,                    response3.Allow.Count);
+                    Assert.Contains (HTTPMethod.OPTIONS,   response3.Allow);
+                    Assert.Contains (HTTPMethod.GET,       response3.Allow);
+                }
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_OptionsCredentials_JSON_RegisteredToken_Test()
+
+        /// <summary>
+        /// CPO PutCredentials JSON using a registered access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_OptionsCredentials_JSON_RegisteredToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.OptionsRequest(credentialsURL,
+                                                                       cpo_accessing_emsp1__token);
+
+                // OPTIONS /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Sat, 06 May 2023 02:16:02 GMT
+                // Host:                            127.0.0.1:3301
+                // Authorization:                   Token emsp1_accessing_cpo::token
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                // HTTP/1.1 200 OK
+                // Date:                            Sat, 06 May 2023 02:16:02 GMT
+                // Access-Control-Allow-Headers:    Authorization
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Allow:                           OPTIONS, GET, POST, PUT, DELETE
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (200,                      response3.HTTPStatusCode.Code);
+                Assert.IsTrue   (Timestamp.Now -           response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                Assert.IsNotNull(response3.AccessControlAllowMethods);
+                if (response3.AccessControlAllowMethods is not null)
+                {
+                    Assert.AreEqual (5,                    response3.AccessControlAllowMethods.Count());
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("GET"));
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("POST"));
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("PUT"));
+                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("DELETE"));
+                }
+
+                Assert.IsNotNull(response3.Allow);
+                if (response3.Allow is not null)
+                {
+                    Assert.AreEqual (5,                    response3.Allow.Count);
+                    Assert.Contains (HTTPMethod.OPTIONS,   response3.Allow);
+                    Assert.Contains (HTTPMethod.GET,       response3.Allow);
+                    Assert.Contains (HTTPMethod.POST,      response3.Allow);
+                    Assert.Contains (HTTPMethod.PUT,       response3.Allow);
+                    Assert.Contains (HTTPMethod.DELETE,    response3.Allow);
+                }
+
+
+                // GET ~/versions, GET ~/version/2.1.1
+                Assert.AreEqual(2,  emsp1APIRequestLogs. Count);
+                Assert.AreEqual(2,  emsp1APIResponseLogs.Count);
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region CPO_PutCredentials_JSON_NoToken_Test()
+
+        /// <summary>
+        /// CPO PutCredentials JSON without an access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_PutCredentials_JSON_NoToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
+                                                                       new Credentials(
+                                                                           AccessToken.Parse("1234"),
+                                                                           URL.Parse("http://localhost/versions"),
+                                                                           new BusinessDetails(
+                                                                               "GraphDefined",
+                                                                               URL.Parse("https://www.graphdefined.com")
+                                                                           ),
+                                                                           CountryCode.Parse("DE"),
+                                                                           Party_Id.   Parse("GDF")
+                                                                       ).ToJSON());
+
+
+                // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Mon, 01 May 2023 04:03:30 GMT
+                // Accept:                          application/json; charset=utf-8;q=1
+                // Host:                            127.0.0.1:3301
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  171
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "token":         "1234",
+                //     "url":           "http://localhost/versions",
+                //     "business_details": {
+                //         "name":      "GraphDefined",
+                //         "website":   "https://www.graphdefined.com"
+                //     },
+                //     "country_code":  "DE",
+                //     "party_id":      "GEF"
+                // }
+
+                // HTTP/1.1 405 Method Not Allowed
+                // Date:                            Mon, 01 May 2023 04:03:51 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  151
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      2000,
+                //     "status_message":  "You need to be registered before trying to invoke this protected method!",
+                //     "timestamp":       "2023-05-01T04:04:02.642Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (405, response3.HTTPStatusCode.Code);
+                Assert.AreEqual (2,   response3.AccessControlAllowMethods?.Count());
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json        = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (2000,                                                                         json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("You need to be registered before trying to invoke this protected method!",   json["status_message"]?.Value<String>());
+
+                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_PutCredentials_JSON_UnknownToken_Test()
+
+        /// <summary>
+        /// CPO PutCredentials JSON using an unknown access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_PutCredentials_JSON_UnknownToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
+                                                                       new Credentials(
+                                                                           AccessToken.Parse("1234"),
+                                                                           URL.Parse("http://localhost/versions"),
+                                                                           new BusinessDetails(
+                                                                               "GraphDefined",
+                                                                               URL.Parse("https://www.graphdefined.com")
+                                                                           ),
+                                                                           CountryCode.Parse("DE"),
+                                                                           Party_Id.   Parse("GDF")
+                                                                       ).ToJSON(),
+                                                                       UnknownToken);
+
+
+                // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Wed, 03 May 2023 21:29:12 GMT
+                // Accept:                          application/json; charset=utf-8;q=1
+                // Host:                            127.0.0.1:3301
+                // Authorization:                   Token UnknownUnknownUnknownToken
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  171
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "token":         "1234",
+                //     "url":           "http://localhost/versions",
+                //     "business_details": {
+                //         "name":      "GraphDefined",
+                //         "website":   "https://www.graphdefined.com"
+                //     },
+                //     "country_code":  "DE",
+                //     "party_id":      "GEF"
+                // }
+
+                // HTTP/1.1 405 Method Not Allowed
+                // Date:                            Wed, 03 May 2023 21:29:12 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  151
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      2000,
+                //     "status_message":  "You need to be registered before trying to invoke this protected method!",
+                //     "timestamp":       "2023-05-03T21:29:12.612Z"}
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (405, response3.HTTPStatusCode.Code);
+                Assert.AreEqual (2,   response3.AccessControlAllowMethods?.Count());
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json        = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (2000,                                                                         json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("You need to be registered before trying to invoke this protected method!",   json["status_message"]?.Value<String>());
+
+                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_PutCredentials_JSON_BlockedToken_Test()
+
+        /// <summary>
+        /// CPO PutCredentials JSON using a blocked access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_PutCredentials_JSON_BlockedToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue)
+            {
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
+                                                                       new Credentials(
+                                                                           AccessToken.Parse("1234"),
+                                                                           URL.Parse("http://localhost/versions"),
+                                                                           new BusinessDetails(
+                                                                               "GraphDefined",
+                                                                               URL.Parse("https://www.graphdefined.com")
+                                                                           ),
+                                                                           CountryCode.Parse("DE"),
+                                                                           Party_Id.   Parse("GEF")
+                                                                       ).ToJSON(),
+                                                                       BlockedCPOToken);
+
+
+                // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Wed, 03 May 2023 21:29:12 GMT
+                // Accept:                          application/json; charset=utf-8;q=1
+                // Host:                            127.0.0.1:3301
+                // Authorization:                   Token blocked-emsp
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  171
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "token":         "1234",
+                //     "url":           "http://localhost/versions",
+                //     "business_details": {
+                //         "name":      "GraphDefined",
+                //         "website":   "https://www.graphdefined.com"
+                //     },
+                //     "country_code":  "DE",
+                //     "party_id":      "GEF"
+                // }
+
+                // HTTP/1.1 403 Forbidden
+                // Date:                            Sun, 30 Apr 2023 10:14:01 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  111
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      2000,
+                //     "status_message":  "The given access token 'blocked-cpo' is blocked!",
+                //     "timestamp":       "2023-04-30T10:14:01.041Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (403, response3.HTTPStatusCode.Code);
+                Assert.AreEqual (2,   response3.AccessControlAllowMethods?.Count());
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json        = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (2000,                                                 json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("The given access token 'blocked-cpo' is blocked!",   json["status_message"]?.Value<String>());
+
+                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_PutCredentials_JSON_RegisteredToken_Test()
+
+        /// <summary>
+        /// CPO PutCredentials JSON using a registered access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_PutCredentials_JSON_RegisteredToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue &&
+                cpoHTTPAPI     is not null &&
+                cpoCommonAPI   is not null &&
+                emsp1CommonAPI is not null)
+            {
+
+                var newAccessToken  = AccessToken.Parse("updatedAccessToken");
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
+                                                                       new Credentials(
+                                                                           newAccessToken,
+                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                                           new BusinessDetails(
+                                                                               "GraphDefined CSO (NEW)",
+                                                                               URL.Parse("https://www.graphdefined.com/cso/new")
+                                                                           ),
+                                                                           CountryCode.Parse("DE"),
+                                                                           Party_Id.   Parse("GEF")
+                                                                       ).ToJSON(),
+                                                                       cpo_accessing_emsp1__token);
+
+
+                // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Thu, 04 May 2023 04:35:10 GMT
+                // Accept:                          application/json; charset=utf-8; q=1
+                // Host:                            127.0.0.1:3401
+                // Authorization:                   Token cpo_accessing_emsp1::token
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  223
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "token":         "updatedAccessToken",
+                //     "url":           "http://localhost:3301/ocpi/v2.1/versions",
+                //     "business_details": {
+                //         "name":           "GraphDefined CSO (NEW)",
+                //         "website":        "https://www.graphdefined.com/cso/new"
+                //     },
+                //     "country_code":  "DE",
+                //     "party_id":      "GEF"
+                // }
+
+                // HTTP/1.1 200 OK
+                // Date:                            Thu, 04 May 2023 04:35:16 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  348
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "data": {
+                //         "token":           "rMGz58G464SS2A9Y76A6G9CrjKEQdMn5pxdh1Wt2d2hMv6Epzx",
+                //         "url":             "http://127.0.0.1:3401/ocpi/v2.1/versions",
+                //         "business_details": {
+                //             "name":            "GraphDefined EMSP #1 Services",
+                //             "website":         "https://www.graphdefined.com/emsp1"
                 //         },
                 //         "country_code":    "DE",
                 //         "party_id":        "GDF"
                 //     },
                 //     "status_code":      1000,
                 //     "status_message":  "Hello world!",
-                //     "timestamp":       "2022-12-27T09:16:14.632Z"
+                //     "timestamp":       "2023-05-04T04:35:16.712Z"
                 // }
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (200,             response2.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,            response2.StatusCode);
-                Assert.AreEqual ("Hello world!",  response2.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now -  response2.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (200, response3.HTTPStatusCode.Code);
+                Assert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
-                //Assert.IsNotNull(response.Request);
+                var json        = response3.Content;
+                Assert.IsNotNull(json);
 
-                var remoteAccessInfoNew  = cpoCommonAPI?.  RemoteParties.First().RemoteAccessInfos.First();
-                Assert.IsNotNull  (remoteAccessInfoNew);
-                Assert.AreNotEqual(remoteAccessInfoOld?.AccessToken.ToString(),  remoteAccessInfoNew?.AccessToken.ToString());
+                var token       = json["data"]?["token"]?.Value<String>();
+                Assert.IsNotNull(token);
+                var accessToken = AccessToken.Parse(token!);
 
-                var accessInfoNew        = emsp1CommonAPI?.RemoteParties.First().LocalAccessInfos. First();
+                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",    json["data"]?["url"]?.                         Value<String>());
+
+                Assert.AreEqual ("GraphDefined EMSP #1 Services",               json["data"]?["business_details"]?["name"]?.   Value<String>());
+                Assert.AreEqual ("https://www.graphdefined.com/emsp1",          json["data"]?["business_details"]?["website"]?.Value<String>());
+
+                Assert.AreEqual ("DE",                                          json["data"]?["country_code"]?.                Value<String>());
+                Assert.AreEqual ("GDF",                                         json["data"]?["party_id"]?.                    Value<String>());
+
+                Assert.AreEqual (1000,                                          json["status_code"]?.                          Value<UInt32>());
+                Assert.AreEqual ("Hello world!",                                json["status_message"]?.                       Value<String>());
+
+                var timestamp   = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+
+                // Validate, that the remote party was updated!
+                var remotePartyAtEMSP1  = emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.RemoteAccessInfos.Any(remoteAccessInfo => remoteAccessInfo.AccessToken == newAccessToken));
+                Assert.IsNotNull(remotePartyAtEMSP1);
+
+                if (remotePartyAtEMSP1 is not null)
+                {
+                    Assert.AreEqual ("GraphDefined CSO (NEW)",                  remotePartyAtEMSP1.BusinessDetails.Name);
+                    Assert.AreEqual ("https://www.graphdefined.com/cso/new",    remotePartyAtEMSP1.BusinessDetails.Website.ToString());
+                    Assert.AreEqual ("DE",                                      remotePartyAtEMSP1.CountryCode.            ToString());
+                    Assert.AreEqual ("GEF",                                     remotePartyAtEMSP1.PartyId.                ToString());
+                    Assert.AreEqual (accessToken,                               remotePartyAtEMSP1.LocalAccessInfos.FirstOrDefault().AccessToken);
+                }
 
             }
 
@@ -837,6 +1490,458 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
         #endregion
 
+        #region CPO_PutCredentials_JSON_RegisteredToken_InvalidCountryCode_Test()
+
+        /// <summary>
+        /// CPO PutCredentials JSON using a registered access token and
+        /// trying to update the country code.
+        /// </summary>
+        [Test]
+        public async Task CPO_PutCredentials_JSON_RegisteredToken_InvalidCountryCode_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue &&
+                cpoHTTPAPI     is not null &&
+                cpoCommonAPI   is not null &&
+                emsp1CommonAPI is not null)
+            {
+
+                var newAccessToken  = AccessToken.Parse("updatedAccessToken");
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
+                                                                       new Credentials(
+                                                                           newAccessToken,
+                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                                           new BusinessDetails(
+                                                                               "GraphDefined CSO (NEW)",
+                                                                               URL.Parse("https://www.graphdefined.com/cso/new")
+                                                                           ),
+                                                                           CountryCode.Parse("FR"),
+                                                                           Party_Id.   Parse("GEF")
+                                                                       ).ToJSON(),
+                                                                       cpo_accessing_emsp1__token);
+
+
+                // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Thu, 04 May 2023 05:04:31 GMT
+                // Accept:                          application/json; charset=utf-8; q=1
+                // Host:                            127.0.0.1:3401
+                // Authorization:                   Token cpo-accessing-emsp1::token
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  223
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "token":         "updatedAccessToken",
+                //     "url":           "http://localhost:3301/ocpi/v2.1/versions",
+                //     "business_details": {
+                //         "name":           "GraphDefined CSO (NEW)",
+                //         "website":        "https://www.graphdefined.com/cso/new"
+                //     },
+                //     "country_code":  "FR",
+                //     "party_id":      "GEF"
+                // }
+
+                // HTTP/1.1 400 Bad Request
+                // Date:                            Thu, 04 May 2023 05:04:32 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  138
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      2000,
+                //     "status_message":  "Updating the country code from 'DE' to 'FR' is not allowed!",
+                //     "timestamp":       "2023-05-04T05:04:32.071Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (400, response3.HTTPStatusCode.Code);
+                Assert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json              = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (2000,                                                            json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("Updating the country code from 'DE' to 'FR' is not allowed!",   json["status_message"]?.Value<String>());
+
+                var timestamp         = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+
+                // Validate, that the remote party was not updated!
+                var remotePartyAtEMSP1  = emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == cpo_accessing_emsp1__token));
+                Assert.IsNotNull(remotePartyAtEMSP1);
+
+                if (remotePartyAtEMSP1 is not null)
+                {
+                    Assert.AreEqual ("GraphDefined CSO Services",                                 remotePartyAtEMSP1.BusinessDetails.Name);
+                    Assert.AreEqual ("https://www.graphdefined.com/cso",                          remotePartyAtEMSP1.BusinessDetails.Website.ToString());
+                    Assert.AreEqual ("DE",                                                        remotePartyAtEMSP1.CountryCode.            ToString());
+                    Assert.AreEqual ("GEF",                                                       remotePartyAtEMSP1.PartyId.                ToString());
+                }
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_PutCredentials_JSON_RegisteredToken_InvalidPartyId_Test()
+
+        /// <summary>
+        /// CPO PutCredentials JSON using a registered access token and
+        /// trying to update the party identification.
+        /// </summary>
+        [Test]
+        public async Task CPO_PutCredentials_JSON_RegisteredToken_InvalidPartyId_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue &&
+                cpoHTTPAPI     is not null &&
+                cpoCommonAPI   is not null &&
+                emsp1CommonAPI is not null)
+            {
+
+                var newAccessToken  = AccessToken.Parse("updatedAccessToken");
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
+                                                                       new Credentials(
+                                                                           newAccessToken,
+                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                                           new BusinessDetails(
+                                                                               "GraphDefined CSO (NEW)",
+                                                                               URL.Parse("https://www.graphdefined.com/cso/new")
+                                                                           ),
+                                                                           CountryCode.Parse("DE"),
+                                                                           Party_Id.   Parse("GXF")
+                                                                       ).ToJSON(),
+                                                                       cpo_accessing_emsp1__token);
+
+
+                // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Thu, 04 May 2023 05:04:31 GMT
+                // Accept:                          application/json; charset=utf-8; q=1
+                // Host:                            127.0.0.1:3401
+                // Authorization:                   Token cpo-accessing-emsp1::token
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  223
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "token":         "updatedAccessToken",
+                //     "url":           "http://localhost:3401/ocpi/v2.1/versions",
+                //     "business_details": {
+                //         "name":           "GraphDefined CSO (NEW)",
+                //         "website":        "https://www.graphdefined.com/cso/new"
+                //     },
+                //     "country_code":  "DE",
+                //     "party_id":      "GXF"
+                // }
+
+                // HTTP/1.1 400 Bad Request
+                // Date:                            Thu, 04 May 2023 05:04:32 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  148
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      2000,
+                //     "status_message":  "Updating the party identification from 'GEF' to 'GXF' is not allowed!",
+                //     "timestamp":       "2023-05-04T05:04:32.071Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (400, response3.HTTPStatusCode.Code);
+                Assert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json              = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (2000,                                                                      json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("Updating the party identification from 'GEF' to 'GXF' is not allowed!",   json["status_message"]?.Value<String>());
+
+                var timestamp         = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+
+                // Validate, that the remote party was not updated!
+                var remotePartyAtEMSP1  = emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == cpo_accessing_emsp1__token));
+                Assert.IsNotNull(remotePartyAtEMSP1);
+
+                if (remotePartyAtEMSP1 is not null)
+                {
+                    Assert.AreEqual ("GraphDefined CSO Services",                                 remotePartyAtEMSP1.BusinessDetails.Name);
+                    Assert.AreEqual ("https://www.graphdefined.com/cso",                          remotePartyAtEMSP1.BusinessDetails.Website.ToString());
+                    Assert.AreEqual ("DE",                                                        remotePartyAtEMSP1.CountryCode.            ToString());
+                    Assert.AreEqual ("GEF",                                                       remotePartyAtEMSP1.PartyId.                ToString());
+                }
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_PutCredentials_JSON_RegisteredToken_NotFullyRegistered_Test()
+
+        /// <summary>
+        /// CPO PutCredentials JSON using a registered but not yet fully registered access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_PutCredentials_JSON_RegisteredToken_NotFullyRegistered_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue &&
+                cpoHTTPAPI     is not null &&
+                cpoCommonAPI   is not null &&
+                emsp1CommonAPI is not null)
+            {
+
+                emsp1CommonAPI.RemoveAllRemoteParties();
+
+                emsp1CommonAPI.AddRemoteParty(CountryCode:                 cpoCommonAPI.OurCountryCode,
+                                              PartyId:                     cpoCommonAPI.OurPartyId,
+                                              Role:                        Roles.CPO,
+                                              BusinessDetails:             cpoCommonAPI.OurBusinessDetails,
+
+                                              AccessToken:                 AccessToken.Parse(cpo_accessing_emsp1__token),
+                                              AccessStatus:                AccessStatus.ALLOWED,
+
+                                              //RemoteAccessToken:           AccessToken.Parse("cpo_accessing_emsp1::token"),
+                                              //RemoteVersionsURL:           null, // 
+                                              //RemoteVersionIds:            new[] { Version.Id },
+                                              //SelectedVersionId:           Version.Id,
+                                              //AccessTokenBase64Encoding:   false,
+                                              //RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                              PartyStatus:                 PartyStatus.ENABLED);
+
+
+                var newAccessToken  = AccessToken.Parse("updatedAccessToken");
+
+                var response1       = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL      = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2       = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL  = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3       = await TestHelpers.PutJSONRequest(URL.Parse(credentialsURL.ToString()),
+                                                                       new Credentials(
+                                                                           newAccessToken,
+                                                                           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                                           new BusinessDetails(
+                                                                               "GraphDefined CSO (NEW)",
+                                                                               URL.Parse("https://www.graphdefined.com/cso/new")
+                                                                           ),
+                                                                           CountryCode.Parse("DE"),
+                                                                           Party_Id.   Parse("GEF")
+                                                                       ).ToJSON(),
+                                                                       cpo_accessing_emsp1__token);
+
+
+                // PUT /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Fri, 05 May 2023 10:19:29 GMT
+                // Accept:                          application/json; charset=utf-8; q=1
+                // Host:                            127.0.0.1:3401
+                // Authorization:                   Token cpo-accessing-emsp1::token
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  223
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "token":         "updatedAccessToken",
+                //     "url":           "http://localhost:3301/ocpi/v2.1/versions",
+                //     "business_details": {
+                //         "name":           "GraphDefined CSO (NEW)",
+                //         "website":        "https://www.graphdefined.com/cso/new"
+                //     },
+                //     "country_code":  "DE",
+                //     "party_id":      "GEF"
+                // }
+
+                // HTTP/1.1 405 Method Not Allowed
+                // Date:                            Fri, 05 May 2023 10:19:29 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  152
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      2000,
+                //     "status_message":  "The given access token 'emsp1_accessing_cpo::token' is not yet registered!",
+                //     "timestamp":       "2023-05-05T10:19:29.735Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (405, response3.HTTPStatusCode.Code);
+                Assert.AreEqual (3,   response3.AccessControlAllowMethods?.Count());
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json              = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (2000,                                                                           json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1::token' is not yet registered!",   json["status_message"]?.Value<String>());
+
+                var timestamp         = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+
+                // Validate, that the remote party was not updated!
+                var remotePartyAtEMSP1  = emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == cpo_accessing_emsp1__token));
+                Assert.IsNotNull(remotePartyAtEMSP1);
+
+                if (remotePartyAtEMSP1 is not null)
+                {
+                    Assert.AreEqual ("GraphDefined CSO Services",                                               remotePartyAtEMSP1.BusinessDetails.Name);
+                    Assert.AreEqual ("https://www.graphdefined.com/cso",                                        remotePartyAtEMSP1.BusinessDetails.Website.ToString());
+                    Assert.AreEqual ("DE",                                                                      remotePartyAtEMSP1.CountryCode.            ToString());
+                    Assert.AreEqual ("GEF",                                                                     remotePartyAtEMSP1.PartyId.                ToString());
+                }
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region CPO_DeleteCredentials_JSON_RegisteredToken_Test()
+
+        /// <summary>
+        /// CPO DeleteCredentials JSON using a registered access token.
+        /// </summary>
+        [Test]
+        public async Task CPO_DeleteCredentials_JSON_RegisteredToken_Test()
+        {
+
+            if (emsp1VersionsAPIURL.HasValue &&
+                cpoHTTPAPI     is not null &&
+                cpoCommonAPI   is not null &&
+                emsp1CommonAPI is not null)
+            {
+
+                RemoteParty? remotePartyAtEMSP1() => emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == cpo_accessing_emsp1__token));
+
+                var remotePartyAtEMSP1_before  = remotePartyAtEMSP1();
+                Assert.IsNotNull(remotePartyAtEMSP1_before);
+
+                var response1                = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
+                var versionURL               = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
+                var response2                = await TestHelpers.GetJSONRequest(versionURL);
+                var credentialsURL           = URL.Parse(response2.Content["data"]?["endpoints"]?[0]?["url"]?.Value<String>()!);
+
+                var response3                = await TestHelpers.DeleteJSONRequest(URL.Parse(credentialsURL.ToString()),
+                                                                                   cpo_accessing_emsp1__token);
+
+
+                // DELETE /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
+                // Date:                            Fri, 05 May 2023 12:31:07 GMT
+                // Accept:                          application/json; charset=utf-8; q=1
+                // Host:                            127.0.0.1:3401
+                // Authorization:                   Token cpo_accessing_emsp1::token
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+
+                // HTTP/1.1 200 OK
+                // Date:                            Fri, 05 May 2023 12:31:07 GMT
+                // Access-Control-Allow-Methods:    OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:    Authorization
+                // Server:                          GraphDefined HTTP API
+                // Access-Control-Allow-Origin:     *
+                // Vary:                            Accept
+                // Connection:                      close
+                // Content-Type:                    application/json; charset=utf-8
+                // Content-Length:                  142
+                // X-Request-ID:                    1234
+                // X-Correlation-ID:                5678
+                // 
+                // {
+                //     "status_code":      1000,
+                //     "status_message":  "The given access token 'cpo_accessing_emsp1::token' was deleted!",
+                //     "timestamp":       "2023-05-05T12:31:07.181Z"
+                // }
+
+                Assert.IsNotNull(response3);
+                Assert.AreEqual (200, response3.HTTPStatusCode.Code);
+                Assert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
+                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
+                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+
+                var json                     = response3.Content;
+                Assert.IsNotNull(json);
+
+                Assert.AreEqual (1000,                                                                 json["status_code"]?.   Value<UInt32>());
+                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1::token' was deleted!",   json["status_message"]?.Value<String>());
+
+                var timestamp                = json["timestamp"]?.Value<DateTime>();
+                Assert.IsNotNull(timestamp);
+                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+
+
+                // Validate, that the remote party was deleted!
+                var remotePartyAtEMSP1_after   = remotePartyAtEMSP1();
+                Assert.IsNull(remotePartyAtEMSP1_after);
+
+            }
+
+        }
+
+        #endregion
 
     }
 

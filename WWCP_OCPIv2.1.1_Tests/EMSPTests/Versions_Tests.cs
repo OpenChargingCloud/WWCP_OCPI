@@ -58,7 +58,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                            Sun, 30 Apr 2023 01:38:42 GMT
                 // Accept:                          application/json; charset=utf-8;q=1
                 // Host:                            localhost:3301
-                // Authorization:                   Token emp1-accessing-cso::token
+                // Authorization:                   Token emsp1_accessing_cpo::token
                 // User-Agent:                      GraphDefined OCPI HTTP Client v1.0
                 // X-Request-ID:                    43EKp122t15Ad3hh1vxEj4Qvtht1hM
                 // X-Correlation-ID:                f1Qr44hnzYd2tWAKrjdjhU15CvW943
@@ -429,7 +429,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             if (cpoVersionsAPIURL.HasValue)
             {
 
-                var response = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, "emp1-accessing-cso::token");
+                var response = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, "emsp1_accessing_cpo::token");
 
                 // {
                 //   "data": [
@@ -589,7 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             if (cpoVersionsAPIURL.HasValue)
             {
 
-                var response  = await TestHelpers.GetHTMLRequest(cpoVersionsAPIURL.Value, "emp1-accessing-cso::token");
+                var response  = await TestHelpers.GetHTMLRequest(cpoVersionsAPIURL.Value, "emsp1_accessing_cpo::token");
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPStatusCode.Code);

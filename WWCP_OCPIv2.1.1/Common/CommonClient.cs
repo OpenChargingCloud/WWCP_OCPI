@@ -1764,6 +1764,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="Credentials">The credentials to store/put at/onto the remote API.</param>
         /// 
+        /// <param name="RemoteRole">The optional role of the remote party.</param>
         /// <param name="VersionId">An optional OCPI version identification.</param>
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
@@ -1776,6 +1777,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             PutCredentials(Credentials         Credentials,
 
+                           Roles?              RemoteRole          = null,
                            Version_Id?         VersionId           = null,
                            Request_Id?         RequestId           = null,
                            Correlation_Id?     CorrelationId       = null,
@@ -1889,25 +1891,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
 
-                        //foreach (var role in response.Data.Roles)
-                        //{
+                        MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:         Credentials.CountryCode,
+                                                           PartyId:             Credentials.PartyId,
+                                                           Role:                RemoteRole ?? (MyCommonAPI.OurRole == Roles.EMSP
+                                                                                                   ? Roles.CPO
+                                                                                                   : Roles.EMSP),
+                                                           BusinessDetails:     Credentials.BusinessDetails,
 
-                            MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:        Credentials.CountryCode,
-                                                               PartyId:            Credentials.PartyId,
-                                                               BusinessDetails:    Credentials.BusinessDetails,
+                                                           AccessToken:         Credentials.Token,
+                                                           AccessStatus:        AccessStatus.ALLOWED,
 
-                                                               AccessToken:        Credentials.Token,
-                                                               AccessStatus:       AccessStatus.ALLOWED,
+                                                           RemoteAccessToken:   response.Data.Token,
+                                                           RemoteVersionsURL:   response.Data.URL,
+                                                           RemoteVersionIds:    new Version_Id[] { Version.Id },
+                                                           SelectedVersionId:   Version.Id,
 
-                                                               RemoteAccessToken:  response.Data.Token,
-                                                               RemoteVersionsURL:  response.Data.URL,
-                                                               RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
-                                                               SelectedVersionId:  Version_Id.Parse("2.2"),
-
-                                                               PartyStatus:        PartyStatus.ENABLED,
-                                                               RemoteStatus:       RemoteAccessStatus.ONLINE);
-
-                        //}
+                                                           PartyStatus:         PartyStatus.ENABLED,
+                                                           RemoteStatus:        RemoteAccessStatus.ONLINE);
 
                     }
 

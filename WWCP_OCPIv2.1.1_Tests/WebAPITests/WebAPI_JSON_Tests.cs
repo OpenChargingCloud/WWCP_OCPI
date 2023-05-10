@@ -70,11 +70,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 //             "website":       "https://www.graphdefined.com/emsp2"
                 //         },
                 //         "accessInfos": [{
-                //             "token":         "emp2-accessing-cso::token",
+                //             "token":         "emsp2_accessing_cpo::token",
                 //             "status":        "ALLOWED"
                 //         }],
                 //         "remoteAccessInfos": [{
-                //             "token":         "emp2-2-cso:token",
+                //             "token":         "cpo_accessing_emsp2::token",
                 //             "versionsURL":   "http://localhost:3402/ocpi/v2.1/versions",
                 //             "status":        "ONLINE",
                 //             "lastUpdate":    "2023-04-30T05:49:16.139Z"
@@ -93,11 +93,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 //             "website":       "https://www.graphdefined.com/emsp1"
                 //         },
                 //         "accessInfos": [{
-                //             "token":         "emp1-accessing-cso::token",
+                //             "token":         "emsp1_accessing_cpo::token",
                 //             "status":        "ALLOWED"
                 //         }],
                 //         "remoteAccessInfos": [{
-                //             "token":         "emp1-2-cso:token",
+                //             "token":         "cpo_accessing_emsp1::token",
                 //             "versionsURL":   "http://localhost:3401/ocpi/v2.1/versions",
                 //             "status":        "ONLINE",
                 //             "lastUpdate":    "2023-04-30T05:49:16.123Z"

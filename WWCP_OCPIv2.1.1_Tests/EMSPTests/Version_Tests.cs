@@ -58,7 +58,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                            Sun, 30 Apr 2023 01:43:15 GMT
                 // Accept:                          application/json; charset=utf-8;q=1
                 // Host:                            localhost:3301
-                // Authorization:                   Token emp1-accessing-cso::token
+                // Authorization:                   Token emsp1_accessing_cpo::token
                 // User-Agent:                      GraphDefined OCPI HTTP Client v1.0
                 // X-Request-ID:                    4xAAKvW377Cd7C7rn2fMC5xb1WYKS8
                 // X-Correlation-ID:                CWE5292n4bYbQ94M2p36GAdSnAS1b7
@@ -329,9 +329,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             if (cpoVersionsAPIURL.HasValue)
             {
 
-                var response1   = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, "emp1-accessing-cso::token");
+                var response1   = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, "emsp1_accessing_cpo::token");
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
-                var response2   = await TestHelpers.GetJSONRequest(versionURL,              "emp1-accessing-cso::token");
+                var response2   = await TestHelpers.GetJSONRequest(versionURL,              "emsp1_accessing_cpo::token");
 
                 Assert.IsNotNull(response2);
                 Assert.AreEqual (200,            response2.HTTPStatusCode.Code);
@@ -613,9 +613,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
             if (cpoVersionsAPIURL.HasValue)
             {
 
-                var response1   = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, "emp1-accessing-cso::token");
+                var response1   = await TestHelpers.GetJSONRequest(cpoVersionsAPIURL.Value, "emsp1_accessing_cpo::token");
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
-                var response2   = await TestHelpers.GetHTMLRequest(versionURL,              "emp1-accessing-cso::token");
+                var response2   = await TestHelpers.GetHTMLRequest(versionURL,              "emsp1_accessing_cpo::token");
 
                 Assert.IsNotNull(response2);
                 Assert.AreEqual (200,            response2.HTTPStatusCode.Code);

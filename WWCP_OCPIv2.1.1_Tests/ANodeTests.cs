@@ -306,8 +306,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected       ConcurrentDictionary<DateTime, OCPIRequest>    emsp2APIRequestLogs;
         protected       ConcurrentDictionary<DateTime, OCPIResponse>   emsp2APIResponseLogs;
 
-        protected const String                                         emp1_accessing_cso__token     = "emp1-accessing-cso::token";
-        protected const String                                         emp2_accessing_cso__token     = "emp2-accessing-cso::token";
+        protected const String                                         cpo_accessing_emsp1__token    = "cpo_accessing_emsp1::token";
+        protected const String                                         cpo_accessing_emsp2__token    = "cpo_accessing_emsp2::token";
+
+        protected const String                                         emsp1_accessing_cpo__token    = "emsp1_accessing_cpo::token";
+        protected const String                                         emsp2_accessing_cpo__token    = "emsp2_accessing_cpo::token";
 
         protected const String                                         UnknownToken                  = "UnknownUnknownUnknownToken";
 
@@ -698,10 +701,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                           Role:                        Roles.EMSP,
                                           BusinessDetails:             emsp1CommonAPI.OurBusinessDetails,
 
-                                          AccessToken:                 AccessToken.Parse(emp1_accessing_cso__token),
+                                          AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo__token),
                                           AccessStatus:                AccessStatus.ALLOWED,
 
-                                          RemoteAccessToken:           AccessToken.Parse("emp1-2-cso:token"),
+                                          RemoteAccessToken:           AccessToken.Parse(cpo_accessing_emsp1__token),
                                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
                                           RemoteVersionIds:            new[] { Version.Id },
                                           SelectedVersionId:           Version.Id,
@@ -714,9 +717,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                           PartyId:                     emsp2CommonAPI.OurPartyId,
                                           Role:                        Roles.EMSP,
                                           BusinessDetails:             emsp2CommonAPI.OurBusinessDetails,
-                                          AccessToken:                 AccessToken.Parse(emp2_accessing_cso__token),
+                                          AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo__token),
                                           AccessStatus:                AccessStatus.ALLOWED,
-                                          RemoteAccessToken:           AccessToken.Parse("emp2-2-cso:token"),
+                                          RemoteAccessToken:           AccessToken.Parse(cpo_accessing_emsp2__token),
                                           RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
                                           RemoteVersionIds:            new[] { Version.Id },
                                           SelectedVersionId:           Version.Id,
@@ -731,10 +734,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                           Role:                        Roles.CPO,
                                           BusinessDetails:             cpoCommonAPI.OurBusinessDetails,
 
-                                          AccessToken:                 AccessToken.Parse("emp1-2-cso:token"),
+                                          AccessToken:                 AccessToken.Parse(cpo_accessing_emsp1__token),
                                           AccessStatus:                AccessStatus.ALLOWED,
 
-                                          RemoteAccessToken:           AccessToken.Parse(emp1_accessing_cso__token),
+                                          RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo__token),
                                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
                                           RemoteVersionIds:            new[] { Version.Id },
                                           SelectedVersionId:           Version.Id,
@@ -749,10 +752,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                           Role:                        Roles.CPO,
                                           BusinessDetails:             cpoCommonAPI.OurBusinessDetails,
 
-                                          AccessToken:                 AccessToken.Parse("emp2-2-cso:token"),
+                                          AccessToken:                 AccessToken.Parse(cpo_accessing_emsp2__token),
                                           AccessStatus:                AccessStatus.ALLOWED,
 
-                                          RemoteAccessToken:           AccessToken.Parse(emp2_accessing_cso__token),
+                                          RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo__token),
                                           RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
                                           RemoteVersionIds:            new[] { Version.Id },
                                           SelectedVersionId:           Version.Id,
