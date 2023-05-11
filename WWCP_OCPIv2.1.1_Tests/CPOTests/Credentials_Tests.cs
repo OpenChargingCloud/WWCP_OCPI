@@ -252,12 +252,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 cpoCommonAPI.  RemoveAllRemoteParties();
                 emsp1CommonAPI.RemoveAllRemoteParties();
 
-                cpoCommonAPI.  AddRemoteParty(CountryCode:       emsp1CommonAPI.OurCountryCode,
-                                              PartyId:           emsp1CommonAPI.OurPartyId,
-                                              Role:              Roles.EMSP,
-                                              BusinessDetails:   emsp1CommonAPI.OurBusinessDetails,
+                emsp1CommonAPI.AddRemoteParty(CountryCode:       cpoCommonAPI.OurCountryCode,
+                                              PartyId:           cpoCommonAPI.OurPartyId,
+                                              Role:              Roles.CPO,
+                                              BusinessDetails:   cpoCommonAPI.OurBusinessDetails,
 
-                                              AccessToken:       AccessToken.Parse(emsp1_accessing_cpo__token),
+                                              AccessToken:       AccessToken.Parse(cpo_accessing_emsp1__token),
                                               AccessStatus:      AccessStatus.ALLOWED,
 
                                               PartyStatus:       PartyStatus.ENABLED);
@@ -269,8 +269,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // POST /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
                 // Date:               Sat, 06 May 2023 02:40:46 GMT
                 // Accept:             application/json; charset=utf-8; q=1
-                // Host:               localhost:3301
-                // Authorization:      Token emsp1_accessing_cpo::token
+                // Host:               localhost:3401
+                // Authorization:      Token cpo_accessing_emsp1::token
                 // Content-Type:       application/json; charset=utf-8
                 // Content-Length:     300
                 // X-Request-ID:       72fQ7S1fAKC1trnv2zECGv14tfn5Y8
@@ -280,11 +280,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "token":         "Gnf45791nft78Qjz68U2MS9fG2fhM8f1U515GUv8QWA4Azr4hx",
                 //     "url":           "http://127.0.0.1:3401/ocpi/v2.1/versions",
                 //     "business_details": {
-                //         "name":          "GraphDefined EMSP #1 Services",
-                //         "website":       "https://www.graphdefined.com/emsp1"
+                //         "name":          "GraphDefined COS Services",
+                //         "website":       "https://www.graphdefined.com/cso"
                 //     },
                 //     "country_code":  "DE",
-                //     "party_id":      "GDF"
+                //     "party_id":      "GEF"
                 // }
 
                 // HTTP/1.1 200 OK
@@ -305,11 +305,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //         "token":           "7bKWv58h56r3fzCjGYCjSbn1QQ6hWpvQ98rG97YM9MMSz95j4n",
                 //         "url":             "http://127.0.0.1:3301/ocpi/v2.1/versions",
                 //         "business_details": {
-                //             "name":            "GraphDefined CSO Services",
-                //             "website":         "https://www.graphdefined.com/cso"
+                //             "name":            "GraphDefined EMSP #1 Services",
+                //             "website":         "https://www.graphdefined.com/emsp1"
                 //         },
                 //         "country_code":    "DE",
-                //         "party_id":        "GEF"
+                //         "party_id":        "GDF"
                 //     },
                 //     "status_code":      1000,
                 //     "status_message":  "Hello world!",
@@ -334,15 +334,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                     #region Validate Credentials
 
                     Assert.IsNotNull  (credentials.Token);
-                    Assert.AreNotEqual(emsp1_accessing_cpo__token,                    credentials.    Token.      ToString());
-                    Assert.AreEqual   ("http://127.0.0.1:3301/ocpi/v2.1/versions",   credentials.    URL.        ToString());
+                    Assert.AreNotEqual(cpo_accessing_emsp1__token,                   credentials.    Token.      ToString());
+                    Assert.AreEqual   ("http://127.0.0.1:3401/ocpi/v2.1/versions",   credentials.    URL.        ToString());
                     Assert.AreEqual   ("DE",                                         credentials.    CountryCode.ToString());
-                    Assert.AreEqual   ("GEF",                                        credentials.    PartyId.    ToString());
+                    Assert.AreEqual   ("GDF",                                        credentials.    PartyId.    ToString());
 
                     var businessDetails = credentials.BusinessDetails;
                     Assert.IsNotNull  (businessDetails);
-                    Assert.AreEqual   ("GraphDefined CSO Services",                  businessDetails.Name);
-                    Assert.AreEqual   ("https://www.graphdefined.com/cso",           businessDetails.Website.    ToString());
+                    Assert.AreEqual   ("GraphDefined EMSP #1 Services",              businessDetails.Name);
+                    Assert.AreEqual   ("https://www.graphdefined.com/emsp1",         businessDetails.Website.    ToString());
 
                     #endregion
 
@@ -373,9 +373,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
 
                     // Cross-Validate CPO and EMSP1 access tokens
-                    Assert.AreEqual(cpoLocalAccessInfo. AccessToken.ToString(),   credentials.          Token.      ToString());
-                    Assert.AreEqual(cpoLocalAccessInfo. AccessToken.ToString(),   emsp1RemoteAccessInfo.AccessToken.ToString());
-                    Assert.AreEqual(cpoRemoteAccessInfo.AccessToken.ToString(),   emsp1LocalAccessInfo. AccessToken.ToString());
+                    Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   credentials.          Token.      ToString());
+                    Assert.AreEqual(cpoLocalAccessInfo.  AccessToken.ToString(),   emsp1RemoteAccessInfo.AccessToken.ToString());
+                    Assert.AreEqual(cpoRemoteAccessInfo. AccessToken.ToString(),   emsp1LocalAccessInfo. AccessToken.ToString());
 
                     #endregion
 
@@ -386,20 +386,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
                     var response2                       = await graphDefinedEMSP1.GetTokens();
 
-                    var emsp1AccessTokenReallyUsed    = (response2.HTTPResponse?.HTTPRequest?.Authorization as HTTPTokenAuthentication)?.Token;
+                    var cpoAccessTokenReallyUsed        = (response2.HTTPResponse?.HTTPRequest?.Authorization as HTTPTokenAuthentication)?.Token;
 
                     // Cross-Validate CPO and EMSP1 access tokens
-                    Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    graphDefinedEMSP1_AccessToken);
-                    Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    graphDefinedEMSP1_TokenAuth);
-                    Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    emsp1AccessTokenReallyUsed);
+                    Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1_AccessToken);
+                    Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1_TokenAuth);
+                    Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   cpoAccessTokenReallyUsed);
 
                     #endregion
 
                     #region Get a new CPOClient and validate, that it is using the new access token
 
                     var graphDefinedEMSP1b = cpoCommonAPI?.GetCPOClient(
-                                                 CountryCode: CountryCode.Parse("DE"),
-                                                 PartyId:     Party_Id.   Parse("GDF")
+                                                 CountryCode:          CountryCode.Parse("DE"),
+                                                 PartyId:              Party_Id.   Parse("GDF"),
+                                                 AllowCachedClients:   false
                                              );
 
                     Assert.IsNotNull(graphDefinedEMSP1b);
@@ -412,13 +413,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
                         var response3                       = await graphDefinedEMSP1b.GetTokens();
 
-                        var emsp1AccessTokenReallyUsed2     = (response3.HTTPResponse?.HTTPRequest?.Authorization as HTTPTokenAuthentication)?.Token;
+                        var cpoAccessTokenReallyUsed2       = (response3.HTTPResponse?.HTTPRequest?.Authorization as HTTPTokenAuthentication)?.Token;
 
 
                         // Cross-Validate CPO and EMSP1 access tokens
-                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    graphDefinedEMSP1b_AccessToken);
-                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    graphDefinedEMSP1b_TokenAuth);
-                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    emsp1AccessTokenReallyUsed2);
+                        Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1b_AccessToken);
+                        Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1b_TokenAuth);
+                        Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   cpoAccessTokenReallyUsed2);
 
                     }
 

@@ -212,15 +212,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Create cpo/emsp1/emsp2 adapter
 
+            Assert.IsNotNull(cpoCommonAPI);
+
             cpoAdapter           = csoRoamingNetwork.CreateOCPIv2_1_CSOAdapter(
 
                                        Id:                                  EMPRoamingProvider_Id.Parse("OCPIv2.1_CSO_" + this.csoRoamingNetwork.Id),
                                        Name:                                I18NString.Create(Languages.de, "OCPI v2.1 CSO"),
                                        Description:                         I18NString.Create(Languages.de, "OCPI v2.1 CSO Roaming"),
 
-                                       CommonAPI:                           cpoCommonAPI,
-                                       DefaultCountryCode:                  cpoCommonAPI.OurCountryCode,
-                                       DefaultPartyId:                      cpoCommonAPI.OurPartyId,
+                                       CommonAPI:                           cpoCommonAPI!,
+                                       DefaultCountryCode:                  cpoCommonAPI!.OurCountryCode,
+                                       DefaultPartyId:                      cpoCommonAPI!.OurPartyId,
 
                                        CustomEVSEIdConverter:               null,
                                        CustomEVSEConverter:                 null,
@@ -243,6 +245,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        DisableSendChargeDetailRecords:      true
 
                                    );
+
+            Assert.IsNotNull(cpoAdapter);
+
+
 
             emsp1Adapter          = emp1RoamingNetwork.CreateOCPIv2_1_EMPAdapter(
 
@@ -276,6 +282,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                    );
 
+            Assert.IsNotNull(emsp1Adapter);
+
+
+
             emsp2Adapter          = emp2RoamingNetwork.CreateOCPIv2_1_EMPAdapter(
 
                                        Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.1_EMP2_" + this.emp1RoamingNetwork.Id),
@@ -308,8 +318,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                    );
 
-            Assert.IsNotNull(cpoAdapter);
-            Assert.IsNotNull(emsp1Adapter);
             Assert.IsNotNull(emsp2Adapter);
 
             #endregion

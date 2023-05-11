@@ -29,9 +29,13 @@ using cloud.charging.open.protocols.WWCP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
+namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 {
 
+    /// <summary>
+    /// OCPI tests in combination with a WWCP roaming network.
+    /// Will test the WWCP-to-OCPI adapters.
+    /// </summary>
     [TestFixture]
     public class RoamingTests : ARoamingTests
     {
@@ -47,17 +51,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
         public async Task Add_ChargingLocationsAndEVSEs_Test1()
         {
 
-            if (csoRoamingNetwork  is not null &&
-                emp1RoamingNetwork is not null &&
-                emp2RoamingNetwork is not null &&
+            Assert.IsNotNull(graphDefinedCSO);
+            Assert.IsNotNull(cpoAdapter);
 
-                graphDefinedCSO    is not null &&
-                graphDefinedEMP    is not null &&
-                exampleEMP         is not null)
+            if (graphDefinedCSO is not null &&
+                cpoAdapter      is not null)
             {
 
                 #region Add DE*GEF*POOL1
 
+                // Will call OCPICSOAdapter.AddStaticData(ChargingPool, ...)!
                 var addChargingPoolResult1 = await graphDefinedCSO.CreateChargingPool(
 
                                                  Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
@@ -66,24 +69,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
 
                                                  Address:              new Address(
 
-                                                                           Street:             "Biberweg",
-                                                                           PostalCode:         "07749",
-                                                                           City:               I18NString.Create(Languages.da, "Jena"),
-                                                                           Country:            Country.Germany,
+                                                                           Street:              "Biberweg",
+                                                                           PostalCode:          "07749",
+                                                                           City:                I18NString.Create(Languages.de, "Jena"),
+                                                                           Country:             Country.Germany,
 
-                                                                           HouseNumber:        "18",
-                                                                           FloorLevel:         null,
-                                                                           Region:             null,
-                                                                           PostalCodeSub:      null,
-                                                                           TimeZone:           null,
-                                                                           OfficialLanguages:  null,
-                                                                           Comment:            null,
+                                                                           HouseNumber:         "18",
+                                                                           FloorLevel:          null,
+                                                                           Region:              null,
+                                                                           PostalCodeSub:       null,
+                                                                           TimeZone:            Time_Zone.TryParse("CET"),
+                                                                           OfficialLanguages:   null,
+                                                                           Comment:             null,
 
-                                                                           CustomData:         null,
-                                                                           InternalData:       null
+                                                                           CustomData:          null,
+                                                                           InternalData:        null
 
                                                                        ),
                                                  GeoLocation:          GeoCoordinate.Parse(50.93, 11.63),
+
+                                                 OpeningTimes:         null,
+                                                 ChargingWhenClosed:   true,
+
+                                                 //EnergyMix
+                                                 //RelatedLocations
+                                                 //Directions
+                                                 //Facilities
+                                                 //Images
+                                                 //LocationType
 
                                                  InitialAdminStatus:   ChargingPoolAdminStatusTypes.Operational,
                                                  InitialStatus:        ChargingPoolStatusTypes.Available,
@@ -94,14 +107,40 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                                              );
 
                 Assert.IsNotNull(addChargingPoolResult1);
+                Assert.IsTrue   (addChargingPoolResult1.IsSuccess);
 
                 var chargingPool1  = addChargingPoolResult1.ChargingPool;
                 Assert.IsNotNull(chargingPool1);
+
+                if (chargingPool1 is not null)
+                {
+
+                    var ocpiLocation1 = cpoAdapter.CommonAPI.GetLocations().FirstOrDefault(location => location.Name == chargingPool1.Name.FirstText());
+                    Assert.IsNotNull(ocpiLocation1);
+
+                    if (ocpiLocation1 is not null)
+                    {
+
+                        Assert.AreEqual($"{chargingPool1.Address?.Street} {chargingPool1.Address?.HouseNumber}",   ocpiLocation1.Address);
+                        Assert.AreEqual(   chargingPool1.Address?.City.     FirstText(),                           ocpiLocation1.City);
+                        Assert.AreEqual(   chargingPool1.Address?.PostalCode,                                      ocpiLocation1.PostalCode);
+                        Assert.AreEqual(   chargingPool1.Address?.TimeZone?.ToString(),                            ocpiLocation1.Timezone);
+
+                        Assert.AreEqual(   chargingPool1.GeoLocation,                                              ocpiLocation1.Coordinates);
+
+                        Assert.AreEqual(   chargingPool1.ChargingWhenClosed,                                       ocpiLocation1.ChargingWhenClosed);
+
+                    }
+
+                }
+
+                Assert.AreEqual(1, cpoAdapter.CommonAPI.GetLocations().Count());
 
                 #endregion
 
                 #region Add DE*GEF*POOL2
 
+                // Will call OCPICSOAdapter.AddStaticData(ChargingPool, ...)!
                 var addChargingPoolResult2 = await graphDefinedCSO.CreateChargingPool(
 
                                                  Id:                   ChargingPool_Id.Parse("DE*GEF*POOL2"),
@@ -110,24 +149,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
 
                                                  Address:              new Address(
 
-                                                                           Street:             "Biberweg",
-                                                                           PostalCode:         "07749",
-                                                                           City:               I18NString.Create(Languages.da, "Jena"),
-                                                                           Country:            Country.Germany,
+                                                                           Street:              "Biber Weg",
+                                                                           PostalCode:          "07748",
+                                                                           City:                I18NString.Create(Languages.de, "Neu-Jena"),
+                                                                           Country:             Country.Germany,
 
-                                                                           HouseNumber:        "18",
-                                                                           FloorLevel:         null,
-                                                                           Region:             null,
-                                                                           PostalCodeSub:      null,
-                                                                           TimeZone:           null,
-                                                                           OfficialLanguages:  null,
-                                                                           Comment:            null,
+                                                                           HouseNumber:         "18b",
+                                                                           FloorLevel:          null,
+                                                                           Region:              null,
+                                                                           PostalCodeSub:       null,
+                                                                           TimeZone:            null,
+                                                                           OfficialLanguages:   null,
+                                                                           Comment:             null,
 
-                                                                           CustomData:         null,
-                                                                           InternalData:       null
+                                                                           CustomData:          null,
+                                                                           InternalData:        null
 
                                                                        ),
-                                                 GeoLocation:          GeoCoordinate.Parse(50.93, 11.63),
+                                                 GeoLocation:          GeoCoordinate.Parse(50.94, 11.64),
+
+                                                 OpeningTimes:         null,
+                                                 ChargingWhenClosed:   false,
 
                                                  InitialAdminStatus:   ChargingPoolAdminStatusTypes.Operational,
                                                  InitialStatus:        ChargingPoolStatusTypes.Available,
@@ -138,9 +180,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                                              );
 
                 Assert.IsNotNull(addChargingPoolResult2);
+                Assert.IsTrue   (addChargingPoolResult2.IsSuccess);
 
                 var chargingPool2  = addChargingPoolResult2.ChargingPool;
                 Assert.IsNotNull(chargingPool2);
+
+                if (chargingPool2 is not null)
+                {
+
+                    var ocpiLocation2 = cpoAdapter.CommonAPI.GetLocations().FirstOrDefault(location => location.Name == chargingPool2.Name.FirstText());
+                    Assert.IsNotNull(ocpiLocation2);
+
+                    if (ocpiLocation2 is not null)
+                    {
+
+                        Assert.AreEqual($"{chargingPool2.Address?.Street} {chargingPool2.Address?.HouseNumber}",   ocpiLocation2.Address);
+                        Assert.AreEqual(   chargingPool2.Address?.City.     FirstText(),                           ocpiLocation2.City);
+                        Assert.AreEqual(   chargingPool2.Address?.PostalCode,                                      ocpiLocation2.PostalCode);
+                        Assert.AreEqual(   chargingPool2.Address?.TimeZone?.ToString(),                            ocpiLocation2.Timezone);
+
+                        Assert.AreEqual(   chargingPool2.GeoLocation,                                              ocpiLocation2.Coordinates);
+
+                    }
+
+                }
+
+                Assert.AreEqual(2, cpoAdapter.CommonAPI.GetLocations().Count());
 
                 #endregion
 
@@ -166,6 +231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                                                 );
 
                 Assert.IsNotNull(addChargingStationResult1);
+                Assert.IsTrue   (addChargingStationResult1.IsSuccess);
 
                 var chargingStation1  = addChargingStationResult1.ChargingStation;
                 Assert.IsNotNull(chargingStation1);
@@ -191,6 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                                                 );
 
                 Assert.IsNotNull(addChargingStationResult2);
+                Assert.IsTrue   (addChargingStationResult2.IsSuccess);
 
                 var chargingStation2  = addChargingStationResult2.ChargingStation;
                 Assert.IsNotNull(chargingStation2);
@@ -216,6 +283,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                                                 );
 
                 Assert.IsNotNull(addChargingStationResult3);
+                Assert.IsTrue   (addChargingStationResult3.IsSuccess);
 
                 var chargingStation3  = addChargingStationResult3.ChargingStation;
                 Assert.IsNotNull(chargingStation3);
@@ -225,11 +293,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
 
+                // Will call OCPICSOAdapter.AddStaticData(EVSE, ...)!
                 var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
                                           Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #1A1"),
+
+                                          ChargingConnectors:   new[] {
+                                                                    new ChargingConnector(
+                                                                        Id:             ChargingConnector_Id.Parse(1),
+                                                                        Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        Lockable:       true,
+                                                                        CableAttached:  true,
+                                                                        CableLength:    Meter.Parse(3.0)
+                                                                    )
+                                                                },
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                           InitialStatus:        EVSEStatusTypes.Available,
@@ -240,9 +319,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                                       );
 
                 Assert.IsNotNull(addEVSE1Result1);
+                Assert.IsTrue   (addEVSE1Result1.IsSuccess);
 
                 var evse1     = addEVSE1Result1.EVSE;
                 Assert.IsNotNull(evse1);
+
+                if (evse1 is not null)
+                {
+
+                    var ocpiLocation1  = cpoAdapter.CommonAPI.GetLocations().FirstOrDefault(location => location.Name == chargingPool1.Name.FirstText());
+                    Assert.IsNotNull(ocpiLocation1);
+
+                    var ocpiEVSE1      = ocpiLocation1!.FirstOrDefault(evse => evse.UId.ToString() == evse1.Id.ToString());
+                    Assert.IsNotNull(ocpiEVSE1);
+
+                    if (ocpiEVSE1 is not null)
+                    {
+
+                        Assert.AreEqual(ocpiEVSE1.EVSEId.ToString(),  evse1.Id.ToString());
+
+                    }
+
+                }
+
+                Assert.AreEqual(1, cpoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).Count());
 
                 #endregion
 
@@ -253,6 +353,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A2"),
                                           Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #1A2"),
+
+                                          ChargingConnectors:   new[] {
+                                                                    new ChargingConnector(
+                                                                        Id:             ChargingConnector_Id.Parse(1),
+                                                                        Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        Lockable:       true,
+                                                                        CableAttached:  true,
+                                                                        CableLength:    Meter.Parse(3.0)
+                                                                    )
+                                                                },
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                           InitialStatus:        EVSEStatusTypes.Available,
@@ -277,6 +387,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1B1"),
                                           Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #1B1"),
 
+                                          ChargingConnectors:   new[] {
+                                                                    new ChargingConnector(
+                                                                        Id:             ChargingConnector_Id.Parse(1),
+                                                                        Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        Lockable:       true,
+                                                                        CableAttached:  true,
+                                                                        CableLength:    Meter.Parse(3.0)
+                                                                    )
+                                                                },
+
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                           InitialStatus:        EVSEStatusTypes.Available,
 
@@ -300,6 +420,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #2A1"),
                                           Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #2A1"),
 
+                                          ChargingConnectors:   new[] {
+                                                                    new ChargingConnector(
+                                                                        Id:             ChargingConnector_Id.Parse(1),
+                                                                        Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        Lockable:       true,
+                                                                        CableAttached:  true,
+                                                                        CableLength:    Meter.Parse(3.0)
+                                                                    )
+                                                                },
+
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                           InitialStatus:        EVSEStatusTypes.Available,
 
@@ -313,16 +443,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests
                 var evse4     = addEVSE1Result4.EVSE;
                 Assert.IsNotNull(evse4);
 
-                #endregion
 
-
-                #region Validate, that locations had been sent to the e-mobility providers
-
-                //var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
-                //Assert.IsNotNull(allLocations);
-                //Assert.AreEqual (2, allLocations.Length);
+                Assert.AreEqual(4, cpoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).Count());
 
                 #endregion
+
+
+
 
                 #region Validate, that EVSEs had been sent to the e-mobility providers
 

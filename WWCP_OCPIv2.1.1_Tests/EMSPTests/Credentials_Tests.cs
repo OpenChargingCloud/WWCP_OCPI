@@ -417,9 +417,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
 
                         // Cross-Validate CPO and EMSP1 access tokens
-                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    graphDefinedCPO2_AccessToken);
-                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    graphDefinedCPO2_TokenAuth);
-                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),    emsp1AccessTokenReallyUsed2);
+                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),   graphDefinedCPO2_AccessToken);
+                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),   graphDefinedCPO2_TokenAuth);
+                        Assert.AreEqual(cpoLocalAccessInfo.AccessToken.ToString(),   emsp1AccessTokenReallyUsed2);
 
                     }
 

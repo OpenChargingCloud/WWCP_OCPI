@@ -505,13 +505,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                       InitialStatus:        EVSEStatusTypes.Available,
 
-                                      ChargingConnectors:        new ChargingConnector[] {
+                                      ChargingConnectors:   new[] {
                                                                 new ChargingConnector(
                                                                     Id:              ChargingConnector_Id.Parse("1"),
                                                                     Plug:            ChargingPlugTypes.Type2Outlet,
                                                                     Lockable:        true,
                                                                     CableAttached:   true,
-                                                                    CableLength:     4
+                                                                    CableLength:     Meter.Parse(4)
                                                                 )
                                                             }
 
@@ -535,7 +535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                       InitialStatus:        EVSEStatusTypes.Available,
 
-                                      ChargingConnectors:   new ChargingConnector[] {
+                                      ChargingConnectors:   new[] {
                                                                 new ChargingConnector(
                                                                     Id:              ChargingConnector_Id.Parse("2"),
                                                                     Plug:            ChargingPlugTypes.TypeFSchuko,
@@ -607,7 +607,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                               EnergyMeter:                    new WWCP.EnergyMeter(
                                                                   EnergyMeter_Id.Parse("12345678")
                                                               ),
-                              EnergyMeteringValues:           new EnergyMeteringValue[] {
+                              EnergyMeteringValues:           new[] {
                                                                   new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(1),    5),
                                                                   new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(31),  10),
                                                                   new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(61),  15),
