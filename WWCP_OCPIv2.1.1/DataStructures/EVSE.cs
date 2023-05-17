@@ -912,8 +912,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     EVSEPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
-                        EVSEPatch["last_updated"].Type == JTokenType.Date &&
-                       (EVSEPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                        EVSEPatch["last_updated"]?.Type == JTokenType.Date &&
+                       (EVSEPatch["last_updated"]?.Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
                 {
                     return PatchResult<EVSE>.Failed(this,
                                                     "The 'lastUpdated' timestamp of the EVSE patch must be newer then the timestamp of the existing EVSE!");
@@ -929,7 +929,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (TryParse(patchResult.PatchedData,
                              out var patchedEVSE,
-                             out var errorResponse))
+                             out var errorResponse) &&
+                    patchedEVSE is not null)
                 {
 
                     return PatchResult<EVSE>.Success(patchedEVSE,

@@ -18,6 +18,7 @@
 #region Usings
 
 using NUnit.Framework;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -29,12 +30,157 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 {
 
     /// <summary>
-    /// Unit tests for charging tariffs.
-    /// https://github.com/ocpi/ocpi/blob/master/mod_tariffs.asciidoc
+    /// Charging tariffs tests.
+    /// https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/mod_tariffs.md
     /// </summary>
     [TestFixture]
     public static class TariffTests
     {
+
+        // Simple Tariff example 2 euro per hour
+        // https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/mod_tariffs.md#simple-tariff-example-2-euro-per-hour
+
+        // {
+        //     "id": "12",
+        //     "currency": "EUR",
+        //     "elements": [{
+        //         "price_components": [{
+        //             "type": "TIME",
+        //             "price": 2.00,
+        //             "step_size": 300
+        //         }]
+        //     }],
+        //     "last_updated": "2015-06-29T20:39:09Z"
+        // }
+
+
+        // Simple Tariff example with alternative multi language text
+        // https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/mod_tariffs.md#simple-tariff-example-2-euro-per-hour
+
+        // {
+        //     "id": "12",
+        //     "currency": "EUR",
+        //     "tariff_alt_text": [{
+        //         "language": "en",
+        //         "text": "2 euro p/hour"
+        //     }, {
+        //         "language": "nl",
+        //         "text": "2 euro p/uur"
+        //     }],
+        //     "elements": [{
+        //         "price_components": [{
+        //             "type": "TIME",
+        //             "price": 2.00,
+        //             "step_size": 300
+        //         }]
+        //     }],
+        //     "last_updated": "2015-06-29T20:39:09Z"
+        // }
+
+
+        // Simple Tariff example with alternative URL
+        // https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/mod_tariffs.md#simple-tariff-example-with-alternative-url
+
+        // {
+        //     "id": "12",
+        //     "currency": "EUR",
+        //     "tariff_alt_url": "https://company.com/tariffs/12",
+        //     "elements": [{
+        //         "price_components": [{
+        //             "type": "TIME",
+        //             "price": 2.00,
+        //             "step_size": 300
+        //         }]
+        //     }],
+        //     "last_updated": "2015-06-29T20:39:09Z"
+        // }
+
+
+        // Complex Tariff example
+        // https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/mod_tariffs.md#complex-tariff-example
+
+        // {
+        //     "id": "11",
+        //     "currency": "EUR",
+        //     "tariff_alt_url": "https://company.com/tariffs/11",
+        //     "elements": [{
+        //         "price_components": [{
+        //             "type": "FLAT",
+        //             "price": 2.50,
+        //             "step_size": 1
+        //         }]
+        //     }, {
+        //         "price_components": [{
+        //             "type": "TIME",
+        //             "price": 1.00,
+        //             "step_size": 900
+        //         }],
+        //         "restrictions": {
+        //             "max_power": 32.00
+        //         }
+        //     }, {
+        //         "price_components": [{
+        //             "type": "TIME",
+        //             "price": 2.00,
+        //             "step_size": 600
+        //         }],
+        //         "restrictions": {
+        //             "min_power": 32.00,
+        //             "day_of_week": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
+        //         }
+        //     }, {
+        //         "price_components": [{
+        //             "type": "TIME",
+        //             "price": 1.25,
+        //             "step_size": 600
+        //         }],
+        //         "restrictions": {
+        //             "min_power": 32.00,
+        //             "day_of_week": ["SATURDAY", "SUNDAY"]
+        //         }
+        //     }, {
+        //         "price_components": [{
+        //             "type": "PARKING_TIME",
+        //             "price": 5.00,
+        //             "step_size": 300
+        //         }],
+        //         "restrictions": {
+        //             "start_time": "09:00",
+        //             "end_time": "18:00",
+        //             "day_of_week": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
+        //         }
+        //     }, {
+        //         "price_components": [{
+        //             "type": "PARKING_TIME",
+        //             "price": 6.00,
+        //             "step_size": 300
+        //         }],
+        //         "restrictions": {
+        //             "start_time": "10:00",
+        //             "end_time": "17:00",
+        //             "day_of_week": ["SATURDAY"]
+        //         }
+        //     }],
+        //     "last_updated": "2015-06-29T20:39:09Z"
+        // }
+
+
+        // Free of Charge Tariff example
+        // https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/mod_tariffs.md#free-of-charge-tariff-example
+
+        // {
+        //     "id": "12",
+        //     "currency": "EUR",
+        //     "elements": [{
+        //         "price_components": [{
+        //             "type": "FLAT",
+        //             "price": 0.00,
+        //             "step_size": 0
+        //         }]
+        //     }],
+        //     "last_updated": "2015-06-29T20:39:09Z"
+        // }
+
 
         #region Tariff_SerializeDeserialize_Test01()
 
@@ -45,7 +191,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
         public static void Tariff_SerializeDeserialize_Test01()
         {
 
-            var TariffA = new Tariff(
+            #region Define tariff1
+
+            var tariff1 = new Tariff(
                               CountryCode.Parse("DE"),
                               Party_Id.   Parse("GEF"),
                               Tariff_Id.  Parse("TARIFF0001"),
@@ -107,26 +255,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                               DateTime.Parse("2020-09-22").ToUniversalTime()
                           );
 
-            var JSON = TariffA.ToJSON();
+            #endregion
 
-            Assert.AreEqual("TARIFF0001",                     JSON["id"].          Value<String>());
 
-            Assert.IsTrue(Tariff.TryParse(JSON, out var TariffB, out var errorResponse));
-            Assert.IsNull(errorResponse);
+            var json = tariff1.ToJSON();
 
-            Assert.AreEqual(TariffA.Id,                       TariffB.Id);
-            Assert.AreEqual(TariffA.Currency,                 TariffB.Currency);
-            Assert.AreEqual(TariffA.TariffElements,           TariffB.TariffElements);
-            Assert.AreEqual(TariffA.TariffAltText,            TariffB.TariffAltText);
-            Assert.AreEqual(TariffA.TariffAltURL,             TariffB.TariffAltURL);
-            Assert.AreEqual(TariffA.EnergyMix,                TariffB.EnergyMix);
+            Assert.AreEqual("TARIFF0001",                     json["id"]?.          Value<String>());
 
-            Assert.AreEqual(TariffA.LastUpdated.ToIso8601(),  TariffB.LastUpdated.ToIso8601());
+
+            var result = Tariff.TryParse(json,
+                                         out var tariff2,
+                                         out var errorResponse,
+                                         tariff1.CountryCode,
+                                         tariff1.PartyId);
+
+            Assert.IsTrue   (result, errorResponse);
+            Assert.IsNotNull(tariff2);
+            Assert.IsNull   (errorResponse);
+
+            if (tariff2 is not null)
+            {
+
+                Assert.AreEqual(tariff1.Id,                        tariff2.Id);
+                Assert.AreEqual(tariff1.Currency,                  tariff2.Currency);
+                Assert.AreEqual(tariff1.TariffElements,            tariff2.TariffElements);
+                Assert.AreEqual(tariff1.TariffAltText,             tariff2.TariffAltText);
+                Assert.AreEqual(tariff1.TariffAltURL,              tariff2.TariffAltURL);
+                Assert.AreEqual(tariff1.EnergyMix,                 tariff2.EnergyMix);
+
+                Assert.AreEqual(tariff1.LastUpdated.ToIso8601(),   tariff2.LastUpdated.ToIso8601());
+
+            }
 
         }
 
         #endregion
-
 
 
     }

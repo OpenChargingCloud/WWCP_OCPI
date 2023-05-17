@@ -621,8 +621,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     ConnectorPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
-                        ConnectorPatch["last_updated"].Type == JTokenType.Date &&
-                       (ConnectorPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                        ConnectorPatch["last_updated"]?.Type == JTokenType.Date &&
+                       (ConnectorPatch["last_updated"]?.Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
                 {
                     return PatchResult<Connector>.Failed(this,
                                                          "The 'lastUpdated' timestamp of the connector patch must be newer then the timestamp of the existing connector!");
@@ -637,18 +637,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                          patchResult.ErrorResponse);
 
                 if (TryParse(patchResult.PatchedData,
-                             out var PatchedConnector,
-                             out var ErrorResponse))
+                             out var patchedConnector,
+                             out var errorResponse) &&
+                    patchedConnector is not null)
                 {
 
-                    return PatchResult<Connector>.Success(PatchedConnector,
-                                                          ErrorResponse);
+                    return PatchResult<Connector>.Success(patchedConnector,
+                                                          errorResponse);
 
                 }
 
                 else
                     return PatchResult<Connector>.Failed(this,
-                                                         "Invalid JSON merge patch of a connector: " + ErrorResponse);
+                                                         "Invalid JSON merge patch of a connector: " + errorResponse);
 
             }
 

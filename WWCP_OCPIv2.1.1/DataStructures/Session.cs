@@ -459,7 +459,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Start                    [mandatory]
 
-                if (!JSON.ParseMandatory("start_date_time",
+                if (!JSON.ParseMandatory("start_datetime",
                                          "start timestamp",
                                          out DateTime Start,
                                          out ErrorResponse))
@@ -471,7 +471,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse End                      [optional]
 
-                if (JSON.ParseOptional("end_date_time",
+                if (JSON.ParseOptional("end_datetime",
                                        "end timestamp",
                                        out DateTime? End,
                                        out ErrorResponse))
@@ -521,17 +521,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Location                 [mandatory]
 
-                if (!JSON.ParseMandatoryJSON("location",
-                                             "location",
-                                             OCPIv2_1_1.Location.TryParse,
-                                             out Location? Location,
-                                             out ErrorResponse))
+                var locationJSON = JSON["location"];
+
+                if (locationJSON is not JObject locationJSONObject)
+                    return false;
+
+                if (!OCPIv2_1_1.Location.TryParse(locationJSONObject,
+                                                  out Location? Location,
+                                                  out ErrorResponse,
+                                                  CountryCodeBody ?? CountryCodeURL!.Value,
+                                                  PartyIdBody     ?? PartyIdURL!.    Value,
+                                                  null) ||
+                    Location is null)
                 {
                     return false;
                 }
 
-                if (Location is null)
-                    return false;
+                //if (!JSON.ParseMandatoryJSON("location",
+                //                             "location",
+                //                             json2 => 
+                //                             out Location? Location,
+                //                             out ErrorResponse) ||
+                //     Location is null)
+                //{
+                //    return false;
+                //}
 
                 #endregion
 
@@ -706,10 +720,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  new JProperty("id",                             Id.                    ToString()),
 
-                                 new JProperty("start_date_time",                Start.                 ToIso8601()),
+                                 new JProperty("start_datetime",                 Start.                 ToIso8601()),
 
                            End.HasValue
-                               ? new JProperty("end_date_time",                  End.             Value.ToIso8601())
+                               ? new JProperty("end_datetime",                   End.             Value.ToIso8601())
                                : null,
 
                                  new JProperty("kwh",                            kWh),

@@ -172,7 +172,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                      "1. Stock",
                                                      GeoCoordinate.Parse(10.1, 20.2),
                                                      "Ladestation #1",
-                                                     new DisplayText[] {
+                                                     new[] {
                                                          DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                          DisplayText.Create(Languages.en, "Ken sent me!")
                                                      },
@@ -693,7 +693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                              DateTime.Parse("2020-12-31")
                                                          )
                                                      },
-                                                     new Capability[] {
+                                                     new[] {
                                                          Capability.RFID_READER,
                                                          Capability.RESERVABLE
                                                      },
@@ -1089,7 +1089,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                      "1. Stock",
                                                      GeoCoordinate.Parse(10.1, 20.2),
                                                      "Ladestation #1",
-                                                     new DisplayText[] {
+                                                     new[] {
                                                          DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                          DisplayText.Create(Languages.en, "Ken sent me!")
                                                      },
@@ -1413,7 +1413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                      "1. Stock",
                                                      GeoCoordinate.Parse(10.1, 20.2),
                                                      "Ladestation #1",
-                                                     new DisplayText[] {
+                                                     new[] {
                                                          DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                          DisplayText.Create(Languages.en, "Ken sent me!")
                                                      },
@@ -1682,7 +1682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                              DateTime.Parse("2020-12-31")
                                                          )
                                                      },
-                                                     new Capability[] {
+                                                     new[] {
                                                          Capability.RFID_READER,
                                                          Capability.RESERVABLE
                                                      },
@@ -2063,7 +2063,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                      "1. Stock",
                                                      GeoCoordinate.Parse(10.1, 20.2),
                                                      "Ladestation #1",
-                                                     new DisplayText[] {
+                                                     new[] {
                                                          DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                          DisplayText.Create(Languages.en, "Ken sent me!")
                                                      },
@@ -2332,7 +2332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                              DateTime.Parse("2020-12-31")
                                                          )
                                                      },
-                                                     new Capability[] {
+                                                     new[] {
                                                          Capability.RFID_READER,
                                                          Capability.RESERVABLE
                                                      },
@@ -2714,7 +2714,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                      "1. Stock",
                                                      GeoCoordinate.Parse(10.1, 20.2),
                                                      "Ladestation #1",
-                                                     new DisplayText[] {
+                                                     new[] {
                                                          DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                          DisplayText.Create(Languages.en, "Ken sent me!")
                                                      },
@@ -2982,7 +2982,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                              DateTime.Parse("2020-12-31")
                                                          )
                                                      },
-                                                     new Capability[] {
+                                                     new[] {
                                                          Capability.RFID_READER,
                                                          Capability.RESERVABLE
                                                      },

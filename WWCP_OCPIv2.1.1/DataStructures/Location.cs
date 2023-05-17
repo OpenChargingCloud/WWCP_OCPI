@@ -1338,8 +1338,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     LocationPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
-                        LocationPatch["last_updated"].Type == JTokenType.Date &&
-                       (LocationPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                        LocationPatch["last_updated"]?.Type == JTokenType.Date &&
+                       (LocationPatch["last_updated"]?.Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
                 {
                     return PatchResult<Location>.Failed(this,
                                                         "The 'lastUpdated' timestamp of the location patch must be newer then the timestamp of the existing location!");
@@ -1355,7 +1355,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (TryParse(patchResult.PatchedData,
                              out var patchedLocation,
-                             out var errorResponse) &&
+                             out var errorResponse,
+                             CountryCode,
+                             PartyId) &&
                     patchedLocation is not null)
                 {
 

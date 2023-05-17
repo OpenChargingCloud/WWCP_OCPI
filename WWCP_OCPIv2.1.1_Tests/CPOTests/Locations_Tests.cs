@@ -465,7 +465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                           "1. Stock",
                                                                                           GeoCoordinate.Parse(10.1, 20.2),
                                                                                           "Ladestation #1",
-                                                                                          new DisplayText[] {
+                                                                                          new[] {
                                                                                               DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                                                               DisplayText.Create(Languages.en, "Ken sent me!")
                                                                                           },

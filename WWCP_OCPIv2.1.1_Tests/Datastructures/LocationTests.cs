@@ -18,6 +18,7 @@
 #region Usings
 
 using NUnit.Framework;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
@@ -59,18 +60,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -95,7 +96,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -107,7 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -123,7 +124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new TransparencySoftwareStatus[] {
+                                            new[] {
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -164,7 +165,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
@@ -172,7 +173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -185,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -230,20 +231,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 "Europe/Berlin",
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -251,7 +252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -263,7 +264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 new EnergyMix(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -273,7 +274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
@@ -288,40 +289,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #endregion
 
-            var JSON = Location1.ToJSON();
+            var json    = Location1.ToJSON();
 
-            Assert.AreEqual("DE",                               JSON["country_code"].Value<String>());
-            Assert.AreEqual("GEF",                              JSON["party_id"].    Value<String>());
-            Assert.AreEqual("LOC0001",                          JSON["id"].          Value<String>());
+            Assert.AreEqual ("LOC0001", json["id"]?.Value<String>());
 
-            Assert.IsTrue(Location.TryParse(JSON, out Location Location2, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            var result  = Location.TryParse(json,
+                                            out var location2,
+                                            out var errorResponse,
+                                            Location1.CountryCode,
+                                            Location1.PartyId);
 
-            Assert.AreEqual(Location1.Id,                       Location2.Id);
+            Assert.IsTrue   (result, errorResponse);
+            Assert.IsNotNull(location2);
+            Assert.IsNull   (errorResponse);
 
-            Assert.AreEqual(Location1.Publish,                  Location2.Publish);
-            Assert.AreEqual(Location1.Address,                  Location2.Address);
-            Assert.AreEqual(Location1.City,                     Location2.City);
-            Assert.AreEqual(Location1.Country,                  Location2.Country);
-            Assert.AreEqual(Location1.Coordinates,              Location2.Coordinates);
-            Assert.AreEqual(Location1.Timezone,                 Location2.Timezone);
+            if (location2 is not null)
+            {
 
-            Assert.AreEqual(Location1.Name,                     Location2.Name);
-            Assert.AreEqual(Location1.PostalCode,               Location2.PostalCode);
-            Assert.AreEqual(Location1.RelatedLocations,         Location2.RelatedLocations);
-            Assert.AreEqual(Location1.LocationType,              Location2.LocationType);
-            //Assert.AreEqual(LocationA.EVSEs,                    LocationB.EVSEs);
-            Assert.AreEqual(Location1.Directions,               Location2.Directions);
-            Assert.AreEqual(Location1.Operator,                 Location2.Operator);
-            Assert.AreEqual(Location1.SubOperator,              Location2.SubOperator);
-            Assert.AreEqual(Location1.Owner,                    Location2.Owner);
-            Assert.AreEqual(Location1.Facilities,               Location2.Facilities);
-            //Assert.AreEqual(LocationA.OpeningTimes,             LocationB.OpeningTimes);
-            Assert.AreEqual(Location1.ChargingWhenClosed,       Location2.ChargingWhenClosed);
-            Assert.AreEqual(Location1.Images,                   Location2.Images);
-            Assert.AreEqual(Location1.EnergyMix,                Location2.EnergyMix);
+                Assert.AreEqual (Location1.Id,                       location2.Id);
 
-            Assert.AreEqual(Location1.LastUpdated.ToIso8601(),  Location2.LastUpdated.ToIso8601());
+                Assert.AreEqual (Location1.Publish,                  location2.Publish);
+                Assert.AreEqual (Location1.Address,                  location2.Address);
+                Assert.AreEqual (Location1.City,                     location2.City);
+                Assert.AreEqual (Location1.Country,                  location2.Country);
+                Assert.AreEqual (Location1.Coordinates,              location2.Coordinates);
+                Assert.AreEqual (Location1.Timezone,                 location2.Timezone);
+
+                Assert.AreEqual (Location1.Name,                     location2.Name);
+                Assert.AreEqual (Location1.PostalCode,               location2.PostalCode);
+                Assert.AreEqual (Location1.RelatedLocations,         location2.RelatedLocations);
+                Assert.AreEqual (Location1.LocationType,              location2.LocationType);
+                //Assert.AreEqual(LocationA.EVSEs,                    LocationB.EVSEs);
+                Assert.AreEqual (Location1.Directions,               location2.Directions);
+                Assert.AreEqual (Location1.Operator,                 location2.Operator);
+                Assert.AreEqual (Location1.SubOperator,              location2.SubOperator);
+                Assert.AreEqual (Location1.Owner,                    location2.Owner);
+                Assert.AreEqual (Location1.Facilities,               location2.Facilities);
+                //Assert.AreEqual(LocationA.OpeningTimes,             LocationB.OpeningTimes);
+                Assert.AreEqual (Location1.ChargingWhenClosed,       location2.ChargingWhenClosed);
+                Assert.AreEqual (Location1.Images,                   location2.Images);
+                Assert.AreEqual (Location1.EnergyMix,                location2.EnergyMix);
+
+                Assert.AreEqual (Location1.LastUpdated.ToIso8601(),  location2.LastUpdated.ToIso8601());
+
+            }
 
         }
 
@@ -350,18 +361,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -386,7 +397,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -398,7 +409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -414,7 +425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new TransparencySoftwareStatus[] {
+                                            new[] {
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -455,7 +466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
@@ -463,7 +474,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -476,7 +487,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -521,20 +532,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 "Europe/Berlin",
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -542,7 +553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -554,7 +565,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 new EnergyMix(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -564,7 +575,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
@@ -617,18 +628,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -653,7 +664,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -665,7 +676,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -681,7 +692,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new TransparencySoftwareStatus[] {
+                                            new[] {
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -722,7 +733,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
@@ -730,7 +741,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -743,7 +754,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -788,20 +799,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 "Europe/Berlin",
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -809,7 +820,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -821,7 +832,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 new EnergyMix(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -831,7 +842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
@@ -884,18 +895,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -920,7 +931,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -932,7 +943,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -948,7 +959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new TransparencySoftwareStatus[] {
+                                            new[] {
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -989,7 +1000,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
@@ -997,7 +1008,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -1010,7 +1021,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -1055,20 +1066,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 "Europe/Berlin",
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -1076,7 +1087,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -1088,7 +1099,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 new EnergyMix(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -1098,7 +1109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
@@ -1129,13 +1140,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
         #endregion
 
-        #region Location_PATCH_minimal()
+        #region Location_PATCH_InvalidLastUpdatedPatch1()
 
         /// <summary>
-        /// Minimal location PATCH test.
+        /// Invalid 'last_updated' PATCH of a location 1.
         /// </summary>
         [Test]
-        public static void Location_PATCH_minimal()
+        public static void Location_PATCH_InvalidLastUpdatedPatch1()
         {
 
             #region Define Location1
@@ -1151,18 +1162,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -1187,7 +1198,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -1199,7 +1210,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -1215,7 +1226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new TransparencySoftwareStatus[] {
+                                            new[] {
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -1253,11 +1264,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             }
                                         ),
 
-
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
@@ -1265,7 +1275,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -1278,7 +1288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -1323,20 +1333,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 "Europe/Berlin",
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -1344,7 +1354,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -1356,7 +1366,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 new EnergyMix(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -1366,7 +1376,541 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
+                                        new EnvironmentalImpact(
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                            0.1
+                                        )
+                                    },
+                                    "Stadtwerke Jena-Ost",
+                                    "New Green Deal"
+                                ),
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                            );
+
+            #endregion
+
+            var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""last_updated"": ""I-N-V-A-L-I-D!"" }"));
+
+            Assert.IsNotNull(patchResult);
+            Assert.IsFalse  (patchResult.IsSuccess);
+            Assert.IsTrue   (patchResult.IsFailed);
+            Assert.IsNotNull(patchResult.ErrorResponse);
+            Assert.AreEqual ("Invalid JSON merge patch of a location: Invalid 'last updated'!",   patchResult.ErrorResponse);
+            Assert.IsNotNull(patchResult.PatchedData);
+
+            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                          patchResult.PatchedData.LastUpdated.ToIso8601());
+
+        }
+
+        #endregion
+
+        #region Location_PATCH_InvalidLastUpdatedPatch2()
+
+        /// <summary>
+        /// Invalid 'last_updated' PATCH of a location 2.
+        /// </summary>
+        [Test]
+        public static void Location_PATCH_InvalidLastUpdatedPatch2()
+        {
+
+            #region Define Location1
+
+            var Location1 = new Location(
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
+                                LocationType.PARKING_LOT,
+                                "Biberweg 18",
+                                "Jena",
+                                "07749",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
+                                new[] {
+                                    new AdditionalGeoLocation(
+                                        Latitude.Parse(11),
+                                        Longitude.Parse(22),
+                                        Name: DisplayText.Create(Languages.de, "Postkasten")
+                                    )
+                                },
+                                new[] {
+                                    new EVSE(
+                                        EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
+                                        StatusType.AVAILABLE,
+                                        new[] {
+                                            new Connector(
+                                                Connector_Id.Parse("1"),
+                                                ConnectorType.IEC_62196_T2,
+                                                ConnectorFormats.SOCKET,
+                                                PowerTypes.AC_3_PHASE,
+                                                400,
+                                                30,
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
+                                                URL.Parse("https://open.charging.cloud/terms"),
+                                                DateTime.Parse("2020-09-21")
+                                            ),
+                                            new Connector(
+                                                Connector_Id.Parse("2"),
+                                                ConnectorType.IEC_62196_T2_COMBO,
+                                                ConnectorFormats.CABLE,
+                                                PowerTypes.AC_3_PHASE,
+                                                400,
+                                                20,
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
+                                                URL.Parse("https://open.charging.cloud/terms"),
+                                                DateTime.Parse("2020-09-22")
+                                            )
+                                        },
+                                        EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
+                                        new[] {
+                                            new StatusSchedule(
+                                                StatusType.INOPERATIVE,
+                                                DateTime.Parse("2020-09-23"),
+                                                DateTime.Parse("2020-09-24")
+                                            ),
+                                            new StatusSchedule(
+                                                StatusType.OUTOFORDER,
+                                                DateTime.Parse("2020-12-30"),
+                                                DateTime.Parse("2020-12-31")
+                                            )
+                                        },
+                                        new[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
+                                        },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            null,
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null,
+                                            null,
+                                            new[] {
+                                                new TransparencySoftwareStatus(
+                                                    new TransparencySoftware(
+                                                        "Chargy Transparency Software Desktop Application",
+                                                        "v1.00",
+                                                        OpenSourceLicense.AGPL3,
+                                                        "GraphDefined GmbH",
+                                                        URL.Parse("https://open.charging.cloud/logo.svg"),
+                                                        URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                                        URL.Parse("https://open.charging.cloud/Chargy"),
+                                                        URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
+                                                    ),
+                                                    LegalStatus.GermanCalibrationLaw,
+                                                    "cert",
+                                                    "German PTB",
+                                                    NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                                    NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                                ),
+                                                new TransparencySoftwareStatus(
+                                                    new TransparencySoftware(
+                                                        "Chargy Transparency Software Mobile Application",
+                                                        "v1.00",
+                                                        OpenSourceLicense.AGPL3,
+                                                        "GraphDefined GmbH",
+                                                        URL.Parse("https://open.charging.cloud/logo.svg"),
+                                                        URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                                        URL.Parse("https://open.charging.cloud/Chargy"),
+                                                        URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
+                                                    ),
+                                                    LegalStatus.ForInformationOnly,
+                                                    "no cert",
+                                                    "GraphDefined",
+                                                    NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                                    NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                                )
+                                            }
+                                        ),
+
+                                        "1. Stock",
+                                        GeoCoordinate.Parse(10.1, 20.2),
+                                        "Ladestation #1",
+                                        new[] {
+                                            DisplayText.Create(Languages.de, "Bitte klingeln!"),
+                                            DisplayText.Create(Languages.en, "Ken sent me!")
+                                        },
+                                        new ParkingRestrictions[] {
+                                            ParkingRestrictions.EV_ONLY,
+                                            ParkingRestrictions.PLUGGED
+                                        },
+                                        new[] {
+                                            new Image(
+                                                URL.Parse("http://example.com/pinguine.jpg"),
+                                                ImageFileType.jpeg,
+                                                ImageCategory.OPERATOR,
+                                                100,
+                                                150,
+                                                URL.Parse("http://example.com/kleine_pinguine.jpg")
+                                            )
+                                        },
+                                        DateTime.Parse("2020-09-22")
+                                    )
+                                },
+                                new[] {
+                                    new DisplayText(Languages.de, "Hallo Welt!"),
+                                    new DisplayText(Languages.en, "Hello world!")
+                                },
+                                new BusinessDetails(
+                                    "Open Charging Cloud",
+                                    URL.Parse("https://open.charging.cloud"),
+                                    new Image(
+                                        URL.Parse("http://open.charging.cloud/logo.svg"),
+                                        ImageFileType.svg,
+                                        ImageCategory.OPERATOR,
+                                        1000,
+                                        1500,
+                                        URL.Parse("http://open.charging.cloud/logo_small.svg")
+                                    )
+                                ),
+                                new BusinessDetails(
+                                    "GraphDefined GmbH",
+                                    URL.Parse("https://www.graphdefined.com"),
+                                    new Image(
+                                        URL.Parse("http://www.graphdefined.com/logo.png"),
+                                        ImageFileType.png,
+                                        ImageCategory.OPERATOR,
+                                        2000,
+                                        3000,
+                                        URL.Parse("http://www.graphdefined.com/logo_small.png")
+                                    )
+                                ),
+                                new BusinessDetails(
+                                    "Achim Friedland",
+                                    URL.Parse("https://ahzf.de"),
+                                    new Image(
+                                        URL.Parse("http://ahzf.de/logo.gif"),
+                                        ImageFileType.gif,
+                                        ImageCategory.OWNER,
+                                        3000,
+                                        4500,
+                                        URL.Parse("http://ahzf.de/logo_small.gif")
+                                    )
+                                ),
+                                new Facilities[] {
+                                    Facilities.CAFE
+                                },
+                                "Europe/Berlin",
+                                new Hours(
+                                    new[] {
+                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                    },
+                                    new[] {
+                                        new ExceptionalPeriod(
+                                            DateTime.Parse("2020-09-21T00:00:00Z"),
+                                            DateTime.Parse("2020-09-22T00:00:00Z")
+                                        )
+                                    },
+                                    new[] {
+                                        new ExceptionalPeriod(
+                                            DateTime.Parse("2020-12-24T00:00:00Z"),
+                                            DateTime.Parse("2020-12-26T00:00:00Z")
+                                        )
+                                    }
+                                ),
+                                false,
+                                new[] {
+                                    new Image(
+                                        URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
+                                        ImageFileType.jpeg,
+                                        ImageCategory.LOCATION,
+                                        200,
+                                        400,
+                                        URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
+                                    )
+                                },
+                                new EnergyMix(
+                                    true,
+                                    new[] {
+                                        new EnergySource(
+                                            EnergySourceCategory.SOLAR,
+                                            80
+                                        ),
+                                        new EnergySource(
+                                            EnergySourceCategory.WIND,
+                                            20
+                                        )
+                                    },
+                                    new[] {
+                                        new EnvironmentalImpact(
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                            0.1
+                                        )
+                                    },
+                                    "Stadtwerke Jena-Ost",
+                                    "New Green Deal"
+                                ),
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                            );
+
+            #endregion
+
+            var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""name"": ""Location 0001a"", ""last_updated"": ""yyyy-MM-ddThh:mm:ssZ"" }"));
+
+            Assert.IsNotNull(patchResult);
+            Assert.IsFalse  (patchResult.IsSuccess);
+            Assert.IsTrue   (patchResult.IsFailed);
+            Assert.IsNotNull(patchResult.ErrorResponse);
+            Assert.AreEqual ("Invalid JSON merge patch of a location: Invalid 'last updated'!",   patchResult.ErrorResponse);
+            Assert.IsNotNull(patchResult.PatchedData);
+
+            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                        patchResult.PatchedData.Id);
+            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                          patchResult.PatchedData.LastUpdated.ToIso8601());
+
+        }
+
+        #endregion
+
+        #region Location_PATCH_minimal()
+
+        /// <summary>
+        /// Minimal location PATCH test.
+        /// </summary>
+        [Test]
+        public static void Location_PATCH_minimal()
+        {
+
+            #region Define Location1
+
+            var Location1 = new Location(
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
+                                LocationType.PARKING_LOT,
+                                "Biberweg 18",
+                                "Jena",
+                                "07749",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
+                                new[] {
+                                    new AdditionalGeoLocation(
+                                        Latitude.Parse(11),
+                                        Longitude.Parse(22),
+                                        Name: DisplayText.Create(Languages.de, "Postkasten")
+                                    )
+                                },
+                                new[] {
+                                    new EVSE(
+                                        EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
+                                        StatusType.AVAILABLE,
+                                        new[] {
+                                            new Connector(
+                                                Connector_Id.Parse("1"),
+                                                ConnectorType.IEC_62196_T2,
+                                                ConnectorFormats.SOCKET,
+                                                PowerTypes.AC_3_PHASE,
+                                                400,
+                                                30,
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
+                                                URL.Parse("https://open.charging.cloud/terms"),
+                                                DateTime.Parse("2020-09-21")
+                                            ),
+                                            new Connector(
+                                                Connector_Id.Parse("2"),
+                                                ConnectorType.IEC_62196_T2_COMBO,
+                                                ConnectorFormats.CABLE,
+                                                PowerTypes.AC_3_PHASE,
+                                                400,
+                                                20,
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
+                                                URL.Parse("https://open.charging.cloud/terms"),
+                                                DateTime.Parse("2020-09-22")
+                                            )
+                                        },
+                                        EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
+                                        new[] {
+                                            new StatusSchedule(
+                                                StatusType.INOPERATIVE,
+                                                DateTime.Parse("2020-09-23"),
+                                                DateTime.Parse("2020-09-24")
+                                            ),
+                                            new StatusSchedule(
+                                                StatusType.OUTOFORDER,
+                                                DateTime.Parse("2020-12-30"),
+                                                DateTime.Parse("2020-12-31")
+                                            )
+                                        },
+                                        new[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
+                                        },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            null,
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null,
+                                            null,
+                                            new[] {
+                                                new TransparencySoftwareStatus(
+                                                    new TransparencySoftware(
+                                                        "Chargy Transparency Software Desktop Application",
+                                                        "v1.00",
+                                                        OpenSourceLicense.AGPL3,
+                                                        "GraphDefined GmbH",
+                                                        URL.Parse("https://open.charging.cloud/logo.svg"),
+                                                        URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                                        URL.Parse("https://open.charging.cloud/Chargy"),
+                                                        URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
+                                                    ),
+                                                    LegalStatus.GermanCalibrationLaw,
+                                                    "cert",
+                                                    "German PTB",
+                                                    NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                                    NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                                ),
+                                                new TransparencySoftwareStatus(
+                                                    new TransparencySoftware(
+                                                        "Chargy Transparency Software Mobile Application",
+                                                        "v1.00",
+                                                        OpenSourceLicense.AGPL3,
+                                                        "GraphDefined GmbH",
+                                                        URL.Parse("https://open.charging.cloud/logo.svg"),
+                                                        URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                                        URL.Parse("https://open.charging.cloud/Chargy"),
+                                                        URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
+                                                    ),
+                                                    LegalStatus.ForInformationOnly,
+                                                    "no cert",
+                                                    "GraphDefined",
+                                                    NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                                    NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                                )
+                                            }
+                                        ),
+
+
+                                        "1. Stock",
+                                        GeoCoordinate.Parse(10.1, 20.2),
+                                        "Ladestation #1",
+                                        new[] {
+                                            DisplayText.Create(Languages.de, "Bitte klingeln!"),
+                                            DisplayText.Create(Languages.en, "Ken sent me!")
+                                        },
+                                        new ParkingRestrictions[] {
+                                            ParkingRestrictions.EV_ONLY,
+                                            ParkingRestrictions.PLUGGED
+                                        },
+                                        new[] {
+                                            new Image(
+                                                URL.Parse("http://example.com/pinguine.jpg"),
+                                                ImageFileType.jpeg,
+                                                ImageCategory.OPERATOR,
+                                                100,
+                                                150,
+                                                URL.Parse("http://example.com/kleine_pinguine.jpg")
+                                            )
+                                        },
+                                        DateTime.Parse("2020-09-22")
+                                    )
+                                },
+                                new[] {
+                                    new DisplayText(Languages.de, "Hallo Welt!"),
+                                    new DisplayText(Languages.en, "Hello world!")
+                                },
+                                new BusinessDetails(
+                                    "Open Charging Cloud",
+                                    URL.Parse("https://open.charging.cloud"),
+                                    new Image(
+                                        URL.Parse("http://open.charging.cloud/logo.svg"),
+                                        ImageFileType.svg,
+                                        ImageCategory.OPERATOR,
+                                        1000,
+                                        1500,
+                                        URL.Parse("http://open.charging.cloud/logo_small.svg")
+                                    )
+                                ),
+                                new BusinessDetails(
+                                    "GraphDefined GmbH",
+                                    URL.Parse("https://www.graphdefined.com"),
+                                    new Image(
+                                        URL.Parse("http://www.graphdefined.com/logo.png"),
+                                        ImageFileType.png,
+                                        ImageCategory.OPERATOR,
+                                        2000,
+                                        3000,
+                                        URL.Parse("http://www.graphdefined.com/logo_small.png")
+                                    )
+                                ),
+                                new BusinessDetails(
+                                    "Achim Friedland",
+                                    URL.Parse("https://ahzf.de"),
+                                    new Image(
+                                        URL.Parse("http://ahzf.de/logo.gif"),
+                                        ImageFileType.gif,
+                                        ImageCategory.OWNER,
+                                        3000,
+                                        4500,
+                                        URL.Parse("http://ahzf.de/logo_small.gif")
+                                    )
+                                ),
+                                new Facilities[] {
+                                    Facilities.CAFE
+                                },
+                                "Europe/Berlin",
+                                new Hours(
+                                    new[] {
+                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                    },
+                                    new[] {
+                                        new ExceptionalPeriod(
+                                            DateTime.Parse("2020-09-21T00:00:00Z"),
+                                            DateTime.Parse("2020-09-22T00:00:00Z")
+                                        )
+                                    },
+                                    new[] {
+                                        new ExceptionalPeriod(
+                                            DateTime.Parse("2020-12-24T00:00:00Z"),
+                                            DateTime.Parse("2020-12-26T00:00:00Z")
+                                        )
+                                    }
+                                ),
+                                false,
+                                new[] {
+                                    new Image(
+                                        URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
+                                        ImageFileType.jpeg,
+                                        ImageCategory.LOCATION,
+                                        200,
+                                        400,
+                                        URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
+                                    )
+                                },
+                                new EnergyMix(
+                                    true,
+                                    new[] {
+                                        new EnergySource(
+                                            EnergySourceCategory.SOLAR,
+                                            80
+                                        ),
+                                        new EnergySource(
+                                            EnergySourceCategory.WIND,
+                                            20
+                                        )
+                                    },
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
@@ -1389,9 +1933,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.IsNull   (patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual   (Location_Id.Parse("LOC0001"),            patchResult.PatchedData.Id);
-            Assert.AreEqual   ("Location 0001a",                        patchResult.PatchedData.Name);
-            Assert.AreNotEqual(DateTime.Parse("2020-09-21T00:00:00Z"),  patchResult.PatchedData.LastUpdated);
+            Assert.AreEqual   (Location_Id.Parse("LOC0001"),             patchResult.PatchedData.Id);
+            Assert.AreEqual   ("Location 0001a",                         patchResult.PatchedData.Name);
+            Assert.AreNotEqual(DateTime.Parse("2020-09-21T00:00:00Z"),   patchResult.PatchedData.LastUpdated);
 
             Assert.IsTrue     (DateTime.UtcNow - patchResult.PatchedData.LastUpdated < TimeSpan.FromSeconds(5));
 
@@ -1421,18 +1965,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -1457,7 +2001,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -1469,7 +2013,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -1485,7 +2029,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new TransparencySoftwareStatus[] {
+                                            new[] {
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -1526,7 +2070,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
@@ -1534,7 +2078,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -1547,7 +2091,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -1592,20 +2136,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 "Europe/Berlin",
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -1613,7 +2157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -1625,7 +2169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 new EnergyMix(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -1635,7 +2179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
@@ -1688,18 +2232,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -1724,7 +2268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -1736,7 +2280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -1752,7 +2296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new TransparencySoftwareStatus[] {
+                                            new[] {
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -1793,15 +2337,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -1814,7 +2358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -1854,25 +2398,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -1880,7 +2424,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -1892,7 +2436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 new EnergyMix(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -1902,7 +2446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
@@ -1958,18 +2502,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -1994,7 +2538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -2006,7 +2550,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -2022,7 +2566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new TransparencySoftwareStatus[] {
+                                            new[] {
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -2063,7 +2607,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
@@ -2071,7 +2615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -2084,7 +2628,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -2129,20 +2673,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 "Europe/Berlin",
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -2150,7 +2694,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -2162,7 +2706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 new EnergyMix(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -2172,7 +2716,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
@@ -2226,18 +2770,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -2262,7 +2806,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -2274,7 +2818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -2290,7 +2834,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new TransparencySoftwareStatus[] {
+                                            new[] {
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -2331,7 +2875,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
@@ -2339,7 +2883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -2352,7 +2896,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -2397,20 +2941,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 "Europe/Berlin",
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -2418,7 +2962,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -2430,7 +2974,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 new EnergyMix(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -2440,7 +2984,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
@@ -2493,18 +3037,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -2529,7 +3073,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -2541,7 +3085,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -2557,7 +3101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new TransparencySoftwareStatus[] {
+                                            new[] {
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -2598,15 +3142,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -2619,7 +3163,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -2659,25 +3203,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -2685,7 +3229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -2697,7 +3241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 new EnergyMix(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -2707,7 +3251,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
@@ -2728,11 +3272,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.IsFalse  (patchResult.IsSuccess);
             Assert.IsTrue   (patchResult.IsFailed);
             Assert.IsNotNull(patchResult.ErrorResponse);
-            Assert.AreEqual ("Invalid JSON merge patch for 'evses' array of a location: JSON property 'evses' is not an array!",  patchResult.ErrorResponse);
+            Assert.AreEqual ("Patching the 'evses' array of a location is not allowed!",   patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                                                        patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                                                          patchResult.PatchedData.LastUpdated.ToIso8601());
+            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                   patchResult.PatchedData.LastUpdated.ToIso8601());
 
         }
 
@@ -2760,18 +3303,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new AdditionalGeoLocation[] {
+                                new[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                new EVSE[] {
+                                new[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new Connector[] {
+                                        new[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -2796,7 +3339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             )
                                         },
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
+                                        new[] {
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -2808,7 +3351,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new Capability[] {
+                                        new[] {
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
@@ -2824,7 +3367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new TransparencySoftwareStatus[] {
+                                            new[] {
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -2865,7 +3408,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new DisplayText[] {
+                                        new[] {
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
@@ -2873,7 +3416,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
-                                        new Image[] {
+                                        new[] {
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -2886,7 +3429,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         DateTime.Parse("2020-09-22")
                                     )
                                 },
-                                new DisplayText[] {
+                                new[] {
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
                                 },
@@ -2931,20 +3474,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 "Europe/Berlin",
                                 new Hours(
-                                    new RegularHours[] {
+                                    new[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
-                                    new ExceptionalPeriod[] {
+                                    new[] {
                                         new ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
@@ -2952,7 +3495,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     }
                                 ),
                                 false,
-                                new Image[] {
+                                new[] {
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -2964,7 +3507,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 },
                                 new EnergyMix(
                                     true,
-                                    new EnergySource[] {
+                                    new[] {
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -2974,7 +3517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             20
                                         )
                                     },
-                                    new EnvironmentalImpact[] {
+                                    new[] {
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
@@ -2995,278 +3538,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.IsFalse  (patchResult.IsSuccess);
             Assert.IsTrue   (patchResult.IsFailed);
             Assert.IsNotNull(patchResult.ErrorResponse);
-            Assert.AreEqual ("Invalid JSON merge patch of a location: Invalid operator!",  patchResult.ErrorResponse);
+            Assert.AreEqual ("Invalid JSON merge patch of a location: Invalid operator!",   patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                 patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                   patchResult.PatchedData.LastUpdated.ToIso8601());
-
-        }
-
-        #endregion
-
-        #region Location_PATCH_InvalidLastUpdatedPatch()
-
-        /// <summary>
-        /// Invalid 'last_updated' PATCH of a location.
-        /// </summary>
-        [Test]
-        public static void Location_PATCH_InvalidLastUpdatedPatch()
-        {
-
-            #region Define Location1
-
-            var Location1 = new Location(
-                                CountryCode. Parse("DE"),
-                                Party_Id.    Parse("GEF"),
-                                Location_Id. Parse("LOC0001"),
-                                LocationType.PARKING_LOT,
-                                "Biberweg 18",
-                                "Jena",
-                                "07749",
-                                Country.Germany,
-                                GeoCoordinate.Parse(10, 20),
-                                "Location 0001",
-                                new AdditionalGeoLocation[] {
-                                    new AdditionalGeoLocation(
-                                        Latitude.Parse(11),
-                                        Longitude.Parse(22),
-                                        Name: DisplayText.Create(Languages.de, "Postkasten")
-                                    )
-                                },
-                                new EVSE[] {
-                                    new EVSE(
-                                        EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusType.AVAILABLE,
-                                        new Connector[] {
-                                            new Connector(
-                                                Connector_Id.Parse("1"),
-                                                ConnectorType.IEC_62196_T2,
-                                                ConnectorFormats.SOCKET,
-                                                PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                Tariff_Id.Parse("DE*GEF*T0001"),
-                                                URL.Parse("https://open.charging.cloud/terms"),
-                                                DateTime.Parse("2020-09-21")
-                                            ),
-                                            new Connector(
-                                                Connector_Id.Parse("2"),
-                                                ConnectorType.IEC_62196_T2_COMBO,
-                                                ConnectorFormats.CABLE,
-                                                PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                Tariff_Id.Parse("DE*GEF*T0003"),
-                                                URL.Parse("https://open.charging.cloud/terms"),
-                                                DateTime.Parse("2020-09-22")
-                                            )
-                                        },
-                                        EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new StatusSchedule[] {
-                                            new StatusSchedule(
-                                                StatusType.INOPERATIVE,
-                                                DateTime.Parse("2020-09-23"),
-                                                DateTime.Parse("2020-09-24")
-                                            ),
-                                            new StatusSchedule(
-                                                StatusType.OUTOFORDER,
-                                                DateTime.Parse("2020-12-30"),
-                                                DateTime.Parse("2020-12-31")
-                                            )
-                                        },
-                                        new Capability[] {
-                                            Capability.RFID_READER,
-                                            Capability.RESERVABLE
-                                        },
-
-                                        // OCPI Computer Science Extensions
-                                        new EnergyMeter(
-                                            Meter_Id.Parse("Meter0815"),
-                                            "EnergyMeter Model #1",
-                                            null,
-                                            "hw. v1.80",
-                                            "fw. v1.20",
-                                            "Energy Metering Services",
-                                            null,
-                                            null,
-                                            null,
-                                            new TransparencySoftwareStatus[] {
-                                                new TransparencySoftwareStatus(
-                                                    new TransparencySoftware(
-                                                        "Chargy Transparency Software Desktop Application",
-                                                        "v1.00",
-                                                        OpenSourceLicense.AGPL3,
-                                                        "GraphDefined GmbH",
-                                                        URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                        URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                        URL.Parse("https://open.charging.cloud/Chargy"),
-                                                        URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
-                                                    ),
-                                                    LegalStatus.GermanCalibrationLaw,
-                                                    "cert",
-                                                    "German PTB",
-                                                    NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                    NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                ),
-                                                new TransparencySoftwareStatus(
-                                                    new TransparencySoftware(
-                                                        "Chargy Transparency Software Mobile Application",
-                                                        "v1.00",
-                                                        OpenSourceLicense.AGPL3,
-                                                        "GraphDefined GmbH",
-                                                        URL.Parse("https://open.charging.cloud/logo.svg"),
-                                                        URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                                        URL.Parse("https://open.charging.cloud/Chargy"),
-                                                        URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
-                                                    ),
-                                                    LegalStatus.ForInformationOnly,
-                                                    "no cert",
-                                                    "GraphDefined",
-                                                    NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
-                                                    NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
-                                                )
-                                            }
-                                        ),
-
-                                        "1. Stock",
-                                        GeoCoordinate.Parse(10.1, 20.2),
-                                        "Ladestation #1",
-                                        new DisplayText[] {
-                                            DisplayText.Create(Languages.de, "Bitte klingeln!"),
-                                            DisplayText.Create(Languages.en, "Ken sent me!")
-                                        },
-                                        new ParkingRestrictions[] {
-                                            ParkingRestrictions.EV_ONLY,
-                                            ParkingRestrictions.PLUGGED
-                                        },
-                                        new Image[] {
-                                            new Image(
-                                                URL.Parse("http://example.com/pinguine.jpg"),
-                                                ImageFileType.jpeg,
-                                                ImageCategory.OPERATOR,
-                                                100,
-                                                150,
-                                                URL.Parse("http://example.com/kleine_pinguine.jpg")
-                                            )
-                                        },
-                                        DateTime.Parse("2020-09-22")
-                                    )
-                                },
-                                new DisplayText[] {
-                                    new DisplayText(Languages.de, "Hallo Welt!"),
-                                    new DisplayText(Languages.en, "Hello world!")
-                                },
-                                new BusinessDetails(
-                                    "Open Charging Cloud",
-                                    URL.Parse("https://open.charging.cloud"),
-                                    new Image(
-                                        URL.Parse("http://open.charging.cloud/logo.svg"),
-                                        ImageFileType.svg,
-                                        ImageCategory.OPERATOR,
-                                        1000,
-                                        1500,
-                                        URL.Parse("http://open.charging.cloud/logo_small.svg")
-                                    )
-                                ),
-                                new BusinessDetails(
-                                    "GraphDefined GmbH",
-                                    URL.Parse("https://www.graphdefined.com"),
-                                    new Image(
-                                        URL.Parse("http://www.graphdefined.com/logo.png"),
-                                        ImageFileType.png,
-                                        ImageCategory.OPERATOR,
-                                        2000,
-                                        3000,
-                                        URL.Parse("http://www.graphdefined.com/logo_small.png")
-                                    )
-                                ),
-                                new BusinessDetails(
-                                    "Achim Friedland",
-                                    URL.Parse("https://ahzf.de"),
-                                    new Image(
-                                        URL.Parse("http://ahzf.de/logo.gif"),
-                                        ImageFileType.gif,
-                                        ImageCategory.OWNER,
-                                        3000,
-                                        4500,
-                                        URL.Parse("http://ahzf.de/logo_small.gif")
-                                    )
-                                ),
-                                new Facilities[] {
-                                    Facilities.CAFE
-                                },
-                                "Europe/Berlin",
-                                new Hours(
-                                    new RegularHours[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
-                                    },
-                                    new ExceptionalPeriod[] {
-                                        new ExceptionalPeriod(
-                                            DateTime.Parse("2020-09-21T00:00:00Z"),
-                                            DateTime.Parse("2020-09-22T00:00:00Z")
-                                        )
-                                    },
-                                    new ExceptionalPeriod[] {
-                                        new ExceptionalPeriod(
-                                            DateTime.Parse("2020-12-24T00:00:00Z"),
-                                            DateTime.Parse("2020-12-26T00:00:00Z")
-                                        )
-                                    }
-                                ),
-                                false,
-                                new Image[] {
-                                    new Image(
-                                        URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
-                                        ImageFileType.jpeg,
-                                        ImageCategory.LOCATION,
-                                        200,
-                                        400,
-                                        URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
-                                    )
-                                },
-                                new EnergyMix(
-                                    true,
-                                    new EnergySource[] {
-                                        new EnergySource(
-                                            EnergySourceCategory.SOLAR,
-                                            80
-                                        ),
-                                        new EnergySource(
-                                            EnergySourceCategory.WIND,
-                                            20
-                                        )
-                                    },
-                                    new EnvironmentalImpact[] {
-                                        new EnvironmentalImpact(
-                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
-                                            0.1
-                                        )
-                                    },
-                                    "Stadtwerke Jena-Ost",
-                                    "New Green Deal"
-                                ),
-                                null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
-                            );
-
-            #endregion
-
-            var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""last_updated"": ""I-N-V-A-L-I-D!"" }"));
-
-            Assert.IsNotNull(patchResult);
-            Assert.IsFalse  (patchResult.IsSuccess);
-            Assert.IsTrue   (patchResult.IsFailed);
-            Assert.IsNotNull(patchResult.ErrorResponse);
-            Assert.AreEqual ("Invalid JSON merge patch of a location: Invalid 'last updated'!",  patchResult.ErrorResponse);
-            Assert.IsNotNull(patchResult.PatchedData);
-
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                       patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                         patchResult.PatchedData.LastUpdated.ToIso8601());
+            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                  patchResult.PatchedData.Id);
+            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                    patchResult.PatchedData.LastUpdated.ToIso8601());
 
         }
 
@@ -3290,6 +3566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                            ""country_code"": ""BE"",
                            ""party_id"": ""BEC"",
                            ""id"": ""LOC1"",
+                           ""type"": ""ON_STREET"",
                            ""publish"": true,
                            ""name"": ""Gent Zuid"",
                            ""address"": ""F.Rooseveltlaan 3A"",
@@ -3361,8 +3638,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #endregion
 
-            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            Assert.IsNull(ErrorResponse);
+            var result = Location.TryParse(JObject.Parse(JSON),
+                                           out var parsedLocation,
+                                           out var errorResponse);
+
+            Assert.IsNull(errorResponse);
             Assert.IsTrue(result);
 
             Assert.AreEqual(Location_Id.Parse("LOC1"),                                  parsedLocation.Id);
@@ -3405,6 +3685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                            ""country_code"": ""SE"",
                            ""party_id"": ""EVC"",
                            ""id"": ""cbb0df21-d17d-40ba-a4aa-dc588c8f98cb"",
+                           ""type"": ""ON_STREET"",
                            ""publish"": true,
                            ""name"": ""P-Huset Leonard"",
                            ""address"": ""Claesgatan 6"",
@@ -3470,12 +3751,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #endregion
 
-            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            Assert.IsNull(ErrorResponse);
-            Assert.IsTrue(result);
+            var result = Location.TryParse(JObject.Parse(JSON),
+                                           out var parsedLocation,
+                                           out var errorResponse);
 
-            Assert.AreEqual(Location_Id.Parse("cbb0df21-d17d-40ba-a4aa-dc588c8f98cb"),  parsedLocation.Id);
-            Assert.AreEqual(true,                                                       parsedLocation.Publish);
+            Assert.IsTrue   (result, errorResponse);
+            Assert.IsNotNull(parsedLocation);
+            Assert.IsNull   (errorResponse);
+
+            Assert.AreEqual(Location_Id.Parse("cbb0df21-d17d-40ba-a4aa-dc588c8f98cb"),   parsedLocation.Id);
+            Assert.AreEqual(true,                                                        parsedLocation.Publish);
             //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
             //Assert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
             //Assert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
@@ -3514,6 +3799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                            ""country_code"": ""NL"",
                            ""party_id"": ""ALF"",
                            ""id"": ""3e7b39c2-10d0-4138-a8b3-8509a25f9920"",
+                           ""type"": ""ON_STREET"",
                            ""publish"": true,
                            ""name"": ""ihomer"",
                            ""address"": ""Tamboerijn 7"",
@@ -3547,12 +3833,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #endregion
 
-            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            Assert.IsNull(ErrorResponse);
-            Assert.IsTrue(result);
+            var result = Location.TryParse(JObject.Parse(JSON),
+                                           out var parsedLocation,
+                                           out var errorResponse);
 
-            Assert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),  parsedLocation.Id);
-            Assert.AreEqual(true,                                                       parsedLocation.Publish);
+            Assert.IsTrue   (result, errorResponse);
+            Assert.IsNotNull(parsedLocation);
+            Assert.IsNull   (errorResponse);
+
+            Assert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),   parsedLocation.Id);
+            Assert.AreEqual(true,                                                        parsedLocation.Publish);
             //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
             //Assert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
             //Assert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
@@ -3591,6 +3881,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                            ""country_code"": ""NL"",
                            ""party_id"": ""ALF"",
                            ""id"": ""3e7b39c2-10d0-4138-a8b3-8509a25f9920"",
+                           ""type"": ""ON_STREET"",
                            ""publish"": false,
                            ""name"": ""ihomer"",
                            ""address"": ""Tamboerijn 7"",
@@ -3623,12 +3914,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #endregion
 
-            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            Assert.IsNull(ErrorResponse);
-            Assert.IsTrue(result);
+            var result = Location.TryParse(JObject.Parse(JSON),
+                                           out var parsedLocation,
+                                           out var errorResponse);
 
-            Assert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),  parsedLocation.Id);
-            Assert.AreEqual(false,                                                      parsedLocation.Publish);
+            Assert.IsTrue   (result, errorResponse);
+            Assert.IsNotNull(parsedLocation);
+            Assert.IsNull   (errorResponse);
+
+            Assert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),   parsedLocation.Id);
+            Assert.AreEqual(false,                                                       parsedLocation.Publish);
             //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
             //Assert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
             //Assert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
@@ -3667,6 +3962,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                            ""country_code"": ""NL"",
                            ""party_id"": ""ALL"",
                            ""id"": ""f76c2e0c-a6ef-4f67-bf23-6a187e5ca0e0"",
+                           ""type"": ""ON_STREET"",
                            ""publish"": false,
                            ""publish_allowed_to"": [{
                              ""visual_number"": ""12345-67"",
@@ -3709,12 +4005,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #endregion
 
-            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            Assert.IsNull(ErrorResponse);
-            Assert.IsTrue(result);
+            var result = Location.TryParse(JObject.Parse(JSON),
+                                           out var parsedLocation,
+                                           out var errorResponse);
 
-            Assert.AreEqual(Location_Id.Parse("f76c2e0c-a6ef-4f67-bf23-6a187e5ca0e0"),  parsedLocation.Id);
-            Assert.AreEqual(false,                                                      parsedLocation.Publish);
+            Assert.IsTrue   (result, errorResponse);
+            Assert.IsNotNull(parsedLocation);
+            Assert.IsNull   (errorResponse);
+
+            Assert.AreEqual(Location_Id.Parse("f76c2e0c-a6ef-4f67-bf23-6a187e5ca0e0"),   parsedLocation.Id);
+            Assert.AreEqual(false,                                                       parsedLocation.Publish);
             //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
             //Assert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
             //Assert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
@@ -3753,6 +4053,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                            ""country_code"": ""DE"",
                            ""party_id"": ""ALL"",
                            ""id"": ""a5295927-09b9-4a71-b4b9-a5fffdfa0b77"",
+                           ""type"": ""ON_STREET"",
                            ""publish"": false,
                            ""publish_allowed_to"": [{
                              ""visual_number"": ""0123456-99"",
@@ -3788,12 +4089,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #endregion
 
-            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
-            Assert.IsNull(ErrorResponse);
-            Assert.IsTrue(result);
+            var result = Location.TryParse(JObject.Parse(JSON),
+                                           out var parsedLocation,
+                                           out var errorResponse);
 
-            Assert.AreEqual(Location_Id.Parse("a5295927-09b9-4a71-b4b9-a5fffdfa0b77"),  parsedLocation.Id);
-            Assert.AreEqual(false,                                                      parsedLocation.Publish);
+            Assert.IsTrue   (result, errorResponse);
+            Assert.IsNotNull(parsedLocation);
+            Assert.IsNull   (errorResponse);
+
+            Assert.AreEqual(Location_Id.Parse("a5295927-09b9-4a71-b4b9-a5fffdfa0b77"),   parsedLocation.Id);
+            Assert.AreEqual(false,                                                       parsedLocation.Publish);
             //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
             //Assert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
             //Assert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
@@ -3815,6 +4120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
         }
 
         #endregion
+
 
     }
 
