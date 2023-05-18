@@ -124,7 +124,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #region Change Access Token
 
-                var updateCPOResult = emsp1CommonAPI.UpdateRemoteParty(
+                var removeResult    = emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"),
+                                                                       Party_Id.   Parse("GEF"));
+
+                Assert.IsTrue(removeResult);
+
+                var updateCPOResult = emsp1CommonAPI.AddRemoteParty(
                     CountryCode:         CountryCode.Parse("DE"),
                     PartyId:             Party_Id.   Parse("GEF"),
                     Role:                Roles.      CPO,

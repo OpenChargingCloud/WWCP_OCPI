@@ -2474,18 +2474,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Try to get the remote party having the given unique identification.
         /// </summary>
         /// <param name="RemotePartyId">The unique identification of the remote party.</param>
-        /// <param name="RemoteParty">The defibrillator.</param>
+        /// <param name="RemoteParty">The remote party.</param>
         public Boolean TryGetRemoteParty(RemoteParty_Id    RemotePartyId,
                                          out RemoteParty?  RemoteParty)
-        {
 
-            if (remoteParties.TryGetValue(RemotePartyId, out RemoteParty))
-                return true;
-
-            RemoteParty = null;
-            return false;
-
-        }
+            => remoteParties.TryGetValue(RemotePartyId,
+                                         out RemoteParty);
 
         #endregion
 
@@ -2498,8 +2492,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public IEnumerable<RemoteParty> GetRemoteParties(IncludeRemoteParty? IncludeFilter = null)
 
             => IncludeFilter is null
-                   ? remoteParties.Values.ToArray()
-                   : remoteParties.Values.Where(remoteParty => IncludeFilter(remoteParty)).ToArray();
+                   ? remoteParties.Values
+                   : remoteParties.Values.
+                                   Where(remoteParty => IncludeFilter(remoteParty));
 
         #endregion
 
@@ -2512,8 +2507,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public IEnumerable<RemoteParty> GetRemoteParties(Roles Role)
 
             => remoteParties.Values.
-                             Where  (remoteParty => remoteParty.Role == Role).
-                             ToArray();
+                             Where(remoteParty => remoteParty.Role == Role);
 
         #endregion
 
@@ -2522,8 +2516,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public IEnumerable<RemoteParty> GetRemoteParties(AccessToken AccessToken)
 
             => remoteParties.Values.
-                             Where(remoteParty => remoteParty.LocalAccessInfos.Any(accessInfo => accessInfo.AccessToken == AccessToken)).
-                             ToArray();
+                             Where(remoteParty => remoteParty.LocalAccessInfos.Any(accessInfo => accessInfo.AccessToken == AccessToken));
 
         #endregion
 
@@ -2533,19 +2526,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                          AccessStatus  AccessStatus)
 
             => remoteParties.Values.
-                             Where(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken  == AccessToken &&
-                                                                                                      localAccessInfo.Status       == AccessStatus)).
-                             ToArray();
+                             Where(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == AccessToken &&
+                                                                                                      localAccessInfo.Status      == AccessStatus));
 
         #endregion
 
-        #region TryGetRemoteParties(AccessToken, out RemoteParties)
+        #region GetRemoteParties   (AccessToken, out RemoteParties)
 
-        public Boolean TryGetRemoteParties(AccessToken AccessToken, out IEnumerable<RemoteParty> RemoteParties)
+        public Boolean TryGetRemoteParties(AccessToken                   AccessToken,
+                                           out IEnumerable<RemoteParty>  RemoteParties)
         {
 
-            RemoteParties = remoteParties.Values.Where  (remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == AccessToken)).
-                                                 ToArray();
+            RemoteParties = remoteParties.Values.
+                                          Where(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == AccessToken));
 
             return RemoteParties.Any();
 
