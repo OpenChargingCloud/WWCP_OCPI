@@ -22,8 +22,9 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
+
+using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -87,7 +88,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -190,7 +191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -337,7 +338,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -528,7 +529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -744,7 +745,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -884,7 +885,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -1023,7 +1024,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_2_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {

@@ -21,6 +21,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1
@@ -102,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (static) Parse   (JSON, CustomCDRTokenParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of an charge detail record token.
+        /// Parse the given JSON representation of a charge detail record token.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
@@ -118,7 +120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 return cdrToken;
             }
 
-            throw new ArgumentException("The given JSON representation of an charge detail record token is invalid: " + errorResponse,
+            throw new ArgumentException("The given JSON representation of a charge detail record token is invalid: " + errorResponse,
                                         nameof(JSON));
 
         }
@@ -155,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of an charge detail record token.
+        /// Try to parse the given JSON representation of a charge detail record token.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDRToken">The parsed charge detail record token.</param>
@@ -171,7 +173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
         /// <summary>
-        /// Try to parse the given JSON representation of an charge detail record token.
+        /// Try to parse the given JSON representation of a charge detail record token.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDRToken">The parsed charge detail record token.</param>
@@ -198,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("country_code",
                                          "country code",
-                                         OCPIv2_2_1.CountryCode.TryParse,
+                                         OCPI.CountryCode.TryParse,
                                          out CountryCode CountryCode,
                                          out ErrorResponse))
                 {
@@ -277,7 +279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             catch (Exception e)
             {
                 CDRToken       = default;
-                ErrorResponse  = "The given JSON representation of an charge detail record token is invalid: " + e.Message;
+                ErrorResponse  = "The given JSON representation of a charge detail record token is invalid: " + e.Message;
                 return false;
             }
 

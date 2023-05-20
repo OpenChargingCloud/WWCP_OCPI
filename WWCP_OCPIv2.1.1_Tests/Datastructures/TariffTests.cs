@@ -24,6 +24,8 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
@@ -197,7 +199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                               CountryCode.Parse("DE"),
                               Party_Id.   Parse("GEF"),
                               Tariff_Id.  Parse("TARIFF0001"),
-                              Currency.EUR,
+                              OCPI.Currency.EUR,
                               new[] {
                                   new TariffElement(
                                       new[] {

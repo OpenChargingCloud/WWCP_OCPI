@@ -24,6 +24,7 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.WWCP;
+using System.Diagnostics;
 
 #endregion
 
@@ -75,10 +76,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
         #region SetupEachTest()
 
         [SetUp]
-        public override void SetupEachTest()
+        public override async Task SetupEachTest()
         {
 
-            base.SetupEachTest();
+            await base.SetupEachTest();
 
             #region Create cso/emp1/emp2 roaming network
 
@@ -114,13 +115,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Create graphDefinedCSO / graphDefinedEMP / exampleEMP
 
-            graphDefinedCSO         = csoRoamingNetwork.CreateChargingStationOperator(
-                                          Id:                                  ChargingStationOperator_Id.Parse("DE*GEF"),
-                                          Name:                                I18NString.Create(Languages.en, "GraphDefined CSO"),
-                                          Description:                         I18NString.Create(Languages.en, "GraphDefined CSO Services"),
-                                          InitialAdminStatus:                  ChargingStationOperatorAdminStatusTypes.Operational,
-                                          InitialStatus:                       ChargingStationOperatorStatusTypes.Available
-                                      ).Result.ChargingStationOperator;
+            var result = await csoRoamingNetwork.CreateChargingStationOperator(
+                                                     Id:                                  ChargingStationOperator_Id.Parse("DE*GEF"),
+                                                     Name:                                I18NString.Create(Languages.en, "GraphDefined CSO"),
+                                                     Description:                         I18NString.Create(Languages.en, "GraphDefined CSO Services"),
+                                                     InitialAdminStatus:                  ChargingStationOperatorAdminStatusTypes.Operational,
+                                                     InitialStatus:                       ChargingStationOperatorStatusTypes.Available
+                                                 );
+
+            Assert.IsTrue   (result.IsSuccess);
+            Assert.IsNotNull(result.ChargingStationOperator);
+
+            graphDefinedCSO = result.ChargingStationOperator;
 
 
             //graphDefinedEMP_remote  = csoRoamingNetwork.CreateEMobilityProvider(
@@ -212,105 +218,116 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             #region Create cpo/emsp1/emsp2 adapter
 
-            cpoAdapter           = csoRoamingNetwork.CreateOCPIv2_2_1_CSOAdapter(
+            Assert.IsNotNull(cpoCommonAPI);
+            Assert.IsNotNull(emsp1CommonAPI);
+            Assert.IsNotNull(emsp2CommonAPI);
 
-                                       Id:                                  EMPRoamingProvider_Id.Parse("OCPIv2.2.1_CSO_" + this.csoRoamingNetwork.Id),
-                                       Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 CSO"),
-                                       Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 CSO Roaming"),
+            if (cpoCommonAPI   is not null &&
+                emsp1CommonAPI is not null &&
+                emsp2CommonAPI is not null)
+            {
 
-                                       CommonAPI:                           cpoCommonAPI,
-                                       DefaultCountryCode:                  cpoCommonAPI.OurCredentialRoles.First().CountryCode,
-                                       DefaultPartyId:                      cpoCommonAPI.OurCredentialRoles.First().PartyId,
+                cpoAdapter           = csoRoamingNetwork.CreateOCPIv2_2_1_CSOAdapter(
 
-                                       CustomEVSEIdConverter:               null,
-                                       CustomEVSEConverter:                 null,
-                                       CustomEVSEStatusUpdateConverter:     null,
-                                       CustomChargeDetailRecordConverter:   null,
+                                           Id:                                  EMPRoamingProvider_Id.Parse("OCPIv2.2.1_CSO_" + this.csoRoamingNetwork.Id),
+                                           Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 CSO"),
+                                           Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 CSO Roaming"),
 
-                                       IncludeEVSEIds:                      null,
-                                       IncludeEVSEs:                        null,
-                                       IncludeChargingPoolIds:              null,
-                                       IncludeChargingPools:                null,
-                                       ChargeDetailRecordFilter:            null,
+                                           CommonAPI:                           cpoCommonAPI,
+                                           DefaultCountryCode:                  cpoCommonAPI.OurCredentialRoles.First().CountryCode,
+                                           DefaultPartyId:                      cpoCommonAPI.OurCredentialRoles.First().PartyId,
 
-                                       ServiceCheckEvery:                   null,
-                                       StatusCheckEvery:                    null,
-                                       CDRCheckEvery:                       null,
+                                           CustomEVSEIdConverter:               null,
+                                           CustomEVSEConverter:                 null,
+                                           CustomEVSEStatusUpdateConverter:     null,
+                                           CustomChargeDetailRecordConverter:   null,
 
-                                       DisablePushData:                     true,
-                                       DisablePushStatus:                   true,
-                                       DisableAuthentication:               false,
-                                       DisableSendChargeDetailRecords:      true
+                                           IncludeEVSEIds:                      null,
+                                           IncludeEVSEs:                        null,
+                                           IncludeChargingPoolIds:              null,
+                                           IncludeChargingPools:                null,
+                                           ChargeDetailRecordFilter:            null,
 
-                                   );
+                                           ServiceCheckEvery:                   null,
+                                           StatusCheckEvery:                    null,
+                                           CDRCheckEvery:                       null,
 
-            emsp1Adapter         = emp1RoamingNetwork.CreateOCPIv2_2_1_EMPAdapter(
+                                           DisablePushData:                     true,
+                                           DisablePushStatus:                   true,
+                                           DisableAuthentication:               false,
+                                           DisableSendChargeDetailRecords:      true
 
-                                       Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.2.1_EMP1_" + this.emp1RoamingNetwork.Id),
-                                       Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 EMP1"),
-                                       Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 EMP1 Roaming"),
+                                       );
 
-                                       CommonAPI:                           emsp1CommonAPI,
-                                       DefaultCountryCode:                  emsp1CommonAPI.OurCredentialRoles.First().CountryCode,
-                                       DefaultPartyId:                      emsp1CommonAPI.OurCredentialRoles.First().PartyId,
+                emsp1Adapter         = emp1RoamingNetwork.CreateOCPIv2_2_1_EMPAdapter(
 
-                                       CustomEVSEIdConverter:               null,
-                                       CustomEVSEConverter:                 null,
-                                       CustomEVSEStatusUpdateConverter:     null,
-                                       CustomChargeDetailRecordConverter:   null,
+                                           Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.2.1_EMP1_" + this.emp1RoamingNetwork.Id),
+                                           Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 EMP1"),
+                                           Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 EMP1 Roaming"),
 
-                                       IncludeEVSEIds:                      null,
-                                       IncludeEVSEs:                        null,
-                                       IncludeChargingPoolIds:              null,
-                                       IncludeChargingPools:                null,
-                                       ChargeDetailRecordFilter:            null,
+                                           CommonAPI:                           emsp1CommonAPI,
+                                           DefaultCountryCode:                  emsp1CommonAPI.OurCredentialRoles.First().CountryCode,
+                                           DefaultPartyId:                      emsp1CommonAPI.OurCredentialRoles.First().PartyId,
 
-                                       ServiceCheckEvery:                   null,
-                                       StatusCheckEvery:                    null,
-                                       CDRCheckEvery:                       null,
+                                           CustomEVSEIdConverter:               null,
+                                           CustomEVSEConverter:                 null,
+                                           CustomEVSEStatusUpdateConverter:     null,
+                                           CustomChargeDetailRecordConverter:   null,
 
-                                       DisablePushData:                     true,
-                                       DisablePushStatus:                   true,
-                                       DisableAuthentication:               false,
-                                       DisableSendChargeDetailRecords:      true
+                                           IncludeEVSEIds:                      null,
+                                           IncludeEVSEs:                        null,
+                                           IncludeChargingPoolIds:              null,
+                                           IncludeChargingPools:                null,
+                                           ChargeDetailRecordFilter:            null,
 
-                                   );
+                                           ServiceCheckEvery:                   null,
+                                           StatusCheckEvery:                    null,
+                                           CDRCheckEvery:                       null,
 
-            emsp2Adapter         = emp2RoamingNetwork.CreateOCPIv2_2_1_EMPAdapter(
+                                           DisablePushData:                     true,
+                                           DisablePushStatus:                   true,
+                                           DisableAuthentication:               false,
+                                           DisableSendChargeDetailRecords:      true
 
-                                       Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.2.1_EMP2_" + this.emp1RoamingNetwork.Id),
-                                       Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 EMP2"),
-                                       Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 EMP2 Roaming"),
+                                       );
 
-                                       CommonAPI:                           emsp2CommonAPI,
-                                       DefaultCountryCode:                  emsp2CommonAPI.OurCredentialRoles.First().CountryCode,
-                                       DefaultPartyId:                      emsp2CommonAPI.OurCredentialRoles.First().PartyId,
+                emsp2Adapter         = emp2RoamingNetwork.CreateOCPIv2_2_1_EMPAdapter(
 
-                                       CustomEVSEIdConverter:               null,
-                                       CustomEVSEConverter:                 null,
-                                       CustomEVSEStatusUpdateConverter:     null,
-                                       CustomChargeDetailRecordConverter:   null,
+                                           Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.2.1_EMP2_" + this.emp1RoamingNetwork.Id),
+                                           Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 EMP2"),
+                                           Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 EMP2 Roaming"),
 
-                                       IncludeEVSEIds:                      null,
-                                       IncludeEVSEs:                        null,
-                                       IncludeChargingPoolIds:              null,
-                                       IncludeChargingPools:                null,
-                                       ChargeDetailRecordFilter:            null,
+                                           CommonAPI:                           emsp2CommonAPI,
+                                           DefaultCountryCode:                  emsp2CommonAPI.OurCredentialRoles.First().CountryCode,
+                                           DefaultPartyId:                      emsp2CommonAPI.OurCredentialRoles.First().PartyId,
 
-                                       ServiceCheckEvery:                   null,
-                                       StatusCheckEvery:                    null,
-                                       CDRCheckEvery:                       null,
+                                           CustomEVSEIdConverter:               null,
+                                           CustomEVSEConverter:                 null,
+                                           CustomEVSEStatusUpdateConverter:     null,
+                                           CustomChargeDetailRecordConverter:   null,
 
-                                       DisablePushData:                     true,
-                                       DisablePushStatus:                   true,
-                                       DisableAuthentication:               false,
-                                       DisableSendChargeDetailRecords:      true
+                                           IncludeEVSEIds:                      null,
+                                           IncludeEVSEs:                        null,
+                                           IncludeChargingPoolIds:              null,
+                                           IncludeChargingPools:                null,
+                                           ChargeDetailRecordFilter:            null,
 
-                                   );
+                                           ServiceCheckEvery:                   null,
+                                           StatusCheckEvery:                    null,
+                                           CDRCheckEvery:                       null,
 
-            Assert.IsNotNull(cpoAdapter);
-            Assert.IsNotNull(emsp1Adapter);
-            Assert.IsNotNull(emsp2Adapter);
+                                           DisablePushData:                     true,
+                                           DisablePushStatus:                   true,
+                                           DisableAuthentication:               false,
+                                           DisableSendChargeDetailRecords:      true
+
+                                       );
+
+                Assert.IsNotNull(cpoAdapter);
+                Assert.IsNotNull(emsp1Adapter);
+                Assert.IsNotNull(emsp2Adapter);
+
+            }
 
             #endregion
 

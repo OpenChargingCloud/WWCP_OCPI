@@ -25,6 +25,8 @@ using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
@@ -75,7 +77,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                             Country.Germany,
                                             GeoCoordinate.Parse(10, 20)
                                         ),
-                                        Currency.EUR,
+                                        OCPI.Currency.EUR,
 
                                         new[] {
                                             new ChargingPeriod(
@@ -163,7 +165,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                 CountryCode.Parse("DE"),
                                                 Party_Id.   Parse("GEF"),
                                                 Tariff_Id.  Parse("TARIFF0001"),
-                                                Currency.EUR,
+                                                OCPI.Currency.EUR,
                                                 new[] {
                                                     new TariffElement(
                                                         new[] {
@@ -360,7 +362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                             Country.Germany,
                                             GeoCoordinate.Parse(10, 20)
                                         ),
-                                        Currency.EUR,
+                                        OCPI.Currency.EUR,
 
                                         new[] {
                                             new ChargingPeriod(
@@ -448,7 +450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                 CountryCode.Parse("DE"),
                                                 Party_Id.   Parse("GEF"),
                                                 Tariff_Id.  Parse("TARIFF0001"),
-                                                Currency.EUR,
+                                                OCPI.Currency.EUR,
                                                 new[] {
                                                     new TariffElement(
                                                         new[] {
@@ -646,7 +648,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                             Country.Germany,
                                             GeoCoordinate.Parse(10, 20)
                                         ),
-                                        Currency.EUR,
+                                        OCPI.Currency.EUR,
 
                                         new[] {
                                             new ChargingPeriod(
@@ -734,7 +736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                 CountryCode.Parse("DE"),
                                                 Party_Id.   Parse("GEF"),
                                                 Tariff_Id.  Parse("TARIFF0001"),
-                                                Currency.EUR,
+                                                OCPI.Currency.EUR,
                                                 new[] {
                                                     new TariffElement(
                                                         new[] {
@@ -932,7 +934,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                             Country.Germany,
                                             GeoCoordinate.Parse(10, 20)
                                         ),
-                                        Currency.EUR,
+                                        OCPI.Currency.EUR,
 
                                         new[] {
                                             new ChargingPeriod(
@@ -1020,7 +1022,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                                                 CountryCode.Parse("DE"),
                                                 Party_Id.   Parse("GEF"),
                                                 Tariff_Id.  Parse("TARIFF0001"),
-                                                Currency.EUR,
+                                                OCPI.Currency.EUR,
                                                 new[] {
                                                     new TariffElement(
                                                         new[] {

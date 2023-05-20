@@ -31,12 +31,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 
 
-    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
-                                                                  WWCP.ChargingPool_Id?             ChargingPoolId,
-                                                                  WWCP.ChargingStation_Id?          ChargingStationId,
-                                                                  WWCP.EVSE_Id?                     EVSEId,
-                                                                  WWCP.ChargingConnector_Id?        ChargingConnectorId,
-                                                                  WWCP.EMobilityProvider_Id?        EMobilityProviderId);
+    public delegate IEnumerable<OCPI.Tariff_Id>  GetTariffIds_Delegate(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
+                                                                       WWCP.ChargingPool_Id?             ChargingPoolId,
+                                                                       WWCP.ChargingStation_Id?          ChargingStationId,
+                                                                       WWCP.EVSE_Id?                     EVSEId,
+                                                                       WWCP.ChargingConnector_Id?        ChargingConnectorId,
+                                                                       WWCP.EMobilityProvider_Id?        EMobilityProviderId);
 
 
 
@@ -195,8 +195,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               WWCP.RoamingNetwork                             RoamingNetwork,
 
                               HTTP.CommonAPI                                  CommonAPI,
-                              CountryCode                                     DefaultCountryCode,
-                              Party_Id                                        DefaultPartyId,
+                              OCPI.CountryCode                                DefaultCountryCode,
+                              OCPI.Party_Id                                   DefaultPartyId,
 
                               GetTariffIds_Delegate?                          GetTariffIds                        = null,
 
@@ -383,71 +383,62 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode               CountryCode,
-                                      Party_Id                  PartyId,
-                                      Roles                     Role,
-                                      BusinessDetails           BusinessDetails,
+        public Task<Boolean> AddRemoteParty(OCPI.RemoteParty_Id            Id,
+                                            IEnumerable<CredentialsRole>   CredentialsRoles,
 
-                                      AccessToken               AccessToken,
+                                            OCPI.AccessToken               AccessToken,
 
-                                      AccessToken               RemoteAccessToken,
-                                      URL                       RemoteVersionsURL,
-                                      IEnumerable<Version_Id>?  RemoteVersionIds            = null,
-                                      Version_Id?               SelectedVersionId           = null,
+                                            OCPI.AccessToken               RemoteAccessToken,
+                                            URL                            RemoteVersionsURL,
+                                            IEnumerable<OCPI.Version_Id>?  RemoteVersionIds            = null,
+                                            OCPI.Version_Id?               SelectedVersionId           = null,
 
-                                      Boolean?                  AccessTokenBase64Encoding   = null,
-                                      AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
-                                      RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
-                                      PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
-        {
+                                            Boolean?                       AccessTokenBase64Encoding   = null,
+                                            Boolean?                       AllowDowngrades             = false,
+                                            OCPI.AccessStatus              AccessStatus                = OCPI.AccessStatus.      ALLOWED,
+                                            OCPI.RemoteAccessStatus?       RemoteStatus                = OCPI.RemoteAccessStatus.ONLINE,
+                                            OCPI.PartyStatus               PartyStatus                 = OCPI.PartyStatus.       ENABLED)
 
-            return CommonAPI.AddRemoteParty(CountryCode,
-                                            PartyId,
-                                            Role,
-                                            BusinessDetails,
+            => CommonAPI.AddRemoteParty(Id,
+                                        CredentialsRoles,
 
-                                            AccessToken,
+                                        AccessToken,
 
-                                            RemoteAccessToken,
-                                            RemoteVersionsURL,
-                                            RemoteVersionIds,
-                                            SelectedVersionId,
+                                        RemoteAccessToken,
+                                        RemoteVersionsURL,
+                                        RemoteVersionIds,
+                                        SelectedVersionId,
 
-                                            AccessTokenBase64Encoding,
-                                            AccessStatus,
-                                            RemoteStatus,
-                                            PartyStatus);
-
-        }
+                                        AccessTokenBase64Encoding,
+                                        AllowDowngrades,
+                                        AccessStatus,
+                                        RemoteStatus,
+                                        PartyStatus);
 
         #endregion
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode      CountryCode,
-                                      Party_Id         PartyId,
-                                      Roles            Role,
-                                      BusinessDetails  BusinessDetails,
+        public Task<Boolean> AddRemoteParty(OCPI.RemoteParty_Id           Id,
+                                            IEnumerable<CredentialsRole>  CredentialsRoles,
 
-                                      AccessToken      AccessToken,
-                                      Boolean?         AccessTokenBase64Encoding   = null,
-                                      AccessStatus     AccessStatus                = AccessStatus.ALLOWED,
+                                            OCPI.AccessToken              AccessToken,
+                                            Boolean?                      AccessTokenBase64Encoding   = null,
+                                            Boolean?                      AllowDowngrades             = false,
+                                            OCPI.AccessStatus             AccessStatus                = OCPI.AccessStatus.ALLOWED,
 
-                                      PartyStatus      PartyStatus                 = PartyStatus. ENABLED)
-        {
+                                            OCPI.PartyStatus              PartyStatus                 = OCPI.PartyStatus. ENABLED)
 
-            return CommonAPI.AddRemoteParty(CountryCode,
-                                            PartyId,
-                                            Role,
-                                            BusinessDetails,
-                                            AccessToken,
-                                            AccessTokenBase64Encoding,
-                                            AccessStatus,
-                                            PartyStatus);
-        }
+            => CommonAPI.AddRemoteParty(Id,
+                                        CredentialsRoles,
+
+                                        AccessToken,
+                                        AccessTokenBase64Encoding,
+                                        AllowDowngrades,
+                                        AccessStatus,
+                                        PartyStatus);
 
         #endregion
-
 
 
         #region (Set/Add/Update/Delete) Roaming network...
@@ -1077,9 +1068,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (lockTaken)
                 {
 
-                    var countryCode  = CountryCode.TryParse(ChargingStation.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = Party_Id.   TryParse(ChargingStation.Id.OperatorId.Suffix);
-                    var locationId   = Location_Id.TryParse(ChargingStation.ChargingPool?.Id.ToString() ?? "");
+                    var countryCode  = OCPI.CountryCode.TryParse(ChargingStation.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = OCPI.Party_Id.   TryParse(ChargingStation.Id.OperatorId.Suffix);
+                    var locationId   = OCPI.Location_Id.TryParse(ChargingStation.ChargingPool?.Id.ToString() ?? "");
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&
@@ -1176,9 +1167,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (lockTaken)
                 {
 
-                    var countryCode  = CountryCode.TryParse(ChargingStation.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = Party_Id.   TryParse(ChargingStation.Id.OperatorId.Suffix);
-                    var locationId   = Location_Id.TryParse(ChargingStation.ChargingPool?.Id.ToString() ?? "");
+                    var countryCode  = OCPI.CountryCode.TryParse(ChargingStation.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = OCPI.Party_Id.   TryParse(ChargingStation.Id.OperatorId.Suffix);
+                    var locationId   = OCPI.Location_Id.TryParse(ChargingStation.ChargingPool?.Id.ToString() ?? "");
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&
@@ -1282,9 +1273,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (lockTaken)
                 {
 
-                    var countryCode  = CountryCode.TryParse(ChargingStation.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = Party_Id.   TryParse(ChargingStation.Id.OperatorId.Suffix);
-                    var locationId   = Location_Id.TryParse(ChargingStation.ChargingPool?.Id.ToString() ?? "");
+                    var countryCode  = OCPI.CountryCode.TryParse(ChargingStation.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = OCPI.Party_Id.   TryParse(ChargingStation.Id.OperatorId.Suffix);
+                    var locationId   = OCPI.Location_Id.TryParse(ChargingStation.ChargingPool?.Id.ToString() ?? "");
 
                     if (countryCode.HasValue &&
                         partyId.    HasValue &&
@@ -1504,10 +1495,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
-                    var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
                     var locationId   = EVSE.ChargingPool is not null
-                                           ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
                                            : null;
 
                     if (countryCode.HasValue &&
@@ -1637,10 +1628,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
-                    var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
                     var locationId   = EVSE.ChargingPool is not null
-                                           ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
                                            : null;
 
                     if (countryCode.HasValue &&
@@ -1777,10 +1768,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
-                    var countryCode  = CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
                     var locationId   = EVSE.ChargingPool is not null
-                                           ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
                                            : null;
 
                     if (countryCode.HasValue &&
@@ -2037,10 +2028,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                (IncludeEVSEs is not null && IncludeEVSEs(evse)))
                             {
 
-                                var countryCode  = CountryCode.TryParse(evse.Id.OperatorId.CountryCode.Alpha2Code);
-                                var partyId      = Party_Id.   TryParse(evse.Id.OperatorId.Suffix);
+                                var countryCode  = OCPI.CountryCode.TryParse(evse.Id.OperatorId.CountryCode.Alpha2Code);
+                                var partyId      = OCPI.Party_Id.   TryParse(evse.Id.OperatorId.Suffix);
                                 var locationId   = evse.ChargingPool is not null
-                                                       ? Location_Id.TryParse(evse.ChargingPool.Id.Suffix)
+                                                       ? OCPI.Location_Id.TryParse(evse.ChargingPool.Id.Suffix)
                                                        : null;
 
                                 if (countryCode.HasValue &&
@@ -2230,7 +2221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
             var remotes = new PriorityList<RemoteParty>();
-            foreach (var remote in CommonAPI.GetRemoteParties(Roles.EMSP))
+            foreach (var remote in CommonAPI.GetRemoteParties(OCPI.Roles.EMSP))
                 remotes.Add(remote);
 
             var authorizationInfo = await remotes.WhenFirst(Work:            async remoteParty => {
@@ -2241,31 +2232,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                        if (authToken is null)
                                                                                            return new AuthorizationInfo(
-                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                      Allowed:      OCPI.AllowedType.NOT_ALLOWED,
                                                                                                       Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                                      Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
+                                                                                                      Info:         new OCPI.DisplayText(Languages.en, $"The local authentication must not be null!"),
                                                                                                       RemoteParty:  remoteParty
                                                                                                   );
 
 
-                                                                                       var tokenId = Token_Id.TryParse(authToken);
+                                                                                       var tokenId = OCPI.Token_Id.TryParse(authToken);
 
                                                                                        if (!tokenId.HasValue)
                                                                                            return new AuthorizationInfo(
-                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                      Allowed:      OCPI.AllowedType.NOT_ALLOWED,
                                                                                                       Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                                      Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
+                                                                                                      Info:         new OCPI.DisplayText(Languages.en, $"The token identification is invalid!"),
                                                                                                       RemoteParty:  remoteParty
                                                                                                   );
 
 
-                                                                                       var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
+                                                                                       var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
 
                                                                                        if (remoteAccessInfo is null)
                                                                                            return new AuthorizationInfo(
-                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                      Allowed:      OCPI.AllowedType.NOT_ALLOWED,
                                                                                                       Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                                      Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                      Info:         new OCPI.DisplayText(Languages.en, $"No remote access information for '{remoteParty.Id})'"),
                                                                                                       RemoteParty:  remoteParty
                                                                                                   );
 
@@ -2288,9 +2279,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                        if (cpoClient is null)
                                                                                            return new AuthorizationInfo(
-                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                      Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                                      Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                      Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                                      Token:        null,
+                                                                                                      Info:         new OCPI.DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.Id})'"),
                                                                                                       RemoteParty:  remoteParty
                                                                                                   );
 
@@ -2319,29 +2310,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                         null, // AuthReference
                                                                                                         authorizationInfo.Data.Info,
                                                                                                         remoteParty,
+                                                                                                        OCPI.EMSP_Id.TryParse(
+                                                                                                            authorizationInfo.FromCountryCode,
+                                                                                                            authorizationInfo.FromPartyId
+                                                                                                        ),
                                                                                                         authorizationInfo.Data.Runtime
                                                                                                     )
 
                                                                                                   : new AuthorizationInfo(
-                                                                                                        Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                        Allowed:      OCPI.AllowedType.NOT_ALLOWED,
                                                                                                         Token:        null, //ToDo: Token should be optional within AuthorizationInfo!
-                                                                                                        Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                        Info:         new OCPI.DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.Id})'"),
                                                                                                         RemoteParty:  remoteParty
                                                                                                     );
 
                                                                                    },
 
-                                                            VerifyResult:    result  => result.Allowed == AllowedType.ALLOWED,
+                                                            VerifyResult:    result  => result.Allowed == OCPI.AllowedType.ALLOWED,
 
                                                             Timeout:         RequestTimeout ?? TimeSpan.FromSeconds(10),
 
                                                             OnException:     null,
 
                                                             DefaultResult:   runtime  => new AuthorizationInfo(
-                                                                                             Allowed:   AllowedType.NOT_ALLOWED,
+                                                                                             Allowed:   OCPI.AllowedType.NOT_ALLOWED,
                                                                                              Token:     null, //ToDo: Token should be optional within AuthorizationInfo!
                                                                                              Location:  null,
-                                                                                             Info:      new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
+                                                                                             Info:      new OCPI.DisplayText(Languages.en, "No authorization service returned a positiv result!"),
                                                                                              Runtime:   runtime
                                                                                          ));
 
@@ -2354,7 +2349,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (authorizationInfo is null)
                 authStartResult = WWCP.AuthStartResult.CommunicationTimeout(Id, this, SessionId);
 
-            else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+            else if (authorizationInfo.Allowed == OCPI.AllowedType.ALLOWED)
                 authStartResult = WWCP.AuthStartResult.Authorized(
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
@@ -2369,50 +2364,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            ChargingTariffs:           null,
                            ListOfAuthStopTokens:      null,
                            ListOfAuthStopPINs:        null,
-                           ProviderId:                WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
                            Runtime:                   null
                        );
 
-            else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+            else if (authorizationInfo.Allowed == OCPI.AllowedType.BLOCKED)
                 authStartResult = WWCP.AuthStartResult.Blocked(
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
                            SessionId:                 SessionId,
-                           ProviderId:                WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
                            Runtime:                   null
                        );
 
-            else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
+            else if (authorizationInfo.Allowed == OCPI.AllowedType.EXPIRED)
                 authStartResult = WWCP.AuthStartResult.Expired(
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
                            SessionId:                 SessionId,
-                           ProviderId:                WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
                            Runtime:                   null
                        );
 
-            else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
+            else if (authorizationInfo.Allowed == OCPI.AllowedType.NO_CREDIT)
                 authStartResult = WWCP.AuthStartResult.NoCredit(
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
                            SessionId:                 SessionId,
-                           ProviderId:                WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
                            Runtime:                   null
                        );
 
-            else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+            else if (authorizationInfo.Allowed == OCPI.AllowedType.NOT_ALLOWED)
                 authStartResult = WWCP.AuthStartResult.NotAuthorized(
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,

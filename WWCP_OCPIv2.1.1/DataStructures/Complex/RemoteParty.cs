@@ -27,6 +27,8 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
@@ -101,6 +103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
     /// <summary>
     /// A remote party.
+    /// In OCPI v2.1 this is a single CPO or EMSP.
     /// </summary>
     public class RemoteParty : IHasId<RemoteParty_Id>,
                                IEquatable<RemoteParty>,
@@ -278,8 +281,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            CountryCode,
                            PartyId,
                            Role,
-                           null,
                            BusinessDetails,
+                           null,
                            AccessTokenBase64Encoding,
                            AllowDowngrades
                        )
@@ -413,8 +416,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            CountryCode,
                            PartyId,
                            Role,
-                           RemoteVersionsURL,
                            BusinessDetails,
+                           RemoteVersionsURL,
                            AccessTokenBase64Encoding,
                            AllowDowngrades
                        )
@@ -839,18 +842,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             => RemoteParty is not null &&
 
                Id.             Equals(RemoteParty.Id)              &&
+               Status.         Equals(RemoteParty.Status)          &&
+
                CountryCode.    Equals(RemoteParty.CountryCode)     &&
                PartyId.        Equals(RemoteParty.PartyId)         &&
                Role.           Equals(RemoteParty.Role)            &&
                BusinessDetails.Equals(RemoteParty.BusinessDetails) &&
-               Status.         Equals(RemoteParty.Status)          &&
+
                LastUpdated.    Equals(RemoteParty.LastUpdated)     &&
                ETag.           Equals(RemoteParty.ETag)            &&
 
-               localAccessInfos.Count.Equals(RemoteParty.localAccessInfos.Count)     &&
-               localAccessInfos. All(RemoteParty.localAccessInfos. Contains) &&
+               localAccessInfos.Count.Equals(RemoteParty.localAccessInfos.Count)   &&
+               localAccessInfos. All(RemoteParty.localAccessInfos. Contains)       &&
 
-               remoteAccessInfos.Count.Equals(RemoteParty.remoteAccessInfos.Count)     &&
+               remoteAccessInfos.Count.Equals(RemoteParty.remoteAccessInfos.Count) &&
                remoteAccessInfos.All(RemoteParty.remoteAccessInfos.Contains);
 
         #endregion

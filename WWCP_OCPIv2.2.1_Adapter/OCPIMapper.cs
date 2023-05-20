@@ -17,9 +17,9 @@
 
 #region Usings
 
-using com.GraphDefined.SMSApi.API.Response;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using org.GraphDefined.Vanaheimr.Illias;
+
+using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -262,6 +262,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             return exceptionalPeriods;
 
         }
+
+        #endregion
+
+
+        #region ToWWCP (this EMSPId)
+
+        public static WWCP.EMobilityProvider_Id? ToWWCP(this EMSP_Id EMSPId)
+
+            => WWCP.EMobilityProvider_Id.TryParse(EMSPId.ToString());
+
+        public static WWCP.EMobilityProvider_Id? ToWWCP(this EMSP_Id? EMSPId)
+
+            => EMSPId.HasValue
+                   ? EMSPId.Value.ToWWCP()
+                   : null;
+
+        #endregion
+
+        #region ToWWCP (this CPOId)
+
+        public static WWCP.ChargingStationOperator_Id? ToWWCP(this CPO_Id CPOId)
+
+            => WWCP.ChargingStationOperator_Id.TryParse(CPOId.ToString());
+
+        public static WWCP.ChargingStationOperator_Id? ToWWCP(this CPO_Id? CPOId)
+
+            => CPOId.HasValue
+                   ? CPOId.Value.ToWWCP()
+                   : null;
 
         #endregion
 
@@ -628,7 +657,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         public static LegalStatus ToOCPI(this WWCP.LegalStatus LegalStatus)
 
-            => OCPIv2_2_1.LegalStatus.Parse(LegalStatus.ToString());
+            => OCPI.LegalStatus.Parse(LegalStatus.ToString());
 
         #endregion
 
@@ -1312,7 +1341,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                            PostalCode:           filteredLocation.PostalCode,
                                                            State:                filteredLocation.State
                                                        ),
-                           Currency:                   Currency.Parse(ChargeDetailRecord.ChargingPrice.Value.Currency.ISOCode),
+                           Currency:                   OCPI.Currency.Parse(ChargeDetailRecord.ChargingPrice.Value.Currency.ISOCode),
                            ChargingPeriods:            chargingPeriods,
                            TotalCosts:                 new Price(
                                                            ExcludingVAT: (Double) ChargeDetailRecord.ChargingPrice.Value.Base,

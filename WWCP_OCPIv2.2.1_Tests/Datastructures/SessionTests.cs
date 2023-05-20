@@ -22,7 +22,8 @@ using NUnit.Framework;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+
+using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -65,7 +66,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                Location_Id. Parse("LOC0001"),
                                EVSE_UId.    Parse("EVSE0001"),
                                Connector_Id.Parse("C1"),
-                               Currency.EUR,
+                               OCPI.Currency.EUR,
                                SessionStatusTypes.ACTIVE,
                                DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
                                AuthorizationReference.Parse("Auth1234"),
@@ -159,7 +160,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a session example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/session_example_1_simple_start.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/examples/session_example_1_simple_start.json
         /// </summary>
         [Test]
         public static void Session_DeserializeGitHub_Test01()
@@ -174,9 +175,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                            ""start_date_time"": ""2020-03-09T10:17:09Z"",
                            ""kwh"":               0.0,
                            ""cdr_token"": {
-                               ""uid"":         ""123abc"",
-                               ""type"":        ""RFID"",
-                               ""contract_id"": ""NL-TST-C12345678-S""
+                               ""country_code"":  ""NL"",
+                               ""party_id"":      ""TST"",
+                               ""uid"":           ""123abc"",
+                               ""type"":          ""RFID"",
+                               ""contract_id"":   ""NL-TST-C12345678-S""
                            },
                            ""auth_method"":     ""WHITELIST"",
                            ""location_id"":     ""LOC1"",
@@ -192,8 +195,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            Assert.IsTrue(Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse));
-            Assert.IsNull(errorResponse);
+            var result = Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse);
+            Assert.IsTrue   (result, errorResponse);
+            Assert.IsNotNull(parsedSession);
+            Assert.IsNull   (errorResponse);
 
             Assert.AreEqual(CountryCode.Parse("NL"),                   parsedSession.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("STK"),                  parsedSession.PartyId);
@@ -224,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a session example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/session_example_2_short_finished.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/examples/session_example_2_short_finished.json
         /// </summary>
         [Test]
         public static void Session_DeserializeGitHub_Test02()
@@ -240,6 +245,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                            ""end_date_time"":       ""2015-06-29T23:50:16Z"",
                            ""kwh"": 41.00,
                             ""cdr_token"": {
+                                 ""country_code"":  ""NL"",
+                                 ""party_id"":      ""TST"",
                                  ""uid"":           ""123abc"",
                                  ""type"":          ""RFID"",
                                  ""contract_id"":   ""NL-TST-C12345678-S""
@@ -285,8 +292,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            Assert.IsTrue(Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse));
-            Assert.IsNull(errorResponse);
+            var result = Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse);
+            Assert.IsTrue   (result, errorResponse);
+            Assert.IsNotNull(parsedSession);
+            Assert.IsNull   (errorResponse);
 
             Assert.AreEqual(CountryCode.Parse("BE"),                   parsedSession.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("BEC"),                  parsedSession.PartyId);

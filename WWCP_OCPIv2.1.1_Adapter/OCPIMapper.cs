@@ -20,6 +20,8 @@
 using org.GraphDefined.Vanaheimr.Styx;
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
@@ -303,6 +305,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        #region ToWWCP (this EMSPId)
+
+        public static WWCP.EMobilityProvider_Id? ToWWCP(this EMSP_Id EMSPId)
+
+            => WWCP.EMobilityProvider_Id.TryParse(EMSPId.ToString());
+
+        public static WWCP.EMobilityProvider_Id? ToWWCP(this EMSP_Id? EMSPId)
+
+            => EMSPId.HasValue
+                   ? EMSPId.Value.ToWWCP()
+                   : null;
+
+        #endregion
+
+        #region ToWWCP (this CPOId)
+
+        public static WWCP.ChargingStationOperator_Id? ToWWCP(this CPO_Id CPOId)
+
+            => WWCP.ChargingStationOperator_Id.TryParse(CPOId.ToString());
+
+        public static WWCP.ChargingStationOperator_Id? ToWWCP(this CPO_Id? CPOId)
+
+            => CPOId.HasValue
+                   ? CPOId.Value.ToWWCP()
+                   : null;
+
+        #endregion
+
+
         #region ToOCPI_Capabilities(this ChargingStation)
 
         public static IEnumerable<Capability> ToOCPI_Capabilities(this WWCP.IChargingStation ChargingStation)
@@ -448,7 +479,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 return null;
             }
 
-            var countryCode  = CountryCode.TryParse(ChargingPool.Operator.Id.CountryCode.Alpha2Code);
+            var countryCode  = OCPI.CountryCode.TryParse(ChargingPool.Operator.Id.CountryCode.Alpha2Code);
 
             if (!countryCode.HasValue)
             {
@@ -457,7 +488,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 return null;
             }
 
-            var partyId      = Party_Id.   TryParse(ChargingPool.Operator.Id.Suffix);
+            var partyId      = OCPI.Party_Id.   TryParse(ChargingPool.Operator.Id.Suffix);
 
             if (!partyId.HasValue)
             {
@@ -657,7 +688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public static LegalStatus ToOCPI(this WWCP.LegalStatus LegalStatus)
 
-            => OCPIv2_1_1.LegalStatus.Parse(LegalStatus.ToString());
+            => OCPI.LegalStatus.Parse(LegalStatus.ToString());
 
         #endregion
 
@@ -693,7 +724,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public static EnergyMeter ToOCPI(this WWCP.EnergyMeter EnergyMeter)
 
-            => new (Meter_Id.Parse(EnergyMeter.Id.ToString()),
+            => new (OCPI.Meter_Id.Parse(EnergyMeter.Id.ToString()),
                     EnergyMeter.Model,
                     EnergyMeter.ModelURL,
                     EnergyMeter.HardwareVersion,
@@ -1125,11 +1156,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this EnergyMeterId)
 
-        public static Meter_Id? ToOCPI(this WWCP.EnergyMeter_Id EnergyMeterId)
+        public static OCPI.Meter_Id? ToOCPI(this WWCP.EnergyMeter_Id EnergyMeterId)
 
-            => Meter_Id.Parse(EnergyMeterId.ToString());
+            => OCPI.Meter_Id.Parse(EnergyMeterId.ToString());
 
-        public static Meter_Id? ToOCPI(this WWCP.EnergyMeter_Id? EnergyMeterId)
+        public static OCPI.Meter_Id? ToOCPI(this WWCP.EnergyMeter_Id? EnergyMeterId)
 
             => EnergyMeterId.HasValue
                    ? EnergyMeterId.Value.ToOCPI()
@@ -1563,10 +1594,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 return new Tariff(
 
-                           CountryCode:      CountryCode.Parse(ChargingTariff.Id.OperatorId.CountryCode.Alpha2Code),
-                           PartyId:          Party_Id.   Parse(ChargingTariff.Id.OperatorId.Suffix),
-                           Id:               Tariff_Id.  Parse(ChargingTariff.Id.ToString()),
-                           Currency:         Currency.   Parse(ChargingTariff.Currency.ISOCode),
+                           CountryCode:      OCPI.CountryCode.Parse(ChargingTariff.Id.OperatorId.CountryCode.Alpha2Code),
+                           PartyId:          OCPI.Party_Id.   Parse(ChargingTariff.Id.OperatorId.Suffix),
+                           Id:               OCPI.Tariff_Id.  Parse(ChargingTariff.Id.ToString()),
+                           Currency:         OCPI.Currency.   Parse(ChargingTariff.Currency.ISOCode),
                            TariffElements:   tariffElements,
 
                            TariffAltText:    ChargingTariff.Description.ToOCPI(),
@@ -1818,15 +1849,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 return new CDR(
 
-                           CountryCode:             CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
-                           PartyId:                 Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
-                           Id:                      CDR_Id.     Parse(ChargeDetailRecord.Id.ToString()),
+                           CountryCode:             OCPI.CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
+                           PartyId:                 OCPI.Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
+                           Id:                      OCPI.CDR_Id.     Parse(ChargeDetailRecord.Id.ToString()),
                            Start:                   ChargeDetailRecord.SessionTime.StartTime,
                            End:                     ChargeDetailRecord.SessionTime.EndTime. Value,
-                           AuthId:                  Auth_Id.    Parse(ChargeDetailRecord.SessionId.ToString()),
+                           AuthId:                  OCPI.Auth_Id.    Parse(ChargeDetailRecord.SessionId.ToString()),
                            AuthMethod:              authMethod.Value,
                            Location:                filteredLocation,   //ToDo: Might still have not required connectors!
-                           Currency:                Currency.Parse(ChargeDetailRecord.ChargingPrice.Value.Currency.ISOCode),
+                           Currency:                OCPI.Currency.   Parse(ChargeDetailRecord.ChargingPrice.Value.Currency.ISOCode),
                            ChargingPeriods:         chargingPeriods,
                            TotalCost:               ChargeDetailRecord.ChargingPrice.       Value.Total,
                            TotalEnergy:             ChargeDetailRecord.ConsumedEnergy.      Value,

@@ -24,6 +24,8 @@ using NUnit.Framework;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
@@ -198,9 +200,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
                 #region Change Access Token
 
-                cpoCommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+                await cpoCommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"),
+                                                     Party_Id.   Parse("GDF"),
+                                                     Roles.      EMSP);
 
-                var result = cpoCommonAPI.AddRemoteParty(
+                var result = await cpoCommonAPI.AddRemoteParty(
                     CountryCode:         CountryCode.Parse("DE"),
                     PartyId:             Party_Id.   Parse("GDF"),
                     Role:                Roles.      EMSP,
@@ -306,9 +310,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
                 #region Block Access Token
 
-                cpoCommonAPI.  RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+                await cpoCommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"),
+                                                     Party_Id.   Parse("GDF"),
+                                                     Roles.      EMSP);
 
-                var addEMSPResult = cpoCommonAPI.AddRemoteParty(
+                var addEMSPResult = await cpoCommonAPI.AddRemoteParty(
                     CountryCode:         CountryCode.Parse("DE"),
                     PartyId:             Party_Id.   Parse("GDF"),
                     Role:                Roles.      EMSP,

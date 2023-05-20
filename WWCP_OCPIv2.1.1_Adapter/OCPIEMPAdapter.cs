@@ -356,8 +356,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               IRoamingNetwork                              RoamingNetwork,
 
                               HTTP.CommonAPI                               CommonAPI,
-                              CountryCode                                  DefaultCountryCode,
-                              Party_Id                                     DefaultPartyId,
+                              OCPI.CountryCode                             DefaultCountryCode,
+                              OCPI.Party_Id                                DefaultPartyId,
 
                               EVSEId_2_WWCPEVSEId_Delegate?                CustomEVSEIdConverter               = null,
                               EVSE_2_WWCPEVSE_Delegate?                    CustomEVSEConverter                 = null,
@@ -428,73 +428,68 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode               CountryCode,
-                                      Party_Id                  PartyId,
-                                      Roles                     Role,
-                                      BusinessDetails           BusinessDetails,
+        public Task<Boolean> AddRemoteParty(OCPI.CountryCode               CountryCode,
+                                            OCPI.Party_Id                  PartyId,
+                                            OCPI.Roles                     Role,
+                                            OCPI.BusinessDetails           BusinessDetails,
 
-                                      AccessToken               AccessToken,
+                                            OCPI.AccessToken               AccessToken,
 
-                                      AccessToken               RemoteAccessToken,
-                                      URL                       RemoteVersionsURL,
-                                      IEnumerable<Version_Id>?  RemoteVersionIds            = null,
-                                      Version_Id?               SelectedVersionId           = null,
+                                            OCPI.AccessToken               RemoteAccessToken,
+                                            URL                            RemoteVersionsURL,
+                                            IEnumerable<OCPI.Version_Id>?  RemoteVersionIds            = null,
+                                            OCPI.Version_Id?               SelectedVersionId           = null,
 
-                                      Boolean?                  AccessTokenBase64Encoding   = null,
-                                      Boolean?                  AllowDowngrades             = false,
-                                      AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
-                                      RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
-                                      PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
-        {
+                                            Boolean?                       AccessTokenBase64Encoding   = null,
+                                            Boolean?                       AllowDowngrades             = false,
+                                            OCPI.AccessStatus              AccessStatus                = OCPI.AccessStatus.      ALLOWED,
+                                            OCPI.RemoteAccessStatus?       RemoteStatus                = OCPI.RemoteAccessStatus.ONLINE,
+                                            OCPI.PartyStatus               PartyStatus                 = OCPI.PartyStatus.       ENABLED)
 
-            return CommonAPI.AddRemoteParty(CountryCode,
-                                            PartyId,
-                                            Role,
-                                            BusinessDetails,
+            => CommonAPI.AddRemoteParty(CountryCode,
+                                        PartyId,
+                                        Role,
+                                        BusinessDetails,
 
-                                            AccessToken,
+                                        AccessToken,
 
-                                            RemoteAccessToken,
-                                            RemoteVersionsURL,
-                                            RemoteVersionIds,
-                                            SelectedVersionId,
+                                        RemoteAccessToken,
+                                        RemoteVersionsURL,
+                                        RemoteVersionIds,
+                                        SelectedVersionId,
 
-                                            AccessTokenBase64Encoding,
-                                            AllowDowngrades,
-                                            AccessStatus,
-                                            RemoteStatus,
-                                            PartyStatus);
-
-        }
+                                        AccessTokenBase64Encoding,
+                                        AllowDowngrades,
+                                        AccessStatus,
+                                        RemoteStatus,
+                                        PartyStatus);
 
         #endregion
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode      CountryCode,
-                                      Party_Id         PartyId,
-                                      Roles            Role,
-                                      BusinessDetails  BusinessDetails,
+        public Task<Boolean> AddRemoteParty(OCPI.CountryCode      CountryCode,
+                                            OCPI.Party_Id         PartyId,
+                                            OCPI.Roles            Role,
+                                            OCPI.BusinessDetails  BusinessDetails,
 
-                                      AccessToken      AccessToken,
-                                      Boolean?         AccessTokenBase64Encoding   = null,
-                                      Boolean?         AllowDowngrades             = false,
+                                            OCPI.AccessToken      AccessToken,
+                                            Boolean?              AccessTokenBase64Encoding   = null,
+                                            Boolean?              AllowDowngrades             = false,
 
-                                      AccessStatus     AccessStatus                = AccessStatus.ALLOWED,
+                                            OCPI.AccessStatus     AccessStatus                = OCPI.AccessStatus.ALLOWED,
 
-                                      PartyStatus      PartyStatus                 = PartyStatus. ENABLED)
-        {
+                                            OCPI.PartyStatus      PartyStatus                 = OCPI.PartyStatus. ENABLED)
 
-            return CommonAPI.AddRemoteParty(CountryCode,
-                                            PartyId,
-                                            Role,
-                                            BusinessDetails,
-                                            AccessToken,
-                                            AccessTokenBase64Encoding,
-                                            AllowDowngrades,
-                                            AccessStatus,
-                                            PartyStatus);
-        }
+            => CommonAPI.AddRemoteParty(CountryCode,
+                                        PartyId,
+                                        Role,
+                                        BusinessDetails,
+                                        AccessToken,
+                                        AccessTokenBase64Encoding,
+                                        AllowDowngrades,
+                                        AccessStatus,
+                                        PartyStatus);
 
         #endregion
 

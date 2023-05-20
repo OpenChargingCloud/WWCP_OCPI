@@ -21,6 +21,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1
@@ -32,6 +34,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public class AuthorizationInfo : IEquatable<AuthorizationInfo>
     {
 
+        // ToDo: Implement RemoteParty and EMSPId correctly!
+
         #region Properties
 
         /// <summary>
@@ -41,10 +45,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public AllowedType              Allowed                   { get; }
 
         /// <summary>
-        /// The complete token object for which this authorization was requested.
+        /// The optional complete token object for which this authorization was requested.
         /// </summary>
-        [Mandatory]
-        public Token                    Token                     { get; }
+        [Optional]
+        public Token?                   Token                     { get; }
 
         /// <summary>
         /// The optional reference to the location if it was included in the request, and if
@@ -74,6 +78,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public RemoteParty?             RemoteParty               { get; }
 
         /// <summary>
+        ///  The EMSP identification.
+        /// </summary>
+        [Optional, NonStandard]
+        public EMSP_Id?                 EMSPId                    { get; }
+
+        /// <summary>
         /// The runtime of the authorization.
         /// </summary>
         [Optional, NonStandard]
@@ -87,17 +97,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Create a new authorization information.
         /// </summary>
         /// <param name="Allowed">A status for the token, and whether charging is allowed at the optionally given charging location.</param>
-        /// <param name="Token">A complete token object for which this authorization was requested.</param>
+        /// <param name="Token">An optional complete token object for which this authorization was requested.</param>
         /// <param name="Location">An optional reference to the location if it was included in the request, and if the EV driver is allowed to charge at that location. Only the EVSEs the EV driver is allowed to charge at are returned.</param>
         /// <param name="AuthorizationReference">An optional reference to the authorization given by the eMSP, when given, this reference will be provided in the relevant charging session and/or charge detail record.</param>
         /// <param name="Info">An optional additional information to the EV driver.</param>
+        /// <param name="RemoteParty">The remote party.</param>
+        /// <param name="EMSPId">The EMSP identification.</param>
         /// <param name="Runtime">The runtime of the authorization.</param>
         public AuthorizationInfo(AllowedType              Allowed,
-                                 Token                    Token,
+                                 Token?                   Token                    = null,
                                  LocationReference?       Location                 = null,
                                  AuthorizationReference?  AuthorizationReference   = null,
                                  DisplayText?             Info                     = null,
                                  RemoteParty?             RemoteParty              = null,
+                                 EMSP_Id?                 EMSPId                   = null,
                                  TimeSpan?                Runtime                  = null)
         {
 
@@ -107,6 +120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.AuthorizationReference  = AuthorizationReference;
             this.Info                    = Info;
             this.RemoteParty             = RemoteParty;
+            this.EMSPId                  = EMSPId;
             this.Runtime                 = Runtime ?? TimeSpan.Zero;
 
         }
@@ -122,12 +136,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomAuthorizationInfoParser">A delegate to parse custom authorization information JSON objects.</param>
         public static AuthorizationInfo Parse(JObject                                          JSON,
+                                              RemoteParty?                                     RemoteParty                     = null,
+                                              EMSP_Id?                                         EMSPId                          = null,
                                               CustomJObjectParserDelegate<AuthorizationInfo>?  CustomAuthorizationInfoParser   = null)
         {
 
             if (TryParse(JSON,
                          out var authorizationInfo,
                          out var errorResponse,
+                         RemoteParty,
+                         EMSPId,
                          CustomAuthorizationInfoParser))
             {
                 return authorizationInfo!;
@@ -157,6 +175,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             => TryParse(JSON,
                         out AuthorizationInfo,
                         out ErrorResponse,
+                        null,
+                        null,
                         null);
 
 
@@ -170,6 +190,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static Boolean TryParse(JObject                                          JSON,
                                        out AuthorizationInfo?                           AuthorizationInfo,
                                        out String?                                      ErrorResponse,
+                                       RemoteParty?                                     RemoteParty                     = null,
+                                       EMSP_Id?                                         EMSPId                          = null,
                                        CustomJObjectParserDelegate<AuthorizationInfo>?  CustomAuthorizationInfoParser   = null)
         {
 
@@ -197,19 +219,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
-                #region Parse Token                     [mandatory]
+                #region Parse Token                     [optional]
 
-                if (!JSON.ParseMandatoryJSON("token",
-                                             "token",
-                                             OCPIv2_2_1.Token.TryParse,
-                                             out Token? Token,
-                                             out ErrorResponse))
+                if (JSON.ParseOptionalJSON("token",
+                                           "token",
+                                           OCPIv2_2_1.Token.TryParse,
+                                           out Token? Token,
+                                           out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
-
-                if (Token is null)
-                    return false;
 
                 #endregion
 
@@ -260,7 +280,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           Token,
                                                           LocationReference,
                                                           AuthorizationReference,
-                                                          Info);
+                                                          Info,
+                                                          RemoteParty,
+                                                          EMSPId);
 
 
                 if (CustomAuthorizationInfoParser is not null)
@@ -300,7 +322,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                  new JProperty("allowed",                   Allowed.                     ToString()),
 
-                                 new JProperty("token",                     Token.                       ToJSON(CustomTokenSerializer)),
+                           Token is not null
+                               ? new JProperty("token",                     Token.                       ToJSON(CustomTokenSerializer))
+                               : null,
 
                            Location.HasValue
                                ? new JProperty("location",                  Location.              Value.ToJSON(CustomLocationReferenceSerializer))
@@ -332,11 +356,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public AuthorizationInfo Clone()
 
             => new (Allowed.                Clone,
-                    Token.                  Clone(),
+                    Token?.                 Clone(),
                     Location?.              Clone(),
                     AuthorizationReference?.Clone,
                     Info?.                  Clone(),
                     RemoteParty,
+                    EMSPId,
                     Runtime);
 
         #endregion
@@ -410,8 +435,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => AuthorizationInfo is not null &&
 
-               Allowed.               Equals(AuthorizationInfo.Allowed) &&
-               Token.                 Equals(AuthorizationInfo.Token)   &&
+               Allowed.Equals(AuthorizationInfo.Allowed) &&
+
+             ((Token is     null               &&  AuthorizationInfo.Token is     null)               ||
+              (Token is not null               &&  AuthorizationInfo.Token is not null                && Token.                       Equals(AuthorizationInfo.Token                       ))) &&
 
             ((!Location.              HasValue && !AuthorizationInfo.Location.              HasValue) ||
               (Location.              HasValue &&  AuthorizationInfo.Location.              HasValue  && Location.              Value.Equals(AuthorizationInfo.Location.              Value))) &&
@@ -438,7 +465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             {
 
                 return Allowed.                GetHashCode()       * 11 ^
-                       Token.                  GetHashCode()       *  7 ^
+                      (Token?.                 GetHashCode() ?? 0) *  7 ^
                       (Location?.              GetHashCode() ?? 0) *  5 ^
                       (AuthorizationReference?.GetHashCode() ?? 0) *  3^
                        Info?.                  GetHashCode() ?? 0;
@@ -457,7 +484,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => String.Concat(
 
-                   Token.Id,
+                   Token?.Id.ToString() ?? "-",
                    " => ",
                    Allowed,
 

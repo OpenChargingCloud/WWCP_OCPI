@@ -23,6 +23,7 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
 
 #endregion
@@ -462,10 +463,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        out Group_Id? GroupId,
                                        out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -502,10 +501,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                            out Languages? UILanguage,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -517,10 +514,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                            out ProfileTypes? DefaultProfile,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -530,13 +525,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptionalJSON("energy_contract",
                                            "energy contract",
                                            OCPIv2_2_1.EnergyContract.TryParse,
-                                           out EnergyContract EnergyContract,
+                                           out EnergyContract? EnergyContract,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion

@@ -25,6 +25,8 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
@@ -194,8 +196,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               WWCP.IRoamingNetwork                            RoamingNetwork,
 
                               HTTP.CommonAPI                                  CommonAPI,
-                              CountryCode                                     DefaultCountryCode,
-                              Party_Id                                        DefaultPartyId,
+                              OCPI.CountryCode                                DefaultCountryCode,
+                              OCPI.Party_Id                                   DefaultPartyId,
 
                               GetTariffIds_Delegate?                          GetTariffIds                        = null,
 
@@ -360,23 +362,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode               CountryCode,
-                                      Party_Id                  PartyId,
-                                      Roles                     Role,
-                                      BusinessDetails           BusinessDetails,
+        public Task<Boolean> AddRemoteParty(CountryCode               CountryCode,
+                                            Party_Id                  PartyId,
+                                            Roles                     Role,
+                                            BusinessDetails           BusinessDetails,
 
-                                      AccessToken               AccessToken,
+                                            AccessToken               AccessToken,
 
-                                      AccessToken               RemoteAccessToken,
-                                      URL                       RemoteVersionsURL,
-                                      IEnumerable<Version_Id>?  RemoteVersionIds            = null,
-                                      Version_Id?               SelectedVersionId           = null,
+                                            AccessToken               RemoteAccessToken,
+                                            URL                       RemoteVersionsURL,
+                                            IEnumerable<Version_Id>?  RemoteVersionIds            = null,
+                                            Version_Id?               SelectedVersionId           = null,
 
-                                      Boolean?                  AccessTokenBase64Encoding   = null,
-                                      Boolean?                  AllowDowngrades             = false,
-                                      AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
-                                      RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
-                                      PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
+                                            Boolean?                  AccessTokenBase64Encoding   = null,
+                                            Boolean?                  AllowDowngrades             = false,
+                                            AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
+                                            RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
+                                            PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
 
             => CommonAPI.AddRemoteParty(CountryCode,
                                         PartyId,
@@ -400,17 +402,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode      CountryCode,
-                                      Party_Id         PartyId,
-                                      Roles            Role,
-                                      BusinessDetails  BusinessDetails,
+        public Task<Boolean> AddRemoteParty(CountryCode      CountryCode,
+                                            Party_Id         PartyId,
+                                            Roles            Role,
+                                            BusinessDetails  BusinessDetails,
 
-                                      AccessToken      AccessToken,
-                                      Boolean?         AccessTokenBase64Encoding   = null,
-                                      Boolean?         AllowDowngrades             = false,
-                                      AccessStatus     AccessStatus                = AccessStatus.ALLOWED,
+                                            AccessToken      AccessToken,
+                                            Boolean?         AccessTokenBase64Encoding   = null,
+                                            Boolean?         AllowDowngrades             = false,
+                                            AccessStatus     AccessStatus                = AccessStatus.ALLOWED,
 
-                                      PartyStatus      PartyStatus                 = PartyStatus. ENABLED)
+                                            PartyStatus      PartyStatus                 = PartyStatus. ENABLED)
 
             => CommonAPI.AddRemoteParty(CountryCode,
                                         PartyId,
@@ -1821,7 +1823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
             var remotes = new PriorityList<RemoteParty>();
-            foreach (var remote in CommonAPI.GetRemoteParties(Roles.EMSP))
+            foreach (var remote in CommonAPI.GetRemoteParties(OCPI.Roles.EMSP))
                 remotes.Add(remote);
 
             var authorizationInfo = await remotes.WhenFirst(Work:            async remoteParty => {
@@ -1848,7 +1850,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                   );
 
 
-                                                                                       var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == RemoteAccessStatus.ONLINE);
+                                                                                       var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
 
                                                                                        if (remoteAccessInfo is null)
                                                                                            return new AuthorizationInfo(
@@ -1904,6 +1906,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                         authorizationInfo.Data.Location,
                                                                                                         authorizationInfo.Data.Info,
                                                                                                         remoteParty,
+                                                                                                        EMSP_Id.From(remoteParty.Id),
                                                                                                         authorizationInfo.Data.Runtime
                                                                                                     )
 
@@ -1952,7 +1955,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            ChargingTariffs:           null,
                            ListOfAuthStopTokens:      null,
                            ListOfAuthStopPINs:        null,
-                           ProviderId:                WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                                                      //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
@@ -1964,7 +1968,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
                            SessionId:                 SessionId,
-                           ProviderId:                WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                                                      //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
@@ -1976,7 +1981,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
                            SessionId:                 SessionId,
-                           ProviderId:                WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                                                      //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,
@@ -1988,7 +1994,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            AuthorizatorId:            Id,
                            ISendAuthorizeStartStop:   this,
                            SessionId:                 SessionId,
-                           ProviderId:                WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                                                      //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
                            Description:               null,
                            AdditionalInfo:            null,
                            NumberOfRetries:           0,

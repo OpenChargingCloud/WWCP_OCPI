@@ -17,11 +17,11 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
+
+using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -304,8 +304,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="CustomChargingProfileResponseSerializer">A delegate to serialize custom charging profile response JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingProfileResponse>  CustomChargingProfileResponseSerializer   = null,
-                              CustomJObjectSerializerDelegate<DisplayText>      CustomDisplayTextSerializer       = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingProfileResponse>?  CustomChargingProfileResponseSerializer   = null,
+                              CustomJObjectSerializerDelegate<DisplayText>?              CustomDisplayTextSerializer               = null)
         {
 
             var JSON = JSONObject.Create(

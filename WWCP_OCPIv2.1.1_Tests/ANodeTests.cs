@@ -28,10 +28,10 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
+using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 using cloud.charging.open.protocols.OCPIv2_1_1.WebAPI;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.Collections.Generic;
+using social.OpenData.UsersAPI;
 
 #endregion
 
@@ -354,7 +354,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         #region SetupEachTest()
 
         [SetUp]
-        public virtual void SetupEachTest()
+        public async virtual Task SetupEachTest()
         {
 
             Timestamp.Reset();
@@ -388,6 +388,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             cpoCommonAPI         = new CommonAPI(
 
+                                       OurBaseURL:                          URL.Parse("http://127.0.0.1:3301/ocpi/v2.1"),
                                        OurVersionsURL:                      cpoVersionsAPIURL.Value,
                                        OurBusinessDetails:                  new BusinessDetails(
                                                                                 "GraphDefined CSO Services",
@@ -436,6 +437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             emsp1CommonAPI       = new CommonAPI(
 
+                                       OurBaseURL:                          URL.Parse("http://127.0.0.1:3401/ocpi/v2.1"),
                                        OurVersionsURL:                      emsp1VersionsAPIURL.Value,
                                        OurBusinessDetails:                  new BusinessDetails(
                                                                                 "GraphDefined EMSP #1 Services",
@@ -484,6 +486,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             emsp2CommonAPI       = new CommonAPI(
 
+                                       OurBaseURL:                          URL.Parse("http://127.0.0.1:3402/ocpi/v2.1"),
                                        OurVersionsURL:                      emsp2VersionsAPIURL.Value,
                                        OurBusinessDetails:                  new BusinessDetails(
                                                                                 "GraphDefined EMSP #2 Services",
@@ -696,73 +699,73 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Define and connect Remote Parties
 
-            cpoCommonAPI.AddRemoteParty  (CountryCode:                 emsp1CommonAPI.OurCountryCode,
-                                          PartyId:                     emsp1CommonAPI.OurPartyId,
-                                          Role:                        Roles.EMSP,
-                                          BusinessDetails:             emsp1CommonAPI.OurBusinessDetails,
+            await cpoCommonAPI.AddRemoteParty  (CountryCode:                 emsp1CommonAPI.OurCountryCode,
+                                                PartyId:                     emsp1CommonAPI.OurPartyId,
+                                                Role:                        Roles.EMSP,
+                                                BusinessDetails:             emsp1CommonAPI.OurBusinessDetails,
 
-                                          AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo__token),
-                                          AccessStatus:                AccessStatus.ALLOWED,
+                                                AccessToken:                 AccessToken.Parse(emsp1_accessing_cpo__token),
+                                                AccessStatus:                AccessStatus.ALLOWED,
 
-                                          RemoteAccessToken:           AccessToken.Parse(cpo_accessing_emsp1__token),
-                                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                          RemoteVersionIds:            new[] { Version.Id },
-                                          SelectedVersionId:           Version.Id,
-                                          AccessTokenBase64Encoding:   false,
-                                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                                                RemoteAccessToken:           AccessToken.Parse(cpo_accessing_emsp1__token),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                RemoteVersionIds:            new[] { Version.Id },
+                                                SelectedVersionId:           Version.Id,
+                                                AccessTokenBase64Encoding:   false,
+                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
 
-                                          PartyStatus:                 PartyStatus.ENABLED);
+                                                PartyStatus:                 PartyStatus.ENABLED);
 
-            cpoCommonAPI.AddRemoteParty  (CountryCode:                 emsp2CommonAPI.OurCountryCode,
-                                          PartyId:                     emsp2CommonAPI.OurPartyId,
-                                          Role:                        Roles.EMSP,
-                                          BusinessDetails:             emsp2CommonAPI.OurBusinessDetails,
-                                          AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo__token),
-                                          AccessStatus:                AccessStatus.ALLOWED,
-                                          RemoteAccessToken:           AccessToken.Parse(cpo_accessing_emsp2__token),
-                                          RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                          RemoteVersionIds:            new[] { Version.Id },
-                                          SelectedVersionId:           Version.Id,
-                                          AccessTokenBase64Encoding:   false,
-                                          RemoteStatus:                RemoteAccessStatus.ONLINE,
-                                          PartyStatus:                 PartyStatus.ENABLED);
-
-
-
-            emsp1CommonAPI.AddRemoteParty(CountryCode:                 cpoCommonAPI.OurCountryCode,
-                                          PartyId:                     cpoCommonAPI.OurPartyId,
-                                          Role:                        Roles.CPO,
-                                          BusinessDetails:             cpoCommonAPI.OurBusinessDetails,
-
-                                          AccessToken:                 AccessToken.Parse(cpo_accessing_emsp1__token),
-                                          AccessStatus:                AccessStatus.ALLOWED,
-
-                                          RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo__token),
-                                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                          RemoteVersionIds:            new[] { Version.Id },
-                                          SelectedVersionId:           Version.Id,
-                                          AccessTokenBase64Encoding:   false,
-                                          RemoteStatus:                RemoteAccessStatus.ONLINE,
-
-                                          PartyStatus:                 PartyStatus.ENABLED);
+            await cpoCommonAPI.AddRemoteParty  (CountryCode:                 emsp2CommonAPI.OurCountryCode,
+                                                PartyId:                     emsp2CommonAPI.OurPartyId,
+                                                Role:                        Roles.EMSP,
+                                                BusinessDetails:             emsp2CommonAPI.OurBusinessDetails,
+                                                AccessToken:                 AccessToken.Parse(emsp2_accessing_cpo__token),
+                                                AccessStatus:                AccessStatus.ALLOWED,
+                                                RemoteAccessToken:           AccessToken.Parse(cpo_accessing_emsp2__token),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                RemoteVersionIds:            new[] { Version.Id },
+                                                SelectedVersionId:           Version.Id,
+                                                AccessTokenBase64Encoding:   false,
+                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
+                                                PartyStatus:                 PartyStatus.ENABLED);
 
 
-            emsp2CommonAPI.AddRemoteParty(CountryCode:                 cpoCommonAPI.OurCountryCode,
-                                          PartyId:                     cpoCommonAPI.OurPartyId,
-                                          Role:                        Roles.CPO,
-                                          BusinessDetails:             cpoCommonAPI.OurBusinessDetails,
 
-                                          AccessToken:                 AccessToken.Parse(cpo_accessing_emsp2__token),
-                                          AccessStatus:                AccessStatus.ALLOWED,
+            await emsp1CommonAPI.AddRemoteParty(CountryCode:                 cpoCommonAPI.OurCountryCode,
+                                                PartyId:                     cpoCommonAPI.OurPartyId,
+                                                Role:                        Roles.CPO,
+                                                BusinessDetails:             cpoCommonAPI.OurBusinessDetails,
 
-                                          RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo__token),
-                                          RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
-                                          RemoteVersionIds:            new[] { Version.Id },
-                                          SelectedVersionId:           Version.Id,
-                                          AccessTokenBase64Encoding:   false,
-                                          RemoteStatus:                RemoteAccessStatus.ONLINE,
+                                                AccessToken:                 AccessToken.Parse(cpo_accessing_emsp1__token),
+                                                AccessStatus:                AccessStatus.ALLOWED,
 
-                                          PartyStatus:                 PartyStatus.ENABLED);
+                                                RemoteAccessToken:           AccessToken.Parse(emsp1_accessing_cpo__token),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                RemoteVersionIds:            new[] { Version.Id },
+                                                SelectedVersionId:           Version.Id,
+                                                AccessTokenBase64Encoding:   false,
+                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                                PartyStatus:                 PartyStatus.ENABLED);
+
+
+            await emsp2CommonAPI.AddRemoteParty(CountryCode:                 cpoCommonAPI.OurCountryCode,
+                                                PartyId:                     cpoCommonAPI.OurPartyId,
+                                                Role:                        Roles.CPO,
+                                                BusinessDetails:             cpoCommonAPI.OurBusinessDetails,
+
+                                                AccessToken:                 AccessToken.Parse(cpo_accessing_emsp2__token),
+                                                AccessStatus:                AccessStatus.ALLOWED,
+
+                                                RemoteAccessToken:           AccessToken.Parse(emsp2_accessing_cpo__token),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v2.1/versions"),
+                                                RemoteVersionIds:            new[] { Version.Id },
+                                                SelectedVersionId:           Version.Id,
+                                                AccessTokenBase64Encoding:   false,
+                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                                PartyStatus:                 PartyStatus.ENABLED);
 
 
             Assert.AreEqual(2, cpoCommonAPI.  RemoteParties.Count());
@@ -773,35 +776,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Define blocked Remote Parties
 
-            cpoCommonAPI.AddRemoteParty  (CountryCode:       CountryCode.Parse("XX"),
-                                          PartyId:           Party_Id.   Parse("BLE"),
-                                          Role:              Roles.EMSP,
-                                          BusinessDetails:   new BusinessDetails(
-                                                                 "Blocked EMSP"
-                                                             ),
-                                          AccessToken:       AccessToken.Parse(BlockedEMSPToken),
-                                          AccessStatus:      AccessStatus.BLOCKED,
-                                          PartyStatus:       PartyStatus. ENABLED);
+            await cpoCommonAPI.AddRemoteParty  (CountryCode:       CountryCode.Parse("XX"),
+                                                PartyId:           Party_Id.   Parse("BLE"),
+                                                Role:              Roles.EMSP,
+                                                BusinessDetails:   new BusinessDetails(
+                                                                       "Blocked EMSP"
+                                                                   ),
+                                                AccessToken:       AccessToken.Parse(BlockedEMSPToken),
+                                                AccessStatus:      AccessStatus.BLOCKED,
+                                                PartyStatus:       PartyStatus. ENABLED);
 
-            emsp1CommonAPI.AddRemoteParty(CountryCode:       CountryCode.Parse("XX"),
-                                          PartyId:           Party_Id.   Parse("BLC"),
-                                          Role:              Roles.CPO,
-                                          BusinessDetails:   new BusinessDetails(
-                                                                 "Blocked CPO"
-                                                             ),
-                                          AccessToken:       AccessToken.Parse(BlockedCPOToken),
-                                          AccessStatus:      AccessStatus.BLOCKED,
-                                          PartyStatus:       PartyStatus. ENABLED);
+            await emsp1CommonAPI.AddRemoteParty(CountryCode:       CountryCode.Parse("XX"),
+                                                PartyId:           Party_Id.   Parse("BLC"),
+                                                Role:              Roles.CPO,
+                                                BusinessDetails:   new BusinessDetails(
+                                                                       "Blocked CPO"
+                                                                   ),
+                                                AccessToken:       AccessToken.Parse(BlockedCPOToken),
+                                                AccessStatus:      AccessStatus.BLOCKED,
+                                                PartyStatus:       PartyStatus. ENABLED);
 
-            emsp2CommonAPI.AddRemoteParty(CountryCode:       CountryCode.Parse("XX"),
-                                          PartyId:           Party_Id.   Parse("BLC"),
-                                          Role:              Roles.CPO,
-                                          BusinessDetails:   new BusinessDetails(
-                                                                 "Blocked CPO"
-                                                             ),
-                                          AccessToken:       AccessToken.Parse(BlockedCPOToken),
-                                          AccessStatus:      AccessStatus.BLOCKED,
-                                          PartyStatus:       PartyStatus. ENABLED);
+            await emsp2CommonAPI.AddRemoteParty(CountryCode:       CountryCode.Parse("XX"),
+                                                PartyId:           Party_Id.   Parse("BLC"),
+                                                Role:              Roles.CPO,
+                                                BusinessDetails:   new BusinessDetails(
+                                                                       "Blocked CPO"
+                                                                   ),
+                                                AccessToken:       AccessToken.Parse(BlockedCPOToken),
+                                                AccessStatus:      AccessStatus.BLOCKED,
+                                                PartyStatus:       PartyStatus. ENABLED);
 
 
             Assert.AreEqual(3, cpoCommonAPI.  RemoteParties.Count());
@@ -830,7 +833,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             cpoCPOAPI.CPOAPILogger?.Debug("all", LogTargets.Debug);
 
-            cpoCommonAPI.ClientConfigurations.Description = (countryCode, partyId) => $"CPO Client for {countryCode}-{partyId}";
+            cpoCommonAPI.ClientConfigurations.Description = (remotePartyId) => $"CPO Client for {remotePartyId}";
 
 
 
@@ -852,7 +855,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             emsp1EMSPAPI.EMSPAPILogger?.Debug("all", LogTargets.Debug);
 
-            emsp1CommonAPI.ClientConfigurations.Description = (countryCode, partyId) => $"EMSP #1 Client for {countryCode}*{partyId}";
+            emsp1CommonAPI.ClientConfigurations.Description = (remotePartyId) => $"EMSP #1 Client for {remotePartyId}";
 
 
 
@@ -874,7 +877,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             emsp2EMSPAPI.EMSPAPILogger?.Debug("all", LogTargets.Debug);
 
-            emsp2CommonAPI.ClientConfigurations.Description = (countryCode, partyId) => $"EMSP #2 Client for {countryCode}*{partyId}";
+            emsp2CommonAPI.ClientConfigurations.Description = (remotePartyId) => $"EMSP #2 Client for {remotePartyId}";
 
             #endregion
 

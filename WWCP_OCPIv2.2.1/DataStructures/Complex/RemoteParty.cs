@@ -26,7 +26,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using System.Drawing;
+
+using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -38,6 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public delegate JObject RemotePartyToJSONDelegate(RemoteParty                                         RemoteParty,
                                                       Boolean                                             Embedded                           = false,
                                                       CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
+                                                      CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
                                                       CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
                                                       CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
                                                       CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
@@ -64,6 +66,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     UInt64?                                             Take                               = null,
                                     Boolean                                             Embedded                           = false,
                                     CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
+                                    CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
                                     CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
                                     CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
                                     CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
@@ -83,6 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                       ? RemotePartyToJSON (remoteParty,
                                                                                            Embedded,
                                                                                            CustomRemotePartySerializer,
+                                                                                           CustomCredentialsRoleSerializer,
                                                                                            CustomBusinessDetailsSerializer,
                                                                                            CustomImageSerializer,
                                                                                            CustomLocalAccessInfoSerializer,
@@ -90,6 +94,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                       : remoteParty.ToJSON(Embedded,
                                                                                            CustomRemotePartySerializer,
+                                                                                           CustomCredentialsRoleSerializer,
                                                                                            CustomBusinessDetailsSerializer,
                                                                                            CustomImageSerializer,
                                                                                            CustomLocalAccessInfoSerializer,
@@ -102,6 +107,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
     /// <summary>
     /// A remote party.
+    /// In OCPI v2.2 this is a roaming network operator combining multiple CPOs or EMSPs.
     /// </summary>
     public class RemoteParty : IHasId<RemoteParty_Id>,
                                IEquatable<RemoteParty>,
@@ -125,49 +131,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// (country code + party identification + role).
         /// </summary>
         [Mandatory]
-        public RemoteParty_Id           Id                   { get; }
-
-        /// <summary>
-        /// ISO-3166 alpha-2 country code of the country this party is operating in.
-        /// </summary>
-        [Mandatory]
-        public CountryCode              CountryCode          { get; }
-
-        /// <summary>
-        /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
-        /// </summary>
-        [Mandatory]
-        public Party_Id                 PartyId              { get; }
-
-        /// <summary>
-        /// The type of the role.
-        /// </summary>
-        [Mandatory]
-        public Roles                    Role                 { get; }
-
-        /// <summary>
-        /// Business details of this party.
-        /// </summary>
-        [Mandatory]
-        public BusinessDetails          BusinessDetails      { get; }
+        public RemoteParty_Id                Id                   { get; }
 
         /// <summary>
         /// The current status of the party.
         /// </summary>
         [Mandatory]
-        public PartyStatus              Status               { get; }
+        public PartyStatus                   Status               { get; }
+
+        /// <summary>
+        /// The enumeration of credential roles.
+        /// </summary>
+        [Mandatory]
+        public IEnumerable<CredentialsRole>  Roles                { get; }
 
         /// <summary>
         /// Timestamp when this remote party was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                 LastUpdated          { get; }
+        public DateTime                      LastUpdated          { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this remote party.
         /// </summary>
         [Mandatory]
-        public String                   ETag                 { get; private set; }
+        public String                        ETag                 { get; private set; }
 
 
 
@@ -241,13 +229,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region RemoteParty(..., AccessToken, AccessStatus = ALLOWED, ...)
 
-        public RemoteParty(CountryCode                           CountryCode,
-                           Party_Id                              PartyId,
-                           Roles                                 Role,
-                           BusinessDetails                       BusinessDetails,
+        public RemoteParty(RemoteParty_Id                        Id,
+                           IEnumerable<CredentialsRole>          Roles,
 
                            AccessToken                           AccessToken,
                            Boolean?                              AccessTokenBase64Encoding    = null,
+                           Boolean?                              AllowDowngrades              = false,
                            AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
                            PartyStatus                           Status                       = PartyStatus. ENABLED,
 
@@ -264,16 +251,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            DateTime?                             LastUpdated                  = null)
 
-            : this(CountryCode,
-                   PartyId,
-                   Role,
-                   BusinessDetails,
+            : this(Id,
+                   Roles,
 
                    new[] {
                        new LocalAccessInfo(
                            AccessToken,
                            AccessStatus,
-                           AccessTokenIsBase64Encoded: AccessTokenBase64Encoding ?? true
+                           Roles,
+                           null,
+                           AccessTokenBase64Encoding,
+                           AllowDowngrades
                        )
                    },
                    Array.Empty<RemoteAccessInfo>(),
@@ -298,10 +286,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region RemoteParty(..., RemoteAccessToken, RemoteVersionsURL, ...)
 
-        public RemoteParty(CountryCode                           CountryCode,
-                           Party_Id                              PartyId,
-                           Roles                                 Role,
-                           BusinessDetails                       BusinessDetails,
+        public RemoteParty(RemoteParty_Id                        Id,
+                           IEnumerable<CredentialsRole>          Roles,
 
                            AccessToken                           RemoteAccessToken,
                            URL                                   RemoteVersionsURL,
@@ -325,10 +311,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            DateTime?                             LastUpdated                  = null)
 
-            : this(CountryCode,
-                   PartyId,
-                   Role,
-                   BusinessDetails,
+            : this(Id,
+                   Roles,
 
                    Array.Empty<LocalAccessInfo>(),
                    new[] {
@@ -362,10 +346,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region RemoteParty(...)
 
-        public RemoteParty(CountryCode                           CountryCode,
-                           Party_Id                              PartyId,
-                           Roles                                 Role,
-                           BusinessDetails                       BusinessDetails,
+        public RemoteParty(RemoteParty_Id                        Id,
+                           IEnumerable<CredentialsRole>          Roles,
 
                            AccessToken                           AccessToken,
 
@@ -374,7 +356,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            IEnumerable<Version_Id>?              RemoteVersionIds             = null,
                            Version_Id?                           SelectedVersionId            = null,
 
-                           Boolean?                              AccessTokenIsBase64Encoded   = null,
+                           Boolean?                              AccessTokenBase64Encoding    = null,
+                           Boolean?                              AllowDowngrades              = false,
                            AccessStatus                          AccessStatus                 = AccessStatus.      ALLOWED,
                            RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                            PartyStatus                           Status                       = PartyStatus.       ENABLED,
@@ -392,16 +375,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            DateTime?                             LastUpdated                  = null)
 
-            : this(CountryCode,
-                   PartyId,
-                   Role,
-                   BusinessDetails,
+            : this(Id,
+                   Roles,
 
                    new[] {
                        new LocalAccessInfo(
                            AccessToken,
                            AccessStatus,
-                           AccessTokenIsBase64Encoded: AccessTokenIsBase64Encoded ?? false
+                           Roles,
+                           RemoteVersionsURL,
+                           AccessTokenBase64Encoding,
+                           AllowDowngrades
                        )
                    },
                    new[] {
@@ -410,7 +394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            RemoteVersionsURL,
                            RemoteVersionIds,
                            SelectedVersionId,
-                           AccessTokenIsBase64Encoded,
+                           AccessTokenBase64Encoding,
                            RemoteStatus
                        )
                    },
@@ -435,10 +419,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region RemoteParty(...)
 
-        public RemoteParty(CountryCode                           CountryCode,
-                           Party_Id                              PartyId,
-                           Roles                                 Role,
-                           BusinessDetails                       BusinessDetails,
+        public RemoteParty(RemoteParty_Id                        Id,
+                           IEnumerable<CredentialsRole>          Roles,
 
                            IEnumerable<LocalAccessInfo>          LocalAccessInfos,
                            IEnumerable<RemoteAccessInfo>         RemoteAccessInfos,
@@ -460,17 +442,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         {
 
-            this.Id                          = RemoteParty_Id.Parse(
-                                                   String.Concat(CountryCode,
-                                                                 "-",
-                                                                 PartyId,
-                                                                 "_",
-                                                                 Role));
-
-            this.CountryCode                 = CountryCode;
-            this.PartyId                     = PartyId;
-            this.Role                        = Role;
-            this.BusinessDetails             = BusinessDetails;
+            this.Id                          = Id;
+            this.Roles                       = Roles;
             this.Status                      = Status;
 
             this.RemoteCertificateValidator  = RemoteCertificateValidator;
@@ -494,11 +467,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             unchecked
             {
 
-                this.hashCode = Id.               GetHashCode()  * 29 ^
-                                CountryCode.      GetHashCode()  * 23 ^
-                                PartyId.          GetHashCode()  * 19 ^
-                                Role.             GetHashCode()  * 17 ^
-                                BusinessDetails.  GetHashCode()  * 13 ^
+                this.hashCode = Id.               GetHashCode()  * 17 ^
+                                Roles.            CalcHashCode() * 13 ^
                                 Status.           GetHashCode()  * 11 ^
                                 LastUpdated.      GetHashCode()  *  7 ^
                                 ETag.             GetHashCode()  *  5 ^
@@ -526,6 +496,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
         public JObject ToJSON(Boolean                                             Embedded,
                               CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
+                              CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
                               CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
                               CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
                               CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
@@ -540,18 +511,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                ? new JProperty("@context",            DefaultJSONLDContext.ToString())
                                : null,
 
-                                 new JProperty("countryCode",         CountryCode.         ToString()),
-                                 new JProperty("partyId",             PartyId.             ToString()),
-                                 new JProperty("role",                Role.                ToString()),
                                  new JProperty("partyStatus",         Status.              ToString()),
 
-                           BusinessDetails is not null
-                               ? new JProperty("businessDetails",     BusinessDetails.     ToJSON(CustomBusinessDetailsSerializer,
-                                                                                                  CustomImageSerializer))
-                               : null,
+                                 new JProperty("roles",               new JArray(Roles.Select(role => role.ToJSON(CustomCredentialsRoleSerializer,
+                                                                                                                  CustomBusinessDetailsSerializer,
+                                                                                                                  CustomImageSerializer)))),
 
                            localAccessInfos.Any()
-                               ? new JProperty("accessInfos",         new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
+                               ? new JProperty("accessInfos",         new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer,
+                                                                                                                                                      CustomCredentialsRoleSerializer,
+                                                                                                                                                      CustomBusinessDetailsSerializer,
+                                                                                                                                                      CustomImageSerializer))))
                                : null,
 
                            remoteAccessInfos.Any()
@@ -577,11 +547,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public RemoteParty Clone()
 
-            => new (CountryCode. Clone,
-                    PartyId.     Clone,
-                    Role,
-                    BusinessDetails.Clone(),
-
+            => new (Id. Clone,
+                    Roles.            Select(credentialsRole   => credentialsRole.  Clone()),
                     LocalAccessInfos. Select(accessInfoStatus  => accessInfoStatus. Clone()),
                     RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
                     Status,
@@ -602,16 +569,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region CalcSHA256Hash(CustomRemotePartySerializer = null, CustomBusinessDetailsSerializer = null, ...)
+        #region CalcSHA256Hash(CustomRemotePartySerializer = null, CustomCredentialsRoleSerializer = null, ...)
 
         /// <summary>
         /// Calculate the SHA256 hash of the JSON representation of this remote party in HEX.
         /// </summary>
         /// <param name="CustomRemotePartySerializer">A delegate to serialize custom remote party JSON objects.</param>
+        /// <param name="CustomCredentialsRoleSerializer">A delegate to serialize custom credentials roles JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
         /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
         public String CalcSHA256Hash(CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
+                                     CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
                                      CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
                                      CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
                                      CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
@@ -620,6 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.ETag = SHA256.HashData(ToJSON(false, // always with @context!
                                                CustomRemotePartySerializer,
+                                               CustomCredentialsRoleSerializer,
                                                CustomBusinessDetailsSerializer,
                                                CustomImageSerializer,
                                                CustomLocalAccessInfoSerializer,
@@ -771,19 +741,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var c = Id.             CompareTo(RemoteParty.Id);
 
             if (c == 0)
-                c = CountryCode.    CompareTo(RemoteParty.CountryCode);
-
-            if (c == 0)
-                c = PartyId.        CompareTo(RemoteParty.PartyId);
-
-            if (c == 0)
-                c = Role.           CompareTo(RemoteParty.Role);
-
-            if (c == 0)
-                c = BusinessDetails.CompareTo(RemoteParty.BusinessDetails);
-
-            if (c == 0)
                 c = Status.         CompareTo(RemoteParty.Status);
+
+            if (c == 0)
+                c = Roles.Count().  CompareTo(RemoteParty.Roles.Count());
+
+            if (c == 0)
+            {
+                for (var i = 0; i < Roles.Count(); i++)
+                {
+
+                    c = Roles.ElementAt(i).CompareTo(RemoteParty.Roles.ElementAt(i));
+
+                    if (c != 0)
+                        break;
+
+                }
+            }
 
             if (c == 0)
                 c = LastUpdated.    CompareTo(RemoteParty.LastUpdated);
@@ -825,19 +799,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             => RemoteParty is not null &&
 
                Id.             Equals(RemoteParty.Id)              &&
-               CountryCode.    Equals(RemoteParty.CountryCode)     &&
-               PartyId.        Equals(RemoteParty.PartyId)         &&
-               Role.           Equals(RemoteParty.Role)            &&
-               BusinessDetails.Equals(RemoteParty.BusinessDetails) &&
                Status.         Equals(RemoteParty.Status)          &&
+
+               Roles.Count().  Equals(RemoteParty.Roles.Count())   &&
+               Roles.All(RemoteParty.Roles.Contains)               &&
+
                LastUpdated.    Equals(RemoteParty.LastUpdated)     &&
                ETag.           Equals(RemoteParty.ETag)            &&
 
-               localAccessInfos.Count.Equals(RemoteParty.localAccessInfos.Count)     &&
-               localAccessInfos. All(_accessInfoStatus => RemoteParty.localAccessInfos. Contains(_accessInfoStatus)) &&
+               localAccessInfos.Count.Equals(RemoteParty.localAccessInfos.Count)   &&
+               localAccessInfos. All(RemoteParty.localAccessInfos. Contains)       &&
 
-               remoteAccessInfos.Count.Equals(RemoteParty.remoteAccessInfos.Count)     &&
-               remoteAccessInfos.All(remoteAccessInfo  => RemoteParty.remoteAccessInfos.Contains(remoteAccessInfo));
+               remoteAccessInfos.Count.Equals(RemoteParty.remoteAccessInfos.Count) &&
+               remoteAccessInfos.All(RemoteParty.remoteAccessInfos.Contains);
 
         #endregion
 

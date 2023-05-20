@@ -15,6 +15,12 @@
  * limitations under the License.
  */
 
+#region Usings
+
+using cloud.charging.open.protocols.OCPI;
+
+#endregion
+
 namespace cloud.charging.open.protocols.OCPIv2_2_1
 {
 

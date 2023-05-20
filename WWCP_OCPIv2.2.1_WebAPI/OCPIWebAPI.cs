@@ -25,6 +25,8 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using social.OpenData.UsersAPI;
 
 using cloud.charging.open.protocols.WWCP;
+
+using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
 using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP;
@@ -407,6 +409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
         #region Custom JSON serializers
 
         public CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer         { get; set; }
+        public CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer     { get; set; }
         public CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer     { get; set; }
         public CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer     { get; set; }
@@ -776,7 +779,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                              var withMetadata                 = Request.QueryString.GetBoolean("withMetadata", false);
                                              var matchFilter                  = Request.QueryString.CreateStringFilter<RemoteParty>("match",
                                                                                                                                     (remoteParty, pattern) => remoteParty.Id.         ToString().Contains(pattern) ||
-                                                                                                                                                              remoteParty.BusinessDetails?.Name. Contains(pattern) == true);
+                                                                                                                                                              remoteParty.Roles.Any(credentialsRole => credentialsRole.BusinessDetails?.Name. Contains(pattern) == true));
                                              var skip                         = Request.QueryString.GetUInt64 ("skip");
                                              var take                         = Request.QueryString.GetUInt64 ("take");
                                              var matchStatusFilter            = Request.QueryString.CreateMultiEnumFilter<PartyStatus>("matchStatus");
@@ -971,6 +974,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -1166,6 +1170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -1532,6 +1537,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -1650,6 +1656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -1870,6 +1877,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -1988,6 +1996,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -2327,6 +2336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -2445,6 +2455,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,
@@ -2778,6 +2789,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
+                                                                                                                  CustomCredentialsRoleSerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
                                                                                                                   CustomLocalAccessInfoSerializer,

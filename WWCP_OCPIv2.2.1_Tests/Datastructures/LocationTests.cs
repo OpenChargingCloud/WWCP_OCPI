@@ -25,6 +25,8 @@ using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
@@ -538,11 +540,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.IsFalse  (patchResult.IsSuccess);
             Assert.IsTrue   (patchResult.IsFailed);
             Assert.IsNotNull(patchResult.ErrorResponse);
-            Assert.AreEqual ("Patching the 'country code' of a location is not allowed!",  patchResult.ErrorResponse);
+            Assert.AreEqual ("Patching the 'country code' of a charging location is not allowed!",   patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                 patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                   patchResult.PatchedData.LastUpdated.ToIso8601());
+            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                           patchResult.PatchedData.Id);
+            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                             patchResult.PatchedData.LastUpdated.ToIso8601());
 
         }
 
@@ -779,11 +781,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.IsFalse  (patchResult.IsSuccess);
             Assert.IsTrue   (patchResult.IsFailed);
             Assert.IsNotNull(patchResult.ErrorResponse);
-            Assert.AreEqual ("Patching the 'party identification' of a location is not allowed!",  patchResult.ErrorResponse);
+            Assert.AreEqual ("Patching the 'party identification' of a charging location is not allowed!",   patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                   patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                     patchResult.PatchedData.LastUpdated.ToIso8601());
+            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                                   patchResult.PatchedData.Id);
+            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                                     patchResult.PatchedData.LastUpdated.ToIso8601());
 
         }
 
@@ -1020,11 +1022,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.IsFalse  (patchResult.IsSuccess);
             Assert.IsTrue   (patchResult.IsFailed);
             Assert.IsNotNull(patchResult.ErrorResponse);
-            Assert.AreEqual ("Patching the 'identification' of a location is not allowed!",  patchResult.ErrorResponse);
+            Assert.AreEqual ("Patching the 'identification' of a charging location is not allowed!",   patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                   patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                     patchResult.PatchedData.LastUpdated.ToIso8601());
+            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                             patchResult.PatchedData.Id);
+            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                               patchResult.PatchedData.LastUpdated.ToIso8601());
 
         }
 
@@ -2472,11 +2474,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.IsFalse  (patchResult.IsSuccess);
             Assert.IsTrue   (patchResult.IsFailed);
             Assert.IsNotNull(patchResult.ErrorResponse);
-            Assert.AreEqual ("Invalid JSON merge patch for 'evses' array of a location: JSON property 'evses' is not an array!",  patchResult.ErrorResponse);
+            Assert.AreEqual ("Patching the 'evses' array of a charging location is not allowed!",   patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                                                        patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                                                          patchResult.PatchedData.LastUpdated.ToIso8601());
+            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                          patchResult.PatchedData.Id);
+            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                            patchResult.PatchedData.LastUpdated.ToIso8601());
 
         }
 
@@ -2713,11 +2715,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.IsFalse  (patchResult.IsSuccess);
             Assert.IsTrue   (patchResult.IsFailed);
             Assert.IsNotNull(patchResult.ErrorResponse);
-            Assert.AreEqual ("Invalid JSON merge patch of a location: Invalid operator!",  patchResult.ErrorResponse);
+            Assert.AreEqual ("Invalid JSON merge patch of a charging location: Invalid operator!",   patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                 patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                   patchResult.PatchedData.LastUpdated.ToIso8601());
+            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                           patchResult.PatchedData.Id);
+            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                             patchResult.PatchedData.LastUpdated.ToIso8601());
 
         }
 
@@ -2954,11 +2956,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.IsFalse  (patchResult.IsSuccess);
             Assert.IsTrue   (patchResult.IsFailed);
             Assert.IsNotNull(patchResult.ErrorResponse);
-            Assert.AreEqual ("Invalid JSON merge patch of a location: Invalid 'last updated'!",  patchResult.ErrorResponse);
+            Assert.AreEqual ("Invalid JSON merge patch of a charging location: Invalid 'last updated'!",   patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                       patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                         patchResult.PatchedData.LastUpdated.ToIso8601());
+            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                                 patchResult.PatchedData.Id);
+            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                                   patchResult.PatchedData.LastUpdated.ToIso8601());
 
         }
 

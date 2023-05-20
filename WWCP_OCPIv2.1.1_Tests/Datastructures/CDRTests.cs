@@ -26,6 +26,10 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.WWCP;
+using cloud.charging.open.protocols.OCPI;
+
+//using EnergyMeter                = cloud.charging.open.protocols.OCPI.EnergyMeter;
+//using TransparencySoftwareStatus = cloud.charging.open.protocols.OCPI.TransparencySoftwareStatus;
 
 #endregion
 
@@ -69,7 +73,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                    Country.Germany,
                                    GeoCoordinate.   Parse(10, 20)
                                ),
-                               Currency.EUR,
+                               OCPI.Currency.EUR,
 
                                new[] {
                                    new ChargingPeriod(
@@ -103,7 +107,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                Meter_Id.              Parse("Meter0815"),
 
                                // OCPI Computer Science Extensions
-                               new EnergyMeter(
+                               new OCPI.EnergyMeter(
                                    Meter_Id.Parse("Meter0815"),
                                    "EnergyMeter Model #1",
                                    null,
@@ -114,8 +118,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                    null,
                                    null,
                                    new[] {
-                                       new TransparencySoftwareStatus(
-                                           new TransparencySoftware(
+                                       new OCPI.TransparencySoftwareStatus(
+                                           new OCPI.TransparencySoftware(
                                                "Chargy Transparency Software Desktop Application",
                                                "v1.00",
                                                OpenSourceLicense.AGPL3,
@@ -125,14 +129,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                URL.Parse("https://open.charging.cloud/Chargy"),
                                                URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
                                            ),
-                                           LegalStatus.GermanCalibrationLaw,
+                                           OCPI.LegalStatus.GermanCalibrationLaw,
                                            "cert",
                                            "German PTB",
                                            NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
                                            NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
                                        ),
-                                       new TransparencySoftwareStatus(
-                                           new TransparencySoftware(
+                                       new OCPI.TransparencySoftwareStatus(
+                                           new OCPI.TransparencySoftware(
                                                "Chargy Transparency Software Mobile Application",
                                                "v1.00",
                                                OpenSourceLicense.AGPL3,
@@ -142,7 +146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                URL.Parse("https://open.charging.cloud/Chargy"),
                                                URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
                                            ),
-                                           LegalStatus.ForInformationOnly,
+                                           OCPI.LegalStatus.ForInformationOnly,
                                            "no cert",
                                            "GraphDefined",
                                            NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
@@ -157,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                        CountryCode.Parse("DE"),
                                        Party_Id.   Parse("GEF"),
                                        Tariff_Id.  Parse("TARIFF0001"),
-                                       Currency.EUR,
+                                       OCPI.Currency.EUR,
                                        new[] {
                                            new TariffElement(
                                                new[] {

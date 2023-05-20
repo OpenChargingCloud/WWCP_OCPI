@@ -22,6 +22,8 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
@@ -203,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptional("public_key",
                                        "public key",
-                                       OCPIv2_1_1.PublicKey.TryParse,
+                                       OCPI.PublicKey.TryParse,
                                        out PublicKey? PublicKey,
                                        out ErrorResponse))
                 {

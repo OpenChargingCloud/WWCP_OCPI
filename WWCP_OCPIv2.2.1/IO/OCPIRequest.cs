@@ -22,6 +22,8 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
@@ -193,26 +195,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Properties
 
-        public CommonAPI          CommonAPI           { get; }
+        public CommonAPI             CommonAPI           { get; }
 
-        public HTTPRequest        HTTPRequest         { get; }
+        public HTTPRequest           HTTPRequest         { get; }
 
-        public Request_Id?        RequestId           { get; }
-        public Correlation_Id?    CorrelationId       { get; }
-        public CountryCode?       ToCountryCode       { get; }
-        public Party_Id?          ToPartyId           { get; }
-        public CountryCode?       FromCountryCode     { get; }
-        public Party_Id?          FromPartyId         { get; }
+        public Request_Id?           RequestId           { get; }
+        public Correlation_Id?       CorrelationId       { get; }
 
-        public AccessToken?       AccessToken         { get; }
+        public CountryCode?          ToCountryCode       { get; }
+        public Party_Id?             ToPartyId           { get; }
+        public CountryCode?          FromCountryCode     { get; }
+        public Party_Id?             FromPartyId         { get; }
 
-        public LocalAccessInfo?   LocalAccessInfo     { get; }
+        public AccessToken?          AccessToken         { get; }
 
-        public RemoteParty        RemoteParty         { get; }
+        public LocalAccessInfo?      LocalAccessInfo     { get; }
 
-        public EMSP_Id?           EMSPId               { get; }
+        public RemoteParty?          RemoteParty         { get; }
 
-        public CPO_Id?            CPOId               { get; }
+        public IEnumerable<EMSP_Id>  EMSPIds             { get; }
+
+        public IEnumerable<CPO_Id>   CPOIds              { get; }
+
+        public EMSP_Id?              EMSPId              { get; }
+
+        public CPO_Id?               CPOId               { get; }
 
 
         /// <summary>
@@ -253,13 +260,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
                 TokenAuth.Token.TryBase64Decode_UTF8(out String DecodedToken)   &&
-                OCPIv2_2_1.AccessToken.TryParse(DecodedToken, out var accessToken))
+                OCPI.AccessToken.TryParse(DecodedToken, out var accessToken))
             {
                 this.AccessToken = accessToken;
             }
 
             else if (Request.Authorization is HTTPBasicAuthentication BasicAuth &&
-                OCPIv2_2_1.AccessToken.TryParse(BasicAuth.Username, out accessToken))
+                OCPI.AccessToken.TryParse(BasicAuth.Username, out accessToken))
             {
                 this.AccessToken = accessToken;
             }
@@ -277,26 +284,47 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                         this.LocalAccessInfo  = new LocalAccessInfo(
                                                     AccessToken.Value,
-                                                    this.RemoteParty.LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status,
-                                                    new[] {
-                                                        new CredentialsRole(
-                                                            this.RemoteParty.CountryCode,
-                                                            this.RemoteParty.PartyId,
-                                                            this.RemoteParty.Role,
-                                                            this.RemoteParty.BusinessDetails,
-                                                            null
-                                                        )
-                                                    },
+                                                    this.RemoteParty.LocalAccessInfos.First(localAccessInfo => localAccessInfo.AccessToken == AccessToken).Status,
+                                                    this.RemoteParty.Roles,
                                                     this.RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
                                                 );
 
-                        this.CPOId            = this.RemoteParty.Role == Roles.CPO
-                                                   ? CPO_Id. Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}*{this.LocalAccessInfo.Value.Roles.First().PartyId}")
-                                                   : null;
+                        this.CPOIds           = this.RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Roles.CPO).
+                                                                       Select(credentialsRole => CPO_Id. Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}*{this.LocalAccessInfo.Value.Roles.First().PartyId}")).
+                                                                       Distinct().
+                                                                       ToArray();
 
-                        this.EMSPId           = this.RemoteParty.Role == Roles.EMSP
-                                                   ? EMSP_Id.Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}-{this.LocalAccessInfo.Value.Roles.First().PartyId}")
-                                                   : null;
+                        this.EMSPIds          = this.RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Roles.EMSP).
+                                                                       Select(credentialsRole => EMSP_Id.Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}-{this.LocalAccessInfo.Value.Roles.First().PartyId}")).
+                                                                       Distinct().
+                                                                       ToArray();
+
+                        if (FromCountryCode.HasValue &&
+                            FromPartyId.    HasValue)
+                        {
+
+                            this.CPOId            = CPO_Id. Parse($"{FromCountryCode}*{FromPartyId}");
+                            this.EMSPId           = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
+
+                            if (this.CPOId. HasValue && !this.CPOIds. Contains(this.CPOId. Value))
+                                this.CPOId   = null;
+
+                            if (this.EMSPId.HasValue && !this.EMSPIds.Contains(this.EMSPId.Value))
+                                this.EMSPId  = null;
+
+                        }
+
+                        if (!FromCountryCode.HasValue &&
+                            !FromPartyId.    HasValue)
+                        {
+
+                            if (CPOIds. Any())
+                                this.CPOId  = CPOIds. First();
+
+                            if (EMSPIds.Any())
+                                this.EMSPId = EMSPIds.First();
+
+                        }
 
                     }
 
@@ -305,8 +333,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                              FromPartyId.    HasValue)
                     {
 
-                        var filteredParties = parties.Where(party => party.CountryCode == FromCountryCode.Value &&
-                                                                     party.PartyId     == FromPartyId.    Value).ToArray();
+                        var filteredParties = parties.Where(party => party.Roles.Any(credentialsRole => credentialsRole.CountryCode == FromCountryCode.Value) &&
+                                                                     party.Roles.Any(credentialsRole => credentialsRole.PartyId     == FromPartyId.    Value)).ToArray();
 
                         if (filteredParties.Count() == 1)
                         {

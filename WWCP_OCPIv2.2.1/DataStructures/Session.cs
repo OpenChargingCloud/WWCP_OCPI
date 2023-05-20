@@ -23,6 +23,7 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
 
 #endregion
@@ -139,7 +140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The ISO 4217 code of the currency used for this session.
         /// </summary>
         [Mandatory]
-        public   Currency                            Currency                     { get; }
+        public   OCPI.Currency                       Currency                     { get; }
 
         /// <summary>
         /// The optional enumeration of charging periods that can be used to calculate and verify the total cost.
@@ -214,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        Location_Id                                       LocationId,
                        EVSE_UId                                          EVSEUId,
                        Connector_Id                                      ConnectorId,
-                       Currency                                          Currency,
+                       OCPI.Currency                                     Currency,
                        SessionStatusTypes                                Status,
 
                        DateTime?                                         End                              = null,
@@ -499,7 +500,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                              OCPIv2_2_1.CDRToken.TryParse,
                                              out CDRToken CDRToken,
                                              out ErrorResponse))
-                {                          
+                {
                     return false;
                 }
 
@@ -588,8 +589,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
-                                         OCPIv2_2_1.Currency.TryParse,
-                                         out Currency Currency,
+                                         OCPI.Currency.TryParse,
+                                         out OCPI.Currency Currency,
                                          out ErrorResponse))
                 {
                     return false;

@@ -25,6 +25,8 @@ using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
@@ -78,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                "Name?",
                                "07749"
                            ),
-                           Currency.EUR,
+                           OCPI.Currency.EUR,
 
                            new ChargingPeriod[] {
                                new ChargingPeriod(
@@ -174,7 +176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                    CountryCode.Parse("DE"),
                                    Party_Id.   Parse("GEF"),
                                    Tariff_Id.  Parse("TARIFF0001"),
-                                   Currency.EUR,
+                                   OCPI.Currency.EUR,
                                    new[] {
                                        new TariffElement(
                                            new PriceComponent[] {
@@ -371,7 +373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
         /// <summary>
         /// Tries to deserialize a charge detail record example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/cdr_example.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/examples/cdr_example.json
         /// </summary>
         [Test]
         public static void CDR_DeserializeGitHub_Test01()
@@ -386,6 +388,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                            ""start_date_time"": ""2015-06-29T21:39:09Z"",
                            ""end_date_time"": ""2015-06-29T23:37:32Z"",
                            ""cdr_token"": {
+                             ""country_code"": ""DE"",
+                             ""party_id"": ""TNM"",
                              ""uid"": ""012345678"",
                              ""type"": ""RFID"",
                              ""contract_id"": ""DE8ACC12E46L89""
@@ -448,8 +452,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             #endregion
 
-            Assert.IsTrue(CDR.TryParse(JObject.Parse(JSON), out var parsedCDR, out var errorResponse));
-            Assert.IsNull(errorResponse);
+            var result = CDR.TryParse(JObject.Parse(JSON), out var parsedCDR, out var errorResponse);
+            Assert.IsTrue   (result, errorResponse);
+            Assert.IsNotNull(parsedCDR);
+            Assert.IsNull   (errorResponse);
 
             Assert.AreEqual(CountryCode.Parse("BE"),                               parsedCDR.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("BEC"),                              parsedCDR.PartyId);

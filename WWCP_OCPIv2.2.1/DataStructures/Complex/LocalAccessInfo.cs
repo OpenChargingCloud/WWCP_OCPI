@@ -22,6 +22,8 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1
@@ -31,13 +33,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     {
 
         public static Boolean Is(this LocalAccessInfo?  AccessInfo,
-                                 Roles             Role)
+                                 Roles                  Role)
 
             => AccessInfo.HasValue &&
                AccessInfo.Value.Is(Role);
 
         public static Boolean IsNot(this LocalAccessInfo?  AccessInfo,
-                                    Roles             Role)
+                                    Roles                  Role)
 
             => !AccessInfo.HasValue ||
                 AccessInfo.Value.IsNot(Role);
@@ -83,6 +85,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         [Optional]
         public URL?                          VersionsURL                   { get; }
 
+        /// <summary>
+        /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
+        /// OCPI does not define any behaviour for this.
+        /// </summary>
+        [Optional]
+        public Boolean                       AllowDowngrades               { get; }
+
 
         public Boolean Is(Roles Role)
             =>  Roles.Any(role => role.Role == Role);
@@ -99,21 +108,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="AccessToken">An access token.</param>
         /// <param name="Status">An access status.</param>
+        /// 
         /// <param name="Roles">an enumeration of credential roles.</param>
+        /// 
         /// <param name="VersionsURL">An optional URL to get the remote OCPI versions information.</param>
         /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
         public LocalAccessInfo(AccessToken                    AccessToken,
                                AccessStatus                   Status,
+
                                IEnumerable<CredentialsRole>?  Roles                        = null,
+
                                URL?                           VersionsURL                  = null,
-                               Boolean?                       AccessTokenIsBase64Encoded   = false)
+                               Boolean?                       AccessTokenIsBase64Encoded   = false,
+                               Boolean?                       AllowDowngrades              = false)
         {
 
             this.AccessToken                 = AccessToken;
             this.Status                      = Status;
+
             this.Roles                       = Roles?.Distinct()          ?? Array.Empty<CredentialsRole>();
+
             this.VersionsURL                 = VersionsURL;
             this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded ?? false;
+            this.AllowDowngrades             = AllowDowngrades            ?? false;
 
             unchecked
             {
@@ -157,6 +174,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            VersionsURL.HasValue
                                ? new JProperty("versionsURL",                  VersionsURL.ToString())
+                               : null,
+
+                           AllowDowngrades
+                               ? new JProperty("allow_downgrades",             AllowDowngrades)
                                : null
 
                        );
@@ -193,7 +214,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    Status,
                    Roles.Select(credentialsRole => credentialsRole.Clone()).ToArray(),
                    VersionsURL,
-                   AccessTokenIsBase64Encoded);
+                   AccessTokenIsBase64Encoded,
+                   AllowDowngrades);
 
         #endregion
 
@@ -312,9 +334,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Object">An access information to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is LocalAccessInfo accessInfo
-                   ? CompareTo(accessInfo)
-                   : throw new ArgumentException("The given object is not a access information!",
+            => Object is LocalAccessInfo localAccessInfo
+                   ? CompareTo(localAccessInfo)
+                   : throw new ArgumentException("The given object is not a local access information!",
                                                  nameof(Object));
 
         #endregion
@@ -328,15 +350,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public Int32 CompareTo(LocalAccessInfo AccessInfo)
         {
 
-            var c = AccessToken.CompareTo(AccessInfo.AccessToken);
+            var c = AccessToken.               CompareTo(AccessInfo.AccessToken);
 
             if (c == 0)
-                c = Status.     CompareTo(AccessInfo.Status);
+                c = Status.                    CompareTo(AccessInfo.Status);
 
-            // Roles
+            if (c == 0)
+                c = Roles.Count().             CompareTo(AccessInfo.Roles.Count());
+
+            if (c == 0)
+            {
+                for (var i = 0; i < Roles.Count(); i++)
+                {
+
+                    c = Roles.ElementAt(i).CompareTo(AccessInfo.Roles.ElementAt(i));
+
+                    if (c != 0)
+                        break;
+
+                }
+            }
 
             if (c == 0 && VersionsURL.HasValue && AccessInfo.VersionsURL.HasValue)
-                c = VersionsURL.Value.CompareTo(AccessInfo.VersionsURL.Value);
+                c = VersionsURL.Value.         CompareTo(AccessInfo.VersionsURL.Value);
+
+            if (c == 0)
+                c = AccessTokenIsBase64Encoded.CompareTo(AccessInfo.AccessTokenIsBase64Encoded);
+
+            if (c == 0)
+                c = AllowDowngrades.           CompareTo(AccessInfo.AllowDowngrades);
 
             return c;
 
@@ -356,8 +398,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Object">An access information to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is LocalAccessInfo accessInfo &&
-                   Equals(accessInfo);
+            => Object is LocalAccessInfo localAccessInfo &&
+                   Equals(localAccessInfo);
 
         #endregion
 
@@ -369,14 +411,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="AccessInfo">An access information to compare with.</param>
         public Boolean Equals(LocalAccessInfo AccessInfo)
 
-            => AccessToken.Equals(AccessInfo.AccessToken) &&
-               Status.     Equals(AccessInfo.Status)      &&
+            => AccessToken.               Equals(AccessInfo.AccessToken)   &&
+               Status.                    Equals(AccessInfo.Status)        &&
 
-               Roles.Count().Equals(AccessInfo.Roles.Count()) &&
+               Roles.Count().             Equals(AccessInfo.Roles.Count()) &&
                Roles.All(AccessInfo.Roles.Contains) &&
 
             ((!VersionsURL.HasValue && !AccessInfo.VersionsURL.HasValue) ||
-              (VersionsURL.HasValue &&  AccessInfo.VersionsURL.HasValue && VersionsURL.Value.Equals(AccessInfo.VersionsURL.Value)));
+              (VersionsURL.HasValue &&  AccessInfo.VersionsURL.HasValue && VersionsURL.Value.Equals(AccessInfo.VersionsURL.Value))) &&
+
+               AccessTokenIsBase64Encoded.Equals(AccessInfo.AccessTokenIsBase64Encoded) &&
+               AllowDowngrades.           Equals(AccessInfo.AllowDowngrades);
 
         #endregion
 

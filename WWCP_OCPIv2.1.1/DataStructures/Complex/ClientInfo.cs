@@ -17,11 +17,11 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
+
+using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -236,7 +236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("country_code",
                                          "country code",
-                                         OCPIv2_1_1.CountryCode.TryParse,
+                                         OCPI.CountryCode.TryParse,
                                          out CountryCode CountryCode,
                                          out ErrorResponse))
                 {

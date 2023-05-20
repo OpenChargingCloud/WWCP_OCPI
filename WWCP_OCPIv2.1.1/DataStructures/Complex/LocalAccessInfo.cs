@@ -21,7 +21,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using System.Runtime.Intrinsics.X86;
+
+using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -102,31 +103,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="AccessToken">An access token.</param>
         /// <param name="Status">An access status.</param>
+        /// 
         /// <param name="CountryCode">A country code.</param>
         /// <param name="PartyId">A party identification.</param>
         /// <param name="Role">A role.</param>
-        /// <param name="VersionsURL">An optional URL to get the remote OCPI versions information.</param>
         /// <param name="BusinessDetails">Optional business details.</param>
+        /// 
+        /// <param name="VersionsURL">An optional URL to get the remote OCPI versions information.</param>
         /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         public LocalAccessInfo(AccessToken       AccessToken,
                                AccessStatus      Status,
+
                                CountryCode       CountryCode,
                                Party_Id          PartyId,
                                Roles             Role,
-                               URL?              VersionsURL                  = null,
                                BusinessDetails?  BusinessDetails              = null,
+
+                               URL?              VersionsURL                  = null,
                                Boolean?          AccessTokenIsBase64Encoded   = false,
                                Boolean?          AllowDowngrades              = false)
         {
 
             this.AccessToken                 = AccessToken;
             this.Status                      = Status;
+
             this.CountryCode                 = CountryCode;
             this.PartyId                     = PartyId;
             this.Role                        = Role;
-            this.VersionsURL                 = VersionsURL;
             this.BusinessDetails             = BusinessDetails;
+
+            this.VersionsURL                 = VersionsURL;
             this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded ?? false;
             this.AllowDowngrades             = AllowDowngrades            ?? false;
 
@@ -134,13 +141,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 this.hashCode = this.AccessToken.               GetHashCode()       * 23 ^
-                                this.AccessTokenIsBase64Encoded.GetHashCode()       * 19 ^
-                                this.Status.                    GetHashCode()       * 17 ^
-                                this.CountryCode.               GetHashCode()       * 13 ^
-                                this.PartyId.                   GetHashCode()       * 11 ^
-                                this.Role.                      GetHashCode()       *  7 ^
+                                this.Status.                    GetHashCode()       * 19 ^
+
+                                this.CountryCode.               GetHashCode()       * 17 ^
+                                this.PartyId.                   GetHashCode()       * 13 ^
+                                this.Role.                      GetHashCode()       * 11 ^
+                               (this.BusinessDetails?.          GetHashCode() ?? 0) *  7 ^
+
                                (this.VersionsURL?.              GetHashCode() ?? 0) *  5 ^
-                               (this.BusinessDetails?.          GetHashCode() ?? 0) *  3 ^
+                                this.AccessTokenIsBase64Encoded.GetHashCode()       *  3 ^
                                 this.AllowDowngrades.           GetHashCode();
 
             }
@@ -166,20 +175,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             var json = JSONObject.Create(
 
                                  new JProperty("accesstoken",                  AccessToken.    ToString()),
-                                 new JProperty("accessTokenIsBase64Encoded",   AccessTokenIsBase64Encoded),
                                  new JProperty("status",                       Status.         ToString()),
+
                                  new JProperty("countryCode",                  CountryCode.    ToString()),
                                  new JProperty("partyId",                      PartyId.        ToString()),
                                  new JProperty("role",                         Role.           ToString()),
-
-                           VersionsURL.HasValue
-                               ? new JProperty("versionsURL",                  VersionsURL.    ToString())
-                               : null,
 
                            BusinessDetails is not null
                                ? new JProperty("businessDetails",              BusinessDetails.ToJSON(CustomBusinessDetailsSerializer,
                                                                                                       CustomImageSerializer))
                                : null,
+
+                           VersionsURL.HasValue
+                               ? new JProperty("versionsURL",                  VersionsURL.    ToString())
+                               : null,
+
+                                 new JProperty("accessTokenIsBase64Encoded",   AccessTokenIsBase64Encoded),
 
                            AllowDowngrades
                                ? new JProperty("allow_downgrades",             AllowDowngrades)
@@ -208,8 +219,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    CountryCode,
                    PartyId,
                    Role,
-                   VersionsURL,
                    BusinessDetails,
+                   VersionsURL,
                    AccessTokenIsBase64Encoded,
                    AllowDowngrades);
 
@@ -334,9 +345,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Object">An access information to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is LocalAccessInfo accessInfo
-                   ? CompareTo(accessInfo)
-                   : throw new ArgumentException("The given object is not a access information!",
+            => Object is LocalAccessInfo localAccessInfo
+                   ? CompareTo(localAccessInfo)
+                   : throw new ArgumentException("The given object is not a local access information!",
                                                  nameof(Object));
 
         #endregion
@@ -353,10 +364,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             var c = AccessToken.               CompareTo(AccessInfo.AccessToken);
 
             if (c == 0)
-                c = AccessTokenIsBase64Encoded.CompareTo(AccessInfo.AccessTokenIsBase64Encoded);
-
-            if (c == 0)
                 c = Status.                    CompareTo(AccessInfo.Status);
+
 
             if (c == 0)
                 c = CountryCode.               CompareTo(AccessInfo.CountryCode);
@@ -367,14 +376,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (c == 0)
                 c = Role.                      CompareTo(AccessInfo.Role);
 
-            //if (c == 0)
-            //    c = LastUpdated.               CompareTo(AccessInfo.LastUpdated);
+            if (c == 0 && BusinessDetails is not null && AccessInfo.BusinessDetails is not null)
+                c = BusinessDetails.           CompareTo(AccessInfo.BusinessDetails);
+
 
             if (c == 0 && VersionsURL.HasValue && AccessInfo.VersionsURL.HasValue)
                 c = VersionsURL.Value.         CompareTo(AccessInfo.VersionsURL.Value);
 
-            if (c == 0 && BusinessDetails is not null && AccessInfo.BusinessDetails is not null)
-                c = BusinessDetails.           CompareTo(AccessInfo.BusinessDetails);
+            if (c == 0)
+                c = AccessTokenIsBase64Encoded.CompareTo(AccessInfo.AccessTokenIsBase64Encoded);
 
             if (c == 0)
                 c = AllowDowngrades.           CompareTo(AccessInfo.AllowDowngrades);
@@ -397,8 +407,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Object">An access information to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is LocalAccessInfo accessInfo &&
-                   Equals(accessInfo);
+            => Object is LocalAccessInfo localAccessInfo &&
+                   Equals(localAccessInfo);
 
         #endregion
 
@@ -411,18 +421,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Boolean Equals(LocalAccessInfo AccessInfo)
 
             => AccessToken.               Equals(AccessInfo.AccessToken)                &&
-               AccessTokenIsBase64Encoded.Equals(AccessInfo.AccessTokenIsBase64Encoded) &&
                Status.                    Equals(AccessInfo.Status)                     &&
+
                CountryCode.               Equals(AccessInfo.CountryCode)                &&
                PartyId.                   Equals(AccessInfo.PartyId)                    &&
                Role.                      Equals(AccessInfo.Role)                       &&
-               AllowDowngrades.           Equals(AccessInfo.AllowDowngrades)            &&
+
+             ((BusinessDetails is null     && AccessInfo.BusinessDetails is null)  ||
+              (BusinessDetails is not null && AccessInfo.BusinessDetails is not null && BusinessDetails.  Equals(AccessInfo.BusinessDetails))) &&
+
 
             ((!VersionsURL.    HasValue &&   !AccessInfo.VersionsURL.    HasValue) ||
               (VersionsURL.    HasValue &&    AccessInfo.VersionsURL.    HasValue    && VersionsURL.Value.Equals(AccessInfo.VersionsURL.Value))) &&
 
-             ((BusinessDetails is null     && AccessInfo.BusinessDetails is null)  ||
-              (BusinessDetails is not null && AccessInfo.BusinessDetails is not null && BusinessDetails.  Equals(AccessInfo.BusinessDetails)));
+               AccessTokenIsBase64Encoded.Equals(AccessInfo.AccessTokenIsBase64Encoded) &&
+               AllowDowngrades.           Equals(AccessInfo.AllowDowngrades);
 
         #endregion
 

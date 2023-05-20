@@ -24,6 +24,7 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
 #endregion
@@ -126,7 +127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The ISO 4217 code of the currency used for this charge detail record.
         /// </summary>
         [Mandatory]
-        public   Currency                                 Currency                    { get; }
+        public   OCPI.Currency                            Currency                    { get; }
 
         /// <summary>
         /// The enumeration of relevant charging tariffs.
@@ -263,7 +264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Auth_Id                                                       AuthId,
                    AuthMethods                                                   AuthMethod,
                    Location                                                      Location,
-                   Currency                                                      Currency,
+                   OCPI.Currency                                                 Currency,
                    IEnumerable<ChargingPeriod>                                   ChargingPeriods,
                    Decimal                                                       TotalCost,
                    Decimal                                                       TotalEnergy,
@@ -646,7 +647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
-                                           OCPIv2_1_1.EnergyMeter.TryParse,
+                                           OCPI.EnergyMeter.TryParse,
                                            out EnergyMeter EnergyMeter,
                                            out ErrorResponse))
                 {
@@ -688,8 +689,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
-                                         OCPIv2_1_1.Currency.TryParse,
-                                         out Currency Currency,
+                                         OCPI.Currency.TryParse,
+                                         out OCPI.Currency Currency,
                                          out ErrorResponse))
                 {
                     return false;

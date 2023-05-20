@@ -29,6 +29,8 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
@@ -754,10 +756,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         {
 
             this.RemoteParty        = new RemoteParty(
-                                          CountryCode:                 CountryCode.Parse("xx"),
-                                          PartyId:                     Party_Id.   Parse("xxx"),
-                                          Role:                        Roles.EMSP,
-                                          BusinessDetails:             new BusinessDetails("xxx"),
+                                          Id:                          RemoteParty_Id.Unknown,
+                                          Roles:                       Array.Empty<CredentialsRole>(),
 
                                           RemoteAccessToken:           AccessToken,
                                           RemoteVersionsURL:           RemoteVersionsURL,
@@ -1898,24 +1898,58 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                         TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
 
-                        foreach (var role in response.Data.Roles)
+                        var oldRemoteParty = this.RemoteParty;
+
+                        // Validate, that neither the credentials roles had not been changed!
+                        if (oldRemoteParty is not null &&
+                            oldRemoteParty.Roles.Count() == response.Data.Roles.Count())
                         {
 
-                            MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:        role.CountryCode,
-                                                               PartyId:            role.PartyId,
-                                                               Role:               role.Role,
-                                                               BusinessDetails:    role.BusinessDetails,
+                            var failed = false;
 
-                                                               AccessToken:        Credentials.Token,
-                                                               AccessStatus:       AccessStatus.ALLOWED,
+                            foreach (var receivedCredentialsRole in response.Data.Roles)
+                            {
 
-                                                               RemoteAccessToken:  response.Data.Token,
-                                                               RemoteVersionsURL:  response.Data.URL,
-                                                               RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
-                                                               SelectedVersionId:  Version_Id.Parse("2.2"),
+                                CredentialsRole? existingCredentialsRole = null;
 
-                                                               PartyStatus:        PartyStatus.ENABLED,
-                                                               RemoteStatus:       RemoteAccessStatus.ONLINE);
+                                foreach (var oldCredentialsRole in oldRemoteParty.Roles)
+                                {
+                                    if (oldCredentialsRole.CountryCode == receivedCredentialsRole.CountryCode &&
+                                        oldCredentialsRole.PartyId     == receivedCredentialsRole.PartyId &&
+                                        oldCredentialsRole.Role        == receivedCredentialsRole.Role)
+                                    {
+                                        existingCredentialsRole = receivedCredentialsRole;
+                                        break;
+                                    }
+                                }
+
+                                if (existingCredentialsRole is null)
+                                    failed = true;
+
+                            }
+
+                            if (!failed)
+                            {
+
+                                // Only the access token and the business details are allowed to be changed!
+                                var result = await MyCommonAPI.AddOrUpdateRemoteParty(Id:                 oldRemoteParty.Id,
+                                                                                      CredentialsRoles:   response.Data.Roles,
+
+                                                                                      AccessToken:        Credentials.Token,
+                                                                                      AccessStatus:       AccessStatus.ALLOWED,
+
+                                                                                      RemoteAccessToken:  response.Data.Token,
+                                                                                      RemoteVersionsURL:  response.Data.URL,
+                                                                                      RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
+                                                                                      SelectedVersionId:  Version_Id.Parse("2.2"),
+
+                                                                                      PartyStatus:        PartyStatus.ENABLED,
+                                                                                      RemoteStatus:       RemoteAccessStatus.ONLINE);
+
+                                if (!result)
+                                    DebugX.Log("Illegal AddOrUpdateRemoteParty(...) after PutCredentials(...)!");
+
+                            }
 
                         }
 
@@ -2209,8 +2243,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             Register(Version_Id?                    VersionId             = null,
                      Boolean                        SetAsDefaultVersion   = true,
-                     URL?                           MyVersionsURL         = null,
-                     IEnumerable<CredentialsRole>?  MyRoles               = null,
                      AccessToken?                   CredentialTokenB      = null,
 
                      Request_Id?                    RequestId             = null,
@@ -2268,22 +2300,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 var versionId         = VersionId        ?? SelectedOCPIVersionId;
-                var myVersionsURL     = MyVersionsURL    ?? MyCommonAPI?.OurVersionsURL;
-                var myRoles           = MyRoles          ?? MyCommonAPI?.OurCredentialRoles;
                 var credentialTokenB  = CredentialTokenB ?? AccessToken.NewRandom();
 
                 var remoteURL         = await GetRemoteURL(Module_Id.Credentials,
                                                            InterfaceRoles.RECEIVER,
                                                            versionId);
 
+                // Might be updated!
+                versionId ??= SelectedOCPIVersionId;
+
                 if      (!versionId.    HasValue)
                     response = OCPIResponse<String, Credentials>.Error("No version identification available!");
-
-                else if (!myVersionsURL.HasValue)
-                    response = OCPIResponse<String, Credentials>.Error("No my versions URL available!");
-
-                else if (!myRoles.SafeAny())
-                    response = OCPIResponse<String, Credentials>.Error("No credential roles available!");
 
                 else if (!remoteURL.HasValue)
                     response = OCPIResponse<String, Credentials>.Error("No remote URL available!");
@@ -2294,8 +2321,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     var requestId          = RequestId     ?? Request_Id.NewRandom();
                     var correlationId      = CorrelationId ?? Correlation_Id.NewRandom();
                     var credentials        = new Credentials(credentialTokenB,
-                                                             myVersionsURL.Value,
-                                                             myRoles);
+                                                             MyCommonAPI.OurVersionsURL,
+                                                             MyCommonAPI.OurCredentialRoles);
 
                     #region Upstream HTTP request...
 
@@ -2364,29 +2391,61 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     if (response.Data is not null)
                     {
 
-                        SelectedOCPIVersionId = versionId;
-                        TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
+                        SelectedOCPIVersionId  = versionId;
+                        TokenAuth              = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
 
-                        //ToDo: Store the new access token on disc.
+                        var oldRemoteParty     = this.RemoteParty;
 
-                        foreach (var role in response.Data.Roles)
+                        // Validate, that neither the credentials roles had not been changed!
+                        if (oldRemoteParty is not null &&
+                            oldRemoteParty.Roles.Count() == response.Data.Roles.Count())
                         {
 
-                            MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:        role.CountryCode,
-                                                               PartyId:            role.PartyId,
-                                                               Role:               role.Role,
-                                                               BusinessDetails:    role.BusinessDetails,
+                            var failed = false;
 
-                                                               AccessToken:        credentialTokenB,
-                                                               AccessStatus:       AccessStatus.ALLOWED,
+                            foreach (var receivedCredentialsRole in response.Data.Roles)
+                            {
 
-                                                               RemoteAccessToken:  response.Data.Token,
-                                                               RemoteVersionsURL:  response.Data.URL,
-                                                               RemoteVersionIds:   new Version_Id[] { versionId.Value },
-                                                               SelectedVersionId:  versionId.Value,
+                                CredentialsRole? existingCredentialsRole = null;
 
-                                                               PartyStatus:        PartyStatus.ENABLED,
-                                                               RemoteStatus:       RemoteAccessStatus.ONLINE);
+                                foreach (var oldCredentialsRole in oldRemoteParty.Roles)
+                                {
+                                    if (oldCredentialsRole.CountryCode == receivedCredentialsRole.CountryCode &&
+                                        oldCredentialsRole.PartyId     == receivedCredentialsRole.PartyId &&
+                                        oldCredentialsRole.Role        == receivedCredentialsRole.Role)
+                                    {
+                                        existingCredentialsRole = receivedCredentialsRole;
+                                        break;
+                                    }
+                                }
+
+                                if (existingCredentialsRole is null)
+                                    failed = true;
+
+                            }
+
+                            if (!failed)
+                            {
+
+                                // Only the access token and the business details are allowed to be changed!
+                                var result = await MyCommonAPI.AddOrUpdateRemoteParty(Id:                 oldRemoteParty.Id,
+                                                                                      CredentialsRoles:   response.Data.Roles,
+
+                                                                                      AccessToken:        credentialTokenB,
+                                                                                      AccessStatus:       AccessStatus.ALLOWED,
+
+                                                                                      RemoteAccessToken:  response.Data.Token,
+                                                                                      RemoteVersionsURL:  response.Data.URL,
+                                                                                      RemoteVersionIds:   new Version_Id[] { versionId.Value },
+                                                                                      SelectedVersionId:  versionId.Value,
+
+                                                                                      PartyStatus:        PartyStatus.ENABLED,
+                                                                                      RemoteStatus:       RemoteAccessStatus.ONLINE);
+
+                                if (!result)
+                                    DebugX.Log("Illegal AddOrUpdateRemoteParty(...) after PutCredentials(...)!");
+
+                            }
 
                         }
 

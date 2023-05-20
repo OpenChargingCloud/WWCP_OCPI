@@ -21,6 +21,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
@@ -62,6 +64,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public RemoteParty?        RemoteParty    { get; }
 
         /// <summary>
+        ///  The EMSP identification.
+        /// </summary>
+        [Optional, NonStandard]
+        public EMSP_Id?            EMSPId         { get; }
+
+        /// <summary>
         /// The runtime of the authorization.
         /// </summary>
         [Optional, NonStandard]
@@ -77,11 +85,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Allowed">A status for the token, and whether charging is allowed at the optionally given charging location.</param>
         /// <param name="Location">An optional reference to the location if it was included in the request, and if the EV driver is allowed to charge at that location. Only the EVSEs the EV driver is allowed to charge at are returned.</param>
         /// <param name="Info">An optional additional information to the EV driver.</param>
+        /// <param name="RemoteParty">The remote party.</param>
+        /// <param name="EMSPId">The EMSP identification.</param>
         /// <param name="Runtime">The runtime of the authorization.</param>
         public AuthorizationInfo(AllowedType         Allowed,
                                  LocationReference?  Location      = null,
                                  DisplayText?        Info          = null,
                                  RemoteParty?        RemoteParty   = null,
+                                 EMSP_Id?            EMSPId        = null,
                                  TimeSpan?           Runtime       = null)
         {
 
@@ -89,6 +100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.Location     = Location;
             this.Info         = Info;
             this.RemoteParty  = RemoteParty;
+            this.EMSPId       = EMSPId;
             this.Runtime      = Runtime ?? TimeSpan.Zero;
 
         }
@@ -277,6 +289,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     Location?.   Clone(),
                     Info?.       Clone(),
                     RemoteParty?.Clone(),
+                    EMSPId?.     Clone,
                     Runtime);
 
         #endregion

@@ -24,6 +24,8 @@ using NUnit.Framework;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
@@ -124,12 +126,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #region Change Access Token
 
-                var removeResult    = emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"),
-                                                                       Party_Id.   Parse("GEF"));
+                var removeResult     = await emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"),
+                                                                              Party_Id.   Parse("GEF"),
+                                                                              Roles.      CPO);
 
                 Assert.IsTrue(removeResult);
 
-                var updateCPOResult = emsp1CommonAPI.AddRemoteParty(
+                var updateCPOResult  = await emsp1CommonAPI.AddRemoteParty(
                     CountryCode:         CountryCode.Parse("DE"),
                     PartyId:             Party_Id.   Parse("GEF"),
                     Role:                Roles.      CPO,
@@ -245,9 +248,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #region Block Access Token
 
-                emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
+                var removeResult  = await emsp1CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"),
+                                                                           Party_Id.   Parse("GEF"),
+                                                                           Roles.      CPO);
 
-                var addCPOResult = emsp1CommonAPI.AddRemoteParty(
+                Assert.IsTrue(removeResult);
+
+                var addCPOResult  = await emsp1CommonAPI.AddRemoteParty(
                     CountryCode:         CountryCode.Parse("DE"),
                     PartyId:             Party_Id.   Parse("GEF"),
                     Role:                Roles.      CPO,

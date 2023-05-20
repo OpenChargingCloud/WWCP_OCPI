@@ -25,6 +25,8 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
@@ -514,7 +516,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
-                                           OCPIv2_1_1.EnergyMeter.TryParse,
+                                           OCPI.EnergyMeter.TryParse,
                                            out EnergyMeter EnergyMeter,
                                            out ErrorResponse))
                 {

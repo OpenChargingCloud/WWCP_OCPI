@@ -25,7 +25,9 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.WWCP.Networking;
 
@@ -139,6 +141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             commonAPI        = new CommonAPI(
 
+                                   OurBaseURL:                          URL.Parse("http://127.0.0.1:3473/ocpi/v2.1"),
                                    OurVersionsURL:                      URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/versions"),
                                    OurBusinessDetails:                  new BusinessDetails(
                                                                             "GraphDefined CSO",

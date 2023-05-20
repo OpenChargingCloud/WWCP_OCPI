@@ -24,6 +24,8 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
@@ -111,7 +113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 Assert.AreEqual (0.0M,                                 parsedSession.kWh);
                 Assert.AreEqual (Auth_Id.Parse("DE8ACC12E46L89"),      parsedSession.AuthId);
                 Assert.AreEqual (AuthMethods.WHITELIST,                parsedSession.AuthMethod);
-                Assert.AreEqual (Currency.EUR,                         parsedSession.Currency);
+                Assert.AreEqual (OCPI.Currency.EUR,                    parsedSession.Currency);
                 Assert.AreEqual (2.50M,                                parsedSession.TotalCost);
                 Assert.AreEqual (SessionStatusTypes.PENDING,           parsedSession.Status);
                 Assert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.LastUpdated.ToIso8601());
@@ -251,7 +253,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 Assert.AreEqual (41.0M,                                parsedSession.kWh);
                 Assert.AreEqual (Auth_Id.Parse("DE8ACC12E46L89"),      parsedSession.AuthId);
                 Assert.AreEqual (AuthMethods.WHITELIST,                parsedSession.AuthMethod);
-                Assert.AreEqual (Currency.EUR,                         parsedSession.Currency);
+                Assert.AreEqual (OCPI.Currency.EUR,                    parsedSession.Currency);
                 Assert.AreEqual (8.50M,                                parsedSession.TotalCost);
                 Assert.AreEqual (SessionStatusTypes.COMPLETED,         parsedSession.Status);
                 Assert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.LastUpdated.ToIso8601());
@@ -340,7 +342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                    GeoCoordinate.Parse(10, 20)
                                ),
 
-                               Currency.EUR,
+                               OCPI.Currency.EUR,
                                SessionStatusTypes.ACTIVE,
                                DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
                                Meter_Id.Parse("Meter0001"),

@@ -30,6 +30,8 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
@@ -760,7 +762,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.RemoteParty        = new RemoteParty(
                                           CountryCode:                 CountryCode.Parse("xx"),
                                           PartyId:                     Party_Id.   Parse("xxx"),
-                                          Role:                        Roles.EMSP,
+                                          Role:                        Roles.      OTHER,
                                           BusinessDetails:             new BusinessDetails("xxx"),
 
                                           RemoteAccessToken:           AccessToken,
@@ -1889,25 +1891,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (response.Data is not null)
                     {
 
-                        TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
+                        // Validate, that neither the country code, nor the party identification had been changed!
+                        if (Credentials.CountryCode == RemoteParty.CountryCode &&
+                            Credentials.PartyId     == RemoteParty.PartyId)
+                        {
 
-                        MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:         Credentials.CountryCode,
-                                                           PartyId:             Credentials.PartyId,
-                                                           Role:                RemoteRole ?? (MyCommonAPI.OurRole == Roles.EMSP
-                                                                                                   ? Roles.CPO
-                                                                                                   : Roles.EMSP),
-                                                           BusinessDetails:     Credentials.BusinessDetails,
+                            TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
 
-                                                           AccessToken:         Credentials.Token,
-                                                           AccessStatus:        AccessStatus.ALLOWED,
+                            // Only the access token and the business details are allowed to be changed!
+                            await MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:         RemoteParty.CountryCode,
+                                                                     PartyId:             RemoteParty.PartyId,
+                                                                     Role:                RemoteRole ?? (MyCommonAPI.OurRole == Roles.EMSP
+                                                                                                             ? Roles.CPO
+                                                                                                             : Roles.EMSP),
+                                                                     BusinessDetails:     Credentials.BusinessDetails,
 
-                                                           RemoteAccessToken:   response.Data.Token,
-                                                           RemoteVersionsURL:   response.Data.URL,
-                                                           RemoteVersionIds:    new Version_Id[] { Version.Id },
-                                                           SelectedVersionId:   Version.Id,
+                                                                     AccessToken:         Credentials.Token,
+                                                                     AccessStatus:        AccessStatus.ALLOWED,
 
-                                                           PartyStatus:         PartyStatus.ENABLED,
-                                                           RemoteStatus:        RemoteAccessStatus.ONLINE);
+                                                                     RemoteAccessToken:   response.Data.Token,
+                                                                     RemoteVersionsURL:   response.Data.URL,
+                                                                     RemoteVersionIds:    new Version_Id[] { Version.Id },
+                                                                     SelectedVersionId:   Version.Id,
+
+                                                                     PartyStatus:         PartyStatus.ENABLED,
+                                                                     RemoteStatus:        RemoteAccessStatus.ONLINE);
+
+                        }
+                        else
+                            DebugX.Log("Illegal AddOrUpdateRemoteParty(...) after PutCredentials(...)!");
 
                     }
 

@@ -22,6 +22,8 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
@@ -245,13 +247,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
                // TokenAuth.Token.TryBase64Decode_UTF8(out String DecodedToken)   &&
-                OCPIv2_1_1.AccessToken.TryParse(TokenAuth.Token, out var accessToken))
+                OCPI.AccessToken.TryParse(TokenAuth.Token, out var accessToken))
             {
                 this.AccessToken = accessToken;
             }
 
             else if (Request.Authorization is HTTPBasicAuthentication BasicAuth &&
-                OCPIv2_1_1.AccessToken.TryParse(BasicAuth.Username, out accessToken))
+                OCPI.AccessToken.TryParse(BasicAuth.Username, out accessToken))
             {
                 this.AccessToken = accessToken;
             }
@@ -273,8 +275,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     this.RemoteParty.CountryCode,
                                                     this.RemoteParty.PartyId,
                                                     this.RemoteParty.Role,
-                                                    this.RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL,
-                                                    this.RemoteParty.BusinessDetails
+                                                    this.RemoteParty.BusinessDetails,
+                                                    this.RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
                                                 );
 
                         this.CPOId            = this.RemoteParty.Role == Roles.CPO

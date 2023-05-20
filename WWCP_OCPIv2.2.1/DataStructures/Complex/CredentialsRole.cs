@@ -21,6 +21,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2_1
@@ -182,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("country_code",
                                          "country code",
-                                         OCPIv2_2_1.CountryCode.TryParse,
+                                         OCPI.CountryCode.TryParse,
                                          out CountryCode CountryCode,
                                          out ErrorResponse))
                 {
@@ -221,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatoryJSON("business_details",
                                              "business details",
-                                             OCPIv2_2_1.BusinessDetails.TryParse,
+                                             OCPI.BusinessDetails.TryParse,
                                              out BusinessDetails? BusinessDetails,
                                              out ErrorResponse))
                 {

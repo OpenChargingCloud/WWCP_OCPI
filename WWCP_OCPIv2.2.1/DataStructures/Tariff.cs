@@ -24,6 +24,7 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
 
 #endregion
@@ -78,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The ISO 4217 code of the currency used for this tariff.
         /// </summary>
         [Mandatory]
-        public   Currency                    Currency             { get; }
+        public   OCPI.Currency               Currency             { get; }
 
         /// <summary>
         /// The optional tariff type allows to distinguish between charging preferences.
@@ -191,7 +192,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public Tariff(CountryCode                                            CountryCode,
                       Party_Id                                               PartyId,
                       Tariff_Id                                              Id ,
-                      Currency                                               Currency,
+                      OCPI.Currency                                          Currency,
                       IEnumerable<TariffElement>                             TariffElements,
 
                       TariffTypes?                                           TariffType                            = null,
@@ -276,7 +277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       CountryCode                                            CountryCode,
                       Party_Id                                               PartyId,
                       Tariff_Id                                              Id ,
-                      Currency                                               Currency,
+                      OCPI.Currency                                          Currency,
                       IEnumerable<TariffElement>                             TariffElements,
 
                       TariffTypes?                                           TariffType                            = null,
@@ -525,8 +526,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
-                                         OCPIv2_2_1.Currency.TryParse,
-                                         out Currency Currency,
+                                         OCPI.Currency.TryParse,
+                                         out OCPI.Currency Currency,
                                          out ErrorResponse))
                 {
                     return false;
