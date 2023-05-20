@@ -28,6 +28,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using System.Data;
 
 #endregion
 
@@ -255,6 +256,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Boolean?                              AllowDowngrades              = false,
                            AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
                            PartyStatus                           Status                       = PartyStatus. ENABLED,
+                           DateTime?                             LocalAccessNotBefore         = null,
+                           DateTime?                             LocalAccessNotAfter          = null,
 
                            RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                            LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -282,6 +285,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            PartyId,
                            Role,
                            BusinessDetails,
+                           LocalAccessNotBefore,
+                           LocalAccessNotAfter,
                            null,
                            AccessTokenBase64Encoding,
                            AllowDowngrades
@@ -319,9 +324,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            IEnumerable<Version_Id>?              RemoteVersionIds             = null,
                            Version_Id?                           SelectedVersionId            = null,
                            Boolean?                              AccessTokenBase64Encoding    = null,
+                           Boolean?                              AllowDowngrades              = null,
 
                            RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                            PartyStatus                           Status                       = PartyStatus.       ENABLED,
+                           DateTime?                             RemoteAccessNotBefore        = null,
+                           DateTime?                             RemoteAccessNotAfter         = null,
 
                            RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                            LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -348,8 +356,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            RemoteVersionsURL,
                            RemoteVersionIds,
                            SelectedVersionId,
+                           RemoteStatus,
+                           RemoteAccessNotBefore,
+                           RemoteAccessNotAfter,
                            AccessTokenBase64Encoding,
-                           RemoteStatus
+                           AllowDowngrades
                        )
                    },
                    Status,
@@ -385,11 +396,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            IEnumerable<Version_Id>?              RemoteVersionIds             = null,
                            Version_Id?                           SelectedVersionId            = null,
 
+                           DateTime?                             LocalAccessNotBefore         = null,
+                           DateTime?                             LocalAccessNotAfter          = null,
+
                            Boolean?                              AccessTokenBase64Encoding    = null,
                            Boolean?                              AllowDowngrades              = false,
                            AccessStatus                          AccessStatus                 = AccessStatus.      ALLOWED,
                            RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                            PartyStatus                           Status                       = PartyStatus.       ENABLED,
+                           DateTime?                             RemoteAccessNotBefore        = null,
+                           DateTime?                             RemoteAccessNotAfter         = null,
 
                            RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                            LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -417,6 +433,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            PartyId,
                            Role,
                            BusinessDetails,
+                           LocalAccessNotBefore,
+                           LocalAccessNotAfter,
                            RemoteVersionsURL,
                            AccessTokenBase64Encoding,
                            AllowDowngrades
@@ -428,8 +446,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            RemoteVersionsURL,
                            RemoteVersionIds,
                            SelectedVersionId,
+                           RemoteStatus,
+                           RemoteAccessNotBefore,
+                           RemoteAccessNotAfter,
                            AccessTokenBase64Encoding,
-                           RemoteStatus
+                           AllowDowngrades
                        )
                    },
                    Status,
@@ -531,6 +552,198 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        #region (static) Parse   (JSON, CustomRemotePartyParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a remote party.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomRemotePartyParser">A delegate to parse custom remote party JSON objects.</param>
+        public static RemoteParty Parse(JObject                                    JSON,
+                                        CustomJObjectParserDelegate<RemoteParty>?  CustomRemotePartyParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out var remoteParty,
+                         out var errorResponse,
+                         CustomRemotePartyParser))
+            {
+                return remoteParty!;
+            }
+
+            throw new ArgumentException("The given JSON representation of a remote party is invalid: " + errorResponse,
+                                        nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out RemoteParty, out ErrorResponse, CustomRemotePartyParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a remote party.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="RemoteParty">The parsed remote party.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomRemotePartyParser">A delegate to parse custom remote party JSON objects.</param>
+        public static Boolean TryParse(JObject                                    JSON,
+                                       out RemoteParty?                           RemoteParty,
+                                       out String?                                ErrorResponse,
+                                       CustomJObjectParserDelegate<RemoteParty>?  CustomRemotePartyParser   = null)
+        {
+
+            try
+            {
+
+                RemoteParty = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse CountryCode          [mandatory]
+
+                if (!JSON.ParseMandatory("countryCode",
+                                         "country code",
+                                         OCPI.CountryCode.TryParse,
+                                         out CountryCode CountryCode,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PartyId              [mandatory]
+
+                if (!JSON.ParseMandatory("partyId",
+                                         "party identification",
+                                         Party_Id.TryParse,
+                                         out Party_Id PartyId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Role                 [mandatory]
+
+                if (!JSON.ParseMandatory("role",
+                                         "party role",
+                                         RolesExtensions.TryParse,
+                                         out Roles Role,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse BusinessDetails      [mandatory]
+
+                if (!JSON.ParseMandatoryJSON("businessDetails",
+                                             "business details",
+                                             OCPI.BusinessDetails.TryParse,
+                                             out BusinessDetails? BusinessDetails,
+                                             out ErrorResponse) ||
+                    BusinessDetails is null)
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                #region Parse LocalAccessInfos     [optional]
+
+                if (JSON.ParseOptionalJSON("localAccessInfos",
+                                           "local access infos",
+                                           LocalAccessInfo.TryParse,
+                                           out IEnumerable<LocalAccessInfo> LocalAccessInfos,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse RemoteAccessInfos    [optional]
+
+                if (JSON.ParseOptionalJSON("remoteAccessInfos",
+                                           "remote access infos",
+                                           RemoteAccessInfo.TryParse,
+                                           out IEnumerable<RemoteAccessInfo> RemoteAccessInfos,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse Status               [mandatory]
+
+                if (!JSON.ParseMandatory("partyStatus",
+                                         "party status",
+                                         PartyStatus.TryParse,
+                                         out PartyStatus Status,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                // ...
+
+                #region Parse LastUpdated          [mandatory]
+
+                if (!JSON.ParseMandatory("last_updated",
+                                         "last updated",
+                                         out DateTime LastUpdated,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                RemoteParty = new RemoteParty(CountryCode,
+                                              PartyId,
+                                              Role,
+                                              BusinessDetails,
+
+                                              LocalAccessInfos,
+                                              RemoteAccessInfos,
+
+                                              Status,
+                                              LastUpdated: LastUpdated);
+
+
+                if (CustomRemotePartyParser is not null)
+                    RemoteParty = CustomRemotePartyParser(JSON,
+                                                          RemoteParty);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                RemoteParty    = default;
+                ErrorResponse  = "The given JSON representation of a remote party is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
         #region ToJSON(Embedded, CustomRemotePartySerializer = null, CustomBusinessDetailsSerializer = null, ...)
 
         /// <summary>
@@ -568,7 +781,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null,
 
                            localAccessInfos.Any()
-                               ? new JProperty("accessInfos",         new JArray(localAccessInfos. SafeSelect(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
+                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos. SafeSelect(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
                                : null,
 
                            remoteAccessInfos.Any()

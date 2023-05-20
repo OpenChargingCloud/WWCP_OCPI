@@ -3969,8 +3969,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.LocalAccessInfo?.Role   != Roles.EMSP)
+                                        if (Request.LocalAccessInfo is null ||
+                                            Request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo.Role   != Roles.EMSP)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4010,8 +4011,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         if (!Token.TryParse(tokenJSON,
                                                             out var newOrUpdatedToken,
                                                             out var errorResponse,
-                                                            Request.LocalAccessInfo.Value.CountryCode,
-                                                            Request.LocalAccessInfo.Value.PartyId,
+                                                            Request.LocalAccessInfo.CountryCode,
+                                                            Request.LocalAccessInfo.PartyId,
                                                             tokenId) ||
                                              newOrUpdatedToken is null)
                                         {

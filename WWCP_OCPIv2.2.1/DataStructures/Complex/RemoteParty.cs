@@ -131,83 +131,83 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// (country code + party identification + role).
         /// </summary>
         [Mandatory]
-        public RemoteParty_Id                Id                   { get; }
+        public RemoteParty_Id                        Id                             { get; }
 
         /// <summary>
         /// The current status of the party.
         /// </summary>
         [Mandatory]
-        public PartyStatus                   Status               { get; }
+        public PartyStatus                           Status                         { get; }
 
         /// <summary>
         /// The enumeration of credential roles.
         /// </summary>
         [Mandatory]
-        public IEnumerable<CredentialsRole>  Roles                { get; }
+        public IEnumerable<CredentialsRole>          Roles                          { get; }
 
         /// <summary>
         /// Timestamp when this remote party was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                      LastUpdated          { get; }
+        public DateTime                              LastUpdated                    { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this remote party.
         /// </summary>
         [Mandatory]
-        public String                        ETag                 { get; private set; }
+        public String                                ETag                           { get; private set; }
 
 
 
         /// <summary>
         /// The remote SSL/TLS certificate validator.
         /// </summary>
-        public RemoteCertificateValidationCallback?  RemoteCertificateValidator    { get; }
+        public RemoteCertificateValidationCallback?  RemoteCertificateValidator     { get; }
 
         /// <summary>
         /// A delegate to select a TLS client certificate.
         /// </summary>
-        public LocalCertificateSelectionCallback?    ClientCertificateSelector     { get; }
+        public LocalCertificateSelectionCallback?    ClientCertificateSelector      { get; }
 
         /// <summary>
         /// The SSL/TLS client certificate to use of HTTP authentication.
         /// </summary>
-        public X509Certificate?                      ClientCert                    { get; }
+        public X509Certificate?                      ClientCert                     { get; }
 
         /// <summary>
         /// The TLS protocol to use.
         /// </summary>
-        public SslProtocols?                         TLSProtocol                   { get; }
+        public SslProtocols?                         TLSProtocol                    { get; }
 
         /// <summary>
         /// Prefer IPv4 instead of IPv6.
         /// </summary>
-        public Boolean?                              PreferIPv4                    { get; }
+        public Boolean?                              PreferIPv4                     { get; }
 
         /// <summary>
         /// The HTTP user agent identification.
         /// </summary>
-        public String?                               HTTPUserAgent                 { get; }
+        public String?                               HTTPUserAgent                  { get; }
 
         /// <summary>
         /// The timeout for upstream requests.
         /// </summary>
-        public TimeSpan?                             RequestTimeout                { get; set; }
+        public TimeSpan?                             RequestTimeout                 { get; set; }
 
         /// <summary>
         /// The delay between transmission retries.
         /// </summary>
-        public TransmissionRetryDelayDelegate?       TransmissionRetryDelay        { get; }
+        public TransmissionRetryDelayDelegate?       TransmissionRetryDelay         { get; }
 
         /// <summary>
         /// The maximum number of retries when communicationg with the remote HTTP service.
         /// </summary>
-        public UInt16?                               MaxNumberOfRetries            { get; }
+        public UInt16?                               MaxNumberOfRetries             { get; }
 
         /// <summary>
         /// Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.
         /// </summary>
-        public Boolean?                              UseHTTPPipelining             { get; }
+        public Boolean?                              UseHTTPPipelining              { get; }
 
 
 
@@ -238,6 +238,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
                            PartyStatus                           Status                       = PartyStatus. ENABLED,
 
+                           DateTime?                             LocalAccessNotBefore         = null,
+                           DateTime?                             LocalAccessNotAfter          = null,
+
                            RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                            LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                            X509Certificate?                      ClientCert                   = null,
@@ -259,6 +262,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            AccessToken,
                            AccessStatus,
                            Roles,
+                           LocalAccessNotBefore,
+                           LocalAccessNotAfter,
                            null,
                            AccessTokenBase64Encoding,
                            AllowDowngrades
@@ -294,9 +299,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            IEnumerable<Version_Id>?              RemoteVersionIds             = null,
                            Version_Id?                           SelectedVersionId            = null,
                            Boolean?                              AccessTokenBase64Encoding    = null,
+                           Boolean?                              AllowDowngrades              = null,
 
                            RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                            PartyStatus                           Status                       = PartyStatus.       ENABLED,
+                           DateTime?                             RemoteAccessNotBefore        = null,
+                           DateTime?                             RemoteAccessNotAfter         = null,
 
                            RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                            LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -321,8 +329,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            RemoteVersionsURL,
                            RemoteVersionIds,
                            SelectedVersionId,
+                           RemoteStatus,
+                           RemoteAccessNotBefore,
+                           RemoteAccessNotAfter,
                            AccessTokenBase64Encoding,
-                           RemoteStatus
+                           AllowDowngrades
                        )
                    },
                    Status,
@@ -356,11 +367,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            IEnumerable<Version_Id>?              RemoteVersionIds             = null,
                            Version_Id?                           SelectedVersionId            = null,
 
+                           DateTime?                             LocalAccessNotBefore         = null,
+                           DateTime?                             LocalAccessNotAfter          = null,
+
                            Boolean?                              AccessTokenBase64Encoding    = null,
                            Boolean?                              AllowDowngrades              = false,
                            AccessStatus                          AccessStatus                 = AccessStatus.      ALLOWED,
                            RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                            PartyStatus                           Status                       = PartyStatus.       ENABLED,
+                           DateTime?                             RemoteAccessNotBefore        = null,
+                           DateTime?                             RemoteAccessNotAfter         = null,
 
                            RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                            LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -383,6 +399,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            AccessToken,
                            AccessStatus,
                            Roles,
+                           LocalAccessNotBefore,
+                           LocalAccessNotAfter,
                            RemoteVersionsURL,
                            AccessTokenBase64Encoding,
                            AllowDowngrades
@@ -394,8 +412,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            RemoteVersionsURL,
                            RemoteVersionIds,
                            SelectedVersionId,
+                           RemoteStatus,
+                           RemoteAccessNotBefore,
+                           RemoteAccessNotAfter,
                            AccessTokenBase64Encoding,
-                           RemoteStatus
+                           AllowDowngrades
                        )
                    },
                    Status,

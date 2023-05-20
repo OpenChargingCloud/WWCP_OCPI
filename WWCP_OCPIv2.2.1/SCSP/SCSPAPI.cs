@@ -4673,8 +4673,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.CPO) ||
-                                            Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.LocalAccessInfo is null ||
+                                            Request.LocalAccessInfo.IsNot(Roles.CPO) ||
+                                            Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -4695,8 +4696,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         var filters           = Request.GetDateAndPaginationFilters();
 
-                                        var allSessions       = CommonAPI.GetSessions(session => Request.LocalAccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
-                                                                                                                                            role.PartyId     == session.PartyId)).
+                                        var allSessions       = CommonAPI.GetSessions(session => Request.LocalAccessInfo.Roles.Any(role => role.CountryCode == session.CountryCode &&
+                                                                                                                                           role.PartyId     == session.PartyId)).
                                                                           ToArray();
 
                                         var filteredSessions  = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
@@ -4833,8 +4834,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.CPO) ||
-                                            Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.LocalAccessInfo is null ||
+                                            Request.LocalAccessInfo.IsNot(Roles.CPO) ||
+                                            Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4866,7 +4868,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #endregion
 
 
-                                        foreach (var role in Request.LocalAccessInfo.Value.Roles)
+                                        foreach (var role in Request.LocalAccessInfo.Roles)
                                             CommonAPI.RemoveAllSessions(role.CountryCode,
                                                                         role.PartyId);
 

@@ -79,6 +79,72 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #region (class) Command
+
+        public class Command
+        {
+
+            #region Properties
+
+            public String    CommandName    { get; }
+
+            public String?   Message        { get; }
+
+            public JObject?  JSON           { get; }
+
+            public Int64?    Number         { get; }
+
+            #endregion
+
+            #region Constructor(s)
+
+            #region Command(CommandName, Message)
+
+
+            public Command(String    CommandName,
+                           String?   Message)
+            {
+
+                this.CommandName  = CommandName;
+                this.Message      = Message;
+
+            }
+
+            #endregion
+
+            #region Command(CommandName, JSON)
+
+            public Command(String    CommandName,
+                           JObject?  JSON)
+            {
+
+                this.CommandName  = CommandName;
+                this.JSON         = JSON;
+
+            }
+
+            #endregion
+
+            #region Command(CommandName, Number)
+
+            public Command(String    CommandName,
+                           Int64?    Number)
+            {
+
+                this.CommandName  = CommandName;
+                this.Number       = Number;
+
+            }
+
+            #endregion
+
+            #endregion
+
+        }
+
+        #endregion
+
+
         #region Data
 
         /// <summary>
@@ -105,6 +171,19 @@ namespace cloud.charging.open.protocols.OCPI
         /// The (max supported) OCPI version.
         /// </summary>
         private readonly           Version_Id  OCPIVersion;
+
+        /// <summary>
+        /// The absolute path to the CommonAPI log file.
+        /// </summary>
+        private readonly           String      logfileName;
+
+
+        protected const String addRemoteParty             = "addRemoteParty";
+        protected const String addRemotePartyIfNotExists  = "addRemotePartyIfNotExists";
+        protected const String addOrUpdateRemoteParty     = "addOrUpdateRemoteParty";
+        protected const String updateRemoteParty          = "updateRemoteParty";
+        protected const String removeRemoteParty          = "removeRemoteParty";
+        protected const String removeAllRemoteParties     = "removeAllRemoteParties";
 
         #endregion
 
@@ -312,6 +391,9 @@ namespace cloud.charging.open.protocols.OCPI
             this.Disable_RootServices     = Disable_RootServices;
             this.LoggingContext           = LoggingContext;
 
+            this.logfileName              = Path.Combine(this.LoggingPath,
+                                                         this.LogfileName);
+
             this.ClientConfigurations     = new ClientConfigurator();
 
             if (!Disable_RootServices)
@@ -429,6 +511,9 @@ namespace cloud.charging.open.protocols.OCPI
             this.Disable_RootServices     = Disable_RootServices;
             this.LoggingContext           = LoggingContext;
 
+            this.logfileName              = Path.Combine(this.LoggingPath,
+                                                         this.LogfileName);
+
             // Link HTTP events...
             HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
             HTTPServer.ResponseLog       += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
@@ -457,32 +542,98 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+        #region Log(Command, Text)
+
         protected async Task Log(String   Command,
-                                 String?  Message   = null)
+                                 String?  Text   = null)
         {
 
-            await File.AppendAllTextAsync(LogfileName,
-                                          new JObject(new JProperty(Command, Message)).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+            await File.AppendAllTextAsync(logfileName,
+                                          new JObject(new JProperty(Command, Text)).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
                                           Encoding.UTF8);
 
         }
 
+        #endregion
+
+        #region Log(Command, JSON)
+
         protected async Task Log(String   Command,
-                                 JObject  Message)
+                                 JObject  JSON)
         {
 
-            await File.AppendAllTextAsync(LogfileName,
-                                          new JObject(new JProperty(Command, Message)).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+            await File.AppendAllTextAsync(logfileName,
+                                          new JObject(new JProperty(Command, JSON)).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
                                           Encoding.UTF8);
 
         }
 
+        #endregion
 
-        //ToDo: Wrap the following into a plugable interface!
+        #region Log(Command, Number)
 
+        protected async Task Log(String   Command,
+                                 Int64    Number)
+        {
 
-        //ToDo: Add last modified timestamp to locations!
-        //ToDo: Refactor async!
+            await File.AppendAllTextAsync(logfileName,
+                                          new JObject(new JProperty(Command, Number)).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                          Encoding.UTF8);
+
+        }
+
+        #endregion
+
+        #region ReadLogfile()
+
+        protected IEnumerable<Command> ReadLogfile()
+        {
+
+            try
+            {
+
+                var list = new List<Command>();
+
+                foreach (var line in File.ReadLines(logfileName,
+                                                    Encoding.UTF8))
+                {
+
+                    try
+                    {
+
+                        var json = JObject.Parse(line);
+
+                        if (json.Properties().First().Value.Type == JTokenType.String)
+                            list.Add(new Command(json.Properties().First().Name,
+                                                 json.Properties().First().Value<String>()));
+
+                        else if (json.Properties().First().Value.Type == JTokenType.Object)
+                            list.Add(new Command(json.Properties().First().Name,
+                                                 json.Properties().First().Value as JObject));
+
+                        else if (json.Properties().First().Value.Type == JTokenType.Integer)
+                            list.Add(new Command(json.Properties().First().Name,
+                                                 json.Properties().First().Value<Int64>()));
+
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.Log(e, "OCPI.CommonAPIBase.ReadLogfile()");
+                    }
+
+                }
+
+                return list;
+
+            }
+            catch
+            {
+                return Array.Empty<Command>();
+            }
+
+        }
+
+        #endregion
 
 
         #region Start()

@@ -367,6 +367,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     public partial class CommonClient : AHTTPClient
     {
 
+        #region (class) CommonAPICounters
+
         public class CommonAPICounters
         {
 
@@ -389,6 +391,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    );
 
         }
+
+        #endregion
 
 
         #region Data
@@ -630,6 +634,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Constructor(s)
 
+        #region CommonClient(RemoteParty, MyCommonAPI, ...)
+
         /// <summary>
         /// Create a new OCPI Common client.
         /// </summary>
@@ -693,6 +699,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         }
 
+        #endregion
+
+        #region CommonClient(RemoteVersionsURL, AccessToken, MyCommonAPI, ...)
 
         /// <summary>
         /// Create a new OCPI Common client.
@@ -786,6 +795,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
+        #endregion
+
+
+        #region ToJSON()
 
         public virtual JObject ToJSON()
             => ToJSON(nameof(CommonClient));
@@ -832,6 +845,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    );
 
         }
+
+        #endregion
 
 
         #region GetVersions(...)

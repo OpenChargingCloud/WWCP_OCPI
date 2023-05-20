@@ -440,6 +440,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             IEnumerable<OCPI.Version_Id>?  RemoteVersionIds            = null,
                                             OCPI.Version_Id?               SelectedVersionId           = null,
 
+                                            DateTime?                      LocalAccessNotBefore        = null,
+                                            DateTime?                      LocalAccessNotAfter         = null,
+
                                             Boolean?                       AccessTokenBase64Encoding   = null,
                                             Boolean?                       AllowDowngrades             = false,
                                             OCPI.AccessStatus              AccessStatus                = OCPI.AccessStatus.      ALLOWED,
@@ -458,6 +461,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         RemoteVersionIds,
                                         SelectedVersionId,
 
+                                        LocalAccessNotBefore,
+                                        LocalAccessNotAfter,
+
                                         AccessTokenBase64Encoding,
                                         AllowDowngrades,
                                         AccessStatus,
@@ -474,6 +480,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             OCPI.BusinessDetails  BusinessDetails,
 
                                             OCPI.AccessToken      AccessToken,
+                                            DateTime?             LocalAccessNotBefore        = null,
+                                            DateTime?             LocalAccessNotAfter         = null,
                                             Boolean?              AccessTokenBase64Encoding   = null,
                                             Boolean?              AllowDowngrades             = false,
 
@@ -486,6 +494,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         Role,
                                         BusinessDetails,
                                         AccessToken,
+                                        LocalAccessNotBefore,
+                                        LocalAccessNotAfter,
                                         AccessTokenBase64Encoding,
                                         AllowDowngrades,
                                         AccessStatus,

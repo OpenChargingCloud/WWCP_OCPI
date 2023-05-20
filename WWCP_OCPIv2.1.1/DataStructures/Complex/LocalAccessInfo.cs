@@ -32,9 +32,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// Local Access information.
     /// </summary>
-    public readonly struct LocalAccessInfo : IEquatable<LocalAccessInfo>,
-                                             IComparable<LocalAccessInfo>,
-                                             IComparable
+    public sealed class LocalAccessInfo : IEquatable<LocalAccessInfo>,
+                                          IComparable<LocalAccessInfo>,
+                                          IComparable
     {
 
         #region Properties
@@ -46,16 +46,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public AccessToken       AccessToken                   { get; }
 
         /// <summary>
-        /// Whether the access token is base64 encoded or not.
-        /// </summary>
-        [Mandatory]
-        public Boolean           AccessTokenIsBase64Encoded    { get; }
-
-        /// <summary>
         /// The access status.
         /// </summary>
         [Mandatory]
         public AccessStatus      Status                        { get; }
+
+        /// <summary>
+        /// This local access information should not be used before this timestamp.
+        /// </summary>
+        [Optional]
+        public DateTime?         NotBefore                     { get; }
+
+        /// <summary>
+        /// This local access information should not be used after this timestamp.
+        /// </summary>
+        [Optional]
+        public DateTime?         NotAfter                      { get; }
 
         /// <summary>
         /// The country code.
@@ -88,10 +94,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public BusinessDetails?  BusinessDetails               { get; }
 
         /// <summary>
+        /// Whether the access token is base64 encoded or not.
+        /// </summary>
+        [Mandatory]
+        public Boolean           AccessTokenIsBase64Encoded    { get; }
+
+        /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI does not define any behaviour for this.
         /// </summary>
-        [Optional]
+        [Mandatory]
         public Boolean           AllowDowngrades               { get; }
 
         #endregion
@@ -109,6 +121,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Role">A role.</param>
         /// <param name="BusinessDetails">Optional business details.</param>
         /// 
+        /// <param name="NotBefore">This local access information should not be used before this timestamp.</param>
+        /// <param name="NotAfter">This local access information should not be used after this timestamp.</param>
+        /// 
         /// <param name="VersionsURL">An optional URL to get the remote OCPI versions information.</param>
         /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
@@ -119,6 +134,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                Party_Id          PartyId,
                                Roles             Role,
                                BusinessDetails?  BusinessDetails              = null,
+
+                               DateTime?         NotBefore                    = null,
+                               DateTime?         NotAfter                     = null,
 
                                URL?              VersionsURL                  = null,
                                Boolean?          AccessTokenIsBase64Encoded   = false,
@@ -133,6 +151,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.Role                        = Role;
             this.BusinessDetails             = BusinessDetails;
 
+            this.NotBefore                   = NotBefore;
+            this.NotAfter                    = NotAfter;
+
             this.VersionsURL                 = VersionsURL;
             this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded ?? false;
             this.AllowDowngrades             = AllowDowngrades            ?? false;
@@ -140,13 +161,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                this.hashCode = this.AccessToken.               GetHashCode()       * 23 ^
-                                this.Status.                    GetHashCode()       * 19 ^
+                this.hashCode = this.AccessToken.               GetHashCode()       * 29 ^
+                                this.Status.                    GetHashCode()       * 27 ^
 
-                                this.CountryCode.               GetHashCode()       * 17 ^
-                                this.PartyId.                   GetHashCode()       * 13 ^
-                                this.Role.                      GetHashCode()       * 11 ^
-                               (this.BusinessDetails?.          GetHashCode() ?? 0) *  7 ^
+                                this.CountryCode.               GetHashCode()       * 23 ^
+                                this.PartyId.                   GetHashCode()       * 19 ^
+                                this.Role.                      GetHashCode()       * 17 ^
+                               (this.BusinessDetails?.          GetHashCode() ?? 0) * 13 ^
+
+                               (this.NotBefore?.                GetHashCode() ?? 0) * 11 ^
+                               (this.NotAfter?.                 GetHashCode() ?? 0) *  7 ^
 
                                (this.VersionsURL?.              GetHashCode() ?? 0) *  5 ^
                                 this.AccessTokenIsBase64Encoded.GetHashCode()       *  3 ^
@@ -158,6 +182,255 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+
+        #region (static) Parse   (JSON, CustomLocalAccessInfoParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a local access information.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomLocalAccessInfoParser">A delegate to parse custom local access information JSON objects.</param>
+        public static LocalAccessInfo Parse(JObject                                        JSON,
+                                            CustomJObjectParserDelegate<LocalAccessInfo>?  CustomLocalAccessInfoParser   = null)
+        {
+            if (TryParse(JSON,
+                         out var localAccessInfo,
+                         out var errorResponse,
+                         CustomLocalAccessInfoParser))
+            {
+                return localAccessInfo!;
+            }
+
+            throw new ArgumentException("The given JSON representation of a local access information is invalid: " + errorResponse,
+                                        nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out LocalAccessInfo, out ErrorResponse, CustomLocalAccessInfoParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a local access information.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="LocalAccessInfo">The parsed local access information.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject               JSON,
+                                       out LocalAccessInfo?  LocalAccessInfo,
+                                       out String?           ErrorResponse)
+
+            => TryParse(JSON,
+                        out LocalAccessInfo,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a local access information.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="LocalAccessInfo">The parsed local access information.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomLocalAccessInfoParser">A delegate to parse custom local access information JSON objects.</param>
+        public static Boolean TryParse(JObject                                        JSON,
+                                       out LocalAccessInfo?                           LocalAccessInfo,
+                                       out String?                                    ErrorResponse,
+                                       CustomJObjectParserDelegate<LocalAccessInfo>?  CustomLocalAccessInfoParser   = null)
+        {
+
+            try
+            {
+
+                LocalAccessInfo = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse AccessToken                   [mandatory]
+
+                if (!JSON.ParseMandatory("accessToken",
+                                         "access token",
+                                         OCPI.AccessToken.TryParse,
+                                         out AccessToken AccessToken,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Status                        [mandatory]
+
+                if (!JSON.ParseMandatory("status",
+                                         "access status",
+                                         AccessStatus.TryParse,
+                                         out AccessStatus Status,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                #region Parse CountryCode                   [mandatory]
+
+                if (!JSON.ParseMandatory("countryCode",
+                                         "country code",
+                                         OCPI.CountryCode.TryParse,
+                                         out CountryCode CountryCode,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PartyId                       [mandatory]
+
+                if (!JSON.ParseMandatory("partyId",
+                                         "party identification",
+                                         Party_Id.TryParse,
+                                         out Party_Id PartyId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Role                          [mandatory]
+
+                if (!JSON.ParseMandatory("role",
+                                         "party role",
+                                         RolesExtensions.TryParse,
+                                         out Roles Role,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse BusinessDetails               [optional]
+
+                if (JSON.ParseOptionalJSON("businessDetails",
+                                           "business details",
+                                           OCPI.BusinessDetails.TryParse,
+                                           out BusinessDetails? BusinessDetails,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+
+                #region Parse NotBefore                     [optional]
+
+                if (JSON.ParseOptional("notBefore",
+                                       "not before",
+                                       out DateTime? NotBefore,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse NotAfter                      [optional]
+
+                if (JSON.ParseOptional("notAfter",
+                                       "not after",
+                                       out DateTime? NotAfter,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+
+                #region Parse VersionsURL                   [mandatory]
+
+                if (!JSON.ParseMandatory("versionsURL",
+                                         "versions URL",
+                                         URL.TryParse,
+                                         out URL VersionsURL,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse AccessTokenIsBase64Encoded    [mandatory]
+
+                if (!JSON.ParseMandatory("accessTokenIsBase64Encoded",
+                                         "access token is base64 encoded",
+                                         out Boolean AccessTokenIsBase64Encoded,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse AllowDowngrades               [mandatory]
+
+                if (!JSON.ParseMandatory("allowDowngrades",
+                                         "allow downgrades",
+                                         out Boolean AllowDowngrades,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                LocalAccessInfo = new LocalAccessInfo(AccessToken,
+                                                      Status,
+
+                                                      CountryCode,
+                                                      PartyId,
+                                                      Role,
+                                                      BusinessDetails,
+
+                                                      NotBefore,
+                                                      NotAfter,
+
+                                                      VersionsURL,
+                                                      AccessTokenIsBase64Encoded,
+                                                      AllowDowngrades);
+
+
+                if (CustomLocalAccessInfoParser is not null)
+                    LocalAccessInfo = CustomLocalAccessInfoParser(JSON,
+                                                                  LocalAccessInfo);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                LocalAccessInfo  = default;
+                ErrorResponse    = "The given JSON representation of a local access information is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
 
         #region ToJSON(CustomLocalAccessInfoSerializer = null, CustomBusinessDetailsSerializer = null, ...)
 
@@ -174,7 +447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var json = JSONObject.Create(
 
-                                 new JProperty("accesstoken",                  AccessToken.    ToString()),
+                                 new JProperty("accessToken",                  AccessToken.    ToString()),
                                  new JProperty("status",                       Status.         ToString()),
 
                                  new JProperty("countryCode",                  CountryCode.    ToString()),
@@ -186,15 +459,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                       CustomImageSerializer))
                                : null,
 
+                           NotBefore.HasValue
+                               ? new JProperty("notBefore",                    NotBefore.Value.ToIso8601())
+                               : null,
+
+                           NotAfter.HasValue
+                               ? new JProperty("notAfter",                     NotAfter. Value.ToIso8601())
+                               : null,
+
                            VersionsURL.HasValue
                                ? new JProperty("versionsURL",                  VersionsURL.    ToString())
                                : null,
 
                                  new JProperty("accessTokenIsBase64Encoded",   AccessTokenIsBase64Encoded),
-
-                           AllowDowngrades
-                               ? new JProperty("allow_downgrades",             AllowDowngrades)
-                               : null
+                                 new JProperty("allowDowngrades",              AllowDowngrades)
 
                        );
 
@@ -205,7 +483,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
         #endregion
-
 
         #region Clone()
 
@@ -220,6 +497,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    PartyId,
                    Role,
                    BusinessDetails,
+                   NotBefore,
+                   NotAfter,
                    VersionsURL,
                    AccessTokenIsBase64Encoded,
                    AllowDowngrades);
@@ -227,115 +506,114 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        //public Credentials? AsCredentials
-
-        //    => VersionsURL.    HasValue &&
-        //       BusinessDetails is not null
-
-        //           ? new Credentials(AccessToken,
-        //                             VersionsURL.Value,
-        //                             BusinessDetails,
-        //                             CountryCode,
-        //                             PartyId)
-
-        //           : null;
-
-
         #region Operator overloading
 
-        #region Operator == (AccessInfo1, AccessInfo2)
+        #region Operator == (LocalAccessInfo1, LocalAccessInfo2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AccessInfo1">An access information.</param>
-        /// <param name="AccessInfo2">Another access information.</param>
+        /// <param name="LocalAccessInfo1">A local access information.</param>
+        /// <param name="LocalAccessInfo2">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (LocalAccessInfo AccessInfo1,
-                                           LocalAccessInfo AccessInfo2)
+        public static Boolean operator == (LocalAccessInfo LocalAccessInfo1,
+                                           LocalAccessInfo LocalAccessInfo2)
+        {
 
-            => AccessInfo1.Equals(AccessInfo2);
+            if (Object.ReferenceEquals(LocalAccessInfo1, LocalAccessInfo2))
+                return true;
+
+            if ((LocalAccessInfo1 is null) || (LocalAccessInfo2 is null))
+                return false;
+
+            return LocalAccessInfo1.Equals(LocalAccessInfo2);
+
+        }
 
         #endregion
 
-        #region Operator != (AccessInfo1, AccessInfo2)
+        #region Operator != (LocalAccessInfo1, LocalAccessInfo2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AccessInfo1">An access information.</param>
-        /// <param name="AccessInfo2">Another access information.</param>
+        /// <param name="LocalAccessInfo1">A local access information.</param>
+        /// <param name="LocalAccessInfo2">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (LocalAccessInfo AccessInfo1,
-                                           LocalAccessInfo AccessInfo2)
+        public static Boolean operator != (LocalAccessInfo LocalAccessInfo1,
+                                           LocalAccessInfo LocalAccessInfo2)
 
-            => !AccessInfo1.Equals(AccessInfo2);
+            => !(LocalAccessInfo1 == LocalAccessInfo2);
 
         #endregion
 
-        #region Operator <  (AccessInfo1, AccessInfo2)
+        #region Operator <  (LocalAccessInfo1, LocalAccessInfo2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AccessInfo1">An access information.</param>
-        /// <param name="AccessInfo2">Another access information.</param>
+        /// <param name="LocalAccessInfo1">A local access information.</param>
+        /// <param name="LocalAccessInfo2">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (LocalAccessInfo AccessInfo1,
-                                          LocalAccessInfo AccessInfo2)
+        public static Boolean operator < (LocalAccessInfo LocalAccessInfo1,
+                                          LocalAccessInfo LocalAccessInfo2)
 
-            => AccessInfo1.CompareTo(AccessInfo2) < 0;
+            => LocalAccessInfo1 is null
+                   ? throw new ArgumentNullException(nameof(LocalAccessInfo1), "The given local access information must not be null!")
+                   : LocalAccessInfo1.CompareTo(LocalAccessInfo2) < 0;
 
         #endregion
 
-        #region Operator <= (AccessInfo1, AccessInfo2)
+        #region Operator <= (LocalAccessInfo1, LocalAccessInfo2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AccessInfo1">An access information.</param>
-        /// <param name="AccessInfo2">Another access information.</param>
+        /// <param name="LocalAccessInfo1">A local access information.</param>
+        /// <param name="LocalAccessInfo2">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (LocalAccessInfo AccessInfo1,
-                                           LocalAccessInfo AccessInfo2)
+        public static Boolean operator <= (LocalAccessInfo LocalAccessInfo1,
+                                           LocalAccessInfo LocalAccessInfo2)
 
-            => AccessInfo1.CompareTo(AccessInfo2) <= 0;
+            => !(LocalAccessInfo1 > LocalAccessInfo2);
 
         #endregion
 
-        #region Operator >  (AccessInfo1, AccessInfo2)
+        #region Operator >  (LocalAccessInfo1, LocalAccessInfo2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AccessInfo1">An access information.</param>
-        /// <param name="AccessInfo2">Another access information.</param>
+        /// <param name="LocalAccessInfo1">A local access information.</param>
+        /// <param name="LocalAccessInfo2">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (LocalAccessInfo AccessInfo1,
-                                          LocalAccessInfo AccessInfo2)
+        public static Boolean operator > (LocalAccessInfo LocalAccessInfo1,
+                                          LocalAccessInfo LocalAccessInfo2)
 
-            => AccessInfo1.CompareTo(AccessInfo2) > 0;
+            => LocalAccessInfo1 is null
+                   ? throw new ArgumentNullException(nameof(LocalAccessInfo1), "The given local access information must not be null!")
+                   : LocalAccessInfo1.CompareTo(LocalAccessInfo2) > 0;
 
         #endregion
 
-        #region Operator >= (AccessInfo1, AccessInfo2)
+        #region Operator >= (LocalAccessInfo1, LocalAccessInfo2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AccessInfo1">An access information.</param>
-        /// <param name="AccessInfo2">Another access information.</param>
+        /// <param name="LocalAccessInfo1">A local access information.</param>
+        /// <param name="LocalAccessInfo2">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (LocalAccessInfo AccessInfo1,
-                                           LocalAccessInfo AccessInfo2)
+        public static Boolean operator >= (LocalAccessInfo LocalAccessInfo1,
+                                           LocalAccessInfo LocalAccessInfo2)
 
-            => AccessInfo1.CompareTo(AccessInfo2) >= 0;
-
-        #endregion
+            => !(LocalAccessInfo1 < LocalAccessInfo2);
 
         #endregion
 
-        #region IComparable<AccessInfo> Members
+        #endregion
+
+        #region IComparable<LocalAccessInfo> Members
 
         #region CompareTo(Object)
 
@@ -352,42 +630,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region CompareTo(AccessInfo)
+        #region CompareTo(LocalAccessInfo)
 
         /// <summary>
         /// Compares two access information.
         /// </summary>
-        /// <param name="AccessInfo">An access information to compare with.</param>
-        public Int32 CompareTo(LocalAccessInfo AccessInfo)
+        /// <param name="LocalAccessInfo">An access information to compare with.</param>
+        public Int32 CompareTo(LocalAccessInfo? LocalAccessInfo)
         {
 
-            var c = AccessToken.               CompareTo(AccessInfo.AccessToken);
+            if (LocalAccessInfo is null)
+                throw new ArgumentNullException(nameof(LocalAccessInfo), "The given local access information must not be null!");
+
+            var c = AccessToken.               CompareTo(LocalAccessInfo.AccessToken);
 
             if (c == 0)
-                c = Status.                    CompareTo(AccessInfo.Status);
+                c = Status.                    CompareTo(LocalAccessInfo.Status);
 
 
             if (c == 0)
-                c = CountryCode.               CompareTo(AccessInfo.CountryCode);
+                c = CountryCode.               CompareTo(LocalAccessInfo.CountryCode);
 
             if (c == 0)
-                c = PartyId.                   CompareTo(AccessInfo.PartyId);
+                c = PartyId.                   CompareTo(LocalAccessInfo.PartyId);
 
             if (c == 0)
-                c = Role.                      CompareTo(AccessInfo.Role);
+                c = Role.                      CompareTo(LocalAccessInfo.Role);
 
-            if (c == 0 && BusinessDetails is not null && AccessInfo.BusinessDetails is not null)
-                c = BusinessDetails.           CompareTo(AccessInfo.BusinessDetails);
+            if (c == 0 && BusinessDetails is not null && LocalAccessInfo.BusinessDetails is not null)
+                c = BusinessDetails.           CompareTo(LocalAccessInfo.BusinessDetails);
 
+            if (c == 0 && NotBefore.HasValue && LocalAccessInfo.NotBefore.HasValue)
+                c = NotBefore.  Value.         CompareTo(LocalAccessInfo.NotBefore.  Value);
 
-            if (c == 0 && VersionsURL.HasValue && AccessInfo.VersionsURL.HasValue)
-                c = VersionsURL.Value.         CompareTo(AccessInfo.VersionsURL.Value);
+            if (c == 0 && NotAfter. HasValue && LocalAccessInfo.NotAfter. HasValue)
+                c = NotAfter.   Value.         CompareTo(LocalAccessInfo.NotAfter.   Value);
+
+            if (c == 0 && VersionsURL.HasValue && LocalAccessInfo.VersionsURL.HasValue)
+                c = VersionsURL.Value.         CompareTo(LocalAccessInfo.VersionsURL.Value);
 
             if (c == 0)
-                c = AccessTokenIsBase64Encoded.CompareTo(AccessInfo.AccessTokenIsBase64Encoded);
+                c = AccessTokenIsBase64Encoded.CompareTo(LocalAccessInfo.AccessTokenIsBase64Encoded);
 
             if (c == 0)
-                c = AllowDowngrades.           CompareTo(AccessInfo.AllowDowngrades);
+                c = AllowDowngrades.           CompareTo(LocalAccessInfo.AllowDowngrades);
 
             return c;
 
@@ -397,7 +683,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region IEquatable<AccessInfo> Members
+        #region IEquatable<LocalAccessInfo> Members
 
         #region Equals(Object)
 
@@ -412,30 +698,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region Equals(AccessInfo)
+        #region Equals(LocalAccessInfo)
 
         /// <summary>
         /// Compares two access information for equality.
         /// </summary>
-        /// <param name="AccessInfo">An access information to compare with.</param>
-        public Boolean Equals(LocalAccessInfo AccessInfo)
+        /// <param name="LocalAccessInfo">An access information to compare with.</param>
+        public Boolean Equals(LocalAccessInfo? LocalAccessInfo)
 
-            => AccessToken.               Equals(AccessInfo.AccessToken)                &&
-               Status.                    Equals(AccessInfo.Status)                     &&
+            => LocalAccessInfo is not null &&
 
-               CountryCode.               Equals(AccessInfo.CountryCode)                &&
-               PartyId.                   Equals(AccessInfo.PartyId)                    &&
-               Role.                      Equals(AccessInfo.Role)                       &&
+               AccessToken.               Equals(LocalAccessInfo.AccessToken)                &&
+               Status.                    Equals(LocalAccessInfo.Status)                     &&
 
-             ((BusinessDetails is null     && AccessInfo.BusinessDetails is null)  ||
-              (BusinessDetails is not null && AccessInfo.BusinessDetails is not null && BusinessDetails.  Equals(AccessInfo.BusinessDetails))) &&
+               CountryCode.               Equals(LocalAccessInfo.CountryCode)                &&
+               PartyId.                   Equals(LocalAccessInfo.PartyId)                    &&
+               Role.                      Equals(LocalAccessInfo.Role)                       &&
 
+             ((BusinessDetails is null     && LocalAccessInfo.BusinessDetails is null)  ||
+              (BusinessDetails is not null && LocalAccessInfo.BusinessDetails is not null && BusinessDetails.  Equals(LocalAccessInfo.BusinessDetails)))   &&
 
-            ((!VersionsURL.    HasValue &&   !AccessInfo.VersionsURL.    HasValue) ||
-              (VersionsURL.    HasValue &&    AccessInfo.VersionsURL.    HasValue    && VersionsURL.Value.Equals(AccessInfo.VersionsURL.Value))) &&
+            ((!NotBefore.      HasValue &&   !LocalAccessInfo.NotBefore.      HasValue) ||
+              (NotBefore.      HasValue &&    LocalAccessInfo.NotBefore.      HasValue    && NotBefore.  Value.Equals(LocalAccessInfo.NotBefore.  Value))) &&
 
-               AccessTokenIsBase64Encoded.Equals(AccessInfo.AccessTokenIsBase64Encoded) &&
-               AllowDowngrades.           Equals(AccessInfo.AllowDowngrades);
+            ((!NotAfter.       HasValue &&   !LocalAccessInfo.NotAfter.       HasValue) ||
+              (NotAfter.       HasValue &&    LocalAccessInfo.NotAfter.       HasValue    && NotAfter.   Value.Equals(LocalAccessInfo.NotAfter.   Value))) &&
+
+            ((!VersionsURL.    HasValue &&   !LocalAccessInfo.VersionsURL.    HasValue) ||
+              (VersionsURL.    HasValue &&    LocalAccessInfo.VersionsURL.    HasValue    && VersionsURL.Value.Equals(LocalAccessInfo.VersionsURL.Value))) &&
+
+               AccessTokenIsBase64Encoded.Equals(LocalAccessInfo.AccessTokenIsBase64Encoded) &&
+               AllowDowngrades.           Equals(LocalAccessInfo.AllowDowngrades);
 
         #endregion
 
@@ -463,6 +756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             => $"'{BusinessDetails?.Name ?? "<unknown>"}' ({CountryCode}{(Role == Roles.EMSP ? "-" : "*")}{PartyId} {Role.AsText()}) [{Status}] using '{AccessToken}' @ '{VersionsURL}' {(AllowDowngrades ? "[Downgrades allowed]" : "[No downgrades]")}";
 
         #endregion
+
 
     }
 

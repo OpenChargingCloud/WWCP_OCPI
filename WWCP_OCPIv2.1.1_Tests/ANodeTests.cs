@@ -31,6 +31,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 using cloud.charging.open.protocols.OCPIv2_1_1.WebAPI;
+
 using social.OpenData.UsersAPI;
 
 #endregion
@@ -426,7 +427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        DevelopmentServers:                  null,
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
-                                       LogfileName:                         null,
+                                       LogfileName:                         $"GraphDefined_OCPI{Version.Number}_CSO.log",
                                        LogfileCreator:                      null,
                                        Autostart:                           false
 
@@ -475,7 +476,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        DevelopmentServers:                  null,
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
-                                       LogfileName:                         null,
+                                       LogfileName:                         $"GraphDefined_OCPI{Version.Number}_EMSP1.log",
                                        LogfileCreator:                      null,
                                        Autostart:                           false
 
@@ -524,7 +525,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        DevelopmentServers:                  null,
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
-                                       LogfileName:                         null,
+                                       LogfileName:                         $"GraphDefined_OCPI{Version.Number}_EMSP2.log",
                                        LogfileCreator:                      null,
                                        Autostart:                           false
 
@@ -699,6 +700,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Define and connect Remote Parties
 
+            File.Delete(Path.Combine(cpoCommonAPI.  LoggingPath, cpoCommonAPI.  LogfileName));
+            File.Delete(Path.Combine(emsp1CommonAPI.LoggingPath, emsp1CommonAPI.LogfileName));
+            File.Delete(Path.Combine(emsp2CommonAPI.LoggingPath, emsp2CommonAPI.LogfileName));
+
             await cpoCommonAPI.AddRemoteParty  (CountryCode:                 emsp1CommonAPI.OurCountryCode,
                                                 PartyId:                     emsp1CommonAPI.OurPartyId,
                                                 Role:                        Roles.EMSP,
@@ -771,6 +776,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual(2, cpoCommonAPI.  RemoteParties.Count());
             Assert.AreEqual(1, emsp1CommonAPI.RemoteParties.Count());
             Assert.AreEqual(1, emsp2CommonAPI.RemoteParties.Count());
+
+            Assert.AreEqual(2, File.ReadAllLines(Path.Combine(cpoCommonAPI.  LoggingPath, cpoCommonAPI.  LogfileName)).Length);
+            Assert.AreEqual(1, File.ReadAllLines(Path.Combine(emsp1CommonAPI.LoggingPath, emsp1CommonAPI.LogfileName)).Length);
+            Assert.AreEqual(1, File.ReadAllLines(Path.Combine(emsp2CommonAPI.LoggingPath, emsp2CommonAPI.LogfileName)).Length);
 
             #endregion
 
@@ -894,6 +903,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             cpoHTTPAPI?.  Shutdown();
             emsp1HTTPAPI?.Shutdown();
             emsp2HTTPAPI?.Shutdown();
+
+            if (cpoCommonAPI is not null)
+                File.Delete(Path.Combine(cpoCommonAPI.  LoggingPath, cpoCommonAPI.  LogfileName));
+
+            if (emsp1CommonAPI is not null)
+                File.Delete(Path.Combine(emsp1CommonAPI.LoggingPath, emsp1CommonAPI.LogfileName));
+
+            if (emsp2CommonAPI is not null)
+                File.Delete(Path.Combine(emsp2CommonAPI.LoggingPath, emsp2CommonAPI.LogfileName));
 
         }
 

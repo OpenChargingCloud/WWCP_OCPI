@@ -17,7 +17,6 @@
 
 #region Usings
 
-using System.Text;
 using System.Net.Security;
 using System.Collections.Concurrent;
 using System.Security.Authentication;
@@ -36,7 +35,6 @@ using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP;
-using System.Data;
 
 #endregion
 
@@ -557,26 +555,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (!OurCredentialRoles.SafeAny())
                 throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
-            this.OurCredentialRoles       = OurCredentialRoles.Distinct();
+            this.OurCredentialRoles    = OurCredentialRoles.Distinct();
 
-            this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
+            this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
-            this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
+            this.Disable_OCPIv2_1_1    = Disable_OCPIv2_1_1;
 
-            this.locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this.tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this.chargingSessions         = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this.tokenStatus              = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
-            this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+            this.locations             = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this.tariffs               = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+            this.chargingSessions      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this.tokenStatus           = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
+            this.ChargeDetailRecords   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
-            this.CommonAPILogger          = this.DisableLogging == false
-                                                ? null
-                                                : new CommonAPILogger(
-                                                      this,
-                                                      LoggingContext,
-                                                      LoggingPath,
-                                                      LogfileCreator
-                                                  );
+            this.CommonAPILogger       = this.DisableLogging == false
+                                             ? null
+                                             : new CommonAPILogger(
+                                                   this,
+                                                   LoggingContext,
+                                                   LoggingPath,
+                                                   LogfileCreator
+                                               );
+
+            if (!this.DisableLogging)
+                ReadLogfile();
 
             RegisterURLTemplates();
 
@@ -678,31 +679,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (!OurCredentialRoles.SafeAny())
                 throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
-            this.OurCredentialRoles       = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
+            this.OurCredentialRoles    = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
 
-            this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
+            this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
-            this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
+            this.Disable_OCPIv2_1_1    = Disable_OCPIv2_1_1;
 
-            this.locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this.tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this.chargingSessions         = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this.tokenStatus              = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
-            this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+            this.locations             = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this.tariffs               = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+            this.chargingSessions      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this.tokenStatus           = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
+            this.ChargeDetailRecords   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             // Link HTTP events...
-            HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            HTTPServer.ResponseLog       += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            HTTPServer.ErrorLog          += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
+            HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
+            HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
+            HTTPServer.ErrorLog       += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
-            this.CommonAPILogger          = this.DisableLogging == false
-                                                ? new CommonAPILogger(
-                                                      this,
-                                                      LoggingContext,
-                                                      LoggingPath,
-                                                      LogfileCreator
-                                                  )
-                                                : null;
+            this.CommonAPILogger       = this.DisableLogging == false
+                                             ? new CommonAPILogger(
+                                                   this,
+                                                   LoggingContext,
+                                                   LoggingPath,
+                                                   LogfileCreator
+                                               )
+                                             : null;
+
+            if (!this.DisableLogging)
+                ReadLogfile();
 
             RegisterURLTemplates();
 
@@ -860,8 +864,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                    #region Check access token
 
-                                   if (Request.LocalAccessInfo.HasValue &&
-                                       Request.LocalAccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                   if (Request.LocalAccessInfo is not null &&
+                                       Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
@@ -955,8 +959,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                    #region Check access token
 
-                                   if (Request.LocalAccessInfo.HasValue &&
-                                       Request.LocalAccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                   if (Request.LocalAccessInfo is not null &&
+                                       Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
@@ -1050,7 +1054,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                    #region The other side is a CPO...
 
-                                   if (Request.RemoteParty.Roles.Any(credentialsRole => credentialsRole.Role == Roles.CPO))
+                                   if (Request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Roles.CPO) == true)
                                    {
 
                                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
@@ -1114,7 +1118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                    #region The other side is an EMSP...
 
-                                   if (Request.RemoteParty.Roles.Any(credentialsRole => credentialsRole.Role == Roles.EMSP))
+                                   if (Request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Roles.EMSP) == true)
                                    {
 
                                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
@@ -1191,21 +1195,57 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                URLPathPrefix + "{versionId}/credentials",
                                OCPIRequestHandler: Request => {
 
+                                   #region Defaults
+
+                                   var accessControlAllowMethods  = new List<String> {
+                                                                        "OPTIONS",
+                                                                        "GET"
+                                                                    };
+
+                                   var allow                      = new List<HTTPMethod> {
+                                                                        HTTPMethod.OPTIONS,
+                                                                        HTTPMethod.GET
+                                                                    };
+
+                                   #endregion
+
+                                   #region Check the access token whether the client is known, and its access is allowed!
+
+                                   if (Request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
+                                   {
+
+                                       accessControlAllowMethods.Add("POST");
+
+                                       allow.Add(HTTPMethod.POST);
+
+                                       // Only when the party is fully registered!
+                                       if (Request.LocalAccessInfo?.VersionsURL.HasValue == true)
+                                       {
+
+                                           accessControlAllowMethods.Add("PUT");
+                                           accessControlAllowMethods.Add("DELETE");
+
+                                           allow.Add(HTTPMethod.PUT);
+                                           allow.Add(HTTPMethod.DELETE);
+
+                                       }
+
+                                    }
+
+                                   #endregion
+
+
                                    return Task.FromResult(
-                                       new OCPIResponse.Builder(Request) {
-                                           HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                               Allow                      = new List<HTTPMethod> {
-                                                                                HTTPMethod.OPTIONS,
-                                                                                HTTPMethod.GET,
-                                                                                HTTPMethod.POST,
-                                                                                HTTPMethod.PUT,
-                                                                                HTTPMethod.DELETE
-                                                                            },
-                                               AccessControlAllowHeaders  = "Authorization"
-                                           }
-                                       });
+                                              new OCPIResponse.Builder(Request) {
+                                                  StatusCode           = 1000,
+                                                  StatusMessage        = "Hello world!",
+                                                  HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                      HTTPStatusCode             = HTTPStatusCode.OK,
+                                                      AccessControlAllowHeaders  = "Authorization",
+                                                      AccessControlAllowMethods  = accessControlAllowMethods,
+                                                      Allow                      = allow
+                                                  }
+                                              });
 
                                });
 
@@ -1226,8 +1266,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                    #region Check access token
 
-                                   if (Request.LocalAccessInfo.HasValue &&
-                                       Request.LocalAccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                   if (Request.LocalAccessInfo is not null &&
+                                       Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
@@ -1261,18 +1301,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                            }
                                        });
 
-
-                                   //return Task.FromResult(
-                                   //    new OCPIResponse.Builder(Request) {
-                                   //        StatusCode           = 2000,
-                                   //        StatusMessage        = "You need to be registered before trying to invoke this protected method!",
-                                   //        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                   //            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                   //            AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                   //            AccessControlAllowHeaders  = "Authorization"
-                                   //        }
-                                   //    });
-
                                });
 
             #endregion
@@ -1290,18 +1318,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:   PostCredentialsRequest,
                                OCPIResponseLogger:  PostCredentialsResponse,
-                               OCPIRequestHandler:   async Request => {
+                               OCPIRequestHandler:  async Request => {
 
-                                   if (Request.AccessToken is not null  && // CREDENTIALS_TOKEN_A
-                                       Request.RemoteParty is not null  &&
-                                       Request.LocalAccessInfo.HasValue &&
-                                       Request.LocalAccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                   if (Request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
                                    {
 
-                                       if (Request.LocalAccessInfo.Value.VersionsURL.HasValue)
+                                       if (Request.LocalAccessInfo.VersionsURL.HasValue)
                                            return new OCPIResponse.Builder(Request) {
-                                                      StatusCode           = 2000,
-                                                      StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is already registered!",
+                                                      StatusCode           = 2000,                                              // CREDENTIALS_TOKEN_A
+                                                      StatusMessage        = $"The given access token '{Request.LocalAccessInfo.AccessToken}' is already registered!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
@@ -1338,36 +1363,63 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                HTTPMethod.PUT,
                                URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.JSON_UTF8,
-                               OCPIRequestLogger:  PutCredentialsRequest,
-                               OCPIResponseLogger: PutCredentialsResponse,
-                               OCPIRequestHandler:        async Request => {
+                               OCPIRequestLogger:   PutCredentialsRequest,
+                               OCPIResponseLogger:  PutCredentialsResponse,
+                               OCPIRequestHandler:  async Request => {
 
-                                   if (Request.LocalAccessInfo.HasValue &&
-                                       Request.LocalAccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                   #region The access token is known...
+
+                                   if (Request.LocalAccessInfo is not null)
                                    {
 
-                                       if (!Request.LocalAccessInfo.Value.VersionsURL.HasValue)
+                                       #region ...but access is blocked!
+
+                                       if (Request.LocalAccessInfo?.Status == AccessStatus.BLOCKED)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
-                                                      StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
+                                                      StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is blocked!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                          HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                                                          HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                           AccessControlAllowHeaders  = "Authorization"
                                                       }
                                                   };
 
-                                       return await POSTOrPUTCredentials(Request);
+                                       #endregion
 
+                                       #region ...and access is allowed, but maybe not yet full registered!
+
+                                       if (Request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
+                                       {
+
+                                           // The party is not yet fully registered!
+                                           if (!Request.LocalAccessInfo?.VersionsURL.HasValue == true)
+                                               return new OCPIResponse.Builder(Request) {
+                                                          StatusCode           = 2000,
+                                                          StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
+                                                          HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                              HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                              AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
+                                                              AccessControlAllowHeaders  = "Authorization"
+                                                          }
+                                                      };
+
+                                           return await POSTOrPUTCredentials(Request);
+
+                                       }
+
+                                       #endregion
 
                                    }
+
+                                   #endregion
 
                                    return new OCPIResponse.Builder(Request) {
                                                   StatusCode           = 2000,
                                                   StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                       HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                      AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                                                      AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                       AccessControlAllowHeaders  = "Authorization"
                                                   }
                                               };
@@ -1391,16 +1443,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                OCPIResponseLogger:  DeleteCredentialsResponse,
                                OCPIRequestHandler:  async Request => {
 
-                                   if (Request.LocalAccessInfo.HasValue &&
-                                       Request.LocalAccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                   if (Request.LocalAccessInfo?.Status == AccessStatus.ALLOWED)
                                    {
 
                                        #region Validations
 
-                                       if (!Request.LocalAccessInfo.Value.VersionsURL.HasValue)
+                                       if (!Request.LocalAccessInfo.VersionsURL.HasValue)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
-                                                      StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!",
+                                                      StatusMessage        = $"The given access token '{Request.LocalAccessInfo.AccessToken}' is not fully registered!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
@@ -1410,14 +1461,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                        #endregion
 
-
-                                       //ToDo: await...
-                                       await RemoveAccessToken(Request.AccessToken.Value);
-
+                                       await RemoveAccessToken(Request.LocalAccessInfo.AccessToken);
 
                                        return new OCPIResponse.Builder(Request) {
                                                   StatusCode           = 1000,
-                                                  StatusMessage        = "The given access token was deleted!",
+                                                  StatusMessage        = $"The given access token '{Request.LocalAccessInfo.AccessToken}' was deleted!",
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                       HTTPStatusCode             = HTTPStatusCode.OK,
                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
@@ -1683,6 +1731,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                          null,
                                          null,
+                                         null,
+                                         null,
                                          AccessStatus.      ALLOWED,
                                          RemoteAccessStatus.ONLINE,
                                          PartyStatus.       ENABLED);
@@ -1843,11 +1893,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   IEnumerable<Version_Id>?              RemoteVersionIds             = null,
                                                   Version_Id?                           SelectedVersionId            = null,
 
+                                                  DateTime?                             LocalAccessNotBefore         = null,
+                                                  DateTime?                             LocalAccessNotAfter          = null,
+
                                                   Boolean?                              AccessTokenBase64Encoding    = null,
                                                   Boolean?                              AllowDowngrades              = false,
                                                   AccessStatus                          AccessStatus                 = AccessStatus.      ALLOWED,
                                                   RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                                                   PartyStatus                           PartyStatus                  = PartyStatus.       ENABLED,
+                                                  DateTime?                             RemoteAccessNotBefore        = null,
+                                                  DateTime?                             RemoteAccessNotAfter         = null,
 
                                                   RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                   LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -1872,11 +1927,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  RemoteVersionIds,
                                                  SelectedVersionId,
 
+                                                 LocalAccessNotBefore,
+                                                 LocalAccessNotAfter,
+
                                                  AccessTokenBase64Encoding,
                                                  AllowDowngrades,
                                                  AccessStatus,
                                                  RemoteStatus,
                                                  PartyStatus,
+                                                 RemoteAccessNotBefore,
+                                                 RemoteAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
@@ -1911,6 +1971,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   IEnumerable<CredentialsRole>          CredentialsRoles,
 
                                                   AccessToken                           AccessToken,
+                                                  DateTime?                             LocalAccessNotBefore         = null,
+                                                  DateTime?                             LocalAccessNotAfter          = null,
                                                   Boolean?                              AccessTokenBase64Encoding    = null,
                                                   Boolean?                              AllowDowngrades              = false,
                                                   AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
@@ -1938,6 +2000,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  AccessStatus,
 
                                                  PartyStatus,
+                                                 LocalAccessNotBefore,
+                                                 LocalAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
@@ -1978,8 +2042,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   Version_Id?                           SelectedVersionId            = null,
 
                                                   Boolean?                              AccessTokenBase64Encoding    = null,
+                                                  Boolean?                              AllowDowngrades              = null,
                                                   RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
                                                   PartyStatus                           PartyStatus                  = PartyStatus.       ENABLED,
+                                                  DateTime?                             RemoteAccessNotBefore        = null,
+                                                  DateTime?                             RemoteAccessNotAfter         = null,
 
                                                   RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                   LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -2002,8 +2069,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  SelectedVersionId,
 
                                                  AccessTokenBase64Encoding,
+                                                 AllowDowngrades,
                                                  RemoteStatus,
                                                  PartyStatus,
+                                                 RemoteAccessNotBefore,
+                                                 RemoteAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
@@ -2108,11 +2178,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                              IEnumerable<Version_Id>?              RemoteVersionIds             = null,
                                                              Version_Id?                           SelectedVersionId            = null,
 
+                                                             DateTime?                             LocalAccessNotBefore         = null,
+                                                             DateTime?                             LocalAccessNotAfter          = null,
+
                                                              Boolean?                              AccessTokenBase64Encoding    = null,
                                                              Boolean?                              AllowDowngrades              = false,
                                                              AccessStatus                          AccessStatus                 = AccessStatus.      ALLOWED,
                                                              RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                                                              PartyStatus                           PartyStatus                  = PartyStatus.       ENABLED,
+                                                             DateTime?                             RemoteAccessNotBefore        = null,
+                                                             DateTime?                             RemoteAccessNotAfter         = null,
 
                                                              RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                              LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -2137,11 +2212,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  RemoteVersionIds,
                                                  SelectedVersionId,
 
+                                                 LocalAccessNotBefore,
+                                                 LocalAccessNotAfter,
+
                                                  AccessTokenBase64Encoding,
                                                  AllowDowngrades,
                                                  AccessStatus,
                                                  RemoteStatus,
                                                  PartyStatus,
+                                                 RemoteAccessNotBefore,
+                                                 RemoteAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
@@ -2179,6 +2259,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                              IEnumerable<CredentialsRole>          CredentialsRoles,
 
                                                              AccessToken                           AccessToken,
+                                                             DateTime?                             LocalAccessNotBefore         = null,
+                                                             DateTime?                             LocalAccessNotAfter          = null,
                                                              Boolean?                              AccessTokenBase64Encoding    = null,
                                                              Boolean?                              AllowDowngrades              = false,
                                                              AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
@@ -2206,6 +2288,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  AccessStatus,
 
                                                  PartyStatus,
+                                                 LocalAccessNotBefore,
+                                                 LocalAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
@@ -2248,8 +2332,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                              Version_Id?                           SelectedVersionId            = null,
 
                                                              Boolean?                              AccessTokenBase64Encoding    = null,
+                                                             Boolean?                              AllowDowngrades              = null,
                                                              RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
                                                              PartyStatus                           PartyStatus                  = PartyStatus.       ENABLED,
+                                                             DateTime?                             RemoteAccessNotBefore        = null,
+                                                             DateTime?                             RemoteAccessNotAfter         = null,
 
                                                              RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                              LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -2272,8 +2359,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  SelectedVersionId,
 
                                                  AccessTokenBase64Encoding,
+                                                 AllowDowngrades,
                                                  RemoteStatus,
                                                  PartyStatus,
+                                                 RemoteAccessNotBefore,
+                                                 RemoteAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
@@ -2382,11 +2472,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                           IEnumerable<Version_Id>?              RemoteVersionIds             = null,
                                                           Version_Id?                           SelectedVersionId            = null,
 
+                                                          DateTime?                             LocalAccessNotBefore         = null,
+                                                          DateTime?                             LocalAccessNotAfter          = null,
+
                                                           Boolean?                              AccessTokenBase64Encoding    = null,
                                                           Boolean?                              AllowDowngrades              = false,
                                                           AccessStatus                          AccessStatus                 = AccessStatus.      ALLOWED,
                                                           RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                                                           PartyStatus                           PartyStatus                  = PartyStatus.       ENABLED,
+                                                          DateTime?                             RemoteAccessNotBefore        = null,
+                                                          DateTime?                             RemoteAccessNotAfter         = null,
 
                                                           RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                           LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -2411,11 +2506,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  RemoteVersionIds,
                                                  SelectedVersionId,
 
+                                                 LocalAccessNotBefore,
+                                                 LocalAccessNotAfter,
+
                                                  AccessTokenBase64Encoding,
                                                  AllowDowngrades,
                                                  AccessStatus,
                                                  RemoteStatus,
                                                  PartyStatus,
+                                                 RemoteAccessNotBefore,
+                                                 RemoteAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
@@ -2458,6 +2558,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                           IEnumerable<CredentialsRole>          CredentialsRoles,
 
                                                           AccessToken                           AccessToken,
+                                                          DateTime?                             LocalAccessNotBefore         = null,
+                                                          DateTime?                             LocalAccessNotAfter          = null,
                                                           Boolean?                              AccessTokenBase64Encoding    = null,
                                                           Boolean?                              AllowDowngrades              = false,
                                                           AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
@@ -2485,6 +2587,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  AccessStatus,
 
                                                  PartyStatus,
+                                                 LocalAccessNotBefore,
+                                                 LocalAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
@@ -2532,8 +2636,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                           Version_Id?                           SelectedVersionId            = null,
 
                                                           Boolean?                              AccessTokenBase64Encoding    = null,
+                                                          Boolean?                              AllowDowngrades              = null,
                                                           RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
                                                           PartyStatus                           PartyStatus                  = PartyStatus.       ENABLED,
+                                                          DateTime?                             RemoteAccessNotBefore        = null,
+                                                          DateTime?                             RemoteAccessNotAfter         = null,
 
                                                           RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                           LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -2556,8 +2663,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  SelectedVersionId,
 
                                                  AccessTokenBase64Encoding,
+                                                 AllowDowngrades,
                                                  RemoteStatus,
                                                  PartyStatus,
+                                                 RemoteAccessNotBefore,
+                                                 RemoteAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
@@ -2675,11 +2785,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      IEnumerable<Version_Id>?              RemoteVersionIds             = null,
                                                      Version_Id?                           SelectedVersionId            = null,
 
+                                                     DateTime?                             LocalAccessNotBefore         = null,
+                                                     DateTime?                             LocalAccessNotAfter          = null,
+
                                                      Boolean?                              AccessTokenBase64Encoding    = null,
                                                      Boolean?                              AllowDowngrades              = false,
                                                      AccessStatus                          AccessStatus                 = AccessStatus.      ALLOWED,
                                                      RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.ONLINE,
                                                      PartyStatus                           PartyStatus                  = PartyStatus.       ENABLED,
+                                                     DateTime?                             RemoteAccessNotBefore        = null,
+                                                     DateTime?                             RemoteAccessNotAfter         = null,
 
                                                      RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                      LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -2704,11 +2819,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  RemoteVersionIds,
                                                  SelectedVersionId,
 
+                                                 LocalAccessNotBefore,
+                                                 LocalAccessNotAfter,
+
                                                  AccessTokenBase64Encoding,
                                                  AllowDowngrades,
                                                  AccessStatus,
                                                  RemoteStatus,
                                                  PartyStatus,
+                                                 RemoteAccessNotBefore,
+                                                 RemoteAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
@@ -2744,6 +2864,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public async Task<Boolean> UpdateRemoteParty(RemoteParty                           ExistingRemoteParty,
 
                                                      AccessToken                           AccessToken,
+                                                     DateTime?                             LocalAccessNotBefore         = null,
+                                                     DateTime?                             LocalAccessNotAfter          = null,
                                                      Boolean?                              AccessTokenBase64Encoding    = null,
                                                      Boolean?                              AllowDowngrades              = false,
                                                      AccessStatus                          AccessStatus                 = AccessStatus.ALLOWED,
@@ -2771,6 +2893,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  AccessStatus,
 
                                                  PartyStatus,
+                                                 LocalAccessNotBefore,
+                                                 LocalAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
@@ -2811,8 +2935,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      Version_Id?                           SelectedVersionId            = null,
 
                                                      Boolean?                              AccessTokenBase64Encoding    = null,
+                                                     Boolean?                              AllowDowngrades              = null,
                                                      RemoteAccessStatus?                   RemoteStatus                 = RemoteAccessStatus.UNKNOWN,
                                                      PartyStatus                           PartyStatus                  = PartyStatus.       ENABLED,
+                                                     DateTime?                             RemoteAccessNotBefore        = null,
+                                                     DateTime?                             RemoteAccessNotAfter         = null,
 
                                                      RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                      LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
@@ -2835,8 +2962,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  SelectedVersionId,
 
                                                  AccessTokenBase64Encoding,
+                                                 AllowDowngrades,
                                                  RemoteStatus,
                                                  PartyStatus,
+                                                 RemoteAccessNotBefore,
+                                                 RemoteAccessNotAfter,
 
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,

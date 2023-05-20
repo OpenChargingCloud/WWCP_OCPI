@@ -280,37 +280,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     if (parties.Count() == 1)
                     {
 
-                        this.RemoteParty      = parties.First();
+                        RemoteParty      = parties.First();
 
-                        this.LocalAccessInfo  = new LocalAccessInfo(
-                                                    AccessToken.Value,
-                                                    this.RemoteParty.LocalAccessInfos.First(localAccessInfo => localAccessInfo.AccessToken == AccessToken).Status,
-                                                    this.RemoteParty.Roles,
-                                                    this.RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
-                                                );
+                        LocalAccessInfo  = new LocalAccessInfo(
+                                               AccessToken.Value,
+                                               RemoteParty.LocalAccessInfos.First(localAccessInfo => localAccessInfo.AccessToken == AccessToken).Status,
+                                               RemoteParty.Roles,
+                                               null,
+                                               null,
+                                               RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
+                                           );
 
-                        this.CPOIds           = this.RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Roles.CPO).
-                                                                       Select(credentialsRole => CPO_Id. Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}*{this.LocalAccessInfo.Value.Roles.First().PartyId}")).
-                                                                       Distinct().
-                                                                       ToArray();
+                        CPOIds           = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Roles.CPO).
+                                                             Select(credentialsRole => CPO_Id. Parse($"{LocalAccessInfo.Roles.First().CountryCode}*{LocalAccessInfo.Roles.First().PartyId}")).
+                                                             Distinct().
+                                                             ToArray();
 
-                        this.EMSPIds          = this.RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Roles.EMSP).
-                                                                       Select(credentialsRole => EMSP_Id.Parse($"{this.LocalAccessInfo.Value.Roles.First().CountryCode}-{this.LocalAccessInfo.Value.Roles.First().PartyId}")).
-                                                                       Distinct().
-                                                                       ToArray();
+                        EMSPIds          = RemoteParty.Roles.Where (credentialsRole => credentialsRole.Role == Roles.EMSP).
+                                                             Select(credentialsRole => EMSP_Id.Parse($"{LocalAccessInfo.Roles.First().CountryCode}-{LocalAccessInfo.Roles.First().PartyId}")).
+                                                             Distinct().
+                                                             ToArray();
 
                         if (FromCountryCode.HasValue &&
                             FromPartyId.    HasValue)
                         {
 
-                            this.CPOId            = CPO_Id. Parse($"{FromCountryCode}*{FromPartyId}");
-                            this.EMSPId           = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
+                            CPOId            = CPO_Id. Parse($"{FromCountryCode}*{FromPartyId}");
+                            EMSPId           = EMSP_Id.Parse($"{FromCountryCode}-{FromPartyId}");
 
-                            if (this.CPOId. HasValue && !this.CPOIds. Contains(this.CPOId. Value))
-                                this.CPOId   = null;
+                            if (CPOId. HasValue && !CPOIds. Contains(CPOId. Value))
+                                CPOId   = null;
 
-                            if (this.EMSPId.HasValue && !this.EMSPIds.Contains(this.EMSPId.Value))
-                                this.EMSPId  = null;
+                            if (EMSPId.HasValue && !EMSPIds.Contains(EMSPId.Value))
+                                EMSPId  = null;
 
                         }
 
@@ -319,10 +321,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         {
 
                             if (CPOIds. Any())
-                                this.CPOId  = CPOIds. First();
+                                CPOId  = CPOIds. First();
 
                             if (EMSPIds.Any())
-                                this.EMSPId = EMSPIds.First();
+                                EMSPId = EMSPIds.First();
 
                         }
 
@@ -334,9 +336,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     {
 
                         var filteredParties = parties.Where(party => party.Roles.Any(credentialsRole => credentialsRole.CountryCode == FromCountryCode.Value) &&
-                                                                     party.Roles.Any(credentialsRole => credentialsRole.PartyId     == FromPartyId.    Value)).ToArray();
+                                                                     party.Roles.Any(credentialsRole => credentialsRole.PartyId     == FromPartyId.    Value)).
+                                                      ToArray();
 
-                        if (filteredParties.Count() == 1)
+                        if (filteredParties.Length == 1)
                         {
 
                             this.LocalAccessInfo   = new LocalAccessInfo(AccessToken.Value,

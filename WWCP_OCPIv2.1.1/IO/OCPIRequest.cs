@@ -267,25 +267,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (parties.Count() == 1)
                     {
 
-                        this.RemoteParty      = parties.First();
+                        RemoteParty      = parties.First();
 
-                        this.LocalAccessInfo  = new LocalAccessInfo(
-                                                    AccessToken.Value,
-                                                    this.RemoteParty.LocalAccessInfos.First(accessInfoStatus => accessInfoStatus.AccessToken == AccessToken).Status,
-                                                    this.RemoteParty.CountryCode,
-                                                    this.RemoteParty.PartyId,
-                                                    this.RemoteParty.Role,
-                                                    this.RemoteParty.BusinessDetails,
-                                                    this.RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
-                                                );
+                        LocalAccessInfo  = new LocalAccessInfo(
+                                               AccessToken.Value,
+                                               RemoteParty.LocalAccessInfos.First(accessInfoStatus => accessInfoStatus.AccessToken == AccessToken).Status,
+                                               RemoteParty.CountryCode,
+                                               RemoteParty.PartyId,
+                                               RemoteParty.Role,
+                                               RemoteParty.BusinessDetails,
+                                               RemoteParty.LocalAccessInfos.First().NotBefore,
+                                               RemoteParty.LocalAccessInfos.First().NotAfter,
+                                               RemoteParty.RemoteAccessInfos.FirstOrDefault()?.VersionsURL
+                                           );
 
-                        this.CPOId            = this.RemoteParty.Role == Roles.CPO
-                                                   ? CPO_Id. Parse($"{this.LocalAccessInfo.Value.CountryCode}*{this.LocalAccessInfo.Value.PartyId}")
-                                                   : null;
+                        CPOId            = RemoteParty.Role == Roles.CPO
+                                              ? CPO_Id. Parse($"{LocalAccessInfo.CountryCode}*{LocalAccessInfo.PartyId}")
+                                              : null;
 
-                        this.EMSPId           = this.RemoteParty.Role == Roles.EMSP
-                                                   ? EMSP_Id.Parse($"{this.LocalAccessInfo.Value.CountryCode}-{this.LocalAccessInfo.Value.PartyId}")
-                                                   : null;
+                        EMSPId           = RemoteParty.Role == Roles.EMSP
+                                              ? EMSP_Id.Parse($"{LocalAccessInfo.CountryCode}-{LocalAccessInfo.PartyId}")
+                                              : null;
 
                     }
 
