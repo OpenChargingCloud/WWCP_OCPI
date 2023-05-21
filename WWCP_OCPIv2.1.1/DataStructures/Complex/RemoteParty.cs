@@ -28,7 +28,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using System.Data;
 
 #endregion
 
@@ -281,13 +280,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        new LocalAccessInfo(
                            AccessToken,
                            AccessStatus,
-                           CountryCode,
-                           PartyId,
-                           Role,
-                           BusinessDetails,
                            LocalAccessNotBefore,
                            LocalAccessNotAfter,
-                           null,
                            AccessTokenBase64Encoding,
                            AllowDowngrades
                        )
@@ -429,13 +423,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        new LocalAccessInfo(
                            AccessToken,
                            AccessStatus,
-                           CountryCode,
-                           PartyId,
-                           Role,
-                           BusinessDetails,
                            LocalAccessNotBefore,
                            LocalAccessNotAfter,
-                           RemoteVersionsURL,
                            AccessTokenBase64Encoding,
                            AllowDowngrades
                        )

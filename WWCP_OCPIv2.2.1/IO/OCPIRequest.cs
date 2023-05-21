@@ -209,7 +209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         public AccessToken?          AccessToken         { get; }
 
-        public LocalAccessInfo?      LocalAccessInfo     { get; }
+        public LocalAccessInfo2?     LocalAccessInfo     { get; }
 
         public RemoteParty?          RemoteParty         { get; }
 
@@ -282,7 +282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                         RemoteParty      = parties.First();
 
-                        LocalAccessInfo  = new LocalAccessInfo(
+                        LocalAccessInfo  = new LocalAccessInfo2(
                                                AccessToken.Value,
                                                RemoteParty.LocalAccessInfos.First(localAccessInfo => localAccessInfo.AccessToken == AccessToken).Status,
                                                RemoteParty.Roles,
@@ -342,7 +342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         if (filteredParties.Length == 1)
                         {
 
-                            this.LocalAccessInfo   = new LocalAccessInfo(AccessToken.Value,
+                            this.LocalAccessInfo   = new LocalAccessInfo2(AccessToken.Value,
                                                                          filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken).Status);
 
                             //this.AccessInfo2  = filteredParties.First().LocalAccessInfos.First(accessInfo2 => accessInfo2.AccessToken == AccessToken);

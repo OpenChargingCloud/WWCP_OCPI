@@ -32,9 +32,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// Local Access information.
     /// </summary>
-    public sealed class LocalAccessInfo : IEquatable<LocalAccessInfo>,
-                                          IComparable<LocalAccessInfo>,
-                                          IComparable
+    public sealed class LocalAccessInfo2 : IEquatable<LocalAccessInfo2>,
+                                           IComparable<LocalAccessInfo2>,
+                                           IComparable
     {
 
         #region Properties
@@ -127,7 +127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="VersionsURL">An optional URL to get the remote OCPI versions information.</param>
         /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public LocalAccessInfo(AccessToken       AccessToken,
+        public LocalAccessInfo2(AccessToken       AccessToken,
                                AccessStatus      Status,
 
                                CountryCode       CountryCode,
@@ -183,20 +183,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomLocalAccessInfoParser = null)
+        #region (static) Parse   (JSON, CustomLocalAccessInfo2Parser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a local access information.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomLocalAccessInfoParser">A delegate to parse custom local access information JSON objects.</param>
-        public static LocalAccessInfo Parse(JObject                                        JSON,
-                                            CustomJObjectParserDelegate<LocalAccessInfo>?  CustomLocalAccessInfoParser   = null)
+        /// <param name="CustomLocalAccessInfo2Parser">A delegate to parse custom local access information JSON objects.</param>
+        public static LocalAccessInfo2 Parse(JObject                                        JSON,
+                                            CustomJObjectParserDelegate<LocalAccessInfo2>?  CustomLocalAccessInfo2Parser   = null)
         {
             if (TryParse(JSON,
                          out var localAccessInfo,
                          out var errorResponse,
-                         CustomLocalAccessInfoParser))
+                         CustomLocalAccessInfo2Parser))
             {
                 return localAccessInfo!;
             }
@@ -208,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(JSON, out LocalAccessInfo, out ErrorResponse, CustomLocalAccessInfoParser = null)
+        #region (static) TryParse(JSON, out LocalAccessInfo2, out ErrorResponse, CustomLocalAccessInfo2Parser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -216,14 +216,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Try to parse the given JSON representation of a local access information.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="LocalAccessInfo">The parsed local access information.</param>
+        /// <param name="LocalAccessInfo2">The parsed local access information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject               JSON,
-                                       out LocalAccessInfo?  LocalAccessInfo,
+                                       out LocalAccessInfo2?  LocalAccessInfo2,
                                        out String?           ErrorResponse)
 
             => TryParse(JSON,
-                        out LocalAccessInfo,
+                        out LocalAccessInfo2,
                         out ErrorResponse,
                         null);
 
@@ -232,19 +232,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Try to parse the given JSON representation of a local access information.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="LocalAccessInfo">The parsed local access information.</param>
+        /// <param name="LocalAccessInfo2">The parsed local access information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomLocalAccessInfoParser">A delegate to parse custom local access information JSON objects.</param>
+        /// <param name="CustomLocalAccessInfo2Parser">A delegate to parse custom local access information JSON objects.</param>
         public static Boolean TryParse(JObject                                        JSON,
-                                       out LocalAccessInfo?                           LocalAccessInfo,
+                                       out LocalAccessInfo2?                           LocalAccessInfo2,
                                        out String?                                    ErrorResponse,
-                                       CustomJObjectParserDelegate<LocalAccessInfo>?  CustomLocalAccessInfoParser   = null)
+                                       CustomJObjectParserDelegate<LocalAccessInfo2>?  CustomLocalAccessInfo2Parser   = null)
         {
 
             try
             {
 
-                LocalAccessInfo = default;
+                LocalAccessInfo2 = default;
 
                 if (JSON?.HasValues != true)
                 {
@@ -398,7 +398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                LocalAccessInfo = new LocalAccessInfo(AccessToken,
+                LocalAccessInfo2 = new LocalAccessInfo2(AccessToken,
                                                       Status,
 
                                                       CountryCode,
@@ -414,16 +414,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                       AllowDowngrades);
 
 
-                if (CustomLocalAccessInfoParser is not null)
-                    LocalAccessInfo = CustomLocalAccessInfoParser(JSON,
-                                                                  LocalAccessInfo);
+                if (CustomLocalAccessInfo2Parser is not null)
+                    LocalAccessInfo2 = CustomLocalAccessInfo2Parser(JSON,
+                                                                  LocalAccessInfo2);
 
                 return true;
 
             }
             catch (Exception e)
             {
-                LocalAccessInfo  = default;
+                LocalAccessInfo2  = default;
                 ErrorResponse    = "The given JSON representation of a local access information is invalid: " + e.Message;
                 return false;
             }
@@ -432,15 +432,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToJSON(CustomLocalAccessInfoSerializer = null, CustomBusinessDetailsSerializer = null, ...)
+        #region ToJSON(CustomLocalAccessInfo2Serializer = null, CustomBusinessDetailsSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
+        /// <param name="CustomLocalAccessInfo2Serializer">A delegate to serialize custom local access information JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<LocalAccessInfo>?  CustomLocalAccessInfoSerializer   = null,
+        public JObject ToJSON(CustomJObjectSerializerDelegate<LocalAccessInfo2>?  CustomLocalAccessInfo2Serializer   = null,
                               CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null,
                               CustomJObjectSerializerDelegate<Image>?            CustomImageSerializer             = null)
         {
@@ -476,8 +476,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomLocalAccessInfoSerializer is not null
-                       ? CustomLocalAccessInfoSerializer(this, json)
+            return CustomLocalAccessInfo2Serializer is not null
+                       ? CustomLocalAccessInfo2Serializer(this, json)
                        : json;
 
         }
@@ -489,7 +489,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Clone this object.
         /// </summary>
-        public LocalAccessInfo Clone()
+        public LocalAccessInfo2 Clone()
 
             => new(AccessToken,
                    Status,
@@ -508,112 +508,112 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Operator overloading
 
-        #region Operator == (LocalAccessInfo1, LocalAccessInfo2)
+        #region Operator == (LocalAccessInfo21, LocalAccessInfo22)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocalAccessInfo1">A local access information.</param>
-        /// <param name="LocalAccessInfo2">Another local access information.</param>
+        /// <param name="LocalAccessInfo21">A local access information.</param>
+        /// <param name="LocalAccessInfo22">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (LocalAccessInfo LocalAccessInfo1,
-                                           LocalAccessInfo LocalAccessInfo2)
+        public static Boolean operator == (LocalAccessInfo2 LocalAccessInfo21,
+                                           LocalAccessInfo2 LocalAccessInfo22)
         {
 
-            if (Object.ReferenceEquals(LocalAccessInfo1, LocalAccessInfo2))
+            if (Object.ReferenceEquals(LocalAccessInfo21, LocalAccessInfo22))
                 return true;
 
-            if ((LocalAccessInfo1 is null) || (LocalAccessInfo2 is null))
+            if ((LocalAccessInfo21 is null) || (LocalAccessInfo22 is null))
                 return false;
 
-            return LocalAccessInfo1.Equals(LocalAccessInfo2);
+            return LocalAccessInfo21.Equals(LocalAccessInfo22);
 
         }
 
         #endregion
 
-        #region Operator != (LocalAccessInfo1, LocalAccessInfo2)
+        #region Operator != (LocalAccessInfo21, LocalAccessInfo22)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocalAccessInfo1">A local access information.</param>
-        /// <param name="LocalAccessInfo2">Another local access information.</param>
+        /// <param name="LocalAccessInfo21">A local access information.</param>
+        /// <param name="LocalAccessInfo22">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (LocalAccessInfo LocalAccessInfo1,
-                                           LocalAccessInfo LocalAccessInfo2)
+        public static Boolean operator != (LocalAccessInfo2 LocalAccessInfo21,
+                                           LocalAccessInfo2 LocalAccessInfo22)
 
-            => !(LocalAccessInfo1 == LocalAccessInfo2);
+            => !(LocalAccessInfo21 == LocalAccessInfo22);
 
         #endregion
 
-        #region Operator <  (LocalAccessInfo1, LocalAccessInfo2)
+        #region Operator <  (LocalAccessInfo21, LocalAccessInfo22)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocalAccessInfo1">A local access information.</param>
-        /// <param name="LocalAccessInfo2">Another local access information.</param>
+        /// <param name="LocalAccessInfo21">A local access information.</param>
+        /// <param name="LocalAccessInfo22">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (LocalAccessInfo LocalAccessInfo1,
-                                          LocalAccessInfo LocalAccessInfo2)
+        public static Boolean operator < (LocalAccessInfo2 LocalAccessInfo21,
+                                          LocalAccessInfo2 LocalAccessInfo22)
 
-            => LocalAccessInfo1 is null
-                   ? throw new ArgumentNullException(nameof(LocalAccessInfo1), "The given local access information must not be null!")
-                   : LocalAccessInfo1.CompareTo(LocalAccessInfo2) < 0;
+            => LocalAccessInfo21 is null
+                   ? throw new ArgumentNullException(nameof(LocalAccessInfo21), "The given local access information must not be null!")
+                   : LocalAccessInfo21.CompareTo(LocalAccessInfo22) < 0;
 
         #endregion
 
-        #region Operator <= (LocalAccessInfo1, LocalAccessInfo2)
+        #region Operator <= (LocalAccessInfo21, LocalAccessInfo22)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocalAccessInfo1">A local access information.</param>
-        /// <param name="LocalAccessInfo2">Another local access information.</param>
+        /// <param name="LocalAccessInfo21">A local access information.</param>
+        /// <param name="LocalAccessInfo22">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (LocalAccessInfo LocalAccessInfo1,
-                                           LocalAccessInfo LocalAccessInfo2)
+        public static Boolean operator <= (LocalAccessInfo2 LocalAccessInfo21,
+                                           LocalAccessInfo2 LocalAccessInfo22)
 
-            => !(LocalAccessInfo1 > LocalAccessInfo2);
+            => !(LocalAccessInfo21 > LocalAccessInfo22);
 
         #endregion
 
-        #region Operator >  (LocalAccessInfo1, LocalAccessInfo2)
+        #region Operator >  (LocalAccessInfo21, LocalAccessInfo22)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocalAccessInfo1">A local access information.</param>
-        /// <param name="LocalAccessInfo2">Another local access information.</param>
+        /// <param name="LocalAccessInfo21">A local access information.</param>
+        /// <param name="LocalAccessInfo22">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (LocalAccessInfo LocalAccessInfo1,
-                                          LocalAccessInfo LocalAccessInfo2)
+        public static Boolean operator > (LocalAccessInfo2 LocalAccessInfo21,
+                                          LocalAccessInfo2 LocalAccessInfo22)
 
-            => LocalAccessInfo1 is null
-                   ? throw new ArgumentNullException(nameof(LocalAccessInfo1), "The given local access information must not be null!")
-                   : LocalAccessInfo1.CompareTo(LocalAccessInfo2) > 0;
+            => LocalAccessInfo21 is null
+                   ? throw new ArgumentNullException(nameof(LocalAccessInfo21), "The given local access information must not be null!")
+                   : LocalAccessInfo21.CompareTo(LocalAccessInfo22) > 0;
 
         #endregion
 
-        #region Operator >= (LocalAccessInfo1, LocalAccessInfo2)
+        #region Operator >= (LocalAccessInfo21, LocalAccessInfo22)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocalAccessInfo1">A local access information.</param>
-        /// <param name="LocalAccessInfo2">Another local access information.</param>
+        /// <param name="LocalAccessInfo21">A local access information.</param>
+        /// <param name="LocalAccessInfo22">Another local access information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (LocalAccessInfo LocalAccessInfo1,
-                                           LocalAccessInfo LocalAccessInfo2)
+        public static Boolean operator >= (LocalAccessInfo2 LocalAccessInfo21,
+                                           LocalAccessInfo2 LocalAccessInfo22)
 
-            => !(LocalAccessInfo1 < LocalAccessInfo2);
-
-        #endregion
+            => !(LocalAccessInfo21 < LocalAccessInfo22);
 
         #endregion
 
-        #region IComparable<LocalAccessInfo> Members
+        #endregion
+
+        #region IComparable<LocalAccessInfo2> Members
 
         #region CompareTo(Object)
 
@@ -623,57 +623,57 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Object">An access information to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is LocalAccessInfo localAccessInfo
+            => Object is LocalAccessInfo2 localAccessInfo
                    ? CompareTo(localAccessInfo)
                    : throw new ArgumentException("The given object is not a local access information!",
                                                  nameof(Object));
 
         #endregion
 
-        #region CompareTo(LocalAccessInfo)
+        #region CompareTo(LocalAccessInfo2)
 
         /// <summary>
         /// Compares two access information.
         /// </summary>
-        /// <param name="LocalAccessInfo">An access information to compare with.</param>
-        public Int32 CompareTo(LocalAccessInfo? LocalAccessInfo)
+        /// <param name="LocalAccessInfo2">An access information to compare with.</param>
+        public Int32 CompareTo(LocalAccessInfo2? LocalAccessInfo2)
         {
 
-            if (LocalAccessInfo is null)
-                throw new ArgumentNullException(nameof(LocalAccessInfo), "The given local access information must not be null!");
+            if (LocalAccessInfo2 is null)
+                throw new ArgumentNullException(nameof(LocalAccessInfo2), "The given local access information must not be null!");
 
-            var c = AccessToken.               CompareTo(LocalAccessInfo.AccessToken);
-
-            if (c == 0)
-                c = Status.                    CompareTo(LocalAccessInfo.Status);
-
+            var c = AccessToken.               CompareTo(LocalAccessInfo2.AccessToken);
 
             if (c == 0)
-                c = CountryCode.               CompareTo(LocalAccessInfo.CountryCode);
+                c = Status.                    CompareTo(LocalAccessInfo2.Status);
+
 
             if (c == 0)
-                c = PartyId.                   CompareTo(LocalAccessInfo.PartyId);
+                c = CountryCode.               CompareTo(LocalAccessInfo2.CountryCode);
 
             if (c == 0)
-                c = Role.                      CompareTo(LocalAccessInfo.Role);
-
-            if (c == 0 && BusinessDetails is not null && LocalAccessInfo.BusinessDetails is not null)
-                c = BusinessDetails.           CompareTo(LocalAccessInfo.BusinessDetails);
-
-            if (c == 0 && NotBefore.HasValue && LocalAccessInfo.NotBefore.HasValue)
-                c = NotBefore.  Value.         CompareTo(LocalAccessInfo.NotBefore.  Value);
-
-            if (c == 0 && NotAfter. HasValue && LocalAccessInfo.NotAfter. HasValue)
-                c = NotAfter.   Value.         CompareTo(LocalAccessInfo.NotAfter.   Value);
-
-            if (c == 0 && VersionsURL.HasValue && LocalAccessInfo.VersionsURL.HasValue)
-                c = VersionsURL.Value.         CompareTo(LocalAccessInfo.VersionsURL.Value);
+                c = PartyId.                   CompareTo(LocalAccessInfo2.PartyId);
 
             if (c == 0)
-                c = AccessTokenIsBase64Encoded.CompareTo(LocalAccessInfo.AccessTokenIsBase64Encoded);
+                c = Role.                      CompareTo(LocalAccessInfo2.Role);
+
+            if (c == 0 && BusinessDetails is not null && LocalAccessInfo2.BusinessDetails is not null)
+                c = BusinessDetails.           CompareTo(LocalAccessInfo2.BusinessDetails);
+
+            if (c == 0 && NotBefore.HasValue && LocalAccessInfo2.NotBefore.HasValue)
+                c = NotBefore.  Value.         CompareTo(LocalAccessInfo2.NotBefore.  Value);
+
+            if (c == 0 && NotAfter. HasValue && LocalAccessInfo2.NotAfter. HasValue)
+                c = NotAfter.   Value.         CompareTo(LocalAccessInfo2.NotAfter.   Value);
+
+            if (c == 0 && VersionsURL.HasValue && LocalAccessInfo2.VersionsURL.HasValue)
+                c = VersionsURL.Value.         CompareTo(LocalAccessInfo2.VersionsURL.Value);
 
             if (c == 0)
-                c = AllowDowngrades.           CompareTo(LocalAccessInfo.AllowDowngrades);
+                c = AccessTokenIsBase64Encoded.CompareTo(LocalAccessInfo2.AccessTokenIsBase64Encoded);
+
+            if (c == 0)
+                c = AllowDowngrades.           CompareTo(LocalAccessInfo2.AllowDowngrades);
 
             return c;
 
@@ -683,7 +683,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region IEquatable<LocalAccessInfo> Members
+        #region IEquatable<LocalAccessInfo2> Members
 
         #region Equals(Object)
 
@@ -693,42 +693,42 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Object">An access information to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is LocalAccessInfo localAccessInfo &&
+            => Object is LocalAccessInfo2 localAccessInfo &&
                    Equals(localAccessInfo);
 
         #endregion
 
-        #region Equals(LocalAccessInfo)
+        #region Equals(LocalAccessInfo2)
 
         /// <summary>
         /// Compares two access information for equality.
         /// </summary>
-        /// <param name="LocalAccessInfo">An access information to compare with.</param>
-        public Boolean Equals(LocalAccessInfo? LocalAccessInfo)
+        /// <param name="LocalAccessInfo2">An access information to compare with.</param>
+        public Boolean Equals(LocalAccessInfo2? LocalAccessInfo2)
 
-            => LocalAccessInfo is not null &&
+            => LocalAccessInfo2 is not null &&
 
-               AccessToken.               Equals(LocalAccessInfo.AccessToken)                &&
-               Status.                    Equals(LocalAccessInfo.Status)                     &&
+               AccessToken.               Equals(LocalAccessInfo2.AccessToken)                &&
+               Status.                    Equals(LocalAccessInfo2.Status)                     &&
 
-               CountryCode.               Equals(LocalAccessInfo.CountryCode)                &&
-               PartyId.                   Equals(LocalAccessInfo.PartyId)                    &&
-               Role.                      Equals(LocalAccessInfo.Role)                       &&
+               CountryCode.               Equals(LocalAccessInfo2.CountryCode)                &&
+               PartyId.                   Equals(LocalAccessInfo2.PartyId)                    &&
+               Role.                      Equals(LocalAccessInfo2.Role)                       &&
 
-             ((BusinessDetails is null     && LocalAccessInfo.BusinessDetails is null)  ||
-              (BusinessDetails is not null && LocalAccessInfo.BusinessDetails is not null && BusinessDetails.  Equals(LocalAccessInfo.BusinessDetails)))   &&
+             ((BusinessDetails is null     && LocalAccessInfo2.BusinessDetails is null)  ||
+              (BusinessDetails is not null && LocalAccessInfo2.BusinessDetails is not null && BusinessDetails.  Equals(LocalAccessInfo2.BusinessDetails)))   &&
 
-            ((!NotBefore.      HasValue &&   !LocalAccessInfo.NotBefore.      HasValue) ||
-              (NotBefore.      HasValue &&    LocalAccessInfo.NotBefore.      HasValue    && NotBefore.  Value.Equals(LocalAccessInfo.NotBefore.  Value))) &&
+            ((!NotBefore.      HasValue &&   !LocalAccessInfo2.NotBefore.      HasValue) ||
+              (NotBefore.      HasValue &&    LocalAccessInfo2.NotBefore.      HasValue    && NotBefore.  Value.Equals(LocalAccessInfo2.NotBefore.  Value))) &&
 
-            ((!NotAfter.       HasValue &&   !LocalAccessInfo.NotAfter.       HasValue) ||
-              (NotAfter.       HasValue &&    LocalAccessInfo.NotAfter.       HasValue    && NotAfter.   Value.Equals(LocalAccessInfo.NotAfter.   Value))) &&
+            ((!NotAfter.       HasValue &&   !LocalAccessInfo2.NotAfter.       HasValue) ||
+              (NotAfter.       HasValue &&    LocalAccessInfo2.NotAfter.       HasValue    && NotAfter.   Value.Equals(LocalAccessInfo2.NotAfter.   Value))) &&
 
-            ((!VersionsURL.    HasValue &&   !LocalAccessInfo.VersionsURL.    HasValue) ||
-              (VersionsURL.    HasValue &&    LocalAccessInfo.VersionsURL.    HasValue    && VersionsURL.Value.Equals(LocalAccessInfo.VersionsURL.Value))) &&
+            ((!VersionsURL.    HasValue &&   !LocalAccessInfo2.VersionsURL.    HasValue) ||
+              (VersionsURL.    HasValue &&    LocalAccessInfo2.VersionsURL.    HasValue    && VersionsURL.Value.Equals(LocalAccessInfo2.VersionsURL.Value))) &&
 
-               AccessTokenIsBase64Encoded.Equals(LocalAccessInfo.AccessTokenIsBase64Encoded) &&
-               AllowDowngrades.           Equals(LocalAccessInfo.AllowDowngrades);
+               AccessTokenIsBase64Encoded.Equals(LocalAccessInfo2.AccessTokenIsBase64Encoded) &&
+               AllowDowngrades.           Equals(LocalAccessInfo2.AllowDowngrades);
 
         #endregion
 

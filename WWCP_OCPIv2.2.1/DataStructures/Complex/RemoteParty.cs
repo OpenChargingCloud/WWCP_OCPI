@@ -261,10 +261,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        new LocalAccessInfo(
                            AccessToken,
                            AccessStatus,
-                           Roles,
                            LocalAccessNotBefore,
                            LocalAccessNotAfter,
-                           null,
                            AccessTokenBase64Encoding,
                            AllowDowngrades
                        )
@@ -398,10 +396,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        new LocalAccessInfo(
                            AccessToken,
                            AccessStatus,
-                           Roles,
                            LocalAccessNotBefore,
                            LocalAccessNotAfter,
-                           RemoteVersionsURL,
                            AccessTokenBase64Encoding,
                            AllowDowngrades
                        )
@@ -539,10 +535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                                   CustomImageSerializer)))),
 
                            localAccessInfos.Any()
-                               ? new JProperty("accessInfos",         new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer,
-                                                                                                                                                      CustomCredentialsRoleSerializer,
-                                                                                                                                                      CustomBusinessDetailsSerializer,
-                                                                                                                                                      CustomImageSerializer))))
+                               ? new JProperty("accessInfos",         new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
                                : null,
 
                            remoteAccessInfos.Any()

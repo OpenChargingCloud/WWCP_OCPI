@@ -1824,7 +1824,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region TryGetLocalAccessInfo(AccessToken, out LocalAccessInfo)
 
-        public Boolean TryGetLocalAccessInfo(AccessToken AccessToken, out LocalAccessInfo LocalAccessInfo)
+        public Boolean TryGetLocalAccessInfo(AccessToken AccessToken, out LocalAccessInfo? LocalAccessInfo)
         {
 
             var accessInfos = remoteParties.Values.Where     (remoteParty => remoteParty.LocalAccessInfos.Any(accessInfo => accessInfo.AccessToken == AccessToken)).

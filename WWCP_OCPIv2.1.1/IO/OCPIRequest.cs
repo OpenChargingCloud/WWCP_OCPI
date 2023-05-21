@@ -205,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public AccessToken?       AccessToken         { get; }
 
-        public LocalAccessInfo?   LocalAccessInfo     { get; }
+        public LocalAccessInfo2?  LocalAccessInfo     { get; }
 
         public RemoteParty?       RemoteParty         { get; }
 
@@ -269,7 +269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         RemoteParty      = parties.First();
 
-                        LocalAccessInfo  = new LocalAccessInfo(
+                        LocalAccessInfo  = new LocalAccessInfo2(
                                                AccessToken.Value,
                                                RemoteParty.LocalAccessInfos.First(accessInfoStatus => accessInfoStatus.AccessToken == AccessToken).Status,
                                                RemoteParty.CountryCode,

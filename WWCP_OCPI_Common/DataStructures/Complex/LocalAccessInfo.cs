@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2023 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,29 +22,10 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
-using cloud.charging.open.protocols.OCPI;
-
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1
+namespace cloud.charging.open.protocols.OCPI
 {
-
-    public static class AccessInfoextentions
-    {
-
-        public static Boolean Is(this LocalAccessInfo?  AccessInfo,
-                                 Roles                  Role)
-
-            => AccessInfo?.Is(Role) == true;
-
-        public static Boolean IsNot(this LocalAccessInfo?  AccessInfo,
-                                    Roles                  Role)
-
-            => AccessInfo is null ||
-               AccessInfo.IsNot(Role);
-
-    }
-
 
     /// <summary>
     /// Local Access information.
@@ -60,100 +41,74 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The access token.
         /// </summary>
         [Mandatory]
-        public AccessToken                   AccessToken                   { get; }
+        public AccessToken       AccessToken                   { get; }
 
         /// <summary>
         /// The access status.
         /// </summary>
         [Mandatory]
-        public AccessStatus                  Status                        { get; }
+        public AccessStatus      Status                        { get; }
 
         /// <summary>
         /// This local access information should not be used before this timestamp.
         /// </summary>
         [Optional]
-        public DateTime?                     NotBefore                     { get; }
+        public DateTime?         NotBefore                     { get; }
 
         /// <summary>
         /// This local access information should not be used after this timestamp.
         /// </summary>
         [Optional]
-        public DateTime?                     NotAfter                      { get; }
-
-        /// <summary>
-        /// The credential roles.
-        /// </summary>
-        [Mandatory]
-        public IEnumerable<CredentialsRole>  Roles                         { get; }
-
-        /// <summary>
-        /// The optional URL to get the remote OCPI versions information.
-        /// </summary>
-        [Optional]
-        public URL?                          VersionsURL                   { get; }
+        public DateTime?         NotAfter                      { get; }
 
         /// <summary>
         /// Whether the access token is base64 encoded or not.
         /// </summary>
         [Mandatory]
-        public Boolean                       AccessTokenIsBase64Encoded    { get; }
+        public Boolean           AccessTokenIsBase64Encoded    { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI does not define any behaviour for this.
         /// </summary>
         [Mandatory]
-        public Boolean                       AllowDowngrades               { get; }
-
-
-        public Boolean Is(Roles Role)
-            =>  Roles.Any(role => role.Role == Role);
-
-        public Boolean IsNot(Roles Role)
-            => !Roles.Any(role => role.Role == Role);
+        public Boolean           AllowDowngrades               { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create new Local access information.
+        /// Create new local access information.
         /// </summary>
         /// <param name="AccessToken">An access token.</param>
         /// <param name="Status">An access status.</param>
-        /// <param name="Roles">an enumeration of credential roles.</param>
         /// <param name="NotBefore">This local access information should not be used before this timestamp.</param>
         /// <param name="NotAfter">This local access information should not be used after this timestamp.</param>
-        /// <param name="VersionsURL">An optional URL to get the remote OCPI versions information.</param>
         /// <param name="AccessTokenIsBase64Encoded">Whether the access token is base64 encoded or not.</param>
-        public LocalAccessInfo(AccessToken                    AccessToken,
-                               AccessStatus                   Status,
-                               IEnumerable<CredentialsRole>?  Roles                        = null,
-                               DateTime?                      NotBefore                    = null,
-                               DateTime?                      NotAfter                     = null,
-                               URL?                           VersionsURL                  = null,
-                               Boolean?                       AccessTokenIsBase64Encoded   = false,
-                               Boolean?                       AllowDowngrades              = false)
+        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
+        public LocalAccessInfo(AccessToken       AccessToken,
+                               AccessStatus      Status,
+                               DateTime?         NotBefore                    = null,
+                               DateTime?         NotAfter                     = null,
+                               Boolean?          AccessTokenIsBase64Encoded   = false,
+                               Boolean?          AllowDowngrades              = false)
         {
 
             this.AccessToken                 = AccessToken;
             this.Status                      = Status;
-            this.Roles                       = Roles?.Distinct()          ?? Array.Empty<CredentialsRole>();
             this.NotBefore                   = NotBefore;
             this.NotAfter                    = NotAfter;
-            this.VersionsURL                 = VersionsURL;
             this.AccessTokenIsBase64Encoded  = AccessTokenIsBase64Encoded ?? false;
             this.AllowDowngrades             = AllowDowngrades            ?? false;
 
             unchecked
             {
 
-                this.hashCode = this.AccessToken.               GetHashCode()       * 19 ^
-                                this.Status.                    GetHashCode()       * 17 ^
-                                this.Roles.                     CalcHashCode()      * 13 ^
+                this.hashCode = this.AccessToken.               GetHashCode()       * 29 ^
+                                this.Status.                    GetHashCode()       * 27 ^
                                (this.NotBefore?.                GetHashCode() ?? 0) * 11 ^
                                (this.NotAfter?.                 GetHashCode() ?? 0) *  7 ^
-                               (this.VersionsURL?.              GetHashCode() ?? 0) *  5 ^
                                 this.AccessTokenIsBase64Encoded.GetHashCode()       *  3 ^
                                 this.AllowDowngrades.           GetHashCode();
 
@@ -259,19 +214,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
-                #region Parse CredentialsRoles              [mandatory]
-
-                if (!JSON.ParseMandatoryHashSet("businessDetails",
-                                                "business details",
-                                                CredentialsRole.TryParse,
-                                                out HashSet<CredentialsRole> CredentialsRoles,
-                                                out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
                 #region Parse NotBefore                     [optional]
 
                 if (JSON.ParseOptional("notBefore",
@@ -294,19 +236,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 {
                     if (ErrorResponse is not null)
                         return false;
-                }
-
-                #endregion
-
-                #region Parse VersionsURL                   [mandatory]
-
-                if (!JSON.ParseMandatory("versionsURL",
-                                         "versions URL",
-                                         URL.TryParse,
-                                         out URL VersionsURL,
-                                         out ErrorResponse))
-                {
-                    return false;
                 }
 
                 #endregion
@@ -338,25 +267,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 LocalAccessInfo = new LocalAccessInfo(AccessToken,
                                                       Status,
-                                                      CredentialsRoles,
                                                       NotBefore,
                                                       NotAfter,
-                                                      VersionsURL,
                                                       AccessTokenIsBase64Encoded,
                                                       AllowDowngrades);
 
 
                 if (CustomLocalAccessInfoParser is not null)
                     LocalAccessInfo = CustomLocalAccessInfoParser(JSON,
-                                                          LocalAccessInfo);
+                                                                  LocalAccessInfo);
 
                 return true;
 
             }
             catch (Exception e)
             {
-                LocalAccessInfo    = default;
-                ErrorResponse  = "The given JSON representation of a local access information is invalid: " + e.Message;
+                LocalAccessInfo  = default;
+                ErrorResponse    = "The given JSON representation of a local access information is invalid: " + e.Message;
                 return false;
             }
 
@@ -364,28 +291,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ToJSON(CustomLocalAccessInfoSerializer = null, CustomCredentialsRoleSerializer = null, ...)
+        #region ToJSON(CustomLocalAccessInfoSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
-        /// <param name="CustomCredentialsRoleSerializer">A delegate to serialize custom credentials role JSON objects.</param>
-        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<LocalAccessInfo>?  CustomLocalAccessInfoSerializer   = null,
-                              CustomJObjectSerializerDelegate<CredentialsRole>?  CustomCredentialsRoleSerializer   = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null,
-                              CustomJObjectSerializerDelegate<Image>?            CustomImageSerializer             = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<LocalAccessInfo>? CustomLocalAccessInfoSerializer = null)
         {
 
             var json = JSONObject.Create(
 
-                                 new JProperty("accessToken",                  AccessToken.ToString()),
-                                 new JProperty("status",                       Status.     ToString()),
-                                 new JProperty("roles",                        new JArray(Roles.Select(role => role.ToJSON(CustomCredentialsRoleSerializer,
-                                                                                                                           CustomBusinessDetailsSerializer,
-                                                                                                                           CustomImageSerializer)))),
+                                 new JProperty("accessToken",                  AccessToken.    ToString()),
+                                 new JProperty("status",                       Status.         ToString()),
 
                            NotBefore.HasValue
                                ? new JProperty("notBefore",                    NotBefore.Value.ToIso8601())
@@ -393,10 +311,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            NotAfter.HasValue
                                ? new JProperty("notAfter",                     NotAfter. Value.ToIso8601())
-                               : null,
-
-                           VersionsURL.HasValue
-                               ? new JProperty("versionsURL",                  VersionsURL.ToString())
                                : null,
 
                                  new JProperty("accessTokenIsBase64Encoded",   AccessTokenIsBase64Encoded),
@@ -421,10 +335,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => new(AccessToken,
                    Status,
-                   Roles.Select(credentialsRole => credentialsRole.Clone()).ToArray(),
                    NotBefore,
                    NotAfter,
-                   VersionsURL,
                    AccessTokenIsBase64Encoded,
                    AllowDowngrades);
 
@@ -572,30 +484,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (c == 0)
                 c = Status.                    CompareTo(LocalAccessInfo.Status);
 
-            if (c == 0)
-                c = Roles.Count().             CompareTo(LocalAccessInfo.Roles.Count());
-
             if (c == 0 && NotBefore.HasValue && LocalAccessInfo.NotBefore.HasValue)
                 c = NotBefore.  Value.         CompareTo(LocalAccessInfo.NotBefore.  Value);
 
             if (c == 0 && NotAfter. HasValue && LocalAccessInfo.NotAfter. HasValue)
                 c = NotAfter.   Value.         CompareTo(LocalAccessInfo.NotAfter.   Value);
-
-            if (c == 0)
-            {
-                for (var i = 0; i < Roles.Count(); i++)
-                {
-
-                    c = Roles.ElementAt(i).CompareTo(LocalAccessInfo.Roles.ElementAt(i));
-
-                    if (c != 0)
-                        break;
-
-                }
-            }
-
-            if (c == 0 && VersionsURL.HasValue && LocalAccessInfo.VersionsURL.HasValue)
-                c = VersionsURL.Value.         CompareTo(LocalAccessInfo.VersionsURL.Value);
 
             if (c == 0)
                 c = AccessTokenIsBase64Encoded.CompareTo(LocalAccessInfo.AccessTokenIsBase64Encoded);
@@ -636,23 +529,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => LocalAccessInfo is not null &&
 
-               AccessToken.               Equals(LocalAccessInfo.AccessToken)   &&
-               Status.                    Equals(LocalAccessInfo.Status)        &&
-
-               Roles.Count().             Equals(LocalAccessInfo.Roles.Count()) &&
-               Roles.All(LocalAccessInfo.Roles.Contains) &&
-
-            ((!NotBefore.  HasValue && !LocalAccessInfo.NotBefore.  HasValue) ||
-              (NotBefore.  HasValue &&  LocalAccessInfo.NotBefore.  HasValue    && NotBefore.  Value.Equals(LocalAccessInfo.NotBefore.  Value))) &&
-
-            ((!NotAfter.   HasValue && !LocalAccessInfo.NotAfter.   HasValue) ||
-              (NotAfter.   HasValue &&  LocalAccessInfo.NotAfter.   HasValue    && NotAfter.   Value.Equals(LocalAccessInfo.NotAfter.   Value))) &&
-
-            ((!VersionsURL.HasValue && !LocalAccessInfo.VersionsURL.HasValue) ||
-              (VersionsURL.HasValue &&  LocalAccessInfo.VersionsURL.HasValue    && VersionsURL.Value.Equals(LocalAccessInfo.VersionsURL.Value))) &&
-
+               AccessToken.               Equals(LocalAccessInfo.AccessToken)                &&
+               Status.                    Equals(LocalAccessInfo.Status)                     &&
                AccessTokenIsBase64Encoded.Equals(LocalAccessInfo.AccessTokenIsBase64Encoded) &&
-               AllowDowngrades.           Equals(LocalAccessInfo.AllowDowngrades);
+               AllowDowngrades.           Equals(LocalAccessInfo.AllowDowngrades)            &&
+
+            ((!NotBefore.HasValue && !LocalAccessInfo.NotBefore.HasValue) ||
+              (NotBefore.HasValue &&  LocalAccessInfo.NotBefore.HasValue && NotBefore.Value.Equals(LocalAccessInfo.NotBefore.Value))) &&
+
+            ((!NotAfter. HasValue && !LocalAccessInfo.NotAfter. HasValue) ||
+              (NotAfter. HasValue &&  LocalAccessInfo.NotAfter. HasValue && NotAfter. Value.Equals(LocalAccessInfo.NotAfter. Value)));
 
         #endregion
 
@@ -677,9 +563,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public override String ToString()
 
-            //=> $"{AccessToken}{(AccessTokenBase64Encoding ? "[base64}" : "")} @ {VersionsURL} {Status}";
-            => $"'{AccessToken}' {Status} @ '{VersionsURL}'";
-            //=> $"{AccessToken}{(AccessTokenIsBase64Encoded ? "[base64}" : "")} for {BusinessDetails.Name} ({CountryCode}{PartyId} {Role})";
+            => $"'{AccessToken}' ({Status}) {(AllowDowngrades ? "[Downgrades allowed]" : "[No downgrades]")}";
 
         #endregion
 

@@ -212,10 +212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                     LocalAccessInfos:    new[] {
                                              new LocalAccessInfo(
                                                  AccessToken.Parse(UnknownToken),
-                                                 AccessStatus.ALLOWED,
-                                                 CountryCode.Parse("DE"),
-                                                 Party_Id.   Parse("GDF"),
-                                                 Roles.      EMSP
+                                                 AccessStatus.ALLOWED
                                              )
                                          },
                     RemoteAccessInfos:   new[] {
@@ -322,10 +319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                     LocalAccessInfos:    new[] {
                                              new LocalAccessInfo(
                                                  AccessToken.Parse(BlockedEMSPToken),
-                                                 AccessStatus.ALLOWED,
-                                                 CountryCode.Parse("DE"),
-                                                 Party_Id.   Parse("GDF"),
-                                                 Roles.      EMSP
+                                                 AccessStatus.ALLOWED
                                              )
                                          },
                     RemoteAccessInfos:   new[] {
