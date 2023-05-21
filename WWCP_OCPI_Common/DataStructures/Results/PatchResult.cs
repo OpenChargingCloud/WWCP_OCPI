@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2023 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,11 +21,11 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1
+namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
-    /// A HTTP PATCH result
+    /// A patch result.
     /// </summary>
     public readonly struct PatchResult<T> : IEquatable<PatchResult<T>>
     {
@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public Boolean  IsFailed
             => !IsSuccess;
 
-        public T        PatchedData     { get; }
+        public T?       PatchedData     { get; }
 
         public String?  ErrorResponse   { get; }
 
@@ -46,10 +46,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new HTTP Patch result.
+        /// Create a new patch result.
         /// </summary>
         private PatchResult(Boolean  IsSuccess,
-                            T        PatchedData,
+                            T?       PatchedData,
                             String?  ErrorResponse   = null)
         {
 
@@ -57,24 +57,62 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.PatchedData    = PatchedData;
             this.ErrorResponse  = ErrorResponse;
 
+            unchecked
+            {
+
+                hashCode = this.IsSuccess.     GetHashCode() * 5       ^
+                          (this.PatchedData?.  GetHashCode() * 3 ?? 0) ^
+                          (this.ErrorResponse?.GetHashCode()     ?? 0);
+
+            }
+
         }
 
         #endregion
 
 
+        #region (static) Success    (PatchedData, ErrorResponse = null)
+
         public static PatchResult<T> Success(T        PatchedData,
-                                             String?  ErrorResponse   = null)
+                                             String?  ErrorResponse = null)
 
             => new (true,
                     PatchedData,
                     ErrorResponse);
 
-        public static PatchResult<T> Failed(T        PatchedData,
-                                            String?  ErrorResponse   = null)
+        #endregion
+
+        #region (static) NoOperation(PatchedData, ErrorResponse = null)
+
+        public static PatchResult<T> NoOperation(T        PatchedData,
+                                                 String?  ErrorResponse = null)
+
+            => new (true,
+                    PatchedData,
+                    ErrorResponse);
+
+        #endregion
+
+        #region (static) Failed     (PatchedData, ErrorResponse)
+
+        public static PatchResult<T> Failed(T?       PatchedData,
+                                            String   ErrorResponse)
 
             => new (false,
                     PatchedData,
                     ErrorResponse);
+
+        #endregion
+
+        #region (static) Failed     (             ErrorResponse)
+
+        public static PatchResult<T> Failed(String ErrorResponse)
+
+            => new (false,
+                    default,
+                    ErrorResponse);
+
+        #endregion
 
 
         #region Operator overloading
@@ -84,8 +122,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="PatchResult1">A JSON PATCH result.</param>
-        /// <param name="PatchResult2">Another JSON PATCH result.</param>
+        /// <param name="PatchResult1">A patch result.</param>
+        /// <param name="PatchResult2">Another patch result.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (PatchResult<T> PatchResult1,
                                            PatchResult<T> PatchResult2)
@@ -99,8 +137,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="PatchResult1">A JSON PATCH result.</param>
-        /// <param name="PatchResult2">Another JSON PATCH result.</param>
+        /// <param name="PatchResult1">A patch result.</param>
+        /// <param name="PatchResult2">Another patch result.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (PatchResult<T> PatchResult1,
                                            PatchResult<T> PatchResult2)
@@ -116,9 +154,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two JSON PATCH results for equality.
+        /// Compares two patch results for equality.
         /// </summary>
-        /// <param name="Object">A JSON PATCH result to compare with.</param>
+        /// <param name="Object">An add result to compare with.</param>
         public override Boolean Equals(Object? Object)
 
             => Object is PatchResult<T> patchResult &&
@@ -129,9 +167,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region Equals(PatchResult)
 
         /// <summary>
-        /// Compares two JSON PATCH results for equality.
+        /// Compares two patch results for equality.
         /// </summary>
-        /// <param name="PatchResult">A JSON PATCH result to compare with.</param>
+        /// <param name="PatchResult">An add result to compare with.</param>
         public Boolean Equals(PatchResult<T> PatchResult)
 
             => IsSuccess.Equals(PatchResult.IsSuccess) &&
@@ -148,21 +186,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return IsSuccess.     GetHashCode()       * 5 ^
-                      (PatchedData?.  GetHashCode() ?? 0) * 3 ^
-                      (ErrorResponse?.GetHashCode() ?? 0);
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

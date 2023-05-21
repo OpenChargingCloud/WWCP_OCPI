@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) NoOperation(Data,             ErrorResponse = null)
+        #region (static) NoOperation(Data, ErrorResponse = null)
 
         public static RemoveResult<T> NoOperation(T        Data,
                                                   String?  ErrorResponse = null)
@@ -93,7 +93,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) Failed     (Data,             ErrorResponse)
+        #region (static) Failed     (Data, ErrorResponse)
 
         public static RemoveResult<T> Failed(T?       Data,
                                              String   ErrorResponse)
@@ -104,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) Failed     (                  ErrorResponse)
+        #region (static) Failed     (      ErrorResponse)
 
         public static RemoveResult<T> Failed(String ErrorResponse)
 
