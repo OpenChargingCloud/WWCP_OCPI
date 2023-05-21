@@ -421,6 +421,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
+        #region Custom JSON serializers
+
         public CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                 { get; }
         public CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer            { get; }
         public CustomJObjectSerializerDelegate<Price>?                CustomPriceSerializer                  { get; }
@@ -430,6 +432,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer              { get; }
         public CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer           { get; }
         public CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer    { get; }
+
+        #endregion
 
         #region Constructor(s)
 

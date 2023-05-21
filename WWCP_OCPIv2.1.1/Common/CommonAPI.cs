@@ -36,7 +36,6 @@ using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
-using System.Transactions;
 
 #endregion
 
@@ -438,6 +437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+        #region Custom JSON serializers
 
         public CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                { get; }
         public CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           { get; }
@@ -447,6 +447,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             { get; }
         public CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          { get; }
         public CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   { get; }
+
+        #endregion
 
         #region Constructor(s)
 
@@ -5219,14 +5221,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region TariffExists(TariffId)
 
         public Boolean TariffExists(Tariff_Id TariffId)
-        {
 
-            lock (tariffs)
-            {
-                return tariffs.ContainsKey(TariffId);
-            }
-
-        }
+            => tariffs.ContainsKey(TariffId);
 
         #endregion
 
@@ -5236,16 +5232,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     out Tariff?  Tariff)
         {
 
-            lock (tariffs)
-            {
+            if (tariffs.TryGetValue(TariffId, out Tariff))
+                return true;
 
-                if (tariffs.TryGetValue(TariffId, out Tariff))
-                    return true;
-
-                Tariff = null;
-                return false;
-
-            }
+            Tariff = null;
+            return false;
 
         }
 
@@ -5254,18 +5245,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region GetTariffs  (IncludeTariff = null)
 
         public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean>? IncludeTariff = null)
-        {
 
-            lock (tariffs)
-            {
-
-                return IncludeTariff is null
-                           ? tariffs.Values.                     ToArray()
-                           : tariffs.Values.Where(IncludeTariff).ToArray();
-
-            }
-
-        }
+            => IncludeTariff is null
+                   ? tariffs.Values
+                   : tariffs.Values.Where(IncludeTariff);
 
         #endregion
 
@@ -5273,18 +5256,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public IEnumerable<Tariff> GetTariffs(CountryCode  CountryCode,
                                               Party_Id     PartyId)
-        {
 
-            lock (tariffs)
-            {
-
-                return tariffs.Values.Where(tariff => tariff.CountryCode == CountryCode &&
-                                                      tariff.PartyId     == PartyId).
-                                      ToArray();
-
-            }
-
-        }
+            => tariffs.Values.Where(tariff => tariff.CountryCode == CountryCode &&
+                                              tariff.PartyId     == PartyId);
 
         #endregion
 

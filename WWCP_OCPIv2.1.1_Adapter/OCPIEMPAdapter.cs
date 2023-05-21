@@ -418,7 +418,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                           this.CommonAPI,
                                                           DefaultCountryCode,
                                                           DefaultPartyId,
-                                                          URLPathPrefix: CommonAPI.URLPathPrefix + "2.1.1/cpo"
+                                                          URLPathPrefix: CommonAPI.URLPathPrefix + Version.Number + "emsp"
                                                       );
 
         }

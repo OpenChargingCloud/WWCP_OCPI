@@ -2988,6 +2988,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
+            //ToDo: OpenData accesss to CPO public charging tariffs!
+
             #region ~/tariffs
 
             #region OPTIONS  ~/tariffs
@@ -3026,10 +3028,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     OCPIResponseLogger:  GetTariffsResponse,
                                     OCPIRequestHandler:  Request => {
 
+                                        //ToDo: OpenData accesss to CPO public charging tariffs!
+
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED ||
-                                            Request.LocalAccessInfo?.Role   != Roles.EMSP)
+                                        if (Request.LocalAccessInfo is null ||
+                                            Request.LocalAccessInfo.Status != AccessStatus.ALLOWED ||
+                                            Request.LocalAccessInfo.Role   != Roles.EMSP)
                                         {
 
                                             return Task.FromResult(
@@ -3050,8 +3055,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters          = Request.GetDateAndPaginationFilters();
 
-                                        var allTariffs       = CommonAPI.GetTariffs(CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
-                                                                                    CommonAPI.OurPartyId       //Request.AccessInfo.Value.PartyId
+                                        //ToDo: Maybe not all EMSP should see all charging tariffs!
+                                        var allTariffs       = CommonAPI.GetTariffs(//CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
+                                                                                    //CommonAPI.OurPartyId       //Request.AccessInfo.Value.PartyId
                                                                                    ).ToArray();
 
                                         var filteredTariffs  = allTariffs.Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
