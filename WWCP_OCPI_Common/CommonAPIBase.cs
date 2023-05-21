@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region (class) Command
 
-        public class Command
+        public sealed class Command
         {
 
             #region Properties
@@ -133,6 +133,87 @@ namespace cloud.charging.open.protocols.OCPI
 
                 this.CommandName  = CommandName;
                 this.Number       = Number;
+
+            }
+
+            #endregion
+
+            #endregion
+
+        }
+
+        #endregion
+
+        #region (class) CommandWithMetadata
+
+        public sealed class CommandWithMetadata
+        {
+
+            #region Properties
+
+            public String     CommandName    { get; }
+
+            public String?    Message        { get; }
+
+            public JObject?   JSON           { get; }
+
+            public Int64?     Number         { get; }
+
+            public DateTime?  Timestamp      { get; }
+
+            public String?    UserId         { get; }
+
+            #endregion
+
+            #region Constructor(s)
+
+            #region CommandWithMetadata(CommandName, Message, Timestamp, UserId)
+
+
+            public CommandWithMetadata(String     CommandName,
+                                       String?    Message,
+                                       DateTime?  Timestamp,
+                                       String?    UserId)
+            {
+
+                this.CommandName  = CommandName;
+                this.Message      = Message;
+                this.Timestamp    = Timestamp;
+                this.UserId       = UserId;
+
+            }
+
+            #endregion
+
+            #region CommandWithMetadata(CommandName, JSON,    Timestamp, UserId)
+
+            public CommandWithMetadata(String     CommandName,
+                                       JObject?   JSON,
+                                       DateTime?  Timestamp,
+                                       String?    UserId)
+            {
+
+                this.CommandName  = CommandName;
+                this.JSON         = JSON;
+                this.Timestamp    = Timestamp;
+                this.UserId       = UserId;
+
+            }
+
+            #endregion
+
+            #region CommandWithMetadata(CommandName, Number,  Timestamp, UserId)
+
+            public CommandWithMetadata(String     CommandName,
+                                       Int64?     Number,
+                                       DateTime?  Timestamp,
+                                       String?    UserId)
+            {
+
+                this.CommandName  = CommandName;
+                this.Number       = Number;
+                this.Timestamp    = Timestamp;
+                this.UserId       = UserId;
 
             }
 
@@ -431,9 +512,6 @@ namespace cloud.charging.open.protocols.OCPI
 
             this.ClientConfigurations     = new ClientConfigurator();
 
-            if (!Disable_RootServices)
-                RegisterURLTemplates();
-
         }
 
         #endregion
@@ -564,9 +642,6 @@ namespace cloud.charging.open.protocols.OCPI
 
             this.ClientConfigurations     = new ClientConfigurator();
 
-            if (!Disable_RootServices)
-                RegisterURLTemplates();
-
         }
 
         #endregion
@@ -574,16 +649,7 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (private) RegisterURLTemplates()
-
-        private void RegisterURLTemplates()
-        {
-
-
-        }
-
-        #endregion
-
+        #region Read/write database files
 
         #region (private, static) WriteToDatabase       (FileName, Text)
 
@@ -606,8 +672,9 @@ namespace cloud.charging.open.protocols.OCPI
             => WriteToDatabase(FileName,
                                JSONObject.Create(
 
-                                         new JProperty("timestamp",  Timestamp.Now),
+                                         // Command is always the first property!
                                          new JProperty(Command,      JToken),
+                                         new JProperty("timestamp",  Timestamp.Now),
 
                                    UserId is not null
                                        ? new JProperty("userId",     UserId)
@@ -625,6 +692,127 @@ namespace cloud.charging.open.protocols.OCPI
             => File.AppendAllTextAsync(FileName,
                                        $"//{Timestamp.Now.ToIso8601()} {(UserId is not null ? UserId : "-")}: {Text}{Environment.NewLine}",
                                        Encoding.UTF8);
+
+        #endregion
+
+
+        #region (private, static) ReadDatabaseFile            (DBFileName)
+
+        private static IEnumerable<Command> ReadDatabaseFile(String DBFileName)
+        {
+
+            try
+            {
+
+                var list = new List<Command>();
+
+                foreach (var line in File.ReadLines(DBFileName,
+                                                    Encoding.UTF8))
+                {
+
+                    try
+                    {
+
+                        if (line.StartsWith("//"))
+                            continue;
+
+                        var json = JObject.Parse(line);
+                        var command = json.Properties().First();
+
+                        if (command.Value.Type == JTokenType.String)
+                            list.Add(new Command(command.Name,
+                                                 command.Value<String>()));
+
+                        else if (command.Value.Type == JTokenType.Object)
+                            list.Add(new Command(command.Name,
+                                                 command.Value as JObject));
+
+                        else if (command.Value.Type == JTokenType.Integer)
+                            list.Add(new Command(command.Name,
+                                                 command.Value<Int64>()));
+
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.Log(e, $"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName})");
+                    }
+
+                }
+
+                return list;
+
+            }
+            catch
+            {
+                return Array.Empty<Command>();
+            }
+
+        }
+
+        #endregion
+
+        #region (private, static) ReadDatabaseFileWithMetadata(DBFileName)
+
+        private static IEnumerable<CommandWithMetadata> ReadDatabaseFileWithMetadata(String DBFileName)
+        {
+
+            try
+            {
+
+                var list = new List<CommandWithMetadata>();
+
+                foreach (var line in File.ReadLines(DBFileName,
+                                                    Encoding.UTF8))
+                {
+
+                    try
+                    {
+
+                        if (line.StartsWith("//"))
+                            continue;
+
+                        var json       = JObject.Parse(line);
+                        var command    = json.Properties().First();
+                        var timestamp  = json["timestamp"]?.Value<DateTime>();
+                        var userId     = json["userId"]?.   Value<String>();
+
+                        if      (command.Value.Type == JTokenType.String)
+                            list.Add(new CommandWithMetadata(command.Name,
+                                                             command.Value<String>(),
+                                                             timestamp,
+                                                             userId));
+
+                        else if (command.Value.Type == JTokenType.Object)
+                            list.Add(new CommandWithMetadata(command.Name,
+                                                             command.Value as JObject,
+                                                             timestamp,
+                                                             userId));
+
+                        else if (command.Value.Type == JTokenType.Integer)
+                            list.Add(new CommandWithMetadata(command.Name,
+                                                             command.Value<Int64>(),
+                                                             timestamp,
+                                                             userId));
+
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.Log(e, $"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName}, IncludeMetaData)");
+                    }
+
+                }
+
+                return list;
+
+            }
+            catch
+            {
+                return Array.Empty<CommandWithMetadata>();
+            }
+
+        }
+
+        #endregion
 
         #endregion
 
@@ -684,51 +872,8 @@ namespace cloud.charging.open.protocols.OCPI
         #region ReadRemotePartyDatabaseFile()
 
         protected IEnumerable<Command> ReadRemotePartyDatabaseFile()
-        {
 
-            try
-            {
-
-                var list = new List<Command>();
-
-                foreach (var line in File.ReadLines(RemotePartyDBFileName,
-                                                    Encoding.UTF8))
-                {
-
-                    try
-                    {
-
-                        var json = JObject.Parse(line);
-
-                        if (json.Properties().First().Value.Type == JTokenType.String)
-                            list.Add(new Command(json.Properties().First().Name,
-                                                 json.Properties().First().Value<String>()));
-
-                        else if (json.Properties().First().Value.Type == JTokenType.Object)
-                            list.Add(new Command(json.Properties().First().Name,
-                                                 json.Properties().First().Value as JObject));
-
-                        else if (json.Properties().First().Value.Type == JTokenType.Integer)
-                            list.Add(new Command(json.Properties().First().Name,
-                                                 json.Properties().First().Value<Int64>()));
-
-                    }
-                    catch (Exception e)
-                    {
-                        DebugX.Log(e, "OCPI.CommonAPIBase.ReadRemotePartyDatabaseFile()");
-                    }
-
-                }
-
-                return list;
-
-            }
-            catch
-            {
-                return Array.Empty<Command>();
-            }
-
-        }
+            => ReadDatabaseFile(RemotePartyDBFileName);
 
         #endregion
 
@@ -788,51 +933,8 @@ namespace cloud.charging.open.protocols.OCPI
         #region ReadAssetsDatabaseFile()
 
         protected IEnumerable<Command> ReadAssetsDatabaseFile()
-        {
 
-            try
-            {
-
-                var list = new List<Command>();
-
-                foreach (var line in File.ReadLines(AssetsDBFileName,
-                                                    Encoding.UTF8))
-                {
-
-                    try
-                    {
-
-                        var json = JObject.Parse(line);
-
-                        if (json.Properties().First().Value.Type == JTokenType.String)
-                            list.Add(new Command(json.Properties().First().Name,
-                                                 json.Properties().First().Value<String>()));
-
-                        else if (json.Properties().First().Value.Type == JTokenType.Object)
-                            list.Add(new Command(json.Properties().First().Name,
-                                                 json.Properties().First().Value as JObject));
-
-                        else if (json.Properties().First().Value.Type == JTokenType.Integer)
-                            list.Add(new Command(json.Properties().First().Name,
-                                                 json.Properties().First().Value<Int64>()));
-
-                    }
-                    catch (Exception e)
-                    {
-                        DebugX.Log(e, "OCPI.CommonAPIBase.ReadAssetsDatabaseFile()");
-                    }
-
-                }
-
-                return list;
-
-            }
-            catch
-            {
-                return Array.Empty<Command>();
-            }
-
-        }
+            => ReadDatabaseFile(AssetsDBFileName);
 
         #endregion
 

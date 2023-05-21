@@ -640,7 +640,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              : null;
 
             if (!this.DisableLogging)
+            {
                 ReadRemotePartyDatabaseFile();
+                ReadAssetsDatabaseFile();
+            }
 
             if (!Disable_RootServices)
                 RegisterURLTemplates();
@@ -798,7 +801,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              : null;
 
             if (!this.DisableLogging)
+            {
                 ReadRemotePartyDatabaseFile();
+                ReadAssetsDatabaseFile();
+            }
 
             if (!Disable_RootServices)
                 RegisterURLTemplates();
@@ -956,6 +962,166 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     case removeAllRemoteParties:
                         remoteParties.Clear();
+                        break;
+
+                    #endregion
+
+
+                }
+
+
+            }
+
+        }
+
+        #endregion
+
+        #region ReadAssetsDatabaseFile()
+
+        private new void ReadAssetsDatabaseFile()
+        {
+
+            foreach (var command in base.ReadAssetsDatabaseFile())
+            {
+
+                String? errorResponse   = null;
+                Tariff? tariff;
+
+                var errorResponses = new List<Tuple<Command, String>>();
+
+                switch (command.CommandName)
+                {
+
+                    #region addTariff
+
+                    case addTariff:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                Tariff.TryParse(command.JSON,
+                                                out tariff,
+                                                out errorResponse) &&
+                                tariff is not null)
+                            {
+                                tariffs.TryAdd(tariff.Id, tariff);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region addTariffIfNotExists
+
+                    case addTariffIfNotExists:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                Tariff.TryParse(command.JSON,
+                                                out tariff,
+                                                out errorResponse) &&
+                                tariff is not null)
+                            {
+                                tariffs.TryAdd(tariff.Id, tariff);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region addOrUpdateTariff
+
+                    case addOrUpdateTariff:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                Tariff.TryParse(command.JSON,
+                                                out tariff,
+                                                out errorResponse) &&
+                                tariff is not null)
+                            {
+
+                                if (tariffs.ContainsKey(tariff.Id))
+                                    tariffs.Remove(tariff.Id, out _);
+
+                                tariffs.TryAdd(tariff.Id, tariff);
+
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region updateTariff
+
+                    case updateTariff:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                Tariff.TryParse(command.JSON,
+                                                out tariff,
+                                                out errorResponse) &&
+                                tariff is not null)
+                            {
+                                tariffs.Remove(tariff.Id, out _);
+                                tariffs.TryAdd(tariff.Id, tariff);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region updateTariff
+
+                    case removeTariff:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                Tariff.TryParse(command.JSON,
+                                                out tariff,
+                                                out errorResponse) &&
+                                tariff is not null)
+                            {
+                                tariffs.Remove(tariff.Id, out _);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region removeAllTariffs
+
+                    case removeAllTariffs:
+                        tariffs.Clear();
                         break;
 
                     #endregion
