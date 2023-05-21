@@ -21,11 +21,11 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1
+namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
-    /// An AddOrUpdate result
+    /// An add or update result
     /// </summary>
     public readonly struct AddOrUpdateResult<T> : IEquatable<AddOrUpdateResult<T?>>
     {
@@ -51,7 +51,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new AddOrUpdate result.
+        /// Create a new add or update result.
         /// </summary>
         private AddOrUpdateResult(Boolean   IsSuccess,
                                   T?        Data,
@@ -63,6 +63,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.Data           = Data;
             this.WasCreated     = WasCreated;
             this.ErrorResponse  = ErrorResponse;
+
+            unchecked
+            {
+
+                hashCode = this.IsSuccess.     GetHashCode() * 7       ^
+                          (this.Data?.         GetHashCode() * 5 ?? 0) ^
+                          (this.WasCreated?.   GetHashCode() * 3 ?? 0) ^
+                          (this.ErrorResponse?.GetHashCode()     ?? 0);
+
+            }
 
         }
 
@@ -125,8 +135,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AddOrUpdateResult1">An AddOrUpdate result.</param>
-        /// <param name="AddOrUpdateResult2">Another AddOrUpdate result.</param>
+        /// <param name="AddOrUpdateResult1">An add or update result.</param>
+        /// <param name="AddOrUpdateResult2">Another add or update result.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (AddOrUpdateResult<T?> AddOrUpdateResult1,
                                            AddOrUpdateResult<T?> AddOrUpdateResult2)
@@ -140,8 +150,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AddOrUpdateResult1">An AddOrUpdate result.</param>
-        /// <param name="AddOrUpdateResult2">Another AddOrUpdate result.</param>
+        /// <param name="AddOrUpdateResult1">An add or update result.</param>
+        /// <param name="AddOrUpdateResult2">Another add or update result.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (AddOrUpdateResult<T?> AddOrUpdateResult1,
                                            AddOrUpdateResult<T?> AddOrUpdateResult2)
@@ -157,10 +167,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two add or update results for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
+        /// <param name="Object">An add or update result to compare with.</param>
         public override Boolean Equals(Object? Object)
 
             => Object is AddOrUpdateResult<T?> addOrUpdateResult &&
@@ -171,10 +180,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(AddOrUpdateResult)
 
         /// <summary>
-        /// Compares two JSON PATCH results for equality.
+        /// Compares two add or update results for equality.
         /// </summary>
-        /// <param name="AddOrUpdateResult">A JSON PATCH result to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="AddOrUpdateResult">An add or update result to compare with.</param>
         public Boolean Equals(AddOrUpdateResult<T?> AddOrUpdateResult)
 
             => IsSuccess.Equals(AddOrUpdateResult.IsSuccess) &&
@@ -194,22 +202,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return IsSuccess.     GetHashCode() * 7       ^
-                      (Data?.         GetHashCode() * 5 ?? 0) ^
-                      (WasCreated?.   GetHashCode() * 3 ?? 0) ^
-                      (ErrorResponse?.GetHashCode()     ?? 0);
-
-            }
-        }
+            => hashCode;
 
         #endregion
 
@@ -239,6 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                );
 
         #endregion
+
 
     }
 

@@ -36,6 +36,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
+using System.Transactions;
 
 #endregion
 
@@ -437,6 +438,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+
+        public CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                { get; }
+        public CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           { get; }
+        public CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer         { get; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?       CustomPriceComponentSerializer        { get; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?   CustomTariffRestrictionsSerializer    { get; }
+        public CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             { get; }
+        public CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          { get; }
+        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   { get; }
+
         #region Constructor(s)
 
         #region CommonAPI(HTTPServerName, ...)
@@ -545,7 +556,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          String?                                LoggingPath                        = null,
                          String?                                LogfileName                        = null,
                          LogfileCreatorDelegate?                LogfileCreator                     = null,
-                         String?                                DatabaseFileName                   = null,
+                         String?                                RemotePartyDBFileName              = null,
+                         String?                                AssetsDBFileName                   = null,
                          DNSClient?                             DNSClient                          = null,
                          Boolean                                Autostart                          = false)
 
@@ -598,7 +610,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    LoggingPath,
                    LogfileName,
                    LogfileCreator,
-                   DatabaseFileName,
+                   RemotePartyDBFileName,
+                   AssetsDBFileName,
                    DNSClient,
                    Autostart)
 
@@ -611,7 +624,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
             this.locations             = new Dictionary<Location_Id, Location>();
-            this.tariffs               = new Dictionary<Tariff_Id,   Tariff>();
             this.chargingSessions      = new Dictionary<Session_Id,  Session>();
             this.tokenStatus           = new Dictionary<Token_Id,    TokenStatus>();
             this.chargeDetailRecords   = new Dictionary<CDR_Id,      CDR>();
@@ -626,7 +638,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              : null;
 
             if (!this.DisableLogging)
-                ReadDatabaseFile();
+                ReadRemotePartyDatabaseFile();
 
             if (!Disable_RootServices)
                 RegisterURLTemplates();
@@ -714,7 +726,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          String?                  LoggingPath               = null,
                          String?                  LogfileName               = null,
                          LogfileCreatorDelegate?  LogfileCreator            = null,
-                         String?                  DatabaseFileName          = null,
+                         String?                  RemotePartyDBFileName     = null,
+                         String?                  AssetsDBFileName          = null,
                          Boolean                  Autostart                 = false)
 
             : base(Version.Id,
@@ -750,7 +763,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    LoggingPath,
                    LogfileName ?? DefaultLogfileName,
                    LogfileCreator,
-                   DatabaseFileName,
+                   RemotePartyDBFileName,
+                   AssetsDBFileName,
                    Autostart)
 
         {
@@ -763,7 +777,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
             this.locations             = new Dictionary<Location_Id, Location>();
-            this.tariffs               = new Dictionary<Tariff_Id,   Tariff>();
             this.chargingSessions      = new Dictionary<Session_Id,  Session>();
             this.tokenStatus           = new Dictionary<Token_Id,    TokenStatus>();
             this.chargeDetailRecords   = new Dictionary<CDR_Id,      CDR>();
@@ -783,7 +796,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              : null;
 
             if (!this.DisableLogging)
-                ReadDatabaseFile();
+                ReadRemotePartyDatabaseFile();
 
             if (!Disable_RootServices)
                 RegisterURLTemplates();
@@ -795,12 +808,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region ReadDatabaseFile()
+        #region ReadRemotePartyDatabaseFile()
 
-        private new void ReadDatabaseFile()
+        private new void ReadRemotePartyDatabaseFile()
         {
 
-            foreach (var command in base.ReadDatabaseFile())
+            foreach (var command in base.ReadRemotePartyDatabaseFile())
             {
 
                 String?      errorResponse   = null;
@@ -1988,8 +2001,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     remoteParties.TryRemove(remoteParty.Id, out _);
 
-                    await Log(removeRemoteParty,
-                              remoteParty.ToJSON(true));
+                    await LogAsset(removeRemoteParty,
+                                   remoteParty.ToJSON(true));
 
                 }
 
@@ -2016,8 +2029,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 newRemoteParty))
                     {
 
-                        await Log(updateRemoteParty,
-                                  newRemoteParty.ToJSON(true));
+                        await LogRemoteParty(updateRemoteParty,
+                                             newRemoteParty.ToJSON(true));
 
                     }
 
@@ -2167,8 +2180,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (remoteParties.TryAdd(newRemoteParty.Id,
                                      newRemoteParty)) {
 
-                await Log(addRemoteParty,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2237,8 +2250,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      newRemoteParty))
             {
 
-                await Log(addRemoteParty,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2313,8 +2326,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      newRemoteParty))
             {
 
-                await Log(addRemoteParty,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2379,8 +2392,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      newRemoteParty))
             {
 
-                await Log(addRemoteParty,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2471,8 +2484,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (result == newRemoteParty)
             {
 
-                await Log(addRemotePartyIfNotExists,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemotePartyIfNotExists,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2543,8 +2556,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (result == newRemoteParty)
             {
 
-                await Log(addRemotePartyIfNotExists,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemotePartyIfNotExists,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2621,8 +2634,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (result == newRemoteParty)
             {
 
-                await Log(addRemotePartyIfNotExists,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemotePartyIfNotExists,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2689,8 +2702,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (result == newRemoteParty)
             {
 
-                await Log(addRemotePartyIfNotExists,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemotePartyIfNotExists,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2790,8 +2803,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           return newRemoteParty;
                                       });
 
-            await Log(addOrUpdateRemoteParty,
-                      newRemoteParty.ToJSON(true));
+            await LogRemoteParty(addOrUpdateRemoteParty,
+                                 newRemoteParty.ToJSON(true));
 
             return added;
 
@@ -2867,8 +2880,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           return newRemoteParty;
                                       });
 
-            await Log(addOrUpdateRemoteParty,
-                      newRemoteParty.ToJSON(true));
+            await LogRemoteParty(addOrUpdateRemoteParty,
+                                 newRemoteParty.ToJSON(true));
 
             return added;
 
@@ -2950,8 +2963,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           return newRemoteParty;
                                       });
 
-            await Log(addOrUpdateRemoteParty,
-                      newRemoteParty.ToJSON(true));
+            await LogRemoteParty(addOrUpdateRemoteParty,
+                                 newRemoteParty.ToJSON(true));
 
             return added;
 
@@ -3023,8 +3036,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           return newRemoteParty;
                                       });
 
-            await Log(addOrUpdateRemoteParty,
-                      newRemoteParty.ToJSON(true));
+            await LogRemoteParty(addOrUpdateRemoteParty,
+                                 newRemoteParty.ToJSON(true));
 
             return added;
 
@@ -3108,8 +3121,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         ExistingRemoteParty))
             {
 
-                await Log(updateRemoteParty,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(updateRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -3177,8 +3190,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         ExistingRemoteParty))
             {
 
-                await Log(updateRemoteParty,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(updateRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -3252,8 +3265,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         ExistingRemoteParty))
             {
 
-                await Log(updateRemoteParty,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(updateRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -3317,8 +3330,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         ExistingRemoteParty))
             {
 
-                await Log(updateRemoteParty,
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(updateRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -3483,8 +3496,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (remoteParties.TryRemove(RemoteParty.Id, out var remoteParty))
             {
 
-                await Log(removeRemoteParty,
-                          remoteParty.ToJSON(true));
+                await LogRemoteParty(removeRemoteParty,
+                                     remoteParty.ToJSON(true));
 
                 return true;
 
@@ -3504,8 +3517,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (remoteParties.Remove(RemotePartyId, out var remoteParty))
             {
 
-                await Log(removeRemoteParty,
-                          remoteParty.ToJSON(true));
+                await LogRemoteParty(removeRemoteParty,
+                                     remoteParty.ToJSON(true));
 
                 return true;
 
@@ -3531,8 +3544,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 remoteParties.TryRemove(remoteParty.Id, out _);
 
-                await Log(removeRemoteParty,
-                          remoteParty.ToJSON(true));
+                await LogRemoteParty(removeRemoteParty,
+                                     remoteParty.ToJSON(true));
 
             }
 
@@ -3556,8 +3569,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 remoteParties.TryRemove(remoteParty.Id, out _);
 
-                await Log(removeRemoteParty,
-                          remoteParty.ToJSON(true));
+                await LogRemoteParty(removeRemoteParty,
+                                     remoteParty.ToJSON(true));
 
             }
 
@@ -3574,7 +3587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             remoteParties.Clear();
 
-            await Log("removeAllRemoteParties");
+            await LogRemoteParty("removeAllRemoteParties");
 
         }
 
@@ -3915,6 +3928,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         //ToDo: Add last modified timestamp to locations!
         //ToDo: Refactor async!
+        //ToDo: Refactor result data structures!
 
         #region Locations
 
@@ -4838,7 +4852,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Tariffs
 
-        private readonly Dictionary<Tariff_Id , Tariff> tariffs;
+        #region Data
+
+        private readonly ConcurrentDictionary<Tariff_Id , Tariff> tariffs = new();
 
 
         public delegate Task OnTariffAddedDelegate(Tariff Tariff);
@@ -4850,55 +4866,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public event OnTariffChangedDelegate? OnTariffChanged;
 
+        #endregion
+
 
         public GetTariffIds2_Delegate? GetTariffIdsDelegate { get; set; }
 
 
         #region AddTariff           (Tariff, SkipNotifications = false)
 
-        public Tariff AddTariff(Tariff   Tariff,
-                                Boolean  SkipNotifications   = false)
+        public async Task<AddResult<Tariff>> AddTariff(Tariff   Tariff,
+                                                       Boolean  SkipNotifications   = false)
         {
 
-            if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
-
-            lock (tariffs)
+            if (tariffs.TryAdd(Tariff.Id, Tariff))
             {
 
-                if (!tariffs.ContainsKey(Tariff.Id))
+                Tariff.CommonAPI = this;
+
+                await LogAsset(addTariff,
+                               Tariff.ToJSON(true,
+                                             CustomTariffSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomTariffElementSerializer,
+                                             CustomPriceComponentSerializer,
+                                             CustomTariffRestrictionsSerializer,
+                                             CustomEnergyMixSerializer,
+                                             CustomEnergySourceSerializer,
+                                             CustomEnvironmentalImpactSerializer));
+
+                if (!SkipNotifications)
                 {
 
-                    tariffs.Add(Tariff.Id, Tariff);
-                    Tariff.CommonAPI = this;
-
-                    if (!SkipNotifications)
+                    var OnTariffAddedLocal = OnTariffAdded;
+                    if (OnTariffAddedLocal is not null)
                     {
-
-                        var OnTariffAddedLocal = OnTariffAdded;
-                        if (OnTariffAddedLocal is not null)
+                        try
                         {
-                            try
-                            {
-                                OnTariffAddedLocal(Tariff).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddTariff), " ", nameof(OnTariffAdded), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
+                            OnTariffAddedLocal(Tariff).Wait();
                         }
-
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddTariff), " ", nameof(OnTariffAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
-
-                    return Tariff;
 
                 }
 
-                throw new ArgumentException("The given tariff already exists!");
+                return AddResult<Tariff>.Success(Tariff);
 
             }
+
+            return AddResult<Tariff>.Failed(Tariff,
+                                            "TryAdd(Tariff.Id, Tariff) failed!");
 
         }
 
@@ -4906,82 +4927,97 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region AddTariffIfNotExists(Tariff, SkipNotifications = false)
 
-        public Tariff AddTariffIfNotExists(Tariff   Tariff,
-                                           Boolean  SkipNotifications   = false)
+        public async Task<AddResult<Tariff>> AddTariffIfNotExists(Tariff   Tariff,
+                                                                  Boolean  SkipNotifications   = false)
         {
 
-            if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
-
-            lock (tariffs)
+            if (tariffs.TryAdd(Tariff.Id, Tariff))
             {
 
-                if (!tariffs.ContainsKey(Tariff.Id))
+                Tariff.CommonAPI = this;
+
+                await LogAsset(addTariffIfNotExists,
+                               Tariff.ToJSON(true,
+                                             CustomTariffSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomTariffElementSerializer,
+                                             CustomPriceComponentSerializer,
+                                             CustomTariffRestrictionsSerializer,
+                                             CustomEnergyMixSerializer,
+                                             CustomEnergySourceSerializer,
+                                             CustomEnvironmentalImpactSerializer));
+
+                if (!SkipNotifications)
                 {
 
-                    tariffs.Add(Tariff.Id, Tariff);
-                    Tariff.CommonAPI = this;
-
-                    if (!SkipNotifications)
+                    var OnTariffAddedLocal = OnTariffAdded;
+                    if (OnTariffAddedLocal is not null)
                     {
-
-                        var OnTariffAddedLocal = OnTariffAdded;
-                        if (OnTariffAddedLocal is not null)
+                        try
                         {
-                            try
-                            {
-                                OnTariffAddedLocal(Tariff).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddTariffIfNotExists), " ", nameof(OnTariffAdded), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
+                            OnTariffAddedLocal(Tariff).Wait();
                         }
-
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddTariffIfNotExists), " ", nameof(OnTariffAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
 
                 }
 
-                return Tariff;
+                return AddResult<Tariff>.Success(Tariff);
 
             }
+
+            return AddResult<Tariff>.NoOperation(Tariff);
 
         }
 
         #endregion
 
-        #region AddOrUpdateTariff   (newOrUpdatedTariff, AllowDowngrades = false)
+        #region AddOrUpdateTariff   (Tariff, AllowDowngrades = false, SkipNotifications = false)
 
-        public async Task<AddOrUpdateResult<Tariff>> AddOrUpdateTariff(Tariff    newOrUpdatedTariff,
-                                                                       Boolean?  AllowDowngrades = false)
+        public async Task<AddOrUpdateResult<Tariff>> AddOrUpdateTariff(Tariff    Tariff,
+                                                                       Boolean?  AllowDowngrades     = false,
+                                                                       Boolean   SkipNotifications   = false)
         {
 
-            if (newOrUpdatedTariff is null)
-                throw new ArgumentNullException(nameof(newOrUpdatedTariff), "The given charging tariff must not be null!");
+            #region Update an existing tariff
 
-            lock (tariffs)
+            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff))
             {
 
-                if (tariffs.TryGetValue(newOrUpdatedTariff.Id, out var existingTariff))
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Tariff.LastUpdated <= existingTariff.LastUpdated)
                 {
+                    return AddOrUpdateResult<Tariff>.Failed(Tariff,
+                                                            "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
+                }
 
-                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                        newOrUpdatedTariff.LastUpdated <= existingTariff.LastUpdated)
-                    {
-                        return AddOrUpdateResult<Tariff>.Failed(newOrUpdatedTariff,
-                                                                "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
-                    }
+                tariffs[Tariff.Id] = Tariff;
 
-                    tariffs[newOrUpdatedTariff.Id] = newOrUpdatedTariff;
+                await LogAsset(addOrUpdateTariff,
+                               Tariff.ToJSON(true,
+                                                         CustomTariffSerializer,
+                                                         CustomDisplayTextSerializer,
+                                                         CustomTariffElementSerializer,
+                                                         CustomPriceComponentSerializer,
+                                                         CustomTariffRestrictionsSerializer,
+                                                         CustomEnergyMixSerializer,
+                                                         CustomEnergySourceSerializer,
+                                                         CustomEnvironmentalImpactSerializer));
+
+                if (!SkipNotifications)
+                {
 
                     var OnTariffChangedLocal = OnTariffChanged;
                     if (OnTariffChangedLocal is not null)
                     {
                         try
                         {
-                            OnTariffChangedLocal(newOrUpdatedTariff).Wait();
+                            OnTariffChangedLocal(Tariff).Wait();
                         }
                         catch (Exception e)
                         {
@@ -4991,52 +5027,96 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                     }
 
-                    return AddOrUpdateResult<Tariff>.Success(newOrUpdatedTariff,
-                                                             WasCreated: false);
-
                 }
 
-                tariffs.Add(newOrUpdatedTariff.Id, newOrUpdatedTariff);
+                return AddOrUpdateResult<Tariff>.Success(Tariff,
+                                                         WasCreated: false);
 
-                var OnTariffAddedLocal = OnTariffAdded;
-                if (OnTariffAddedLocal is not null)
+            }
+
+            #endregion
+
+            #region Add a new tariff
+
+            if (tariffs.TryAdd(Tariff.Id, Tariff))
+            {
+
+                if (!SkipNotifications)
                 {
-                    try
+
+                    var OnTariffAddedLocal = OnTariffAdded;
+                    if (OnTariffAddedLocal is not null)
                     {
-                        OnTariffAddedLocal(newOrUpdatedTariff).Wait();
+                        try
+                        {
+                            OnTariffAddedLocal(Tariff).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffAdded), ": ",
-                                    Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace ?? "");
-                    }
+
                 }
 
-                return AddOrUpdateResult<Tariff>.Success(newOrUpdatedTariff,
+                return AddOrUpdateResult<Tariff>.Success(Tariff,
                                                          WasCreated: true);
 
             }
+
+            return AddOrUpdateResult<Tariff>.Failed(Tariff,
+                                                    "TryAdd(Tariff.Id, Tariff) failed!");
+
+            #endregion
 
         }
 
         #endregion
 
-        #region UpdateTariff        (Tariff)
+        #region UpdateTariff        (Tariff, AllowDowngrades = false, SkipNotifications = false)
 
-        public Tariff UpdateTariff(Tariff Tariff)
+        public async Task<UpdateResult<Tariff>> UpdateTariff(Tariff    Tariff,
+                                                             Boolean?  AllowDowngrades     = false,
+                                                             Boolean   SkipNotifications   = false)
         {
 
-            if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
+            #region Validate AllowDowngrades
 
-            lock (tariffs)
+            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff))
             {
 
-                if (tariffs.ContainsKey(Tariff.Id))
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Tariff.LastUpdated <= existingTariff.LastUpdated)
                 {
 
-                    tariffs[Tariff.Id] = Tariff;
+                    return UpdateResult<Tariff>.Failed(Tariff,
+                                                       "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
+
+                }
+
+            }
+
+            #endregion
+
+
+            if (tariffs.TryUpdate(Tariff.Id, Tariff, Tariff))
+            {
+
+                await LogAsset(updateTariff,
+                               Tariff.ToJSON(true,
+                                             CustomTariffSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomTariffElementSerializer,
+                                             CustomPriceComponentSerializer,
+                                             CustomTariffRestrictionsSerializer,
+                                             CustomEnergyMixSerializer,
+                                             CustomEnergySourceSerializer,
+                                             CustomEnvironmentalImpactSerializer));
+
+                if (!SkipNotifications)
+                {
 
                     var OnTariffChangedLocal = OnTariffChanged;
                     if (OnTariffChangedLocal is not null)
@@ -5053,50 +5133,56 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                     }
 
-                    return Tariff;
-
                 }
 
-                return null;
+                return UpdateResult<Tariff>.Success(Tariff);
 
             }
+
+            return UpdateResult<Tariff>.Failed(Tariff,
+                                               "TryUpdate(Tariff.Id, Tariff, Tariff) failed!");
 
         }
 
         #endregion
 
 
-        #region TryPatchTariff      (Tariff, TariffPatch, AllowDowngrades = false)
+        #region TryPatchTariff      (Tariff, TariffPatch, AllowDowngrades = false, SkipNotifications = false)
 
         public async Task<PatchResult<Tariff>> TryPatchTariff(Tariff    Tariff,
                                                               JObject   TariffPatch,
-                                                              Boolean?  AllowDowngrades = false)
+                                                              Boolean?  AllowDowngrades     = false,
+                                                              Boolean   SkipNotifications   = false)
         {
-
-            if (Tariff is null)
-                return PatchResult<Tariff>.Failed(Tariff,
-                                                  "The given charging tariff must not be null!");
 
             if (TariffPatch is null || !TariffPatch.HasValues)
                 return PatchResult<Tariff>.Failed(Tariff,
                                                   "The given charging tariff patch must not be null or empty!");
 
-            // ToDo: Remove me and add a proper 'lock' mechanism!
-            await Task.Delay(1);
-
-            lock (tariffs)
+            if (tariffs.TryGetValue(Tariff.Id, out var tariff))
             {
 
-                if (tariffs.TryGetValue(Tariff.Id, out var tariff))
+                var patchResult = tariff.TryPatch(TariffPatch,
+                                                  AllowDowngrades ?? this.AllowDowngrades ?? false);
+
+                if (patchResult.IsSuccess)
                 {
 
-                    var patchResult = tariff.TryPatch(TariffPatch,
-                                                      AllowDowngrades ?? this.AllowDowngrades ?? false);
+                    tariffs[Tariff.Id] = patchResult.PatchedData;
 
-                    if (patchResult.IsSuccess)
+                    await LogAsset(updateTariff,
+                                   Tariff.ToJSON(true,
+                                                 CustomTariffSerializer,
+                                                 CustomDisplayTextSerializer,
+                                                 CustomTariffElementSerializer,
+                                                 CustomPriceComponentSerializer,
+                                                 CustomTariffRestrictionsSerializer,
+                                                 CustomEnergyMixSerializer,
+                                                 CustomEnergySourceSerializer,
+                                                 CustomEnvironmentalImpactSerializer));
+
+                    if (!SkipNotifications)
                     {
-
-                        tariffs[Tariff.Id] = patchResult.PatchedData;
 
                         var OnTariffChangedLocal = OnTariffChanged;
                         if (OnTariffChangedLocal is not null)
@@ -5115,16 +5201,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     }
 
-
-                    return patchResult;
-
                 }
 
-                else
-                    return PatchResult<Tariff>.Failed(Tariff,
-                                                      "The given charging tariff does not exist!");
+                return patchResult;
 
             }
+
+            else
+                return PatchResult<Tariff>.Failed(Tariff,
+                                                  "The given charging tariff does not exist!");
 
         }
 
@@ -5224,31 +5309,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region RemoveTariff    (Tariff)
 
-        public Boolean RemoveTariff(Tariff Tariff)
-        {
+        /// <summary>
+        /// Remove the given charging tariff.
+        /// </summary>
+        /// <param name="Tariff">A charging tariff.</param>
+        public Task<RemoveResult<Tariff>> RemoveTariff(Tariff Tariff)
 
-            lock (tariffs)
-            {
-
-                return tariffs.Remove(Tariff.Id);
-
-            }
-
-        }
+            => RemoveTariff(Tariff.Id);
 
         #endregion
 
         #region RemoveTariff    (TariffId)
 
-        public Boolean RemoveTariff(Tariff_Id TariffId)
+        /// <summary>
+        /// Remove the given charging tariff.
+        /// </summary>
+        /// <param name="TariffId">An unique charging tariff identification.</param>
+        public async Task<RemoveResult<Tariff>> RemoveTariff(Tariff_Id TariffId)
         {
 
-            lock (tariffs)
+            if (tariffs.Remove(TariffId, out var tariff))
             {
 
-                return tariffs.Remove(TariffId);
+                await LogAsset(removeTariff,
+                               tariff.ToJSON(true,
+                                             CustomTariffSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomTariffElementSerializer,
+                                             CustomPriceComponentSerializer,
+                                             CustomTariffRestrictionsSerializer,
+                                             CustomEnergyMixSerializer,
+                                             CustomEnergySourceSerializer,
+                                             CustomEnvironmentalImpactSerializer));
+
+                return RemoveResult<Tariff>.Success(tariff);
 
             }
+
+            return RemoveResult<Tariff>.Failed(null,
+                                               "Remove(TariffId, ...) failed!");
 
         }
 
@@ -5259,25 +5358,112 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// Remove all matching tariffs.
         /// </summary>
-        /// <param name="IncludeSessions">An optional charging session filter.</param>
-        public void RemoveAllTariffs(Func<Tariff, Boolean>? IncludeTariffs = null)
+        /// <param name="IncludeTariffs">An optional charging tariff filter.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff, Boolean>? IncludeTariffs = null)
         {
 
-            lock (tariffs)
+            if (IncludeTariffs is null)
             {
 
-                if (IncludeTariffs is null)
-                    tariffs.Clear();
+                var existingTariffs = tariffs.Values.ToArray();
 
-                else
+                tariffs.Clear();
+
+                await LogAsset(removeAllTariffs);
+
+                return RemoveResult<IEnumerable<Tariff>>.Success(existingTariffs);
+
+            }
+
+            else
+            {
+
+                var removedTariffs = new List<Tariff>();
+
+                foreach (var tariff in tariffs.Values.Where(IncludeTariffs).ToArray())
                 {
+                    if (tariffs.Remove(tariff.Id, out _))
+                    {
 
-                    var tariffsToDelete = tariffs.Values.Where(IncludeTariffs).ToArray();
+                        removedTariffs.Add(tariff);
 
-                    foreach (var tariff in tariffsToDelete)
-                        tariffs.Remove(tariff.Id);
+                        await LogAsset(removeTariff,
+                                       tariff.ToJSON(true,
+                                                     CustomTariffSerializer,
+                                                     CustomDisplayTextSerializer,
+                                                     CustomTariffElementSerializer,
+                                                     CustomPriceComponentSerializer,
+                                                     CustomTariffRestrictionsSerializer,
+                                                     CustomEnergyMixSerializer,
+                                                     CustomEnergySourceSerializer,
+                                                     CustomEnvironmentalImpactSerializer));
 
+                    }
                 }
+
+                return removedTariffs.Any()
+                           ? RemoveResult<IEnumerable<Tariff>>.Success    (removedTariffs)
+                           : RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>());
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs(IncludeTariffIds)
+
+        /// <summary>
+        /// Remove all matching tariffs.
+        /// </summary>
+        /// <param name="IncludeTariffIds">An optional charging tariff identification filter.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff_Id, Boolean>? IncludeTariffIds)
+        {
+
+            if (IncludeTariffIds is null)
+            {
+
+                var existingTariffs = tariffs.Values.ToArray();
+
+                tariffs.Clear();
+
+                await LogAsset(removeAllTariffs);
+
+                return RemoveResult<IEnumerable<Tariff>>.Success(existingTariffs);
+
+            }
+
+            else
+            {
+
+                var removedTariffs = new List<Tariff>();
+
+                foreach (var tariff in tariffs.Where  (kvp => IncludeTariffIds(kvp.Key)).
+                                               Select (kvp => kvp.Value).
+                                               ToArray())
+                {
+                    if (tariffs.Remove(tariff.Id, out _))
+                    {
+
+                        removedTariffs.Add(tariff);
+
+                        await LogAsset(removeTariff,
+                                       tariff.ToJSON(true,
+                                                     CustomTariffSerializer,
+                                                     CustomDisplayTextSerializer,
+                                                     CustomTariffElementSerializer,
+                                                     CustomPriceComponentSerializer,
+                                                     CustomTariffRestrictionsSerializer,
+                                                     CustomEnergyMixSerializer,
+                                                     CustomEnergySourceSerializer,
+                                                     CustomEnvironmentalImpactSerializer));
+
+                    }
+                }
+
+                return removedTariffs.Any()
+                           ? RemoveResult<IEnumerable<Tariff>>.Success    (removedTariffs)
+                           : RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>());
 
             }
 
@@ -5292,21 +5478,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllTariffs(CountryCode  CountryCode,
-                                     Party_Id     PartyId)
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(CountryCode  CountryCode,
+                                                                              Party_Id     PartyId)
         {
 
-            lock (tariffs)
+            var removedTariffs = new List<Tariff>();
+
+            foreach (var tariff in tariffs.Values.Where(tariffs => CountryCode == tariffs.CountryCode &&
+                                                                   PartyId     == tariffs.PartyId).ToArray())
             {
+                if (tariffs.Remove(tariff.Id, out _))
+                {
 
-                var tariffsToDelete = tariffs.Values.Where  (tariffs => CountryCode == tariffs.CountryCode &&
-                                                                        PartyId     == tariffs.PartyId).
-                                                    ToArray();
+                    removedTariffs.Add(tariff);
 
-                foreach (var tariff in tariffsToDelete)
-                    tariffs.Remove(tariff.Id);
+                    await LogAsset(removeTariff,
+                                   tariff.ToJSON(true,
+                                                 CustomTariffSerializer,
+                                                 CustomDisplayTextSerializer,
+                                                 CustomTariffElementSerializer,
+                                                 CustomPriceComponentSerializer,
+                                                 CustomTariffRestrictionsSerializer,
+                                                 CustomEnergyMixSerializer,
+                                                 CustomEnergySourceSerializer,
+                                                 CustomEnvironmentalImpactSerializer));
 
+                }
             }
+
+            return removedTariffs.Any()
+                       ? RemoveResult<IEnumerable<Tariff>>.Success    (removedTariffs)
+                       : RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>());
 
         }
 

@@ -102,174 +102,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     public class OCPIAPILogger
     {
 
-        #region (class) APILogger<T, X>
-
-        /// <summary>
-        /// A wrapper class to manage OCPI API event subscriptions
-        /// for logging purposes.
-        /// </summary>
-        public class APILogger<T, X> // T == OCPIRequestLogHandler, X == OCPIRequestLoggerDelegate
-        {
-
-            #region Data
-
-            private readonly Dictionary<LogTargets, T>  subscriptionDelegates;
-            private readonly HashSet<LogTargets>        subscriptionStatus;
-
-            #endregion
-
-            #region Properties
-
-            /// <summary>
-            /// The context of the event to be logged.
-            /// </summary>
-            public String     Context                         { get; }
-
-            /// <summary>
-            /// The name of the event to be logged.
-            /// </summary>
-            public String     LogEventName                    { get; }
-
-            /// <summary>
-            /// A delegate called whenever the event is subscriped to.
-            /// </summary>
-            public Action<T>  SubscribeToEventDelegate        { get; }
-
-            /// <summary>
-            /// A delegate called whenever the subscription of the event is stopped.
-            /// </summary>
-            public Action<T>  UnsubscribeFromEventDelegate    { get; }
-
-            #endregion
-
-            #region Constructor(s)
-
-            /// <summary>
-            /// Create a new log event for the linked HTTP API event.
-            /// </summary>
-            /// <param name="Context">The context of the event.</param>
-            /// <param name="LogEventName">The name of the event.</param>
-            /// <param name="SubscribeToEventDelegate">A delegate for subscribing to the linked event.</param>
-            /// <param name="UnsubscribeFromEventDelegate">A delegate for subscribing from the linked event.</param>
-            public APILogger(String     Context,
-                             String     LogEventName,
-                             Action<T>  SubscribeToEventDelegate,
-                             Action<T>  UnsubscribeFromEventDelegate)
-            {
-
-                #region Initial checks
-
-                if (LogEventName.IsNullOrEmpty())
-                    throw new ArgumentNullException(nameof(LogEventName), "The given log event name must not be null or empty!");
-
-                #endregion
-
-                this.Context                       = Context ?? "";
-                this.LogEventName                  = LogEventName;
-                this.SubscribeToEventDelegate      = SubscribeToEventDelegate;
-                this.UnsubscribeFromEventDelegate  = UnsubscribeFromEventDelegate;
-                this.subscriptionDelegates         = new Dictionary<LogTargets, T>();
-                this.subscriptionStatus            = new HashSet<LogTargets>();
-
-            }
-
-            #endregion
-
-
-            #region RegisterLogTarget(LogTarget, RequestDelegate)
-
-            /// <summary>
-            /// Register the given log target and delegate combination.
-            /// </summary>
-            /// <param name="LogTarget">A log target.</param>
-            /// <param name="RequestDelegate">A delegate to call.</param>
-            /// <returns>A HTTP request logger.</returns>
-            public APILogger<T, X> RegisterLogTarget(LogTargets  LogTarget,
-                                                     X           RequestDelegate)
-            {
-
-                if (subscriptionDelegates.ContainsKey(LogTarget))
-                    throw new ArgumentException("Duplicate log target!", nameof(LogTarget));
-
-                //_SubscriptionDelegates.Add(LogTarget,
-                //                           (Timestamp, HTTPAPI, Request) => RequestDelegate(Context, LogEventName, Request));
-
-                return this;
-
-            }
-
-            #endregion
-
-            #region Subscribe   (LogTarget)
-
-            /// <summary>
-            /// Subscribe the given log target to the linked event.
-            /// </summary>
-            /// <param name="LogTarget">A log target.</param>
-            /// <returns>True, if successful; false else.</returns>
-            public Boolean Subscribe(LogTargets LogTarget)
-            {
-
-                if (IsSubscribed(LogTarget))
-                    return true;
-
-                if (subscriptionDelegates.TryGetValue(LogTarget,
-                                                      out var requestLogHandler))
-                {
-                    SubscribeToEventDelegate(requestLogHandler);
-                    subscriptionStatus.Add(LogTarget);
-                    return true;
-                }
-
-                return false;
-
-            }
-
-            #endregion
-
-            #region IsSubscribed(LogTarget)
-
-            /// <summary>
-            /// Return the subscription status of the given log target.
-            /// </summary>
-            /// <param name="LogTarget">A log target.</param>
-            public Boolean IsSubscribed(LogTargets LogTarget)
-
-                => subscriptionStatus.Contains(LogTarget);
-
-            #endregion
-
-            #region Unsubscribe (LogTarget)
-
-            /// <summary>
-            /// Unsubscribe the given log target from the linked event.
-            /// </summary>
-            /// <param name="LogTarget">A log target.</param>
-            /// <returns>True, if successful; false else.</returns>
-            public Boolean Unsubscribe(LogTargets LogTarget)
-            {
-
-                if (!IsSubscribed(LogTarget))
-                    return true;
-
-                if (subscriptionDelegates.TryGetValue(LogTarget,
-                                                      out var requestLogHandler))
-                {
-                    UnsubscribeFromEventDelegate(requestLogHandler);
-                    subscriptionStatus.Remove(LogTarget);
-                    return true;
-                }
-
-                return false;
-
-            }
-
-            #endregion
-
-        }
-
-        #endregion
-
         #region (class) OCPIAPIRequestLogger
 
         /// <summary>
@@ -364,7 +196,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     throw new ArgumentException("Duplicate log target!", nameof(LogTarget));
 
                 subscriptionDelegates.Add(LogTarget,
-                                           (Timestamp, HTTPAPI, Request) => RequestDelegate(LoggingPath, Context, LogEventName, Request));
+                                          (timestamp, httpAPI, request) => RequestDelegate(LoggingPath, Context, LogEventName, request));
 
                 return this;
 
@@ -536,7 +368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     throw new ArgumentException("Duplicate log target!", nameof(LogTarget));
 
                 subscriptionDelegates.Add(LogTarget,
-                                          (Timestamp, HTTPAPI, Request, Response) => HTTPResponseDelegate(LoggingPath, Context, LogEventName, Request, Response));
+                                          (timestamp, httpAPI, request, response) => HTTPResponseDelegate(LoggingPath, Context, LogEventName, request, response));
 
                 return this;
 

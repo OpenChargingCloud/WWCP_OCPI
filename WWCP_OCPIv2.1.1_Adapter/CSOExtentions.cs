@@ -45,10 +45,6 @@ namespace cloud.charging.open.protocols.WWCP
         /// <param name="Id">The unique identification of the roaming provider.</param>
         /// <param name="Name">The offical (multi-language) name of the roaming provider.</param>
         /// 
-        /// <param name="EVSE2EVSEDataRecord">A delegate to process an EVSE data record, e.g. before pushing it to the roaming provider.</param>
-        /// 
-        /// <param name="DefaultOperator">An optional Charging Station Operator, which will be copied into the main OperatorID-section of the OCPI SOAP request.</param>
-        /// <param name="OperatorNameSelector">An optional delegate to select an Charging Station Operator name, which will be copied into the OperatorName-section of the OCPI SOAP request.</param>
         /// <param name="IncludeEVSEs">Only include the EVSEs matching the given delegate.</param>
         /// <param name="ServiceCheckEvery">The service check intervall.</param>
         /// <param name="StatusCheckEvery">The status check intervall.</param>

@@ -150,22 +150,22 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String      DefaultHTTPServerName      = "GraphDefined OCPI HTTP API v0.1";
+        public new const           String      DefaultHTTPServerName           = "GraphDefined OCPI HTTP API v0.1";
 
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String      DefaultHTTPServiceName     = "GraphDefined OCPI HTTP API v0.1";
+        public new const           String      DefaultHTTPServiceName          = "GraphDefined OCPI HTTP API v0.1";
 
         /// <summary>
         /// The default HTTP server TCP port.  
         /// </summary>
-        public new static readonly IPPort      DefaultHTTPServerPort      = IPPort.Parse(8080);
+        public new static readonly IPPort      DefaultHTTPServerPort           = IPPort.Parse(8080);
 
         /// <summary>
         /// The default HTTP URL path prefix.  
         /// </summary>
-        public new static readonly HTTPPath    DefaultURLPathPrefix       = HTTPPath.Parse("io/OCPI/");
+        public new static readonly HTTPPath    DefaultURLPathPrefix            = HTTPPath.Parse("io/OCPI/");
 
         /// <summary>
         /// The (max supported) OCPI version.
@@ -178,9 +178,14 @@ namespace cloud.charging.open.protocols.OCPI
         private readonly           String      logfileName;
 
         /// <summary>
-        /// The database file name.
+        /// The default database file name for all remote party configuration.
         /// </summary>
-        public const               String      DefaultDatabaseFileName    = "OCPI-Database.db";
+        public const               String      DefaultRemotePartyDBFileName    = "RemoteParties.db";
+
+        /// <summary>
+        /// The default database file name for all OCPI assets.
+        /// </summary>
+        public const               String      DefaultAssetsDBFileName         = "Assets.db";
 
 
         protected const String addRemoteParty             = "addRemoteParty";
@@ -189,6 +194,13 @@ namespace cloud.charging.open.protocols.OCPI
         protected const String updateRemoteParty          = "updateRemoteParty";
         protected const String removeRemoteParty          = "removeRemoteParty";
         protected const String removeAllRemoteParties     = "removeAllRemoteParties";
+
+        protected const String addTariff                  = "addTariff";
+        protected const String addTariffIfNotExists       = "addTariffIfNotExists";
+        protected const String addOrUpdateTariff          = "addOrUpdateTariff";
+        protected const String updateTariff               = "updateTariff";
+        protected const String removeTariff               = "removeTariff";
+        protected const String removeAllTariffs           = "removeAllTariffs";
 
         #endregion
 
@@ -237,9 +249,14 @@ namespace cloud.charging.open.protocols.OCPI
         public ClientConfigurator       ClientConfigurations       { get; }
 
         /// <summary>
-        /// The database file name.
+        /// The database file name for all remote party configuration.
         /// </summary>
-        public String                   DatabaseFileName           { get; }
+        public String                   RemotePartyDBFileName      { get; }
+
+        /// <summary>
+        /// The database file name for all OCPI assets.
+        /// </summary>
+        public String                   AssetsDBFileName           { get; }
 
         #endregion
 
@@ -344,7 +361,8 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                               LoggingPath                   = null,
                              String?                               LogfileName                   = null,
                              LogfileCreatorDelegate?               LogfileCreator                = null,
-                             String?                               DatabaseFileName              = null,
+                             String?                               RemotePartyDBFileName         = null,
+                             String?                               AssetsDBFileName              = null,
                              DNSClient?                            DNSClient                     = null,
                              Boolean                               Autostart                     = false)
 
@@ -405,8 +423,11 @@ namespace cloud.charging.open.protocols.OCPI
             this.logfileName              = Path.Combine(this.LoggingPath,
                                                          this.LogfileName);
 
-            this.DatabaseFileName         = DatabaseFileName ?? Path.Combine(this.LoggingPath,
-                                                                             DefaultDatabaseFileName);
+            this.RemotePartyDBFileName    = RemotePartyDBFileName ?? Path.Combine(this.LoggingPath,
+                                                                                  DefaultRemotePartyDBFileName);
+
+            this.AssetsDBFileName         = AssetsDBFileName      ?? Path.Combine(this.LoggingPath,
+                                                                                  DefaultAssetsDBFileName);
 
             this.ClientConfigurations     = new ClientConfigurator();
 
@@ -486,7 +507,8 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                  LoggingPath                = null,
                              String?                  LogfileName                = null,
                              LogfileCreatorDelegate?  LogfileCreator             = null,
-                             String?                  DatabaseFileName           = null,
+                             String?                  RemotePartyDBFileName      = null,
+                             String?                  AssetsDBFileName           = null,
                              Boolean                  Autostart                  = false)
 
             : base(HTTPServer,
@@ -529,8 +551,11 @@ namespace cloud.charging.open.protocols.OCPI
             this.logfileName              = Path.Combine(this.LoggingPath,
                                                          this.LogfileName);
 
-            this.DatabaseFileName         = DatabaseFileName ?? Path.Combine(this.LoggingPath,
-                                                                             DefaultDatabaseFileName);
+            this.RemotePartyDBFileName    = RemotePartyDBFileName ?? Path.Combine(this.LoggingPath,
+                                                                                  DefaultRemotePartyDBFileName);
+
+            this.AssetsDBFileName         = AssetsDBFileName      ?? Path.Combine(this.LoggingPath,
+                                                                                  DefaultAssetsDBFileName);
 
             // Link HTTP events...
             HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -560,51 +585,105 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region Log(Command, Text)
+        #region (private, static) WriteToDatabase       (FileName, Text)
 
-        protected async Task Log(String   Command,
-                                 String?  Text   = null)
-        {
+        private static Task WriteToDatabase(String  FileName,
+                                            String  Text)
 
-            await File.AppendAllTextAsync(DatabaseFileName,
-                                          new JObject(new JProperty(Command, Text)).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
-                                          Encoding.UTF8);
-
-        }
+            => File.AppendAllTextAsync(FileName,
+                                       Text + Environment.NewLine,
+                                       Encoding.UTF8);
 
         #endregion
 
-        #region Log(Command, JSON)
+        #region (private, static) WriteToDatabase       (FileName, JToken, UserId = null)
 
-        protected async Task Log(String   Command,
-                                 JObject  JSON)
-        {
+        private static Task WriteToDatabase(String   FileName,
+                                            String   Command,
+                                            JToken?  JToken,
+                                            String?  UserId   = null)
 
-            await File.AppendAllTextAsync(DatabaseFileName,
-                                          new JObject(new JProperty(Command, JSON)).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
-                                          Encoding.UTF8);
+            => WriteToDatabase(FileName,
+                               JSONObject.Create(
 
-        }
+                                         new JProperty("timestamp",  Timestamp.Now),
+                                         new JProperty(Command,      JToken),
 
-        #endregion
-
-        #region Log(Command, Number)
-
-        protected async Task Log(String   Command,
-                                 Int64    Number)
-        {
-
-            await File.AppendAllTextAsync(DatabaseFileName,
-                                          new JObject(new JProperty(Command, Number)).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
-                                          Encoding.UTF8);
-
-        }
+                                   UserId is not null
+                                       ? new JProperty("userId",     UserId)
+                                       : null).
+                               ToString(Newtonsoft.Json.Formatting.None));
 
         #endregion
 
-        #region ReadDatabaseFile()
+        #region (private, static) WriteCommentToDatabase(FileName, Text, UserId = null)
 
-        protected IEnumerable<Command> ReadDatabaseFile()
+        private static Task WriteCommentToDatabase(String   FileName,
+                                                   String   Text,
+                                                   String?  UserId   = null)
+
+            => File.AppendAllTextAsync(FileName,
+                                       $"//{Timestamp.Now.ToIso8601()} {(UserId is not null ? UserId : "-")}: {Text}{Environment.NewLine}",
+                                       Encoding.UTF8);
+
+        #endregion
+
+
+        #region LogRemoteParty       (Command, Text = null, UserId = null)
+
+        protected Task LogRemoteParty(String   Command,
+                                      String?  Text     = null,
+                                      String?  UserId   = null)
+
+            => WriteToDatabase(RemotePartyDBFileName,
+                               Command,
+                               Text is not null
+                                   ? JToken.Parse(Text)
+                                   : null,
+                               UserId);
+
+        #endregion
+
+        #region LogRemoteParty       (Command, JSON,        UserId = null)
+
+        protected Task LogRemoteParty(String   Command,
+                                      JObject  JSON,
+                                      String?  UserId   = null)
+
+            => WriteToDatabase(RemotePartyDBFileName,
+                               Command,
+                               JSON,
+                               UserId);
+
+        #endregion
+
+        #region LogRemoteParty       (Command, Number,      UserId = null)
+
+        protected Task Log(String   Command,
+                           Int64    Number,
+                           String?  UserId   = null)
+
+            => WriteToDatabase(RemotePartyDBFileName,
+                               Command,
+                               Number,
+                               UserId);
+
+        #endregion
+
+        #region LogRemotePartyComment(Text,                 UserId = null)
+
+        protected Task LogRemotePartyComment(String   Text,
+                                             String?  UserId = null)
+
+            => WriteCommentToDatabase(RemotePartyDBFileName,
+                                      Text,
+                                      UserId);
+
+        #endregion
+
+        #region ReadRemotePartyDatabaseFile()
+
+        protected IEnumerable<Command> ReadRemotePartyDatabaseFile()
         {
 
             try
@@ -612,7 +691,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 var list = new List<Command>();
 
-                foreach (var line in File.ReadLines(DatabaseFileName,
+                foreach (var line in File.ReadLines(RemotePartyDBFileName,
                                                     Encoding.UTF8))
                 {
 
@@ -636,7 +715,111 @@ namespace cloud.charging.open.protocols.OCPI
                     }
                     catch (Exception e)
                     {
-                        DebugX.Log(e, "OCPI.CommonAPIBase.ReadLogfile()");
+                        DebugX.Log(e, "OCPI.CommonAPIBase.ReadRemotePartyDatabaseFile()");
+                    }
+
+                }
+
+                return list;
+
+            }
+            catch
+            {
+                return Array.Empty<Command>();
+            }
+
+        }
+
+        #endregion
+
+
+        #region LogAsset       (Command, Text = null, UserId = null)
+
+        protected Task LogAsset(String   Command,
+                                String?  Text     = null,
+                                String?  UserId   = null)
+
+            => WriteToDatabase(AssetsDBFileName,
+                               Command,
+                               Text is not null
+                                   ? JToken.Parse(Text)
+                                   : null,
+                               UserId);
+
+        #endregion
+
+        #region LogAsset       (Command, JSON,        UserId = null)
+
+        protected Task LogAsset(String   Command,
+                                JObject  JSON,
+                                String?  UserId   = null)
+
+            => WriteToDatabase(AssetsDBFileName,
+                               Command,
+                               JSON,
+                               UserId);
+
+        #endregion
+
+        #region LogAsset       (Command, Number,      UserId = null)
+
+        protected Task LogAsset(String   Command,
+                                Int64    Number,
+                                String?  UserId   = null)
+
+            => WriteToDatabase(AssetsDBFileName,
+                               Command,
+                               Number,
+                               UserId);
+
+        #endregion
+
+        #region LogAssetComment(Text,                 UserId = null)
+
+        protected Task LogAssetComment(String   Text,
+                                       String?  UserId   = null)
+
+            => WriteCommentToDatabase(AssetsDBFileName,
+                                      Text,
+                                      UserId);
+
+        #endregion
+
+        #region ReadAssetsDatabaseFile()
+
+        protected IEnumerable<Command> ReadAssetsDatabaseFile()
+        {
+
+            try
+            {
+
+                var list = new List<Command>();
+
+                foreach (var line in File.ReadLines(AssetsDBFileName,
+                                                    Encoding.UTF8))
+                {
+
+                    try
+                    {
+
+                        var json = JObject.Parse(line);
+
+                        if (json.Properties().First().Value.Type == JTokenType.String)
+                            list.Add(new Command(json.Properties().First().Name,
+                                                 json.Properties().First().Value<String>()));
+
+                        else if (json.Properties().First().Value.Type == JTokenType.Object)
+                            list.Add(new Command(json.Properties().First().Name,
+                                                 json.Properties().First().Value as JObject));
+
+                        else if (json.Properties().First().Value.Type == JTokenType.Integer)
+                            list.Add(new Command(json.Properties().First().Name,
+                                                 json.Properties().First().Value<Int64>()));
+
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.Log(e, "OCPI.CommonAPIBase.ReadAssetsDatabaseFile()");
                     }
 
                 }
@@ -667,7 +850,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             var result = base.Start();
 
-            Log("started", "").GetAwaiter().GetResult();
+            LogAsset("started").GetAwaiter().GetResult();
 
             #region Send 'Open Data API restarted'-e-mail...
 
@@ -712,7 +895,7 @@ namespace cloud.charging.open.protocols.OCPI
             var result = base.Shutdown(Message,
                                        Wait);
 
-            Log("shutdown", Message).GetAwaiter().GetResult();
+            LogAsset("shutdown", Message).GetAwaiter().GetResult();
 
             //SendShutdown(this, Timestamp.Now);
 

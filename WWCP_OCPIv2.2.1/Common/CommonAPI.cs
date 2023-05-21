@@ -421,6 +421,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
+        public CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                 { get; }
+        public CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer            { get; }
+        public CustomJObjectSerializerDelegate<Price>?                CustomPriceSerializer                  { get; }
+        public CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer          { get; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?       CustomPriceComponentSerializer         { get; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?   CustomTariffRestrictionsSerializer     { get; }
+        public CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer              { get; }
+        public CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer           { get; }
+        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer    { get; }
+
         #region Constructor(s)
 
         #region CommonAPI(HTTPServerName, ...)
@@ -494,7 +504,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          String?                                LoggingPath                        = null,
                          String?                                LogfileName                        = null,
                          LogfileCreatorDelegate?                LogfileCreator                     = null,
-                         String?                                DatabaseFileName                   = null,
+                         String?                                RemotePartyDBFileName              = null,
+                         String?                                AssetsDBFileName                   = null,
                          DNSClient?                             DNSClient                          = null,
                          Boolean                                Autostart                          = false)
 
@@ -548,7 +559,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    LoggingPath,
                    LogfileName,
                    LogfileCreator,
-                   DatabaseFileName,
+                   RemotePartyDBFileName,
+                   AssetsDBFileName,
                    DNSClient,
                    Autostart)
 
@@ -564,7 +576,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.Disable_OCPIv2_1_1    = Disable_OCPIv2_1_1;
 
             this.locations             = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this.tariffs               = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
             this.chargingSessions      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
             this.tokenStatus           = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
             this.ChargeDetailRecords   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
@@ -579,7 +590,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                );
 
             if (!this.DisableLogging)
-                ReadDatabaseFile();
+                ReadRemotePartyDatabaseFile();
 
             RegisterURLTemplates();
 
@@ -639,7 +650,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          String?                       LoggingPath               = null,
                          String?                       LogfileName               = null,
                          LogfileCreatorDelegate?       LogfileCreator            = null,
-                         String?                       DatabaseFileName          = null,
+                         String?                       RemotePartyDBFileName     = null,
+                         String?                       AssetsDBFileName          = null,
                          Boolean                       Autostart                 = false)
 
             : base(Version.Id,
@@ -675,7 +687,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    LoggingPath,
                    LogfileName ?? DefaultLogfileName,
                    LogfileCreator,
-                   DatabaseFileName,
+                   RemotePartyDBFileName,
+                   AssetsDBFileName,
                    Autostart)
 
         {
@@ -690,7 +703,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.Disable_OCPIv2_1_1    = Disable_OCPIv2_1_1;
 
             this.locations             = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this.tariffs               = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
             this.chargingSessions      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
             this.tokenStatus           = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
             this.ChargeDetailRecords   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
@@ -710,7 +722,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                              : null;
 
             if (!this.DisableLogging)
-                ReadDatabaseFile();
+                ReadRemotePartyDatabaseFile();
 
             RegisterURLTemplates();
 
@@ -1783,8 +1795,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                     remoteParties.TryRemove(remoteParty.Id, out _);
 
-                    await Log("removeRemoteParty",
-                              remoteParty.ToJSON(true));
+                    await LogRemoteParty(removeRemoteParty,
+                                         remoteParty.ToJSON(true));
 
                 }
 
@@ -1809,8 +1821,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                 newRemoteParty))
                     {
 
-                        await Log("updateRemoteParty",
-                                  newRemoteParty.ToJSON(true));
+                        await LogRemoteParty(updateRemoteParty,
+                                             newRemoteParty.ToJSON(true));
 
                     }
 
@@ -1956,8 +1968,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (remoteParties.TryAdd(newRemoteParty.Id,
                                      newRemoteParty)) {
 
-                await Log("addRemoteParty",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2022,8 +2034,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                      newRemoteParty))
             {
 
-                await Log("addRemoteParty",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2094,8 +2106,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                      newRemoteParty))
             {
 
-                await Log("addRemoteParty",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2156,8 +2168,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                      newRemoteParty))
             {
 
-                await Log("addRemoteParty",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2244,8 +2256,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (result == newRemoteParty)
             {
 
-                await Log("addRemotePartyIfNotExists",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemotePartyIfNotExists,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2312,8 +2324,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (result == newRemoteParty)
             {
 
-                await Log("addRemotePartyIfNotExists",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemotePartyIfNotExists,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2386,8 +2398,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (result == newRemoteParty)
             {
 
-                await Log("addRemotePartyIfNotExists",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemotePartyIfNotExists,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2450,8 +2462,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (result == newRemoteParty)
             {
 
-                await Log("addRemotePartyIfNotExists",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(addRemotePartyIfNotExists,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2547,8 +2559,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                           return newRemoteParty;
                                       });
 
-            await Log("addOrUpdateRemoteParty",
-                      newRemoteParty.ToJSON(true));
+            await LogRemoteParty(addOrUpdateRemoteParty,
+                                 newRemoteParty.ToJSON(true));
 
             return added;
 
@@ -2620,8 +2632,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                           return newRemoteParty;
                                       });
 
-            await Log("addOrUpdateRemoteParty",
-                      newRemoteParty.ToJSON(true));
+            await LogRemoteParty(addOrUpdateRemoteParty,
+                                 newRemoteParty.ToJSON(true));
 
             return added;
 
@@ -2699,8 +2711,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                           return newRemoteParty;
                                       });
 
-            await Log("addOrUpdateRemoteParty",
-                      newRemoteParty.ToJSON(true));
+            await LogRemoteParty(addOrUpdateRemoteParty,
+                                 newRemoteParty.ToJSON(true));
 
             return added;
 
@@ -2768,8 +2780,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                           return newRemoteParty;
                                       });
 
-            await Log("addOrUpdateRemoteParty",
-                      newRemoteParty.ToJSON(true));
+            await LogRemoteParty(addOrUpdateRemoteParty,
+                                 newRemoteParty.ToJSON(true));
 
             return added;
 
@@ -2850,8 +2862,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         ExistingRemoteParty))
             {
 
-                await Log("updateRemoteParty",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(updateRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2916,8 +2928,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         ExistingRemoteParty))
             {
 
-                await Log("updateRemoteParty",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(updateRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -2988,8 +3000,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         ExistingRemoteParty))
             {
 
-                await Log("updateRemoteParty",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(updateRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -3050,8 +3062,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         ExistingRemoteParty))
             {
 
-                await Log("updateRemoteParty",
-                          newRemoteParty.ToJSON(true));
+                await LogRemoteParty(updateRemoteParty,
+                                     newRemoteParty.ToJSON(true));
 
                 return true;
 
@@ -3216,8 +3228,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (remoteParties.TryRemove(RemoteParty.Id, out var remoteParty))
             {
 
-                await Log("removeRemoteParty",
-                          remoteParty.ToJSON(true));
+                await LogRemoteParty(removeRemoteParty,
+                                     remoteParty.ToJSON(true));
 
                 return true;
 
@@ -3237,8 +3249,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (remoteParties.Remove(RemotePartyId, out var remoteParty))
             {
 
-                await Log("removeRemoteParty",
-                          remoteParty.ToJSON(true));
+                await LogRemoteParty(removeRemoteParty,
+                                     remoteParty.ToJSON(true));
 
                 return true;
 
@@ -3264,8 +3276,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 remoteParties.TryRemove(remoteParty.Id, out _);
 
-                await Log("removeRemoteParty",
-                          remoteParty.ToJSON(true));
+                await LogRemoteParty(removeRemoteParty,
+                                     remoteParty.ToJSON(true));
 
             }
 
@@ -3293,8 +3305,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 remoteParties.TryRemove(remoteParty.Id, out _);
 
-                await Log("removeRemoteParty",
-                          remoteParty.ToJSON(true));
+                await LogRemoteParty(removeRemoteParty,
+                                     remoteParty.ToJSON(true));
 
             }
 
@@ -3311,7 +3323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             remoteParties.Clear();
 
-            await Log("removeAllRemoteParties");
+            await LogRemoteParty("removeAllRemoteParties");
 
         }
 
@@ -3652,6 +3664,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         //ToDo: Add last modified timestamp to locations!
         //ToDo: Refactor async!
+        //ToDo: Refactor result data structures!
 
         #region Locations
 
@@ -4741,7 +4754,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Tariffs
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id , Tariff>>> tariffs;
+        #region Data
+
+        private readonly ConcurrentDictionary<CountryCode, ConcurrentDictionary<Party_Id, ConcurrentDictionary<Tariff_Id , Tariff>>> tariffs = new();
 
 
         public delegate Task OnTariffAddedDelegate(Tariff Tariff);
@@ -4752,6 +4767,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public delegate Task OnTariffChangedDelegate(Tariff Tariff);
 
         public event OnTariffChangedDelegate? OnTariffChanged;
+
+        #endregion
 
 
         public GetTariffIds2_Delegate?        GetTariffIdsDelegate       { get; set; }
@@ -4771,20 +4788,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
                 {
-                    parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    this.tariffs.Add(Tariff.CountryCode, parties);
+                    parties = new ConcurrentDictionary<Party_Id, ConcurrentDictionary<Tariff_Id, Tariff>>();
+                    this.tariffs.TryAdd(Tariff.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
                 {
-                    tariffs = new Dictionary<Tariff_Id, Tariff>();
-                    parties.Add(Tariff.PartyId, tariffs);
+                    tariffs = new ConcurrentDictionary<Tariff_Id, Tariff>();
+                    parties.TryAdd(Tariff.PartyId, tariffs);
                 }
 
                 if (!tariffs.ContainsKey(Tariff.Id))
                 {
 
-                    tariffs.Add(Tariff.Id, Tariff);
+                    tariffs.TryAdd(Tariff.Id, Tariff);
                     Tariff.CommonAPI = this;
 
                     if (!SkipNotifications)
@@ -4833,20 +4850,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
                 {
-                    parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    this.tariffs.Add(Tariff.CountryCode, parties);
+                    parties = new ConcurrentDictionary<Party_Id, ConcurrentDictionary<Tariff_Id, Tariff>>();
+                    this.tariffs.TryAdd(Tariff.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
                 {
-                    tariffs = new Dictionary<Tariff_Id, Tariff>();
-                    parties.Add(Tariff.PartyId, tariffs);
+                    tariffs = new ConcurrentDictionary<Tariff_Id, Tariff>();
+                    parties.TryAdd(Tariff.PartyId, tariffs);
                 }
 
                 if (!tariffs.ContainsKey(Tariff.Id))
                 {
 
-                    tariffs.Add(Tariff.Id, Tariff);
+                    tariffs.TryAdd(Tariff.Id, Tariff);
                     Tariff.CommonAPI = this;
 
                     if (!SkipNotifications)
@@ -4893,14 +4910,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 if (!this.tariffs.TryGetValue(newOrUpdatedTariff.CountryCode, out var parties))
                 {
-                    parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    this.tariffs.Add(newOrUpdatedTariff.CountryCode, parties);
+                    parties = new ConcurrentDictionary<Party_Id, ConcurrentDictionary<Tariff_Id, Tariff>>();
+                    this.tariffs.TryAdd(newOrUpdatedTariff.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(newOrUpdatedTariff.PartyId, out var tariffs))
                 {
-                    tariffs = new Dictionary<Tariff_Id, Tariff>();
-                    parties.Add(newOrUpdatedTariff.PartyId, tariffs);
+                    tariffs = new ConcurrentDictionary<Tariff_Id, Tariff>();
+                    parties.TryAdd(newOrUpdatedTariff.PartyId, tariffs);
                 }
 
                 if (tariffs.TryGetValue(newOrUpdatedTariff.Id, out var existingTariff))
@@ -4935,7 +4952,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 }
 
-                tariffs.Add(newOrUpdatedTariff.Id, newOrUpdatedTariff);
+                tariffs.TryAdd(newOrUpdatedTariff.Id, newOrUpdatedTariff);
 
                 var OnTariffAddedLocal = OnTariffAdded;
                 if (OnTariffAddedLocal is not null)
@@ -5262,38 +5279,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveTariff    (Tariff)
 
-        public Boolean RemoveTariff(Tariff Tariff)
+        /// <summary>
+        /// Remove the given charging tariff.
+        /// </summary>
+        /// <param name="Tariff">A charging tariff.</param>
+        public async Task<Boolean> RemoveTariff(Tariff Tariff)
         {
 
-            lock (tariffs)
+            var success = false;
+
+            if (tariffs.TryGetValue(Tariff.CountryCode, out var parties))
             {
 
-                var success = false;
-
-                if (tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+                if (parties.TryGetValue(Tariff.PartyId, out var tariffsOfParty))
                 {
 
-                    if (parties.TryGetValue(Tariff.PartyId, out var _tariffs))
+                    if (tariffsOfParty.Remove(Tariff.Id, out _))
                     {
 
-                        if (_tariffs.ContainsKey(Tariff.Id))
-                        {
-                            success = _tariffs.Remove(Tariff.Id);
-                        }
+                        await LogAsset(removeTariff,
+                                       Tariff.ToJSON(CustomTariffSerializer,
+                                                     CustomDisplayTextSerializer,
+                                                     CustomPriceSerializer,
+                                                     CustomTariffElementSerializer,
+                                                     CustomPriceComponentSerializer,
+                                                     CustomTariffRestrictionsSerializer,
+                                                     CustomEnergyMixSerializer,
+                                                     CustomEnergySourceSerializer,
+                                                     CustomEnvironmentalImpactSerializer));
 
-                        if (!_tariffs.Any())
-                            parties.Remove(Tariff.PartyId);
+                        success = true;
 
                     }
 
-                    if (!parties.Any())
-                        chargingSessions.Remove(Tariff.CountryCode);
+                    if (!tariffsOfParty.Any())
+                        parties.Remove(Tariff.PartyId, out _);
 
                 }
 
-                return success;
+                if (!parties.Any())
+                    tariffs.Remove(Tariff.CountryCode, out _);
 
             }
+
+            return success;
 
         }
 
@@ -5301,36 +5330,62 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveTariff    (TariffId)
 
-        public Boolean RemoveTariff(Tariff_Id TariffId)
+        /// <summary>
+        /// Remove the given charging tariff.
+        /// </summary>
+        /// <param name="TariffId">An unique charging tariff identification.</param>
+        public async Task<Boolean> RemoveTariff(Tariff_Id TariffId)
         {
 
-            lock (tariffs)
+            CountryCode? countryCode   = default;
+            Party_Id?    partyId       = default;
+
+            foreach (var parties in tariffs.Values)
             {
-
-                CountryCode? countryCode   = default;
-                Party_Id?    partyId       = default;
-
-                foreach (var parties in tariffs.Values)
+                foreach (var tariffs in parties.Values)
                 {
-                    foreach (var tariffs in parties.Values)
+                    if (tariffs.TryGetValue(TariffId, out var tariff))
                     {
-                        if (tariffs.TryGetValue(TariffId, out var tariff))
-                        {
-                            countryCode  = tariff.CountryCode;
-                            partyId      = tariff.PartyId;
-                        }
+                        countryCode  = tariff.CountryCode;
+                        partyId      = tariff.PartyId;
                     }
                 }
+            }
 
-                if (countryCode.HasValue &&
-                    partyId.    HasValue)
+            if (countryCode.HasValue &&
+                partyId.    HasValue)
+            {
+
+                var success = tariffs[countryCode.Value][partyId.Value].Remove(TariffId, out var tariff);
+
+                if (success)
                 {
-                    return tariffs[countryCode.Value][partyId.Value].Remove(TariffId);
+
+                    if (tariff is not null)
+                        await LogAsset(removeTariff,
+                                       tariff.ToJSON(CustomTariffSerializer,
+                                                     CustomDisplayTextSerializer,
+                                                     CustomPriceSerializer,
+                                                     CustomTariffElementSerializer,
+                                                     CustomPriceComponentSerializer,
+                                                     CustomTariffRestrictionsSerializer,
+                                                     CustomEnergyMixSerializer,
+                                                     CustomEnergySourceSerializer,
+                                                     CustomEnvironmentalImpactSerializer));
+
+                    if (!tariffs[countryCode.Value][partyId.Value].Any())
+                        tariffs[countryCode.Value].Remove(partyId.Value, out _);
+
+                    if (!tariffs[countryCode.Value].Any())
+                        tariffs.Remove(countryCode.Value, out _);
+
                 }
 
-                return false;
+                return success;
 
             }
+
+            return false;
 
         }
 
@@ -5339,28 +5394,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #region RemoveAllTariffs(IncludeTariffs = null)
 
         /// <summary>
-        /// Remove all matching charging tariffs.
+        /// Remove all matching tariffs.
         /// </summary>
-        /// <param name="IncludeSessions">An optional charging tariff filter.</param>
-        public void RemoveAllTariffs(Func<Tariff, Boolean>? IncludeTariffs = null)
+        /// <param name="IncludeTariffs">An optional charging tariff filter.</param>
+        public async Task RemoveAllTariffs(Func<Tariff, Boolean>? IncludeTariffs = null)
         {
 
-            lock (tariffs)
+            if (IncludeTariffs is null)
+            {
+                tariffs.Clear();
+                await LogAsset(removeAllTariffs);
+            }
+
+            else
             {
 
-                if (IncludeTariffs is null)
-                    tariffs.Clear();
-
-                else
+                foreach (var tariff in tariffs.Values.SelectMany(partyKVP  => partyKVP. Values).
+                                                      SelectMany(tariffKVP => tariffKVP.Values).
+                                                      Where     (IncludeTariffs).
+                                                      ToArray   ())
                 {
 
-                    var tariffsToDelete = tariffs.Values.SelectMany(xx => xx.Values).
-                                                         SelectMany(yy => yy.Values).
-                                                         Where(IncludeTariffs).
-                                                         ToArray();
+                    tariffs[tariff.CountryCode][tariff.PartyId].Remove(tariff.Id, out _);
 
-                    foreach (var tariff in tariffsToDelete)
-                        tariffs[tariff.CountryCode][tariff.PartyId].Remove(tariff.Id);
+                    await LogAsset(removeTariff,
+                                   tariff.ToJSON(CustomTariffSerializer,
+                                                 CustomDisplayTextSerializer,
+                                                 CustomPriceSerializer,
+                                                 CustomTariffElementSerializer,
+                                                 CustomPriceComponentSerializer,
+                                                 CustomTariffRestrictionsSerializer,
+                                                 CustomEnergyMixSerializer,
+                                                 CustomEnergySourceSerializer,
+                                                 CustomEnvironmentalImpactSerializer));
 
                 }
 
@@ -5370,29 +5436,100 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
+        #region RemoveAllTariffs(IncludeTariffIds)
+
+        /// <summary>
+        /// Remove all matching tariffs.
+        /// </summary>
+        /// <param name="IncludeTariffIds">An optional charging tariff identification filter.</param>
+        public async Task<Boolean> RemoveAllTariffs(Func<Tariff_Id, Boolean>? IncludeTariffIds)
+        {
+
+            var success = false;
+
+            if (IncludeTariffIds is null)
+            {
+
+                tariffs.Clear();
+
+                await LogAsset(removeAllTariffs);
+
+                success = true;
+
+            }
+
+            else
+            {
+                foreach (var tariff in tariffs.Values.SelectMany(partyKVP  => partyKVP. Values).
+                                                      SelectMany(tariffKVP => tariffKVP.Values).
+                                                      Where     (tariff    => IncludeTariffIds(tariff.Id)).
+                                                      ToArray   ())
+                {
+
+                    success = true;
+
+                    tariffs[tariff.CountryCode][tariff.PartyId].Remove(tariff.Id, out _);
+
+                    await LogAsset(removeTariff,
+                                   tariff.ToJSON(CustomTariffSerializer,
+                                                 CustomDisplayTextSerializer,
+                                                 CustomPriceSerializer,
+                                                 CustomTariffElementSerializer,
+                                                 CustomPriceComponentSerializer,
+                                                 CustomTariffRestrictionsSerializer,
+                                                 CustomEnergyMixSerializer,
+                                                 CustomEnergySourceSerializer,
+                                                 CustomEnvironmentalImpactSerializer));
+
+                }
+            }
+
+            return success;
+
+        }
+
+        #endregion
+
         #region RemoveAllTariffs(CountryCode, PartyId)
 
         /// <summary>
-        /// Remove all tariffs owned by the given party.
+        /// Remove all charging tariffs owned by the given party.
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllTariffs(CountryCode  CountryCode,
-                                     Party_Id     PartyId)
+        public async Task<Boolean> RemoveAllTariffs(CountryCode  CountryCode,
+                                                    Party_Id     PartyId)
         {
 
-            lock (tariffs)
+            await LogAssetComment(removeAllTariffs, $"{CountryCode} {PartyId}");
+
+            var success = false;
+
+            if (tariffs.TryGetValue(CountryCode, out var parties))
             {
-
-                if (tariffs.TryGetValue(CountryCode, out var parties))
+                if (parties.TryGetValue(PartyId, out var tariffs))
                 {
-                    if (parties.TryGetValue(PartyId, out var tariffs))
-                    {
-                        tariffs.Clear();
-                    }
-                }
 
+                    tariffs.Clear();
+
+                    success = true;
+
+                    foreach (var tariff in tariffs.Values)
+                        await LogAsset(removeTariff,
+                                       tariff.ToJSON(CustomTariffSerializer,
+                                                     CustomDisplayTextSerializer,
+                                                     CustomPriceSerializer,
+                                                     CustomTariffElementSerializer,
+                                                     CustomPriceComponentSerializer,
+                                                     CustomTariffRestrictionsSerializer,
+                                                     CustomEnergyMixSerializer,
+                                                     CustomEnergySourceSerializer,
+                                                     CustomEnvironmentalImpactSerializer));
+
+                }
             }
+
+            return success;
 
         }
 
