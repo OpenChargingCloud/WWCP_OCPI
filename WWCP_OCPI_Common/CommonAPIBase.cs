@@ -150,22 +150,22 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String      DefaultHTTPServerName     = "GraphDefined OCPI HTTP API v0.1";
+        public new const           String      DefaultHTTPServerName      = "GraphDefined OCPI HTTP API v0.1";
 
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public new const           String      DefaultHTTPServiceName    = "GraphDefined OCPI HTTP API v0.1";
+        public new const           String      DefaultHTTPServiceName     = "GraphDefined OCPI HTTP API v0.1";
 
         /// <summary>
         /// The default HTTP server TCP port.  
         /// </summary>
-        public new static readonly IPPort      DefaultHTTPServerPort     = IPPort.Parse(8080);
+        public new static readonly IPPort      DefaultHTTPServerPort      = IPPort.Parse(8080);
 
         /// <summary>
         /// The default HTTP URL path prefix.  
         /// </summary>
-        public new static readonly HTTPPath    DefaultURLPathPrefix      = HTTPPath.Parse("io/OCPI/");
+        public new static readonly HTTPPath    DefaultURLPathPrefix       = HTTPPath.Parse("io/OCPI/");
 
         /// <summary>
         /// The (max supported) OCPI version.
@@ -176,6 +176,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// The absolute path to the CommonAPI log file.
         /// </summary>
         private readonly           String      logfileName;
+
+        /// <summary>
+        /// The database file name.
+        /// </summary>
+        public const               String      DefaultDatabaseFileName    = "OCPI-Database.db";
 
 
         protected const String addRemoteParty             = "addRemoteParty";
@@ -230,6 +235,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// A template for OCPI client configurations.
         /// </summary>
         public ClientConfigurator       ClientConfigurations       { get; }
+
+        /// <summary>
+        /// The database file name.
+        /// </summary>
+        public String                   DatabaseFileName           { get; }
 
         #endregion
 
@@ -334,6 +344,7 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                               LoggingPath                   = null,
                              String?                               LogfileName                   = null,
                              LogfileCreatorDelegate?               LogfileCreator                = null,
+                             String?                               DatabaseFileName              = null,
                              DNSClient?                            DNSClient                     = null,
                              Boolean                               Autostart                     = false)
 
@@ -393,6 +404,9 @@ namespace cloud.charging.open.protocols.OCPI
 
             this.logfileName              = Path.Combine(this.LoggingPath,
                                                          this.LogfileName);
+
+            this.DatabaseFileName         = DatabaseFileName ?? Path.Combine(this.LoggingPath,
+                                                                             DefaultDatabaseFileName);
 
             this.ClientConfigurations     = new ClientConfigurator();
 
@@ -472,6 +486,7 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                  LoggingPath                = null,
                              String?                  LogfileName                = null,
                              LogfileCreatorDelegate?  LogfileCreator             = null,
+                             String?                  DatabaseFileName           = null,
                              Boolean                  Autostart                  = false)
 
             : base(HTTPServer,
@@ -514,6 +529,9 @@ namespace cloud.charging.open.protocols.OCPI
             this.logfileName              = Path.Combine(this.LoggingPath,
                                                          this.LogfileName);
 
+            this.DatabaseFileName         = DatabaseFileName ?? Path.Combine(this.LoggingPath,
+                                                                             DefaultDatabaseFileName);
+
             // Link HTTP events...
             HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
             HTTPServer.ResponseLog       += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
@@ -548,7 +566,7 @@ namespace cloud.charging.open.protocols.OCPI
                                  String?  Text   = null)
         {
 
-            await File.AppendAllTextAsync(logfileName,
+            await File.AppendAllTextAsync(DatabaseFileName,
                                           new JObject(new JProperty(Command, Text)).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
                                           Encoding.UTF8);
 
@@ -562,7 +580,7 @@ namespace cloud.charging.open.protocols.OCPI
                                  JObject  JSON)
         {
 
-            await File.AppendAllTextAsync(logfileName,
+            await File.AppendAllTextAsync(DatabaseFileName,
                                           new JObject(new JProperty(Command, JSON)).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
                                           Encoding.UTF8);
 
@@ -576,7 +594,7 @@ namespace cloud.charging.open.protocols.OCPI
                                  Int64    Number)
         {
 
-            await File.AppendAllTextAsync(logfileName,
+            await File.AppendAllTextAsync(DatabaseFileName,
                                           new JObject(new JProperty(Command, Number)).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
                                           Encoding.UTF8);
 
@@ -584,9 +602,9 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region ReadLogfile()
+        #region ReadDatabaseFile()
 
-        protected IEnumerable<Command> ReadLogfile()
+        protected IEnumerable<Command> ReadDatabaseFile()
         {
 
             try
@@ -594,7 +612,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 var list = new List<Command>();
 
-                foreach (var line in File.ReadLines(logfileName,
+                foreach (var line in File.ReadLines(DatabaseFileName,
                                                     Encoding.UTF8))
                 {
 

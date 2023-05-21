@@ -494,6 +494,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          String?                                LoggingPath                        = null,
                          String?                                LogfileName                        = null,
                          LogfileCreatorDelegate?                LogfileCreator                     = null,
+                         String?                                DatabaseFileName                   = null,
                          DNSClient?                             DNSClient                          = null,
                          Boolean                                Autostart                          = false)
 
@@ -547,6 +548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    LoggingPath,
                    LogfileName,
                    LogfileCreator,
+                   DatabaseFileName,
                    DNSClient,
                    Autostart)
 
@@ -577,7 +579,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                );
 
             if (!this.DisableLogging)
-                ReadLogfile();
+                ReadDatabaseFile();
 
             RegisterURLTemplates();
 
@@ -637,6 +639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          String?                       LoggingPath               = null,
                          String?                       LogfileName               = null,
                          LogfileCreatorDelegate?       LogfileCreator            = null,
+                         String?                       DatabaseFileName          = null,
                          Boolean                       Autostart                 = false)
 
             : base(Version.Id,
@@ -672,6 +675,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    LoggingPath,
                    LogfileName ?? DefaultLogfileName,
                    LogfileCreator,
+                   DatabaseFileName,
                    Autostart)
 
         {
@@ -706,7 +710,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                              : null;
 
             if (!this.DisableLogging)
-                ReadLogfile();
+                ReadDatabaseFile();
 
             RegisterURLTemplates();
 
