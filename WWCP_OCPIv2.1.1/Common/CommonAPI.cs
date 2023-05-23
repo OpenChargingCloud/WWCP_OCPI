@@ -36,6 +36,8 @@ using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 #endregion
 
@@ -439,14 +441,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Custom JSON serializers
 
-        public CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                { get; }
-        public CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           { get; }
-        public CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer         { get; }
-        public CustomJObjectSerializerDelegate<PriceComponent>?       CustomPriceComponentSerializer        { get; }
-        public CustomJObjectSerializerDelegate<TariffRestrictions>?   CustomTariffRestrictionsSerializer    { get; }
-        public CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             { get; }
-        public CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          { get; }
-        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   { get; }
+        public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                        { get; }
+        public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; }
+        public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                 { get; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer                { get; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer            { get; }
+        public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                     { get; }
+        public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; }
+        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer           { get; }
+
+
+        public CustomJObjectSerializerDelegate<Token>?                       CustomTokenSerializer                         { get; }
+
+
+        public CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                           { get; }
+        public CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                      { get; }
+        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer         { get; }
+        public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                          { get; }
+        public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer                { get; }
+        public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                     { get; }
+        public CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                   { get; }
+        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; }
+        public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; }
+        public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; }
+        public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                         { get; }
+        public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer                { get; }
+        public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                  { get; }
+        public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                    { get; }
+        public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                   { get; }
 
         #endregion
 
@@ -627,8 +650,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             this.locations             = new Dictionary<Location_Id, Location>();
             this.chargingSessions      = new Dictionary<Session_Id,  Session>();
-            this.tokenStatus           = new Dictionary<Token_Id,    TokenStatus>();
-            this.chargeDetailRecords   = new Dictionary<CDR_Id,      CDR>();
 
             this.CommonAPILogger       = this.DisableLogging == false
                                              ? new CommonAPILogger(
@@ -783,8 +804,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             this.locations             = new Dictionary<Location_Id, Location>();
             this.chargingSessions      = new Dictionary<Session_Id,  Session>();
-            this.tokenStatus           = new Dictionary<Token_Id,    TokenStatus>();
-            this.chargeDetailRecords   = new Dictionary<CDR_Id,      CDR>();
 
             // Link HTTP events...
             HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -5040,7 +5059,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public GetTariffIds2_Delegate? GetTariffIdsDelegate { get; set; }
 
 
-        #region AddTariff           (Tariff, SkipNotifications = false)
+        #region AddTariff           (Tariff,                          SkipNotifications = false)
 
         public async Task<AddResult<Tariff>> AddTariff(Tariff   Tariff,
                                                        Boolean  SkipNotifications   = false)
@@ -5093,7 +5112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region AddTariffIfNotExists(Tariff, SkipNotifications = false)
+        #region AddTariffIfNotExists(Tariff,                          SkipNotifications = false)
 
         public async Task<AddResult<Tariff>> AddTariffIfNotExists(Tariff   Tariff,
                                                                   Boolean  SkipNotifications   = false)
@@ -5235,7 +5254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return AddOrUpdateResult<Tariff>.Failed(Tariff,
-                                                    "TryAdd(Tariff.Id, Tariff) failed!");
+                                                    "AddOrUpdateTariff(Tariff.Id, Tariff) failed!");
 
             #endregion
 
@@ -5308,7 +5327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return UpdateResult<Tariff>.Failed(Tariff,
-                                               "TryUpdate(Tariff.Id, Tariff, Tariff) failed!");
+                                               "UpdateTariff(Tariff.Id, Tariff, Tariff) failed!");
 
         }
 
@@ -5333,7 +5352,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var patchResult = tariff.TryPatch(TariffPatch,
                                                   AllowDowngrades ?? this.AllowDowngrades ?? false);
 
-                if (patchResult.IsSuccess)
+                if (patchResult.IsSuccess &&
+                    patchResult.PatchedData is not null)
                 {
 
                     tariffs[Tariff.Id] = patchResult.PatchedData;
@@ -5624,8 +5644,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             var removedTariffs = new List<Tariff>();
 
-            foreach (var tariff in tariffs.Values.Where(tariffs => CountryCode == tariffs.CountryCode &&
-                                                                   PartyId     == tariffs.PartyId).ToArray())
+            foreach (var tariff in tariffs.Values.Where(tariff => CountryCode == tariff.CountryCode &&
+                                                                  PartyId     == tariff.PartyId).ToArray())
             {
                 if (tariffs.Remove(tariff.Id, out _))
                 {
@@ -6114,7 +6134,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Tokens
 
-        private readonly Dictionary<Token_Id, TokenStatus> tokenStatus;
+        #region Data
+
+        private readonly ConcurrentDictionary<Token_Id, TokenStatus> tokenStatus = new();
 
 
         public delegate Task OnTokenAddedDelegate(Token Token);
@@ -6131,139 +6153,144 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public event OnVerifyTokenDelegate? OnVerifyToken;
 
+        #endregion
 
-        #region AddToken           (Token, Status = AllowedTypes.ALLOWED, SkipNotifications = false)
 
-        public Token AddToken(Token         Token,
-                              AllowedType?  Status              = null,
-                              Boolean       SkipNotifications   = false)
+        #region AddToken           (Token, Status = AllowedTypes.ALLOWED,                          SkipNotifications = false)
+
+        public async Task<AddResult<Token>> AddToken(Token         Token,
+                                                     AllowedType?  Status              = null,
+                                                     Boolean       SkipNotifications   = false)
         {
 
             Status ??= AllowedType.ALLOWED;
 
-            lock (tokenStatus)
+            if (tokenStatus.TryAdd(Token.Id, new TokenStatus(Token,
+                                                             Status.Value)))
             {
 
-                if (!tokenStatus.ContainsKey(Token.Id))
+                Token.CommonAPI = this;
+
+                await LogAsset(addToken,
+                               Token.ToJSON(true,
+                                            CustomTokenSerializer));
+
+                if (!SkipNotifications)
                 {
 
-                    tokenStatus.Add(Token.Id, new TokenStatus(Token, Status.Value));
-                    Token.CommonAPI = this;
-
-                    if (!SkipNotifications)
+                    var OnTokenAddedLocal = OnTokenAdded;
+                    if (OnTokenAddedLocal is not null)
                     {
-
-                        var OnTokenAddedLocal = OnTokenAdded;
-                        if (OnTokenAddedLocal is not null)
+                        try
                         {
-                            try
-                            {
-                                OnTokenAddedLocal(Token).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
+                            OnTokenAddedLocal(Token).Wait();
                         }
-
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
-
-                    return Token;
 
                 }
 
-                throw new ArgumentException("The given token already exists!");
+                return AddResult<Token>.Success(Token);
 
             }
+
+            return AddResult<Token>.Failed(Token,
+                                           "TryAdd(Token.Id, Token) failed!");
 
         }
 
         #endregion
 
-        #region AddTokenIfNotExists(Token, Status = AllowedTypes.ALLOWED, SkipNotifications = false)
+        #region AddTokenIfNotExists(Token, Status = AllowedTypes.ALLOWED,                          SkipNotifications = false)
 
-        public Token AddTokenIfNotExists(Token         Token,
-                                         AllowedType?  Status              = null,
-                                         Boolean       SkipNotifications   = false)
+        public async Task<AddResult<Token>> AddTokenIfNotExists(Token         Token,
+                                                                AllowedType?  Status              = null,
+                                                                Boolean       SkipNotifications   = false)
         {
 
             Status ??= AllowedType.ALLOWED;
 
-            lock (tokenStatus)
+            if (tokenStatus.TryAdd(Token.Id, new TokenStatus(Token,
+                                                             Status.Value)))
             {
 
-                if (!tokenStatus.ContainsKey(Token.Id))
+                Token.CommonAPI = this;
+
+                await LogAsset(addToken,
+                               Token.ToJSON(true,
+                                            CustomTokenSerializer));
+
+                if (!SkipNotifications)
                 {
 
-                    tokenStatus.Add(Token.Id, new TokenStatus(Token, Status.Value));
-                    Token.CommonAPI = this;
-
-                    if (!SkipNotifications)
+                    var OnTokenAddedLocal = OnTokenAdded;
+                    if (OnTokenAddedLocal is not null)
                     {
-
-                        var OnTokenAddedLocal = OnTokenAdded;
-                        if (OnTokenAddedLocal is not null)
+                        try
                         {
-                            try
-                            {
-                                OnTokenAddedLocal(Token).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddTokenIfNotExists), " ", nameof(OnTokenAdded), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
+                            OnTokenAddedLocal(Token).Wait();
                         }
-
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
 
                 }
 
-                return Token;
+                return AddResult<Token>.Success(Token);
 
             }
+
+            return AddResult<Token>.NoOperation(Token);
 
         }
 
         #endregion
 
-        #region AddOrUpdateToken   (newOrUpdatedToken, Status = AllowedTypes.ALLOWED, AllowDowngrades = false)
+        #region AddOrUpdateToken   (Token, Status = AllowedTypes.ALLOWED, AllowDowngrades = false, SkipNotifications = false)
 
-        public async Task<AddOrUpdateResult<Token>> AddOrUpdateToken(Token         newOrUpdatedToken,
-                                                                     AllowedType?  Status           = null,
-                                                                     Boolean?      AllowDowngrades  = false)
+        public async Task<AddOrUpdateResult<Token>> AddOrUpdateToken(Token         Token,
+                                                                     AllowedType?  Status              = null,
+                                                                     Boolean?      AllowDowngrades     = false,
+                                                                     Boolean       SkipNotifications   = false)
         {
 
-            Status ??= AllowedType.ALLOWED;
+            #region Update an existing token
 
-            if (newOrUpdatedToken is null)
-                throw new ArgumentNullException(nameof(newOrUpdatedToken), "The given token must not be null!");
-
-            lock (tokenStatus)
+            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
             {
 
-                if (tokenStatus.TryGetValue(newOrUpdatedToken.Id, out TokenStatus existingTokenStatus))
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
                 {
+                    return AddOrUpdateResult<Token>.Failed(Token,
+                                                           "The 'lastUpdated' timestamp of the new token must be newer then the timestamp of the existing token!");
+                }
 
-                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                        newOrUpdatedToken.LastUpdated <= existingTokenStatus.Token.LastUpdated)
-                    {
-                        return AddOrUpdateResult<Token>.Failed(newOrUpdatedToken,
-                                                               "The 'lastUpdated' timestamp of the new charging token must be newer then the timestamp of the existing token!");
-                    }
+                tokenStatus[Token.Id] = new TokenStatus(Token,
+                                                        Status ?? existingTokenStatus.Status);
 
-                    tokenStatus[newOrUpdatedToken.Id] = new TokenStatus(newOrUpdatedToken,
-                                                                   Status.Value);
+                await LogAsset(addOrUpdateToken,
+                               Token.ToJSON(true,
+                                            CustomTokenSerializer));
+
+                if (!SkipNotifications)
+                {
 
                     var OnTokenChangedLocal = OnTokenChanged;
                     if (OnTokenChangedLocal is not null)
                     {
                         try
                         {
-                            OnTokenChangedLocal(newOrUpdatedToken).Wait();
+                            OnTokenChangedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
@@ -6273,71 +6300,158 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                     }
 
-                    return AddOrUpdateResult<Token>.Success(newOrUpdatedToken,
-                                                            WasCreated: false);
-
                 }
 
-                tokenStatus.Add(newOrUpdatedToken.Id, new TokenStatus(newOrUpdatedToken,
-                                                                 Status.Value));
+                return AddOrUpdateResult<Token>.Success(Token,
+                                                        WasCreated: false);
 
-                var OnTokenAddedLocal = OnTokenAdded;
-                if (OnTokenAddedLocal is not null)
+            }
+
+            #endregion
+
+            #region Add a new token
+
+            if (tokenStatus.TryAdd(Token.Id, new TokenStatus(Token,
+                                                             Status ?? AllowedType.ALLOWED)))
+            {
+
+                if (!SkipNotifications)
                 {
-                    try
+
+                    var OnTokenAddedLocal = OnTokenAdded;
+                    if (OnTokenAddedLocal is not null)
                     {
-                        OnTokenAddedLocal(newOrUpdatedToken).Wait();
+                        try
+                        {
+                            OnTokenAddedLocal(Token).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenAdded), ": ",
-                                    Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace ?? "");
-                    }
+
                 }
 
-                return AddOrUpdateResult<Token>.Success(newOrUpdatedToken,
+                return AddOrUpdateResult<Token>.Success(Token,
                                                         WasCreated: true);
 
             }
+
+            return AddOrUpdateResult<Token>.Failed(Token,
+                                                   "AddOrUpdateToken(Token.Id, Token) failed!");
+
+            #endregion
+
+        }
+
+        #endregion
+
+        #region UpdateToken        (Token, Status = AllowedTypes.ALLOWED, AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<UpdateResult<Token>> UpdateToken(Token         Token,
+                                                           AllowedType?  Status              = null,
+                                                           Boolean?      AllowDowngrades     = false,
+                                                           Boolean       SkipNotifications   = false)
+        {
+
+            Status ??= AllowedType.ALLOWED;
+
+            #region Validate AllowDowngrades
+
+            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
+            {
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
+                {
+
+                    return UpdateResult<Token>.Failed(Token,
+                                                       "The 'lastUpdated' timestamp of the new charging token must be newer then the timestamp of the existing token!");
+
+                }
+
+            }
+
+            #endregion
+
+
+            if (tokenStatus.TryUpdate(Token.Id,
+                                      new TokenStatus(Token,
+                                                      Status.Value),
+                                      new TokenStatus(Token,
+                                                      Status.Value)))
+            {
+
+                await LogAsset(updateToken,
+                               Token.ToJSON(true,
+                                            CustomTokenSerializer));
+
+                if (!SkipNotifications)
+                {
+
+                    var OnTokenChangedLocal = OnTokenChanged;
+                    if (OnTokenChangedLocal is not null)
+                    {
+                        try
+                        {
+                            OnTokenChangedLocal(Token).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateToken), " ", nameof(OnTokenChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return UpdateResult<Token>.Success(Token);
+
+            }
+
+            return UpdateResult<Token>.Failed(Token,
+                                              "UpdateToken(Token.Id, Token, Token) failed!");
 
         }
 
         #endregion
 
 
-        #region TryPatchToken      (Token, TokenPatch, AllowDowngrades = false)
+        #region TryPatchToken      (Token, TokenPatch, AllowDowngrades = false, SkipNotifications = false)
 
         public async Task<PatchResult<Token>> TryPatchToken(Token     Token,
                                                             JObject   TokenPatch,
-                                                            Boolean?  AllowDowngrades = false)
+                                                            Boolean?  AllowDowngrades     = false,
+                                                            Boolean   SkipNotifications   = false)
         {
-
-            if (Token is null)
-                return PatchResult<Token>.Failed(Token,
-                                                 "The given token must not be null!");
 
             if (TokenPatch is null || !TokenPatch.HasValues)
                 return PatchResult<Token>.Failed(Token,
                                                  "The given token patch must not be null or empty!");
 
-            // ToDo: Remove me and add a proper 'lock' mechanism!
-            await Task.Delay(1);
-
-            lock (tokenStatus)
+            if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
             {
 
-                if (tokenStatus.TryGetValue(Token.Id, out var _tokenStatus))
+                var patchResult = existingTokenStatus.Token.TryPatch(TokenPatch,
+                                                                     AllowDowngrades ?? this.AllowDowngrades ?? false);
+
+                if (patchResult.IsSuccess &&
+                    patchResult.PatchedData is not null)
                 {
 
-                    var patchResult = _tokenStatus.Token.TryPatch(TokenPatch,
-                                                                  AllowDowngrades ?? this.AllowDowngrades ?? false);
+                    tokenStatus[Token.Id] = new TokenStatus(patchResult.PatchedData,
+                                                            existingTokenStatus.Status);
 
-                    if (patchResult.IsSuccess)
+                    await LogAsset(updateToken,
+                                   Token.ToJSON(true,
+                                                CustomTokenSerializer));
+
+                    if (!SkipNotifications)
                     {
-
-                        tokenStatus[Token.Id] = new TokenStatus(patchResult.PatchedData,
-                                                                _tokenStatus.Status);
 
                         var OnTokenChangedLocal = OnTokenChanged;
                         if (OnTokenChangedLocal is not null)
@@ -6356,15 +6470,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     }
 
-                    return patchResult;
-
                 }
 
-                else
-                    return PatchResult<Token>.Failed(Token,
-                                                      "The given charging token does not exist!");
+                return patchResult;
 
             }
+
+            else
+                return PatchResult<Token>.Failed(Token,
+                                                  "The given token does not exist!");
 
         }
 
@@ -6374,14 +6488,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region TokenExists(TokenId)
 
         public Boolean TokenExists(Token_Id TokenId)
-        {
 
-            lock (tokenStatus)
-            {
-                return tokenStatus.ContainsKey(TokenId);
-            }
-
-        }
+            => tokenStatus.ContainsKey(TokenId);
 
         #endregion
 
@@ -6391,36 +6499,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                    out TokenStatus  TokenWithStatus)
         {
 
-            lock (tokenStatus)
-            {
+            if (tokenStatus.TryGetValue(TokenId, out TokenWithStatus))
+                return true;
 
-                if (tokenStatus.TryGetValue(TokenId, out TokenWithStatus))
-                    return true;
-
-                var VerifyTokenLocal = OnVerifyToken;
-                if (VerifyTokenLocal is not null)
-                {
-
-                    try
-                    {
-
-                        var result = VerifyTokenLocal(TokenId).Result;
-
-                        TokenWithStatus = result;
-
-                        return true;
-
-                    } catch (Exception e)
-                    {
-
-                    }
-
-                }
-
-                TokenWithStatus = default;
-                return false;
-
-            }
+            TokenWithStatus = default;
+            return false;
 
         }
 
@@ -6429,35 +6512,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region GetTokens  (IncludeToken)
 
         public IEnumerable<TokenStatus> GetTokens(Func<Token, Boolean> IncludeToken)
-        {
 
-            lock (tokenStatus)
-            {
-
-                return tokenStatus.Values.Where  (tokenStatus => IncludeToken(tokenStatus.Token)).
-                                          ToArray();
-
-            }
-
-        }
+            => IncludeToken is null
+                   ? tokenStatus.Values
+                   : tokenStatus.Values.Where(tokenStatus => IncludeToken(tokenStatus.Token));
 
         #endregion
 
         #region GetTokens  (IncludeTokenStatus = null)
 
         public IEnumerable<TokenStatus> GetTokens(Func<TokenStatus, Boolean>? IncludeTokenStatus = null)
-        {
 
-            lock (tokenStatus)
-            {
-
-                return IncludeTokenStatus is null
-                           ? tokenStatus.Values.                          ToArray()
-                           : tokenStatus.Values.Where(IncludeTokenStatus).ToArray();
-
-            }
-
-        }
+            => IncludeTokenStatus is null
+                   ? tokenStatus.Values
+                   : tokenStatus.Values.Where(IncludeTokenStatus);
 
         #endregion
 
@@ -6465,18 +6533,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public IEnumerable<TokenStatus> GetTokens(CountryCode  CountryCode,
                                                   Party_Id     PartyId)
-        {
 
-            lock (tokenStatus)
-            {
-
-                return tokenStatus.Values.Where  (tokenStatus => tokenStatus.Token.CountryCode == CountryCode &&
-                                                                 tokenStatus.Token.PartyId     == PartyId).
-                                          ToArray();
-
-            }
-
-        }
+            => tokenStatus.Values.Where(tokenStatus => tokenStatus.Token.CountryCode == CountryCode &&
+                                                       tokenStatus.Token.PartyId     == PartyId);
 
         #endregion
 
@@ -6487,17 +6546,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// Remove the given token.
         /// </summary>
         /// <param name="Token">A token.</param>
-        public Boolean RemoveToken(Token Token)
-        {
+        public Task<RemoveResult<Token>> RemoveToken(Token Token)
 
-            lock (tokenStatus)
-            {
-
-                return tokenStatus.Remove(Token.Id);
-
-            }
-
-        }
+            => RemoveToken(Token.Id);
 
         #endregion
 
@@ -6507,15 +6558,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// Remove the given token.
         /// </summary>
         /// <param name="TokenId">A unique identification of a token.</param>
-        public Boolean RemoveToken(Token_Id TokenId)
+        public async Task<RemoveResult<Token>> RemoveToken(Token_Id TokenId)
         {
 
-            lock (tokenStatus)
+            if (tokenStatus.Remove(TokenId, out var existingTokenStatus))
             {
 
-                return tokenStatus.Remove(TokenId);
+                await LogAsset(removeToken,
+                               existingTokenStatus.Token.ToJSON(true,
+                                                                CustomTokenSerializer));
+
+                return RemoveResult<Token>.Success(existingTokenStatus.Token);
 
             }
+
+            return RemoveResult<Token>.Failed(null,
+                                              "RemoveToken(TokenId, ...) failed!");
 
         }
 
@@ -6526,27 +6584,98 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// Remove all tokens.
         /// </summary>
-        /// <param name="IncludeCDRs">An optional token filter.</param>
-        public void RemoveAllTokens(Func<Token, Boolean>? IncludeTokens = null)
+        /// <param name="IncludeTokens">An optional token filter.</param>
+        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Func<Token, Boolean>? IncludeTokens = null)
         {
 
-            lock (tokenStatus)
+            if (IncludeTokens is null)
             {
 
-                if (IncludeTokens is null)
-                    tokenStatus.Clear();
+                var existingTokens = tokenStatus.Values.Select(tokenStatus => tokenStatus.Token).ToArray();
 
-                else
+                tokenStatus.Clear();
+
+                await LogAsset(removeAllTokens);
+
+                return RemoveResult<IEnumerable<Token>>.Success(existingTokens);
+
+            }
+
+            else
+            {
+
+                var removedTokens = new List<Token>();
+
+                foreach (var token in tokenStatus.Values.Select(tokenStatus => tokenStatus.Token).Where(IncludeTokens).ToArray())
                 {
+                    if (tokenStatus.Remove(token.Id, out _))
+                    {
 
-                    var tokensToDelete = tokenStatus.Values.Where  (tokenStatus => IncludeTokens(tokenStatus.Token)).
-                                                            Select (tokenStatus => tokenStatus.Token).
-                                                            ToArray();
+                        removedTokens.Add(token);
 
-                    foreach (var token in tokensToDelete)
-                        tokenStatus.Remove(token.Id);
+                        await LogAsset(removeToken,
+                                       token.ToJSON(true,
+                                                    CustomTokenSerializer));
 
+                    }
                 }
+
+                return removedTokens.Any()
+                           ? RemoveResult<IEnumerable<Token>>.Success    (removedTokens)
+                           : RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>());
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllTokens(IncludeTokenIds)
+
+        /// <summary>
+        /// Remove all matching tokens.
+        /// </summary>
+        /// <param name="IncludeTokenIds">An optional token identification filter.</param>
+        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Func<Token_Id, Boolean>? IncludeTokenIds)
+        {
+
+            if (IncludeTokenIds is null)
+            {
+
+                var existingTokens = tokenStatus.Values.Select(existingTokenStatus => existingTokenStatus.Token).ToArray();
+
+                tokenStatus.Clear();
+
+                await LogAsset(removeAllTokens);
+
+                return RemoveResult<IEnumerable<Token>>.Success(existingTokens);
+
+            }
+
+            else
+            {
+
+                var removedTokens = new List<Token>();
+
+                foreach (var token in tokenStatus.Where  (kvp => IncludeTokenIds(kvp.Key)).
+                                                  Select (kvp => kvp.Value.Token).
+                                                  ToArray())
+                {
+                    if (tokenStatus.Remove(token.Id, out _))
+                    {
+
+                        removedTokens.Add(token);
+
+                        await LogAsset(removeChargeDetailRecord,
+                                       token.ToJSON(true,
+                                                    CustomTokenSerializer));
+
+                    }
+                }
+
+                return removedTokens.Any()
+                           ? RemoveResult<IEnumerable<Token>>.Success    (removedTokens)
+                           : RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>());
 
             }
 
@@ -6561,22 +6690,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllTokens(CountryCode  CountryCode,
-                                    Party_Id     PartyId)
+        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(CountryCode  CountryCode,
+                                                                            Party_Id     PartyId)
         {
 
-            lock (tokenStatus)
+            var removedTokens = new List<Token>();
+
+            foreach (var token in tokenStatus.Values.Select(existingTokenStatus => existingTokenStatus.Token).
+                                                     Where (existingToken       => CountryCode == existingToken.CountryCode &&
+                                                                                   PartyId     == existingToken.PartyId).ToArray())
             {
+                if (tokenStatus.Remove(token.Id, out _))
+                {
 
-                var tokensToDelete = tokenStatus.Values.Where  (tokenStatus => CountryCode == tokenStatus.Token.CountryCode &&
-                                                                               PartyId     == tokenStatus.Token.PartyId).
-                                                        Select (tokenStatus => tokenStatus.Token).
-                                                        ToArray();
+                    removedTokens.Add(token);
 
-                foreach (var token in tokensToDelete)
-                    tokenStatus.Remove(token.Id);
+                    await LogAsset(removeToken,
+                                   token.ToJSON(true,
+                                                CustomTokenSerializer));
 
+                }
             }
+
+            return removedTokens.Any()
+                       ? RemoveResult<IEnumerable<Token>>.Success    (removedTokens)
+                       : RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>());
 
         }
 
@@ -6586,7 +6724,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region ChargeDetailRecords
 
-        private readonly Dictionary<CDR_Id, CDR> chargeDetailRecords;
+        #region Data
+
+        private readonly ConcurrentDictionary<CDR_Id, CDR> chargeDetailRecords = new();
 
 
         public delegate Task OnChargeDetailRecordAddedDelegate(CDR CDR);
@@ -6598,135 +6738,206 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public event OnChargeDetailRecordChangedDelegate? OnChargeDetailRecordChanged;
 
-
-        #region AddCDR           (CDR, SkipNotifications = false)
-
-        public CDR AddCDR(CDR      CDR,
-                          Boolean  SkipNotifications   = false)
-        {
-
-            if (CDR is null)
-                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
-
-            lock (chargeDetailRecords)
-            {
-
-                if (!chargeDetailRecords.ContainsKey(CDR.Id))
-                {
-
-                    chargeDetailRecords.Add(CDR.Id, CDR);
-                    CDR.CommonAPI = this;
-
-                    if (!SkipNotifications)
-                    {
-
-                        var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
-                        if (OnChargeDetailRecordAddedLocal is not null)
-                        {
-                            try
-                            {
-                                OnChargeDetailRecordAddedLocal(CDR).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
-                        }
-
-                    }
-
-                    return CDR;
-
-                }
-
-                throw new ArgumentException("The given charge detail record already exists!");
-
-            }
-
-        }
-
         #endregion
 
-        #region AddCDRIfNotExists(CDR, SkipNotifications = false)
 
-        public CDR AddCDRIfNotExists(CDR      CDR,
-                                     Boolean  SkipNotifications   = false)
+        #region AddCDR           (CDR,                          SkipNotifications = false)
+
+        public async Task<AddResult<CDR>> AddCDR(CDR      CDR,
+                                                 Boolean  SkipNotifications   = false)
         {
 
-            if (CDR is null)
-                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
-
-            lock (chargeDetailRecords)
+            if (chargeDetailRecords.TryAdd(CDR.Id, CDR))
             {
 
-                if (!chargeDetailRecords.ContainsKey(CDR.Id))
+                CDR.CommonAPI = this;
+
+                await LogAsset(addChargeDetailRecord,
+                               CDR.ToJSON(true,
+                                          null,
+                                          CustomCDRSerializer,
+                                          CustomLocationSerializer,
+                                          CustomAdditionalGeoLocationSerializer,
+                                          CustomEVSESerializer,
+                                          CustomStatusScheduleSerializer,
+                                          CustomConnectorSerializer,
+                                          CustomEnergyMeterSerializer,
+                                          CustomTransparencySoftwareStatusSerializer,
+                                          CustomTransparencySoftwareSerializer,
+                                          CustomDisplayTextSerializer,
+                                          CustomBusinessDetailsSerializer,
+                                          CustomHoursSerializer,
+                                          CustomImageSerializer,
+                                          CustomEnergyMixSerializer,
+                                          CustomEnergySourceSerializer,
+                                          CustomEnvironmentalImpactSerializer,
+                                          CustomTariffSerializer,
+                                          CustomTariffElementSerializer,
+                                          CustomPriceComponentSerializer,
+                                          CustomTariffRestrictionsSerializer,
+                                          CustomChargingPeriodSerializer,
+                                          CustomCDRDimensionSerializer,
+                                          CustomSignedDataSerializer,
+                                          CustomSignedValueSerializer));
+
+                if (!SkipNotifications)
                 {
 
-                    chargeDetailRecords.Add(CDR.Id, CDR);
-                    CDR.CommonAPI = this;
-
-                    if (!SkipNotifications)
-                    {
-
-                        var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
-                        if (OnChargeDetailRecordAddedLocal is not null)
-                        {
-                            try
-                            {
-                                OnChargeDetailRecordAddedLocal(CDR).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDRIfNotExists), " ", nameof(OnChargeDetailRecordAdded), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
-                        }
-
-                    }
-
-                }
-
-                return CDR;
-
-            }
-
-        }
-
-        #endregion
-
-        #region AddOrUpdateCDR   (newOrUpdatedCDR, AllowDowngrades = false)
-
-        public async Task<AddOrUpdateResult<CDR>> AddOrUpdateCDR(CDR       newOrUpdatedCDR,
-                                                                 Boolean?  AllowDowngrades = false)
-        {
-
-            if (newOrUpdatedCDR is null)
-                throw new ArgumentNullException(nameof(newOrUpdatedCDR), "The given charge detail record must not be null!");
-
-            lock (chargeDetailRecords)
-            {
-
-                if (chargeDetailRecords.TryGetValue(newOrUpdatedCDR.Id, out var existingCDR))
-                {
-
-                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                        newOrUpdatedCDR.LastUpdated <= existingCDR.LastUpdated)
-                    {
-                        return AddOrUpdateResult<CDR>.Failed(newOrUpdatedCDR,
-                                                             "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!");
-                    }
-
-                    chargeDetailRecords[newOrUpdatedCDR.Id] = newOrUpdatedCDR;
-
-                    var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
-                    if (OnChargeDetailRecordChangedLocal is not null)
+                    var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
+                    if (OnChargeDetailRecordAddedLocal is not null)
                     {
                         try
                         {
-                            OnChargeDetailRecordChangedLocal(newOrUpdatedCDR).Wait();
+                            OnChargeDetailRecordAddedLocal(CDR).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return AddResult<CDR>.Success(CDR);
+
+            }
+
+            return AddResult<CDR>.Failed(CDR,
+                                         "TryAdd(CDR.Id, CDR) failed!");
+
+        }
+
+        #endregion
+
+        #region AddCDRIfNotExists(CDR,                          SkipNotifications = false)
+
+        public async Task<AddResult<CDR>> AddCDRIfNotExists(CDR      CDR,
+                                                            Boolean  SkipNotifications   = false)
+        {
+
+            if (chargeDetailRecords.TryAdd(CDR.Id, CDR))
+            {
+
+                CDR.CommonAPI = this;
+
+                await LogAsset(addChargeDetailRecord,
+                               CDR.ToJSON(true,
+                                          null,
+                                          CustomCDRSerializer,
+                                          CustomLocationSerializer,
+                                          CustomAdditionalGeoLocationSerializer,
+                                          CustomEVSESerializer,
+                                          CustomStatusScheduleSerializer,
+                                          CustomConnectorSerializer,
+                                          CustomEnergyMeterSerializer,
+                                          CustomTransparencySoftwareStatusSerializer,
+                                          CustomTransparencySoftwareSerializer,
+                                          CustomDisplayTextSerializer,
+                                          CustomBusinessDetailsSerializer,
+                                          CustomHoursSerializer,
+                                          CustomImageSerializer,
+                                          CustomEnergyMixSerializer,
+                                          CustomEnergySourceSerializer,
+                                          CustomEnvironmentalImpactSerializer,
+                                          CustomTariffSerializer,
+                                          CustomTariffElementSerializer,
+                                          CustomPriceComponentSerializer,
+                                          CustomTariffRestrictionsSerializer,
+                                          CustomChargingPeriodSerializer,
+                                          CustomCDRDimensionSerializer,
+                                          CustomSignedDataSerializer,
+                                          CustomSignedValueSerializer));
+
+                if (!SkipNotifications)
+                {
+
+                    var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
+                    if (OnChargeDetailRecordAddedLocal is not null)
+                    {
+                        try
+                        {
+                            OnChargeDetailRecordAddedLocal(CDR).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return AddResult<CDR>.Success(CDR);
+
+            }
+
+            return AddResult<CDR>.NoOperation(CDR);
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateCDR   (CDR, AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<AddOrUpdateResult<CDR>> AddOrUpdateCDR(CDR       CDR,
+                                                                 Boolean?  AllowDowngrades     = false,
+                                                                 Boolean   SkipNotifications   = false)
+        {
+
+            #region Update an existing cdr
+
+            if (chargeDetailRecords.TryGetValue(CDR.Id, out var existingCDR))
+            {
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    CDR.LastUpdated <= existingCDR.LastUpdated)
+                {
+                    return AddOrUpdateResult<CDR>.Failed(CDR,
+                                                         "The 'lastUpdated' timestamp of the new charging cdr must be newer then the timestamp of the existing cdr!");
+                }
+
+                chargeDetailRecords[CDR.Id] = CDR;
+
+                await LogAsset(addOrUpdateChargeDetailRecord,
+                               CDR.ToJSON(true,
+                                          null,
+                                          CustomCDRSerializer,
+                                          CustomLocationSerializer,
+                                          CustomAdditionalGeoLocationSerializer,
+                                          CustomEVSESerializer,
+                                          CustomStatusScheduleSerializer,
+                                          CustomConnectorSerializer,
+                                          CustomEnergyMeterSerializer,
+                                          CustomTransparencySoftwareStatusSerializer,
+                                          CustomTransparencySoftwareSerializer,
+                                          CustomDisplayTextSerializer,
+                                          CustomBusinessDetailsSerializer,
+                                          CustomHoursSerializer,
+                                          CustomImageSerializer,
+                                          CustomEnergyMixSerializer,
+                                          CustomEnergySourceSerializer,
+                                          CustomEnvironmentalImpactSerializer,
+                                          CustomTariffSerializer,
+                                          CustomTariffElementSerializer,
+                                          CustomPriceComponentSerializer,
+                                          CustomTariffRestrictionsSerializer,
+                                          CustomChargingPeriodSerializer,
+                                          CustomCDRDimensionSerializer,
+                                          CustomSignedDataSerializer,
+                                          CustomSignedValueSerializer));
+
+                if (!SkipNotifications)
+                {
+
+                    var OnCDRChangedLocal = OnChargeDetailRecordChanged;
+                    if (OnCDRChangedLocal is not null)
+                    {
+                        try
+                        {
+                            OnCDRChangedLocal(CDR).Wait();
                         }
                         catch (Exception e)
                         {
@@ -6736,59 +6947,120 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                     }
 
-                    return AddOrUpdateResult<CDR>.Success(newOrUpdatedCDR,
-                                                          WasCreated: false);
-
                 }
 
-                chargeDetailRecords.Add(newOrUpdatedCDR.Id, newOrUpdatedCDR);
+                return AddOrUpdateResult<CDR>.Success(CDR,
+                                                      WasCreated: false);
 
-                var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
-                if (OnChargeDetailRecordAddedLocal is not null)
+            }
+
+            #endregion
+
+            #region Add a new cdr
+
+            if (chargeDetailRecords.TryAdd(CDR.Id, CDR))
+            {
+
+                if (!SkipNotifications)
                 {
-                    try
+
+                    var OnCDRAddedLocal = OnChargeDetailRecordAdded;
+                    if (OnCDRAddedLocal is not null)
                     {
-                        OnChargeDetailRecordAddedLocal(newOrUpdatedCDR).Wait();
+                        try
+                        {
+                            OnCDRAddedLocal(CDR).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
-                                    Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace ?? "");
-                    }
+
                 }
 
-                return AddOrUpdateResult<CDR>.Success(newOrUpdatedCDR,
+                return AddOrUpdateResult<CDR>.Success(CDR,
                                                       WasCreated: true);
 
             }
+
+            return AddOrUpdateResult<CDR>.Failed(CDR,
+                                                 "AddOrUpdateCDR(CDR.Id, CDR) failed!");
+
+            #endregion
 
         }
 
         #endregion
 
-        #region UpdateCDR        (CDR)
+        #region UpdateCDR        (CDR, AllowDowngrades = false, SkipNotifications = false)
 
-        public CDR UpdateCDR(CDR CDR)
+        public async Task<UpdateResult<CDR>> UpdateCDR(CDR       CDR,
+                                                       Boolean?  AllowDowngrades     = false,
+                                                       Boolean   SkipNotifications   = false)
         {
 
-            if (CDR is null)
-                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
+            #region Validate AllowDowngrades
 
-            lock (chargeDetailRecords)
+            if (chargeDetailRecords.TryGetValue(CDR.Id, out var existingCDR))
             {
 
-                if (chargeDetailRecords.ContainsKey(CDR.Id))
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    CDR.LastUpdated <= existingCDR.LastUpdated)
                 {
 
-                    chargeDetailRecords[CDR.Id] = CDR;
+                    return UpdateResult<CDR>.Failed(CDR,
+                                                    "The 'lastUpdated' timestamp of the new charging cdr must be newer then the timestamp of the existing cdr!");
 
-                    var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
-                    if (OnChargeDetailRecordChangedLocal is not null)
+                }
+
+            }
+
+            #endregion
+
+
+            if (chargeDetailRecords.TryUpdate(CDR.Id, CDR, CDR))
+            {
+
+                await LogAsset(updateChargeDetailRecord,
+                               CDR.ToJSON(true,
+                                          null,
+                                          CustomCDRSerializer,
+                                          CustomLocationSerializer,
+                                          CustomAdditionalGeoLocationSerializer,
+                                          CustomEVSESerializer,
+                                          CustomStatusScheduleSerializer,
+                                          CustomConnectorSerializer,
+                                          CustomEnergyMeterSerializer,
+                                          CustomTransparencySoftwareStatusSerializer,
+                                          CustomTransparencySoftwareSerializer,
+                                          CustomDisplayTextSerializer,
+                                          CustomBusinessDetailsSerializer,
+                                          CustomHoursSerializer,
+                                          CustomImageSerializer,
+                                          CustomEnergyMixSerializer,
+                                          CustomEnergySourceSerializer,
+                                          CustomEnvironmentalImpactSerializer,
+                                          CustomTariffSerializer,
+                                          CustomTariffElementSerializer,
+                                          CustomPriceComponentSerializer,
+                                          CustomTariffRestrictionsSerializer,
+                                          CustomChargingPeriodSerializer,
+                                          CustomCDRDimensionSerializer,
+                                          CustomSignedDataSerializer,
+                                          CustomSignedValueSerializer));
+
+                if (!SkipNotifications)
+                {
+
+                    var OnCDRChangedLocal = OnChargeDetailRecordChanged;
+                    if (OnCDRChangedLocal is not null)
                     {
                         try
                         {
-                            OnChargeDetailRecordChangedLocal(CDR).Wait();
+                            OnCDRChangedLocal(CDR).Wait();
                         }
                         catch (Exception e)
                         {
@@ -6798,13 +7070,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                     }
 
-                    return CDR;
-
                 }
 
-                return null;
+                return UpdateResult<CDR>.Success(CDR);
 
             }
+
+            return UpdateResult<CDR>.Failed(CDR,
+                                            "UpdateCDR(CDR.Id, CDR, CDR) failed!");
 
         }
 
@@ -6814,14 +7087,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region CDRExists(CDRId)
 
         public Boolean CDRExists(CDR_Id CDRId)
-        {
 
-            lock (chargeDetailRecords)
-            {
-                return chargeDetailRecords.ContainsKey(CDRId);
-            }
-
-        }
+            => chargeDetailRecords.ContainsKey(CDRId);
 
         #endregion
 
@@ -6831,16 +7098,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                  out CDR?  CDR)
         {
 
-            lock (chargeDetailRecords)
-            {
+            if (chargeDetailRecords.TryGetValue(CDRId, out CDR))
+                return true;
 
-                if (chargeDetailRecords.TryGetValue(CDRId, out CDR))
-                    return true;
-
-                CDR = null;
-                return false;
-
-            }
+            CDR = null;
+            return false;
 
         }
 
@@ -6853,18 +7115,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="IncludeCDRs">An optional charge detail record filter.</param>
         public IEnumerable<CDR> GetCDRs(Func<CDR, Boolean>? IncludeCDRs = null)
-        {
 
-            lock (chargeDetailRecords)
-            {
-
-                return IncludeCDRs is null
-                           ? chargeDetailRecords.Values.                   ToArray()
-                           : chargeDetailRecords.Values.Where(IncludeCDRs).ToArray();
-
-            }
-
-        }
+            => IncludeCDRs is null
+                   ? chargeDetailRecords.Values
+                   : chargeDetailRecords.Values.Where(IncludeCDRs);
 
         #endregion
 
@@ -6877,18 +7131,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="PartyId">The identification of the party.</param>
         public IEnumerable<CDR> GetCDRs(CountryCode  CountryCode,
                                         Party_Id     PartyId)
-        {
 
-            lock (chargeDetailRecords)
-            {
-
-                return chargeDetailRecords.Values.Where  (cdr => cdr.CountryCode == CountryCode &&
-                                                                 cdr.PartyId     == PartyId).
-                                                  ToArray();
-
-            }
-
-        }
+            => chargeDetailRecords.Values.Where(cdr => cdr.CountryCode == CountryCode &&
+                                                       cdr.PartyId     == PartyId);
 
         #endregion
 
@@ -6899,17 +7144,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// Remove the given charge detail record.
         /// </summary>
         /// <param name="CDR">A charge detail record.</param>
-        public Boolean RemoveCDR(CDR CDR)
-        {
+        public Task<RemoveResult<CDR>> RemoveCDR(CDR CDR)
 
-            lock (chargeDetailRecords)
-            {
-
-                return chargeDetailRecords.Remove(CDR.Id);
-
-            }
-
-        }
+            => RemoveCDR(CDR.Id);
 
         #endregion
 
@@ -6919,15 +7156,46 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// Remove the given charge detail record.
         /// </summary>
         /// <param name="CDRId">A unique identification of a charge detail record.</param>
-        public Boolean RemoveCDR(CDR_Id CDRId)
+        public async Task<RemoveResult<CDR>> RemoveCDR(CDR_Id CDRId)
         {
 
-            lock (chargeDetailRecords)
+            if (chargeDetailRecords.Remove(CDRId, out var cdr))
             {
 
-                return chargeDetailRecords.Remove(CDRId);
+                await LogAsset(removeChargeDetailRecord,
+                               cdr.ToJSON(true,
+                                          null,
+                                          CustomCDRSerializer,
+                                          CustomLocationSerializer,
+                                          CustomAdditionalGeoLocationSerializer,
+                                          CustomEVSESerializer,
+                                          CustomStatusScheduleSerializer,
+                                          CustomConnectorSerializer,
+                                          CustomEnergyMeterSerializer,
+                                          CustomTransparencySoftwareStatusSerializer,
+                                          CustomTransparencySoftwareSerializer,
+                                          CustomDisplayTextSerializer,
+                                          CustomBusinessDetailsSerializer,
+                                          CustomHoursSerializer,
+                                          CustomImageSerializer,
+                                          CustomEnergyMixSerializer,
+                                          CustomEnergySourceSerializer,
+                                          CustomEnvironmentalImpactSerializer,
+                                          CustomTariffSerializer,
+                                          CustomTariffElementSerializer,
+                                          CustomPriceComponentSerializer,
+                                          CustomTariffRestrictionsSerializer,
+                                          CustomChargingPeriodSerializer,
+                                          CustomCDRDimensionSerializer,
+                                          CustomSignedDataSerializer,
+                                          CustomSignedValueSerializer));
+
+                return RemoveResult<CDR>.Success(cdr);
 
             }
+
+            return RemoveResult<CDR>.Failed(null,
+                                            "Remove(CDRId, ...) failed!");
 
         }
 
@@ -6939,24 +7207,145 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// Remove all matching charge detail records.
         /// </summary>
         /// <param name="IncludeCDRs">An optional charge detail record filter.</param>
-        public void RemoveAllCDRs(Func<CDR, Boolean>? IncludeCDRs = null)
+        public async Task<RemoveResult<IEnumerable<CDR>>> RemoveAllCDRs(Func<CDR, Boolean>? IncludeCDRs = null)
         {
 
-            lock (chargeDetailRecords)
+            if (IncludeCDRs is null)
             {
 
-                if (IncludeCDRs is null)
-                    chargeDetailRecords.Clear();
+                var existingCDRs = chargeDetailRecords.Values.ToArray();
 
-                else
+                chargeDetailRecords.Clear();
+
+                await LogAsset(removeAllChargeDetailRecords);
+
+                return RemoveResult<IEnumerable<CDR>>.Success(existingCDRs);
+
+            }
+
+            else
+            {
+
+                var removedCDRs = new List<CDR>();
+
+                foreach (var cdr in chargeDetailRecords.Values.Where(IncludeCDRs).ToArray())
                 {
+                    if (chargeDetailRecords.Remove(cdr.Id, out _))
+                    {
 
-                    var cdrsToDelete = chargeDetailRecords.Values.Where(IncludeCDRs).ToArray();
+                        removedCDRs.Add(cdr);
 
-                    foreach (var cdr in cdrsToDelete)
-                        chargeDetailRecords.Remove(cdr.Id);
+                        await LogAsset(removeChargeDetailRecord,
+                                       cdr.ToJSON(true,
+                                                  null,
+                                                  CustomCDRSerializer,
+                                                  CustomLocationSerializer,
+                                                  CustomAdditionalGeoLocationSerializer,
+                                                  CustomEVSESerializer,
+                                                  CustomStatusScheduleSerializer,
+                                                  CustomConnectorSerializer,
+                                                  CustomEnergyMeterSerializer,
+                                                  CustomTransparencySoftwareStatusSerializer,
+                                                  CustomTransparencySoftwareSerializer,
+                                                  CustomDisplayTextSerializer,
+                                                  CustomBusinessDetailsSerializer,
+                                                  CustomHoursSerializer,
+                                                  CustomImageSerializer,
+                                                  CustomEnergyMixSerializer,
+                                                  CustomEnergySourceSerializer,
+                                                  CustomEnvironmentalImpactSerializer,
+                                                  CustomTariffSerializer,
+                                                  CustomTariffElementSerializer,
+                                                  CustomPriceComponentSerializer,
+                                                  CustomTariffRestrictionsSerializer,
+                                                  CustomChargingPeriodSerializer,
+                                                  CustomCDRDimensionSerializer,
+                                                  CustomSignedDataSerializer,
+                                                  CustomSignedValueSerializer));
 
+                    }
                 }
+
+                return removedCDRs.Any()
+                           ? RemoveResult<IEnumerable<CDR>>.Success    (removedCDRs)
+                           : RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>());
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllCDRs(IncludeCDRIds)
+
+        /// <summary>
+        /// Remove all matching cdrs.
+        /// </summary>
+        /// <param name="IncludeCDRIds">An optional charging cdr identification filter.</param>
+        public async Task<RemoveResult<IEnumerable<CDR>>> RemoveAllCDRs(Func<CDR_Id, Boolean>? IncludeCDRIds)
+        {
+
+            if (IncludeCDRIds is null)
+            {
+
+                var existingCDRs = chargeDetailRecords.Values.ToArray();
+
+                chargeDetailRecords.Clear();
+
+                await LogAsset(removeAllChargeDetailRecords);
+
+                return RemoveResult<IEnumerable<CDR>>.Success(existingCDRs);
+
+            }
+
+            else
+            {
+
+                var removedCDRs = new List<CDR>();
+
+                foreach (var cdr in chargeDetailRecords.Where  (kvp => IncludeCDRIds(kvp.Key)).
+                                                        Select (kvp => kvp.Value).
+                                                        ToArray())
+                {
+                    if (chargeDetailRecords.Remove(cdr.Id, out _))
+                    {
+
+                        removedCDRs.Add(cdr);
+
+                        await LogAsset(removeChargeDetailRecord,
+                                       cdr.ToJSON(true,
+                                                  null,
+                                                  CustomCDRSerializer,
+                                                  CustomLocationSerializer,
+                                                  CustomAdditionalGeoLocationSerializer,
+                                                  CustomEVSESerializer,
+                                                  CustomStatusScheduleSerializer,
+                                                  CustomConnectorSerializer,
+                                                  CustomEnergyMeterSerializer,
+                                                  CustomTransparencySoftwareStatusSerializer,
+                                                  CustomTransparencySoftwareSerializer,
+                                                  CustomDisplayTextSerializer,
+                                                  CustomBusinessDetailsSerializer,
+                                                  CustomHoursSerializer,
+                                                  CustomImageSerializer,
+                                                  CustomEnergyMixSerializer,
+                                                  CustomEnergySourceSerializer,
+                                                  CustomEnvironmentalImpactSerializer,
+                                                  CustomTariffSerializer,
+                                                  CustomTariffElementSerializer,
+                                                  CustomPriceComponentSerializer,
+                                                  CustomTariffRestrictionsSerializer,
+                                                  CustomChargingPeriodSerializer,
+                                                  CustomCDRDimensionSerializer,
+                                                  CustomSignedDataSerializer,
+                                                  CustomSignedValueSerializer));
+
+                    }
+                }
+
+                return removedCDRs.Any()
+                           ? RemoveResult<IEnumerable<CDR>>.Success    (removedCDRs)
+                           : RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>());
 
             }
 
@@ -6971,21 +7360,54 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllCDRs(CountryCode  CountryCode,
-                                  Party_Id     PartyId)
+        public async Task<RemoveResult<IEnumerable<CDR>>> RemoveAllCDRs(CountryCode  CountryCode,
+                                                                        Party_Id     PartyId)
         {
 
-            lock (chargeDetailRecords)
+            var removedCDRs = new List<CDR>();
+
+            foreach (var cdr in chargeDetailRecords.Values.Where (existingCDR => CountryCode == existingCDR.CountryCode &&
+                                                                                 PartyId     == existingCDR.PartyId).ToArray())
             {
+                if (chargeDetailRecords.Remove(cdr.Id, out _))
+                {
 
-                var sessionsToDelete = chargingSessions.Values.Where  (cdr => CountryCode == cdr.CountryCode &&
-                                                                              PartyId     == cdr.PartyId).
-                                                               ToArray();
+                    removedCDRs.Add(cdr);
 
-                foreach (var session in sessionsToDelete)
-                    chargingSessions.Remove(session.Id);
+                    await LogAsset(removeToken,
+                                   cdr.ToJSON(true,
+                                              null,
+                                              CustomCDRSerializer,
+                                              CustomLocationSerializer,
+                                              CustomAdditionalGeoLocationSerializer,
+                                              CustomEVSESerializer,
+                                              CustomStatusScheduleSerializer,
+                                              CustomConnectorSerializer,
+                                              CustomEnergyMeterSerializer,
+                                              CustomTransparencySoftwareStatusSerializer,
+                                              CustomTransparencySoftwareSerializer,
+                                              CustomDisplayTextSerializer,
+                                              CustomBusinessDetailsSerializer,
+                                              CustomHoursSerializer,
+                                              CustomImageSerializer,
+                                              CustomEnergyMixSerializer,
+                                              CustomEnergySourceSerializer,
+                                              CustomEnvironmentalImpactSerializer,
+                                              CustomTariffSerializer,
+                                              CustomTariffElementSerializer,
+                                              CustomPriceComponentSerializer,
+                                              CustomTariffRestrictionsSerializer,
+                                              CustomChargingPeriodSerializer,
+                                              CustomCDRDimensionSerializer,
+                                              CustomSignedDataSerializer,
+                                              CustomSignedValueSerializer));
 
+                }
             }
+
+            return removedCDRs.Any()
+                       ? RemoveResult<IEnumerable<CDR>>.Success    (removedCDRs)
+                       : RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>());
 
         }
 

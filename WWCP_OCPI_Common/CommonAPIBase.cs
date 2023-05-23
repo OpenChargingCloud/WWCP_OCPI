@@ -269,19 +269,33 @@ namespace cloud.charging.open.protocols.OCPI
         public const               String      DefaultAssetsDBFileName         = "Assets.db";
 
 
-        protected const String addRemoteParty             = "addRemoteParty";
-        protected const String addRemotePartyIfNotExists  = "addRemotePartyIfNotExists";
-        protected const String addOrUpdateRemoteParty     = "addOrUpdateRemoteParty";
-        protected const String updateRemoteParty          = "updateRemoteParty";
-        protected const String removeRemoteParty          = "removeRemoteParty";
-        protected const String removeAllRemoteParties     = "removeAllRemoteParties";
+        protected const String addRemoteParty                     = "addRemoteParty";
+        protected const String addRemotePartyIfNotExists          = "addRemotePartyIfNotExists";
+        protected const String addOrUpdateRemoteParty             = "addOrUpdateRemoteParty";
+        protected const String updateRemoteParty                  = "updateRemoteParty";
+        protected const String removeRemoteParty                  = "removeRemoteParty";
+        protected const String removeAllRemoteParties             = "removeAllRemoteParties";
 
-        protected const String addTariff                  = "addTariff";
-        protected const String addTariffIfNotExists       = "addTariffIfNotExists";
-        protected const String addOrUpdateTariff          = "addOrUpdateTariff";
-        protected const String updateTariff               = "updateTariff";
-        protected const String removeTariff               = "removeTariff";
-        protected const String removeAllTariffs           = "removeAllTariffs";
+        protected const String addTariff                          = "addTariff";
+        protected const String addTariffIfNotExists               = "addTariffIfNotExists";
+        protected const String addOrUpdateTariff                  = "addOrUpdateTariff";
+        protected const String updateTariff                       = "updateTariff";
+        protected const String removeTariff                       = "removeTariff";
+        protected const String removeAllTariffs                   = "removeAllTariffs";
+
+        protected const String addToken                           = "addToken";
+        protected const String addTokenIfNotExists                = "addTokenIfNotExists";
+        protected const String addOrUpdateToken                   = "addOrUpdateToken";
+        protected const String updateToken                        = "updateToken";
+        protected const String removeToken                        = "removeToken";
+        protected const String removeAllTokens                    = "removeAllTokens";
+
+        protected const String addChargeDetailRecord              = "addChargeDetailRecord";
+        protected const String addChargeDetailRecordIfNotExists   = "addChargeDetailRecordIfNotExists";
+        protected const String addOrUpdateChargeDetailRecord      = "addOrUpdateChargeDetailRecord";
+        protected const String updateChargeDetailRecord           = "updateChargeDetailRecord";
+        protected const String removeChargeDetailRecord           = "removeChargeDetailRecord";
+        protected const String removeAllChargeDetailRecords       = "removeAllChargeDetailRecords";
 
         #endregion
 
