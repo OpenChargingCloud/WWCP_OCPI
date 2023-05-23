@@ -389,6 +389,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.RoamingNetwork                     = RoamingNetwork;
 
             this.CommonAPI                          = CommonAPI;
+            this.EMSPAPI                            = new HTTP.EMSPAPI(
+                                                          this.CommonAPI,
+                                                          DefaultCountryCode,
+                                                          DefaultPartyId,
+                                                          URLPathPrefix: CommonAPI.URLPathPrefix + Version.Number + "emsp"
+                                                      );
 
             this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
             this.CustomEVSEConverter                = CustomEVSEConverter;
@@ -414,12 +420,71 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             //this.chargingPoolsUpdateLog             = new Dictionary<IChargingPool, List<PropertyUpdateInfo>>();
 
-            this.EMSPAPI                            = new HTTP.EMSPAPI(
-                                                          this.CommonAPI,
-                                                          DefaultCountryCode,
-                                                          DefaultPartyId,
-                                                          URLPathPrefix: CommonAPI.URLPathPrefix + Version.Number + "emsp"
-                                                      );
+        }
+
+
+        public OCPIEMPAdapter(CSORoamingProvider_Id                        Id,
+                              I18NString                                   Name,
+                              I18NString                                   Description,
+                              IRoamingNetwork                              RoamingNetwork,
+
+                              HTTP.EMSPAPI                                 EMSPAPI,
+
+                              EVSEId_2_WWCPEVSEId_Delegate?                CustomEVSEIdConverter               = null,
+                              EVSE_2_WWCPEVSE_Delegate?                    CustomEVSEConverter                 = null,
+                              StatusType_2_WWCPEVSEStatusUpdate_Delegate?  CustomEVSEStatusUpdateConverter     = null,
+                              CDR_2_WWCPChargeDetailRecord_Delegate?       CustomChargeDetailRecordConverter   = null,
+
+                              IncludeChargingStationOperatorIdDelegate?    IncludeChargingStationOperatorIds   = null,
+                              IncludeChargingStationOperatorDelegate?      IncludeChargingStationOperators     = null,
+                              IncludeChargingPoolIdDelegate?               IncludeChargingPoolIds              = null,
+                              IncludeChargingPoolDelegate?                 IncludeChargingPools                = null,
+                              IncludeChargingStationIdDelegate?            IncludeChargingStationIds           = null,
+                              IncludeChargingStationDelegate?              IncludeChargingStations             = null,
+                              IncludeEVSEIdDelegate?                       IncludeEVSEIds                      = null,
+                              IncludeEVSEDelegate?                         IncludeEVSEs                        = null,
+                              ChargeDetailRecordFilterDelegate?            ChargeDetailRecordFilter            = null,
+
+                              Boolean                                      DisablePushData                     = false,
+                              Boolean                                      DisablePushAdminStatus              = false,
+                              Boolean                                      DisablePushStatus                   = false,
+                              Boolean                                      DisablePushEnergyStatus             = false,
+                              Boolean                                      DisableAuthentication               = false,
+                              Boolean                                      DisableSendChargeDetailRecords      = false)
+
+        {
+
+            this.Id                                 = Id;
+            this.Name                               = Name;
+            this.Description                        = Description;
+            this.RoamingNetwork                     = RoamingNetwork;
+
+            this.CommonAPI                          = EMSPAPI.CommonAPI;
+            this.EMSPAPI                            = EMSPAPI;
+
+            this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
+            this.CustomEVSEConverter                = CustomEVSEConverter;
+            this.CustomEVSEStatusUpdateConverter    = CustomEVSEStatusUpdateConverter;
+            this.CustomChargeDetailRecordConverter  = CustomChargeDetailRecordConverter;
+
+            //this.IncludeChargingStationOperatorIds  = IncludeChargingStationOperatorIds ?? (chargingStationOperatorId  => true);
+            //this.IncludeChargingStationOperators    = IncludeChargingStationOperators   ?? (chargingStationOperator    => true);
+            //this.IncludeChargingPoolIds             = IncludeChargingPoolIds            ?? (chargingPoolId             => true);
+            //this.IncludeChargingPools               = IncludeChargingPools              ?? (chargingPool               => true);
+            //this.IncludeChargingStationIds          = IncludeChargingStationIds         ?? (chargingStationId          => true);
+            //this.IncludeChargingStations            = IncludeChargingStations           ?? (chargingStation            => true);
+            //this.IncludeEVSEIds                     = IncludeEVSEIds                    ?? (evseid                     => true);
+            //this.IncludeEVSEs                       = IncludeEVSEs                      ?? (evse                       => true);
+            //this.ChargeDetailRecordFilter           = ChargeDetailRecordFilter          ?? (chargeDetailRecord         => ChargeDetailRecordFilters.forward);
+
+            //this.DisablePushData                    = DisablePushData;
+            //this.DisablePushAdminStatus             = DisablePushAdminStatus;
+            //this.DisablePushStatus                  = DisablePushStatus;
+            //this.DisablePushEnergyStatus            = DisablePushEnergyStatus;
+            //this.DisableAuthentication              = DisableAuthentication;
+            //this.DisableSendChargeDetailRecords     = DisableSendChargeDetailRecords;
+
+            //this.chargingPoolsUpdateLog             = new Dictionary<IChargingPool, List<PropertyUpdateInfo>>();
 
         }
 

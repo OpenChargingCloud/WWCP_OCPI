@@ -294,6 +294,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.CommonAPI                          = CommonAPI;
+            this.CPOAPI                             = new HTTP.CPOAPI(
+
+                                                          this.CommonAPI,
+                                                          DefaultCountryCode,
+                                                          DefaultPartyId,
+                                                          null, // AllowDowngrades
+
+                                                          null, // HTTPHostname
+                                                          null, // ExternalDNSName
+                                                          null, // HTTPServiceName
+                                                          null, // BasePath
+
+                                                          this.CommonAPI.URLPathPrefix + Version.Number + "cpo",
+                                                          null, // APIVersionHashes
+
+                                                          null, // DisableMaintenanceTasks
+                                                          null, // MaintenanceInitialDelay
+                                                          null, // MaintenanceEvery
+
+                                                          null, // DisableWardenTasks
+                                                          null, // WardenInitialDelay
+                                                          null, // WardenCheckEvery
+
+                                                          IsDevelopment,
+                                                          DevelopmentServers,
+                                                          DisableLogging,
+                                                          LoggingContext,
+                                                          LoggingPath,
+                                                          LogfileName,
+                                                          LogfileCreator
+                                                          // Autostart
+
+                                                      );
 
             this.GetTariffIds                       = GetTariffIds;
 
@@ -321,39 +354,139 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.CustomEVSEStatusUpdateConverter    = CustomEVSEStatusUpdateConverter;
             this.CustomChargeDetailRecordConverter  = CustomChargeDetailRecordConverter;
 
-            this.CPOAPI                             = new HTTP.CPOAPI(
+        }
 
-                                                          this.CommonAPI,
-                                                          DefaultCountryCode,
-                                                          DefaultPartyId,
-                                                          null, // AllowDowngrades
 
-                                                          null, // HTTPHostname
-                                                          null, // ExternalDNSName
-                                                          null, // HTTPServiceName
-                                                          null, // BasePath
+        public OCPICSOAdapter(WWCP.EMPRoamingProvider_Id                      Id,
+                              I18NString                                      Name,
+                              I18NString                                      Description,
+                              WWCP.IRoamingNetwork                            RoamingNetwork,
 
-                                                          CommonAPI.URLPathPrefix + Version.Number + "cpo",
-                                                          null, // APIVersionHashes
+                              HTTP.CPOAPI                                     CPOAPI,
 
-                                                          null, // DisableMaintenanceTasks
-                                                          null, // MaintenanceInitialDelay
-                                                          null, // MaintenanceEvery
+                              GetTariffIds_Delegate?                          GetTariffIds                        = null,
 
-                                                          null, // DisableWardenTasks
-                                                          null, // WardenInitialDelay
-                                                          null, // WardenCheckEvery
+                              WWCPEVSEId_2_EVSEUId_Delegate?                  CustomEVSEUIdConverter              = null,
+                              WWCPEVSEId_2_EVSEId_Delegate?                   CustomEVSEIdConverter               = null,
+                              WWCPEVSE_2_EVSE_Delegate?                       CustomEVSEConverter                 = null,
+                              WWCPEVSEStatusUpdate_2_StatusType_Delegate?     CustomEVSEStatusUpdateConverter     = null,
+                              WWCPChargeDetailRecord_2_CDR_Delegate?          CustomChargeDetailRecordConverter   = null,
 
-                                                          IsDevelopment,
-                                                          DevelopmentServers,
-                                                          DisableLogging,
-                                                          LoggingContext,
-                                                          LoggingPath,
-                                                          LogfileName,
-                                                          LogfileCreator
-                                                          // Autostart
+                              WWCP.IncludeChargingStationOperatorIdDelegate?  IncludeChargingStationOperatorIds   = null,
+                              WWCP.IncludeChargingStationOperatorDelegate?    IncludeChargingStationOperators     = null,
+                              WWCP.IncludeChargingPoolIdDelegate?             IncludeChargingPoolIds              = null,
+                              WWCP.IncludeChargingPoolDelegate?               IncludeChargingPools                = null,
+                              WWCP.IncludeChargingStationIdDelegate?          IncludeChargingStationIds           = null,
+                              WWCP.IncludeChargingStationDelegate?            IncludeChargingStations             = null,
+                              WWCP.IncludeEVSEIdDelegate?                     IncludeEVSEIds                      = null,
+                              WWCP.IncludeEVSEDelegate?                       IncludeEVSEs                        = null,
+                              WWCP.ChargeDetailRecordFilterDelegate?          ChargeDetailRecordFilter            = null,
 
-                                                      );
+                              TimeSpan?                                       FlushEVSEDataAndStatusEvery         = null,
+                              TimeSpan?                                       FlushEVSEFastStatusEvery            = null,
+                              TimeSpan?                                       FlushChargeDetailRecordsEvery       = null,
+
+                              Boolean                                         DisablePushData                     = false,
+                              Boolean                                         DisablePushAdminStatus              = false,
+                              Boolean                                         DisablePushStatus                   = false,
+                              Boolean                                         DisablePushEnergyStatus             = false,
+                              Boolean                                         DisableAuthentication               = false,
+                              Boolean                                         DisableSendChargeDetailRecords      = false,
+
+                              String                                          EllipticCurve                       = "P-256",
+                              ECPrivateKeyParameters?                         PrivateKey                          = null,
+                              WWCP.PublicKeyCertificates?                     PublicKeyCertificates               = null,
+
+                              Boolean?                                        IsDevelopment                       = null,
+                              IEnumerable<String>?                            DevelopmentServers                  = null,
+                              Boolean?                                        DisableLogging                      = false,
+                              String?                                         LoggingPath                         = DefaultHTTPAPI_LoggingPath,
+                              String?                                         LoggingContext                      = DefaultLoggingContext,
+                              String?                                         LogfileName                         = DefaultHTTPAPI_LogfileName,
+                              LogfileCreatorDelegate?                         LogfileCreator                      = null,
+
+                              String?                                         ClientsLoggingPath                  = DefaultHTTPAPI_LoggingPath,
+                              String?                                         ClientsLoggingContext               = DefaultLoggingContext,
+                              LogfileCreatorDelegate?                         ClientsLogfileCreator               = null,
+                              DNSClient?                                      DNSClient                           = null)
+
+
+            : base(Id,
+                   RoamingNetwork,
+
+                   Name,
+                   Description,
+
+                   IncludeEVSEIds,
+                   IncludeEVSEs,
+                   IncludeChargingStationIds,
+                   IncludeChargingStations,
+                   IncludeChargingPoolIds,
+                   IncludeChargingPools,
+                   IncludeChargingStationOperatorIds,
+                   IncludeChargingStationOperators,
+                   ChargeDetailRecordFilter,
+
+                   FlushEVSEDataAndStatusEvery,
+                   FlushEVSEFastStatusEvery,
+                   null,
+                   FlushChargeDetailRecordsEvery,
+
+                   DisablePushData,
+                   DisablePushAdminStatus,
+                   DisablePushStatus,
+                   true,
+                   DisablePushEnergyStatus,
+                   DisableAuthentication,
+                   DisableSendChargeDetailRecords,
+
+                   EllipticCurve,
+                   PrivateKey,
+                   PublicKeyCertificates,
+
+                   IsDevelopment,
+                   DevelopmentServers,
+                   DisableLogging,
+                   LoggingPath,
+                   LoggingContext,
+                   LogfileName,
+                   LogfileCreator,
+
+                   ClientsLoggingPath,
+                   ClientsLoggingContext,
+                   ClientsLogfileCreator,
+                   DNSClient)
+
+        {
+
+            this.CPOAPI                             = CPOAPI;
+            this.CommonAPI                          = CPOAPI.CommonAPI;
+
+            this.GetTariffIds                       = GetTariffIds;
+
+            if (this.GetTariffIds is not null) {
+
+                this.CommonAPI.GetTariffIdsDelegate += (cpoCountryCode,
+                                                        cpoPartyId,
+                                                        locationId,
+                                                        evseUId,
+                                                        connectorId,
+                                                        empId) =>
+
+                    this.GetTariffIds(                       WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
+                                      locationId. HasValue ? WWCP.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
+                                      null,
+                                      evseUId.    HasValue ? WWCP.EVSE_Id.                   Parse(evseUId.    Value.ToString()) : null,
+                                      connectorId.HasValue ? WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
+                                      empId.      HasValue ? WWCP.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null);
+
+            }
+
+            this.CustomEVSEUIdConverter             = CustomEVSEUIdConverter;
+            this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
+            this.CustomEVSEConverter                = CustomEVSEConverter;
+            this.CustomEVSEStatusUpdateConverter    = CustomEVSEStatusUpdateConverter;
+            this.CustomChargeDetailRecordConverter  = CustomChargeDetailRecordConverter;
 
         }
 

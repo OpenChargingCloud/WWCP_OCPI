@@ -385,6 +385,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Create cpo/emsp1/emsp2 OCPI Common API
 
+            // Clean up log and databade directories...
+            foreach (var filePath in Directory.GetFiles(Path.Combine(AppContext.BaseDirectory,
+                                                                     HTTPAPI.DefaultHTTPAPI_LoggingPath),
+                                                        $"GraphDefined_OCPI{Version.Number}_*.log"))
+            {
+                File.Delete(filePath);
+            }
+
+
             cpoVersionsAPIURL    = URL.Parse("http://127.0.0.1:3301/ocpi/v2.1/versions");
 
             cpoCommonAPI         = new CommonAPI(
@@ -429,6 +438,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        LoggingPath:                         null,
                                        LogfileName:                         $"GraphDefined_OCPI{Version.Number}_CSO.log",
                                        LogfileCreator:                      null,
+                                       DatabaseFilePath:                    null,
+                                       RemotePartyDBFileName:               $"GraphDefined_OCPI{Version.Number}_RemoteParties_CPO.log",
+                                       AssetsDBFileName:                    $"GraphDefined_OCPI{Version.Number}_Assets_CPO.log",
                                        Autostart:                           false
 
                                    );
@@ -478,6 +490,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        LoggingPath:                         null,
                                        LogfileName:                         $"GraphDefined_OCPI{Version.Number}_EMSP1.log",
                                        LogfileCreator:                      null,
+                                       DatabaseFilePath:                    null,
+                                       RemotePartyDBFileName:               $"GraphDefined_OCPI{Version.Number}_RemoteParties_EMSP1.log",
+                                       AssetsDBFileName:                    $"GraphDefined_OCPI{Version.Number}_Assets_EMSP1.log",
                                        Autostart:                           false
 
                                    );
@@ -527,6 +542,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        LoggingPath:                         null,
                                        LogfileName:                         $"GraphDefined_OCPI{Version.Number}_EMSP2.log",
                                        LogfileCreator:                      null,
+                                       DatabaseFilePath:                    null,
+                                       RemotePartyDBFileName:               $"GraphDefined_OCPI{Version.Number}_RemoteParties_EMSP2.log",
+                                       AssetsDBFileName:                    $"GraphDefined_OCPI{Version.Number}_Assets_EMSP2.log",
                                        Autostart:                           false
 
                                    );
@@ -700,10 +718,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Define and connect Remote Parties
 
-            File.Delete(Path.Combine(cpoCommonAPI.  LoggingPath, cpoCommonAPI.  LogfileName));
-            File.Delete(Path.Combine(emsp1CommonAPI.LoggingPath, emsp1CommonAPI.LogfileName));
-            File.Delete(Path.Combine(emsp2CommonAPI.LoggingPath, emsp2CommonAPI.LogfileName));
-
             await cpoCommonAPI.AddRemoteParty  (CountryCode:                 emsp1CommonAPI.OurCountryCode,
                                                 PartyId:                     emsp1CommonAPI.OurPartyId,
                                                 Role:                        Roles.EMSP,
@@ -777,9 +791,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual(1, emsp1CommonAPI.RemoteParties.Count());
             Assert.AreEqual(1, emsp2CommonAPI.RemoteParties.Count());
 
-            Assert.AreEqual(2, File.ReadAllLines(Path.Combine(cpoCommonAPI.  LoggingPath, cpoCommonAPI.  LogfileName)).Length);
-            Assert.AreEqual(1, File.ReadAllLines(Path.Combine(emsp1CommonAPI.LoggingPath, emsp1CommonAPI.LogfileName)).Length);
-            Assert.AreEqual(1, File.ReadAllLines(Path.Combine(emsp2CommonAPI.LoggingPath, emsp2CommonAPI.LogfileName)).Length);
+            Assert.AreEqual(2, File.ReadAllLines(cpoCommonAPI.  RemotePartyDBFileName).Length);
+            Assert.AreEqual(1, File.ReadAllLines(emsp1CommonAPI.RemotePartyDBFileName).Length);
+            Assert.AreEqual(1, File.ReadAllLines(emsp2CommonAPI.RemotePartyDBFileName).Length);
 
             #endregion
 

@@ -192,6 +192,163 @@ namespace cloud.charging.open.protocols.WWCP
 
         }
 
+
+
+        /// <summary>
+        /// Create and register a new electric vehicle roaming provider
+        /// using the OCPI protocol and having the given unique electric
+        /// vehicle roaming provider identification.
+        /// </summary>
+        /// 
+        /// <param name="RoamingNetwork">A WWCP roaming network.</param>
+        /// <param name="Id">The unique identification of the roaming provider.</param>
+        /// <param name="Name">The offical (multi-language) name of the roaming provider.</param>
+        /// 
+        /// <param name="IncludeEVSEs">Only include the EVSEs matching the given delegate.</param>
+        /// <param name="ServiceCheckEvery">The service check intervall.</param>
+        /// <param name="StatusCheckEvery">The status check intervall.</param>
+        /// 
+        /// <param name="DisablePushData">This service can be disabled, e.g. for debugging reasons.</param>
+        /// <param name="DisablePushStatus">This service can be disabled, e.g. for debugging reasons.</param>
+        /// <param name="DisableAuthentication">This service can be disabled, e.g. for debugging reasons.</param>
+        /// <param name="DisableSendChargeDetailRecords">This service can be disabled, e.g. for debugging reasons.</param>
+        /// 
+        /// <param name="OCPIConfigurator">An optional delegate to configure the new OCPI roaming provider after its creation.</param>
+        /// <param name="Configurator">An optional delegate to configure the new roaming provider after its creation.</param>
+        public static OCPIv2_1_1.OCPICSOAdapter?
+
+            CreateOCPIv2_1_CSOAdapter(this IRoamingNetwork                                     RoamingNetwork,
+                                      EMPRoamingProvider_Id                                    Id,
+                                      I18NString                                               Name,
+                                      I18NString                                               Description,
+
+                                      OCPIv2_1_1.HTTP.CPOAPI                                   CPOAPI,
+
+                                      OCPIv2_1_1.GetTariffIds_Delegate?                        GetTariffIds                         = null,
+
+                                      OCPIv2_1_1.WWCPEVSEId_2_EVSEUId_Delegate?                CustomEVSEUIdConverter               = null,
+                                      OCPIv2_1_1.WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
+                                      OCPIv2_1_1.WWCPEVSE_2_EVSE_Delegate?                     CustomEVSEConverter                  = null,
+                                      OCPIv2_1_1.WWCPEVSEStatusUpdate_2_StatusType_Delegate?   CustomEVSEStatusUpdateConverter      = null,
+                                      OCPIv2_1_1.WWCPChargeDetailRecord_2_CDR_Delegate?        CustomChargeDetailRecordConverter    = null,
+
+                                      IncludeEVSEIdDelegate?                                   IncludeEVSEIds                       = null,
+                                      IncludeEVSEDelegate?                                     IncludeEVSEs                         = null,
+                                      IncludeChargingStationIdDelegate?                        IncludeChargingStationIds            = null,
+                                      IncludeChargingStationDelegate?                          IncludeChargingStations              = null,
+                                      IncludeChargingPoolIdDelegate?                           IncludeChargingPoolIds               = null,
+                                      IncludeChargingPoolDelegate?                             IncludeChargingPools                 = null,
+                                      IncludeChargingStationOperatorIdDelegate?                IncludeChargingStationOperatorIds    = null,
+                                      IncludeChargingStationOperatorDelegate?                  IncludeChargingStationOperators      = null,
+                                      ChargeDetailRecordFilterDelegate?                        ChargeDetailRecordFilter             = null,
+
+                                      TimeSpan?                                                ServiceCheckEvery                    = null,
+                                      TimeSpan?                                                StatusCheckEvery                     = null,
+                                      TimeSpan?                                                CDRCheckEvery                        = null,
+
+                                      Boolean                                                  DisablePushData                      = false,
+                                      Boolean                                                  DisablePushStatus                    = false,
+                                      Boolean                                                  DisablePushAdminStatus               = false,
+                                      Boolean                                                  DisablePushEnergyStatus              = false,
+                                      Boolean                                                  DisableAuthentication                = false,
+                                      Boolean                                                  DisableSendChargeDetailRecords       = false,
+
+                                      Action<OCPIv2_1_1.OCPICSOAdapter>?                       OCPIConfigurator                     = null,
+                                      Action<IEMPRoamingProvider>?                             Configurator                         = null,
+
+                                      String                                                   EllipticCurve                        = "P-256",
+                                      ECPrivateKeyParameters?                                  PrivateKey                           = null,
+                                      PublicKeyCertificates?                                   PublicKeyCertificates                = null,
+
+                                      Boolean?                                                 IsDevelopment                        = null,
+                                      IEnumerable<String>?                                     DevelopmentServers                   = null,
+                                      Boolean?                                                 DisableLogging                       = null,
+                                      String?                                                  LoggingPath                          = null,
+                                      String?                                                  LoggingContext                       = null,
+                                      String?                                                  LogfileName                          = null,
+                                      LogfileCreatorDelegate?                                  LogfileCreator                       = null,
+
+                                      String?                                                  ClientsLoggingPath                   = null,
+                                      String?                                                  ClientsLoggingContext                = null,
+                                      LogfileCreatorDelegate?                                  ClientsLogfileCreator                = null,
+                                      DNSClient?                                               DNSClient                            = null)
+
+        {
+
+            #region Initial checks
+
+            if (Name.IsNullOrEmpty())
+                throw new ArgumentNullException(nameof(Name), "The given roaming provider name must not be null or empty!");
+
+            #endregion
+
+            var newRoamingProvider = new OCPIv2_1_1.OCPICSOAdapter(
+
+                                         Id,
+                                         Name,
+                                         Description,
+                                         RoamingNetwork,
+
+                                         CPOAPI,
+                                         //DefaultCountryCode,
+                                         //DefaultPartyId,
+
+                                         GetTariffIds,
+
+                                         CustomEVSEUIdConverter,
+                                         CustomEVSEIdConverter,
+                                         CustomEVSEConverter,
+                                         CustomEVSEStatusUpdateConverter,
+                                         CustomChargeDetailRecordConverter,
+
+                                         IncludeChargingStationOperatorIds,
+                                         IncludeChargingStationOperators,
+                                         IncludeChargingPoolIds,
+                                         IncludeChargingPools,
+                                         IncludeChargingStationIds,
+                                         IncludeChargingStations,
+                                         IncludeEVSEIds,
+                                         IncludeEVSEs,
+                                         ChargeDetailRecordFilter,
+
+                                         ServiceCheckEvery,
+                                         StatusCheckEvery,
+                                         CDRCheckEvery,
+
+                                         DisablePushData,
+                                         DisablePushAdminStatus,
+                                         DisablePushStatus,
+                                         DisablePushEnergyStatus,
+                                         DisableAuthentication,
+                                         DisableSendChargeDetailRecords,
+
+                                         EllipticCurve,
+                                         PrivateKey,
+                                         PublicKeyCertificates,
+
+                                         IsDevelopment,
+                                         DevelopmentServers,
+                                         DisableLogging,
+                                         LoggingPath,
+                                         LoggingContext,
+                                         LogfileName,
+                                         LogfileCreator,
+
+                                         ClientsLoggingPath,
+                                         ClientsLoggingContext,
+                                         ClientsLogfileCreator,
+                                         DNSClient
+
+                                     );
+
+            OCPIConfigurator?.Invoke(newRoamingProvider);
+
+            return RoamingNetwork.
+                       CreateEMPRoamingProvider(newRoamingProvider,
+                                                Configurator) as OCPIv2_1_1.OCPICSOAdapter;
+
+        }
+
     }
 
 }

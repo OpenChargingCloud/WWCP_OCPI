@@ -242,7 +242,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToJSON(CustomTokenStatusSerializer = null, CustomLocationReferenceSerializer = null)
+        #region ToJSON(CustomTokenStatusSerializer = null, IncludeOwnerInformation = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
@@ -250,16 +250,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomTokenStatusSerializer">A delegate to serialize custom token status JSON objects.</param>
         /// <param name="CustomLocationReferenceSerializer">A delegate to serialize custom location reference JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<TokenStatus>?        CustomTokenStatusSerializer         = null,
+                              Boolean                                              IncludeOwnerInformation             = false,
+                              CustomJObjectSerializerDelegate<Token>?              CustomTokenSerializer               = null,
                               CustomJObjectSerializerDelegate<LocationReference>?  CustomLocationReferenceSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
 
-                                 new JProperty("token",              Token),
-                                 new JProperty("status",             Status.ToString()),
+                                 new JProperty("token",               Token. ToJSON(IncludeOwnerInformation,
+                                                                                    CustomTokenSerializer)),
+                                 new JProperty("status",              Status.ToString()),
 
                            LocationReference.HasValue
-                               ? new JProperty("locationReference",  LocationReference.Value.ToJSON(CustomLocationReferenceSerializer))
+                               ? new JProperty("locationReference",   LocationReference.Value.ToJSON(CustomLocationReferenceSerializer))
                                : null
 
                        );

@@ -283,12 +283,19 @@ namespace cloud.charging.open.protocols.OCPI
         protected const String removeTariff                       = "removeTariff";
         protected const String removeAllTariffs                   = "removeAllTariffs";
 
-        protected const String addToken                           = "addToken";
-        protected const String addTokenIfNotExists                = "addTokenIfNotExists";
-        protected const String addOrUpdateToken                   = "addOrUpdateToken";
-        protected const String updateToken                        = "updateToken";
-        protected const String removeToken                        = "removeToken";
-        protected const String removeAllTokens                    = "removeAllTokens";
+        protected const String addSession                         = "addSession";
+        protected const String addSessionIfNotExists              = "addSessionIfNotExists";
+        protected const String addOrUpdateSession                 = "addOrUpdateSession";
+        protected const String updateSession                      = "updateSession";
+        protected const String removeSession                      = "removeSession";
+        protected const String removeAllSessions                  = "removeAllSessions";
+
+        protected const String addTokenStatus                     = "addTokenStatus";
+        protected const String addTokenStatusIfNotExists          = "addTokenStatusIfNotExists";
+        protected const String addOrUpdateTokenStatus             = "addOrUpdateTokenStatus";
+        protected const String updateTokenStatus                  = "updateTokenStatus";
+        protected const String removeTokenStatus                  = "removeTokenStatus";
+        protected const String removeAllTokenStatus               = "removeAllTokenStatus";
 
         protected const String addChargeDetailRecord              = "addChargeDetailRecord";
         protected const String addChargeDetailRecordIfNotExists   = "addChargeDetailRecordIfNotExists";
@@ -342,6 +349,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// A template for OCPI client configurations.
         /// </summary>
         public ClientConfigurator       ClientConfigurations       { get; }
+
+
+        public String                   DatabaseFilePath           { get; }
 
         /// <summary>
         /// The database file name for all remote party configuration.
@@ -456,6 +466,7 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                               LoggingPath                   = null,
                              String?                               LogfileName                   = null,
                              LogfileCreatorDelegate?               LogfileCreator                = null,
+                             String?                               DatabaseFilePath              = null,
                              String?                               RemotePartyDBFileName         = null,
                              String?                               AssetsDBFileName              = null,
                              DNSClient?                            DNSClient                     = null,
@@ -506,25 +517,31 @@ namespace cloud.charging.open.protocols.OCPI
 
         {
 
-            this.OCPIVersion              = OCPIVersion;
-            this.OurBaseURL               = OurBaseURL;
-            this.OurVersionsURL           = OurVersionsURL;
-            this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
-            this.LocationsAsOpenData      = LocationsAsOpenData;
-            this.AllowDowngrades          = AllowDowngrades;
-            this.Disable_RootServices     = Disable_RootServices;
-            this.LoggingContext           = LoggingContext;
+            this.OCPIVersion               = OCPIVersion;
+            this.OurBaseURL                = OurBaseURL;
+            this.OurVersionsURL            = OurVersionsURL;
+            this.AdditionalURLPathPrefix   = AdditionalURLPathPrefix;
+            this.LocationsAsOpenData       = LocationsAsOpenData;
+            this.AllowDowngrades           = AllowDowngrades;
+            this.Disable_RootServices      = Disable_RootServices;
+            this.LoggingContext            = LoggingContext;
 
-            this.logfileName              = Path.Combine(this.LoggingPath,
-                                                         this.LogfileName);
+            this.logfileName               = Path.Combine(this.LoggingPath,
+                                                          this.LogfileName);
 
-            this.RemotePartyDBFileName    = RemotePartyDBFileName ?? Path.Combine(this.LoggingPath,
-                                                                                  DefaultRemotePartyDBFileName);
+            this.DatabaseFilePath          = DatabaseFilePath      ?? Path.Combine(AppContext.BaseDirectory,
+                                                                                   DefaultHTTPAPI_LoggingPath);
 
-            this.AssetsDBFileName         = AssetsDBFileName      ?? Path.Combine(this.LoggingPath,
-                                                                                  DefaultAssetsDBFileName);
+            if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
+                this.DatabaseFilePath     += Path.DirectorySeparatorChar;
 
-            this.ClientConfigurations     = new ClientConfigurator();
+            this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
+                                                          RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
+
+            this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
+                                                          AssetsDBFileName      ?? DefaultAssetsDBFileName);
+
+            this.ClientConfigurations      = new ClientConfigurator();
 
         }
 
@@ -599,6 +616,7 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                  LoggingPath                = null,
                              String?                  LogfileName                = null,
                              LogfileCreatorDelegate?  LogfileCreator             = null,
+                             String?                  DatabaseFilePath           = null,
                              String?                  RemotePartyDBFileName      = null,
                              String?                  AssetsDBFileName           = null,
                              Boolean                  Autostart                  = false)
@@ -631,30 +649,36 @@ namespace cloud.charging.open.protocols.OCPI
 
         {
 
-            this.OCPIVersion              = OCPIVersion;
-            this.OurBaseURL               = OurBaseURL;
-            this.OurVersionsURL           = OurVersionsURL;
-            this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
-            this.LocationsAsOpenData      = LocationsAsOpenData;
-            this.AllowDowngrades          = AllowDowngrades;
-            this.Disable_RootServices     = Disable_RootServices;
-            this.LoggingContext           = LoggingContext;
+            this.OCPIVersion               = OCPIVersion;
+            this.OurBaseURL                = OurBaseURL;
+            this.OurVersionsURL            = OurVersionsURL;
+            this.AdditionalURLPathPrefix   = AdditionalURLPathPrefix;
+            this.LocationsAsOpenData       = LocationsAsOpenData;
+            this.AllowDowngrades           = AllowDowngrades;
+            this.Disable_RootServices      = Disable_RootServices;
+            this.LoggingContext            = LoggingContext;
 
-            this.logfileName              = Path.Combine(this.LoggingPath,
-                                                         this.LogfileName);
+            this.logfileName               = Path.Combine(this.LoggingPath,
+                                                          this.LogfileName);
 
-            this.RemotePartyDBFileName    = RemotePartyDBFileName ?? Path.Combine(this.LoggingPath,
-                                                                                  DefaultRemotePartyDBFileName);
+            this.DatabaseFilePath          = DatabaseFilePath      ?? Path.Combine(AppContext.BaseDirectory,
+                                                                                   DefaultHTTPAPI_LoggingPath);
 
-            this.AssetsDBFileName         = AssetsDBFileName      ?? Path.Combine(this.LoggingPath,
-                                                                                  DefaultAssetsDBFileName);
+            if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
+                this.DatabaseFilePath     += Path.DirectorySeparatorChar;
+
+            this.RemotePartyDBFileName     = Path.Combine(this.DatabaseFilePath,
+                                                          RemotePartyDBFileName ?? DefaultRemotePartyDBFileName);
+
+            this.AssetsDBFileName          = Path.Combine(this.DatabaseFilePath,
+                                                          AssetsDBFileName      ?? DefaultAssetsDBFileName);
 
             // Link HTTP events...
-            HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            HTTPServer.ResponseLog       += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            HTTPServer.ErrorLog          += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
+            HTTPServer.RequestLog         += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
+            HTTPServer.ResponseLog        += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
+            HTTPServer.ErrorLog           += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
-            this.ClientConfigurations     = new ClientConfigurator();
+            this.ClientConfigurations      = new ClientConfigurator();
 
         }
 

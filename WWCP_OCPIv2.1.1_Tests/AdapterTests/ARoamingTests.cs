@@ -216,13 +216,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Create cpo/emsp1/emsp2 adapter
 
-            Assert.IsNotNull(cpoCommonAPI);
-            Assert.IsNotNull(emsp1CommonAPI);
-            Assert.IsNotNull(emsp2CommonAPI);
+            Assert.IsNotNull(cpoCPOAPI);
+            Assert.IsNotNull(emsp1EMSPAPI);
+            Assert.IsNotNull(emsp2EMSPAPI);
 
-            if (cpoCommonAPI   is not null &&
-                emsp1CommonAPI is not null &&
-                emsp2CommonAPI is not null)
+            if (cpoCPOAPI    is not null &&
+                emsp1EMSPAPI is not null &&
+                emsp2EMSPAPI is not null)
             {
 
                 cpoAdapter           = csoRoamingNetwork.CreateOCPIv2_1_CSOAdapter(
@@ -231,9 +231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            Name:                                I18NString.Create(Languages.de, "OCPI v2.1 CSO"),
                                            Description:                         I18NString.Create(Languages.de, "OCPI v2.1 CSO Roaming"),
 
-                                           CommonAPI:                           cpoCommonAPI,
-                                           DefaultCountryCode:                  cpoCommonAPI.OurCountryCode,
-                                           DefaultPartyId:                      cpoCommonAPI.OurPartyId,
+                                           CPOAPI:                              cpoCPOAPI,
 
                                            CustomEVSEIdConverter:               null,
                                            CustomEVSEConverter:                 null,
@@ -263,9 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            Name:                                I18NString.Create(Languages.de, "OCPI v2.1 EMP1"),
                                            Description:                         I18NString.Create(Languages.de, "OCPI v2.1 EMP1 Roaming"),
 
-                                           CommonAPI:                           emsp1CommonAPI,
-                                           DefaultCountryCode:                  emsp1CommonAPI.OurCountryCode,
-                                           DefaultPartyId:                      emsp1CommonAPI.OurPartyId,
+                                           EMSPAPI:                             emsp1EMSPAPI,
 
                                            CustomEVSEIdConverter:               null,
                                            CustomEVSEConverter:                 null,
@@ -295,9 +291,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            Name:                                I18NString.Create(Languages.de, "OCPI v2.1 EMP2"),
                                            Description:                         I18NString.Create(Languages.de, "OCPI v2.1 EMP2 Roaming"),
 
-                                           CommonAPI:                           emsp2CommonAPI,
-                                           DefaultCountryCode:                  emsp2CommonAPI.OurCountryCode,
-                                           DefaultPartyId:                      emsp2CommonAPI.OurPartyId,
+                                           EMSPAPI:                             emsp2EMSPAPI,
 
                                            CustomEVSEIdConverter:               null,
                                            CustomEVSEConverter:                 null,

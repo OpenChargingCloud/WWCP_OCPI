@@ -508,6 +508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          String?                                LoggingPath                        = null,
                          String?                                LogfileName                        = null,
                          LogfileCreatorDelegate?                LogfileCreator                     = null,
+                         String?                                DatabaseFilePath                   = null,
                          String?                                RemotePartyDBFileName              = null,
                          String?                                AssetsDBFileName                   = null,
                          DNSClient?                             DNSClient                          = null,
@@ -563,6 +564,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    LoggingPath,
                    LogfileName,
                    LogfileCreator,
+                   DatabaseFilePath,
                    RemotePartyDBFileName,
                    AssetsDBFileName,
                    DNSClient,
@@ -654,6 +656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          String?                       LoggingPath               = null,
                          String?                       LogfileName               = null,
                          LogfileCreatorDelegate?       LogfileCreator            = null,
+                         String?                       DatabaseFilePath          = null,
                          String?                       RemotePartyDBFileName     = null,
                          String?                       AssetsDBFileName          = null,
                          Boolean                       Autostart                 = false)
@@ -691,6 +694,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    LoggingPath,
                    LogfileName ?? DefaultLogfileName,
                    LogfileCreator,
+                   DatabaseFilePath,
                    RemotePartyDBFileName,
                    AssetsDBFileName,
                    Autostart)

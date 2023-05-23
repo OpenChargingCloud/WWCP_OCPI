@@ -3639,7 +3639,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                                     AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
 
-                                        if (addOrUpdateResult.IsSuccess)
+                                        if (addOrUpdateResult.IsSuccess &&
+                                            addOrUpdateResult.Data is not null)
+                                        {
+
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
@@ -3670,6 +3673,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            ETag                       = addOrUpdateResult.Data.ETag
                                                        }
                                                    };
+
+                                        }
 
                                         return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 2000,
@@ -6176,8 +6181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        // ToDo: What kind of error might happen here?
-                                        CommonAPI.AddCDR(newCDR);
+                                        var addResult = await CommonAPI.AddCDR(newCDR);
 
 
                                         // https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/mod_cdrs.asciidoc#mod_cdrs_post_method
@@ -6189,19 +6193,57 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         // Description  URL to the newly created CDR in the eMSP’s system, can be used by the CPO system to perform a GET on the same CDR.
                                         // Example      https://www.server.com/ocpi/emsp/2.2/cdrs/123456
 
+                                        if (addResult.IsSuccess)
+                                            return new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 1000,
+                                                           StatusMessage        = "Hello world!",
+                                                           Data                 = newCDR.ToJSON(),
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.Created,
+                                                               Location                   = URLPathPrefix + "cdrs" + newCDR.Id.ToString(),
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "DELETE" },
+                                                               AccessControlAllowHeaders  = "Authorization",
+                                                               LastModified               = newCDR.LastUpdated.ToIso8601(),
+                                                               ETag                       = newCDR.ETag
+                                                           }
+                                                       };
+
+
                                         return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 1000,
-                                                       StatusMessage        = "Hello world!",
-                                                       Data                 = newCDR.ToJSON(),
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.Created,
-                                                           Location                   = URLPathPrefix + "cdrs" + newCDR.Id.ToString(),
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "DELETE" },
-                                                           AccessControlAllowHeaders  = "Authorization",
-                                                           LastModified               = newCDR.LastUpdated.ToIso8601(),
-                                                           ETag                       = newCDR.ETag
-                                                       }
-                                                   };
+                                                   StatusCode           = 2000,
+                                                   StatusMessage        = addResult.ErrorResponse,
+                                                   Data                 = newCDR.ToJSON(false,
+                                                                                        null,
+                                                                                        CustomCDRSerializer,
+                                                                                        CustomLocationSerializer,
+                                                                                        CustomAdditionalGeoLocationSerializer,
+                                                                                        CustomEVSESerializer,
+                                                                                        CustomStatusScheduleSerializer,
+                                                                                        CustomConnectorSerializer,
+                                                                                        CustomEnergyMeterSerializer,
+                                                                                        CustomTransparencySoftwareStatusSerializer,
+                                                                                        CustomTransparencySoftwareSerializer,
+                                                                                        CustomDisplayTextSerializer,
+                                                                                        CustomBusinessDetailsSerializer,
+                                                                                        CustomHoursSerializer,
+                                                                                        CustomImageSerializer,
+                                                                                        CustomEnergyMixSerializer,
+                                                                                        CustomEnergySourceSerializer,
+                                                                                        CustomEnvironmentalImpactSerializer,
+                                                                                        CustomTariffSerializer,
+                                                                                        CustomTariffElementSerializer,
+                                                                                        CustomPriceComponentSerializer,
+                                                                                        CustomTariffRestrictionsSerializer,
+                                                                                        CustomChargingPeriodSerializer,
+                                                                                        CustomCDRDimensionSerializer,
+                                                                                        CustomSignedDataSerializer,
+                                                                                        CustomSignedValueSerializer),
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                               };
 
                                     });
 
@@ -6239,8 +6281,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        CommonAPI.RemoveAllCDRs(Request.LocalAccessInfo.CountryCode,
-                                                                Request.LocalAccessInfo.PartyId);
+                                        var deleteResult = await CommonAPI.RemoveAllCDRs(Request.LocalAccessInfo.CountryCode,
+                                                                                         Request.LocalAccessInfo.PartyId);
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -6429,47 +6471,84 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        //ToDo: await...
-                                        CommonAPI.RemoveCDR(existingCDR!);
+                                        var deleteResult = await CommonAPI.RemoveCDR(existingCDR);
+
+
+                                        if (deleteResult.IsSuccess)
+                                            return new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 1000,
+                                                           StatusMessage        = "Hello world!",
+                                                           Data                 = existingCDR.ToJSON(false,
+                                                                                                     Request.EMSPId,
+                                                                                                     CustomCDRSerializer,
+                                                                                                     CustomLocationSerializer,
+                                                                                                     CustomAdditionalGeoLocationSerializer,
+                                                                                                     CustomEVSESerializer,
+                                                                                                     CustomStatusScheduleSerializer,
+                                                                                                     CustomConnectorSerializer,
+                                                                                                     CustomEnergyMeterSerializer,
+                                                                                                     CustomTransparencySoftwareStatusSerializer,
+                                                                                                     CustomTransparencySoftwareSerializer,
+                                                                                                     CustomDisplayTextSerializer,
+                                                                                                     CustomBusinessDetailsSerializer,
+                                                                                                     CustomHoursSerializer,
+                                                                                                     CustomImageSerializer,
+                                                                                                     CustomEnergyMixSerializer,
+                                                                                                     CustomEnergySourceSerializer,
+                                                                                                     CustomEnvironmentalImpactSerializer,
+                                                                                                     CustomTariffSerializer,
+                                                                                                     CustomTariffElementSerializer,
+                                                                                                     CustomPriceComponentSerializer,
+                                                                                                     CustomTariffRestrictionsSerializer,
+                                                                                                     CustomChargingPeriodSerializer,
+                                                                                                     CustomCDRDimensionSerializer,
+                                                                                                     CustomSignedDataSerializer,
+                                                                                                     CustomSignedValueSerializer),
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.OK,
+                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
+                                                               AccessControlAllowHeaders  = "Authorization",
+                                                               LastModified               = existingCDR.LastUpdated.ToIso8601(),
+                                                               ETag                       = existingCDR.ETag
+                                                           }
+                                                       };
 
 
                                         return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 1000,
-                                                       StatusMessage        = "Hello world!",
-                                                       Data                 = existingCDR.ToJSON(false,
-                                                                                                 Request.EMSPId,
-                                                                                                 CustomCDRSerializer,
-                                                                                                 CustomLocationSerializer,
-                                                                                                 CustomAdditionalGeoLocationSerializer,
-                                                                                                 CustomEVSESerializer,
-                                                                                                 CustomStatusScheduleSerializer,
-                                                                                                 CustomConnectorSerializer,
-                                                                                                 CustomEnergyMeterSerializer,
-                                                                                                 CustomTransparencySoftwareStatusSerializer,
-                                                                                                 CustomTransparencySoftwareSerializer,
-                                                                                                 CustomDisplayTextSerializer,
-                                                                                                 CustomBusinessDetailsSerializer,
-                                                                                                 CustomHoursSerializer,
-                                                                                                 CustomImageSerializer,
-                                                                                                 CustomEnergyMixSerializer,
-                                                                                                 CustomEnergySourceSerializer,
-                                                                                                 CustomEnvironmentalImpactSerializer,
-                                                                                                 CustomTariffSerializer,
-                                                                                                 CustomTariffElementSerializer,
-                                                                                                 CustomPriceComponentSerializer,
-                                                                                                 CustomTariffRestrictionsSerializer,
-                                                                                                 CustomChargingPeriodSerializer,
-                                                                                                 CustomCDRDimensionSerializer,
-                                                                                                 CustomSignedDataSerializer,
-                                                                                                 CustomSignedValueSerializer),
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
-                                                           AccessControlAllowHeaders  = "Authorization",
-                                                           LastModified               = existingCDR.LastUpdated.ToIso8601(),
-                                                           ETag                       = existingCDR.ETag
-                                                       }
-                                                   };
+                                                   StatusCode           = 2000,
+                                                   StatusMessage        = deleteResult.ErrorResponse,
+                                                   Data                 = existingCDR.ToJSON(false,
+                                                                                             null,
+                                                                                             CustomCDRSerializer,
+                                                                                             CustomLocationSerializer,
+                                                                                             CustomAdditionalGeoLocationSerializer,
+                                                                                             CustomEVSESerializer,
+                                                                                             CustomStatusScheduleSerializer,
+                                                                                             CustomConnectorSerializer,
+                                                                                             CustomEnergyMeterSerializer,
+                                                                                             CustomTransparencySoftwareStatusSerializer,
+                                                                                             CustomTransparencySoftwareSerializer,
+                                                                                             CustomDisplayTextSerializer,
+                                                                                             CustomBusinessDetailsSerializer,
+                                                                                             CustomHoursSerializer,
+                                                                                             CustomImageSerializer,
+                                                                                             CustomEnergyMixSerializer,
+                                                                                             CustomEnergySourceSerializer,
+                                                                                             CustomEnvironmentalImpactSerializer,
+                                                                                             CustomTariffSerializer,
+                                                                                             CustomTariffElementSerializer,
+                                                                                             CustomPriceComponentSerializer,
+                                                                                             CustomTariffRestrictionsSerializer,
+                                                                                             CustomChargingPeriodSerializer,
+                                                                                             CustomCDRDimensionSerializer,
+                                                                                             CustomSignedDataSerializer,
+                                                                                             CustomSignedValueSerializer),
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                               };
 
                                     });
 

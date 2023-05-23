@@ -441,35 +441,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Custom JSON serializers
 
-        public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                        { get; }
-        public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; }
-        public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                 { get; }
-        public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer                { get; }
-        public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer            { get; }
-        public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                     { get; }
-        public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; }
-        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer           { get; }
+        public CustomJObjectSerializerDelegate<Tariff>?                       CustomTariffSerializer                        { get; }
+        public CustomJObjectSerializerDelegate<DisplayText>?                  CustomDisplayTextSerializer                   { get; }
+        public CustomJObjectSerializerDelegate<TariffElement>?                CustomTariffElementSerializer                 { get; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?               CustomPriceComponentSerializer                { get; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?           CustomTariffRestrictionsSerializer            { get; }
+        public CustomJObjectSerializerDelegate<EnergyMix>?                    CustomEnergyMixSerializer                     { get; }
+        public CustomJObjectSerializerDelegate<EnergySource>?                 CustomEnergySourceSerializer                  { get; }
+        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?          CustomEnvironmentalImpactSerializer           { get; }
 
 
-        public CustomJObjectSerializerDelegate<Token>?                       CustomTokenSerializer                         { get; }
+        public CustomJObjectSerializerDelegate<Session>?                      CustomSessionSerializer                       { get; }
+        public CustomJObjectSerializerDelegate<Location>?                     CustomLocationSerializer                      { get; }
+        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?        CustomAdditionalGeoLocationSerializer         { get; }
+        public CustomJObjectSerializerDelegate<EVSE>?                         CustomEVSESerializer                          { get; }
+        public CustomJObjectSerializerDelegate<StatusSchedule>?               CustomStatusScheduleSerializer                { get; }
+        public CustomJObjectSerializerDelegate<Connector>?                    CustomConnectorSerializer                     { get; }
+        public CustomJObjectSerializerDelegate<EnergyMeter>?                  CustomEnergyMeterSerializer                   { get; }
+        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?   CustomTransparencySoftwareStatusSerializer    { get; }
+        public CustomJObjectSerializerDelegate<TransparencySoftware>?         CustomTransparencySoftwareSerializer          { get; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?              CustomBusinessDetailsSerializer               { get; }
+        public CustomJObjectSerializerDelegate<Hours>?                        CustomHoursSerializer                         { get; }
+        public CustomJObjectSerializerDelegate<Image>?                        CustomImageSerializer                         { get; }
+        public CustomJObjectSerializerDelegate<ChargingPeriod>?               CustomChargingPeriodSerializer                { get; }
+        public CustomJObjectSerializerDelegate<CDRDimension>?                 CustomCDRDimensionSerializer                  { get; }
 
 
-        public CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                           { get; }
-        public CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                      { get; }
-        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer         { get; }
-        public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                          { get; }
-        public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer                { get; }
-        public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                     { get; }
-        public CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                   { get; }
-        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; }
-        public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; }
-        public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; }
-        public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; }
-        public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                         { get; }
-        public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer                { get; }
-        public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                  { get; }
-        public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                    { get; }
-        public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                   { get; }
+        public CustomJObjectSerializerDelegate<Token>?                        CustomTokenSerializer                         { get; }
+        public CustomJObjectSerializerDelegate<TokenStatus>?                  CustomTokenStatusSerializer                   { get; }
+
+        public CustomJObjectSerializerDelegate<LocationReference>?            CustomLocationReferenceSerializer             { get; }
+
+
+        public CustomJObjectSerializerDelegate<CDR>?                          CustomCDRSerializer                           { get; }
+        public CustomJObjectSerializerDelegate<SignedData>?                   CustomSignedDataSerializer                    { get; }
+        public CustomJObjectSerializerDelegate<SignedValue>?                  CustomSignedValueSerializer                   { get; }
 
         #endregion
 
@@ -581,6 +587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          String?                                LoggingPath                        = null,
                          String?                                LogfileName                        = null,
                          LogfileCreatorDelegate?                LogfileCreator                     = null,
+                         String?                                DatabaseFilePath                   = null,
                          String?                                RemotePartyDBFileName              = null,
                          String?                                AssetsDBFileName                   = null,
                          DNSClient?                             DNSClient                          = null,
@@ -635,6 +642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    LoggingPath,
                    LogfileName,
                    LogfileCreator,
+                   DatabaseFilePath,
                    RemotePartyDBFileName,
                    AssetsDBFileName,
                    DNSClient,
@@ -649,7 +657,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
             this.locations             = new Dictionary<Location_Id, Location>();
-            this.chargingSessions      = new Dictionary<Session_Id,  Session>();
 
             this.CommonAPILogger       = this.DisableLogging == false
                                              ? new CommonAPILogger(
@@ -752,6 +759,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          String?                  LoggingPath               = null,
                          String?                  LogfileName               = null,
                          LogfileCreatorDelegate?  LogfileCreator            = null,
+                         String?                  DatabaseFilePath          = null,
                          String?                  RemotePartyDBFileName     = null,
                          String?                  AssetsDBFileName          = null,
                          Boolean                  Autostart                 = false)
@@ -789,6 +797,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    LoggingPath,
                    LogfileName ?? DefaultLogfileName,
                    LogfileCreator,
+                   DatabaseFilePath,
                    RemotePartyDBFileName,
                    AssetsDBFileName,
                    Autostart)
@@ -803,7 +812,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
             this.locations             = new Dictionary<Location_Id, Location>();
-            this.chargingSessions      = new Dictionary<Session_Id,  Session>();
 
             // Link HTTP events...
             HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -1003,8 +1011,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             foreach (var command in base.ReadAssetsDatabaseFile())
             {
 
-                String? errorResponse   = null;
-                Tariff? tariff;
+                String?       errorResponse   = null;
+                Tariff?       tariff;
+                Session?      session;
+                TokenStatus  _tokenStatus;
+                CDR?          cdr;
 
                 var errorResponses = new List<Tuple<Command, String>>();
 
@@ -1145,6 +1156,405 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #endregion
 
+
+                    #region addSession
+
+                    case addSession:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                Session.TryParse(command.JSON,
+                                                 out session,
+                                                 out errorResponse) &&
+                                session is not null)
+                            {
+                                chargingSessions.TryAdd(session.Id, session);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region addSessionIfNotExists
+
+                    case addSessionIfNotExists:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                Session.TryParse(command.JSON,
+                                                 out session,
+                                                 out errorResponse) &&
+                                session is not null)
+                            {
+                                chargingSessions.TryAdd(session.Id, session);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region addOrUpdateSession
+
+                    case addOrUpdateSession:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                Session.TryParse(command.JSON,
+                                                 out session,
+                                                 out errorResponse) &&
+                                session is not null)
+                            {
+
+                                if (chargingSessions.ContainsKey(session.Id))
+                                    chargingSessions.Remove(session.Id, out _);
+
+                                chargingSessions.TryAdd(session.Id, session);
+
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region updateSession
+
+                    case updateSession:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                Session.TryParse(command.JSON,
+                                                 out session,
+                                                 out errorResponse) &&
+                                session is not null)
+                            {
+                                chargingSessions.Remove(session.Id, out _);
+                                chargingSessions.TryAdd(session.Id, session);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region updateSession
+
+                    case removeSession:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                Session.TryParse(command.JSON,
+                                                 out session,
+                                                 out errorResponse) &&
+                                session is not null)
+                            {
+                                chargingSessions.Remove(session.Id, out _);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region removeAllSessions
+
+                    case removeAllSessions:
+                        chargingSessions.Clear();
+                        break;
+
+                    #endregion
+
+
+                    #region addToken
+
+                    case addTokenStatus:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                TokenStatus.TryParse(command.JSON,
+                                                     out _tokenStatus,
+                                                     out errorResponse))
+                            {
+                                tokenStatus.TryAdd(_tokenStatus.Token.Id, _tokenStatus);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region addTokenIfNotExists
+
+                    case addTokenStatusIfNotExists:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                TokenStatus.TryParse(command.JSON,
+                                                     out _tokenStatus,
+                                                     out errorResponse))
+                            {
+                                tokenStatus.TryAdd(_tokenStatus.Token.Id, _tokenStatus);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region addOrUpdateToken
+
+                    case addOrUpdateTokenStatus:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                TokenStatus.TryParse(command.JSON,
+                                                     out _tokenStatus,
+                                                     out errorResponse))
+                            {
+
+                                if (tokenStatus.ContainsKey(_tokenStatus.Token.Id))
+                                    tokenStatus.Remove(_tokenStatus.Token.Id, out _);
+
+                                tokenStatus.TryAdd(_tokenStatus.Token.Id, _tokenStatus);
+
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region updateToken
+
+                    case updateTokenStatus:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                TokenStatus.TryParse(command.JSON,
+                                                     out _tokenStatus,
+                                                     out errorResponse))
+                            {
+                                tokenStatus.Remove(_tokenStatus.Token.Id, out _);
+                                tokenStatus.TryAdd(_tokenStatus.Token.Id, _tokenStatus);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region updateToken
+
+                    case removeTokenStatus:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                TokenStatus.TryParse(command.JSON,
+                                                     out _tokenStatus,
+                                                     out errorResponse))
+                            {
+                                tokenStatus.Remove(_tokenStatus.Token.Id, out _);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region removeAllTokens
+
+                    case removeAllTokenStatus:
+                        tokenStatus.Clear();
+                        break;
+
+                    #endregion
+
+
+                    #region addChargeDetailRecord
+
+                    case addChargeDetailRecord:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                CDR.TryParse(command.JSON,
+                                             out cdr,
+                                             out errorResponse) &&
+                                cdr is not null)
+                            {
+                                chargeDetailRecords.TryAdd(cdr.Id, cdr);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region addChargeDetailRecordIfNotExists
+
+                    case addChargeDetailRecordIfNotExists:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                CDR.TryParse(command.JSON,
+                                             out cdr,
+                                             out errorResponse) &&
+                                cdr is not null)
+                            {
+                                chargeDetailRecords.TryAdd(cdr.Id, cdr);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region addOrUpdateChargeDetailRecord
+
+                    case addOrUpdateChargeDetailRecord:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                CDR.TryParse(command.JSON,
+                                             out cdr,
+                                             out errorResponse) &&
+                                cdr is not null)
+                            {
+
+                                if (chargeDetailRecords.ContainsKey(cdr.Id))
+                                    chargeDetailRecords.Remove(cdr.Id, out _);
+
+                                chargeDetailRecords.TryAdd(cdr.Id, cdr);
+
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region updateChargeDetailRecord
+
+                    case updateChargeDetailRecord:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                CDR.TryParse(command.JSON,
+                                                out cdr,
+                                                out errorResponse) &&
+                                cdr is not null)
+                            {
+                                chargeDetailRecords.Remove(cdr.Id, out _);
+                                chargeDetailRecords.TryAdd(cdr.Id, cdr);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region updateCDR
+
+                    case removeChargeDetailRecord:
+                        try
+                        {
+                            if (command.JSON is not null &&
+                                CDR.TryParse(command.JSON,
+                                             out cdr,
+                                             out errorResponse) &&
+                                cdr is not null)
+                            {
+                                chargeDetailRecords.Remove(cdr.Id, out _);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+                    #region removeAllCDRs
+
+                    case removeAllChargeDetailRecords:
+                        chargeDetailRecords.Clear();
+                        break;
+
+                        #endregion
 
                 }
 
@@ -4119,6 +4529,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Locations
 
+        #region Data
+
         private readonly Dictionary<Location_Id , Location> locations;
 
 
@@ -4130,6 +4542,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public delegate Task OnLocationChangedDelegate(Location Location);
 
         public event OnLocationChangedDelegate? OnLocationChanged;
+
+        #endregion
 
 
         #region AddLocation           (Location, SkipNotifications = false)
@@ -5507,7 +5921,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return RemoveResult<Tariff>.Failed(null,
-                                               "Remove(TariffId, ...) failed!");
+                                               "RemoveTariff(TariffId, ...) failed!");
 
         }
 
@@ -5678,272 +6092,400 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Sessions
 
-        private readonly Dictionary<Session_Id , Session> chargingSessions;
+        #region Data
+
+        private readonly ConcurrentDictionary<Session_Id , Session> chargingSessions = new();
 
 
-        public delegate Task OnSessionCreatedDelegate(Session Session);
+        public delegate Task OnSessionAddedDelegate(Session Session);
 
-        public event OnSessionCreatedDelegate? OnSessionCreated;
+        public event OnSessionAddedDelegate? OnChargingSessionAdded;
 
-        public delegate Task OnSessionChangedDelegate(Session Session);
+        public delegate Task OnChargingSessionChangedDelegate(Session Session);
 
-        public event OnSessionChangedDelegate? OnSessionChanged;
-
-
-        #region AddSession           (Session, SkipNotifications = false)
-
-        public Session AddSession(Session  Session,
-                                  Boolean  SkipNotifications   = false)
-        {
-
-            if (Session is null)
-                throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
-
-            lock (chargingSessions)
-            {
-
-                if (!chargingSessions.ContainsKey(Session.Id))
-                {
-
-                    chargingSessions.Add(Session.Id, Session);
-                    Session.CommonAPI = this;
-
-                    if (!SkipNotifications)
-                    {
-
-                        var OnSessionCreatedLocal = OnSessionCreated;
-                        if (OnSessionCreatedLocal is not null)
-                        {
-                            try
-                            {
-                                OnSessionCreatedLocal(Session).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSession), " ", nameof(OnSessionCreated), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
-                        }
-
-                    }
-
-                    return Session;
-
-                }
-
-                throw new ArgumentException("The given session already exists!");
-
-            }
-
-        }
+        public event OnChargingSessionChangedDelegate? OnChargingSessionChanged;
 
         #endregion
 
-        #region AddSessionIfNotExists(Session, SkipNotifications = false)
 
-        public Session AddSessionIfNotExists(Session  Session,
-                                             Boolean  SkipNotifications   = false)
+        #region AddSession           (Session,                          SkipNotifications = false)
+
+        public async Task<AddResult<Session>> AddSession(Session  Session,
+                                                         Boolean  SkipNotifications   = false)
         {
 
-            if (Session is null)
-                throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
-
-            lock (chargingSessions)
+            if (chargingSessions.TryAdd(Session.Id, Session))
             {
 
-                if (!chargingSessions.ContainsKey(Session.Id))
+                Session.CommonAPI = this;
+
+                await LogAsset(addSession,
+                               Session.ToJSON(true,
+                                              null,
+                                              CustomSessionSerializer,
+                                              CustomLocationSerializer,
+                                              CustomAdditionalGeoLocationSerializer,
+                                              CustomEVSESerializer,
+                                              CustomStatusScheduleSerializer,
+                                              CustomConnectorSerializer,
+                                              CustomEnergyMeterSerializer,
+                                              CustomTransparencySoftwareStatusSerializer,
+                                              CustomTransparencySoftwareSerializer,
+                                              CustomDisplayTextSerializer,
+                                              CustomBusinessDetailsSerializer,
+                                              CustomHoursSerializer,
+                                              CustomImageSerializer,
+                                              CustomEnergyMixSerializer,
+                                              CustomEnergySourceSerializer,
+                                              CustomEnvironmentalImpactSerializer,
+                                              CustomChargingPeriodSerializer,
+                                              CustomCDRDimensionSerializer));
+
+                if (!SkipNotifications)
                 {
 
-                    chargingSessions.Add(Session.Id, Session);
-                    Session.CommonAPI = this;
-
-                    if (!SkipNotifications)
-                    {
-
-                        var OnSessionCreatedLocal = OnSessionCreated;
-                        if (OnSessionCreatedLocal is not null)
-                        {
-                            try
-                            {
-                                OnSessionCreatedLocal(Session).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSessionIfNotExists), " ", nameof(OnSessionCreated), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
-                        }
-
-                    }
-
-                }
-
-                return Session;
-
-            }
-
-        }
-
-        #endregion
-
-        #region AddOrUpdateSession   (newOrUpdatedSession, AllowDowngrades = false)
-
-        public async Task<AddOrUpdateResult<Session>> AddOrUpdateSession(Session   newOrUpdatedSession,
-                                                                         Boolean?  AllowDowngrades = false)
-        {
-
-            if (newOrUpdatedSession is null)
-                throw new ArgumentNullException(nameof(newOrUpdatedSession), "The given charging session must not be null!");
-
-            lock (chargingSessions)
-            {
-
-                if (chargingSessions.TryGetValue(newOrUpdatedSession.Id, out Session existingSession))
-                {
-
-                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                        newOrUpdatedSession.LastUpdated <= existingSession.LastUpdated)
-                    {
-                        return AddOrUpdateResult<Session>.Failed(newOrUpdatedSession,
-                                                                 "The 'lastUpdated' timestamp of the new charging session must be newer then the timestamp of the existing session!");
-                    }
-
-                    chargingSessions[newOrUpdatedSession.Id] = newOrUpdatedSession;
-
-                    var OnSessionChangedLocal = OnSessionChanged;
-                    if (OnSessionChangedLocal is not null)
+                    var OnChargingSessionAddedLocal = OnChargingSessionAdded;
+                    if (OnChargingSessionAddedLocal is not null)
                     {
                         try
                         {
-                            OnSessionChangedLocal(newOrUpdatedSession).Wait();
+                            OnChargingSessionAddedLocal(Session).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSession), " ", nameof(OnChargingSessionAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
                     }
 
-                    return AddOrUpdateResult<Session>.Success(newOrUpdatedSession,
-                                                              WasCreated: false);
-
                 }
 
-                chargingSessions.Add(newOrUpdatedSession.Id, newOrUpdatedSession);
+                return AddResult<Session>.Success(Session);
 
-                var OnSessionCreatedLocal = OnSessionCreated;
-                if (OnSessionCreatedLocal is not null)
+            }
+
+            return AddResult<Session>.Failed(Session,
+                                            "AddSession(Session.Id, Session) failed!");
+
+        }
+
+        #endregion
+
+        #region AddSessionIfNotExists(Session,                          SkipNotifications = false)
+
+        public async Task<AddResult<Session>> AddSessionIfNotExists(Session  Session,
+                                                                    Boolean  SkipNotifications   = false)
+        {
+
+            if (chargingSessions.TryAdd(Session.Id, Session))
+            {
+
+                Session.CommonAPI = this;
+
+                await LogAsset(addSessionIfNotExists,
+                               Session.ToJSON(true,
+                                              null,
+                                              CustomSessionSerializer,
+                                              CustomLocationSerializer,
+                                              CustomAdditionalGeoLocationSerializer,
+                                              CustomEVSESerializer,
+                                              CustomStatusScheduleSerializer,
+                                              CustomConnectorSerializer,
+                                              CustomEnergyMeterSerializer,
+                                              CustomTransparencySoftwareStatusSerializer,
+                                              CustomTransparencySoftwareSerializer,
+                                              CustomDisplayTextSerializer,
+                                              CustomBusinessDetailsSerializer,
+                                              CustomHoursSerializer,
+                                              CustomImageSerializer,
+                                              CustomEnergyMixSerializer,
+                                              CustomEnergySourceSerializer,
+                                              CustomEnvironmentalImpactSerializer,
+                                              CustomChargingPeriodSerializer,
+                                              CustomCDRDimensionSerializer));
+
+                if (!SkipNotifications)
                 {
-                    try
+
+                    var OnChargingSessionAddedLocal = OnChargingSessionAdded;
+                    if (OnChargingSessionAddedLocal is not null)
                     {
-                        OnSessionCreatedLocal(newOrUpdatedSession).Wait();
+                        try
+                        {
+                            OnChargingSessionAddedLocal(Session).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSessionIfNotExists), " ", nameof(OnChargingSessionAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionCreated), ": ",
-                                    Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace ?? "");
-                    }
+
                 }
 
-                return AddOrUpdateResult<Session>.Success(newOrUpdatedSession,
+                return AddResult<Session>.Success(Session);
+
+            }
+
+            return AddResult<Session>.NoOperation(Session);
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateSession   (Session, AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<AddOrUpdateResult<Session>> AddOrUpdateSession(Session   Session,
+                                                                         Boolean?  AllowDowngrades     = false,
+                                                                         Boolean   SkipNotifications   = false)
+        {
+
+            #region Update an existing session
+
+            if (chargingSessions.TryGetValue(Session.Id, out var existingSession))
+            {
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Session.LastUpdated <= existingSession.LastUpdated)
+                {
+                    return AddOrUpdateResult<Session>.Failed(Session,
+                                                            "The 'lastUpdated' timestamp of the new charging session must be newer then the timestamp of the existing session!");
+                }
+
+                chargingSessions[Session.Id] = Session;
+
+                await LogAsset(addOrUpdateSession,
+                               Session.ToJSON(true,
+                                              null,
+                                              CustomSessionSerializer,
+                                              CustomLocationSerializer,
+                                              CustomAdditionalGeoLocationSerializer,
+                                              CustomEVSESerializer,
+                                              CustomStatusScheduleSerializer,
+                                              CustomConnectorSerializer,
+                                              CustomEnergyMeterSerializer,
+                                              CustomTransparencySoftwareStatusSerializer,
+                                              CustomTransparencySoftwareSerializer,
+                                              CustomDisplayTextSerializer,
+                                              CustomBusinessDetailsSerializer,
+                                              CustomHoursSerializer,
+                                              CustomImageSerializer,
+                                              CustomEnergyMixSerializer,
+                                              CustomEnergySourceSerializer,
+                                              CustomEnvironmentalImpactSerializer,
+                                              CustomChargingPeriodSerializer,
+                                              CustomCDRDimensionSerializer));
+
+                if (!SkipNotifications)
+                {
+
+                    var OnChargingSessionChangedLocal = OnChargingSessionChanged;
+                    if (OnChargingSessionChangedLocal is not null)
+                    {
+                        try
+                        {
+                            OnChargingSessionChangedLocal(Session).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnChargingSessionChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return AddOrUpdateResult<Session>.Success(Session,
+                                                          WasCreated: false);
+
+            }
+
+            #endregion
+
+            #region Add a new session
+
+            if (chargingSessions.TryAdd(Session.Id, Session))
+            {
+
+                if (!SkipNotifications)
+                {
+
+                    var OnSessionAddedLocal = OnChargingSessionAdded;
+                    if (OnSessionAddedLocal is not null)
+                    {
+                        try
+                        {
+                            OnSessionAddedLocal(Session).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnChargingSessionAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return AddOrUpdateResult<Session>.Success(Session,
                                                           WasCreated: true);
 
             }
 
+            return AddOrUpdateResult<Session>.Failed(Session,
+                                                     "AddOrUpdateSession(Session.Id, Session) failed!");
+
+            #endregion
+
         }
 
         #endregion
 
-        #region UpdateSession        (Session)
+        #region UpdateSession        (Session, AllowDowngrades = false, SkipNotifications = false)
 
-        public Session UpdateSession(Session Session)
+        public async Task<UpdateResult<Session>> UpdateSession(Session   Session,
+                                                               Boolean?  AllowDowngrades     = false,
+                                                               Boolean   SkipNotifications   = false)
         {
 
-            if (Session is null)
-                throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
+            #region Validate AllowDowngrades
 
-            lock (chargingSessions)
+            if (chargingSessions.TryGetValue(Session.Id, out var existingSession))
             {
 
-                if (chargingSessions.ContainsKey(Session.Id))
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Session.LastUpdated <= existingSession.LastUpdated)
                 {
 
-                    chargingSessions[Session.Id] = Session;
+                    return UpdateResult<Session>.Failed(Session,
+                                                        "The 'lastUpdated' timestamp of the new charging session must be newer then the timestamp of the existing session!");
 
-                    var OnSessionChangedLocal = OnSessionChanged;
-                    if (OnSessionChangedLocal is not null)
+                }
+
+            }
+
+            #endregion
+
+
+            if (chargingSessions.TryUpdate(Session.Id, Session, Session))
+            {
+
+                await LogAsset(updateSession,
+                               Session.ToJSON(true,
+                                              null,
+                                              CustomSessionSerializer,
+                                              CustomLocationSerializer,
+                                              CustomAdditionalGeoLocationSerializer,
+                                              CustomEVSESerializer,
+                                              CustomStatusScheduleSerializer,
+                                              CustomConnectorSerializer,
+                                              CustomEnergyMeterSerializer,
+                                              CustomTransparencySoftwareStatusSerializer,
+                                              CustomTransparencySoftwareSerializer,
+                                              CustomDisplayTextSerializer,
+                                              CustomBusinessDetailsSerializer,
+                                              CustomHoursSerializer,
+                                              CustomImageSerializer,
+                                              CustomEnergyMixSerializer,
+                                              CustomEnergySourceSerializer,
+                                              CustomEnvironmentalImpactSerializer,
+                                              CustomChargingPeriodSerializer,
+                                              CustomCDRDimensionSerializer));
+
+                if (!SkipNotifications)
+                {
+
+                    var OnChargingSessionChangedLocal = OnChargingSessionChanged;
+                    if (OnChargingSessionChangedLocal is not null)
                     {
                         try
                         {
-                            OnSessionChangedLocal(Session).Wait();
+                            OnChargingSessionChangedLocal(Session).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnSessionChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnChargingSessionChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
                     }
 
-                    return Session;
-
                 }
 
-                return null;
+                return UpdateResult<Session>.Success(Session);
 
             }
+
+            return UpdateResult<Session>.Failed(Session,
+                                                "UpdateSession(Session.Id, Session, Session) failed!");
 
         }
 
         #endregion
 
 
-        #region TryPatchSession      (Session, SessionPatch, AllowDowngrades = false)
+        #region TryPatchSession      (Session, SessionPatch, AllowDowngrades = false, SkipNotifications = false)
 
         public async Task<PatchResult<Session>> TryPatchSession(Session   Session,
                                                                 JObject   SessionPatch,
-                                                                Boolean?  AllowDowngrades = false)
+                                                                Boolean?  AllowDowngrades     = false,
+                                                                Boolean   SkipNotifications   = false)
         {
-
-            if (Session is null)
-                return PatchResult<Session>.Failed(Session,
-                                                   "The given charging session must not be null!");
 
             if (SessionPatch is null || !SessionPatch.HasValues)
                 return PatchResult<Session>.Failed(Session,
-                                                   "The given charging session patch must not be null or empty!");
+                                                  "The given charging session patch must not be null or empty!");
 
-            // ToDo: Remove me and add a proper 'lock' mechanism!
-            await Task.Delay(1);
-
-            lock (chargingSessions)
+            if (chargingSessions.TryGetValue(Session.Id, out var session))
             {
 
-                if (chargingSessions.TryGetValue(Session.Id, out var session))
+                var patchResult = session.TryPatch(SessionPatch,
+                                                  AllowDowngrades ?? this.AllowDowngrades ?? false);
+
+                if (patchResult.IsSuccess &&
+                    patchResult.PatchedData is not null)
                 {
 
-                    var patchResult = session.TryPatch(SessionPatch,
-                                                       AllowDowngrades ?? this.AllowDowngrades ?? false);
+                    chargingSessions[Session.Id] = patchResult.PatchedData;
 
-                    if (patchResult.IsSuccess)
+                    await LogAsset(updateSession,
+                                   Session.ToJSON(true,
+                                                  null,
+                                                  CustomSessionSerializer,
+                                                  CustomLocationSerializer,
+                                                  CustomAdditionalGeoLocationSerializer,
+                                                  CustomEVSESerializer,
+                                                  CustomStatusScheduleSerializer,
+                                                  CustomConnectorSerializer,
+                                                  CustomEnergyMeterSerializer,
+                                                  CustomTransparencySoftwareStatusSerializer,
+                                                  CustomTransparencySoftwareSerializer,
+                                                  CustomDisplayTextSerializer,
+                                                  CustomBusinessDetailsSerializer,
+                                                  CustomHoursSerializer,
+                                                  CustomImageSerializer,
+                                                  CustomEnergyMixSerializer,
+                                                  CustomEnergySourceSerializer,
+                                                  CustomEnvironmentalImpactSerializer,
+                                                  CustomChargingPeriodSerializer,
+                                                  CustomCDRDimensionSerializer));
+
+                    if (!SkipNotifications)
                     {
 
-                        chargingSessions[Session.Id] = patchResult.PatchedData;
-
-                        var OnSessionChangedLocal = OnSessionChanged;
-                        if (OnSessionChangedLocal is not null)
+                        var OnChargingSessionChangedLocal = OnChargingSessionChanged;
+                        if (OnChargingSessionChangedLocal is not null)
                         {
                             try
                             {
-                                OnSessionChangedLocal(patchResult.PatchedData).Wait();
+                                OnChargingSessionChangedLocal(patchResult.PatchedData).Wait();
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchSession), " ", nameof(OnSessionChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchSession), " ", nameof(OnChargingSessionChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -5951,15 +6493,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     }
 
-                    return patchResult;
-
                 }
 
-                else
-                    return PatchResult<Session>.Failed(Session,
-                                                       "The given charging session does not exist!");
+                return patchResult;
 
             }
+
+            else
+                return PatchResult<Session>.Failed(Session,
+                                                  "The given charging session does not exist!");
 
         }
 
@@ -5969,16 +6511,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region SessionExists(SessionId)
 
         public Boolean SessionExists(Session_Id SessionId)
-        {
 
-            lock (chargingSessions)
-            {
-
-                return chargingSessions.ContainsKey(SessionId);
-
-            }
-
-        }
+            => chargingSessions.ContainsKey(SessionId);
 
         #endregion
 
@@ -5988,15 +6522,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      out Session?  Session)
         {
 
-            lock (chargingSessions)
-            {
-                if (chargingSessions.TryGetValue(SessionId, out Session))
-                    return true;
+            if (chargingSessions.TryGetValue(SessionId, out Session))
+                return true;
 
-                Session = null;
-                return false;
-
-            }
+            Session = null;
+            return false;
 
         }
 
@@ -6005,18 +6535,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region GetSessions  (IncludeSession = null)
 
         public IEnumerable<Session> GetSessions(Func<Session, Boolean>? IncludeSession = null)
-        {
 
-            lock (chargingSessions)
-            {
-
-                return IncludeSession is null
-                           ? chargingSessions.Values.                      ToArray()
-                           : chargingSessions.Values.Where(IncludeSession).ToArray();
-
-            }
-
-        }
+            => IncludeSession is null
+                   ? chargingSessions.Values
+                   : chargingSessions.Values.Where(IncludeSession);
 
         #endregion
 
@@ -6024,49 +6546,57 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public IEnumerable<Session> GetSessions(CountryCode  CountryCode,
                                                 Party_Id     PartyId)
-        {
 
-            lock (chargingSessions)
-            {
-
-                return chargingSessions.Values.Where(session => session.CountryCode == CountryCode &&
-                                                                session.PartyId     == PartyId).
-                                               ToArray();
-
-            }
-
-        }
+            => chargingSessions.Values.Where(chargingSession => chargingSession.CountryCode == CountryCode &&
+                                                                chargingSession.PartyId     == PartyId);
 
         #endregion
 
 
         #region RemoveSession    (Session)
 
-        public Boolean RemoveSession(Session Session)
-        {
+        public Task<RemoveResult<Session>> RemoveSession(Session Session)
 
-            lock (chargingSessions)
-            {
-
-                return chargingSessions.Remove(Session.Id);
-
-            }
-
-        }
+            => RemoveSession(Session.Id);
 
         #endregion
 
         #region RemoveSession    (SessionId)
 
-        public Boolean RemoveSession(Session_Id SessionId)
+        public async Task<RemoveResult<Session>> RemoveSession(Session_Id SessionId)
         {
 
-            lock (chargingSessions)
+            if (chargingSessions.Remove(SessionId, out var session))
             {
 
-                return chargingSessions.Remove(SessionId);
+                await LogAsset(removeTariff,
+                               session.ToJSON(true,
+                                              null,
+                                              CustomSessionSerializer,
+                                              CustomLocationSerializer,
+                                              CustomAdditionalGeoLocationSerializer,
+                                              CustomEVSESerializer,
+                                              CustomStatusScheduleSerializer,
+                                              CustomConnectorSerializer,
+                                              CustomEnergyMeterSerializer,
+                                              CustomTransparencySoftwareStatusSerializer,
+                                              CustomTransparencySoftwareSerializer,
+                                              CustomDisplayTextSerializer,
+                                              CustomBusinessDetailsSerializer,
+                                              CustomHoursSerializer,
+                                              CustomImageSerializer,
+                                              CustomEnergyMixSerializer,
+                                              CustomEnergySourceSerializer,
+                                              CustomEnvironmentalImpactSerializer,
+                                              CustomChargingPeriodSerializer,
+                                              CustomCDRDimensionSerializer));
+
+                return RemoveResult<Session>.Success(session);
 
             }
+
+            return RemoveResult<Session>.Failed(null,
+                                                "RemoveSession(SessionId, ...) failed!");
 
         }
 
@@ -6078,24 +6608,133 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// Remove all matching sessions.
         /// </summary>
         /// <param name="IncludeSessions">An optional charging session filter.</param>
-        public void RemoveAllSessions(Func<Session, Boolean>? IncludeSessions = null)
+        public async Task<RemoveResult<IEnumerable<Session>>> RemoveAllSessions(Func<Session, Boolean>? IncludeSessions = null)
         {
 
-            lock (chargingSessions)
+            if (IncludeSessions is null)
             {
 
-                if (IncludeSessions is null)
-                    chargingSessions.Clear();
+                var existingSessions = chargingSessions.Values.ToArray();
 
-                else
+                chargingSessions.Clear();
+
+                await LogAsset(removeAllTariffs);
+
+                return RemoveResult<IEnumerable<Session>>.Success(existingSessions);
+
+            }
+
+            else
+            {
+
+                var removedSessions = new List<Session>();
+
+                foreach (var session in chargingSessions.Values.Where(IncludeSessions).ToArray())
                 {
+                    if (chargingSessions.Remove(session.Id, out _))
+                    {
 
-                    var sessionsToDelete = chargingSessions.Values.Where(IncludeSessions).ToArray();
+                        removedSessions.Add(session);
 
-                    foreach (var session in sessionsToDelete)
-                        chargingSessions.Remove(session.Id);
+                        await LogAsset(removeTariff,
+                                       session.ToJSON(true,
+                                                      null,
+                                                      CustomSessionSerializer,
+                                                      CustomLocationSerializer,
+                                                      CustomAdditionalGeoLocationSerializer,
+                                                      CustomEVSESerializer,
+                                                      CustomStatusScheduleSerializer,
+                                                      CustomConnectorSerializer,
+                                                      CustomEnergyMeterSerializer,
+                                                      CustomTransparencySoftwareStatusSerializer,
+                                                      CustomTransparencySoftwareSerializer,
+                                                      CustomDisplayTextSerializer,
+                                                      CustomBusinessDetailsSerializer,
+                                                      CustomHoursSerializer,
+                                                      CustomImageSerializer,
+                                                      CustomEnergyMixSerializer,
+                                                      CustomEnergySourceSerializer,
+                                                      CustomEnvironmentalImpactSerializer,
+                                                      CustomChargingPeriodSerializer,
+                                                      CustomCDRDimensionSerializer));
 
+                    }
                 }
+
+                return removedSessions.Any()
+                           ? RemoveResult<IEnumerable<Session>>.Success    (removedSessions)
+                           : RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>());
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllSessions(IncludeSessionIds)
+
+        /// <summary>
+        /// Remove all matching sessions.
+        /// </summary>
+        /// <param name="IncludeSessionIds">An optional charging session identification filter.</param>
+        public async Task<RemoveResult<IEnumerable<Session>>> RemoveAllSessions(Func<Session_Id, Boolean>? IncludeSessionIds)
+        {
+
+            if (IncludeSessionIds is null)
+            {
+
+                var existingSessions = chargingSessions.Values.ToArray();
+
+                chargingSessions.Clear();
+
+                await LogAsset(removeAllSessions);
+
+                return RemoveResult<IEnumerable<Session>>.Success(existingSessions);
+
+            }
+
+            else
+            {
+
+                var removedSessions = new List<Session>();
+
+                foreach (var session in chargingSessions.Where  (kvp => IncludeSessionIds(kvp.Key)).
+                                                         Select (kvp => kvp.Value).
+                                                         ToArray())
+                {
+                    if (chargingSessions.Remove(session.Id, out _))
+                    {
+
+                        removedSessions.Add(session);
+
+                        await LogAsset(removeSession,
+                                       session.ToJSON(true,
+                                                      null,
+                                                      CustomSessionSerializer,
+                                                      CustomLocationSerializer,
+                                                      CustomAdditionalGeoLocationSerializer,
+                                                      CustomEVSESerializer,
+                                                      CustomStatusScheduleSerializer,
+                                                      CustomConnectorSerializer,
+                                                      CustomEnergyMeterSerializer,
+                                                      CustomTransparencySoftwareStatusSerializer,
+                                                      CustomTransparencySoftwareSerializer,
+                                                      CustomDisplayTextSerializer,
+                                                      CustomBusinessDetailsSerializer,
+                                                      CustomHoursSerializer,
+                                                      CustomImageSerializer,
+                                                      CustomEnergyMixSerializer,
+                                                      CustomEnergySourceSerializer,
+                                                      CustomEnvironmentalImpactSerializer,
+                                                      CustomChargingPeriodSerializer,
+                                                      CustomCDRDimensionSerializer));
+
+                    }
+                }
+
+                return removedSessions.Any()
+                           ? RemoveResult<IEnumerable<Session>>.Success    (removedSessions)
+                           : RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>());
 
             }
 
@@ -6110,21 +6749,48 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllSessions(CountryCode  CountryCode,
-                                      Party_Id     PartyId)
+        public async Task<RemoveResult<IEnumerable<Session>>> RemoveAllSessions(CountryCode  CountryCode,
+                                                                                Party_Id     PartyId)
         {
 
-            lock (chargingSessions)
+            var removedSessions = new List<Session>();
+
+            foreach (var session in chargingSessions.Values.Where(session => CountryCode == session.CountryCode &&
+                                                                             PartyId     == session.PartyId).ToArray())
             {
+                if (chargingSessions.Remove(session.Id, out _))
+                {
 
-                var sessionsToDelete = chargingSessions.Values.Where  (session => CountryCode == session.CountryCode &&
-                                                                                  PartyId     == session.PartyId).
-                                                               ToArray();
+                    removedSessions.Add(session);
 
-                foreach (var session in sessionsToDelete)
-                    chargingSessions.Remove(session.Id);
+                    await LogAsset(removeSession,
+                                   session.ToJSON(true,
+                                                  null,
+                                                  CustomSessionSerializer,
+                                                  CustomLocationSerializer,
+                                                  CustomAdditionalGeoLocationSerializer,
+                                                  CustomEVSESerializer,
+                                                  CustomStatusScheduleSerializer,
+                                                  CustomConnectorSerializer,
+                                                  CustomEnergyMeterSerializer,
+                                                  CustomTransparencySoftwareStatusSerializer,
+                                                  CustomTransparencySoftwareSerializer,
+                                                  CustomDisplayTextSerializer,
+                                                  CustomBusinessDetailsSerializer,
+                                                  CustomHoursSerializer,
+                                                  CustomImageSerializer,
+                                                  CustomEnergyMixSerializer,
+                                                  CustomEnergySourceSerializer,
+                                                  CustomEnvironmentalImpactSerializer,
+                                                  CustomChargingPeriodSerializer,
+                                                  CustomCDRDimensionSerializer));
 
+                }
             }
+
+            return removedSessions.Any()
+                       ? RemoveResult<IEnumerable<Session>>.Success    (removedSessions)
+                       : RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>());
 
         }
 
@@ -6139,14 +6805,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         private readonly ConcurrentDictionary<Token_Id, TokenStatus> tokenStatus = new();
 
 
-        public delegate Task OnTokenAddedDelegate(Token Token);
+        public delegate Task OnTokenStatusAddedDelegate(Token Token);
 
-        public event OnTokenAddedDelegate? OnTokenAdded;
+        public event OnTokenStatusAddedDelegate? OnTokenStatusAdded;
 
 
-        public delegate Task OnTokenChangedDelegate(Token Token);
+        public delegate Task OnTokenStatusChangedDelegate(Token Token);
 
-        public event OnTokenChangedDelegate? OnTokenChanged;
+        public event OnTokenStatusChangedDelegate? OnTokenStatusChanged;
 
 
         public delegate Task<TokenStatus> OnVerifyTokenDelegate(Token_Id TokenId);
@@ -6163,31 +6829,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      Boolean       SkipNotifications   = false)
         {
 
-            Status ??= AllowedType.ALLOWED;
+            var newTokenStatus = new TokenStatus(Token,
+                                                 Status ??= AllowedType.ALLOWED);
 
-            if (tokenStatus.TryAdd(Token.Id, new TokenStatus(Token,
-                                                             Status.Value)))
+            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
             {
 
                 Token.CommonAPI = this;
 
-                await LogAsset(addToken,
-                               Token.ToJSON(true,
-                                            CustomTokenSerializer));
+                await LogAsset(addTokenStatus,
+                               newTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                     true,
+                                                     CustomTokenSerializer,
+                                                     CustomLocationReferenceSerializer));
 
                 if (!SkipNotifications)
                 {
 
-                    var OnTokenAddedLocal = OnTokenAdded;
-                    if (OnTokenAddedLocal is not null)
+                    var OnTokenStatusAddedLocal = OnTokenStatusAdded;
+                    if (OnTokenStatusAddedLocal is not null)
                     {
                         try
                         {
-                            OnTokenAddedLocal(Token).Wait();
+                            OnTokenStatusAddedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenStatusAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -6200,7 +6868,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return AddResult<Token>.Failed(Token,
-                                           "TryAdd(Token.Id, Token) failed!");
+                                           "TryAdd(Token.Id, newTokenStatus) failed!");
 
         }
 
@@ -6213,31 +6881,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                 Boolean       SkipNotifications   = false)
         {
 
-            Status ??= AllowedType.ALLOWED;
+            var newTokenStatus = new TokenStatus(Token,
+                                                 Status ??= AllowedType.ALLOWED);
 
-            if (tokenStatus.TryAdd(Token.Id, new TokenStatus(Token,
-                                                             Status.Value)))
+            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
             {
 
                 Token.CommonAPI = this;
 
-                await LogAsset(addToken,
-                               Token.ToJSON(true,
-                                            CustomTokenSerializer));
+                await LogAsset(addTokenStatus,
+                               newTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                     true,
+                                                     CustomTokenSerializer,
+                                                     CustomLocationReferenceSerializer));
 
                 if (!SkipNotifications)
                 {
 
-                    var OnTokenAddedLocal = OnTokenAdded;
-                    if (OnTokenAddedLocal is not null)
+                    var OnTokenStatusAddedLocal = OnTokenStatusAdded;
+                    if (OnTokenStatusAddedLocal is not null)
                     {
                         try
                         {
-                            OnTokenAddedLocal(Token).Wait();
+                            OnTokenStatusAddedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenStatusAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -6275,26 +6945,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            "The 'lastUpdated' timestamp of the new token must be newer then the timestamp of the existing token!");
                 }
 
-                tokenStatus[Token.Id] = new TokenStatus(Token,
-                                                        Status ?? existingTokenStatus.Status);
+                var updatedTokenStatus = new TokenStatus(Token,
+                                                         Status ?? existingTokenStatus.Status);
 
-                await LogAsset(addOrUpdateToken,
-                               Token.ToJSON(true,
-                                            CustomTokenSerializer));
+                tokenStatus[Token.Id] = updatedTokenStatus;
+
+                await LogAsset(addOrUpdateTokenStatus,
+                               updatedTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                         true,
+                                                         CustomTokenSerializer,
+                                                         CustomLocationReferenceSerializer));
 
                 if (!SkipNotifications)
                 {
 
-                    var OnTokenChangedLocal = OnTokenChanged;
-                    if (OnTokenChangedLocal is not null)
+                    var OnTokenStatusChangedLocal = OnTokenStatusChanged;
+                    if (OnTokenStatusChangedLocal is not null)
                     {
                         try
                         {
-                            OnTokenChangedLocal(Token).Wait();
+                            OnTokenStatusChangedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenStatusChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -6311,23 +6985,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Add a new token
 
-            if (tokenStatus.TryAdd(Token.Id, new TokenStatus(Token,
-                                                             Status ?? AllowedType.ALLOWED)))
+            var newTokenStatus = new TokenStatus(Token,
+                                                 Status ??= AllowedType.ALLOWED);
+
+            if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
             {
 
                 if (!SkipNotifications)
                 {
 
-                    var OnTokenAddedLocal = OnTokenAdded;
-                    if (OnTokenAddedLocal is not null)
+                    var OnTokenStatusAddedLocal = OnTokenStatusAdded;
+                    if (OnTokenStatusAddedLocal is not null)
                     {
                         try
                         {
-                            OnTokenAddedLocal(Token).Wait();
+                            OnTokenStatusAddedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenStatusAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -6357,7 +7033,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            Boolean       SkipNotifications   = false)
         {
 
-            Status ??= AllowedType.ALLOWED;
+            var updatedTokenStatus = new TokenStatus(Token,
+                                                     AllowedType.ALLOWED);
 
             #region Validate AllowDowngrades
 
@@ -6379,29 +7056,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
             if (tokenStatus.TryUpdate(Token.Id,
-                                      new TokenStatus(Token,
-                                                      Status.Value),
-                                      new TokenStatus(Token,
-                                                      Status.Value)))
+                                      updatedTokenStatus,
+                                      existingTokenStatus))
             {
 
-                await LogAsset(updateToken,
-                               Token.ToJSON(true,
-                                            CustomTokenSerializer));
+                await LogAsset(updateTokenStatus,
+                               updatedTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                         true,
+                                                         CustomTokenSerializer,
+                                                         CustomLocationReferenceSerializer));
 
                 if (!SkipNotifications)
                 {
 
-                    var OnTokenChangedLocal = OnTokenChanged;
-                    if (OnTokenChangedLocal is not null)
+                    var OnTokenStatusChangedLocal = OnTokenStatusChanged;
+                    if (OnTokenStatusChangedLocal is not null)
                     {
                         try
                         {
-                            OnTokenChangedLocal(Token).Wait();
+                            OnTokenStatusChangedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateToken), " ", nameof(OnTokenChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateToken), " ", nameof(OnTokenStatusChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -6443,26 +7120,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     patchResult.PatchedData is not null)
                 {
 
-                    tokenStatus[Token.Id] = new TokenStatus(patchResult.PatchedData,
-                                                            existingTokenStatus.Status);
+                    var patchedTokenStatus = new TokenStatus(patchResult.PatchedData,
+                                                             existingTokenStatus.Status);
 
-                    await LogAsset(updateToken,
-                                   Token.ToJSON(true,
-                                                CustomTokenSerializer));
+                    tokenStatus[Token.Id] = patchedTokenStatus;
+
+                    await LogAsset(updateTokenStatus,
+                                   patchedTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                             true,
+                                                             CustomTokenSerializer,
+                                                             CustomLocationReferenceSerializer));
 
                     if (!SkipNotifications)
                     {
 
-                        var OnTokenChangedLocal = OnTokenChanged;
-                        if (OnTokenChangedLocal is not null)
+                        var OnTokenStatusChangedLocal = OnTokenStatusChanged;
+                        if (OnTokenStatusChangedLocal is not null)
                         {
                             try
                             {
-                                OnTokenChangedLocal(patchResult.PatchedData).Wait();
+                                OnTokenStatusChangedLocal(patchResult.PatchedData).Wait();
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchToken), " ", nameof(OnTokenChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchToken), " ", nameof(OnTokenStatusChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -6564,7 +7245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (tokenStatus.Remove(TokenId, out var existingTokenStatus))
             {
 
-                await LogAsset(removeToken,
+                await LogAsset(removeTokenStatus,
                                existingTokenStatus.Token.ToJSON(true,
                                                                 CustomTokenSerializer));
 
@@ -6595,7 +7276,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 tokenStatus.Clear();
 
-                await LogAsset(removeAllTokens);
+                await LogAsset(removeAllTokenStatus);
 
                 return RemoveResult<IEnumerable<Token>>.Success(existingTokens);
 
@@ -6613,7 +7294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         removedTokens.Add(token);
 
-                        await LogAsset(removeToken,
+                        await LogAsset(removeTokenStatus,
                                        token.ToJSON(true,
                                                     CustomTokenSerializer));
 
@@ -6646,7 +7327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 tokenStatus.Clear();
 
-                await LogAsset(removeAllTokens);
+                await LogAsset(removeAllTokenStatus);
 
                 return RemoveResult<IEnumerable<Token>>.Success(existingTokens);
 
@@ -6705,7 +7386,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     removedTokens.Add(token);
 
-                    await LogAsset(removeToken,
+                    await LogAsset(removeTokenStatus,
                                    token.ToJSON(true,
                                                 CustomTokenSerializer));
 
@@ -7374,7 +8055,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     removedCDRs.Add(cdr);
 
-                    await LogAsset(removeToken,
+                    await LogAsset(removeTokenStatus,
                                    cdr.ToJSON(true,
                                               null,
                                               CustomCDRSerializer,
