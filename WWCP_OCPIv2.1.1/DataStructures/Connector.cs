@@ -45,7 +45,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly Object patchLock = new ();
+        private readonly Object patchLock = new();
 
         #endregion
 
@@ -612,9 +612,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                Boolean  AllowDowngrades = false)
         {
 
-            if (ConnectorPatch is null)
+            if (ConnectorPatch is null || !ConnectorPatch.Properties().Any())
                 return PatchResult<Connector>.Failed(this,
-                                                     "The given connector patch must not be null!");
+                                                     "The given connector patch must not be null or empty!");
 
             lock (patchLock)
             {
@@ -633,10 +633,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var patchResult = TryPrivatePatch(ToJSON(), ConnectorPatch);
 
-
-                if (patchResult.IsFailed)
+                if (patchResult.IsFailed ||
+                    patchResult.PatchedData is null)
+                {
                     return PatchResult<Connector>.Failed(this,
-                                                         patchResult.ErrorResponse);
+                                                         patchResult.ErrorResponse ?? "Unknown error!");
+                }
 
                 if (TryParse(patchResult.PatchedData,
                              out var patchedConnector,
@@ -914,6 +916,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                );
 
         #endregion
+
 
     }
 

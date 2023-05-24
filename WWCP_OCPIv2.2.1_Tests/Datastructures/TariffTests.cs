@@ -85,7 +85,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                   )
                               },
                               TariffTypes.PROFILE_GREEN,
-                              new DisplayText[] {
+                              new[] {
                                   new DisplayText(Languages.de, "Hallo Welt!"),
                                   new DisplayText(Languages.en, "Hello world!"),
                               },
@@ -102,7 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                               DateTime.Parse("2020-12-31"), // End timestamp
                               new EnergyMix(
                                   true,
-                                  new EnergySource[] {
+                                  new[] {
                                       new EnergySource(
                                           EnergySourceCategory.SOLAR,
                                           80
@@ -112,7 +112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                           20
                                       )
                                   },
-                                  new EnvironmentalImpact[] {
+                                  new[] {
                                       new EnvironmentalImpact(
                                           EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                           0.1

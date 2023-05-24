@@ -28,6 +28,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -52,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly Object patchLock = new ();
+        private readonly Object patchLock = new();
 
         #endregion
 
@@ -1510,27 +1511,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region (internal) SetEVSE(EVSE)
-
-        internal void SetEVSE(EVSE EVSE)
-        {
-
-            if (EVSE is null)
-                return;
-
-            lock (EVSEs)
-            {
-
-                EVSEs = EVSEs.Where  (evse => evse.UId != EVSE.UId).
-                              Concat (new EVSE[] { EVSE }).
-                              ToArray();
-
-            }
-
-        }
-
-        #endregion
-
         #region (internal) RemoveEVSE(EVSE)
 
         internal void RemoveEVSE(EVSE EVSE)
@@ -1551,20 +1531,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (internal) RemoveEVSE(EVSEUId)
 
-        internal void RemoveEVSE(EVSE_UId EVSEUId)
+        #region Update(LocationBuilder, out Warnings)
+
+        public Location? Update(Action<Builder>           LocationBuilder,
+                                out IEnumerable<Warning>  Warnings)
         {
-            lock (EVSEs)
-            {
 
-                EVSEs = EVSEs.Where(evse => evse.UId != EVSEUId).
-                              ToArray();
+            var builder = ToBuilder();
+            LocationBuilder(builder);
 
-            }
+            return builder.ToImmutable(out Warnings);
+
         }
 
         #endregion
+
 
         #region CalcSHA256Hash(CustomLocationSerializer = null, CustomAdditionalGeoLocationSerializer = null, ...)
 
@@ -2266,82 +2248,123 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
+
+            #region SetEVSE   (EVSE)
+
+            public Builder SetEVSE(EVSE EVSE)
+            {
+
+                var newEVSEs = EVSEs.Where(evse => evse.UId != EVSE.UId).ToHashSet();
+                EVSEs.Clear();
+
+                foreach (var newEVSE in newEVSEs)
+                    EVSEs.Add(newEVSE);
+
+                EVSEs.Add(EVSE);
+
+                return this;
+
+            }
+
+            #endregion
+
+            #region RemoveEVSE(EVSE)
+
+            public Builder RemoveEVSE(EVSE EVSE)
+            {
+
+                var newEVSEs = EVSEs.Where(evse => evse.UId != EVSE.UId).ToHashSet();
+                EVSEs.Clear();
+
+                foreach (var newEVSE in newEVSEs)
+                    EVSEs.Add(newEVSE);
+
+                return this;
+
+            }
+
+            #endregion
+
+
             #region ToImmutable
 
             /// <summary>
             /// Return an immutable version of the location.
             /// </summary>
-            public static implicit operator Location(Builder Builder)
+            public static implicit operator Location?(Builder Builder)
 
-                => Builder.ToImmutable;
+                => Builder.ToImmutable(out _);
 
 
             /// <summary>
             /// Return an immutable version of the location.
             /// </summary>
-            public Location ToImmutable
+            /// <param name="Warnings"></param>
+            public Location? ToImmutable(out IEnumerable<Warning> Warnings)
             {
-                get
-                {
 
-                    if (!CountryCode. HasValue)
-                        throw new ArgumentNullException(nameof(CountryCode),  "The country code must not be null or empty!");
+                var warnings = new List<Warning>();
 
-                    if (!PartyId.     HasValue)
-                        throw new ArgumentNullException(nameof(PartyId),      "The party identification must not be null or empty!");
+                if (!CountryCode. HasValue)
+                    warnings.Add(Warning.Create(Languages.en, "The country code must not be null or empty!"));
 
-                    if (!Id.          HasValue)
-                        throw new ArgumentNullException(nameof(Id),           "The location identification must not be null or empty!");
+                if (!PartyId.     HasValue)
+                    warnings.Add(Warning.Create(Languages.en, "The party identification must not be null or empty!"));
 
-                    if (!LocationType.HasValue)
-                        throw new ArgumentNullException(nameof(LocationType), "The location type must not be null or empty!");
+                if (!Id.          HasValue)
+                    warnings.Add(Warning.Create(Languages.en, "The location identification must not be null or empty!"));
 
-                    if (Address    is null || Address.   IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(Address),      "The address parameter must not be null or empty!");
+                if (!LocationType.HasValue)
+                    warnings.Add(Warning.Create(Languages.en, "The location type must not be null or empty!"));
 
-                    if (City       is null || City.      IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(City),         "The city parameter must not be null or empty!");
+                if (Address    is null || Address.   IsNullOrEmpty())
+                    warnings.Add(Warning.Create(Languages.en, "The address parameter must not be null or empty!"));
 
-                    if (PostalCode is null || PostalCode.IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(PostalCode),   "The postal code must not be null or empty!");
+                if (City       is null || City.      IsNullOrEmpty())
+                    warnings.Add(Warning.Create(Languages.en, "The city parameter must not be null or empty!"));
 
-                    if (Country is null)
-                        throw new ArgumentNullException(nameof(Country),      "The country parameter must not be null or empty!");
+                if (PostalCode is null || PostalCode.IsNullOrEmpty())
+                    warnings.Add(Warning.Create(Languages.en, "The postal code must not be null or empty!"));
 
-                    if (!Coordinates.HasValue)
-                        throw new ArgumentNullException(nameof(Coordinates),  "The geo coordinates must not be null or empty!");
+                if (Country is null)
+                    warnings.Add(Warning.Create(Languages.en, "The country parameter must not be null or empty!"));
 
+                if (!Coordinates.HasValue)
+                    warnings.Add(Warning.Create(Languages.en, "The geo coordinates must not be null or empty!"));
 
-                    return new Location(CommonAPI,
-                                        CountryCode. Value,
-                                        PartyId.     Value,
-                                        Id.          Value,
-                                        LocationType.Value,
-                                        Address,
-                                        City,
-                                        PostalCode,
-                                        Country,
-                                        Coordinates.Value,
+                Warnings = warnings;
 
-                                        Name,
-                                        RelatedLocations,
-                                        EVSEs,
-                                        Directions,
-                                        Operator,
-                                        SubOperator,
-                                        Owner,
-                                        Facilities,
-                                        Timezone,
-                                        OpeningTimes,
-                                        ChargingWhenClosed,
-                                        Images,
-                                        EnergyMix,
+                return warnings.Any()
+                           ? null
+                           : new Location(CommonAPI,
+                                          CountryCode!. Value,
+                                          PartyId!.     Value,
+                                          Id!.          Value,
+                                          LocationType!.Value,
+                                          Address!,
+                                          City!,
+                                          PostalCode!,
+                                          Country!,
+                                          Coordinates!.Value,
 
-                                        Publish,
+                                          Name,
+                                          RelatedLocations,
+                                          EVSEs,
+                                          Directions,
+                                          Operator,
+                                          SubOperator,
+                                          Owner,
+                                          Facilities,
+                                          Timezone,
+                                          OpeningTimes,
+                                          ChargingWhenClosed,
+                                          Images,
+                                          EnergyMix,
 
-                                        LastUpdated);
+                                          Publish,
 
-                }
+                                          LastUpdated);
+
             }
 
             #endregion
@@ -2349,6 +2372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
         #endregion
+
 
     }
 

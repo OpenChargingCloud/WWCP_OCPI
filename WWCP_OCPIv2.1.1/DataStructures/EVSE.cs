@@ -45,7 +45,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly Object patchLock = new Object();
+        private readonly Object patchLock = new();
 
         #endregion
 
@@ -959,26 +959,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             EMSPId) ?? Array.Empty<Tariff_Id>();
 
 
-        #region (internal) UpdateConnector(Connector)
+        #region Update(EVSEBuilder, out Warnings)
 
-        internal void UpdateConnector(Connector Connector)
+        public EVSE? Update(Action<Builder>           EVSEBuilder,
+                            out IEnumerable<Warning>  Warnings)
         {
 
-            if (Connector is null)
-                return;
+            var builder = ToBuilder();
+            EVSEBuilder(builder);
 
-            lock (Connectors)
-            {
-
-                Connectors = Connectors.
-                                 Where (connector => connector.Id != Connector.Id).
-                                 Concat(new Connector[] { Connector });
-
-            }
+            return builder.ToImmutable(out Warnings);
 
         }
 
         #endregion
+
 
         #region CalcSHA256Hash(CustomEVSESerializer = null, CustomStatusScheduleSerializer = null, ...)
 
@@ -1295,8 +1290,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             ((!Coordinates.      HasValue    && !EVSE.Coordinates.      HasValue)    ||
               (Coordinates.      HasValue    &&  EVSE.Coordinates.      HasValue    && Coordinates.Value.Equals(EVSE.Coordinates.Value))) &&
 
-             ((ParentLocation    is     null &&  EVSE.ParentLocation    is     null) ||
-              (ParentLocation    is not null &&  EVSE.ParentLocation    is not null && ParentLocation.   Equals(EVSE.ParentLocation)))    &&
+             ((EnergyMeter       is     null &&  EVSE.EnergyMeter       is     null) ||
+              (EnergyMeter       is not null &&  EVSE.EnergyMeter       is not null && EnergyMeter.      Equals(EVSE.EnergyMeter)))       &&
 
              ((FloorLevel        is     null &&  EVSE.FloorLevel        is     null) ||
               (FloorLevel        is not null &&  EVSE.FloorLevel        is not null && FloorLevel.       Equals(EVSE.FloorLevel)))        &&
@@ -1343,12 +1338,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 unchecked
                 {
 
-                    cachedHashCode = UId.                GetHashCode()       * 41 ^
-                                     Status.             GetHashCode()       * 37 ^
-                                     Connectors.         CalcHashCode()      * 31 ^
-                                    (EVSEId?.            GetHashCode() ?? 0) * 29 ^
-                                     StatusSchedule.     GetHashCode()       * 23 ^
-                                     Capabilities.       CalcHashCode()      * 19 ^
+                    cachedHashCode = UId.                GetHashCode()       * 43 ^
+                                     Status.             GetHashCode()       * 41 ^
+                                     Connectors.         CalcHashCode()      * 37 ^
+                                    (EVSEId?.            GetHashCode() ?? 0) * 21 ^
+                                     StatusSchedule.     GetHashCode()       * 29 ^
+                                     Capabilities.       CalcHashCode()      * 13 ^
+                                    (EnergyMeter?.       GetHashCode() ?? 0) * 19 ^
                                     (FloorLevel?.        GetHashCode() ?? 0) * 17 ^
                                     (Coordinates?.       GetHashCode() ?? 0) * 13 ^
                                     (PhysicalReference?. GetHashCode() ?? 0) * 11 ^
@@ -1601,6 +1597,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
+
+            public Builder SetConnector(Connector Connector)
+            {
+
+                // EVSE.UpdateConnector(newOrUpdatedConnector);
+                var newConnectors = Connectors.Where(connector => connector.Id != Connector.Id).ToHashSet();
+                Connectors.Clear();
+
+                foreach (var newConnector in newConnectors)
+                    Connectors.Add(newConnector);
+
+                Connectors.Add(Connector);
+
+                return this;
+
+            }
+
+
             #region ToImmutable
 
             /// <summary>
@@ -1608,44 +1622,47 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// </summary>
             public static implicit operator EVSE?(Builder? Builder)
 
-                => Builder?.ToImmutable;
+                => Builder?.ToImmutable(out _);
 
 
             /// <summary>
             /// Return an immutable version of the EVSE.
             /// </summary>
-            public EVSE ToImmutable
+            /// <param name="Warnings"></param>
+            public EVSE? ToImmutable(out IEnumerable<Warning> Warnings)
             {
-                get
-                {
 
-                    if (!UId.   HasValue)
-                        throw new ArgumentNullException(nameof(UId),     "The unique identification must not be null or empty!");
+                var warnings = new List<Warning>();
 
-                    if (!Status.HasValue)
-                        throw new ArgumentNullException(nameof(Status),  "The status must not be null or empty!");
+                if (!UId.   HasValue)
+                    warnings.Add(Warning.Create(Languages.en, "The unique identification must not be null or empty!"));
 
+                if (!Status.HasValue)
+                    warnings.Add(Warning.Create(Languages.en, "The status must not be null or empty!"));
 
-                    return new EVSE(ParentLocation,
+                Warnings = warnings;
 
-                                    UId.   Value,
-                                    Status.Value,
-                                    Connectors,
+                return warnings.Any()
+                           ? null
+                           : new EVSE(ParentLocation,
 
-                                    EVSEId,
-                                    StatusSchedule,
-                                    Capabilities,
-                                    EnergyMeter,
-                                    FloorLevel,
-                                    Coordinates,
-                                    PhysicalReference,
-                                    Directions,
-                                    ParkingRestrictions,
-                                    Images,
+                                      UId!.   Value,
+                                      Status!.Value,
+                                      Connectors,
 
-                                    LastUpdated);
+                                      EVSEId,
+                                      StatusSchedule,
+                                      Capabilities,
+                                      EnergyMeter,
+                                      FloorLevel,
+                                      Coordinates,
+                                      PhysicalReference,
+                                      Directions,
+                                      ParkingRestrictions,
+                                      Images,
 
-                }
+                                      LastUpdated);
+
             }
 
             #endregion
@@ -1653,6 +1670,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
         #endregion
+
 
     }
 

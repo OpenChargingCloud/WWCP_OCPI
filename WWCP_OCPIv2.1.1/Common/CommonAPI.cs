@@ -36,8 +36,6 @@ using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
-using System.Linq;
-using System.Runtime.CompilerServices;
 
 #endregion
 
@@ -656,8 +654,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
-            this.locations             = new Dictionary<Location_Id, Location>();
-
             this.CommonAPILogger       = this.DisableLogging == false
                                              ? new CommonAPILogger(
                                                    this,
@@ -810,8 +806,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.OurRole               = OurRole;
 
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
-
-            this.locations             = new Dictionary<Location_Id, Location>();
 
             // Link HTTP events...
             HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -4531,7 +4525,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Data
 
-        private readonly Dictionary<Location_Id , Location> locations;
+        private readonly ConcurrentDictionary<Location_Id , Location> locations = new();
 
 
         public delegate Task OnLocationAddedDelegate(Location Location);
@@ -4543,52 +4537,86 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public event OnLocationChangedDelegate? OnLocationChanged;
 
+
+
+        public delegate Task OnEVSEAddedDelegate(EVSE EVSE);
+
+        public event OnEVSEAddedDelegate? OnEVSEAdded;
+
+
+        public delegate Task OnEVSEChangedDelegate(EVSE EVSE);
+
+        public event OnEVSEChangedDelegate? OnEVSEChanged;
+
+        public delegate Task OnEVSEStatusChangedDelegate(DateTime Timestamp, EVSE EVSE, StatusType OldEVSEStatus, StatusType NewEVSEStatus);
+
+        public event OnEVSEStatusChangedDelegate? OnEVSEStatusChanged;
+
+
+        public delegate Task OnEVSERemovedDelegate(EVSE EVSE);
+
+        public event OnEVSERemovedDelegate? OnEVSERemoved;
+
+
         #endregion
 
 
         #region AddLocation           (Location, SkipNotifications = false)
 
-        public Location AddLocation(Location  Location,
-                                    Boolean   SkipNotifications   = false)
+        public async Task<AddResult<Location>> AddLocation(Location  Location,
+                                                           Boolean   SkipNotifications   = false)
         {
 
-            lock (locations)
+            if (locations.TryAdd(Location.Id, Location))
             {
 
+                Location.CommonAPI = this;
 
-                if (!locations.ContainsKey(Location.Id))
+                await LogAsset(addLocation,
+                               Location.ToJSON(true,
+                                               null,
+                                               CustomLocationSerializer,
+                                               CustomAdditionalGeoLocationSerializer,
+                                               CustomEVSESerializer,
+                                               CustomStatusScheduleSerializer,
+                                               CustomConnectorSerializer,
+                                               CustomEnergyMeterSerializer,
+                                               CustomTransparencySoftwareStatusSerializer,
+                                               CustomTransparencySoftwareSerializer,
+                                               CustomDisplayTextSerializer,
+                                               CustomBusinessDetailsSerializer,
+                                               CustomHoursSerializer,
+                                               CustomImageSerializer,
+                                               CustomEnergyMixSerializer,
+                                               CustomEnergySourceSerializer,
+                                               CustomEnvironmentalImpactSerializer));
+
+                if (!SkipNotifications)
                 {
 
-                    locations.Add(Location.Id, Location);
-                    Location.CommonAPI = this;
-
-                    if (!SkipNotifications)
+                    var OnLocationAddedLocal = OnLocationAdded;
+                    if (OnLocationAddedLocal is not null)
                     {
-
-                        var OnLocationAddedLocal = OnLocationAdded;
-                        if (OnLocationAddedLocal is not null)
+                        try
                         {
-                            try
-                            {
-                                OnLocationAddedLocal(Location).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
+                            OnLocationAddedLocal(Location).Wait();
                         }
-
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
-
-                    return Location;
 
                 }
 
-                throw new ArgumentException("The given location already exists!");
+                return AddResult<Location>.Success(Location);
 
             }
+
+            return AddResult<Location>.Failed(Location,
+                                              "TryAdd(Location.Id, Location) failed!");
 
         }
 
@@ -4596,78 +4624,115 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region AddLocationIfNotExists(Location, SkipNotifications = false)
 
-        public Location AddLocationIfNotExists(Location  Location,
-                                               Boolean   SkipNotifications   = false)
+        public async Task<AddResult<Location>> AddLocationIfNotExists(Location  Location,
+                                                                      Boolean   SkipNotifications   = false)
         {
 
-            lock (locations)
+            if (locations.TryAdd(Location.Id, Location))
             {
 
-                if (!locations.ContainsKey(Location.Id))
+                Location.CommonAPI = this;
+
+                await LogAsset(addLocationIfNotExists,
+                               Location.ToJSON(true,
+                                               null,
+                                               CustomLocationSerializer,
+                                               CustomAdditionalGeoLocationSerializer,
+                                               CustomEVSESerializer,
+                                               CustomStatusScheduleSerializer,
+                                               CustomConnectorSerializer,
+                                               CustomEnergyMeterSerializer,
+                                               CustomTransparencySoftwareStatusSerializer,
+                                               CustomTransparencySoftwareSerializer,
+                                               CustomDisplayTextSerializer,
+                                               CustomBusinessDetailsSerializer,
+                                               CustomHoursSerializer,
+                                               CustomImageSerializer,
+                                               CustomEnergyMixSerializer,
+                                               CustomEnergySourceSerializer,
+                                               CustomEnvironmentalImpactSerializer));
+
+                if (!SkipNotifications)
                 {
 
-                    locations.Add(Location.Id, Location);
-                    Location.CommonAPI = this;
-
-                    if (!SkipNotifications)
+                    var OnLocationAddedLocal = OnLocationAdded;
+                    if (OnLocationAddedLocal is not null)
                     {
-
-                        var OnLocationAddedLocal = OnLocationAdded;
-                        if (OnLocationAddedLocal is not null)
+                        try
                         {
-                            try
-                            {
-                                OnLocationAddedLocal(Location).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddLocationIfNotExists), " ", nameof(OnLocationAdded), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
+                            OnLocationAddedLocal(Location).Wait();
                         }
-
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
 
                 }
 
-                return Location;
+                return AddResult<Location>.Success(Location);
 
             }
+
+            return AddResult<Location>.NoOperation(Location);
 
         }
 
         #endregion
 
-        #region AddOrUpdateLocation   (newOrUpdatedLocation, AllowDowngrades = false)
+        #region AddOrUpdateLocation   (Location, AllowDowngrades = false, SkipNotifications = false)
 
-        private AddOrUpdateResult<Location> __addOrUpdateLocation(Location  newOrUpdatedLocation,
-                                                                  Boolean?  AllowDowngrades = false)
+        public async Task<AddOrUpdateResult<Location>> AddOrUpdateLocation(Location  Location,
+                                                                           Boolean?  AllowDowngrades     = false,
+                                                                           Boolean   SkipNotifications   = false)
         {
 
-            if (locations.TryGetValue(newOrUpdatedLocation.Id, out var existingLocation))
+            #region Update an existing location
+
+            if (locations.TryGetValue(Location.Id, out var existingLocation))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    newOrUpdatedLocation.LastUpdated <= existingLocation.LastUpdated)
+                    Location.LastUpdated <= existingLocation.LastUpdated)
                 {
-                    return AddOrUpdateResult<Location>.Failed     (newOrUpdatedLocation,
-                                                                   "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
+                    return AddOrUpdateResult<Location>.Failed(Location,
+                                                              "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
                 }
 
-                if (newOrUpdatedLocation.LastUpdated.ToIso8601() == existingLocation.LastUpdated.ToIso8601())
-                    return AddOrUpdateResult<Location>.NoOperation(newOrUpdatedLocation,
-                                                                   "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
+                //if (Location.LastUpdated.ToIso8601() == existingLocation.LastUpdated.ToIso8601())
+                //    return AddOrUpdateResult<Location>.NoOperation(Location,
+                //                                                   "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
 
-                locations[newOrUpdatedLocation.Id] = newOrUpdatedLocation;
-                newOrUpdatedLocation.CommonAPI = this;
+                locations[Location.Id] = Location;
+                Location.CommonAPI = this;
+
+                await LogAsset(addOrUpdateLocation,
+                               Location.ToJSON(true,
+                                               null,
+                                               CustomLocationSerializer,
+                                               CustomAdditionalGeoLocationSerializer,
+                                               CustomEVSESerializer,
+                                               CustomStatusScheduleSerializer,
+                                               CustomConnectorSerializer,
+                                               CustomEnergyMeterSerializer,
+                                               CustomTransparencySoftwareStatusSerializer,
+                                               CustomTransparencySoftwareSerializer,
+                                               CustomDisplayTextSerializer,
+                                               CustomBusinessDetailsSerializer,
+                                               CustomHoursSerializer,
+                                               CustomImageSerializer,
+                                               CustomEnergyMixSerializer,
+                                               CustomEnergySourceSerializer,
+                                               CustomEnvironmentalImpactSerializer));
 
                 var OnLocationChangedLocal = OnLocationChanged;
                 if (OnLocationChangedLocal is not null)
                 {
                     try
                     {
-                        OnLocationChangedLocal(newOrUpdatedLocation).Wait();
+                        OnLocationChangedLocal(Location).Wait();
                     }
                     catch (Exception e)
                     {
@@ -4682,7 +4747,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
                     try
                     {
-                        foreach (var evse in newOrUpdatedLocation.EVSEs)
+                        foreach (var evse in Location.EVSEs)
                             OnEVSEChangedLocal(evse).Wait();
                     }
                     catch (Exception e)
@@ -4693,68 +4758,138 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     }
                 }
 
-                return AddOrUpdateResult<Location>.Success(newOrUpdatedLocation,
+                return AddOrUpdateResult<Location>.Success(Location,
                                                            WasCreated: false);
 
             }
 
-            locations.Add(newOrUpdatedLocation.Id, newOrUpdatedLocation);
-            newOrUpdatedLocation.CommonAPI = this;
+            #endregion
 
-            var OnLocationAddedLocal = OnLocationAdded;
-            if (OnLocationAddedLocal is not null)
+            #region Add a new location
+
+            if (locations.TryAdd(Location.Id, Location))
             {
-                try
+
+                Location.CommonAPI = this;
+
+                await LogAsset(addOrUpdateLocation,
+                               Location.ToJSON(true,
+                                               null,
+                                               CustomLocationSerializer,
+                                               CustomAdditionalGeoLocationSerializer,
+                                               CustomEVSESerializer,
+                                               CustomStatusScheduleSerializer,
+                                               CustomConnectorSerializer,
+                                               CustomEnergyMeterSerializer,
+                                               CustomTransparencySoftwareStatusSerializer,
+                                               CustomTransparencySoftwareSerializer,
+                                               CustomDisplayTextSerializer,
+                                               CustomBusinessDetailsSerializer,
+                                               CustomHoursSerializer,
+                                               CustomImageSerializer,
+                                               CustomEnergyMixSerializer,
+                                               CustomEnergySourceSerializer,
+                                               CustomEnvironmentalImpactSerializer));
+
+                var OnLocationAddedLocal = OnLocationAdded;
+                if (OnLocationAddedLocal is not null)
                 {
-                    OnLocationAddedLocal(newOrUpdatedLocation).Wait();
+                    try
+                    {
+                        OnLocationAddedLocal(Location).Wait();
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationAdded), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace ?? "");
+                    }
                 }
-                catch (Exception e)
-                {
-                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationAdded), ": ",
-                                Environment.NewLine, e.Message,
-                                Environment.NewLine, e.StackTrace ?? "");
-                }
+
+                return AddOrUpdateResult<Location>.Success(Location,
+                                                           WasCreated: true);
+
             }
 
-            return AddOrUpdateResult<Location>.Success(newOrUpdatedLocation,
-                                                       WasCreated: true);
+            return AddOrUpdateResult<Location>.Failed(Location,
+                                                      "AddOrUpdateLocation(Location.Id, Location) failed!");
 
-        }
-
-        public async Task<AddOrUpdateResult<Location>> AddOrUpdateLocation(Location  newOrUpdatedLocation,
-                                                                           Boolean?  AllowDowngrades = false)
-        {
-
-            if (newOrUpdatedLocation is null)
-                return AddOrUpdateResult<Location>.Failed(newOrUpdatedLocation,
-                                                          "The given location must not be null!");
-
-            // ToDo: Remove me and add a proper 'lock' mechanism!
-            await Task.Delay(1);
-
-            lock (locations)
-            {
-                return __addOrUpdateLocation(newOrUpdatedLocation,
-                                             AllowDowngrades);
-            }
+            #endregion
 
         }
 
         #endregion
 
-        #region UpdateLocation        (Location)
+        #region UpdateLocation        (Location, AllowDowngrades = false, SkipNotifications = false)
 
-        public Location? UpdateLocation(Location Location)
+        public async Task<UpdateResult<Location>> UpdateLocation(Location  Location,
+                                                                 Boolean?  AllowDowngrades     = false,
+                                                                 Boolean   SkipNotifications   = false)
         {
 
-            lock (locations)
+            #region Validate AllowDowngrades
+
+            if (locations.TryGetValue(Location.Id, out var existingLocation))
             {
 
-                if (locations.ContainsKey(Location.Id))
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Location.LastUpdated <= existingLocation.LastUpdated)
                 {
 
-                    locations[Location.Id] = Location;
-                    Location.CommonAPI = this;
+                    return UpdateResult<Location>.Failed(Location,
+                                                         "The 'lastUpdated' timestamp of the new charging location must be newer then the timestamp of the existing location!");
+
+                }
+
+            }
+            else
+                return UpdateResult<Location>.Failed(Location,
+                                                     $"Unknown charging location identification '{Location.Id}'!");
+
+            #endregion
+
+
+            if (locations.TryUpdate(Location.Id, Location, existingLocation))
+            {
+
+                Location.CommonAPI = this;
+
+                await LogAsset(updateLocation,
+                               Location.ToJSON(true,
+                                               null,
+                                               CustomLocationSerializer,
+                                               CustomAdditionalGeoLocationSerializer,
+                                               CustomEVSESerializer,
+                                               CustomStatusScheduleSerializer,
+                                               CustomConnectorSerializer,
+                                               CustomEnergyMeterSerializer,
+                                               CustomTransparencySoftwareStatusSerializer,
+                                               CustomTransparencySoftwareSerializer,
+                                               CustomDisplayTextSerializer,
+                                               CustomBusinessDetailsSerializer,
+                                               CustomHoursSerializer,
+                                               CustomImageSerializer,
+                                               CustomEnergyMixSerializer,
+                                               CustomEnergySourceSerializer,
+                                               CustomEnvironmentalImpactSerializer));
+
+                if (!SkipNotifications)
+                {
+
+                    var OnLocationChangedLocal = OnLocationChanged;
+                    if (OnLocationChangedLocal is not null)
+                    {
+                        try
+                        {
+                            OnLocationChangedLocal(Location).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateLocation), " ", nameof(OnLocationChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
 
                     var OnEVSEChangedLocal = OnEVSEChanged;
                     if (OnEVSEChangedLocal is not null)
@@ -4772,46 +4907,65 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                     }
 
-                    return Location;
-
                 }
 
-                return null;
+                return UpdateResult<Location>.Success(Location);
 
             }
+
+            return UpdateResult<Location>.Failed(Location,
+                                                 "UpdateLocation(Location.Id, Location, Location) failed!");
 
         }
 
         #endregion
 
 
-        #region TryPatchLocation      (Location, LocationPatch, AllowDowngrades = false)
+        #region TryPatchLocation      (Location, LocationPatch, AllowDowngrades = false, SkipNotifications = false)
 
         public async Task<PatchResult<Location>> TryPatchLocation(Location  Location,
                                                                   JObject   LocationPatch,
-                                                                  Boolean?  AllowDowngrades = false)
+                                                                  Boolean?  AllowDowngrades     = false,
+                                                                  Boolean   SkipNotifications   = false)
         {
 
             if (!LocationPatch.HasValues)
                 return PatchResult<Location>.Failed(Location,
                                                     "The given location patch must not be null or empty!");
 
-            // ToDo: Remove me and add a proper 'lock' mechanism!
-            await Task.Delay(1);
-
-            lock (locations)
+            if (locations.TryGetValue(Location.Id, out var existingLocation))
             {
 
-                if (locations.TryGetValue(Location.Id, out var existingLocation))
+                var patchResult = existingLocation.TryPatch(LocationPatch,
+                                                            AllowDowngrades ?? this.AllowDowngrades ?? false);
+
+                if (patchResult.IsSuccess &&
+                    patchResult.PatchedData is not null)
                 {
 
-                    var patchResult = existingLocation.TryPatch(LocationPatch,
-                                                                AllowDowngrades ?? this.AllowDowngrades ?? false);
+                    locations[Location.Id] = patchResult.PatchedData;
 
-                    if (patchResult.IsSuccess)
+                    await LogAsset(updateLocation,
+                                   Location.ToJSON(true,
+                                                   null,
+                                                   CustomLocationSerializer,
+                                                   CustomAdditionalGeoLocationSerializer,
+                                                   CustomEVSESerializer,
+                                                   CustomStatusScheduleSerializer,
+                                                   CustomConnectorSerializer,
+                                                   CustomEnergyMeterSerializer,
+                                                   CustomTransparencySoftwareStatusSerializer,
+                                                   CustomTransparencySoftwareSerializer,
+                                                   CustomDisplayTextSerializer,
+                                                   CustomBusinessDetailsSerializer,
+                                                   CustomHoursSerializer,
+                                                   CustomImageSerializer,
+                                                   CustomEnergyMixSerializer,
+                                                   CustomEnergySourceSerializer,
+                                                   CustomEnvironmentalImpactSerializer));
+
+                    if (!SkipNotifications)
                     {
-
-                        locations[Location.Id] = patchResult.PatchedData;
 
                         var OnLocationChangedLocal = OnLocationChanged;
                         if (OnLocationChangedLocal is not null)
@@ -4847,133 +5001,190 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     }
 
-                    return patchResult;
-
                 }
 
-                else
-                    return PatchResult<Location>.Failed(Location,
-                                                        "The given location does not exist!");
+                return patchResult;
 
             }
+
+            else
+                return PatchResult<Location>.Failed(Location,
+                                                    "The given location does not exist!");
 
         }
 
         #endregion
 
 
+        #region AddOrUpdateEVSE       (Location, EVSE, AllowDowngrades = false, SkipNotifications = false)
 
-        public delegate Task OnEVSEAddedDelegate(EVSE EVSE);
-
-        public event OnEVSEAddedDelegate? OnEVSEAdded;
-
-
-        public delegate Task OnEVSEChangedDelegate(EVSE EVSE);
-
-        public event OnEVSEChangedDelegate? OnEVSEChanged;
-
-        public delegate Task OnEVSEStatusChangedDelegate(DateTime Timestamp, EVSE EVSE, StatusType OldEVSEStatus, StatusType NewEVSEStatus);
-
-        public event OnEVSEStatusChangedDelegate? OnEVSEStatusChanged;
-
-
-        public delegate Task OnEVSERemovedDelegate(EVSE EVSE);
-
-        public event OnEVSERemovedDelegate? OnEVSERemoved;
-
-
-        #region AddOrUpdateEVSE       (Location, newOrUpdatedEVSE, AllowDowngrades = false)
-
-        private AddOrUpdateResult<EVSE> __addOrUpdateEVSE(Location  Location,
-                                                          EVSE      newOrUpdatedEVSE,
-                                                          Boolean?  AllowDowngrades = false)
+        public async Task<AddOrUpdateResult<EVSE>> AddOrUpdateEVSE(Location  Location,
+                                                                   EVSE      EVSE,
+                                                                   Boolean?  AllowDowngrades     = false,
+                                                                   Boolean   SkipNotifications   = false)
         {
 
-            Location.TryGetEVSE(newOrUpdatedEVSE.UId, out var existingEVSE);
+            #region Validate AllowDowngrades
 
-            if (existingEVSE is not null)
+            if (Location.TryGetEVSE(EVSE.UId, out var existingEVSE) &&
+                existingEVSE is not null)
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    newOrUpdatedEVSE.LastUpdated < existingEVSE.LastUpdated)
+                    EVSE.LastUpdated <= existingEVSE.LastUpdated)
                 {
-                    return AddOrUpdateResult<EVSE>.Failed     (newOrUpdatedEVSE,
+                    return AddOrUpdateResult<EVSE>.Failed     (EVSE,
                                                                "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
                 }
 
-                if (newOrUpdatedEVSE.LastUpdated.ToIso8601() == existingEVSE.LastUpdated.ToIso8601())
-                    return AddOrUpdateResult<EVSE>.NoOperation(newOrUpdatedEVSE,
-                                                               "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
+                //if (EVSE.LastUpdated.ToIso8601() == existingEVSE.LastUpdated.ToIso8601())
+                //    return AddOrUpdateResult<EVSE>.NoOperation(EVSE,
+                //                                               "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
 
             }
 
+            #endregion
 
-            Location.SetEVSE(newOrUpdatedEVSE);
+            var newLocation = Location.Update(locationBuilder => {
 
-            // Update location timestamp!
-            var builder = Location.ToBuilder();
-            builder.LastUpdated = newOrUpdatedEVSE.LastUpdated;
-            __addOrUpdateLocation(builder, (AllowDowngrades ?? this.AllowDowngrades) == false);
+                                                  if (EVSE.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
+                                                      locationBuilder.SetEVSE(EVSE);
+                                                  else
+                                                      locationBuilder.RemoveEVSE(EVSE);
 
-            var OnLocationChangedLocal = OnLocationChanged;
-            if (OnLocationChangedLocal is not null)
-            {
-                try
-                {
-                    OnLocationChangedLocal(newOrUpdatedEVSE.ParentLocation).Wait();
-                }
-                catch (Exception e)
-                {
-                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnLocationChanged), ": ",
-                                Environment.NewLine, e.Message,
-                                e.StackTrace is not null
-                                            ? Environment.NewLine + e.StackTrace
-                                            : String.Empty);
-                }
-            }
+                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
+
+                                              },
+                                              out var warnings);
+
+            if (newLocation is null)
+                return AddOrUpdateResult<EVSE>.Failed(EVSE,
+                                                      warnings.First().Text.FirstText());
 
 
-            if (existingEVSE is not null)
+            var updateResult = await UpdateLocation(newLocation,
+                                                    (AllowDowngrades ?? this.AllowDowngrades) == false,
+                                                    SkipNotifications: true);
+
+            if (!SkipNotifications)
             {
 
-                if (existingEVSE.Status != StatusType.REMOVED)
+                var OnLocationChangedLocal = OnLocationChanged;
+                if (OnLocationChangedLocal is not null)
                 {
-
-                    var OnEVSEChangedLocal = OnEVSEChanged;
-                    if (OnEVSEChangedLocal is not null)
+                    try
                     {
-                        try
-                        {
-                            OnEVSEChangedLocal(newOrUpdatedEVSE).Wait();
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEChanged), ": ",
-                                        Environment.NewLine, e.Message,
-                                        e.StackTrace is not null
-                                            ? Environment.NewLine + e.StackTrace
-                                            : String.Empty);
-                        }
+                        OnLocationChangedLocal(EVSE.ParentLocation).Wait();
                     }
-
-
-                    if (existingEVSE.Status != newOrUpdatedEVSE.Status)
+                    catch (Exception e)
                     {
-                        var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
-                        if (OnEVSEStatusChangedLocal is not null)
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnLocationChanged), ": ",
+                                    Environment.NewLine, e.Message,
+                                    e.StackTrace is not null
+                                                ? Environment.NewLine + e.StackTrace
+                                                : String.Empty);
+                    }
+                }
+
+                if (existingEVSE is not null)
+                {
+
+                    #region Status != REMOVED
+
+                    if (existingEVSE.Status != StatusType.REMOVED)
+                    {
+
+                        var OnEVSEChangedLocal = OnEVSEChanged;
+                        if (OnEVSEChangedLocal is not null)
                         {
                             try
                             {
-
-                                OnEVSEStatusChangedLocal(Timestamp.Now,
-                                                         newOrUpdatedEVSE,
-                                                         existingEVSE.Status,
-                                                         newOrUpdatedEVSE.Status).Wait();
-
+                                OnEVSEChangedLocal(EVSE).Wait();
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            e.StackTrace is not null
+                                                ? Environment.NewLine + e.StackTrace
+                                                : String.Empty);
+                            }
+                        }
+
+
+                        if (existingEVSE.Status != EVSE.Status)
+                        {
+                            var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                            if (OnEVSEStatusChangedLocal is not null)
+                            {
+                                try
+                                {
+
+                                    OnEVSEStatusChangedLocal(Timestamp.Now,
+                                                             EVSE,
+                                                             existingEVSE.Status,
+                                                             EVSE.Status).Wait();
+
+                                }
+                                catch (Exception e)
+                                {
+                                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
+                                                Environment.NewLine, e.Message,
+                                                e.StackTrace is not null
+                                                    ? Environment.NewLine + e.StackTrace
+                                                    : String.Empty);
+                                }
+                            }
+                        }
+
+                    }
+
+                    #endregion
+
+                    #region Status REMOVED
+
+                    else
+                    {
+
+                        //if (!KeepRemovedEVSEs(EVSE))
+                        //    Location.RemoveEVSE(EVSE);
+
+                        var OnEVSERemovedLocal = OnEVSERemoved;
+                        if (OnEVSERemovedLocal is not null)
+                        {
+                            try
+                            {
+                                OnEVSERemovedLocal(EVSE).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSERemoved), ": ",
+                                            Environment.NewLine, e.Message,
+                                            e.StackTrace is not null
+                                                ? Environment.NewLine + e.StackTrace
+                                                : String.Empty);
+                            }
+                        }
+
+                    }
+
+                    #endregion
+
+                }
+                else
+                {
+                    if (!SkipNotifications)
+                    {
+                        var OnEVSEAddedLocal = OnEVSEAdded;
+                        if (OnEVSEAddedLocal is not null)
+                        {
+                            try
+                            {
+                                OnEVSEAddedLocal(EVSE).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEAdded), ": ",
                                             Environment.NewLine, e.Message,
                                             e.StackTrace is not null
                                                 ? Environment.NewLine + e.StackTrace
@@ -4981,72 +5192,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             }
                         }
                     }
-
                 }
-                else
-                {
 
-                    if (!KeepRemovedEVSEs(newOrUpdatedEVSE))
-                        Location.RemoveEVSE(newOrUpdatedEVSE);
-
-                    var OnEVSERemovedLocal = OnEVSERemoved;
-                    if (OnEVSERemovedLocal is not null)
-                    {
-                        try
-                        {
-                            OnEVSERemovedLocal(newOrUpdatedEVSE).Wait();
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSERemoved), ": ",
-                                        Environment.NewLine, e.Message,
-                                        e.StackTrace is not null
-                                            ? Environment.NewLine + e.StackTrace
-                                            : String.Empty);
-                        }
-                    }
-
-                }
-            }
-            else
-            {
-                var OnEVSEAddedLocal = OnEVSEAdded;
-                if (OnEVSEAddedLocal is not null)
-                {
-                    try
-                    {
-                        OnEVSEAddedLocal(newOrUpdatedEVSE).Wait();
-                    }
-                    catch (Exception e)
-                    {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEAdded), ": ",
-                                    Environment.NewLine, e.Message,
-                                    e.StackTrace is not null
-                                            ? Environment.NewLine + e.StackTrace
-                                            : String.Empty);
-                    }
-                }
             }
 
-            return AddOrUpdateResult<EVSE>.Success(newOrUpdatedEVSE,
+            return AddOrUpdateResult<EVSE>.Success(EVSE,
                                                    WasCreated: existingEVSE is null);
-
-        }
-
-        public async Task<AddOrUpdateResult<EVSE>> AddOrUpdateEVSE(Location  Location,
-                                                                   EVSE      newOrUpdatedEVSE,
-                                                                   Boolean?  AllowDowngrades = false)
-        {
-
-            // ToDo: Remove me and add a proper 'lock' mechanism!
-            //await Task.Delay(1);
-
-            //lock (Locations)
-            //{
-                return __addOrUpdateEVSE(Location,
-                                         newOrUpdatedEVSE,
-                                         (AllowDowngrades ?? this.AllowDowngrades) == false);
-            //}
 
         }
 
@@ -5064,98 +5215,90 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 return PatchResult<EVSE>.Failed(EVSE,
                                                 "The given EVSE patch must not be null or empty!");
 
-            // ToDo: Remove me and add a proper 'lock' mechanism!
-            await Task.Delay(1);
+            var patchResult        = EVSE.TryPatch(EVSEPatch,
+                                                   AllowDowngrades ?? this.AllowDowngrades ?? false);
 
-            lock (locations)
+            var justAStatusChange  = EVSEPatch.Children().Count() == 2 && EVSEPatch.ContainsKey("status") && EVSEPatch.ContainsKey("last_updated");
+
+            if (patchResult.IsSuccess &&
+                patchResult.PatchedData is not null)
             {
 
-                var patchResult        = EVSE.TryPatch(EVSEPatch,
-                                                       AllowDowngrades ?? this.AllowDowngrades ?? false);
+                var newLocation = Location.Update(locationBuilder => {
 
-                var justAStatusChange  = EVSEPatch.Children().Count() == 2 && EVSEPatch.ContainsKey("status") && EVSEPatch.ContainsKey("last_updated");
+                                                  if (patchResult.PatchedData.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
+                                                      locationBuilder.SetEVSE(patchResult.PatchedData);
+                                                  else
+                                                      locationBuilder.RemoveEVSE(patchResult.PatchedData);
 
-                if (patchResult.IsSuccess)
+                                                  locationBuilder.LastUpdated  = patchResult.PatchedData.LastUpdated;
+
+                                              },
+                                              out var warnings);
+
+                if (newLocation is null)
+                    return PatchResult<EVSE>.Failed(EVSE,
+                                                    warnings.First().Text.FirstText());
+
+
+                //if (patchResult.PatchedData.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
+                //    Location.SetEVSE   (patchResult.PatchedData);
+                //else
+                //    Location.RemoveEVSE(patchResult.PatchedData);
+
+                //// Update location timestamp!
+                //var builder = Location.ToBuilder();
+                //builder.LastUpdated = patchResult.PatchedData.LastUpdated;
+
+                await AddOrUpdateLocation(newLocation,
+                                          (AllowDowngrades ?? this.AllowDowngrades) == false,
+                                          SkipNotifications: true);
+
+
+                if (EVSE.Status != StatusType.REMOVED)
                 {
 
-                    if (patchResult.PatchedData.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
-                        Location.SetEVSE   (patchResult.PatchedData);
-                    else
-                        Location.RemoveEVSE(patchResult.PatchedData);
-
-                    // Update location timestamp!
-                    var builder = Location.ToBuilder();
-                    builder.LastUpdated = patchResult.PatchedData.LastUpdated;
-                    __addOrUpdateLocation(builder, (AllowDowngrades ?? this.AllowDowngrades) == false);
-
-
-                    if (EVSE.Status != StatusType.REMOVED)
+                    if (justAStatusChange)
                     {
 
-                        if (justAStatusChange)
+                        DebugX.Log("EVSE status change: " + EVSE.EVSEId + " => " + patchResult.PatchedData.Status);
+
+                        var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                        if (OnEVSEStatusChangedLocal is not null)
                         {
-
-                            DebugX.Log("EVSE status change: " + EVSE.EVSEId + " => " + patchResult.PatchedData.Status);
-
-                            var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
-                            if (OnEVSEStatusChangedLocal is not null)
+                            try
                             {
-                                try
-                                {
 
-                                    OnEVSEStatusChangedLocal(patchResult.PatchedData.LastUpdated,
-                                                             EVSE,
-                                                             EVSE.Status,
-                                                             patchResult.PatchedData.Status).Wait();
+                                OnEVSEStatusChangedLocal(patchResult.PatchedData.LastUpdated,
+                                                         EVSE,
+                                                         EVSE.Status,
+                                                         patchResult.PatchedData.Status).Wait();
 
-                                }
-                                catch (Exception e)
-                                {
-                                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
-                                                Environment.NewLine, e.Message,
-                                                e.StackTrace is not null
-                                                    ? Environment.NewLine + e.StackTrace
-                                                    : String.Empty);
-                                }
                             }
-
-                        }
-                        else
-                        {
-
-                            var OnEVSEChangedLocal = OnEVSEChanged;
-                            if (OnEVSEChangedLocal is not null)
+                            catch (Exception e)
                             {
-                                try
-                                {
-                                    OnEVSEChangedLocal(patchResult.PatchedData).Wait();
-                                }
-                                catch (Exception e)
-                                {
-                                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEChanged), ": ",
-                                                Environment.NewLine, e.Message,
-                                                e.StackTrace is not null
-                                                    ? Environment.NewLine + e.StackTrace
-                                                    : String.Empty);
-                                }
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            e.StackTrace is not null
+                                                ? Environment.NewLine + e.StackTrace
+                                                : String.Empty);
                             }
-
                         }
 
                     }
                     else
                     {
 
-                        var OnEVSERemovedLocal = OnEVSERemoved;
-                        if (OnEVSERemovedLocal is not null)
+                        var OnEVSEChangedLocal = OnEVSEChanged;
+                        if (OnEVSEChangedLocal is not null)
                         {
                             try
                             {
-                                OnEVSERemovedLocal(patchResult.PatchedData).Wait();
+                                OnEVSEChangedLocal(patchResult.PatchedData).Wait();
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSERemoved), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             e.StackTrace is not null
                                                 ? Environment.NewLine + e.StackTrace
@@ -5166,76 +5309,112 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     }
 
                 }
+                else
+                {
 
-                return patchResult;
+                    var OnEVSERemovedLocal = OnEVSERemoved;
+                    if (OnEVSERemovedLocal is not null)
+                    {
+                        try
+                        {
+                            OnEVSERemovedLocal(patchResult.PatchedData).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSERemoved), ": ",
+                                        Environment.NewLine, e.Message,
+                                        e.StackTrace is not null
+                                            ? Environment.NewLine + e.StackTrace
+                                            : String.Empty);
+                        }
+                    }
+
+                }
 
             }
+
+            return patchResult;
 
         }
 
         #endregion
 
 
-        #region AddOrUpdateConnector  (Location, EVSE, newOrUpdatedConnector,     AllowDowngrades = false)
+        #region AddOrUpdateConnector  (Location, EVSE, Connector,     AllowDowngrades = false, SkipNotifications = false)
 
         public async Task<AddOrUpdateResult<Connector>> AddOrUpdateConnector(Location   Location,
                                                                              EVSE       EVSE,
-                                                                             Connector  newOrUpdatedConnector,
-                                                                             Boolean?   AllowDowngrades = false)
+                                                                             Connector  Connector,
+                                                                             Boolean?   AllowDowngrades     = false,
+                                                                             Boolean    SkipNotifications   = false)
         {
 
-            // ToDo: Remove me and add a proper 'lock' mechanism!
-            await Task.Delay(1);
+            #region Validate AllowDowngrades
 
-            lock (locations)
+            if (EVSE.TryGetConnector(Connector.Id, out var existingConnector) &&
+                existingConnector is not null)
             {
 
-                var ConnectorExistedBefore = EVSE.TryGetConnector(newOrUpdatedConnector.Id, out var existingConnector);
-
-                if (existingConnector is not null)
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Connector.LastUpdated <= existingConnector.LastUpdated)
                 {
-
-                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                        newOrUpdatedConnector.LastUpdated < existingConnector.LastUpdated)
-                    {
-                        return AddOrUpdateResult<Connector>.Failed     (newOrUpdatedConnector,
-                                                                        "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
-                    }
-
-                    if (newOrUpdatedConnector.LastUpdated.ToIso8601() == existingConnector.LastUpdated.ToIso8601())
-                        return AddOrUpdateResult<Connector>.NoOperation(newOrUpdatedConnector,
-                                                                        "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
-
+                    return AddOrUpdateResult<Connector>.Failed(Connector,
+                                                               "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
                 }
 
-                EVSE.UpdateConnector(newOrUpdatedConnector);
-
-                // Update EVSE/location timestamps!
-                var evseBuilder     = EVSE.ToBuilder();
-                evseBuilder.LastUpdated = newOrUpdatedConnector.LastUpdated;
-                __addOrUpdateEVSE    (Location, evseBuilder,     (AllowDowngrades ?? this.AllowDowngrades) == false);
-
-
-                var OnLocationChangedLocal = OnLocationChanged;
-                if (OnLocationChangedLocal is not null)
-                {
-                    try
-                    {
-                        OnLocationChangedLocal(newOrUpdatedConnector.ParentEVSE.ParentLocation).Wait();
-                    }
-                    catch (Exception e)
-                    {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateConnector), " ", nameof(OnLocationChanged), ": ",
-                                    Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace ?? "");
-                    }
-                }
-
-
-                return AddOrUpdateResult<Connector>.Success(newOrUpdatedConnector,
-                                                            WasCreated: !ConnectorExistedBefore);
+                //if (newOrUpdatedConnector.LastUpdated.ToIso8601() == existingConnector.LastUpdated.ToIso8601())
+                //    return AddOrUpdateResult<Connector>.NoOperation(newOrUpdatedConnector,
+                //                                                    "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
 
             }
+
+            #endregion
+
+
+            var newEVSE = EVSE.Update(evseBuilder => {
+                                          evseBuilder.SetConnector(Connector);
+                                          evseBuilder.LastUpdated  = Connector.LastUpdated;
+                                      },
+                                      out var warnings);
+
+            if (newEVSE is null)
+                return AddOrUpdateResult<Connector>.Failed(Connector,
+                                                           warnings.First().Text.FirstText());
+
+
+            var result = await AddOrUpdateEVSE(Location,
+                                               newEVSE,
+                                               (AllowDowngrades ?? this.AllowDowngrades) == false,
+                                               SkipNotifications: true);
+
+            if (result.IsSuccess)
+            {
+
+                if (!SkipNotifications)
+                {
+                    var OnLocationChangedLocal = OnLocationChanged;
+                    if (OnLocationChangedLocal is not null)
+                    {
+                        try
+                        {
+                            OnLocationChangedLocal(Connector.ParentEVSE.ParentLocation).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateConnector), " ", nameof(OnLocationChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+                }
+
+                return AddOrUpdateResult<Connector>.Success(Connector,
+                                                            WasCreated: result.WasCreated ?? false);
+
+            }
+
+            return AddOrUpdateResult<Connector>.Failed(Connector,
+                                                       result.ErrorResponse ?? "Unknown error!");
 
         }
 
@@ -5254,30 +5433,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 return PatchResult<Connector>.Failed(Connector,
                                                      "The given connector patch must not be null or empty!");
 
-            // ToDo: Remove me and add a proper 'lock' mechanism!
-            await Task.Delay(1);
+            var patchResult = Connector.TryPatch(ConnectorPatch,
+                                                 AllowDowngrades ?? this.AllowDowngrades ?? false);
 
-            lock (locations)
+            if (patchResult.IsSuccess &&
+                patchResult.PatchedData is not null)
             {
 
-                var patchResult = Connector.TryPatch(ConnectorPatch,
-                                                     AllowDowngrades ?? this.AllowDowngrades ?? false);
+                var newEVSE = EVSE.Update(evseBuilder => {
+                                              evseBuilder.SetConnector(patchResult.PatchedData);
+                                              evseBuilder.LastUpdated  = Connector.LastUpdated;
+                                          },
+                                          out var warnings);
 
-                if (patchResult.IsSuccess)
-                {
+                if (newEVSE is null)
+                    return PatchResult<Connector>.Failed(Connector,
+                                                         warnings.First().Text.FirstText());
 
-                    EVSE.UpdateConnector(patchResult.PatchedData);
-
-                    // Update EVSE/location timestamps!
-                    var evseBuilder     = EVSE.ToBuilder();
-                    evseBuilder.LastUpdated = patchResult.PatchedData.LastUpdated;
-                    __addOrUpdateEVSE    (Location, evseBuilder,     (AllowDowngrades ?? this.AllowDowngrades) == false);
-
-                }
-
-                return patchResult;
+                await AddOrUpdateEVSE(Location,
+                                      newEVSE,
+                                      (AllowDowngrades ?? this.AllowDowngrades) == false,
+                                      SkipNotifications: true);
 
             }
+
+            return patchResult;
 
         }
 
@@ -5287,16 +5467,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region LocationExists(LocationId)
 
         public Boolean LocationExists(Location_Id LocationId)
-        {
 
-            lock (locations)
-            {
-
-                return locations.ContainsKey(LocationId);
-
-            }
-
-        }
+            => locations.ContainsKey(LocationId);
 
         #endregion
 
@@ -5306,16 +5478,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       out Location?  Location)
         {
 
-            lock (locations)
-            {
+            if (locations.TryGetValue(LocationId, out Location))
+                return true;
 
-                if (locations.TryGetValue(LocationId, out Location))
-                    return true;
-
-                Location = null;
-                return false;
-
-            }
+            Location = null;
+            return false;
 
         }
 
@@ -5324,18 +5491,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region GetLocations  (IncludeLocation = null)
 
         public IEnumerable<Location> GetLocations(Func<Location, Boolean>? IncludeLocation = null)
-        {
 
-            lock (locations)
-            {
-
-                return IncludeLocation is null
-                           ? locations.Values.ToArray()
-                           : locations.Values.Where(IncludeLocation).ToArray();
-
-            }
-
-        }
+            => IncludeLocation is null
+                   ? locations.Values
+                   : locations.Values.Where(IncludeLocation);
 
         #endregion
 
@@ -5343,47 +5502,126 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public IEnumerable<Location> GetLocations(CountryCode  CountryCode,
                                                   Party_Id     PartyId)
-        {
 
-            lock (locations)
-            {
-
-                return locations.Values.Where(location => location.CountryCode == CountryCode &&
-                                                          location.PartyId     == PartyId).
-                                               ToArray();
-
-            }
-
-        }
+            => locations.Values.Where(location => location.CountryCode == CountryCode &&
+                                                  location.PartyId     == PartyId);
 
         #endregion
 
 
         #region RemoveLocation    (Location)
 
-        public Boolean RemoveLocation(Location Location)
-        {
+        /// <summary>
+        /// Remove the given charging location.
+        /// </summary>
+        /// <param name="Location">A charging location.</param>
+        public Task<RemoveResult<Location>> RemoveLocation(Location Location)
 
-            lock (locations)
-            {
-
-                return locations.Remove(Location.Id);
-
-            }
-
-        }
+            => RemoveLocation(Location.Id);
 
         #endregion
 
         #region RemoveLocation    (LocationId)
 
-        public Boolean RemoveLocation(Location_Id LocationId)
+        /// <summary>
+        /// Remove the given charging location.
+        /// </summary>
+        /// <param name="LocationId">An unique charging location identification.</param>
+        public async Task<RemoveResult<Location>> RemoveLocation(Location_Id LocationId)
         {
 
-            lock (locations)
+            if (locations.Remove(LocationId, out var location))
             {
 
-                return locations.Remove(LocationId);
+                await LogAsset(removeLocation,
+                               location.ToJSON(true,
+                                               null,
+                                               CustomLocationSerializer,
+                                               CustomAdditionalGeoLocationSerializer,
+                                               CustomEVSESerializer,
+                                               CustomStatusScheduleSerializer,
+                                               CustomConnectorSerializer,
+                                               CustomEnergyMeterSerializer,
+                                               CustomTransparencySoftwareStatusSerializer,
+                                               CustomTransparencySoftwareSerializer,
+                                               CustomDisplayTextSerializer,
+                                               CustomBusinessDetailsSerializer,
+                                               CustomHoursSerializer,
+                                               CustomImageSerializer,
+                                               CustomEnergyMixSerializer,
+                                               CustomEnergySourceSerializer,
+                                               CustomEnvironmentalImpactSerializer));
+
+                return RemoveResult<Location>.Success(location);
+
+            }
+
+            return RemoveResult<Location>.Failed(null,
+                                                 "RemoveLocation(LocationId, ...) failed!");
+
+        }
+
+        #endregion
+
+        #region RemoveAllLocations(IncludeLocations = null)
+
+        /// <summary>
+        /// Remove all matching charging locations.
+        /// </summary>
+        /// <param name="IncludeLocations">An optional charging location filter.</param>
+        public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(Func<Location, Boolean>? IncludeLocations = null)
+        {
+
+            if (IncludeLocations is null)
+            {
+
+                var existingLocations = locations.Values.ToArray();
+
+                locations.Clear();
+
+                await LogAsset(removeAllLocations);
+
+                return RemoveResult<IEnumerable<Location>>.Success(existingLocations);
+
+            }
+
+            else
+            {
+
+                var removedLocations = new List<Location>();
+
+                foreach (var location in locations.Values.Where(IncludeLocations).ToArray())
+                {
+                    if (locations.Remove(location.Id, out _))
+                    {
+
+                        removedLocations.Add(location);
+
+                        await LogAsset(removeLocation,
+                                       location.ToJSON(true,
+                                                       null,
+                                                       CustomLocationSerializer,
+                                                       CustomAdditionalGeoLocationSerializer,
+                                                       CustomEVSESerializer,
+                                                       CustomStatusScheduleSerializer,
+                                                       CustomConnectorSerializer,
+                                                       CustomEnergyMeterSerializer,
+                                                       CustomTransparencySoftwareStatusSerializer,
+                                                       CustomTransparencySoftwareSerializer,
+                                                       CustomDisplayTextSerializer,
+                                                       CustomBusinessDetailsSerializer,
+                                                       CustomHoursSerializer,
+                                                       CustomImageSerializer,
+                                                       CustomEnergyMixSerializer,
+                                                       CustomEnergySourceSerializer,
+                                                       CustomEnvironmentalImpactSerializer));
+
+                    }
+                }
+
+                return removedLocations.Any()
+                           ? RemoveResult<IEnumerable<Location>>.Success    (removedLocations)
+                           : RemoveResult<IEnumerable<Location>>.NoOperation(Array.Empty<Location>());
 
             }
 
@@ -5391,30 +5629,67 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region RemoveAllLocations(IncludeSessions = null)
+        #region RemoveAllLocations(IncludeLocationIds)
 
         /// <summary>
-        /// Remove all matching locations.
+        /// Remove all matching charging locations.
         /// </summary>
-        /// <param name="IncludeLocations">An optional location filter.</param>
-        public void RemoveAllLocations(Func<Location, Boolean>? IncludeLocations = null)
+        /// <param name="IncludeLocationIds">An optional charging location identification filter.</param>
+        public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(Func<Location_Id, Boolean>? IncludeLocationIds)
         {
 
-            lock (locations)
+            if (IncludeLocationIds is null)
             {
 
-                if (IncludeLocations is null)
-                    locations.Clear();
+                var existingLocations = locations.Values.ToArray();
 
-                else
+                locations.Clear();
+
+                await LogAsset(removeAllLocations);
+
+                return RemoveResult<IEnumerable<Location>>.Success(existingLocations);
+
+            }
+
+            else
+            {
+
+                var removedLocations = new List<Location>();
+
+                foreach (var location in locations.Where  (kvp => IncludeLocationIds(kvp.Key)).
+                                               Select (kvp => kvp.Value).
+                                               ToArray())
                 {
+                    if (locations.Remove(location.Id, out _))
+                    {
 
-                    var locationsToDelete = locations.Values.Where(IncludeLocations).ToArray();
+                        removedLocations.Add(location);
 
-                    foreach (var location in locationsToDelete)
-                        locations.Remove(location.Id);
+                        await LogAsset(removeLocation,
+                                       location.ToJSON(true,
+                                                       null,
+                                                       CustomLocationSerializer,
+                                                       CustomAdditionalGeoLocationSerializer,
+                                                       CustomEVSESerializer,
+                                                       CustomStatusScheduleSerializer,
+                                                       CustomConnectorSerializer,
+                                                       CustomEnergyMeterSerializer,
+                                                       CustomTransparencySoftwareStatusSerializer,
+                                                       CustomTransparencySoftwareSerializer,
+                                                       CustomDisplayTextSerializer,
+                                                       CustomBusinessDetailsSerializer,
+                                                       CustomHoursSerializer,
+                                                       CustomImageSerializer,
+                                                       CustomEnergyMixSerializer,
+                                                       CustomEnergySourceSerializer,
+                                                       CustomEnvironmentalImpactSerializer));
 
+                    }
                 }
+
+                return removedLocations.Any()
+                           ? RemoveResult<IEnumerable<Location>>.Success    (removedLocations)
+                           : RemoveResult<IEnumerable<Location>>.NoOperation(Array.Empty<Location>());
 
             }
 
@@ -5425,25 +5700,49 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region RemoveAllLocations(CountryCode, PartyId)
 
         /// <summary>
-        /// Remove all locations owned by the given party.
+        /// Remove all charging locations owned by the given party.
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllLocations(CountryCode  CountryCode,
-                                       Party_Id     PartyId)
+        public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(CountryCode  CountryCode,
+                                                                              Party_Id     PartyId)
         {
 
-            lock (locations)
+            var removedLocations = new List<Location>();
+
+            foreach (var location in locations.Values.Where(location => CountryCode == location.CountryCode &&
+                                                                  PartyId     == location.PartyId).ToArray())
             {
+                if (locations.Remove(location.Id, out _))
+                {
 
-                var locationsToDelete = locations.Values.Where(location => CountryCode == location.CountryCode &&
-                                                                           PartyId     == location.PartyId).
-                                                               ToArray();
+                    removedLocations.Add(location);
 
-                foreach (var location in locationsToDelete)
-                    locations.Remove(location.Id);
+                    await LogAsset(removeLocation,
+                                   location.ToJSON(true,
+                                                   null,
+                                                   CustomLocationSerializer,
+                                                   CustomAdditionalGeoLocationSerializer,
+                                                   CustomEVSESerializer,
+                                                   CustomStatusScheduleSerializer,
+                                                   CustomConnectorSerializer,
+                                                   CustomEnergyMeterSerializer,
+                                                   CustomTransparencySoftwareStatusSerializer,
+                                                   CustomTransparencySoftwareSerializer,
+                                                   CustomDisplayTextSerializer,
+                                                   CustomBusinessDetailsSerializer,
+                                                   CustomHoursSerializer,
+                                                   CustomImageSerializer,
+                                                   CustomEnergyMixSerializer,
+                                                   CustomEnergySourceSerializer,
+                                                   CustomEnvironmentalImpactSerializer));
 
+                }
             }
+
+            return removedLocations.Any()
+                       ? RemoveResult<IEnumerable<Location>>.Success    (removedLocations)
+                       : RemoveResult<IEnumerable<Location>>.NoOperation(Array.Empty<Location>());
 
         }
 
@@ -5598,17 +5897,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 tariffs[Tariff.Id] = Tariff;
+                Tariff.CommonAPI = this;
 
                 await LogAsset(addOrUpdateTariff,
                                Tariff.ToJSON(true,
-                                                         CustomTariffSerializer,
-                                                         CustomDisplayTextSerializer,
-                                                         CustomTariffElementSerializer,
-                                                         CustomPriceComponentSerializer,
-                                                         CustomTariffRestrictionsSerializer,
-                                                         CustomEnergyMixSerializer,
-                                                         CustomEnergySourceSerializer,
-                                                         CustomEnvironmentalImpactSerializer));
+                                             CustomTariffSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomTariffElementSerializer,
+                                             CustomPriceComponentSerializer,
+                                             CustomTariffRestrictionsSerializer,
+                                             CustomEnergyMixSerializer,
+                                             CustomEnergySourceSerializer,
+                                             CustomEnvironmentalImpactSerializer));
 
                 if (!SkipNotifications)
                 {
@@ -5641,6 +5941,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             if (tariffs.TryAdd(Tariff.Id, Tariff))
             {
+
+                Tariff.CommonAPI = this;
+
+                await LogAsset(addOrUpdateTariff,
+                               Tariff.ToJSON(true,
+                                             CustomTariffSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomTariffElementSerializer,
+                                             CustomPriceComponentSerializer,
+                                             CustomTariffRestrictionsSerializer,
+                                             CustomEnergyMixSerializer,
+                                             CustomEnergySourceSerializer,
+                                             CustomEnvironmentalImpactSerializer));
 
                 if (!SkipNotifications)
                 {
@@ -5698,12 +6011,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
             }
+            else
+                return UpdateResult<Tariff>.Failed(Tariff,
+                                                   $"Unknown tariff identification '{Tariff.Id}'!");
 
             #endregion
 
 
-            if (tariffs.TryUpdate(Tariff.Id, Tariff, Tariff))
+            if (tariffs.TryUpdate(Tariff.Id, Tariff, existingTariff))
             {
+
+                Tariff.CommonAPI = this;
 
                 await LogAsset(updateTariff,
                                Tariff.ToJSON(true,
@@ -5760,11 +6078,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 return PatchResult<Tariff>.Failed(Tariff,
                                                   "The given charging tariff patch must not be null or empty!");
 
-            if (tariffs.TryGetValue(Tariff.Id, out var tariff))
+            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff))
             {
 
-                var patchResult = tariff.TryPatch(TariffPatch,
-                                                  AllowDowngrades ?? this.AllowDowngrades ?? false);
+                var patchResult = existingTariff.TryPatch(TariffPatch,
+                                                          AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                 if (patchResult.IsSuccess &&
                     patchResult.PatchedData is not null)
@@ -5930,7 +6248,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region RemoveAllTariffs(IncludeTariffs = null)
 
         /// <summary>
-        /// Remove all matching tariffs.
+        /// Remove all matching charging tariffs.
         /// </summary>
         /// <param name="IncludeTariffs">An optional charging tariff filter.</param>
         public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff, Boolean>? IncludeTariffs = null)
@@ -5988,7 +6306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region RemoveAllTariffs(IncludeTariffIds)
 
         /// <summary>
-        /// Remove all matching tariffs.
+        /// Remove all matching charging tariffs.
         /// </summary>
         /// <param name="IncludeTariffIds">An optional charging tariff identification filter.</param>
         public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff_Id, Boolean>? IncludeTariffIds)
@@ -6255,6 +6573,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 chargingSessions[Session.Id] = Session;
+                Session.CommonAPI = this;
 
                 await LogAsset(addOrUpdateSession,
                                Session.ToJSON(true,
@@ -6309,6 +6628,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             if (chargingSessions.TryAdd(Session.Id, Session))
             {
+
+                Session.CommonAPI = this;
+
+                await LogAsset(addOrUpdateSession,
+                               Session.ToJSON(true,
+                                              null,
+                                              CustomSessionSerializer,
+                                              CustomLocationSerializer,
+                                              CustomAdditionalGeoLocationSerializer,
+                                              CustomEVSESerializer,
+                                              CustomStatusScheduleSerializer,
+                                              CustomConnectorSerializer,
+                                              CustomEnergyMeterSerializer,
+                                              CustomTransparencySoftwareStatusSerializer,
+                                              CustomTransparencySoftwareSerializer,
+                                              CustomDisplayTextSerializer,
+                                              CustomBusinessDetailsSerializer,
+                                              CustomHoursSerializer,
+                                              CustomImageSerializer,
+                                              CustomEnergyMixSerializer,
+                                              CustomEnergySourceSerializer,
+                                              CustomEnvironmentalImpactSerializer,
+                                              CustomChargingPeriodSerializer,
+                                              CustomCDRDimensionSerializer));
 
                 if (!SkipNotifications)
                 {
@@ -6366,12 +6709,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
             }
+            else
+                return UpdateResult<Session>.Failed(Session,
+                                                    $"Unknown session identification '{Session.Id}'!");
 
             #endregion
 
 
-            if (chargingSessions.TryUpdate(Session.Id, Session, Session))
+            if (chargingSessions.TryUpdate(Session.Id, Session, existingSession))
             {
+
+                Session.CommonAPI = this;
 
                 await LogAsset(updateSession,
                                Session.ToJSON(true,
@@ -6439,11 +6787,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 return PatchResult<Session>.Failed(Session,
                                                   "The given charging session patch must not be null or empty!");
 
-            if (chargingSessions.TryGetValue(Session.Id, out var session))
+            if (chargingSessions.TryGetValue(Session.Id, out var existingSession))
             {
 
-                var patchResult = session.TryPatch(SessionPatch,
-                                                  AllowDowngrades ?? this.AllowDowngrades ?? false);
+                var patchResult = existingSession.TryPatch(SessionPatch,
+                                                           AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                 if (patchResult.IsSuccess &&
                     patchResult.PatchedData is not null)
@@ -6949,6 +7297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                          Status ?? existingTokenStatus.Status);
 
                 tokenStatus[Token.Id] = updatedTokenStatus;
+                Token.CommonAPI = this;
 
                 await LogAsset(addOrUpdateTokenStatus,
                                updatedTokenStatus.ToJSON(CustomTokenStatusSerializer,
@@ -6990,6 +7339,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             if (tokenStatus.TryAdd(Token.Id, newTokenStatus))
             {
+
+                Token.CommonAPI = this;
+
+                await LogAsset(addOrUpdateTokenStatus,
+                               newTokenStatus.ToJSON(CustomTokenStatusSerializer,
+                                                     true,
+                                                     CustomTokenSerializer,
+                                                     CustomLocationReferenceSerializer));
 
                 if (!SkipNotifications)
                 {
@@ -7033,9 +7390,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            Boolean       SkipNotifications   = false)
         {
 
-            var updatedTokenStatus = new TokenStatus(Token,
-                                                     AllowedType.ALLOWED);
-
             #region Validate AllowDowngrades
 
             if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
@@ -7046,19 +7400,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     return UpdateResult<Token>.Failed(Token,
-                                                       "The 'lastUpdated' timestamp of the new charging token must be newer then the timestamp of the existing token!");
+                                                      "The 'lastUpdated' timestamp of the new charging token must be newer then the timestamp of the existing token!");
 
                 }
 
             }
+            else
+                return UpdateResult<Token>.Failed(Token,
+                                                  $"Unknown token identification '{Token.Id}'!");
 
             #endregion
 
+
+            var updatedTokenStatus = new TokenStatus(Token,
+                                                     AllowedType.ALLOWED);
 
             if (tokenStatus.TryUpdate(Token.Id,
                                       updatedTokenStatus,
                                       existingTokenStatus))
             {
+
+                Token.CommonAPI = this;
 
                 await LogAsset(updateTokenStatus,
                                updatedTokenStatus.ToJSON(CustomTokenStatusSerializer,
@@ -7568,7 +7930,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                  Boolean   SkipNotifications   = false)
         {
 
-            #region Update an existing cdr
+            #region Update an existing charge detail record
 
             if (chargeDetailRecords.TryGetValue(CDR.Id, out var existingCDR))
             {
@@ -7577,10 +7939,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     CDR.LastUpdated <= existingCDR.LastUpdated)
                 {
                     return AddOrUpdateResult<CDR>.Failed(CDR,
-                                                         "The 'lastUpdated' timestamp of the new charging cdr must be newer then the timestamp of the existing cdr!");
+                                                         "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!");
                 }
 
                 chargeDetailRecords[CDR.Id] = CDR;
+                CDR.CommonAPI = this;
 
                 await LogAsset(addOrUpdateChargeDetailRecord,
                                CDR.ToJSON(true,
@@ -7637,10 +8000,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region Add a new cdr
+            #region Add a new charge detail record
 
             if (chargeDetailRecords.TryAdd(CDR.Id, CDR))
             {
+
+                CDR.CommonAPI = this;
 
                 if (!SkipNotifications)
                 {
@@ -7693,17 +8058,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     return UpdateResult<CDR>.Failed(CDR,
-                                                    "The 'lastUpdated' timestamp of the new charging cdr must be newer then the timestamp of the existing cdr!");
+                                                    "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!");
 
                 }
 
             }
+            else
+                return UpdateResult<CDR>.Failed(CDR,
+                                                $"Unknown charge detail record identification '{CDR.Id}'!");
 
             #endregion
 
 
-            if (chargeDetailRecords.TryUpdate(CDR.Id, CDR, CDR))
+            if (chargeDetailRecords.TryUpdate(CDR.Id, CDR, existingCDR))
             {
+
+                CDR.CommonAPI = this;
 
                 await LogAsset(updateChargeDetailRecord,
                                CDR.ToJSON(true,
@@ -7759,6 +8129,93 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             return UpdateResult<CDR>.Failed(CDR,
                                             "UpdateCDR(CDR.Id, CDR, CDR) failed!");
+
+        }
+
+        #endregion
+
+
+        #region TryPatchCDR      (CDR, CDRPatch, AllowDowngrades = false, SkipNotifications = false)   // Non-Standard
+
+        public async Task<PatchResult<CDR>> TryPatchCDR(CDR       CDR,
+                                                        JObject   CDRPatch,
+                                                        Boolean?  AllowDowngrades     = false,
+                                                        Boolean   SkipNotifications   = false)
+        {
+
+            if (CDRPatch is null || !CDRPatch.HasValues)
+                return PatchResult<CDR>.Failed(CDR,
+                                               "The given charge detail record patch must not be null or empty!");
+
+            if (chargeDetailRecords.TryGetValue(CDR.Id, out var existingCDR))
+            {
+
+                var patchResult = existingCDR.TryPatch(CDRPatch,
+                                                       AllowDowngrades ?? this.AllowDowngrades ?? false);
+
+                if (patchResult.IsSuccess &&
+                    patchResult.PatchedData is not null)
+                {
+
+                    chargeDetailRecords[CDR.Id] = patchResult.PatchedData;
+
+                    await LogAsset(updateChargeDetailRecord,
+                                   CDR.ToJSON(true,
+                                              null,
+                                              CustomCDRSerializer,
+                                              CustomLocationSerializer,
+                                              CustomAdditionalGeoLocationSerializer,
+                                              CustomEVSESerializer,
+                                              CustomStatusScheduleSerializer,
+                                              CustomConnectorSerializer,
+                                              CustomEnergyMeterSerializer,
+                                              CustomTransparencySoftwareStatusSerializer,
+                                              CustomTransparencySoftwareSerializer,
+                                              CustomDisplayTextSerializer,
+                                              CustomBusinessDetailsSerializer,
+                                              CustomHoursSerializer,
+                                              CustomImageSerializer,
+                                              CustomEnergyMixSerializer,
+                                              CustomEnergySourceSerializer,
+                                              CustomEnvironmentalImpactSerializer,
+                                              CustomTariffSerializer,
+                                              CustomTariffElementSerializer,
+                                              CustomPriceComponentSerializer,
+                                              CustomTariffRestrictionsSerializer,
+                                              CustomChargingPeriodSerializer,
+                                              CustomCDRDimensionSerializer,
+                                              CustomSignedDataSerializer,
+                                              CustomSignedValueSerializer));
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
+                        if (OnChargeDetailRecordChangedLocal is not null)
+                        {
+                            try
+                            {
+                                OnChargeDetailRecordChangedLocal(patchResult.PatchedData).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                }
+
+                return patchResult;
+
+            }
+
+            else
+                return PatchResult<CDR>.Failed(CDR,
+                                                  "The given charge detail record does not exist!");
 
         }
 

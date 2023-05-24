@@ -1108,6 +1108,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                     var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                             CustomEVSEIdConverter,
+                                                            evse.Status.Timestamp > evse.LastChange
+                                                                ? evse.Status.Timestamp
+                                                                : evse.LastChange,
                                                             out var warning);
 
                                     if (evse2 is not null)
@@ -1207,6 +1210,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                     var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                             CustomEVSEIdConverter,
+                                                            evse.Status.Timestamp > evse.LastChange
+                                                                ? evse.Status.Timestamp
+                                                                : evse.LastChange,
                                                             out var warning);
 
                                     if (evse2 is not null)
@@ -1313,6 +1319,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                     var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                             CustomEVSEIdConverter,
+                                                            evse.Status.Timestamp > evse.LastChange
+                                                                ? evse.Status.Timestamp
+                                                                : evse.LastChange,
                                                             out var warning);
 
                                     if (evse2 is not null)
@@ -1531,6 +1540,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
+                                                        EVSE.Status.Timestamp > EVSE.LastChange
+                                                            ? EVSE.Status.Timestamp
+                                                            : EVSE.LastChange,
                                                         out warnings);
 
                                 if (evse2 is not null)
@@ -1664,6 +1676,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
+                                                        EVSE.Status.Timestamp > EVSE.LastChange
+                                                            ? EVSE.Status.Timestamp
+                                                            : EVSE.LastChange,
                                                         out warnings);
 
                                 if (evse2 is not null)
@@ -1804,6 +1819,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
+                                                        EVSE.Status.Timestamp > EVSE.LastChange
+                                                            ? EVSE.Status.Timestamp
+                                                            : EVSE.LastChange,
                                                         out warnings);
 
                                 if (evse2 is not null)
@@ -2060,6 +2078,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                         var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                                 CustomEVSEIdConverter,
+                                                                evse.Status.Timestamp > evse.LastChange
+                                                                    ? evse.Status.Timestamp
+                                                                    : evse.LastChange,
                                                                 ref warnings);
 
                                         if (evse2 is not null)

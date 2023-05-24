@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             var EVSE1 = new EVSE(
                             EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                             StatusType.AVAILABLE,
-                            new Connector[] {
+                            new[] {
                                 new Connector(
                                     Connector_Id.Parse("1"),
                                     ConnectorType.IEC_62196_T2,
@@ -62,7 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                     400,
                                     30,
                                     12,
-                                    new Tariff_Id[] {
+                                    new[] {
                                         Tariff_Id.Parse("DE*GEF*T0001"),
                                         Tariff_Id.Parse("DE*GEF*T0002")
                                     },
@@ -77,7 +77,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                     400,
                                     20,
                                     8,
-                                    new Tariff_Id[] {
+                                    new[] {
                                         Tariff_Id.Parse("DE*GEF*T0003"),
                                         Tariff_Id.Parse("DE*GEF*T0004")
                                     },
@@ -86,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                 )
                             },
                             EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                            new StatusSchedule[] {
+                            new[] {
                                 new StatusSchedule(
                                     StatusType.INOPERATIVE,
                                     DateTime.Parse("2020-09-22T00:00:00.000Z").ToUniversalTime(),
@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                     DateTime.Parse("2020-12-31T00:00:00.000Z").ToUniversalTime()
                                 )
                             },
-                            new Capability[] {
+                            new[] {
                                 Capability.RFID_READER,
                                 Capability.RESERVABLE
                             },
@@ -155,15 +155,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                             "1. Stock",
                             GeoCoordinate.Parse(10.1, 20.2),
                             "Ladestation #1",
-                            new DisplayText[] {
+                            new[] {
                                 DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                 DisplayText.Create(Languages.en, "Ken sent me!")
                             },
-                            new ParkingRestrictions[] {
+                            new[] {
                                 ParkingRestrictions.EV_ONLY,
                                 ParkingRestrictions.PLUGGED
                             },
-                            new Image[] {
+                            new[] {
                                 new Image(
                                     URL.Parse("http://example.com/pinguine.jpg"),
                                     ImageFileType.jpeg,

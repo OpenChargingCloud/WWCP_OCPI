@@ -42,6 +42,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        IComparable
     {
 
+        #region Data
+
+        private readonly Object patchLock = new();
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -1044,6 +1050,131 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        #region (private) TryPrivatePatch(JSON, Patch)
+
+        private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
+                                                     JObject  Patch)
+        {
+
+            foreach (var property in Patch)
+            {
+
+                if      (property.Key == "country_code")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'country code' of a charge detail record is not allowed!");
+
+                else if (property.Key == "party_id")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'party identification' of a charge detail record is not allowed!");
+
+                else if (property.Key == "id")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'identification' of a charge detail record is not allowed!");
+
+                else if (property.Value is null)
+                    JSON.Remove(property.Key);
+
+                else if (property.Value is JObject subObject)
+                {
+
+                    if (JSON.ContainsKey(property.Key))
+                    {
+
+                        if (JSON[property.Key] is JObject oldSubObject)
+                        {
+
+                            //ToDo: Perhaps use a more generic JSON patch here!
+                            // PatchObject.Apply(ToJSON(), EVSEPatch),
+                            var patchResult = TryPrivatePatch(oldSubObject, subObject);
+
+                            if (patchResult.IsSuccess)
+                                JSON[property.Key] = patchResult.PatchedData;
+
+                        }
+
+                        else
+                            JSON[property.Key] = subObject;
+
+                    }
+
+                    else
+                        JSON.Add(property.Key, subObject);
+
+                }
+
+                //else if (property.Value is JArray subArray)
+                //{
+                //}
+
+                else
+                    JSON[property.Key] = property.Value;
+
+            }
+
+            return PatchResult<JObject>.Success(JSON);
+
+        }
+
+        #endregion
+
+        #region TryPatch(CDRPatch, AllowDowngrades = false)
+
+        /// <summary>
+        /// Try to patch the JSON representaion of this charge detail record.
+        /// </summary>
+        /// <param name="CDRPatch">The JSON merge patch.</param>
+        /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
+        public PatchResult<CDR> TryPatch(JObject  CDRPatch,
+                                            Boolean  AllowDowngrades = false)
+        {
+
+            if (CDRPatch is null)
+                return PatchResult<CDR>.Failed(this,
+                                                  "The given charge detail record patch must not be null!");
+
+            lock (patchLock)
+            {
+
+                if (CDRPatch["last_updated"] is null)
+                    CDRPatch["last_updated"] = Timestamp.Now.ToIso8601();
+
+                else if (AllowDowngrades == false &&
+                        CDRPatch["last_updated"].Type == JTokenType.Date &&
+                       (CDRPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                {
+                    return PatchResult<CDR>.Failed(this,
+                                                      "The 'lastUpdated' timestamp of the charge detail record patch must be newer then the timestamp of the existing charge detail record!");
+                }
+
+
+                var patchResult = TryPrivatePatch(ToJSON(), CDRPatch);
+
+
+                if (patchResult.IsFailed)
+                    return PatchResult<CDR>.Failed(this,
+                                                      patchResult.ErrorResponse);
+
+                if (TryParse(patchResult.PatchedData,
+                             out var patchedCDR,
+                             out var errorResponse))
+                {
+
+                    return PatchResult<CDR>.Success(patchedCDR,
+                                                       errorResponse);
+
+                }
+
+                else
+                    return PatchResult<CDR>.Failed(this,
+                                                      "Invalid JSON merge patch of a charge detail record: " + errorResponse);
+
+            }
+
+        }
+
+        #endregion
+
+
         #region Operator overloading
 
         #region Operator == (CDR1, CDR2)
@@ -1363,6 +1494,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                );
 
         #endregion
+
 
     }
 

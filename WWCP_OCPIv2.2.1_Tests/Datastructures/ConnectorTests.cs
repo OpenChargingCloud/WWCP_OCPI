@@ -56,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                  400,
                                  30,
                                  12,
-                                 new Tariff_Id[] {
+                                 new[] {
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
                                  },
@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             Assert.IsTrue(Connector.TryParse(JSON, out Connector Connector2, out String ErrorResponse));
             Assert.IsNull(ErrorResponse);
 
-            Assert.AreEqual(new Tariff_Id[] {
+            Assert.AreEqual(new[] {
                                 Tariff_Id.Parse("DE*GEF*T0001"),
                                 Tariff_Id.Parse("DE*GEF*T0002")
                             },
@@ -171,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                  400,
                                  30,
                                  12,
-                                 new Tariff_Id[] {
+                                 new[] {
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
                                  },
@@ -223,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                  400,
                                  30,
                                  12,
-                                 new Tariff_Id[] {
+                                 new[] {
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
                                  },
@@ -273,7 +273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                  400,
                                  30,
                                  12,
-                                 new Tariff_Id[] {
+                                 new[] {
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
                                  },
@@ -322,7 +322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                  400,
                                  30,
                                  12,
-                                 new Tariff_Id[] {
+                                 new[] {
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
                                  },
@@ -370,7 +370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                  400,
                                  30,
                                  12,
-                                 new Tariff_Id[] {
+                                 new[] {
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
                                  },
@@ -420,7 +420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                  400,
                                  30,
                                  12,
-                                 new Tariff_Id[] {
+                                 new[] {
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
                                  },
@@ -471,7 +471,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                  400,
                                  30,
                                  12,
-                                 new Tariff_Id[] {
+                                 new[] {
                                      Tariff_Id.Parse("DE*GEF*T0001"),
                                      Tariff_Id.Parse("DE*GEF*T0002")
                                  },

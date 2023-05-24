@@ -234,20 +234,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -535,20 +535,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -802,20 +802,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -1069,20 +1069,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -1336,20 +1336,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -1602,20 +1602,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -1870,20 +1870,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -2139,20 +2139,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -2406,20 +2406,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -2676,20 +2676,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -2944,20 +2944,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -3211,20 +3211,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
@@ -3477,20 +3477,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 "Europe/Berlin",
                                 new Hours(
                                     new[] {
-                                        new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
-                                        new RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
-                                        new RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
-                                        new RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
-                                        new RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
+                                        new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
+                                        new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
                                     },
                                     new[] {
-                                        new ExceptionalPeriod(
+                                        new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )

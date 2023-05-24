@@ -228,7 +228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                    : new Hours(
                          RegularHours:          OpeningTimes.RegularOpenings.Values.
-                                                    SelectMany(regularHoursList => regularHoursList.Select(regularHours => new RegularHours(
+                                                    SelectMany(regularHoursList => regularHoursList.Select(regularHours => new OCPI.RegularHours(
                                                                                                                                regularHours.DayOfWeek,
                                                                                                                                regularHours.PeriodBegin,
                                                                                                                                regularHours.PeriodEnd
@@ -237,17 +237,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          ExceptionalClosings:   OpeningTimes.ExceptionalClosings.ToOCPI()
                      );
 
-        public static ExceptionalPeriod? ToOCPI(this org.GraphDefined.Vanaheimr.Illias.ExceptionalPeriod ExceptionalPeriod)
+        public static OCPI.ExceptionalPeriod? ToOCPI(this org.GraphDefined.Vanaheimr.Illias.ExceptionalPeriod ExceptionalPeriod)
 
             => new (
                    ExceptionalPeriod.Begin,
                    ExceptionalPeriod.End
                );
 
-        public static IEnumerable<ExceptionalPeriod> ToOCPI(this IEnumerable<org.GraphDefined.Vanaheimr.Illias.ExceptionalPeriod> ExceptionalPeriods)
+        public static IEnumerable<OCPI.ExceptionalPeriod> ToOCPI(this IEnumerable<org.GraphDefined.Vanaheimr.Illias.ExceptionalPeriod> ExceptionalPeriods)
         {
 
-            var exceptionalPeriods = new List<ExceptionalPeriod>();
+            var exceptionalPeriods = new List<OCPI.ExceptionalPeriod>();
 
             foreach (var exceptionalPeriod in ExceptionalPeriods)
             {
@@ -504,6 +504,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     var ocpiEVSE = evse.ToOCPI(CustomEVSEUIdConverter,
                                                CustomEVSEIdConverter,
+                                               evse.Status.Timestamp > evse.LastChange
+                                                   ? evse.Status.Timestamp
+                                                   : evse.LastChange,
                                                ref warnings);
 
                     if (ocpiEVSE is not null)
@@ -716,11 +719,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static EVSE? ToOCPI(this WWCP.IEVSE                 EVSE,
                                    WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
                                    WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                   DateTime?                       LastUpdate,
                                    ref List<Warning>               Warnings)
         {
 
             var evse = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                    CustomEVSEIdConverter,
+                                   LastUpdate,
                                    out var warnings);
 
             foreach (var warning in warnings)
@@ -737,6 +742,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static EVSE? ToOCPI(this WWCP.IEVSE                 EVSE,
                                    WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
                                    WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                   DateTime?                       LastUpdate,
                                    out IEnumerable<Warning>        Warnings)
         {
 
@@ -812,7 +818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            ParkingRestrictions:   Array.Empty<ParkingRestrictions>(),
                            Images:                Array.Empty<Image>(),
 
-                           LastUpdated:           EVSE.LastChange
+                           LastUpdated:           LastUpdate ?? EVSE.LastChange
 
                        );
 
@@ -869,6 +875,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                             CustomEVSEIdConverter,
+                                            evse.Status.Timestamp > evse.LastChange
+                                                ? evse.Status.Timestamp
+                                                : evse.LastChange,
                                             out var warning);
 
                     if (evse2 is not null)

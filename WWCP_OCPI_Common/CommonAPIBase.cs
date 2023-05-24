@@ -276,6 +276,13 @@ namespace cloud.charging.open.protocols.OCPI
         protected const String removeRemoteParty                  = "removeRemoteParty";
         protected const String removeAllRemoteParties             = "removeAllRemoteParties";
 
+        protected const String addLocation                        = "addLocation";
+        protected const String addLocationIfNotExists             = "addLocationIfNotExists";
+        protected const String addOrUpdateLocation                = "addOrUpdateLocation";
+        protected const String updateLocation                     = "updateLocation";
+        protected const String removeLocation                     = "removeLocation";
+        protected const String removeAllLocations                 = "removeAllLocations";
+
         protected const String addTariff                          = "addTariff";
         protected const String addTariffIfNotExists               = "addTariffIfNotExists";
         protected const String addOrUpdateTariff                  = "addOrUpdateTariff";
