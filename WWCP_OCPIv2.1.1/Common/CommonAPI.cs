@@ -5651,6 +5651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// Remove the given charging location.
         /// </summary>
         /// <param name="Location">A charging location.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
         public Task<RemoveResult<Location>> RemoveLocation(Location  Location,
                                                            Boolean   SkipNotifications   = false)
 
@@ -5665,6 +5666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// Remove the given charging location.
         /// </summary>
         /// <param name="LocationId">An unique charging location identification.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
         public async Task<RemoveResult<Location>> RemoveLocation(Location_Id  LocationId,
                                                                  Boolean      SkipNotifications   = false)
         {
@@ -5740,6 +5742,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region RemoveAllLocations(                      SkipNotifications = false)
 
+        /// <summary>
+        /// Remove all charging locations.
+        /// </summary>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
         public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(Boolean SkipNotifications = false)
         {
 
@@ -5798,6 +5804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// Remove all matching charging locations.
         /// </summary>
         /// <param name="IncludeLocations">A charging location filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
         public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(Func<Location, Boolean>  IncludeLocations,
                                                                                   Boolean                  SkipNotifications   = false)
         {
@@ -5835,7 +5842,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// Remove all matching charging locations.
         /// </summary>
-        /// <param name="IncludeLocationIds">An optional charging location identification filter.</param>
+        /// <param name="IncludeLocationIds">A charging location identification filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
         public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(Func<Location_Id, Boolean>  IncludeLocationIds,
                                                                                   Boolean                     SkipNotifications   = false)
         {
@@ -5877,6 +5885,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
         public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(CountryCode  CountryCode,
                                                                                   Party_Id     PartyId,
                                                                                   Boolean      SkipNotifications   = false)
@@ -5921,14 +5930,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         private readonly ConcurrentDictionary<Tariff_Id , Tariff> tariffs = new();
 
 
-        public delegate Task OnTariffAddedDelegate(Tariff Tariff);
-
-        public event OnTariffAddedDelegate? OnTariffAdded;
-
-
+        public delegate Task OnTariffAddedDelegate  (Tariff Tariff);
         public delegate Task OnTariffChangedDelegate(Tariff Tariff);
+        public delegate Task OnTariffRemovedDelegate(Tariff Tariff);
 
-        public event OnTariffChangedDelegate? OnTariffChanged;
+        public event OnTariffAddedDelegate?    OnTariffAdded;
+        public event OnTariffChangedDelegate?  OnTariffChanged;
+        public event OnTariffRemovedDelegate?  OnTariffRemoved;
 
         #endregion
 
@@ -6363,25 +6371,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region RemoveTariff    (Tariff)
+        #region RemoveTariff    (Tariff,               SkipNotifications = false)
 
         /// <summary>
         /// Remove the given charging tariff.
         /// </summary>
         /// <param name="Tariff">A charging tariff.</param>
-        public Task<RemoveResult<Tariff>> RemoveTariff(Tariff Tariff)
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public Task<RemoveResult<Tariff>> RemoveTariff(Tariff   Tariff,
+                                                       Boolean  SkipNotifications   = false)
 
-            => RemoveTariff(Tariff.Id);
+            => RemoveTariff(Tariff.Id,
+                            SkipNotifications);
 
         #endregion
 
-        #region RemoveTariff    (TariffId)
+        #region RemoveTariff    (TariffId,             SkipNotifications = false)
 
         /// <summary>
         /// Remove the given charging tariff.
         /// </summary>
         /// <param name="TariffId">An unique charging tariff identification.</param>
-        public async Task<RemoveResult<Tariff>> RemoveTariff(Tariff_Id TariffId)
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<Tariff>> RemoveTariff(Tariff_Id  TariffId,
+                                                             Boolean    SkipNotifications   = false)
         {
 
             if (tariffs.Remove(TariffId, out var tariff))
@@ -6398,6 +6411,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              CustomEnergySourceSerializer,
                                              CustomEnvironmentalImpactSerializer));
 
+                if (!SkipNotifications)
+                {
+
+                    var OnTariffRemovedLocal = OnTariffRemoved;
+                    if (OnTariffRemovedLocal is not null)
+                    {
+                        try
+                        {
+                            await OnTariffRemovedLocal(tariff);
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(RemoveTariff), " ", nameof(OnTariffRemoved), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
                 return RemoveResult<Tariff>.Success(tariff);
 
             }
@@ -6409,163 +6442,166 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-
-        #region RemoveAllTariffs(IncludeTariffs = null)
+        #region RemoveAllTariffs(                      SkipNotifications = false)
 
         /// <summary>
-        /// Remove all matching charging tariffs.
+        /// Remove all charging tariffs.
         /// </summary>
-        /// <param name="IncludeTariffs">An optional charging tariff filter.</param>
-        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff, Boolean>? IncludeTariffs = null)
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Boolean SkipNotifications = false)
         {
 
-            if (IncludeTariffs is null)
+            var existingTariffs = tariffs.Values.ToArray();
+
+            tariffs.Clear();
+
+            await LogAsset(removeAllTariffs);
+
+            if (!SkipNotifications)
             {
 
-                var existingTariffs = tariffs.Values.ToArray();
-
-                tariffs.Clear();
-
-                await LogAsset(removeAllTariffs);
-
-                return RemoveResult<IEnumerable<Tariff>>.Success(existingTariffs);
-
-            }
-
-            else
-            {
-
-                var removedTariffs = new List<Tariff>();
-
-                foreach (var tariff in tariffs.Values.Where(IncludeTariffs).ToArray())
+                var OnTariffRemovedLocal = OnTariffRemoved;
+                if (OnTariffRemovedLocal is not null)
                 {
-                    if (tariffs.Remove(tariff.Id, out _))
+                    try
                     {
-
-                        removedTariffs.Add(tariff);
-
-                        await LogAsset(removeTariff,
-                                       tariff.ToJSON(true,
-                                                     CustomTariffSerializer,
-                                                     CustomDisplayTextSerializer,
-                                                     CustomTariffElementSerializer,
-                                                     CustomPriceComponentSerializer,
-                                                     CustomTariffRestrictionsSerializer,
-                                                     CustomEnergyMixSerializer,
-                                                     CustomEnergySourceSerializer,
-                                                     CustomEnvironmentalImpactSerializer));
-
+                        foreach (var location in existingTariffs)
+                            await OnTariffRemovedLocal(location);
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(RemoveAllTariffs), " ", nameof(OnTariffRemoved), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
-                return removedTariffs.Any()
-                           ? RemoveResult<IEnumerable<Tariff>>.Success    (removedTariffs)
-                           : RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>());
-
             }
+
+            return RemoveResult<IEnumerable<Tariff>>.Success(existingTariffs);
 
         }
 
         #endregion
 
-        #region RemoveAllTariffs(IncludeTariffIds)
+        #region RemoveAllTariffs(IncludeTariffs,       SkipNotifications = false)
 
         /// <summary>
         /// Remove all matching charging tariffs.
         /// </summary>
-        /// <param name="IncludeTariffIds">An optional charging tariff identification filter.</param>
-        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff_Id, Boolean>? IncludeTariffIds)
+        /// <param name="IncludeTariffs">A charging tariff filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff, Boolean>  IncludeTariffs,
+                                                                              Boolean                SkipNotifications   = false)
         {
 
-            if (IncludeTariffIds is null)
+            var removedTariffs  = new List<Tariff>();
+            var failedTariffs   = new List<RemoveResult<Tariff>>();
+
+            foreach (var tariff in tariffs.Values.Where(IncludeTariffs).ToArray())
             {
 
-                var existingTariffs = tariffs.Values.ToArray();
+                var result = await RemoveTariff(tariff.Id,
+                                                SkipNotifications);
 
-                tariffs.Clear();
-
-                await LogAsset(removeAllTariffs);
-
-                return RemoveResult<IEnumerable<Tariff>>.Success(existingTariffs);
+                if (result.IsSuccess)
+                    removedTariffs.Add(tariff);
+                else
+                    failedTariffs. Add(result);
 
             }
 
-            else
-            {
+            return removedTariffs.Any() && !failedTariffs.Any()
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
 
-                var removedTariffs = new List<Tariff>();
-
-                foreach (var tariff in tariffs.Where  (kvp => IncludeTariffIds(kvp.Key)).
-                                               Select (kvp => kvp.Value).
-                                               ToArray())
-                {
-                    if (tariffs.Remove(tariff.Id, out _))
-                    {
-
-                        removedTariffs.Add(tariff);
-
-                        await LogAsset(removeTariff,
-                                       tariff.ToJSON(true,
-                                                     CustomTariffSerializer,
-                                                     CustomDisplayTextSerializer,
-                                                     CustomTariffElementSerializer,
-                                                     CustomPriceComponentSerializer,
-                                                     CustomTariffRestrictionsSerializer,
-                                                     CustomEnergyMixSerializer,
-                                                     CustomEnergySourceSerializer,
-                                                     CustomEnvironmentalImpactSerializer));
-
-                    }
-                }
-
-                return removedTariffs.Any()
-                           ? RemoveResult<IEnumerable<Tariff>>.Success    (removedTariffs)
-                           : RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>());
-
-            }
+                       : !removedTariffs.Any() && !failedTariffs.Any()
+                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>())
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.Select(tariff => tariff.Data)!,
+                                                                             failedTariffs.Select(tariff => tariff.ErrorResponse).AggregateWith(", "));
 
         }
 
         #endregion
 
-        #region RemoveAllTariffs(CountryCode, PartyId)
+        #region RemoveAllTariffs(IncludeTariffIds,     SkipNotifications = false)
+
+        /// <summary>
+        /// Remove all matching charging tariffs.
+        /// </summary>
+        /// <param name="IncludeTariffIds">A charging tariff identification filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff_Id, Boolean>  IncludeTariffIds,
+                                                                              Boolean                   SkipNotifications   = false)
+        {
+
+            var removedTariffs  = new List<Tariff>();
+            var failedTariffs   = new List<RemoveResult<Tariff>>();
+
+            foreach (var tariff in tariffs.Where  (kvp => IncludeTariffIds(kvp.Key)).
+                                           Select (kvp => kvp.Value).
+                                           ToArray())
+            {
+
+                var result = await RemoveTariff(tariff.Id,
+                                                SkipNotifications);
+
+                if (result.IsSuccess)
+                    removedTariffs.Add(tariff);
+                else
+                    failedTariffs. Add(result);
+
+            }
+
+            return removedTariffs.Any() && !failedTariffs.Any()
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
+
+                       : !removedTariffs.Any() && !failedTariffs.Any()
+                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>())
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.Select(tariff => tariff.Data)!,
+                                                                             failedTariffs.Select(tariff => tariff.ErrorResponse).AggregateWith(", "));
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs(CountryCode, PartyId, SkipNotifications = false)
 
         /// <summary>
         /// Remove all charging tariffs owned by the given party.
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
         public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(CountryCode  CountryCode,
-                                                                              Party_Id     PartyId)
+                                                                              Party_Id     PartyId,
+                                                                              Boolean      SkipNotifications   = false)
         {
 
-            var removedTariffs = new List<Tariff>();
+            var removedTariffs  = new List<Tariff>();
+            var failedTariffs   = new List<RemoveResult<Tariff>>();
 
-            foreach (var tariff in tariffs.Values.Where(tariff => CountryCode == tariff.CountryCode &&
-                                                                  PartyId     == tariff.PartyId).ToArray())
+            foreach (var tariff in tariffs.Values.Where  (tariff => CountryCode == tariff.CountryCode &&
+                                                                    PartyId     == tariff.PartyId).
+                                                  ToArray())
             {
-                if (tariffs.Remove(tariff.Id, out _))
-                {
 
+                var result = await RemoveTariff(tariff.Id,
+                                                SkipNotifications);
+
+                if (result.IsSuccess)
                     removedTariffs.Add(tariff);
+                else
+                    failedTariffs. Add(result);
 
-                    await LogAsset(removeTariff,
-                                   tariff.ToJSON(true,
-                                                 CustomTariffSerializer,
-                                                 CustomDisplayTextSerializer,
-                                                 CustomTariffElementSerializer,
-                                                 CustomPriceComponentSerializer,
-                                                 CustomTariffRestrictionsSerializer,
-                                                 CustomEnergyMixSerializer,
-                                                 CustomEnergySourceSerializer,
-                                                 CustomEnvironmentalImpactSerializer));
-
-                }
             }
 
-            return removedTariffs.Any()
-                       ? RemoveResult<IEnumerable<Tariff>>.Success    (removedTariffs)
-                       : RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>());
+            return removedTariffs.Any() && !failedTariffs.Any()
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
+
+                       : !removedTariffs.Any() && !failedTariffs.Any()
+                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>())
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.Select(tariff => tariff.Data)!,
+                                                                             failedTariffs.Select(tariff => tariff.ErrorResponse).AggregateWith(", "));
 
         }
 
@@ -6580,13 +6616,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         private readonly ConcurrentDictionary<Session_Id , Session> chargingSessions = new();
 
 
-        public delegate Task OnSessionAddedDelegate(Session Session);
-
-        public event OnSessionAddedDelegate? OnChargingSessionAdded;
-
+        public delegate Task OnSessionAddedDelegate          (Session Session);
         public delegate Task OnChargingSessionChangedDelegate(Session Session);
+        public delegate Task OnSessionRemovedDelegate        (Session Session);
 
-        public event OnChargingSessionChangedDelegate? OnChargingSessionChanged;
+        public event OnSessionAddedDelegate?            OnSessionAdded;
+        public event OnChargingSessionChangedDelegate?  OnSessionChanged;
+        public event OnSessionRemovedDelegate?          OnSessionRemoved;
 
         #endregion
 
@@ -6627,7 +6663,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnChargingSessionAddedLocal = OnChargingSessionAdded;
+                    var OnChargingSessionAddedLocal = OnSessionAdded;
                     if (OnChargingSessionAddedLocal is not null)
                     {
                         try
@@ -6636,7 +6672,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSession), " ", nameof(OnChargingSessionAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSession), " ", nameof(OnSessionAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -6691,7 +6727,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnChargingSessionAddedLocal = OnChargingSessionAdded;
+                    var OnChargingSessionAddedLocal = OnSessionAdded;
                     if (OnChargingSessionAddedLocal is not null)
                     {
                         try
@@ -6700,7 +6736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSessionIfNotExists), " ", nameof(OnChargingSessionAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSessionIfNotExists), " ", nameof(OnSessionAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -6765,7 +6801,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnChargingSessionChangedLocal = OnChargingSessionChanged;
+                    var OnChargingSessionChangedLocal = OnSessionChanged;
                     if (OnChargingSessionChangedLocal is not null)
                     {
                         try
@@ -6774,7 +6810,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnChargingSessionChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -6821,7 +6857,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnSessionAddedLocal = OnChargingSessionAdded;
+                    var OnSessionAddedLocal = OnSessionAdded;
                     if (OnSessionAddedLocal is not null)
                     {
                         try
@@ -6830,7 +6866,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnChargingSessionAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -6911,7 +6947,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnChargingSessionChangedLocal = OnChargingSessionChanged;
+                    var OnChargingSessionChangedLocal = OnSessionChanged;
                     if (OnChargingSessionChangedLocal is not null)
                     {
                         try
@@ -6920,7 +6956,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnChargingSessionChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnSessionChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -6989,7 +7025,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (!SkipNotifications)
                     {
 
-                        var OnChargingSessionChangedLocal = OnChargingSessionChanged;
+                        var OnChargingSessionChangedLocal = OnSessionChanged;
                         if (OnChargingSessionChangedLocal is not null)
                         {
                             try
@@ -6998,7 +7034,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchSession), " ", nameof(OnChargingSessionChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchSession), " ", nameof(OnSessionChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -7066,17 +7102,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region RemoveSession    (Session)
+        #region RemoveSession    (Session,              SkipNotifications = false)
 
-        public Task<RemoveResult<Session>> RemoveSession(Session Session)
+        /// <summary>
+        /// Remove the given charging session.
+        /// </summary>
+        /// <param name="Session">A charging session.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public Task<RemoveResult<Session>> RemoveSession(Session  Session,
+                                                         Boolean  SkipNotifications   = false)
 
-            => RemoveSession(Session.Id);
+            => RemoveSession(Session.Id,
+                             SkipNotifications);
 
         #endregion
 
-        #region RemoveSession    (SessionId)
+        #region RemoveSession    (SessionId,            SkipNotifications = false)
 
-        public async Task<RemoveResult<Session>> RemoveSession(Session_Id SessionId)
+        /// <summary>
+        /// Remove the given charging session.
+        /// </summary>
+        /// <param name="SessionId">An unique charging session identification.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<Session>> RemoveSession(Session_Id  SessionId,
+                                                               Boolean     SkipNotifications   = false)
         {
 
             if (chargingSessions.Remove(SessionId, out var session))
@@ -7104,6 +7153,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               CustomChargingPeriodSerializer,
                                               CustomCDRDimensionSerializer));
 
+                if (!SkipNotifications)
+                {
+
+                    var OnSessionRemovedLocal = OnSessionRemoved;
+                    if (OnSessionRemovedLocal is not null)
+                    {
+                        try
+                        {
+                            await OnSessionRemovedLocal(session);
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(RemoveSession), " ", nameof(OnSessionRemoved), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
                 return RemoveResult<Session>.Success(session);
 
             }
@@ -7115,196 +7184,166 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-
-        #region RemoveAllSessions(IncludeSessions = null)
+        #region RemoveAllSessions(                      SkipNotifications = false)
 
         /// <summary>
-        /// Remove all matching sessions.
+        /// Remove all charging sessions.
         /// </summary>
-        /// <param name="IncludeSessions">An optional charging session filter.</param>
-        public async Task<RemoveResult<IEnumerable<Session>>> RemoveAllSessions(Func<Session, Boolean>? IncludeSessions = null)
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Session>>> RemoveAllSessions(Boolean SkipNotifications = false)
         {
 
-            if (IncludeSessions is null)
+            var existingSessions = chargingSessions.Values.ToArray();
+
+            chargingSessions.Clear();
+
+            await LogAsset(removeAllSessions);
+
+            if (!SkipNotifications)
             {
 
-                var existingSessions = chargingSessions.Values.ToArray();
-
-                chargingSessions.Clear();
-
-                await LogAsset(removeAllTariffs);
-
-                return RemoveResult<IEnumerable<Session>>.Success(existingSessions);
-
-            }
-
-            else
-            {
-
-                var removedSessions = new List<Session>();
-
-                foreach (var session in chargingSessions.Values.Where(IncludeSessions).ToArray())
+                var OnSessionRemovedLocal = OnSessionRemoved;
+                if (OnSessionRemovedLocal is not null)
                 {
-                    if (chargingSessions.Remove(session.Id, out _))
+                    try
                     {
-
-                        removedSessions.Add(session);
-
-                        await LogAsset(removeTariff,
-                                       session.ToJSON(true,
-                                                      null,
-                                                      CustomSessionSerializer,
-                                                      CustomLocationSerializer,
-                                                      CustomAdditionalGeoLocationSerializer,
-                                                      CustomEVSESerializer,
-                                                      CustomStatusScheduleSerializer,
-                                                      CustomConnectorSerializer,
-                                                      CustomEnergyMeterSerializer,
-                                                      CustomTransparencySoftwareStatusSerializer,
-                                                      CustomTransparencySoftwareSerializer,
-                                                      CustomDisplayTextSerializer,
-                                                      CustomBusinessDetailsSerializer,
-                                                      CustomHoursSerializer,
-                                                      CustomImageSerializer,
-                                                      CustomEnergyMixSerializer,
-                                                      CustomEnergySourceSerializer,
-                                                      CustomEnvironmentalImpactSerializer,
-                                                      CustomChargingPeriodSerializer,
-                                                      CustomCDRDimensionSerializer));
-
+                        foreach (var location in existingSessions)
+                            await OnSessionRemovedLocal(location);
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(RemoveAllSessions), " ", nameof(OnSessionRemoved), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
-                return removedSessions.Any()
-                           ? RemoveResult<IEnumerable<Session>>.Success    (removedSessions)
-                           : RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>());
-
             }
+
+            return RemoveResult<IEnumerable<Session>>.Success(existingSessions);
 
         }
 
         #endregion
 
-        #region RemoveAllSessions(IncludeSessionIds)
+        #region RemoveAllSessions(IncludeSessions,      SkipNotifications = false)
 
         /// <summary>
         /// Remove all matching sessions.
         /// </summary>
-        /// <param name="IncludeSessionIds">An optional charging session identification filter.</param>
-        public async Task<RemoveResult<IEnumerable<Session>>> RemoveAllSessions(Func<Session_Id, Boolean>? IncludeSessionIds)
+        /// <param name="IncludeSessions">A charging session filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Session>>> RemoveAllSessions(Func<Session, Boolean>  IncludeSessions,
+                                                                                Boolean                 SkipNotifications   = false)
         {
 
-            if (IncludeSessionIds is null)
+            var removedSessions  = new List<Session>();
+            var failedSessions   = new List<RemoveResult<Session>>();
+
+            foreach (var session in chargingSessions.Values.Where(IncludeSessions).ToArray())
             {
 
-                var existingSessions = chargingSessions.Values.ToArray();
+                var result = await RemoveSession(session.Id,
+                                                 SkipNotifications);
 
-                chargingSessions.Clear();
-
-                await LogAsset(removeAllSessions);
-
-                return RemoveResult<IEnumerable<Session>>.Success(existingSessions);
+                if (result.IsSuccess)
+                    removedSessions.Add(session);
+                else
+                    failedSessions. Add(result);
 
             }
 
-            else
-            {
+            return removedSessions.Any() && !failedSessions.Any()
+                       ? RemoveResult<IEnumerable<Session>>.Success(removedSessions)
 
-                var removedSessions = new List<Session>();
-
-                foreach (var session in chargingSessions.Where  (kvp => IncludeSessionIds(kvp.Key)).
-                                                         Select (kvp => kvp.Value).
-                                                         ToArray())
-                {
-                    if (chargingSessions.Remove(session.Id, out _))
-                    {
-
-                        removedSessions.Add(session);
-
-                        await LogAsset(removeSession,
-                                       session.ToJSON(true,
-                                                      null,
-                                                      CustomSessionSerializer,
-                                                      CustomLocationSerializer,
-                                                      CustomAdditionalGeoLocationSerializer,
-                                                      CustomEVSESerializer,
-                                                      CustomStatusScheduleSerializer,
-                                                      CustomConnectorSerializer,
-                                                      CustomEnergyMeterSerializer,
-                                                      CustomTransparencySoftwareStatusSerializer,
-                                                      CustomTransparencySoftwareSerializer,
-                                                      CustomDisplayTextSerializer,
-                                                      CustomBusinessDetailsSerializer,
-                                                      CustomHoursSerializer,
-                                                      CustomImageSerializer,
-                                                      CustomEnergyMixSerializer,
-                                                      CustomEnergySourceSerializer,
-                                                      CustomEnvironmentalImpactSerializer,
-                                                      CustomChargingPeriodSerializer,
-                                                      CustomCDRDimensionSerializer));
-
-                    }
-                }
-
-                return removedSessions.Any()
-                           ? RemoveResult<IEnumerable<Session>>.Success    (removedSessions)
-                           : RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>());
-
-            }
+                       : !removedSessions.Any() && !failedSessions.Any()
+                             ? RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>())
+                             : RemoveResult<IEnumerable<Session>>.Failed     (failedSessions.Select(session => session.Data)!,
+                                                                              failedSessions.Select(session => session.ErrorResponse).AggregateWith(", "));
 
         }
 
         #endregion
 
-        #region RemoveAllSessions(CountryCode, PartyId)
+        #region RemoveAllSessions(IncludeSessionIds,    SkipNotifications = false)
+
+        /// <summary>
+        /// Remove all matching sessions.
+        /// </summary>
+        /// <param name="IncludeSessionIds">A charging session identification filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Session>>> RemoveAllSessions(Func<Session_Id, Boolean>  IncludeSessionIds,
+                                                                                Boolean                    SkipNotifications   = false)
+        {
+
+            var removedSessions  = new List<Session>();
+            var failedSessions   = new List<RemoveResult<Session>>();
+
+            foreach (var session in chargingSessions.Where  (kvp => IncludeSessionIds(kvp.Key)).
+                                                     Select (kvp => kvp.Value).
+                                                     ToArray())
+            {
+
+                var result = await RemoveSession(session.Id,
+                                                 SkipNotifications);
+
+                if (result.IsSuccess)
+                    removedSessions.Add(session);
+                else
+                    failedSessions. Add(result);
+
+            }
+
+            return removedSessions.Any() && !failedSessions.Any()
+                       ? RemoveResult<IEnumerable<Session>>.Success(removedSessions)
+
+                       : !removedSessions.Any() && !failedSessions.Any()
+                             ? RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>())
+                             : RemoveResult<IEnumerable<Session>>.Failed     (failedSessions.Select(session => session.Data)!,
+                                                                              failedSessions.Select(session => session.ErrorResponse).AggregateWith(", "));
+
+        }
+
+        #endregion
+
+        #region RemoveAllSessions(CountryCode, PartyId, SkipNotifications = false)
 
         /// <summary>
         /// Remove all charging sessions owned by the given party.
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
         public async Task<RemoveResult<IEnumerable<Session>>> RemoveAllSessions(CountryCode  CountryCode,
-                                                                                Party_Id     PartyId)
+                                                                                Party_Id     PartyId,
+                                                                                Boolean      SkipNotifications   = false)
         {
 
-            var removedSessions = new List<Session>();
+            var removedSessions  = new List<Session>();
+            var failedSessions   = new List<RemoveResult<Session>>();
 
-            foreach (var session in chargingSessions.Values.Where(session => CountryCode == session.CountryCode &&
-                                                                             PartyId     == session.PartyId).ToArray())
+            foreach (var session in chargingSessions.Values.Where  (session => CountryCode == session.CountryCode &&
+                                                                               PartyId     == session.PartyId).
+                                                            ToArray())
             {
-                if (chargingSessions.Remove(session.Id, out _))
-                {
 
+                var result = await RemoveSession(session.Id,
+                                                 SkipNotifications);
+
+                if (result.IsSuccess)
                     removedSessions.Add(session);
+                else
+                    failedSessions. Add(result);
 
-                    await LogAsset(removeSession,
-                                   session.ToJSON(true,
-                                                  null,
-                                                  CustomSessionSerializer,
-                                                  CustomLocationSerializer,
-                                                  CustomAdditionalGeoLocationSerializer,
-                                                  CustomEVSESerializer,
-                                                  CustomStatusScheduleSerializer,
-                                                  CustomConnectorSerializer,
-                                                  CustomEnergyMeterSerializer,
-                                                  CustomTransparencySoftwareStatusSerializer,
-                                                  CustomTransparencySoftwareSerializer,
-                                                  CustomDisplayTextSerializer,
-                                                  CustomBusinessDetailsSerializer,
-                                                  CustomHoursSerializer,
-                                                  CustomImageSerializer,
-                                                  CustomEnergyMixSerializer,
-                                                  CustomEnergySourceSerializer,
-                                                  CustomEnvironmentalImpactSerializer,
-                                                  CustomChargingPeriodSerializer,
-                                                  CustomCDRDimensionSerializer));
-
-                }
             }
 
-            return removedSessions.Any()
-                       ? RemoveResult<IEnumerable<Session>>.Success    (removedSessions)
-                       : RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>());
+            return removedSessions.Any() && !failedSessions.Any()
+                       ? RemoveResult<IEnumerable<Session>>.Success(removedSessions)
+
+                       : !removedSessions.Any() && !failedSessions.Any()
+                             ? RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>())
+                             : RemoveResult<IEnumerable<Session>>.Failed     (failedSessions.Select(session => session.Data)!,
+                                                                              failedSessions.Select(session => session.ErrorResponse).AggregateWith(", "));
 
         }
 
@@ -7319,19 +7358,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         private readonly ConcurrentDictionary<Token_Id, TokenStatus> tokenStatus = new();
 
 
-        public delegate Task OnTokenStatusAddedDelegate(Token Token);
+        public delegate Task               OnTokenAddedDelegate  (Token     Token);
+        public delegate Task               OnTokenChangedDelegate(Token     Token);
+        public delegate Task               OnTokenRemovedDelegate(Token     Token);
+        public delegate Task<TokenStatus>  OnVerifyTokenDelegate (Token_Id  TokenId);
 
-        public event OnTokenStatusAddedDelegate? OnTokenStatusAdded;
-
-
-        public delegate Task OnTokenStatusChangedDelegate(Token Token);
-
-        public event OnTokenStatusChangedDelegate? OnTokenStatusChanged;
-
-
-        public delegate Task<TokenStatus> OnVerifyTokenDelegate(Token_Id TokenId);
-
-        public event OnVerifyTokenDelegate? OnVerifyToken;
+        public event OnTokenAddedDelegate?    OnTokenAdded;
+        public event OnTokenChangedDelegate?  OnTokenChanged;
+        public event OnTokenRemovedDelegate?  OnTokenRemoved;
+        public event OnVerifyTokenDelegate?   OnVerifyToken;
 
         #endregion
 
@@ -7360,16 +7395,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnTokenStatusAddedLocal = OnTokenStatusAdded;
-                    if (OnTokenStatusAddedLocal is not null)
+                    var OnTokenAddedLocal = OnTokenAdded;
+                    if (OnTokenAddedLocal is not null)
                     {
                         try
                         {
-                            OnTokenStatusAddedLocal(Token).Wait();
+                            OnTokenAddedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenStatusAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAddedLocal), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -7412,16 +7447,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnTokenStatusAddedLocal = OnTokenStatusAdded;
-                    if (OnTokenStatusAddedLocal is not null)
+                    var OnTokenAddedLocal = OnTokenAdded;
+                    if (OnTokenAddedLocal is not null)
                     {
                         try
                         {
-                            OnTokenStatusAddedLocal(Token).Wait();
+                            OnTokenAddedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenStatusAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -7474,16 +7509,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnTokenStatusChangedLocal = OnTokenStatusChanged;
-                    if (OnTokenStatusChangedLocal is not null)
+                    var OnTokenChangedLocal = OnTokenChanged;
+                    if (OnTokenChangedLocal is not null)
                     {
                         try
                         {
-                            OnTokenStatusChangedLocal(Token).Wait();
+                            OnTokenChangedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenStatusChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -7517,16 +7552,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnTokenStatusAddedLocal = OnTokenStatusAdded;
-                    if (OnTokenStatusAddedLocal is not null)
+                    var OnTokenAddedLocal = OnTokenAdded;
+                    if (OnTokenAddedLocal is not null)
                     {
                         try
                         {
-                            OnTokenStatusAddedLocal(Token).Wait();
+                            OnTokenAddedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenStatusAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -7597,16 +7632,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnTokenStatusChangedLocal = OnTokenStatusChanged;
-                    if (OnTokenStatusChangedLocal is not null)
+                    var OnTokenChangedLocal = OnTokenChanged;
+                    if (OnTokenChangedLocal is not null)
                     {
                         try
                         {
-                            OnTokenStatusChangedLocal(Token).Wait();
+                            OnTokenChangedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateToken), " ", nameof(OnTokenStatusChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateToken), " ", nameof(OnTokenChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -7662,16 +7697,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (!SkipNotifications)
                     {
 
-                        var OnTokenStatusChangedLocal = OnTokenStatusChanged;
-                        if (OnTokenStatusChangedLocal is not null)
+                        var OnTokenChangedLocal = OnTokenChanged;
+                        if (OnTokenChangedLocal is not null)
                         {
                             try
                             {
-                                OnTokenStatusChangedLocal(patchResult.PatchedData).Wait();
+                                OnTokenChangedLocal(patchResult.PatchedData).Wait();
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchToken), " ", nameof(OnTokenStatusChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchToken), " ", nameof(OnTokenChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -7749,25 +7784,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region RemoveToken    (Token)
+        #region RemoveToken    (Token,                SkipNotifications = false)
 
         /// <summary>
         /// Remove the given token.
         /// </summary>
         /// <param name="Token">A token.</param>
-        public Task<RemoveResult<Token>> RemoveToken(Token Token)
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public Task<RemoveResult<Token>> RemoveToken(Token    Token,
+                                                     Boolean  SkipNotifications   = false)
 
-            => RemoveToken(Token.Id);
+            => RemoveToken(Token.Id,
+                           SkipNotifications);
 
         #endregion
 
-        #region RemoveToken    (TokenId)
+        #region RemoveToken    (TokenId,              SkipNotifications = false)
 
         /// <summary>
         /// Remove the given token.
         /// </summary>
         /// <param name="TokenId">A unique identification of a token.</param>
-        public async Task<RemoveResult<Token>> RemoveToken(Token_Id TokenId)
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<Token>> RemoveToken(Token_Id  TokenId,
+                                                           Boolean   SkipNotifications   = false)
         {
 
             if (tokenStatus.Remove(TokenId, out var existingTokenStatus))
@@ -7776,6 +7816,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogAsset(removeTokenStatus,
                                existingTokenStatus.Token.ToJSON(true,
                                                                 CustomTokenSerializer));
+
+                if (!SkipNotifications)
+                {
+
+                    var OnTokenRemovedLocal = OnTokenRemoved;
+                    if (OnTokenRemovedLocal is not null)
+                    {
+                        try
+                        {
+                            await OnTokenRemovedLocal(existingTokenStatus.Token);
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(RemoveToken), " ", nameof(OnTokenRemoved), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
 
                 return RemoveResult<Token>.Success(existingTokenStatus.Token);
 
@@ -7788,143 +7848,166 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-
-        #region RemoveAllTokens(IncludeTokens = null)
+        #region RemoveAllTokens(                      SkipNotifications = false)
 
         /// <summary>
         /// Remove all tokens.
         /// </summary>
-        /// <param name="IncludeTokens">An optional token filter.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Func<Token, Boolean>? IncludeTokens = null)
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Boolean SkipNotifications = false)
         {
 
-            if (IncludeTokens is null)
+            var existingTokenStatus = tokenStatus.Values.ToArray();
+
+            tokenStatus.Clear();
+
+            await LogAsset(removeAllTokenStatus);
+
+            if (!SkipNotifications)
             {
 
-                var existingTokens = tokenStatus.Values.Select(tokenStatus => tokenStatus.Token).ToArray();
-
-                tokenStatus.Clear();
-
-                await LogAsset(removeAllTokenStatus);
-
-                return RemoveResult<IEnumerable<Token>>.Success(existingTokens);
-
-            }
-
-            else
-            {
-
-                var removedTokens = new List<Token>();
-
-                foreach (var token in tokenStatus.Values.Select(tokenStatus => tokenStatus.Token).Where(IncludeTokens).ToArray())
+                var OnTokenRemovedLocal = OnTokenRemoved;
+                if (OnTokenRemovedLocal is not null)
                 {
-                    if (tokenStatus.Remove(token.Id, out _))
+                    try
                     {
-
-                        removedTokens.Add(token);
-
-                        await LogAsset(removeTokenStatus,
-                                       token.ToJSON(true,
-                                                    CustomTokenSerializer));
-
+                        foreach (var tokenStatus in existingTokenStatus)
+                            await OnTokenRemovedLocal(tokenStatus.Token);
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(RemoveAllTokens), " ", nameof(OnTokenRemoved), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
-                return removedTokens.Any()
-                           ? RemoveResult<IEnumerable<Token>>.Success    (removedTokens)
-                           : RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>());
-
             }
+
+            return RemoveResult<IEnumerable<Token>>.Success(existingTokenStatus.Select(tokenStatus => tokenStatus.Token));
 
         }
 
         #endregion
 
-        #region RemoveAllTokens(IncludeTokenIds)
+        #region RemoveAllTokens(IncludeTokens,        SkipNotifications = false)
+
+        /// <summary>
+        /// Remove all tokens.
+        /// </summary>
+        /// <param name="IncludeTokens">A token filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Func<Token, Boolean>  IncludeTokens,
+                                                                            Boolean               SkipNotifications   = false)
+        {
+
+            var removedTokens  = new List<Token>();
+            var failedTokens   = new List<RemoveResult<Token>>();
+
+            foreach (var token_status in tokenStatus.Values.Where(tokenstatus => IncludeTokens(tokenstatus.Token)).ToArray())
+            {
+
+                var result = await RemoveToken(token_status.Token.Id,
+                                               SkipNotifications);
+
+                if (result.IsSuccess)
+                    removedTokens.Add(token_status.Token);
+                else
+                    failedTokens. Add(result);
+
+            }
+
+            return removedTokens.Any() && !failedTokens.Any()
+                       ? RemoveResult<IEnumerable<Token>>.Success(removedTokens)
+
+                       : !removedTokens.Any() && !failedTokens.Any()
+                             ? RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>())
+                             : RemoveResult<IEnumerable<Token>>.Failed     (failedTokens.Select(token => token.Data)!,
+                                                                            failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
+
+        }
+
+        #endregion
+
+        #region RemoveAllTokens(IncludeTokenIds,      SkipNotifications = false)
 
         /// <summary>
         /// Remove all matching tokens.
         /// </summary>
-        /// <param name="IncludeTokenIds">An optional token identification filter.</param>
-        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Func<Token_Id, Boolean>? IncludeTokenIds)
+        /// <param name="IncludeTokenIds">A token identification filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(Func<Token_Id, Boolean>  IncludeTokenIds,
+                                                                            Boolean                  SkipNotifications   = false)
         {
 
-            if (IncludeTokenIds is null)
+            var removedTokens  = new List<Token>();
+            var failedTokens   = new List<RemoveResult<Token>>();
+
+            foreach (var token_status in tokenStatus.Where  (kvp => IncludeTokenIds(kvp.Key)).
+                                                     Select (kvp => kvp.Value).
+                                                     ToArray())
             {
 
-                var existingTokens = tokenStatus.Values.Select(existingTokenStatus => existingTokenStatus.Token).ToArray();
+                var result = await RemoveToken(token_status.Token.Id,
+                                               SkipNotifications);
 
-                tokenStatus.Clear();
-
-                await LogAsset(removeAllTokenStatus);
-
-                return RemoveResult<IEnumerable<Token>>.Success(existingTokens);
+                if (result.IsSuccess)
+                    removedTokens.Add(token_status.Token);
+                else
+                    failedTokens. Add(result);
 
             }
 
-            else
-            {
+            return removedTokens.Any() && !failedTokens.Any()
+                       ? RemoveResult<IEnumerable<Token>>.Success(removedTokens)
 
-                var removedTokens = new List<Token>();
-
-                foreach (var token in tokenStatus.Where  (kvp => IncludeTokenIds(kvp.Key)).
-                                                  Select (kvp => kvp.Value.Token).
-                                                  ToArray())
-                {
-                    if (tokenStatus.Remove(token.Id, out _))
-                    {
-
-                        removedTokens.Add(token);
-
-                        await LogAsset(removeChargeDetailRecord,
-                                       token.ToJSON(true,
-                                                    CustomTokenSerializer));
-
-                    }
-                }
-
-                return removedTokens.Any()
-                           ? RemoveResult<IEnumerable<Token>>.Success    (removedTokens)
-                           : RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>());
-
-            }
+                       : !removedTokens.Any() && !failedTokens.Any()
+                             ? RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>())
+                             : RemoveResult<IEnumerable<Token>>.Failed     (failedTokens.Select(token => token.Data)!,
+                                                                             failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
 
         }
 
         #endregion
 
-        #region RemoveAllTokens(CountryCode, PartyId)
+        #region RemoveAllTokens(CountryCode, PartyId, SkipNotifications = false)
 
         /// <summary>
         /// Remove all tokens owned by the given party.
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
         public async Task<RemoveResult<IEnumerable<Token>>> RemoveAllTokens(CountryCode  CountryCode,
-                                                                            Party_Id     PartyId)
+                                                                            Party_Id     PartyId,
+                                                                            Boolean      SkipNotifications   = false)
         {
 
-            var removedTokens = new List<Token>();
+            var removedTokens  = new List<Token>();
+            var failedTokens   = new List<RemoveResult<Token>>();
 
-            foreach (var token in tokenStatus.Values.Select(existingTokenStatus => existingTokenStatus.Token).
-                                                     Where (existingToken       => CountryCode == existingToken.CountryCode &&
-                                                                                   PartyId     == existingToken.PartyId).ToArray())
+            foreach (var token_status in tokenStatus.Values.Where  (tokenstatus => CountryCode == tokenstatus.Token.CountryCode &&
+                                                                                   PartyId     == tokenstatus.Token.PartyId).
+                                                            ToArray())
             {
-                if (tokenStatus.Remove(token.Id, out _))
-                {
 
-                    removedTokens.Add(token);
+                var result = await RemoveToken(token_status.Token.Id,
+                                               SkipNotifications);
 
-                    await LogAsset(removeTokenStatus,
-                                   token.ToJSON(true,
-                                                CustomTokenSerializer));
+                if (result.IsSuccess)
+                    removedTokens.Add(token_status.Token);
+                else
+                    failedTokens. Add(result);
 
-                }
             }
 
-            return removedTokens.Any()
-                       ? RemoveResult<IEnumerable<Token>>.Success    (removedTokens)
-                       : RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>());
+            return removedTokens.Any() && !failedTokens.Any()
+                       ? RemoveResult<IEnumerable<Token>>.Success(removedTokens)
+
+                       : !removedTokens.Any() && !failedTokens.Any()
+                             ? RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>())
+                             : RemoveResult<IEnumerable<Token>>.Failed     (failedTokens.Select(token => token.Data)!,
+                                                                             failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
 
         }
 
@@ -7939,14 +8022,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         private readonly ConcurrentDictionary<CDR_Id, CDR> chargeDetailRecords = new();
 
 
-        public delegate Task OnChargeDetailRecordAddedDelegate(CDR CDR);
-
-        public event OnChargeDetailRecordAddedDelegate? OnChargeDetailRecordAdded;
-
-
+        public delegate Task OnChargeDetailRecordAddedDelegate  (CDR CDR);
         public delegate Task OnChargeDetailRecordChangedDelegate(CDR CDR);
+        public delegate Task OnChargeDetailRecordRemovedDelegate(CDR CDR);
 
-        public event OnChargeDetailRecordChangedDelegate? OnChargeDetailRecordChanged;
+        public event OnChargeDetailRecordAddedDelegate?    OnCDRAdded;
+        public event OnChargeDetailRecordChangedDelegate?  OnCDRChanged;
+        public event OnChargeDetailRecordRemovedDelegate?  OnCDRRemoved;
 
         #endregion
 
@@ -7993,7 +8075,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
+                    var OnChargeDetailRecordAddedLocal = OnCDRAdded;
                     if (OnChargeDetailRecordAddedLocal is not null)
                     {
                         try
@@ -8002,7 +8084,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnCDRAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -8063,7 +8145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
+                    var OnChargeDetailRecordAddedLocal = OnCDRAdded;
                     if (OnChargeDetailRecordAddedLocal is not null)
                     {
                         try
@@ -8072,7 +8154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnCDRAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -8143,7 +8225,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnCDRChangedLocal = OnChargeDetailRecordChanged;
+                    var OnCDRChangedLocal = OnCDRChanged;
                     if (OnCDRChangedLocal is not null)
                     {
                         try
@@ -8152,7 +8234,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnCDRChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -8177,7 +8259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnCDRAddedLocal = OnChargeDetailRecordAdded;
+                    var OnCDRAddedLocal = OnCDRAdded;
                     if (OnCDRAddedLocal is not null)
                     {
                         try
@@ -8186,7 +8268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnCDRAdded), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -8273,7 +8355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!SkipNotifications)
                 {
 
-                    var OnCDRChangedLocal = OnChargeDetailRecordChanged;
+                    var OnCDRChangedLocal = OnCDRChanged;
                     if (OnCDRChangedLocal is not null)
                     {
                         try
@@ -8282,7 +8364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnCDRChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -8357,7 +8439,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (!SkipNotifications)
                     {
 
-                        var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
+                        var OnChargeDetailRecordChangedLocal = OnCDRChanged;
                         if (OnChargeDetailRecordChangedLocal is not null)
                         {
                             try
@@ -8366,7 +8448,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchCDR), " ", nameof(OnCDRChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -8443,25 +8525,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region RemoveCDR    (CDR)
+        #region RemoveCDR    (CDR,                  SkipNotifications = false)
 
         /// <summary>
         /// Remove the given charge detail record.
         /// </summary>
         /// <param name="CDR">A charge detail record.</param>
-        public Task<RemoveResult<CDR>> RemoveCDR(CDR CDR)
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public Task<RemoveResult<CDR>> RemoveCDR(CDR      CDR,
+                                                 Boolean  SkipNotifications   = false)
 
-            => RemoveCDR(CDR.Id);
+            => RemoveCDR(CDR.Id,
+                         SkipNotifications);
 
         #endregion
 
-        #region RemoveCDR    (CDRId)
+        #region RemoveCDR    (CDRId,                SkipNotifications = false)
 
         /// <summary>
         /// Remove the given charge detail record.
         /// </summary>
         /// <param name="CDRId">A unique identification of a charge detail record.</param>
-        public async Task<RemoveResult<CDR>> RemoveCDR(CDR_Id CDRId)
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<CDR>> RemoveCDR(CDR_Id   CDRId,
+                                                       Boolean  SkipNotifications   = false)
         {
 
             if (chargeDetailRecords.Remove(CDRId, out var cdr))
@@ -8495,6 +8582,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           CustomSignedDataSerializer,
                                           CustomSignedValueSerializer));
 
+                if (!SkipNotifications)
+                {
+
+                    var OnCDRRemovedLocal = OnCDRRemoved;
+                    if (OnCDRRemovedLocal is not null)
+                    {
+                        try
+                        {
+                            await OnCDRRemovedLocal(cdr);
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(RemoveCDR), " ", nameof(OnCDRRemoved), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
                 return RemoveResult<CDR>.Success(cdr);
 
             }
@@ -8506,214 +8613,166 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+        #region RemoveAllCDRs(                      SkipNotifications = false)
 
-        #region RemoveAllCDRs(IncludeCDRs = null)
+        /// <summary>
+        /// Remove all charge detail records.
+        /// </summary>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<CDR>>> RemoveAllCDRs(Boolean SkipNotifications = false)
+        {
+
+            var existingCDRs = chargeDetailRecords.Values.ToArray();
+
+            chargeDetailRecords.Clear();
+
+            await LogAsset(removeAllChargeDetailRecords);
+
+            if (!SkipNotifications)
+            {
+
+                var OnCDRRemovedLocal = OnCDRRemoved;
+                if (OnCDRRemovedLocal is not null)
+                {
+                    try
+                    {
+                        foreach (var location in existingCDRs)
+                            await OnCDRRemovedLocal(location);
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(RemoveAllCDRs), " ", nameof(OnCDRRemoved), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace ?? "");
+                    }
+                }
+
+            }
+
+            return RemoveResult<IEnumerable<CDR>>.Success(existingCDRs);
+
+        }
+
+        #endregion
+
+        #region RemoveAllCDRs(IncludeCDRs,          SkipNotifications = false)
 
         /// <summary>
         /// Remove all matching charge detail records.
         /// </summary>
-        /// <param name="IncludeCDRs">An optional charge detail record filter.</param>
-        public async Task<RemoveResult<IEnumerable<CDR>>> RemoveAllCDRs(Func<CDR, Boolean>? IncludeCDRs = null)
+        /// <param name="IncludeCDRs">A charge detail record filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<CDR>>> RemoveAllCDRs(Func<CDR, Boolean>  IncludeCDRs,
+                                                                        Boolean             SkipNotifications   = false)
         {
 
-            if (IncludeCDRs is null)
+            var removedCDRs  = new List<CDR>();
+            var failedCDRs   = new List<RemoveResult<CDR>>();
+
+            foreach (var cdr in chargeDetailRecords.Values.Where(IncludeCDRs).ToArray())
             {
 
-                var existingCDRs = chargeDetailRecords.Values.ToArray();
+                var result = await RemoveCDR(cdr.Id,
+                                             SkipNotifications);
 
-                chargeDetailRecords.Clear();
-
-                await LogAsset(removeAllChargeDetailRecords);
-
-                return RemoveResult<IEnumerable<CDR>>.Success(existingCDRs);
+                if (result.IsSuccess)
+                    removedCDRs.Add(cdr);
+                else
+                    failedCDRs. Add(result);
 
             }
 
-            else
-            {
+            return removedCDRs.Any() && !failedCDRs.Any()
+                       ? RemoveResult<IEnumerable<CDR>>.Success(removedCDRs)
 
-                var removedCDRs = new List<CDR>();
-
-                foreach (var cdr in chargeDetailRecords.Values.Where(IncludeCDRs).ToArray())
-                {
-                    if (chargeDetailRecords.Remove(cdr.Id, out _))
-                    {
-
-                        removedCDRs.Add(cdr);
-
-                        await LogAsset(removeChargeDetailRecord,
-                                       cdr.ToJSON(true,
-                                                  null,
-                                                  CustomCDRSerializer,
-                                                  CustomLocationSerializer,
-                                                  CustomAdditionalGeoLocationSerializer,
-                                                  CustomEVSESerializer,
-                                                  CustomStatusScheduleSerializer,
-                                                  CustomConnectorSerializer,
-                                                  CustomEnergyMeterSerializer,
-                                                  CustomTransparencySoftwareStatusSerializer,
-                                                  CustomTransparencySoftwareSerializer,
-                                                  CustomDisplayTextSerializer,
-                                                  CustomBusinessDetailsSerializer,
-                                                  CustomHoursSerializer,
-                                                  CustomImageSerializer,
-                                                  CustomEnergyMixSerializer,
-                                                  CustomEnergySourceSerializer,
-                                                  CustomEnvironmentalImpactSerializer,
-                                                  CustomTariffSerializer,
-                                                  CustomTariffElementSerializer,
-                                                  CustomPriceComponentSerializer,
-                                                  CustomTariffRestrictionsSerializer,
-                                                  CustomChargingPeriodSerializer,
-                                                  CustomCDRDimensionSerializer,
-                                                  CustomSignedDataSerializer,
-                                                  CustomSignedValueSerializer));
-
-                    }
-                }
-
-                return removedCDRs.Any()
-                           ? RemoveResult<IEnumerable<CDR>>.Success    (removedCDRs)
-                           : RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>());
-
-            }
+                       : !removedCDRs.Any() && !failedCDRs.Any()
+                             ? RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>())
+                             : RemoveResult<IEnumerable<CDR>>.Failed     (failedCDRs.Select(cdr => cdr.Data)!,
+                                                                          failedCDRs.Select(cdr => cdr.ErrorResponse).AggregateWith(", "));
 
         }
 
         #endregion
 
-        #region RemoveAllCDRs(IncludeCDRIds)
+        #region RemoveAllCDRs(IncludeCDRIds,        SkipNotifications = false)
 
         /// <summary>
         /// Remove all matching cdrs.
         /// </summary>
-        /// <param name="IncludeCDRIds">An optional charging cdr identification filter.</param>
-        public async Task<RemoveResult<IEnumerable<CDR>>> RemoveAllCDRs(Func<CDR_Id, Boolean>? IncludeCDRIds)
+        /// <param name="IncludeCDRIds">A charging cdr identification filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<CDR>>> RemoveAllCDRs(Func<CDR_Id, Boolean>  IncludeCDRIds,
+                                                                        Boolean                SkipNotifications   = false)
         {
 
-            if (IncludeCDRIds is null)
+            var removedCDRs  = new List<CDR>();
+            var failedCDRs   = new List<RemoveResult<CDR>>();
+
+            foreach (var cdr in chargeDetailRecords.Where  (kvp => IncludeCDRIds(kvp.Key)).
+                                                    Select (kvp => kvp.Value).
+                                                    ToArray())
             {
 
-                var existingCDRs = chargeDetailRecords.Values.ToArray();
+                var result = await RemoveCDR(cdr.Id,
+                                             SkipNotifications);
 
-                chargeDetailRecords.Clear();
-
-                await LogAsset(removeAllChargeDetailRecords);
-
-                return RemoveResult<IEnumerable<CDR>>.Success(existingCDRs);
+                if (result.IsSuccess)
+                    removedCDRs.Add(cdr);
+                else
+                    failedCDRs. Add(result);
 
             }
 
-            else
-            {
+            return removedCDRs.Any() && !failedCDRs.Any()
+                       ? RemoveResult<IEnumerable<CDR>>.Success(removedCDRs)
 
-                var removedCDRs = new List<CDR>();
-
-                foreach (var cdr in chargeDetailRecords.Where  (kvp => IncludeCDRIds(kvp.Key)).
-                                                        Select (kvp => kvp.Value).
-                                                        ToArray())
-                {
-                    if (chargeDetailRecords.Remove(cdr.Id, out _))
-                    {
-
-                        removedCDRs.Add(cdr);
-
-                        await LogAsset(removeChargeDetailRecord,
-                                       cdr.ToJSON(true,
-                                                  null,
-                                                  CustomCDRSerializer,
-                                                  CustomLocationSerializer,
-                                                  CustomAdditionalGeoLocationSerializer,
-                                                  CustomEVSESerializer,
-                                                  CustomStatusScheduleSerializer,
-                                                  CustomConnectorSerializer,
-                                                  CustomEnergyMeterSerializer,
-                                                  CustomTransparencySoftwareStatusSerializer,
-                                                  CustomTransparencySoftwareSerializer,
-                                                  CustomDisplayTextSerializer,
-                                                  CustomBusinessDetailsSerializer,
-                                                  CustomHoursSerializer,
-                                                  CustomImageSerializer,
-                                                  CustomEnergyMixSerializer,
-                                                  CustomEnergySourceSerializer,
-                                                  CustomEnvironmentalImpactSerializer,
-                                                  CustomTariffSerializer,
-                                                  CustomTariffElementSerializer,
-                                                  CustomPriceComponentSerializer,
-                                                  CustomTariffRestrictionsSerializer,
-                                                  CustomChargingPeriodSerializer,
-                                                  CustomCDRDimensionSerializer,
-                                                  CustomSignedDataSerializer,
-                                                  CustomSignedValueSerializer));
-
-                    }
-                }
-
-                return removedCDRs.Any()
-                           ? RemoveResult<IEnumerable<CDR>>.Success    (removedCDRs)
-                           : RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>());
-
-            }
+                       : !removedCDRs.Any() && !failedCDRs.Any()
+                             ? RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>())
+                             : RemoveResult<IEnumerable<CDR>>.Failed     (failedCDRs.Select(cdr => cdr.Data)!,
+                                                                          failedCDRs.Select(cdr => cdr.ErrorResponse).AggregateWith(", "));
 
         }
 
         #endregion
 
-        #region RemoveAllCDRs(CountryCode, PartyId)
+        #region RemoveAllCDRs(CountryCode, PartyId, SkipNotifications = false)
 
         /// <summary>
         /// Remove all charge detail records owned by the given party.
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
         public async Task<RemoveResult<IEnumerable<CDR>>> RemoveAllCDRs(CountryCode  CountryCode,
-                                                                        Party_Id     PartyId)
+                                                                        Party_Id     PartyId,
+                                                                        Boolean      SkipNotifications   = false)
         {
 
-            var removedCDRs = new List<CDR>();
+            var removedCDRs  = new List<CDR>();
+            var failedCDRs   = new List<RemoveResult<CDR>>();
 
-            foreach (var cdr in chargeDetailRecords.Values.Where (existingCDR => CountryCode == existingCDR.CountryCode &&
-                                                                                 PartyId     == existingCDR.PartyId).ToArray())
+            foreach (var cdr in chargeDetailRecords.Values.Where  (cdr => CountryCode == cdr.CountryCode &&
+                                                                          PartyId     == cdr.PartyId).
+                                                           ToArray())
             {
-                if (chargeDetailRecords.Remove(cdr.Id, out _))
-                {
 
+                var result = await RemoveCDR(cdr.Id,
+                                             SkipNotifications);
+
+                if (result.IsSuccess)
                     removedCDRs.Add(cdr);
+                else
+                    failedCDRs. Add(result);
 
-                    await LogAsset(removeTokenStatus,
-                                   cdr.ToJSON(true,
-                                              null,
-                                              CustomCDRSerializer,
-                                              CustomLocationSerializer,
-                                              CustomAdditionalGeoLocationSerializer,
-                                              CustomEVSESerializer,
-                                              CustomStatusScheduleSerializer,
-                                              CustomConnectorSerializer,
-                                              CustomEnergyMeterSerializer,
-                                              CustomTransparencySoftwareStatusSerializer,
-                                              CustomTransparencySoftwareSerializer,
-                                              CustomDisplayTextSerializer,
-                                              CustomBusinessDetailsSerializer,
-                                              CustomHoursSerializer,
-                                              CustomImageSerializer,
-                                              CustomEnergyMixSerializer,
-                                              CustomEnergySourceSerializer,
-                                              CustomEnvironmentalImpactSerializer,
-                                              CustomTariffSerializer,
-                                              CustomTariffElementSerializer,
-                                              CustomPriceComponentSerializer,
-                                              CustomTariffRestrictionsSerializer,
-                                              CustomChargingPeriodSerializer,
-                                              CustomCDRDimensionSerializer,
-                                              CustomSignedDataSerializer,
-                                              CustomSignedValueSerializer));
-
-                }
             }
 
-            return removedCDRs.Any()
-                       ? RemoveResult<IEnumerable<CDR>>.Success    (removedCDRs)
-                       : RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>());
+            return removedCDRs.Any() && !failedCDRs.Any()
+                       ? RemoveResult<IEnumerable<CDR>>.Success(removedCDRs)
+
+                       : !removedCDRs.Any() && !failedCDRs.Any()
+                             ? RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>())
+                             : RemoveResult<IEnumerable<CDR>>.Failed     (failedCDRs.Select(cdr => cdr.Data)!,
+                                                                          failedCDRs.Select(cdr => cdr.ErrorResponse).AggregateWith(", "));
 
         }
 
