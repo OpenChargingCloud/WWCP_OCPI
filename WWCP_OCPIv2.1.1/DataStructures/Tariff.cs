@@ -726,9 +726,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             Boolean  AllowDowngrades = false)
         {
 
-            if (TariffPatch is null)
+            if (!TariffPatch.HasValues)
                 return PatchResult<Tariff>.Failed(this,
-                                                  "The given charging tariff patch must not be null!");
+                                                  "The given charging tariff patch must not be null or empty!");
 
             lock (patchLock)
             {

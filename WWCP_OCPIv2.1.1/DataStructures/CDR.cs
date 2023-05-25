@@ -1128,9 +1128,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             Boolean  AllowDowngrades = false)
         {
 
-            if (CDRPatch is null)
+            if (!CDRPatch.HasValues)
                 return PatchResult<CDR>.Failed(this,
-                                                  "The given charge detail record patch must not be null!");
+                                                  "The given charge detail record patch must not be null or empty!");
 
             lock (patchLock)
             {

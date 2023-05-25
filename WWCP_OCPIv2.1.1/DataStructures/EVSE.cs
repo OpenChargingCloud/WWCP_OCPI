@@ -903,9 +903,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                           Boolean  AllowDowngrades = false)
         {
 
-            if (EVSEPatch is null)
+            if (!EVSEPatch.HasValues)
                 return PatchResult<EVSE>.Failed(this,
-                                                "The given EVSE patch must not be null!");
+                                                "The given EVSE patch must not be null or empty!");
 
             lock (patchLock)
             {

@@ -1843,7 +1843,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         if (evse2 is not null)
                                         {
 
-                                            var result2 = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                            var result2 = await CommonAPI.UpdateEVSE(location, evse2);
 
                                             result = result2.IsSuccess
                                                          ? WWCP.PushEVSEStatusResult.Success(Id, this, null, warnings)

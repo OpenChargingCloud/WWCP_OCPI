@@ -612,7 +612,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                Boolean  AllowDowngrades = false)
         {
 
-            if (ConnectorPatch is null || !ConnectorPatch.Properties().Any())
+            if (!ConnectorPatch.HasValues)
                 return PatchResult<Connector>.Failed(this,
                                                      "The given connector patch must not be null or empty!");
 

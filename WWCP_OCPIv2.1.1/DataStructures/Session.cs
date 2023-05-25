@@ -886,9 +886,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                              Boolean  AllowDowngrades = false)
         {
 
-            if (SessionPatch is null)
+            if (!SessionPatch.HasValues)
                 return PatchResult<Session>.Failed(this,
-                                                   "The given charging session patch must not be null!");
+                                                   "The given charging session patch must not be null or empty!");
 
             lock (patchLock)
             {

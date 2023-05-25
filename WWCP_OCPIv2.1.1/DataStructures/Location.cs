@@ -29,6 +29,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.Concurrent;
 
 #endregion
 
@@ -139,22 +140,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The optional enumeration of Electric Vehicle Supply Equipments (EVSE) at this charging location.
         /// </summary>
         [Optional]
-        public    IEnumerable<EVSE>                   EVSEs                    { get; private set; }
-
-        /// <summary>
-        /// The optional enumeration of all EVSE identifications at this charging location.
-        /// </summary>
-        [Optional]
-        public    IEnumerable<EVSE_Id>                EVSEIds
-            => EVSEs.Where (evse => evse.EVSEId.HasValue).
-                     Select(evse => evse.EVSEId!.Value);
+        public    IEnumerable<EVSE>                   EVSEs
+            => evsesByUId.Values;
 
         /// <summary>
         /// The enumeration of all internal EVSE (unique) identifications at this charging location.
         /// </summary>
         [Mandatory]
         public    IEnumerable<EVSE_UId>               EVSEUIds
-            => EVSEs.Select(evse => evse.UId);
+            => evsesByUId.Keys;
+
+        /// <summary>
+        /// The optional enumeration of all EVSE identifications at this charging location.
+        /// </summary>
+        [Optional]
+        public    IEnumerable<EVSE_Id>                EVSEIds
+            => evsesById.Keys;
 
         /// <summary>
         /// The optional enumeration of human-readable directions on how to reach the location.
@@ -477,7 +478,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.Name                 = Name;
             this.RelatedLocations     = RelatedLocations?.Distinct() ?? Array.Empty<AdditionalGeoLocation>();
-            this.EVSEs                = EVSEs?.           Distinct() ?? Array.Empty<EVSE>();
             this.Directions           = Directions?.      Distinct() ?? Array.Empty<DisplayText>();
             this.Operator             = Operator;
             this.SubOperator          = SubOperator;
@@ -494,8 +494,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.LastUpdated          = LastUpdated                  ?? Timestamp.Now;
 
-            foreach (var evse in this.EVSEs)
-                evse.ParentLocation = this;
+            if (EVSEs is not null && EVSEs.Any())
+            {
+                foreach (var evse in EVSEs.Distinct())
+                {
+
+                    evse.ParentLocation = this;
+
+                    evsesByUId.TryAdd(evse.UId,
+                                      evse);
+
+                    if (evse.EVSEId.HasValue)
+                        evsesById.TryAdd(evse.EVSEId.Value,
+                                         evse);
+
+                }
+            }
 
             this.ETag                 = CalcSHA256Hash(EMSPId,
                                                        CustomLocationSerializer,
@@ -1329,9 +1343,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               Boolean  AllowDowngrades = false)
         {
 
-            if (LocationPatch is null)
+            if (!LocationPatch.HasValues)
                 return PatchResult<Location>.Failed(this,
-                                                    "The given location patch must not be null!");
+                                                    "The given location patch must not be null or empty!");
 
             lock (patchLock)
             {
@@ -1391,6 +1405,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        EMSPId) ?? Array.Empty<Tariff_Id>();
 
 
+
+
+        private readonly ConcurrentDictionary<EVSE_UId, EVSE> evsesByUId  = new();
+        private readonly ConcurrentDictionary<EVSE_Id,  EVSE> evsesById   = new();
+
         #region EVSEExists(EVSEUId)
 
         /// <summary>
@@ -1398,18 +1417,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="EVSEUId">An EVSE identification.</param>
         public Boolean EVSEExists(EVSE_UId EVSEUId)
+
+            => evsesByUId.ContainsKey(EVSEUId);
+
+        #endregion
+
+        #region GetEVSE   (EVSEUId)
+
+        /// <summary>
+        /// Return the EVSE having the given EVSE unique identification.
+        /// </summary>
+        /// <param name="EVSEUId">An EVSE unique identification.</param>
+        public EVSE? GetEVSE(EVSE_UId EVSEUId)
         {
 
-            lock (EVSEs)
-            {
-                foreach (var evse in EVSEs)
-                {
-                    if (evse.UId == EVSEUId)
-                        return true;
-                }
-            }
+            if (evsesByUId.TryGetValue(EVSEUId, out var evse))
+                return evse!;
 
-            return false;
+            return default;
 
         }
 
@@ -1418,40 +1443,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region TryGetEVSE(EVSEUId, out EVSE)
 
         /// <summary>
-        /// Try to return the EVSE having the given EVSE identification.
+        /// Try to return the EVSE having the given EVSE unique identification.
         /// </summary>
-        /// <param name="EVSEUId">An EVSE identification.</param>
+        /// <param name="EVSEUId">An EVSE unique identification.</param>
         /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
         public Boolean TryGetEVSE(EVSE_UId   EVSEUId,
                                   out EVSE?  EVSE)
-        {
 
-            lock (EVSEs)
-            {
-                foreach (var evse in EVSEs)
-                {
-                    if (evse.UId == EVSEUId)
-                    {
-                        EVSE = evse;
-                        return true;
-                    }
-                }
-            }
-
-            EVSE = null;
-            return false;
-
-        }
+            => evsesByUId.TryGetValue(EVSEUId, out EVSE);
 
         #endregion
 
         #region IEnumerable<EVSE> Members
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            => EVSEs.GetEnumerator();
+            => evsesByUId.Values.GetEnumerator();
 
         public IEnumerator<EVSE> GetEnumerator()
-            => EVSEs.GetEnumerator();
+            => evsesByUId.Values.GetEnumerator();
 
         #endregion
 
@@ -1463,18 +1472,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="EVSEId">An EVSE identification.</param>
         public Boolean EVSEExists(EVSE_Id EVSEId)
+
+            => evsesById.ContainsKey(EVSEId);
+
+        #endregion
+
+        #region GetEVSE   (EVSEId)
+
+        /// <summary>
+        /// Return the EVSE having the given EVSE identification.
+        /// </summary>
+        /// <param name="EVSEId">An EVSE identification.</param>
+        public EVSE? GetEVSE(EVSE_Id EVSEId)
         {
 
-            lock (EVSEs)
-            {
-                foreach (var evse in EVSEs)
-                {
-                    if (evse.EVSEId == EVSEId)
-                        return true;
-                }
-            }
+            if (evsesById.TryGetValue(EVSEId, out var evse))
+                return evse!;
 
-            return false;
+            return default;
 
         }
 
@@ -1487,47 +1502,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="EVSEId">An EVSE identification.</param>
         /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
-        public Boolean TryGetEVSE(EVSE_Id   EVSEId,
-                                  out EVSE  EVSE)
-        {
+        public Boolean TryGetEVSE(EVSE_Id    EVSEId,
+                                  out EVSE?  EVSE)
 
-            lock (EVSEs)
-            {
-                foreach (var evse in EVSEs)
-                {
-                    if (evse.EVSEId == EVSEId)
-                    {
-                        EVSE = evse;
-                        return true;
-                    }
-                }
-            }
-
-            EVSE = null;
-            return false;
-
-        }
-
-        #endregion
-
-
-        #region (internal) RemoveEVSE(EVSE)
-
-        internal void RemoveEVSE(EVSE EVSE)
-        {
-
-            if (EVSE is null)
-                return;
-
-            lock (EVSEs)
-            {
-
-                EVSEs = EVSEs.Where(evse => evse.UId != EVSE.UId).
-                              ToArray();
-
-            }
-
-        }
+            => evsesById.TryGetValue(EVSEId, out EVSE);
 
         #endregion
 

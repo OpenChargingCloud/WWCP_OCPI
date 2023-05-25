@@ -639,9 +639,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            Boolean  AllowDowngrades = false)
         {
 
-            if (TokenPatch is null)
+            if (!TokenPatch.HasValues)
                 return PatchResult<Token>.Failed(this,
-                                                 "The given token patch must not be null!");
+                                                 "The given token patch must not be null or empty!");
 
             lock (patchLock)
             {
