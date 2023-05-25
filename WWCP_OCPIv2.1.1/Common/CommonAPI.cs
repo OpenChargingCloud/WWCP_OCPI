@@ -4523,41 +4523,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         private readonly ConcurrentDictionary<Location_Id , Location> locations = new();
 
+        public delegate Task OnLocationAddedDelegate    (Location  Location);
+        public delegate Task OnLocationChangedDelegate  (Location  Location);
+        public delegate Task OnLocationRemovedDelegate  (Location  Location);
+        public delegate Task OnEVSEAddedDelegate        (EVSE      EVSE);
+        public delegate Task OnEVSEChangedDelegate      (EVSE      EVSE);
+        public delegate Task OnEVSEStatusChangedDelegate(DateTime  Timestamp, EVSE EVSE, StatusType NewEVSEStatus, StatusType? OldEVSEStatus = null);
+        public delegate Task OnEVSERemovedDelegate      (EVSE      EVSE);
 
-        public delegate Task OnLocationAddedDelegate(Location Location);
-
-        public event OnLocationAddedDelegate? OnLocationAdded;
-
-
-        public delegate Task OnLocationChangedDelegate(Location Location);
-
-        public event OnLocationChangedDelegate? OnLocationChanged;
-
-
-        public delegate Task OnLocationRemovedDelegate(Location Location);
-
-        public event OnLocationRemovedDelegate? OnLocationRemoved;
-
-
-
-        public delegate Task OnEVSEAddedDelegate(EVSE EVSE);
-
-        public event OnEVSEAddedDelegate? OnEVSEAdded;
-
-
-        public delegate Task OnEVSEChangedDelegate(EVSE EVSE);
-
-        public event OnEVSEChangedDelegate? OnEVSEChanged;
-
-        public delegate Task OnEVSEStatusChangedDelegate(DateTime Timestamp, EVSE EVSE, StatusType OldEVSEStatus, StatusType NewEVSEStatus);
-
-        public event OnEVSEStatusChangedDelegate? OnEVSEStatusChanged;
-
-
-        public delegate Task OnEVSERemovedDelegate(EVSE EVSE);
-
-        public event OnEVSERemovedDelegate? OnEVSERemoved;
-
+        public event OnLocationAddedDelegate?      OnLocationAdded;
+        public event OnLocationChangedDelegate?    OnLocationChanged;
+        public event OnLocationRemovedDelegate?    OnLocationRemoved;
+        public event OnEVSEAddedDelegate?          OnEVSEAdded;
+        public event OnEVSEChangedDelegate?        OnEVSEChanged;
+        public event OnEVSEStatusChangedDelegate?  OnEVSEStatusChanged;
+        public event OnEVSERemovedDelegate?        OnEVSERemoved;
 
         #endregion
 
@@ -5010,31 +4990,70 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     foreach (var evseUId in new HashSet<EVSE_UId>(oldEVSEUIds.Union(newEVSEUIds)))
                     {
 
-                        if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId) && existingLocation.GetEVSE(evseUId)! != Location.GetEVSE(evseUId)!)
+                        if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
                         {
-                            var OnEVSEChangedLocal = OnEVSEChanged;
-                            if (OnEVSEChangedLocal is not null)
+
+                            if (existingLocation.TryGetEVSE(evseUId, out var oldEVSE) &&
+                                Location.        TryGetEVSE(evseUId, out var newEVSE) &&
+                                oldEVSE is not null &&
+                                newEVSE is not null)
                             {
-                                try
+
+                                if (oldEVSE != newEVSE)
                                 {
-                                    await OnEVSEChangedLocal(existingLocation.GetEVSE(evseUId)!);
+                                    var OnEVSEChangedLocal = OnEVSEChanged;
+                                    if (OnEVSEChangedLocal is not null)
+                                    {
+                                        try
+                                        {
+                                            await OnEVSEChangedLocal(newEVSE);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateLocation), " ", nameof(OnEVSEChanged), ": ",
+                                                        Environment.NewLine, e.Message,
+                                                        Environment.NewLine, e.StackTrace ?? "");
+                                        }
+                                    }
                                 }
-                                catch (Exception e)
+
+                                if (oldEVSE.Status != newEVSE.Status)
                                 {
-                                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateLocation), " ", nameof(OnEVSEChanged), ": ",
-                                                Environment.NewLine, e.Message,
-                                                Environment.NewLine, e.StackTrace ?? "");
+                                    var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                                    if (OnEVSEStatusChangedLocal is not null)
+                                    {
+                                        try
+                                        {
+                                            await OnEVSEStatusChangedLocal(Timestamp.Now,
+                                                                           newEVSE,
+                                                                           newEVSE.Status,
+                                                                           oldEVSE.Status);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateLocation), " ", nameof(OnEVSEChanged), ": ",
+                                                        Environment.NewLine, e.Message,
+                                                        Environment.NewLine, e.StackTrace ?? "");
+                                        }
+                                    }
                                 }
+
                             }
+
                         }
                         else if (!oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
                         {
+
                             var OnEVSEAddedLocal = OnEVSEAdded;
                             if (OnEVSEAddedLocal is not null)
                             {
                                 try
                                 {
-                                    await OnEVSEAddedLocal(existingLocation.GetEVSE(evseUId)!);
+                                    if (Location.TryGetEVSE(evseUId, out var evse) &&
+                                        evse is not null)
+                                    {
+                                        await OnEVSEAddedLocal(evse);
+                                    }
                                 }
                                 catch (Exception e)
                                 {
@@ -5043,15 +5062,42 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 Environment.NewLine, e.StackTrace ?? "");
                                 }
                             }
+
+                            var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                            if (OnEVSEStatusChangedLocal is not null)
+                            {
+                                try
+                                {
+                                    if (Location.TryGetEVSE(evseUId, out var evse) &&
+                                        evse is not null)
+                                    {
+                                        await OnEVSEStatusChangedLocal(Timestamp.Now,
+                                                                       evse,
+                                                                       evse.Status);
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateLocation), " ", nameof(OnEVSEChanged), ": ",
+                                                Environment.NewLine, e.Message,
+                                                Environment.NewLine, e.StackTrace ?? "");
+                                }
+                            }
+
                         }
                         else if ( oldEVSEUIds.Contains(evseUId) && !newEVSEUIds.Contains(evseUId))
                         {
+
                             var OnEVSERemovedLocal = OnEVSERemoved;
                             if (OnEVSERemovedLocal is not null)
                             {
                                 try
                                 {
-                                    await OnEVSERemovedLocal(existingLocation.GetEVSE(evseUId)!);
+                                    if (existingLocation.TryGetEVSE(evseUId, out var evse) &&
+                                        evse is not null)
+                                    {
+                                        await OnEVSERemovedLocal(evse);
+                                    }
                                 }
                                 catch (Exception e)
                                 {
@@ -5060,6 +5106,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 Environment.NewLine, e.StackTrace ?? "");
                                 }
                             }
+
+                            var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                            if (OnEVSEStatusChangedLocal is not null)
+                            {
+                                try
+                                {
+                                    if (existingLocation.TryGetEVSE(evseUId, out var oldEVSE) &&
+                                        Location.        TryGetEVSE(evseUId, out var newEVSE) &&
+                                        oldEVSE is not null &&
+                                        newEVSE is not null)
+                                    {
+                                        await OnEVSEStatusChangedLocal(Timestamp.Now,
+                                                                       oldEVSE,
+                                                                       newEVSE.Status,
+                                                                       oldEVSE.Status);
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateLocation), " ", nameof(OnEVSEChanged), ": ",
+                                                Environment.NewLine, e.Message,
+                                                Environment.NewLine, e.StackTrace ?? "");
+                                }
+                            }
+
                         }
 
                     }
