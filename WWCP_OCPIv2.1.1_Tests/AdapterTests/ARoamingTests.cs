@@ -42,13 +42,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected  RoamingNetwork?            csoRoamingNetwork;
         protected  IChargingStationOperator?  graphDefinedCSO;
 
-        protected  IEMobilityProvider?        graphDefinedEMP;
+        protected  LocalEMobilityProvider?    graphDefinedEMP1Local;
         protected  RoamingNetwork?            emp1RoamingNetwork;
-        protected  IEMobilityProvider?        graphDefinedEMP_remote;
+        protected  IEMobilityProvider?        graphDefinedEMP1;
 
+        protected  LocalEMobilityProvider?    graphDefinedEMP2Local;
         protected  RoamingNetwork?            emp2RoamingNetwork;
-        protected  IEMobilityProvider?        exampleEMP;
-        protected  IEMobilityProvider?        exampleEMP_remote;
+        protected  IEMobilityProvider?        graphDefinedEMP2;
 
         #endregion
 
@@ -62,16 +62,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         #endregion
 
 
-        #region SetupOnce()
-
-        [OneTimeSetUp]
-        public void SetupOnce()
-        {
-
-        }
-
-        #endregion
-
         #region SetupEachTest()
 
         [SetUp]
@@ -79,6 +69,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         {
 
             await base.SetupEachTest();
+
+            graphDefinedEMP1Local = new LocalEMobilityProvider(
+                                        EMobilityProvider_Id.Parse("DE-GDF")
+                                    );
+
+            graphDefinedEMP2Local = new LocalEMobilityProvider(
+                                        EMobilityProvider_Id.Parse("DE-GD2")
+                                    );
 
             #region Create cso/emp1/emp2 roaming network
 
@@ -112,105 +110,58 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
-            #region Create graphDefinedCSO / graphDefinedEMP / exampleEMP
+            #region Create graphDefinedCSO / graphDefinedEMP1 / graphDefinedEMP2
 
-            var result  = await csoRoamingNetwork.CreateChargingStationOperator(
-                                                      Id:                   ChargingStationOperator_Id.Parse("DE*GEF"),
-                                                      Name:                 I18NString.Create(Languages.en, "GraphDefined CSO"),
-                                                      Description:          I18NString.Create(Languages.en, "GraphDefined CSO Services"),
-                                                      InitialAdminStatus:   ChargingStationOperatorAdminStatusTypes.Operational,
-                                                      InitialStatus:        ChargingStationOperatorStatusTypes.Available
-                                                  );
+            var csoResult     = await csoRoamingNetwork.CreateChargingStationOperator(
+                                                            Id:                   ChargingStationOperator_Id.Parse("DE*GEF"),
+                                                            Name:                 I18NString.Create(Languages.en, "GraphDefined CSO"),
+                                                            Description:          I18NString.Create(Languages.en, "GraphDefined CSO Services"),
+                                                            InitialAdminStatus:   ChargingStationOperatorAdminStatusTypes.Operational,
+                                                            InitialStatus:        ChargingStationOperatorStatusTypes.Available
+                                                        );
 
-            Assert.IsTrue   (result.IsSuccess);
-            Assert.IsNotNull(result.ChargingStationOperator);
+            Assert.IsTrue   (csoResult.IsSuccess);
+            Assert.IsNotNull(csoResult.ChargingStationOperator);
 
-            graphDefinedCSO = result.ChargingStationOperator;
-
-            //graphDefinedEMP_remote  = csoRoamingNetwork.CreateEMobilityProvider(
-            //                              Id:                                  EMobilityProvider_Id.Parse("DE*GDF"),
-            //                              Name:                                I18NString.Create(Languages.en, "GraphDefined EMP"),
-            //                              Description:                         I18NString.Create(Languages.en, "GraphDefined EMP Services"),
-            //                              InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
-            //                              InitialStatus:                       EMobilityProviderStatusTypes.Available,
-            //                              RemoteEMobilityProviderCreator:      (eMobilityProvider) => {
-
-            //                                                                       var empAdapter = new OCPIEMPAdapter(
-            //                                                                                            Id:                 CSORoamingProvider_Id.Parse($"{emp1CommonAPI.OurCountryCode}-{emp1CommonAPI.OurPartyId}"),
-            //                                                                                            Name:               I18NString.           Create(Languages.en, emp1CommonAPI.OurBusinessDetails.Name),
-            //                                                                                            Description:        I18NString.           Create(Languages.en, emp1CommonAPI.OurBusinessDetails.Name + "_description"),
-            //                                                                                            RoamingNetwork:     emp1RoamingNetwork,
-            //                                                                                            CommonAPI:          emp1CommonAPI,
-            //                                                                                            DefaultCountryCode: emp1CommonAPI.OurCountryCode,
-            //                                                                                            DefaultPartyId:     emp1CommonAPI.OurPartyId
-            //                                                                                        );
-
-            //                                                                       // IRemoteEMobilityProvider
-            //                                                                       return empAdapter;
-
-            //                                                                   }
-            //                          ).Result.EMobilityProvider;
-
-            //var graphDefMAP_remote  = csoRoamingNetwork.CreateEMPRoamingProvider(
-            //                              Id:                                  EMPRoamingProvider_Id.Parse("DE*GDF"),
-            //                              Name:                                I18NString.Create(Languages.en, "GraphDefined EMP"),
-            //                              Description:                         I18NString.Create(Languages.en, "GraphDefined EMP Services"),
-            //                              InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
-            //                              InitialStatus:                       EMobilityProviderStatusTypes.Available,
-            //                              RemoteEMobilityProviderCreator:      (eMobilityProvider) => {
-
-            //                                                                       var empAdapter = new OCPIEMPAdapter(
-            //                                                                                            Id:                 CSORoamingProvider_Id.Parse($"{emp1CommonAPI.OurCountryCode}-{emp1CommonAPI.OurPartyId}"),
-            //                                                                                            Name:               I18NString.           Create(Languages.en, emp1CommonAPI.OurBusinessDetails.Name),
-            //                                                                                            Description:        I18NString.           Create(Languages.en, emp1CommonAPI.OurBusinessDetails.Name + "_description"),
-            //                                                                                            RoamingNetwork:     emp1RoamingNetwork,
-            //                                                                                            CommonAPI:          emp1CommonAPI,
-            //                                                                                            DefaultCountryCode: emp1CommonAPI.OurCountryCode,
-            //                                                                                            DefaultPartyId:     emp1CommonAPI.OurPartyId
-            //                                                                                        );
-
-            //                                                                       // IRemoteEMobilityProvider
-            //                                                                       return empAdapter;
-
-            //                                                                   }
-            //                          ).Result.EMobilityProvider;
+            graphDefinedCSO   = csoResult.ChargingStationOperator;
 
 
 
+            var emp1result    = await emp1RoamingNetwork.CreateEMobilityProvider(
+
+                                                             Id:                               EMobilityProvider_Id.Parse("DE-GDF"),
+                                                             Name:                             I18NString.Create(Languages.en, "GraphDefined EMP #1"),
+                                                             Description:                      I18NString.Create(Languages.en, "GraphDefined EMP #1 Services"),
+                                                             InitialAdminStatus:               EMobilityProviderAdminStatusTypes.Operational,
+                                                             InitialStatus:                    EMobilityProviderStatusTypes.Available,
+
+                                                             RemoteEMobilityProviderCreator:   eMobilityProvider => graphDefinedEMP1Local
+
+                                                         );
+
+            Assert.IsTrue   (emp1result.IsSuccess);
+            Assert.IsNotNull(emp1result.EMobilityProvider);
+
+            graphDefinedEMP1  = emp1result.EMobilityProvider;
 
 
 
+            var emp2result    = await emp2RoamingNetwork.CreateEMobilityProvider(
 
+                                                             Id:                               EMobilityProvider_Id.Parse("DE-GD2"),
+                                                             Name:                             I18NString.Create(Languages.en, "GraphDefined EMP #2"),
+                                                             Description:                      I18NString.Create(Languages.en, "GraphDefined EMP #2 Services"),
+                                                             InitialAdminStatus:               EMobilityProviderAdminStatusTypes.Operational,
+                                                             InitialStatus:                    EMobilityProviderStatusTypes.Available,
 
-            //graphDefinedEMP     = emp1RoamingNetwork.CreateEMobilityProvider(
-            //                          Id:                                  EMobilityProvider_Id.Parse("DE*GDF"),
-            //                          Name:                                I18NString.Create(Languages.en, "GraphDefined EMP"),
-            //                          Description:                         I18NString.Create(Languages.en, "GraphDefined EMP Services"),
-            //                          InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
-            //                          InitialStatus:                       EMobilityProviderStatusTypes.Available
-            //                      ).Result.EMobilityProvider;
+                                                             RemoteEMobilityProviderCreator:   eMobilityProvider => graphDefinedEMP2Local
 
+                                                         );
 
+            Assert.IsTrue   (emp2result.IsSuccess);
+            Assert.IsNotNull(emp2result.EMobilityProvider);
 
-
-
-
-            //exampleEMP          = emp2RoamingNetwork.CreateEMobilityProvider(
-            //                          Id:                                  EMobilityProvider_Id.Parse("DE*EMP"),
-            //                          Name:                                I18NString.Create(Languages.en, "example EMP"),
-            //                          Description:                         I18NString.Create(Languages.en, "example EMP Services"),
-            //                          InitialAdminStatus:                  EMobilityProviderAdminStatusTypes.Operational,
-            //                          InitialStatus:                       EMobilityProviderStatusTypes.Available
-            //                      ).Result.EMobilityProvider;
-
-
-
-
-
-
-            //Assert.IsNotNull(graphDefinedCSO);
-            //Assert.IsNotNull(graphDefinedEMP);
-            //Assert.IsNotNull(exampleEMP);
+            graphDefinedEMP2  = emp2result.EMobilityProvider;
 
             #endregion
 
@@ -334,16 +285,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         {
 
             base.ShutdownEachTest();
-
-        }
-
-        #endregion
-
-        #region ShutdownOnce()
-
-        [OneTimeTearDown]
-        public void ShutdownOnce()
-        {
 
         }
 

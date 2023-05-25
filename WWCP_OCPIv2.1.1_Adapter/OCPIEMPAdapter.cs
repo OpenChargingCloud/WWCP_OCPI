@@ -22,6 +22,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.WWCP;
+using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -32,6 +33,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// Receive charging stations downstream from an OCPI partner...
     /// </summary>
     public class OCPIEMPAdapter : //AWWCPEMPAdapter<ChargeDetailRecord>,
+                                  IRemoteEMobilityProvider,
                                   ICSORoamingProvider,
                                   IEquatable <OCPIEMPAdapter>,
                                   IComparable<OCPIEMPAdapter>,
@@ -462,6 +464,44 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.CommonAPI                          = EMSPAPI.CommonAPI;
             this.EMSPAPI                            = EMSPAPI;
 
+            this.EMSPAPI.OnRFIDAuthToken           += async (countryCode, partyId, tokenId, locationReference) => {
+
+                                                           var response = await AuthorizeStart(LocalAuthentication:   LocalAuthentication.FromAuthToken(
+                                                                                                                          AuthenticationToken.Parse(tokenId.ToString())
+                                                                                                                      ),
+                                                                                               ChargingLocation:      null,
+                                                                                               ChargingProduct:       null,
+                                                                                               SessionId:             null,
+                                                                                               CPOPartnerSessionId:   null,
+                                                                                               OperatorId:            null,
+                                                                                               Timestamp:             null,
+                                                                                               CancellationToken:     default,
+                                                                                               EventTrackingId:       null,
+                                                                                               RequestTimeout:        null);
+
+                                                           if (response.Result == AuthStartResultTypes.Authorized)
+                                                               return new AuthorizationInfo(
+                                                                          Allowed:       AllowedType.ALLOWED,
+                                                                          Location:      null,
+                                                                          Info:          null,
+                                                                          RemoteParty:   null,
+                                                                          EMSPId:        null,
+                                                                          Runtime:       null
+                                                                      );
+
+                                                           else //if (response.Result == AuthStartResultTypes.NotAuthorized)
+                                                               return new AuthorizationInfo(
+                                                                          Allowed:       AllowedType.NOT_ALLOWED,
+                                                                          Location:      null,
+                                                                          Info:          null,
+                                                                          RemoteParty:   null,
+                                                                          EMSPId:        null,
+                                                                          Runtime:       null
+                                                                      );
+
+                                                      };
+
+
             this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
             this.CustomEVSEConverter                = CustomEVSEConverter;
             this.CustomEVSEStatusUpdateConverter    = CustomEVSEStatusUpdateConverter;
@@ -487,6 +527,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             //this.chargingPoolsUpdateLog             = new Dictionary<IChargingPool, List<PropertyUpdateInfo>>();
 
         }
+
+
+        public event OnAuthorizeStartRequestDelegate  OnAuthorizeStartRequest;
+        public event OnAuthorizeStartResponseDelegate OnAuthorizeStartResponse;
+
+        public event OnAuthorizeStopRequestDelegate   OnAuthorizeStopRequest;
+        public event OnAuthorizeStopResponseDelegate  OnAuthorizeStopResponse;
 
         #endregion
 
@@ -629,6 +676,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         IEnumerable<ChargingSession> IChargingSessions.ChargingSessions => throw new NotImplementedException();
 
+        public IEnumerable<KeyValuePair<LocalAuthentication, TokenAuthorizationResultType>> AllTokens => throw new NotImplementedException();
+
+        public IEnumerable<KeyValuePair<LocalAuthentication, TokenAuthorizationResultType>> AuthorizedTokens => throw new NotImplementedException();
+
+        public IEnumerable<KeyValuePair<LocalAuthentication, TokenAuthorizationResultType>> NotAuthorizedTokens => throw new NotImplementedException();
+
+        public IEnumerable<KeyValuePair<LocalAuthentication, TokenAuthorizationResultType>> BlockedTokens => throw new NotImplementedException();
+
+        public IId AuthId => throw new NotImplementedException();
 
         Boolean IChargingSessions.TryGetChargingSessionById(ChargingSession_Id ChargingSessionId, out ChargingSession? ChargingSession)
         {
@@ -854,6 +910,379 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public override String ToString()
 
             => Id.ToString();
+
+        #endregion
+
+
+
+        #region EVSE
+
+        public Task<PushEVSEDataResult> SetStaticData(WWCP.EVSE EVSE, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> AddStaticData(WWCP.EVSE EVSE, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(WWCP.EVSE EVSE, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> DeleteStaticData(WWCP.EVSE EVSE, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<WWCP.EVSE> EVSEs, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<WWCP.EVSE> EVSEs, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<WWCP.EVSE> EVSEs, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<WWCP.EVSE> EVSEs, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region ChargingStations
+
+        public Task<PushEVSEDataResult> SetStaticData(ChargingStation ChargingStation, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> AddStaticData(ChargingStation ChargingStation, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(ChargingStation ChargingStation, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> DeleteStaticData(ChargingStation ChargingStation, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<ChargingStation> ChargingStations, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<ChargingStation> ChargingStations, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<ChargingStation> ChargingStations, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<ChargingStation> ChargingStations, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region ChargingPools
+
+        public Task<PushEVSEDataResult> SetStaticData(ChargingPool ChargingPool, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> AddStaticData(ChargingPool ChargingPool, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(ChargingPool ChargingPool, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> DeleteStaticData(ChargingPool ChargingPool, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<ChargingPool> ChargingPools, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<ChargingPool> ChargingPools, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<ChargingPool> ChargingPools, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<ChargingPool> ChargingPools, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region ChargingStationOperators
+
+        public Task<PushEVSEDataResult> SetStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> AddStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> DeleteStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region RoamingNetwork
+
+        public Task<PushEVSEDataResult> SetStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> AddStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> UpdateStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushEVSEDataResult> DeleteStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region UpdateAdminStatus
+
+        public Task<PushEVSEAdminStatusResult> UpdateAdminStatus(IEnumerable<EVSEAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingStationAdminStatusResult> UpdateAdminStatus(IEnumerable<ChargingStationAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingPoolAdminStatusResult> UpdateAdminStatus(IEnumerable<ChargingPoolAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushChargingStationOperatorAdminStatusResult> UpdateAdminStatus(IEnumerable<ChargingStationOperatorAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PushRoamingNetworkAdminStatusResult> UpdateAdminStatus(IEnumerable<RoamingNetworkAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region UpdateStatus
+
+        public async Task<PushEVSEStatusResult> UpdateStatus(IEnumerable<EVSEStatusUpdate>  StatusUpdates,
+
+                                                             DateTime?                      Timestamp           = null,
+                                                             CancellationToken              CancellationToken   = default,
+                                                             EventTracking_Id?              EventTrackingId     = null,
+                                                             TimeSpan?                      RequestTimeout      = null)
+        {
+
+            //return await RoamingNetwork.updateevse
+
+            throw new NotImplementedException();
+
+        }
+
+        public async Task<PushChargingStationStatusResult> UpdateStatus(IEnumerable<ChargingStationStatusUpdate>  StatusUpdates,
+
+                                                                        DateTime?                                 Timestamp           = null,
+                                                                        CancellationToken                         CancellationToken   = default,
+                                                                        EventTracking_Id?                         EventTrackingId     = null,
+                                                                        TimeSpan?                                 RequestTimeout      = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<PushChargingPoolStatusResult> UpdateStatus(IEnumerable<ChargingPoolStatusUpdate>  StatusUpdates,
+
+                                                                     DateTime?                              Timestamp           = null,
+                                                                     CancellationToken                      CancellationToken   = default,
+                                                                     EventTracking_Id?                      EventTrackingId     = null,
+                                                                     TimeSpan?                              RequestTimeout      = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<PushChargingStationOperatorStatusResult> UpdateStatus(IEnumerable<ChargingStationOperatorStatusUpdate>  StatusUpdates,
+
+                                                                                DateTime?                                         Timestamp           = null,
+                                                                                CancellationToken                                 CancellationToken   = default,
+                                                                                EventTracking_Id?                                 EventTrackingId     = null,
+                                                                                TimeSpan?                                         RequestTimeout      = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<PushRoamingNetworkStatusResult> UpdateStatus(IEnumerable<RoamingNetworkStatusUpdate>  StatusUpdates,
+
+                                                                       DateTime?                                Timestamp           = null,
+                                                                       CancellationToken                        CancellationToken   = default,
+                                                                       EventTracking_Id?                        EventTrackingId     = null,
+                                                                       TimeSpan?                                RequestTimeout      = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+
+
+        #region AuthorizeStart(LocalAuthentication, ...)
+
+        public async Task<AuthStartResult> AuthorizeStart(LocalAuthentication          LocalAuthentication,
+                                                          ChargingLocation?            ChargingLocation      = null,
+                                                          ChargingProduct?             ChargingProduct       = null,
+                                                          ChargingSession_Id?          SessionId             = null,
+                                                          ChargingSession_Id?          CPOPartnerSessionId   = null,
+                                                          ChargingStationOperator_Id?  OperatorId            = null,
+
+                                                          DateTime?                    Timestamp             = null,
+                                                          CancellationToken            CancellationToken     = default,
+                                                          EventTracking_Id?            EventTrackingId       = null,
+                                                          TimeSpan?                    RequestTimeout        = null)
+        {
+
+            return await RoamingNetwork.AuthorizeStart(LocalAuthentication,
+                                                       ChargingLocation,
+                                                       ChargingProduct,
+                                                       SessionId,
+                                                       CPOPartnerSessionId,
+                                                       OperatorId,
+                                                       Timestamp,
+                                                       CancellationToken,
+                                                       EventTrackingId,
+                                                       RequestTimeout);
+
+        }
+
+        #endregion
+
+        #region AuthorizeStop(SessionId, LocalAuthentication, ...)
+
+        public async Task<AuthStopResult> AuthorizeStop(ChargingSession_Id           SessionId,
+                                                        LocalAuthentication          LocalAuthentication,
+                                                        ChargingLocation?            ChargingLocation      = null,
+                                                        ChargingSession_Id?          CPOPartnerSessionId   = null,
+                                                        ChargingStationOperator_Id?  OperatorId            = null,
+
+                                                        DateTime?                    Timestamp             = null,
+                                                        CancellationToken            CancellationToken     = default,
+                                                        EventTracking_Id?            EventTrackingId       = null,
+                                                        TimeSpan?                    RequestTimeout        = null)
+        {
+
+            return await RoamingNetwork.AuthorizeStop(SessionId,
+                                                      LocalAuthentication,
+                                                      ChargingLocation,
+                                                      CPOPartnerSessionId,
+                                                      OperatorId,
+
+                                                      Timestamp,
+                                                      CancellationToken,
+                                                      EventTrackingId,
+                                                      RequestTimeout);
+
+        }
+
+        #endregion
+
+        #region ReceiveChargeDetailRecords(ChargeDetailRecords, ...)
+
+        public async Task<SendCDRsResult> ReceiveChargeDetailRecords(IEnumerable<ChargeDetailRecord>  ChargeDetailRecords,
+
+                                                                     DateTime?                        Timestamp             = null,
+                                                                     CancellationToken                CancellationToken     = default,
+                                                                     EventTracking_Id?                EventTrackingId       = null,
+                                                                     TimeSpan?                        RequestTimeout        = null)
+        {
+
+            return await RoamingNetwork.ReceiveChargeDetailRecords(ChargeDetailRecords,
+                                                                   Timestamp,
+                                                                   CancellationToken,
+                                                                   EventTrackingId,
+                                                                   RequestTimeout);
+
+        }
 
         #endregion
 
