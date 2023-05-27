@@ -1593,9 +1593,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
         #region AuthStart_Test1()
 
         /// <summary>
-        /// Add WWCP charging locations, stations and EVSEs and update the EVSE status.
-        /// Validate that they had been sent to the OCPI module.
-        /// Validate via HTTP that they are present within the OCPI module.
+        /// Send an authorization start request.
+        /// Validate that the authorization start request had been sent to the OCPI module.
+        /// Validate via HTTP that the authorization start request is present within the OCPI module.
         /// </summary>
         [Test]
         public async Task AuthStart_Test1()
@@ -1938,6 +1938,213 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                 //Assert.AreEqual(AuthStartResultTypes.NotAuthorized, authStartResult1.Result);
                 Assert.AreEqual(AuthStartResultTypes.Authorized,    authStartResult2.Result);
                 Assert.AreEqual(AuthStartResultTypes.Authorized,    authStartResult3.Result);
+
+            }
+            else
+                Assert.Fail("Failed precondition(s)!");
+
+        }
+
+        #endregion
+
+        #region SendChargeDetailRecord_Test1()
+
+        /// <summary>
+        /// Send a charge detail record.
+        /// Validate that the charge detail record had been sent to the OCPI module.
+        /// Validate via HTTP that the charge detail record is present within the OCPI module.
+        /// </summary>
+        [Test]
+        public async Task SendChargeDetailRecord_Test1()
+        {
+
+            if (csoRoamingNetwork      is not null &&
+                emp1RoamingNetwork     is not null &&
+                emp2RoamingNetwork     is not null &&
+
+                cpoCPOAPI              is not null &&
+                emsp1EMSPAPI           is not null &&
+                emsp2EMSPAPI           is not null &&
+
+                graphDefinedCSO        is not null &&
+                graphDefinedEMP1Local  is not null &&
+                graphDefinedEMP2Local  is not null)
+            {
+
+                #region Add DE*GEF*POOL1
+
+                var addChargingPoolResult1 = await graphDefinedCSO.CreateChargingPool(
+
+                                                 Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
+                                                 Name:                 I18NString.Create(Languages.en, "Test pool #1"),
+                                                 Description:          I18NString.Create(Languages.en, "GraphDefined charging pool for tests #1"),
+
+                                                 Address:              new Address(
+
+                                                                           Street:             "Biberweg",
+                                                                           PostalCode:         "07749",
+                                                                           City:               I18NString.Create(Languages.da, "Jena"),
+                                                                           Country:            Country.Germany,
+
+                                                                           HouseNumber:        "18",
+                                                                           FloorLevel:         null,
+                                                                           Region:             null,
+                                                                           PostalCodeSub:      null,
+                                                                           TimeZone:           null,
+                                                                           OfficialLanguages:  null,
+                                                                           Comment:            null,
+
+                                                                           CustomData:         null,
+                                                                           InternalData:       null
+
+                                                                       ),
+                                                 GeoLocation:          GeoCoordinate.Parse(50.93, 11.63),
+
+                                                 InitialAdminStatus:   ChargingPoolAdminStatusTypes.Operational,
+                                                 InitialStatus:        ChargingPoolStatusTypes.Available,
+
+                                                 Configurator:         chargingPool => {
+                                                                       }
+
+                                             );
+
+                Assert.IsNotNull(addChargingPoolResult1);
+
+                var chargingPool1  = addChargingPoolResult1.ChargingPool;
+                Assert.IsNotNull(chargingPool1);
+
+                #endregion
+
+                // OCPI does not have stations!
+
+                #region Add DE*GEF*STATION*1*A
+
+                var addChargingStationResult1 = await chargingPool1!.CreateChargingStation(
+
+                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                    Name:                 I18NString.Create(Languages.en, "Test station #1A"),
+                                                    Description:          I18NString.Create(Languages.en, "GraphDefined charging station for tests #1A"),
+
+                                                    GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
+
+                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialStatus:        ChargingStationStatusTypes.Available,
+
+                                                    Configurator:         chargingStation => {
+                                                                          }
+
+                                                );
+
+                Assert.IsNotNull(addChargingStationResult1);
+
+                var chargingStation1  = addChargingStationResult1.ChargingStation;
+                Assert.IsNotNull(chargingStation1);
+
+                #endregion
+
+                #region Add EVSE DE*GEF*EVSE*1*A*1
+
+                var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
+
+                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+                                          Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
+                                          Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #1A1"),
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusTypes.Available,
+
+                                          Configurator:         evse => {
+                                                                }
+
+                                      );
+
+                Assert.IsNotNull(addEVSE1Result1);
+
+                var evse1     = addEVSE1Result1.EVSE;
+                Assert.IsNotNull(evse1);
+
+                #endregion
+
+
+                graphDefinedEMP1Local.AddAuth(AuthenticationToken.Parse("11223344"),
+                                              AuthStartResult.    Authorized(AuthorizatorId:            graphDefinedEMP1Local.AuthId,
+                                                                             ISendAuthorizeStartStop:   null,
+                                                                             SessionId:                 null,
+                                                                             EMPPartnerSessionId:       null,
+                                                                             ContractId:                null,
+                                                                             PrintedNumber:             null,
+                                                                             ExpiryDate:                null,
+                                                                             MaxkW:                     null,
+                                                                             MaxkWh:                    null,
+                                                                             MaxDuration:               null,
+                                                                             ChargingTariffs:           null,
+                                                                             ListOfAuthStopTokens:      null,
+                                                                             ListOfAuthStopPINs:        null,
+
+                                                                             ProviderId:                null,
+                                                                             Description:               null,
+                                                                             AdditionalInfo:            null,
+                                                                             NumberOfRetries:           0,
+                                                                             Runtime:                   null));
+
+
+                var sendCDRResult = await csoRoamingNetwork.SendChargeDetailRecord(
+                                              new ChargeDetailRecord(
+                                                  Id:                           ChargeDetailRecord_Id.NewRandom,
+                                                  SessionId:                    ChargingSession_Id.   NewRandom,
+                                                  SessionTime:                  new StartEndDateTime(
+                                                                                    Timestamp.Now - TimeSpan.FromHours(2),
+                                                                                    Timestamp.Now - TimeSpan.FromMinutes(2)
+                                                                                ),
+                                                  Duration:                     TimeSpan.FromMinutes(118),
+
+                                                  EVSE:                         evse1,
+                                                  EVSEId:                       null,
+                                                  ChargingStation:              null,
+                                                  ChargingStationId:            null,
+                                                  ChargingPool:                 null,
+                                                  ChargingPoolId:               null,
+                                                  ChargingStationOperator:      null,
+                                                  ChargingStationOperatorId:    null,
+
+                                                  ChargingProduct:              ChargingProduct.FromId(ChargingProduct_Id.Parse("AC1")),
+                                                  ChargingPrice:                null,
+
+                                                  AuthenticationStart:          null,
+                                                  AuthenticationStop:           null,
+                                                  AuthMethodStart:              null,
+                                                  AuthMethodStop:               null,
+                                                  ProviderIdStart:              null,
+                                                  ProviderIdStop:               null,
+
+                                                  EMPRoamingProvider:           null,
+                                                  EMPRoamingProviderId:         null,
+
+                                                  Reservation:                  null,
+                                                  ReservationId:                null,
+                                                  ReservationTime:              null,
+                                                  ReservationFee:               null,
+
+                                                  ParkingSpaceId:               null,
+                                                  ParkingTime:                  null,
+                                                  ParkingFee:                   null,
+
+                                                  EnergyMeterId:                null,
+                                                  EnergyMeter:                  null,
+                                                  EnergyMeteringValues:         null,
+                                                  ConsumedEnergy:               null,
+                                                  ConsumedEnergyFee:            null,
+
+                                                  CustomData:                   null,
+                                                  InternalData:                 null,
+
+                                                  PublicKey:                    null,
+                                                  Signatures:                   null));
+
+                //LocalAuthentication: LocalAuthentication.FromAuthToken(AuthenticationToken.Parse("11223344")),
+                //ChargingProduct:     
+
+                Assert.AreEqual(AuthStartResultTypes.Authorized, sendCDRResult.Result);
 
             }
             else
