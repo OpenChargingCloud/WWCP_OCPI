@@ -26,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Aegir;
 
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 
 #endregion
 
@@ -45,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
         /// <summary>
         /// Add WWCP charging locations, stations and EVSEs.
         /// Validate that they had been sent to the OCPI module.
-        /// Validate via HTTP that they are present within the OCPI module.
+        /// Validate via HTTP that they are present within the remote OCPI module.
         /// </summary>
         [Test]
         public async Task Add_ChargingLocationsAndEVSEs_Test1()
@@ -516,7 +517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
         /// <summary>
         /// Add WWCP charging locations, stations and EVSEs and update their static data.
         /// Validate that they had been sent to the OCPI module.
-        /// Validate via HTTP that they are present within the OCPI module.
+        /// Validate via HTTP that they are present within the remote OCPI module.
         /// </summary>
         [Test]
         public async Task Update_ChargingLocationsAndEVSEs_Test1()
@@ -1124,7 +1125,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
         /// <summary>
         /// Add WWCP charging locations, stations and EVSEs and update the EVSE status.
         /// Validate that they had been sent to the OCPI module.
-        /// Validate via HTTP that they are present within the OCPI module.
+        /// Validate via HTTP that they are present within the remote OCPI module.
         /// </summary>
         [Test]
         public async Task Update_EVSEStatus_Test1()
@@ -1595,7 +1596,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
         /// <summary>
         /// Send an authorization start request.
         /// Validate that the authorization start request had been sent to the OCPI module.
-        /// Validate via HTTP that the authorization start request is present within the OCPI module.
+        /// Validate via HTTP that the authorization start request is present within the remote OCPI module.
         /// </summary>
         [Test]
         public async Task AuthStart_Test1()
@@ -1952,7 +1953,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
         /// <summary>
         /// Send a charge detail record.
         /// Validate that the charge detail record had been sent to the OCPI module.
-        /// Validate via HTTP that the charge detail record is present within the OCPI module.
+        /// Validate via HTTP that the charge detail record is present within the remote OCPI module.
         /// </summary>
         [Test]
         public async Task SendChargeDetailRecord_Test1()
@@ -2087,64 +2088,222 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                              NumberOfRetries:           0,
                                                                              Runtime:                   null));
 
+                if (evse1                 is not null &&
+                    evse1.ChargingStation is not null &&
+                    evse1.ChargingPool    is not null &&
+                    evse1.Operator        is not null)
+                {
 
-                var sendCDRResult = await csoRoamingNetwork.SendChargeDetailRecord(
-                                              new ChargeDetailRecord(
-                                                  Id:                           ChargeDetailRecord_Id.NewRandom,
-                                                  SessionId:                    ChargingSession_Id.   NewRandom,
-                                                  SessionTime:                  new StartEndDateTime(
-                                                                                    Timestamp.Now - TimeSpan.FromHours(2),
-                                                                                    Timestamp.Now - TimeSpan.FromMinutes(2)
-                                                                                ),
-                                                  Duration:                     TimeSpan.FromMinutes(118),
+                    var sendCDRResult = await csoRoamingNetwork.SendChargeDetailRecord(
+                                                  new ChargeDetailRecord(
+                                                      Id:                           ChargeDetailRecord_Id.NewRandom,
+                                                      SessionId:                    ChargingSession_Id.   NewRandom,
+                                                      SessionTime:                  new StartEndDateTime(
+                                                                                        Timestamp.Now - TimeSpan.FromHours(2),
+                                                                                        Timestamp.Now - TimeSpan.FromMinutes(2)
+                                                                                    ),
+                                                      Duration:                     TimeSpan.FromMinutes(118),
 
-                                                  EVSE:                         evse1,
-                                                  EVSEId:                       null,
-                                                  ChargingStation:              null,
-                                                  ChargingStationId:            null,
-                                                  ChargingPool:                 null,
-                                                  ChargingPoolId:               null,
-                                                  ChargingStationOperator:      null,
-                                                  ChargingStationOperatorId:    null,
+                                                      EVSE:                         evse1,
+                                                      EVSEId:                       evse1.Id,
+                                                      ChargingStation:              evse1.ChargingStation,
+                                                      ChargingStationId:            evse1.ChargingStation.Id,
+                                                      ChargingPool:                 evse1.ChargingPool,
+                                                      ChargingPoolId:               evse1.ChargingPool.Id,
+                                                      ChargingStationOperator:      evse1.Operator,
+                                                      ChargingStationOperatorId:    evse1.Operator.Id,
 
-                                                  ChargingProduct:              ChargingProduct.FromId(ChargingProduct_Id.Parse("AC1")),
-                                                  ChargingPrice:                null,
+                                                      ChargingProduct:              ChargingProduct.FromId(ChargingProduct_Id.Parse("AC1")),
+                                                      ChargingPrice:                null,
 
-                                                  AuthenticationStart:          null,
-                                                  AuthenticationStop:           null,
-                                                  AuthMethodStart:              null,
-                                                  AuthMethodStop:               null,
-                                                  ProviderIdStart:              null,
-                                                  ProviderIdStop:               null,
+                                                      AuthenticationStart:          LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
+                                                      AuthenticationStop:           LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
+                                                      AuthMethodStart:              AuthMethod.AUTH_REQUEST,
+                                                      AuthMethodStop:               AuthMethod.WHITELIST,
+                                                      ProviderIdStart:              EMobilityProvider_Id.Parse("DE-GDF"),
+                                                      ProviderIdStop:               EMobilityProvider_Id.Parse("DE-GD2"),
 
-                                                  EMPRoamingProvider:           null,
-                                                  EMPRoamingProviderId:         null,
+                                                      EMPRoamingProvider:           null,
+                                                      EMPRoamingProviderId:         null,
 
-                                                  Reservation:                  null,
-                                                  ReservationId:                null,
-                                                  ReservationTime:              null,
-                                                  ReservationFee:               null,
+                                                      Reservation:                  null,
+                                                      ReservationId:                null,
+                                                      ReservationTime:              null,
+                                                      ReservationFee:               null,
 
-                                                  ParkingSpaceId:               null,
-                                                  ParkingTime:                  null,
-                                                  ParkingFee:                   null,
+                                                      ParkingSpaceId:               null,
+                                                      ParkingTime:                  null,
+                                                      ParkingFee:                   null,
 
-                                                  EnergyMeterId:                null,
-                                                  EnergyMeter:                  null,
-                                                  EnergyMeteringValues:         null,
-                                                  ConsumedEnergy:               null,
-                                                  ConsumedEnergyFee:            null,
+                                                      EnergyMeterId:                null,
+                                                      EnergyMeter:                  null,
+                                                      EnergyMeteringValues:         null,
+                                                      ConsumedEnergy:               null,
+                                                      ConsumedEnergyFee:            null,
 
-                                                  CustomData:                   null,
-                                                  InternalData:                 null,
+                                                      CustomData:                   null,
+                                                      InternalData:                 null,
 
-                                                  PublicKey:                    null,
-                                                  Signatures:                   null));
+                                                      PublicKey:                    null,
+                                                      Signatures:                   null));
 
-                //LocalAuthentication: LocalAuthentication.FromAuthToken(AuthenticationToken.Parse("11223344")),
-                //ChargingProduct:     
 
-                Assert.AreEqual(AuthStartResultTypes.Authorized, sendCDRResult.Result);
+                    Assert.AreEqual(SendCDRsResultTypes.Success, sendCDRResult.Result);
+
+                }
+
+            }
+            else
+                Assert.Fail("Failed precondition(s)!");
+
+        }
+
+        #endregion
+
+
+
+        #region RemoteStart_Test1()
+
+        /// <summary>
+        /// Send a remote start request.
+        /// Validate that the remote start request had been sent to the OCPI module.
+        /// Validate via HTTP that the remote start request is present within the remote OCPI module.
+        /// </summary>
+        [Test]
+        public async Task RemoteStart_Test1()
+        {
+
+            if (csoRoamingNetwork      is not null &&
+                emp1RoamingNetwork     is not null &&
+                emp2RoamingNetwork     is not null &&
+
+                cpoCPOAPI              is not null &&
+                emsp1EMSPAPI           is not null &&
+                emsp2EMSPAPI           is not null &&
+
+                graphDefinedCSO        is not null &&
+                graphDefinedEMP1Local  is not null &&
+                graphDefinedEMP2Local  is not null)
+            {
+
+                #region Add DE*GEF*POOL1
+
+                var addChargingPoolResult1 = await graphDefinedCSO.CreateChargingPool(
+
+                                                 Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
+                                                 Name:                 I18NString.Create(Languages.en, "Test pool #1"),
+                                                 Description:          I18NString.Create(Languages.en, "GraphDefined charging pool for tests #1"),
+
+                                                 Address:              new Address(
+
+                                                                           Street:             "Biberweg",
+                                                                           PostalCode:         "07749",
+                                                                           City:               I18NString.Create(Languages.da, "Jena"),
+                                                                           Country:            Country.Germany,
+
+                                                                           HouseNumber:        "18",
+                                                                           FloorLevel:         null,
+                                                                           Region:             null,
+                                                                           PostalCodeSub:      null,
+                                                                           TimeZone:           null,
+                                                                           OfficialLanguages:  null,
+                                                                           Comment:            null,
+
+                                                                           CustomData:         null,
+                                                                           InternalData:       null
+
+                                                                       ),
+                                                 GeoLocation:          GeoCoordinate.Parse(50.93, 11.63),
+
+                                                 InitialAdminStatus:   ChargingPoolAdminStatusTypes.Operational,
+                                                 InitialStatus:        ChargingPoolStatusTypes.Available,
+
+                                                 Configurator:         chargingPool => {
+                                                                       }
+
+                                             );
+
+                Assert.IsNotNull(addChargingPoolResult1);
+
+                var chargingPool1  = addChargingPoolResult1.ChargingPool;
+                Assert.IsNotNull(chargingPool1);
+
+                #endregion
+
+                // OCPI does not have stations!
+
+                #region Add DE*GEF*STATION*1*A
+
+                var addChargingStationResult1 = await chargingPool1!.CreateChargingStation(
+
+                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                    Name:                 I18NString.Create(Languages.en, "Test station #1A"),
+                                                    Description:          I18NString.Create(Languages.en, "GraphDefined charging station for tests #1A"),
+
+                                                    GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
+
+                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialStatus:        ChargingStationStatusTypes.Available,
+
+                                                    Configurator:         chargingStation => {
+                                                                          }
+
+                                                );
+
+                Assert.IsNotNull(addChargingStationResult1);
+
+                var chargingStation1  = addChargingStationResult1.ChargingStation;
+                Assert.IsNotNull(chargingStation1);
+
+                #endregion
+
+                #region Add EVSE DE*GEF*EVSE*1*A*1
+
+                var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
+
+                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+                                          Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
+                                          Description:          I18NString.Create(Languages.en, "GraphDefined EVSE for tests #1A1"),
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusTypes.Available,
+
+                                          Configurator:         evse => {
+                                                                }
+
+                                      );
+
+                Assert.IsNotNull(addEVSE1Result1);
+
+                var evse1     = addEVSE1Result1.EVSE;
+                Assert.IsNotNull(evse1);
+
+                #endregion
+
+
+                if (evse1 is not null)
+                {
+
+                    var providerSessionId  = ChargingSession_Id.NewRandom;
+
+                    var remoteStartResult  = await emp1RoamingNetwork.RemoteStart(
+
+                                                       ChargingLocation:       ChargingLocation.      FromEVSEId(evse1.Id),
+                                                       ChargingProduct:        ChargingProduct.       FromId    (ChargingProduct_Id.Parse("AC1")),
+                                                       ReservationId:          ChargingReservation_Id.Random    (ChargingStationOperator_Id.Parse("DE*GEF")),
+                                                       SessionId:              providerSessionId,
+                                                       ProviderId:             EMobilityProvider_Id.  Parse("DE-GDF"),
+                                                       RemoteAuthentication:   RemoteAuthentication.  FromRemoteIdentification(eMobilityAccount_Id.Parse("DE-GDF-C12345678")),
+
+                                                       Timestamp:              null,
+                                                       CancellationToken:      default,
+                                                       EventTrackingId:        null,
+                                                       RequestTimeout:         null);
+
+
+                    Assert.AreEqual(RemoteStartResultTypes.Success, remoteStartResult.Result);
+
+                }
 
             }
             else
