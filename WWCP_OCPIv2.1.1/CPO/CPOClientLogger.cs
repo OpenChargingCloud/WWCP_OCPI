@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public new const String  DefaultContext   = $"OCPI{Version.Number}_CPOClient";
+            public new const String  DefaultContext   = $"OCPI{Version.String}_CPOClient";
 
             #endregion
 

@@ -224,7 +224,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNotNull(cpoAPI);
 
 
-            csoAdapter       = roamingNetwork.CreateOCPIv2_1_CSOAdapter(
+            csoAdapter       = roamingNetwork.CreateOCPIv2_1_1_CSOAdapter(
 
                                    Id:                                  EMPRoamingProvider_Id.Parse("OCPIv2.1_CSO_" + this.roamingNetwork.Id),
                                    Name:                                I18NString.Create(Languages.de, "OCPI v2.1 CSO"),

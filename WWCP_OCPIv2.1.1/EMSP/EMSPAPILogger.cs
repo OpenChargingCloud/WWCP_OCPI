@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// The default context of this logger.
         /// </summary>
-        public new const String  DefaultContext   = $"OCPI{Version.Number}_EMSPAPI";
+        public new const String  DefaultContext   = $"OCPI{Version.String}_EMSPAPI";
 
         #endregion
 

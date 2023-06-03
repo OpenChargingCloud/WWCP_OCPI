@@ -81,17 +81,32 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region (class) Command
 
+        /// <summary>
+        /// An OCPI API command.
+        /// </summary>
         public sealed class Command
         {
 
             #region Properties
 
+            /// <summary>
+            /// The name of the command.
+            /// </summary>
             public String    CommandName    { get; }
 
+            /// <summary>
+            /// An optional command message parameter.
+            /// </summary>
             public String?   Message        { get; }
 
+            /// <summary>
+            /// An optional command JSON object parameter.
+            /// </summary>
             public JObject?  JSON           { get; }
 
+            /// <summary>
+            /// An optional command number parameter.
+            /// </summary>
             public Int64?    Number         { get; }
 
             #endregion
@@ -100,7 +115,11 @@ namespace cloud.charging.open.protocols.OCPI
 
             #region Command(CommandName, Message)
 
-
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="Message">A command message parameter.</param>
             public Command(String    CommandName,
                            String?   Message)
             {
@@ -114,6 +133,11 @@ namespace cloud.charging.open.protocols.OCPI
 
             #region Command(CommandName, JSON)
 
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="JSON">A command JSON object parameter.</param>
             public Command(String    CommandName,
                            JObject?  JSON)
             {
@@ -127,6 +151,11 @@ namespace cloud.charging.open.protocols.OCPI
 
             #region Command(CommandName, Number)
 
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="Number">A command number parameter.</param>
             public Command(String    CommandName,
                            Int64?    Number)
             {
@@ -140,84 +169,170 @@ namespace cloud.charging.open.protocols.OCPI
 
             #endregion
 
+            #region (override) ToString()
+
+            /// <summary>
+            /// Return a text representation of this object.
+            /// </summary>
+            public override String ToString()
+
+                => $"'{CommandName}' => {Message                                                              ??
+                                         JSON?.  ToString(Newtonsoft.Json.Formatting.None)?.SubstringMax(100) ??
+                                         Number?.ToString()                                                   ??
+                                         String.Empty}";
+
+            #endregion
+
         }
 
         #endregion
 
         #region (class) CommandWithMetadata
 
+        /// <summary>
+        /// An OCPI API command with additional metadata.
+        /// </summary>
         public sealed class CommandWithMetadata
         {
 
             #region Properties
 
-            public String     CommandName    { get; }
+            /// <summary>
+            /// The name of the command.
+            /// </summary>
+            public String            CommandName        { get; }
 
-            public String?    Message        { get; }
+            /// <summary>
+            /// An optional command message parameter.
+            /// </summary>
+            public String?           Message            { get; }
 
-            public JObject?   JSON           { get; }
+            /// <summary>
+            /// An optional command JSON object parameter.
+            /// </summary>
+            public JObject?          JSON               { get; }
 
-            public Int64?     Number         { get; }
+            /// <summary>
+            /// An optional command number parameter.
+            /// </summary>
+            public Int64?            Number             { get; }
 
-            public DateTime?  Timestamp      { get; }
 
-            public String?    UserId         { get; }
+            /// <summary>
+            /// The timestamp of the command.
+            /// </summary>
+            public DateTime          Timestamp          { get; }
+
+            /// <summary>
+            /// The unique event tracking identification for correlating this request with other events.
+            /// </summary>
+            public EventTracking_Id  EventTrackingId    { get; }
+
+            /// <summary>
+            /// The optional user identification initiating this command/request.
+            /// </summary>
+            public User_Id?          UserId             { get; }
 
             #endregion
 
             #region Constructor(s)
 
-            #region CommandWithMetadata(CommandName, Message, Timestamp, UserId)
+            #region CommandWithMetadata(CommandName, Message, Timestamp, UserId = null)
 
-
-            public CommandWithMetadata(String     CommandName,
-                                       String?    Message,
-                                       DateTime?  Timestamp,
-                                       String?    UserId)
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="Message">A command message parameter.</param>
+            /// <param name="Timestamp">The timestamp of the command.</param>
+            /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+            /// <param name="UserId">An optional user identification initiating this command/request.</param>
+            public CommandWithMetadata(String            CommandName,
+                                       String?           Message,
+                                       DateTime          Timestamp,
+                                       EventTracking_Id  EventTrackingId,
+                                       User_Id?          UserId   = null)
             {
 
-                this.CommandName  = CommandName;
-                this.Message      = Message;
-                this.Timestamp    = Timestamp;
-                this.UserId       = UserId;
+                this.CommandName      = CommandName;
+                this.Message          = Message;
+                this.Timestamp        = Timestamp;
+                this.EventTrackingId  = EventTrackingId;
+                this.UserId           = UserId;
 
             }
 
             #endregion
 
-            #region CommandWithMetadata(CommandName, JSON,    Timestamp, UserId)
+            #region CommandWithMetadata(CommandName, JSON,    Timestamp, UserId = null)
 
-            public CommandWithMetadata(String     CommandName,
-                                       JObject?   JSON,
-                                       DateTime?  Timestamp,
-                                       String?    UserId)
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="JSON">A command JSON object parameter.</param>
+            /// <param name="Timestamp">The timestamp of the command.</param>
+            /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+            /// <param name="UserId">An optional user identification initiating this command/request.</param>
+            public CommandWithMetadata(String            CommandName,
+                                       JObject?          JSON,
+                                       DateTime          Timestamp,
+                                       EventTracking_Id  EventTrackingId,
+                                       User_Id?          UserId   = null)
             {
 
-                this.CommandName  = CommandName;
-                this.JSON         = JSON;
-                this.Timestamp    = Timestamp;
-                this.UserId       = UserId;
+                this.CommandName      = CommandName;
+                this.JSON             = JSON;
+                this.Timestamp        = Timestamp;
+                this.EventTrackingId  = EventTrackingId;
+                this.UserId           = UserId;
 
             }
 
             #endregion
 
-            #region CommandWithMetadata(CommandName, Number,  Timestamp, UserId)
+            #region CommandWithMetadata(CommandName, Number,  Timestamp, UserId = null)
 
-            public CommandWithMetadata(String     CommandName,
-                                       Int64?     Number,
-                                       DateTime?  Timestamp,
-                                       String?    UserId)
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="Number">A command number parameter.</param>
+            /// <param name="Timestamp">The timestamp of the command.</param>
+            /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+            /// <param name="UserId">An optional user identification initiating this command/request.</param>
+            public CommandWithMetadata(String            CommandName,
+                                       Int64?            Number,
+                                       DateTime          Timestamp,
+                                       EventTracking_Id  EventTrackingId,
+                                       User_Id?          UserId   = null)
             {
 
-                this.CommandName  = CommandName;
-                this.Number       = Number;
-                this.Timestamp    = Timestamp;
-                this.UserId       = UserId;
+                this.CommandName      = CommandName;
+                this.Number           = Number;
+                this.Timestamp        = Timestamp;
+                this.EventTrackingId  = EventTrackingId;
+                this.UserId           = UserId;
 
             }
 
             #endregion
+
+            #endregion
+
+            #region (override) ToString()
+
+            /// <summary>
+            /// Return a text representation of this object.
+            /// </summary>
+            public override String ToString()
+
+                => $"'{CommandName}' {(UserId is not null
+                                           ? $"({UserId})"
+                                           : String.Empty)} => {Message                                                              ??
+                                                                JSON?.  ToString(Newtonsoft.Json.Formatting.None)?.SubstringMax(100) ??
+                                                                Number?.ToString()                                                   ??
+                                                                String.Empty}";
 
             #endregion
 
@@ -252,11 +367,6 @@ namespace cloud.charging.open.protocols.OCPI
         /// The (max supported) OCPI version.
         /// </summary>
         private readonly           Version_Id  OCPIVersion;
-
-        /// <summary>
-        /// The absolute path to the CommonAPI log file.
-        /// </summary>
-        private readonly           String      logfileName;
 
         /// <summary>
         /// The default database file name for all remote party configuration.
@@ -533,8 +643,8 @@ namespace cloud.charging.open.protocols.OCPI
             this.Disable_RootServices      = Disable_RootServices;
             this.LoggingContext            = LoggingContext;
 
-            this.logfileName               = Path.Combine(this.LoggingPath,
-                                                          this.LogfileName);
+            //this.logfileName               = Path.Combine(this.LoggingPath,
+            //                                              this.LogfileName);
 
             this.DatabaseFilePath          = DatabaseFilePath      ?? Path.Combine(AppContext.BaseDirectory,
                                                                                    DefaultHTTPAPI_LoggingPath);
@@ -665,11 +775,11 @@ namespace cloud.charging.open.protocols.OCPI
             this.Disable_RootServices      = Disable_RootServices;
             this.LoggingContext            = LoggingContext;
 
-            this.logfileName               = Path.Combine(this.LoggingPath,
-                                                          this.LogfileName);
+            //this.logfileName               = Path.Combine(this.LoggingPath,
+            //                                              this.LogfileName);
 
-            this.DatabaseFilePath          = DatabaseFilePath      ?? Path.Combine(AppContext.BaseDirectory,
-                                                                                   DefaultHTTPAPI_LoggingPath);
+            this.DatabaseFilePath          = DatabaseFilePath                   ?? Path.Combine(AppContext.BaseDirectory,
+                                                                                                DefaultHTTPAPI_LoggingPath);
 
             if (this.DatabaseFilePath[^1] != Path.DirectorySeparatorChar)
                 this.DatabaseFilePath     += Path.DirectorySeparatorChar;
@@ -694,6 +804,8 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
+        //ToDo: Wrap the following into a plugable interface!
+
         #region Read/write database files
 
         #region (private, static) WriteToDatabase       (FileName, Text)
@@ -707,35 +819,38 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (private, static) WriteToDatabase       (FileName, JToken, UserId = null)
+        #region (private, static) WriteToDatabase       (FileName, JToken, ...)
 
-        private static Task WriteToDatabase(String   FileName,
-                                            String   Command,
-                                            JToken?  JToken,
-                                            String?  UserId   = null)
+        private static Task WriteToDatabase(String            FileName,
+                                            String            Command,
+                                            JToken?           JToken,
+                                            EventTracking_Id  EventTrackingId,
+                                            User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(FileName,
                                JSONObject.Create(
 
                                          // Command is always the first property!
-                                         new JProperty(Command,      JToken),
-                                         new JProperty("timestamp",  Timestamp.Now),
+                                         new JProperty(Command,            JToken),
+                                         new JProperty("timestamp",        Timestamp.Now),
+                                         new JProperty("eventTrackingId",  EventTrackingId),
 
-                                   UserId is not null
-                                       ? new JProperty("userId",     UserId)
+                                   CurrentUserId is not null
+                                       ? new JProperty("userId",           CurrentUserId)
                                        : null).
                                ToString(Newtonsoft.Json.Formatting.None));
 
         #endregion
 
-        #region (private, static) WriteCommentToDatabase(FileName, Text, UserId = null)
+        #region (private, static) WriteCommentToDatabase(FileName, Text, ...)
 
-        private static Task WriteCommentToDatabase(String   FileName,
-                                                   String   Text,
-                                                   String?  UserId   = null)
+        private static Task WriteCommentToDatabase(String            FileName,
+                                                   String            Text,
+                                                   EventTracking_Id  EventTrackingId,
+                                                   User_Id?          CurrentUserId   = null)
 
             => File.AppendAllTextAsync(FileName,
-                                       $"//{Timestamp.Now.ToIso8601()} {(UserId is not null ? UserId : "-")}: {Text}{Environment.NewLine}",
+                                       $"//{Timestamp.Now.ToIso8601()} {EventTrackingId} {(CurrentUserId is not null ? CurrentUserId : "-")}: {Text}{Environment.NewLine}",
                                        Encoding.UTF8);
 
         #endregion
@@ -816,33 +931,50 @@ namespace cloud.charging.open.protocols.OCPI
                         if (line.StartsWith("//"))
                             continue;
 
-                        var json       = JObject.Parse(line);
-                        var command    = json.Properties().First();
-                        var timestamp  = json["timestamp"]?.Value<DateTime>();
-                        var userId     = json["userId"]?.   Value<String>();
+                        var json             = JObject.Parse(line);
+                        var command          = json.Properties().First();
+                        var timestamp        = json["timestamp"]?.      Value<DateTime>();
+                        var eventtrackingid  = json["eventTrackingId"]?.Value<String>();
+                        var eventTrackingId  = eventtrackingid is not null ? EventTracking_Id.Parse(eventtrackingid) : null;
+                        var userid           = json["userId"]?.         Value<String>();
+                        var userId           = userid          is not null ? User_Id.         Parse(userid)          : new User_Id?();
 
-                        if      (command.Value.Type == JTokenType.String)
-                            list.Add(new CommandWithMetadata(command.Name,
-                                                             command.Value<String>(),
-                                                             timestamp,
-                                                             userId));
+                        if (timestamp.HasValue &&
+                            eventTrackingId is not null)
+                        {
 
-                        else if (command.Value.Type == JTokenType.Object)
-                            list.Add(new CommandWithMetadata(command.Name,
-                                                             command.Value as JObject,
-                                                             timestamp,
-                                                             userId));
+                            if (command.Value.Type == JTokenType.String)
+                                list.Add(new CommandWithMetadata(command.Name,
+                                                                 command.Value<String>(),
+                                                                 timestamp.Value,
+                                                                 eventTrackingId,
+                                                                 userId));
 
-                        else if (command.Value.Type == JTokenType.Integer)
-                            list.Add(new CommandWithMetadata(command.Name,
-                                                             command.Value<Int64>(),
-                                                             timestamp,
-                                                             userId));
+                            else if (command.Value.Type == JTokenType.Object)
+                                list.Add(new CommandWithMetadata(command.Name,
+                                                                 command.Value as JObject,
+                                                                 timestamp.Value,
+                                                                 eventTrackingId,
+                                                                 userId));
+
+                            else if (command.Value.Type == JTokenType.Integer)
+                                list.Add(new CommandWithMetadata(command.Name,
+                                                                 command.Value<Int64>(),
+                                                                 timestamp.Value,
+                                                                 eventTrackingId,
+                                                                 userId));
+
+                            else
+                                DebugX.Log($"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName}, IncludeMetaData): Invalid command: '{line}'!");
+
+                        }
+                        else
+                            DebugX.Log($"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName}, IncludeMetaData): Invalid command: '{line}'!");
 
                     }
                     catch (Exception e)
                     {
-                        DebugX.Log(e, $"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName}, IncludeMetaData)");
+                        DebugX.LogException(e, $"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName}, IncludeMetaData)");
                     }
 
                 }
@@ -862,59 +994,81 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region LogRemoteParty       (Command, Text = null, UserId = null)
+        #region (protected) LogRemoteParty       (Command,              ...)
 
-        protected Task LogRemoteParty(String   Command,
-                                      String?  Text     = null,
-                                      String?  UserId   = null)
+        protected Task LogRemoteParty(String            Command,
+                                      EventTracking_Id  EventTrackingId,
+                                      User_Id?          CurrentUserId   = null)
+
+            => WriteToDatabase(RemotePartyDBFileName,
+                               Command,
+                               null,
+                               EventTrackingId,
+                               CurrentUserId);
+
+        #endregion
+
+        #region (protected) LogRemoteParty       (Command, Text = null, ...)
+
+        protected Task LogRemoteParty(String            Command,
+                                      String?           Text,
+                                      EventTracking_Id  EventTrackingId,
+                                      User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(RemotePartyDBFileName,
                                Command,
                                Text is not null
                                    ? JToken.Parse(Text)
                                    : null,
-                               UserId);
+                               EventTrackingId,
+                               CurrentUserId);
 
         #endregion
 
-        #region LogRemoteParty       (Command, JSON,        UserId = null)
+        #region (protected) LogRemoteParty       (Command, JSON,        ...)
 
-        protected Task LogRemoteParty(String   Command,
-                                      JObject  JSON,
-                                      String?  UserId   = null)
+        protected Task LogRemoteParty(String            Command,
+                                      JObject           JSON,
+                                      EventTracking_Id  EventTrackingId,
+                                      User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(RemotePartyDBFileName,
                                Command,
                                JSON,
-                               UserId);
+                               EventTrackingId,
+                               CurrentUserId);
 
         #endregion
 
-        #region LogRemoteParty       (Command, Number,      UserId = null)
+        #region (protected) LogRemoteParty       (Command, Number,      ...)
 
-        protected Task Log(String   Command,
-                           Int64    Number,
-                           String?  UserId   = null)
+        protected Task Log(String            Command,
+                           Int64             Number,
+                           EventTracking_Id  EventTrackingId,
+                           User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(RemotePartyDBFileName,
                                Command,
                                Number,
-                               UserId);
+                               EventTrackingId,
+                               CurrentUserId);
 
         #endregion
 
-        #region LogRemotePartyComment(Text,                 UserId = null)
+        #region (protected) LogRemotePartyComment(Text,                 ...)
 
-        protected Task LogRemotePartyComment(String   Text,
-                                             String?  UserId = null)
+        protected Task LogRemotePartyComment(String           Text,
+                                            EventTracking_Id  EventTrackingId,
+                                            User_Id?          CurrentUserId   = null)
 
             => WriteCommentToDatabase(RemotePartyDBFileName,
                                       Text,
-                                      UserId);
+                                      EventTrackingId,
+                                      CurrentUserId);
 
         #endregion
 
-        #region ReadRemotePartyDatabaseFile()
+        #region (protected) ReadRemotePartyDatabaseFile()
 
         protected IEnumerable<Command> ReadRemotePartyDatabaseFile()
 
@@ -923,59 +1077,81 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region LogAsset       (Command, Text = null, UserId = null)
+        #region (protected) LogAsset       (Command,              ...)
 
-        protected Task LogAsset(String   Command,
-                                String?  Text     = null,
-                                String?  UserId   = null)
+        protected Task LogAsset(String            Command,
+                                EventTracking_Id  EventTrackingId,
+                                User_Id?          CurrentUserId   = null)
+
+            => WriteToDatabase(AssetsDBFileName,
+                               Command,
+                               null,
+                               EventTrackingId,
+                               CurrentUserId);
+
+        #endregion
+
+        #region (protected) LogAsset       (Command, Text = null, ...)
+
+        protected Task LogAsset(String             Command,
+                                String?            Text,
+                                EventTracking_Id?  EventTrackingId   = null,
+                                User_Id?           CurrentUserId     = null)
 
             => WriteToDatabase(AssetsDBFileName,
                                Command,
                                Text is not null
                                    ? JToken.Parse(Text)
                                    : null,
-                               UserId);
+                               EventTrackingId ?? EventTracking_Id.New,
+                               CurrentUserId);
 
         #endregion
 
-        #region LogAsset       (Command, JSON,        UserId = null)
+        #region (protected) LogAsset       (Command, JSON,        ...)
 
-        protected Task LogAsset(String   Command,
-                                JObject  JSON,
-                                String?  UserId   = null)
+        protected Task LogAsset(String            Command,
+                                JObject           JSON,
+                                EventTracking_Id  EventTrackingId,
+                                User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(AssetsDBFileName,
                                Command,
                                JSON,
-                               UserId);
+                               EventTrackingId,
+                               CurrentUserId);
 
         #endregion
 
-        #region LogAsset       (Command, Number,      UserId = null)
+        #region (protected) LogAsset       (Command, Number,      ...)
 
-        protected Task LogAsset(String   Command,
-                                Int64    Number,
-                                String?  UserId   = null)
+        protected Task LogAsset(String            Command,
+                                Int64             Number,
+                                EventTracking_Id  EventTrackingId,
+                                User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(AssetsDBFileName,
                                Command,
                                Number,
-                               UserId);
+                               EventTrackingId,
+                               CurrentUserId);
 
         #endregion
 
-        #region LogAssetComment(Text,                 UserId = null)
+        #region (protected) LogAssetComment(Text,                 ...)
 
-        protected Task LogAssetComment(String   Text,
-                                       String?  UserId   = null)
+        protected Task LogAssetComment(String            Text,
+                                       EventTracking_Id  EventTrackingId,
+                                       User_Id?          CurrentUserId   = null)
 
             => WriteCommentToDatabase(AssetsDBFileName,
                                       Text,
-                                      UserId);
+                                      EventTrackingId,
+                                      CurrentUserId);
 
         #endregion
 
-        #region ReadAssetsDatabaseFile()
+        #region (protected) ReadAssetsDatabaseFile()
 
         protected IEnumerable<Command> ReadAssetsDatabaseFile()
 
@@ -984,20 +1160,27 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region Start()
+        #region Start(...)
 
         /// <summary>
         /// Start this CommonAPI.
         /// </summary>
-        public override Boolean Start()
+        /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+        /// <param name="CurrentUserId">An optional user identification initiating this command/request.</param>
+        public async Task<Boolean> Start(EventTracking_Id?  EventTrackingId   = null,
+                                         User_Id?           CurrentUserId     = null)
         {
 
             if (HTTPServer.IsStarted)
                 return true;
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             var result = base.Start();
 
-            LogAsset("started").GetAwaiter().GetResult();
+            await LogAsset("started",
+                           EventTrackingId,
+                           CurrentUserId);
 
             #region Send 'Open Data API restarted'-e-mail...
 
@@ -1025,24 +1208,34 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Shutdown(Message = null, Wait = true)
+        #region Shutdown(Message = null, Wait = true, ...)
 
         /// <summary>
         /// Shutdown this CommonAPI.
         /// </summary>
         /// <param name="Message">An optional shutdown message.</param>
         /// <param name="Wait">Whether to wait for the shutdown to complete.</param>
-        public override Boolean Shutdown(String?  Message   = null,
-                                         Boolean  Wait      = true)
+        /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+        /// <param name="CurrentUserId">An optional user identification initiating this command/request.</param>
+        public async Task<Boolean> Shutdown(String?            Message           = null,
+                                            Boolean            Wait              = true,
+                                            EventTracking_Id?  EventTrackingId   = null,
+                                            User_Id?           CurrentUserId     = null)
         {
 
             if (!HTTPServer.IsStarted)
                 return true;
 
-            var result = base.Shutdown(Message,
-                                       Wait);
+            EventTrackingId ??= EventTracking_Id.New;
 
-            LogAsset("shutdown", Message).GetAwaiter().GetResult();
+            var result = base.Shutdown(Message,
+                                       Wait,
+                                       EventTrackingId);
+
+            await LogAsset("shutdown",
+                           Message,
+                           EventTrackingId,
+                           CurrentUserId);
 
             //SendShutdown(this, Timestamp.Now);
 

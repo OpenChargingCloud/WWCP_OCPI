@@ -388,7 +388,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             // Clean up log and databade directories...
             foreach (var filePath in Directory.GetFiles(Path.Combine(AppContext.BaseDirectory,
                                                                      HTTPAPI.DefaultHTTPAPI_LoggingPath),
-                                                        $"GraphDefined_OCPI{Version.Number}_*.log"))
+                                                        $"GraphDefined_OCPI{Version.String}_*.log"))
             {
                 File.Delete(filePath);
             }
@@ -436,11 +436,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        DevelopmentServers:                  null,
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
-                                       LogfileName:                         $"GraphDefined_OCPI{Version.Number}_CSO.log",
+                                       LogfileName:                         $"GraphDefined_OCPI{Version.String}_CSO.log",
                                        LogfileCreator:                      null,
                                        DatabaseFilePath:                    null,
-                                       RemotePartyDBFileName:               $"GraphDefined_OCPI{Version.Number}_RemoteParties_CPO.log",
-                                       AssetsDBFileName:                    $"GraphDefined_OCPI{Version.Number}_Assets_CPO.log",
+                                       RemotePartyDBFileName:               $"GraphDefined_OCPI{Version.String}_RemoteParties_CPO.log",
+                                       AssetsDBFileName:                    $"GraphDefined_OCPI{Version.String}_Assets_CPO.log",
                                        Autostart:                           false
 
                                    );
@@ -488,11 +488,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        DevelopmentServers:                  null,
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
-                                       LogfileName:                         $"GraphDefined_OCPI{Version.Number}_EMSP1.log",
+                                       LogfileName:                         $"GraphDefined_OCPI{Version.String}_EMSP1.log",
                                        LogfileCreator:                      null,
                                        DatabaseFilePath:                    null,
-                                       RemotePartyDBFileName:               $"GraphDefined_OCPI{Version.Number}_RemoteParties_EMSP1.log",
-                                       AssetsDBFileName:                    $"GraphDefined_OCPI{Version.Number}_Assets_EMSP1.log",
+                                       RemotePartyDBFileName:               $"GraphDefined_OCPI{Version.String}_RemoteParties_EMSP1.log",
+                                       AssetsDBFileName:                    $"GraphDefined_OCPI{Version.String}_Assets_EMSP1.log",
                                        Autostart:                           false
 
                                    );
@@ -540,11 +540,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        DevelopmentServers:                  null,
                                        DisableLogging:                      null,
                                        LoggingPath:                         null,
-                                       LogfileName:                         $"GraphDefined_OCPI{Version.Number}_EMSP2.log",
+                                       LogfileName:                         $"GraphDefined_OCPI{Version.String}_EMSP2.log",
                                        LogfileCreator:                      null,
                                        DatabaseFilePath:                    null,
-                                       RemotePartyDBFileName:               $"GraphDefined_OCPI{Version.Number}_RemoteParties_EMSP2.log",
-                                       AssetsDBFileName:                    $"GraphDefined_OCPI{Version.Number}_Assets_EMSP2.log",
+                                       RemotePartyDBFileName:               $"GraphDefined_OCPI{Version.String}_RemoteParties_EMSP2.log",
+                                       AssetsDBFileName:                    $"GraphDefined_OCPI{Version.String}_Assets_EMSP2.log",
                                        Autostart:                           false
 
                                    );

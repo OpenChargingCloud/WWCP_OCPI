@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public new const String  DefaultContext   = $"OCPI{Version.Number}_SCSPClient";
+            public new const String  DefaultContext   = $"OCPI{Version.String}_SCSPClient";
 
             #endregion
 

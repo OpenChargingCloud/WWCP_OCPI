@@ -42,11 +42,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected  RoamingNetwork?            csoRoamingNetwork;
         protected  IChargingStationOperator?  graphDefinedCSO;
 
-        protected  LocalEMobilityProvider?    graphDefinedEMP1Local;
+        protected  VirtualEMobilityProvider?    graphDefinedEMP1Local;
         protected  RoamingNetwork?            emp1RoamingNetwork;
         protected  IEMobilityProvider?        graphDefinedEMP1;
 
-        protected  LocalEMobilityProvider?    graphDefinedEMP2Local;
+        protected  VirtualEMobilityProvider?    graphDefinedEMP2Local;
         protected  RoamingNetwork?            emp2RoamingNetwork;
         protected  IEMobilityProvider?        graphDefinedEMP2;
 
@@ -70,11 +70,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             await base.SetupEachTest();
 
-            graphDefinedEMP1Local = new LocalEMobilityProvider(
+            graphDefinedEMP1Local = new VirtualEMobilityProvider(
                                         EMobilityProvider_Id.Parse("DE-GDF")
                                     );
 
-            graphDefinedEMP2Local = new LocalEMobilityProvider(
+            graphDefinedEMP2Local = new VirtualEMobilityProvider(
                                         EMobilityProvider_Id.Parse("DE-GD2")
                                     );
 
@@ -176,7 +176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 emsp2EMSPAPI is not null)
             {
 
-                cpoAdapter           = csoRoamingNetwork.CreateOCPIv2_1_CSOAdapter(
+                cpoAdapter           = csoRoamingNetwork.CreateOCPIv2_1_1_CSOAdapter(
 
                                            Id:                                  EMPRoamingProvider_Id.Parse("OCPIv2.1_CSO_" + this.csoRoamingNetwork.Id),
                                            Name:                                I18NString.Create(Languages.de, "OCPI v2.1 CSO"),

@@ -802,7 +802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         {
 
             this.HTTPServer       = HTTPServer  ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
-            this.Context          = Context     ?? $"OCPI{Version.Number}_Logger";
+            this.Context          = Context     ?? $"OCPI{Version.String}_Logger";
             this.LoggingPath      = LoggingPath ?? AppContext.BaseDirectory;
 
             this.requestLoggers   = new ConcurrentDictionary<String, OCPIAPIRequestLogger>();

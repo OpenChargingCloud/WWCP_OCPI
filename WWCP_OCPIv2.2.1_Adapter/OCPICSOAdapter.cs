@@ -334,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                           null, // HTTPServiceName
                                                           null, // BasePath
 
-                                                          CommonAPI.URLPathPrefix + Version.Number + "cpo",
+                                                          CommonAPI.URLPathPrefix + Version.String + "cpo",
                                                           null, // APIVersionHashes
 
                                                           null, // DisableMaintenanceTasks

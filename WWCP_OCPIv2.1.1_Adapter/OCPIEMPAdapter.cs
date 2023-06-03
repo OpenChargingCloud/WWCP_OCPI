@@ -395,7 +395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                           this.CommonAPI,
                                                           DefaultCountryCode,
                                                           DefaultPartyId,
-                                                          URLPathPrefix: CommonAPI.URLPathPrefix + Version.Number + "emsp"
+                                                          URLPathPrefix: CommonAPI.URLPathPrefix + Version.String + "emsp"
                                                       );
 
             this.CustomEVSEIdConverter              = CustomEVSEIdConverter;

@@ -783,7 +783,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region (override) ToString()
 
         /// <summary>
-        /// Get a text representation of this object.
+        /// Return a text representation of this object.
         /// </summary>
         public override String ToString()
 

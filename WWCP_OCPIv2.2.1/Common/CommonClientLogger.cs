@@ -42,7 +42,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public const String  DefaultContext   = $"OCPI{Version.Number}_CommonClient";
+            public const String  DefaultContext   = $"OCPI{Version.String}_CommonClient";
 
             #endregion
 

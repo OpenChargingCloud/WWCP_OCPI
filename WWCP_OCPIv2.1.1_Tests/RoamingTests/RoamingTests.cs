@@ -60,7 +60,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                 #region Add DE*GEF*POOL1
 
                 // Will call OCPICSOAdapter.AddStaticData(ChargingPool, ...)!
-                var addChargingPoolResult1 = await graphDefinedCSO.CreateChargingPool(
+                var addChargingPoolResult1 = await graphDefinedCSO.AddChargingPool(
 
                                                  Id: ChargingPool_Id.Parse("DE*GEF*POOL1"),
                                                  Name: I18NString.Create(Languages.en, "Test pool #1"),
@@ -141,7 +141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                 #region Add DE*GEF*POOL2
 
                 // Will call OCPICSOAdapter.AddStaticData(ChargingPool, ...)!
-                var addChargingPoolResult2 = await graphDefinedCSO.CreateChargingPool(
+                var addChargingPoolResult2 = await graphDefinedCSO.AddChargingPool(
 
                                                  Id: ChargingPool_Id.Parse("DE*GEF*POOL2"),
                                                  Name: I18NString.Create(Languages.en, "Test pool #2"),
@@ -215,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*1*A
 
-                var addChargingStationResult1 = await chargingPool1!.CreateChargingStation(
+                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
                                                     Id: ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                     Name: I18NString.Create(Languages.en, "Test station #1A"),
@@ -242,7 +242,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*1*B
 
-                var addChargingStationResult2 = await chargingPool1!.CreateChargingStation(
+                var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
                                                     Id: ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
                                                     Name: I18NString.Create(Languages.en, "Test station #1B"),
@@ -269,7 +269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*2*A
 
-                var addChargingStationResult3 = await chargingPool2!.CreateChargingStation(
+                var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
                                                     Id: ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
                                                     Name: I18NString.Create(Languages.en, "Test station #2A"),
@@ -298,7 +298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                 #region Add EVSE DE*GEF*EVSE*1*A*1
 
                 // Will call OCPICSOAdapter.AddStaticData(EVSE, ...)!
-                var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
+                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
@@ -352,7 +352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*A*2
 
-                var addEVSE1Result2 = await chargingStation1!.CreateEVSE(
+                var addEVSE1Result2 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A2"),
@@ -385,7 +385,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*B*1
 
-                var addEVSE1Result3 = await chargingStation2!.CreateEVSE(
+                var addEVSE1Result3 = await chargingStation2!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1B1"),
@@ -418,7 +418,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*2*A*1
 
-                var addEVSE1Result4 = await chargingStation3!.CreateEVSE(
+                var addEVSE1Result4 = await chargingStation3!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #2A1"),
@@ -533,7 +533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*POOL1
 
-                var addChargingPoolResult1 = await graphDefinedCSO.CreateChargingPool(
+                var addChargingPoolResult1 = await graphDefinedCSO.AddChargingPool(
 
                                                  Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
                                                  Name:                 I18NString.Create(Languages.en, "Test pool #1"),
@@ -577,7 +577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*POOL2
 
-                var addChargingPoolResult2 = await graphDefinedCSO.CreateChargingPool(
+                var addChargingPoolResult2 = await graphDefinedCSO.AddChargingPool(
 
                                                  Id:                   ChargingPool_Id.Parse("DE*GEF*POOL2"),
                                                  Name:                 I18NString.Create(Languages.en, "Test pool #2"),
@@ -624,7 +624,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*1*A
 
-                var addChargingStationResult1 = await chargingPool1!.CreateChargingStation(
+                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #1A"),
@@ -649,7 +649,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*1*B
 
-                var addChargingStationResult2 = await chargingPool1!.CreateChargingStation(
+                var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #1B"),
@@ -674,7 +674,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*2*A
 
-                var addChargingStationResult3 = await chargingPool2!.CreateChargingStation(
+                var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #2A"),
@@ -700,7 +700,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
 
-                var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
+                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
@@ -733,7 +733,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*A*2
 
-                var addEVSE1Result2 = await chargingStation1!.CreateEVSE(
+                var addEVSE1Result2 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A2"),
@@ -766,7 +766,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*B*1
 
-                var addEVSE1Result3 = await chargingStation2!.CreateEVSE(
+                var addEVSE1Result3 = await chargingStation2!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1B1"),
@@ -799,7 +799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*2*A*1
 
-                var addEVSE1Result4 = await chargingStation3!.CreateEVSE(
+                var addEVSE1Result4 = await chargingStation3!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #2A1"),
@@ -1141,7 +1141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*POOL1
 
-                var addChargingPoolResult1 = await graphDefinedCSO.CreateChargingPool(
+                var addChargingPoolResult1 = await graphDefinedCSO.AddChargingPool(
 
                                                  Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
                                                  Name:                 I18NString.Create(Languages.en, "Test pool #1"),
@@ -1185,7 +1185,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*POOL2
 
-                var addChargingPoolResult2 = await graphDefinedCSO.CreateChargingPool(
+                var addChargingPoolResult2 = await graphDefinedCSO.AddChargingPool(
 
                                                  Id:                   ChargingPool_Id.Parse("DE*GEF*POOL2"),
                                                  Name:                 I18NString.Create(Languages.en, "Test pool #2"),
@@ -1232,7 +1232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*1*A
 
-                var addChargingStationResult1 = await chargingPool1!.CreateChargingStation(
+                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #1A"),
@@ -1257,7 +1257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*1*B
 
-                var addChargingStationResult2 = await chargingPool1!.CreateChargingStation(
+                var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #1B"),
@@ -1282,7 +1282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*2*A
 
-                var addChargingStationResult3 = await chargingPool2!.CreateChargingStation(
+                var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #2A"),
@@ -1308,7 +1308,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
 
-                var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
+                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
@@ -1341,7 +1341,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*A*2
 
-                var addEVSE1Result2 = await chargingStation1!.CreateEVSE(
+                var addEVSE1Result2 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A2"),
@@ -1374,7 +1374,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*B*1
 
-                var addEVSE1Result3 = await chargingStation2!.CreateEVSE(
+                var addEVSE1Result3 = await chargingStation2!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1B1"),
@@ -1407,7 +1407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*2*A*1
 
-                var addEVSE1Result4 = await chargingStation3!.CreateEVSE(
+                var addEVSE1Result4 = await chargingStation3!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #2A1"),
@@ -1616,7 +1616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*POOL1
 
-                var addChargingPoolResult1 = await graphDefinedCSO.CreateChargingPool(
+                var addChargingPoolResult1 = await graphDefinedCSO.AddChargingPool(
 
                                                  Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
                                                  Name:                 I18NString.Create(Languages.en, "Test pool #1"),
@@ -1660,7 +1660,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*POOL2
 
-                var addChargingPoolResult2 = await graphDefinedCSO.CreateChargingPool(
+                var addChargingPoolResult2 = await graphDefinedCSO.AddChargingPool(
 
                                                  Id:                   ChargingPool_Id.Parse("DE*GEF*POOL2"),
                                                  Name:                 I18NString.Create(Languages.en, "Test pool #2"),
@@ -1707,7 +1707,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*1*A
 
-                var addChargingStationResult1 = await chargingPool1!.CreateChargingStation(
+                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #1A"),
@@ -1732,7 +1732,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*1*B
 
-                var addChargingStationResult2 = await chargingPool1!.CreateChargingStation(
+                var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #1B"),
@@ -1757,7 +1757,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*2*A
 
-                var addChargingStationResult3 = await chargingPool2!.CreateChargingStation(
+                var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #2A"),
@@ -1783,7 +1783,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
 
-                var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
+                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
@@ -1806,7 +1806,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*A*2
 
-                var addEVSE1Result2 = await chargingStation1!.CreateEVSE(
+                var addEVSE1Result2 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A2"),
@@ -1829,7 +1829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*B*1
 
-                var addEVSE1Result3 = await chargingStation2!.CreateEVSE(
+                var addEVSE1Result3 = await chargingStation2!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1B1"),
@@ -1852,7 +1852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*2*A*1
 
-                var addEVSE1Result4 = await chargingStation3!.CreateEVSE(
+                var addEVSE1Result4 = await chargingStation3!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #2A1"),
@@ -1973,7 +1973,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*POOL1
 
-                var addChargingPoolResult1 = await graphDefinedCSO.CreateChargingPool(
+                var addChargingPoolResult1 = await graphDefinedCSO.AddChargingPool(
 
                                                  Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
                                                  Name:                 I18NString.Create(Languages.en, "Test pool #1"),
@@ -2019,7 +2019,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*1*A
 
-                var addChargingStationResult1 = await chargingPool1!.CreateChargingStation(
+                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #1A"),
@@ -2044,7 +2044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
 
-                var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
+                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
@@ -2186,7 +2186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*POOL1
 
-                var addChargingPoolResult1 = await graphDefinedCSO.CreateChargingPool(
+                var addChargingPoolResult1 = await graphDefinedCSO.AddChargingPool(
 
                                                  Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
                                                  Name:                 I18NString.Create(Languages.en, "Test pool #1"),
@@ -2232,7 +2232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*1*A
 
-                var addChargingStationResult1 = await chargingPool1!.CreateChargingStation(
+                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #1A"),
@@ -2257,7 +2257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
 
-                var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
+                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
@@ -2426,7 +2426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*POOL1
 
-                var addChargingPoolResult1 = await graphDefinedCSO.CreateChargingPool(
+                var addChargingPoolResult1 = await graphDefinedCSO.AddChargingPool(
 
                                                  Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
                                                  Name:                 I18NString.Create(Languages.en, "Test pool #1"),
@@ -2472,7 +2472,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add DE*GEF*STATION*1*A
 
-                var addChargingStationResult1 = await chargingPool1!.CreateChargingStation(
+                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
                                                     Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                     Name:                 I18NString.Create(Languages.en, "Test station #1A"),
@@ -2497,7 +2497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
 
-                var addEVSE1Result1 = await chargingStation1!.CreateEVSE(
+                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),

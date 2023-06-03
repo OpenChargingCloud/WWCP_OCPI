@@ -306,7 +306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                           null, // HTTPServiceName
                                                           null, // BasePath
 
-                                                          this.CommonAPI.URLPathPrefix + Version.Number + "cpo",
+                                                          this.CommonAPI.URLPathPrefix + Version.String + "cpo",
                                                           null, // APIVersionHashes
 
                                                           null, // DisableMaintenanceTasks
@@ -598,6 +598,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             try
             {
 
@@ -616,7 +618,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                            out warnings);
 
                         if (location is not null)
-                            CommonAPI.AddLocation(location);
+                            await CommonAPI.AddLocation(location,
+                                                        false,
+                                                        EventTrackingId);
 
 
                         return WWCP.PushChargingPoolDataResult.Enqueued(
@@ -687,6 +691,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             try
             {
 
@@ -706,7 +712,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         if (location is not null)
                         {
 
-                            var result = CommonAPI.AddLocation(location);
+                            var result = await CommonAPI.AddLocation(location,
+                                                                     false,
+                                                                     EventTrackingId);
 
 
                             //ToDo: Process errors!!!
@@ -788,6 +796,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             try
             {
 
@@ -807,7 +817,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         if (location is not null)
                         {
 
-                            var result = CommonAPI.UpdateLocation(location);
+                            var result = await CommonAPI.UpdateLocation(location,
+                                                                        null,
+                                                                        false,
+                                                                        EventTrackingId);
 
                             //ToDo: Process errors!!!
 
@@ -1149,6 +1162,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             try
             {
 
@@ -1182,7 +1197,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         out warnings);
 
                                 if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                    result = await CommonAPI.AddOrUpdateEVSE(location,
+                                                                             evse2,
+                                                                             null,
+                                                                             false,
+                                                                             EventTrackingId);
                                 else
                                     result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
 
@@ -1278,13 +1297,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             try
             {
 
                 if (lockTaken)
                 {
 
-                    AddOrUpdateResult<EVSE> result;
+                    AddResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
@@ -1311,21 +1332,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         out warnings);
 
                                 if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                    result = await CommonAPI.AddEVSE(location,
+                                                                     evse2,
+                                                                     false,
+                                                                     EventTrackingId);
                                 else
-                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+                                    result = AddResult<EVSE>.Failed("Could not convert the given EVSE!");
 
                             }
                             else
-                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+                                result = AddResult<EVSE>.Failed("Unknown location identification!");
 
                         }
                         else
-                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+                            result = AddResult<EVSE>.Failed("The given EVSE was filtered!");
 
                     }
                     else
-                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+                        result = AddResult<EVSE>.Failed("Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1414,6 +1438,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             try
             {
 
@@ -1447,7 +1473,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         out warnings);
 
                                 if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                    result = await CommonAPI.AddOrUpdateEVSE(location,
+                                                                             evse2,
+                                                                             null,
+                                                                             false,
+                                                                             EventTrackingId);
                                 else
                                     result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
 

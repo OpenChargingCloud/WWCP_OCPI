@@ -1665,7 +1665,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (justMySupportedVersion.Length == 0)
                 return new OCPIResponse.Builder(Request) {
                            StatusCode           = 3003,
-                           StatusMessage        = $"Could not find {Version.Number} at '{receivedCredentials.URL}'!",
+                           StatusMessage        = $"Could not find {Version.String} at '{receivedCredentials.URL}'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
@@ -1682,7 +1682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             if (otherVersion2_2_1Details.StatusCode != 1000)
                 return new OCPIResponse.Builder(Request) {
                            StatusCode           = 3001,
-                           StatusMessage        = $"Could not fetch {Version.Number} information from '{justMySupportedVersion.First().URL}'!",
+                           StatusMessage        = $"Could not fetch {Version.String} information from '{justMySupportedVersion.First().URL}'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
@@ -1790,7 +1790,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveAccessToken(AccessToken)
 
-        public async Task<CommonAPI> RemoveAccessToken(AccessToken AccessToken)
+        public async Task<CommonAPI> RemoveAccessToken(AccessToken        AccessToken,
+                                                       EventTracking_Id?  EventTrackingId   = null,
+                                                       User_Id?           CurrentUserId     = null)
         {
 
             foreach (var remoteParty in remoteParties.Values.Where(party => party.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken == AccessToken)))
@@ -1804,7 +1806,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     remoteParties.TryRemove(remoteParty.Id, out _);
 
                     await LogRemoteParty(removeRemoteParty,
-                                         remoteParty.ToJSON(true));
+                                         remoteParty.ToJSON(true),
+                                         EventTrackingId ?? EventTracking_Id.New,
+                                         CurrentUserId);
 
                 }
 
@@ -1826,11 +1830,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             );
 
                     if (remoteParties.TryAdd(newRemoteParty.Id,
-                                                newRemoteParty))
+                                             newRemoteParty))
                     {
 
                         await LogRemoteParty(updateRemoteParty,
-                                             newRemoteParty.ToJSON(true));
+                                             newRemoteParty.ToJSON(true),
+                                             EventTrackingId ?? EventTracking_Id.New,
+                                             CurrentUserId);
 
                     }
 
@@ -1937,7 +1943,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   TimeSpan?                             RequestTimeout               = null,
                                                   TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                   UInt16?                               MaxNumberOfRetries           = null,
-                                                  Boolean?                              UseHTTPPipelining            = null)
+                                                  Boolean?                              UseHTTPPipelining            = null,
+
+                                                  EventTracking_Id?                     EventTrackingId              = null,
+                                                  User_Id?                              CurrentUserId                = null)
 
         {
 
@@ -1977,7 +1986,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                      newRemoteParty)) {
 
                 await LogRemoteParty(addRemoteParty,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -2012,7 +2023,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   TimeSpan?                             RequestTimeout               = null,
                                                   TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                   UInt16?                               MaxNumberOfRetries           = null,
-                                                  Boolean?                              UseHTTPPipelining            = null)
+                                                  Boolean?                              UseHTTPPipelining            = null,
+
+                                                  EventTracking_Id?                     EventTrackingId              = null,
+                                                  User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(Id,
@@ -2043,7 +2057,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 await LogRemoteParty(addRemoteParty,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -2081,7 +2097,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   TimeSpan?                             RequestTimeout               = null,
                                                   TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                   UInt16?                               MaxNumberOfRetries           = null,
-                                                  Boolean?                              UseHTTPPipelining            = null)
+                                                  Boolean?                              UseHTTPPipelining            = null,
+
+                                                  EventTracking_Id?                     EventTrackingId              = null,
+                                                  User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(Id,
@@ -2115,7 +2134,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 await LogRemoteParty(addRemoteParty,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -2148,7 +2169,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   UInt16?                               MaxNumberOfRetries           = null,
                                                   Boolean?                              UseHTTPPipelining            = null,
 
-                                                  DateTime?                             LastUpdated                  = null)
+                                                  DateTime?                             LastUpdated                  = null,
+
+                                                  EventTracking_Id?                     EventTrackingId              = null,
+                                                  User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(Id,
@@ -2177,7 +2201,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 await LogRemoteParty(addRemoteParty,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -2222,7 +2248,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                              TimeSpan?                             RequestTimeout               = null,
                                                              TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                              UInt16?                               MaxNumberOfRetries           = null,
-                                                             Boolean?                              UseHTTPPipelining            = null)
+                                                             Boolean?                              UseHTTPPipelining            = null,
+
+                                                             EventTracking_Id?                     EventTrackingId              = null,
+                                                             User_Id?                              CurrentUserId                = null)
 
         {
 
@@ -2265,7 +2294,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 await LogRemoteParty(addRemotePartyIfNotExists,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -2300,7 +2331,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                              TimeSpan?                             RequestTimeout               = null,
                                                              TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                              UInt16?                               MaxNumberOfRetries           = null,
-                                                             Boolean?                              UseHTTPPipelining            = null)
+                                                             Boolean?                              UseHTTPPipelining            = null,
+
+                                                             EventTracking_Id?                     EventTrackingId              = null,
+                                                             User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(Id,
@@ -2333,7 +2367,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 await LogRemoteParty(addRemotePartyIfNotExists,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -2371,7 +2407,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                              TimeSpan?                             RequestTimeout               = null,
                                                              TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                              UInt16?                               MaxNumberOfRetries           = null,
-                                                             Boolean?                              UseHTTPPipelining            = null)
+                                                             Boolean?                              UseHTTPPipelining            = null,
+
+                                                             EventTracking_Id?                     EventTrackingId              = null,
+                                                             User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(Id,
@@ -2407,7 +2446,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 await LogRemoteParty(addRemotePartyIfNotExists,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -2440,7 +2481,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                              UInt16?                               MaxNumberOfRetries           = null,
                                                              Boolean?                              UseHTTPPipelining            = null,
 
-                                                             DateTime?                             LastUpdated                  = null)
+                                                             DateTime?                             LastUpdated                  = null,
+
+                                                             EventTracking_Id?                     EventTrackingId              = null,
+                                                             User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(Id,
@@ -2471,7 +2515,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 await LogRemoteParty(addRemotePartyIfNotExists,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -2516,7 +2562,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                           TimeSpan?                             RequestTimeout               = null,
                                                           TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                           UInt16?                               MaxNumberOfRetries           = null,
-                                                          Boolean?                              UseHTTPPipelining            = null)
+                                                          Boolean?                              UseHTTPPipelining            = null,
+
+                                                          EventTracking_Id?                     EventTrackingId              = null,
+                                                          User_Id?                              CurrentUserId                = null)
 
         {
 
@@ -2568,7 +2617,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                       });
 
             await LogRemoteParty(addOrUpdateRemoteParty,
-                                 newRemoteParty.ToJSON(true));
+                                 newRemoteParty.ToJSON(true),
+                                 EventTrackingId ?? EventTracking_Id.New,
+                                 CurrentUserId);
 
             return added;
 
@@ -2599,7 +2650,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                           TimeSpan?                             RequestTimeout               = null,
                                                           TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                           UInt16?                               MaxNumberOfRetries           = null,
-                                                          Boolean?                              UseHTTPPipelining            = null)
+                                                          Boolean?                              UseHTTPPipelining            = null,
+
+                                                          EventTracking_Id?                     EventTrackingId              = null,
+                                                          User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(Id,
@@ -2641,7 +2695,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                       });
 
             await LogRemoteParty(addOrUpdateRemoteParty,
-                                 newRemoteParty.ToJSON(true));
+                                 newRemoteParty.ToJSON(true),
+                                 EventTrackingId ?? EventTracking_Id.New,
+                                 CurrentUserId);
 
             return added;
 
@@ -2675,7 +2731,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                           TimeSpan?                             RequestTimeout               = null,
                                                           TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                           UInt16?                               MaxNumberOfRetries           = null,
-                                                          Boolean?                              UseHTTPPipelining            = null)
+                                                          Boolean?                              UseHTTPPipelining            = null,
+
+                                                          EventTracking_Id?                     EventTrackingId              = null,
+                                                          User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(Id,
@@ -2720,7 +2779,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                       });
 
             await LogRemoteParty(addOrUpdateRemoteParty,
-                                 newRemoteParty.ToJSON(true));
+                                 newRemoteParty.ToJSON(true),
+                                 EventTrackingId ?? EventTracking_Id.New,
+                                 CurrentUserId);
 
             return added;
 
@@ -2749,7 +2810,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                           UInt16?                               MaxNumberOfRetries           = null,
                                                           Boolean?                              UseHTTPPipelining            = null,
 
-                                                          DateTime?                             LastUpdated                  = null)
+                                                          DateTime?                             LastUpdated                  = null,
+
+                                                          EventTracking_Id?                     EventTrackingId              = null,
+                                                          User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(Id,
@@ -2789,7 +2853,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                       });
 
             await LogRemoteParty(addOrUpdateRemoteParty,
-                                 newRemoteParty.ToJSON(true));
+                                 newRemoteParty.ToJSON(true),
+                                 EventTrackingId ?? EventTracking_Id.New,
+                                 CurrentUserId);
 
             return added;
 
@@ -2829,7 +2895,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      TimeSpan?                             RequestTimeout               = null,
                                                      TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                      UInt16?                               MaxNumberOfRetries           = null,
-                                                     Boolean?                              UseHTTPPipelining            = null)
+                                                     Boolean?                              UseHTTPPipelining            = null,
+
+                                                     EventTracking_Id?                     EventTrackingId              = null,
+                                                     User_Id?                              CurrentUserId                = null)
 
         {
 
@@ -2871,7 +2940,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 await LogRemoteParty(updateRemoteParty,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -2905,7 +2976,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      TimeSpan?                             RequestTimeout               = null,
                                                      TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                      UInt16?                               MaxNumberOfRetries           = null,
-                                                     Boolean?                              UseHTTPPipelining            = null)
+                                                     Boolean?                              UseHTTPPipelining            = null,
+
+                                                     EventTracking_Id?                     EventTrackingId              = null,
+                                                     User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(ExistingRemoteParty.Id,
@@ -2937,7 +3011,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 await LogRemoteParty(updateRemoteParty,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -2974,7 +3050,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      TimeSpan?                             RequestTimeout               = null,
                                                      TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                      UInt16?                               MaxNumberOfRetries           = null,
-                                                     Boolean?                              UseHTTPPipelining            = null)
+                                                     Boolean?                              UseHTTPPipelining            = null,
+
+                                                     EventTracking_Id?                     EventTrackingId              = null,
+                                                     User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(ExistingRemoteParty.Id,
@@ -3009,7 +3088,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 await LogRemoteParty(updateRemoteParty,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -3041,7 +3122,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      UInt16?                               MaxNumberOfRetries           = null,
                                                      Boolean?                              UseHTTPPipelining            = null,
 
-                                                     DateTime?                             LastUpdated                  = null)
+                                                     DateTime?                             LastUpdated                  = null,
+
+                                                     EventTracking_Id?                     EventTrackingId              = null,
+                                                     User_Id?                              CurrentUserId                = null)
         {
 
             var newRemoteParty = new RemoteParty(ExistingRemoteParty.Id,
@@ -3071,7 +3155,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             {
 
                 await LogRemoteParty(updateRemoteParty,
-                                     newRemoteParty.ToJSON(true));
+                                     newRemoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -3230,14 +3316,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveRemoteParty(RemoteParty)
 
-        public async Task<Boolean> RemoveRemoteParty(RemoteParty RemoteParty)
+        public async Task<Boolean> RemoveRemoteParty(RemoteParty        RemoteParty,
+                                                     EventTracking_Id?  EventTrackingId   = null,
+                                                     User_Id?           CurrentUserId     = null)
         {
 
             if (remoteParties.TryRemove(RemoteParty.Id, out var remoteParty))
             {
 
                 await LogRemoteParty(removeRemoteParty,
-                                     remoteParty.ToJSON(true));
+                                     remoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -3251,14 +3341,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveRemoteParty(RemotePartyId)
 
-        public async Task<Boolean> RemoveRemoteParty(RemoteParty_Id RemotePartyId)
+        public async Task<Boolean> RemoveRemoteParty(RemoteParty_Id     RemotePartyId,
+                                                     EventTracking_Id?  EventTrackingId   = null,
+                                                     User_Id?           CurrentUserId     = null)
         {
 
             if (remoteParties.Remove(RemotePartyId, out var remoteParty))
             {
 
                 await LogRemoteParty(removeRemoteParty,
-                                     remoteParty.ToJSON(true));
+                                     remoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
                 return true;
 
@@ -3272,9 +3366,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveRemoteParty(CountryCode, PartyId, Role)
 
-        public async Task<Boolean> RemoveRemoteParty(CountryCode  CountryCode,
-                                                     Party_Id     PartyId,
-                                                     Roles        Role)
+        public async Task<Boolean> RemoveRemoteParty(CountryCode        CountryCode,
+                                                     Party_Id           PartyId,
+                                                     Roles              Role,
+                                                     EventTracking_Id?  EventTrackingId   = null,
+                                                     User_Id?           CurrentUserId     = null)
         {
 
             foreach (var remoteParty in GetRemoteParties(CountryCode,
@@ -3285,7 +3381,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 remoteParties.TryRemove(remoteParty.Id, out _);
 
                 await LogRemoteParty(removeRemoteParty,
-                                     remoteParty.ToJSON(true));
+                                     remoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
             }
 
@@ -3297,10 +3395,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveRemoteParty(CountryCode, PartyId, Role, AccessToken)
 
-        public async Task<Boolean> RemoveRemoteParty(CountryCode  CountryCode,
-                                                     Party_Id     PartyId,
-                                                     Roles        Role,
-                                                     AccessToken  AccessToken)
+        public async Task<Boolean> RemoveRemoteParty(CountryCode        CountryCode,
+                                                     Party_Id           PartyId,
+                                                     Roles              Role,
+                                                     AccessToken        AccessToken,
+                                                     EventTracking_Id?  EventTrackingId   = null,
+                                                     User_Id?           CurrentUserId     = null)
         {
 
             foreach (var remoteParty in remoteParties.Values.
@@ -3314,7 +3414,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 remoteParties.TryRemove(remoteParty.Id, out _);
 
                 await LogRemoteParty(removeRemoteParty,
-                                     remoteParty.ToJSON(true));
+                                     remoteParty.ToJSON(true),
+                                     EventTrackingId ?? EventTracking_Id.New,
+                                     CurrentUserId);
 
             }
 
@@ -3326,12 +3428,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveAllRemoteParties()
 
-        public async Task RemoveAllRemoteParties()
+        public async Task RemoveAllRemoteParties(EventTracking_Id?  EventTrackingId   = null,
+                                                 User_Id?           CurrentUserId     = null)
         {
 
             remoteParties.Clear();
 
-            await LogRemoteParty("removeAllRemoteParties");
+            await LogRemoteParty("removeAllRemoteParties",
+                                 EventTrackingId ?? EventTracking_Id.New,
+                                 CurrentUserId);
 
         }
 
@@ -3691,8 +3796,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddLocation           (Location, SkipNotifications = false)
 
-        public Location AddLocation(Location  Location,
-                                    Boolean   SkipNotifications   = false)
+        public Location AddLocation(Location           Location,
+                                    Boolean            SkipNotifications   = false,
+                                    EventTracking_Id?  EventTrackingId     = null,
+                                    User_Id?           CurrentUserId       = null)
         {
 
             if (Location is null)
@@ -3731,7 +3838,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -3753,8 +3860,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddLocationIfNotExists(Location, SkipNotifications = false)
 
-        public Location AddLocationIfNotExists(Location  Location,
-                                               Boolean   SkipNotifications   = false)
+        public Location AddLocationIfNotExists(Location           Location,
+                                               Boolean            SkipNotifications   = false,
+                                               EventTracking_Id?  EventTrackingId     = null,
+                                               User_Id?           CurrentUserId       = null)
         {
 
             if (Location is null)
@@ -3793,7 +3902,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddLocationIfNotExists), " ", nameof(OnLocationAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocationIfNotExists), " ", nameof(OnLocationAdded), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -3813,54 +3922,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddOrUpdateLocation   (newOrUpdatedLocation, AllowDowngrades = false)
 
-        private AddOrUpdateResult<Location> __addOrUpdateLocation(Location  newOrUpdatedLocation,
-                                                                  Boolean?  AllowDowngrades = false)
+        private AddOrUpdateResult<Location> __addOrUpdateLocation(Location           Location,
+                                                                  Boolean?           AllowDowngrades   = false,
+                                                                  EventTracking_Id?  EventTrackingId   = null,
+                                                                  User_Id?           CurrentUserId     = null)
         {
 
-            if (newOrUpdatedLocation is null)
-                return AddOrUpdateResult<Location>.Failed(newOrUpdatedLocation,
-                                                          "The given location must not be null!");
-
-
-            if (!this.locations.TryGetValue(newOrUpdatedLocation.CountryCode, out var parties))
+            if (!this.locations.TryGetValue(Location.CountryCode, out var parties))
             {
                 parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                this.locations.Add(newOrUpdatedLocation.CountryCode, parties);
+                this.locations.Add(Location.CountryCode, parties);
             }
 
-            if (!parties.TryGetValue(newOrUpdatedLocation.PartyId, out var locations))
+            if (!parties.TryGetValue(Location.PartyId, out var locations))
             {
                 locations = new Dictionary<Location_Id, Location>();
-                parties.Add(newOrUpdatedLocation.PartyId, locations);
+                parties.Add(Location.PartyId, locations);
             }
 
-            if (locations.TryGetValue(newOrUpdatedLocation.Id, out var existingLocation))
+            if (locations.TryGetValue(Location.Id, out var existingLocation))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    newOrUpdatedLocation.LastUpdated <= existingLocation.LastUpdated)
+                    Location.LastUpdated <= existingLocation.LastUpdated)
                 {
-                    return AddOrUpdateResult<Location>.Failed     (newOrUpdatedLocation,
+                    return AddOrUpdateResult<Location>.Failed     (Location,
                                                                    "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
                 }
 
-                if (newOrUpdatedLocation.LastUpdated.ToIso8601() == existingLocation.LastUpdated.ToIso8601())
-                    return AddOrUpdateResult<Location>.NoOperation(newOrUpdatedLocation,
+                if (Location.LastUpdated.ToIso8601() == existingLocation.LastUpdated.ToIso8601())
+                    return AddOrUpdateResult<Location>.NoOperation(Location,
                                                                    "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
 
-                locations[newOrUpdatedLocation.Id] = newOrUpdatedLocation;
-                newOrUpdatedLocation.CommonAPI = this;
+                locations[Location.Id] = Location;
+                Location.CommonAPI = this;
 
                 var OnLocationChangedLocal = OnLocationChanged;
                 if (OnLocationChangedLocal is not null)
                 {
                     try
                     {
-                        OnLocationChangedLocal(newOrUpdatedLocation).Wait();
+                        OnLocationChangedLocal(Location).Wait();
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationChanged), ": ",
+                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationChanged), ": ",
                                     Environment.NewLine, e.Message,
                                     Environment.NewLine, e.StackTrace ?? "");
                     }
@@ -3871,41 +3977,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 {
                     try
                     {
-                        foreach (var evse in newOrUpdatedLocation.EVSEs)
+                        foreach (var evse in Location.EVSEs)
                             OnEVSEChangedLocal(evse).Wait();
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateLocation), " ", nameof(OnEVSEChanged), ": ",
+                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateLocation), " ", nameof(OnEVSEChanged), ": ",
                                     Environment.NewLine, e.Message,
                                     Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
-                return AddOrUpdateResult<Location>.Success(newOrUpdatedLocation,
+                return AddOrUpdateResult<Location>.Success(Location,
                                                            WasCreated: false);
 
             }
 
-            locations.Add(newOrUpdatedLocation.Id, newOrUpdatedLocation);
-            newOrUpdatedLocation.CommonAPI = this;
+            locations.Add(Location.Id, Location);
+            Location.CommonAPI = this;
 
             var OnLocationAddedLocal = OnLocationAdded;
             if (OnLocationAddedLocal is not null)
             {
                 try
                 {
-                    OnLocationAddedLocal(newOrUpdatedLocation).Wait();
+                    OnLocationAddedLocal(Location).Wait();
                 }
                 catch (Exception e)
                 {
-                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationAdded), ": ",
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationAdded), ": ",
                                 Environment.NewLine, e.Message,
                                 Environment.NewLine, e.StackTrace ?? "");
                 }
             }
 
-            return AddOrUpdateResult<Location>.Success(newOrUpdatedLocation,
+            return AddOrUpdateResult<Location>.Success(Location,
                                                        WasCreated: true);
 
         }
@@ -3933,7 +4039,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region UpdateLocation        (Location)
 
-        public Location? UpdateLocation(Location Location)
+        public Location? UpdateLocation(Location           Location,
+                                        EventTracking_Id?  EventTrackingId   = null,
+                                        User_Id?           CurrentUserId     = null)
         {
 
             if (Location is null)
@@ -3960,7 +4068,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateLocation), " ", nameof(OnEVSEChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateLocation), " ", nameof(OnEVSEChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -3981,9 +4089,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region TryPatchLocation      (Location, LocationPatch, AllowDowngrades = false)
 
-        public async Task<PatchResult<Location>> TryPatchLocation(Location  Location,
-                                                                  JObject   LocationPatch,
-                                                                  Boolean?  AllowDowngrades = false)
+        public async Task<PatchResult<Location>> TryPatchLocation(Location           Location,
+                                                                  JObject            LocationPatch,
+                                                                  Boolean?           AllowDowngrades   = false,
+                                                                  EventTracking_Id?  EventTrackingId   = null,
+                                                                  User_Id?           CurrentUserId     = null)
         {
 
             if (Location is null)
@@ -4022,7 +4132,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchLocation), " ", nameof(OnLocationChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchLocation), " ", nameof(OnLocationChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -4039,7 +4149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchLocation), " ", nameof(OnEVSEChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchLocation), " ", nameof(OnEVSEChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -4084,9 +4194,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddOrUpdateEVSE       (Location, newOrUpdatedEVSE, AllowDowngrades = false)
 
-        private AddOrUpdateResult<EVSE> __addOrUpdateEVSE(Location  Location,
-                                                          EVSE      newOrUpdatedEVSE,
-                                                          Boolean?  AllowDowngrades = false)
+        private AddOrUpdateResult<EVSE> __addOrUpdateEVSE(Location           Location,
+                                                          EVSE               newOrUpdatedEVSE,
+                                                          Boolean?           AllowDowngrades   = false,
+                                                          EventTracking_Id?  EventTrackingId   = null,
+                                                          User_Id?           CurrentUserId     = null)
         {
 
             Location.TryGetEVSE(newOrUpdatedEVSE.UId, out var existingEVSE);
@@ -4124,7 +4236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 }
                 catch (Exception e)
                 {
-                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnLocationChanged), ": ",
+                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnLocationChanged), ": ",
                                 Environment.NewLine, e.Message,
                                 e.StackTrace is not null
                                             ? Environment.NewLine + e.StackTrace
@@ -4148,7 +4260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         e.StackTrace is not null
                                             ? Environment.NewLine + e.StackTrace
@@ -4173,7 +4285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             e.StackTrace is not null
                                                 ? Environment.NewLine + e.StackTrace
@@ -4198,7 +4310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSERemoved), ": ",
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSERemoved), ": ",
                                         Environment.NewLine, e.Message,
                                         e.StackTrace is not null
                                             ? Environment.NewLine + e.StackTrace
@@ -4219,7 +4331,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEAdded), ": ",
+                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEAdded), ": ",
                                     Environment.NewLine, e.Message,
                                     e.StackTrace is not null
                                             ? Environment.NewLine + e.StackTrace
@@ -4254,10 +4366,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region TryPatchEVSE          (Location, EVSE, EVSEPatch,  AllowDowngrades = false)
 
-        public async Task<PatchResult<EVSE>> TryPatchEVSE(Location  Location,
-                                                          EVSE      EVSE,
-                                                          JObject   EVSEPatch,
-                                                          Boolean?  AllowDowngrades = false)
+        public async Task<PatchResult<EVSE>> TryPatchEVSE(Location           Location,
+                                                          EVSE               EVSE,
+                                                          JObject            EVSEPatch,
+                                                          Boolean?           AllowDowngrades   = false,
+                                                          EventTracking_Id?  EventTrackingId   = null,
+                                                          User_Id?           CurrentUserId     = null)
         {
 
             if (!EVSEPatch.HasValues)
@@ -4311,7 +4425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 }
                                 catch (Exception e)
                                 {
-                                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
+                                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
                                                 Environment.NewLine, e.Message,
                                                 e.StackTrace is not null
                                                     ? Environment.NewLine + e.StackTrace
@@ -4332,7 +4446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                 }
                                 catch (Exception e)
                                 {
-                                    DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEChanged), ": ",
+                                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSEChanged), ": ",
                                                 Environment.NewLine, e.Message,
                                                 e.StackTrace is not null
                                                     ? Environment.NewLine + e.StackTrace
@@ -4355,7 +4469,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSERemoved), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchEVSE), " ", nameof(OnEVSERemoved), ": ",
                                             Environment.NewLine, e.Message,
                                             e.StackTrace is not null
                                                 ? Environment.NewLine + e.StackTrace
@@ -4378,10 +4492,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddOrUpdateConnector  (Location, EVSE, newOrUpdatedConnector,     AllowDowngrades = false)
 
-        public async Task<AddOrUpdateResult<Connector>> AddOrUpdateConnector(Location   Location,
-                                                                             EVSE       EVSE,
-                                                                             Connector  newOrUpdatedConnector,
-                                                                             Boolean?   AllowDowngrades = false)
+        public async Task<AddOrUpdateResult<Connector>> AddOrUpdateConnector(Location           Location,
+                                                                             EVSE               EVSE,
+                                                                             Connector          newOrUpdatedConnector,
+                                                                             Boolean?           AllowDowngrades   = false,
+                                                                             EventTracking_Id?  EventTrackingId   = null,
+                                                                             User_Id?           CurrentUserId     = null)
         {
 
             if (Location is null)
@@ -4437,7 +4553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateConnector), " ", nameof(OnLocationChanged), ": ",
+                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateConnector), " ", nameof(OnLocationChanged), ": ",
                                     Environment.NewLine, e.Message,
                                     Environment.NewLine, e.StackTrace ?? "");
                     }
@@ -4455,11 +4571,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region TryPatchConnector     (Location, EVSE, Connector, ConnectorPatch, AllowDowngrades = false)
 
-        public async Task<PatchResult<Connector>> TryPatchConnector(Location   Location,
-                                                                    EVSE       EVSE,
-                                                                    Connector  Connector,
-                                                                    JObject    ConnectorPatch,
-                                                                    Boolean?   AllowDowngrades = false)
+        public async Task<PatchResult<Connector>> TryPatchConnector(Location           Location,
+                                                                    EVSE               EVSE,
+                                                                    Connector          Connector,
+                                                                    JObject            ConnectorPatch,
+                                                                    Boolean?           AllowDowngrades   = false,
+                                                                    EventTracking_Id?  EventTrackingId   = null,
+                                                                    User_Id?           CurrentUserId     = null)
         {
 
             if (Location is null)
@@ -4678,7 +4796,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveLocation    (Location)
 
-        public Location RemoveLocation(Location Location)
+        public Location RemoveLocation(Location           Location,
+                                       EventTracking_Id?  EventTrackingId   = null,
+                                       User_Id?           CurrentUserId     = null)
         {
 
             lock (locations)
@@ -4718,7 +4838,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// Remove all locations.
         /// </summary>
-        public void RemoveAllLocations()
+        public void RemoveAllLocations(EventTracking_Id?  EventTrackingId   = null,
+                                       User_Id?           CurrentUserId     = null)
         {
 
             lock (locations)
@@ -4737,8 +4858,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllLocations(CountryCode  CountryCode,
-                                       Party_Id     PartyId)
+        public void RemoveAllLocations(CountryCode        CountryCode,
+                                       Party_Id           PartyId,
+                                       EventTracking_Id?  EventTrackingId   = null,
+                                       User_Id?           CurrentUserId     = null)
         {
 
             lock (locations)
@@ -4784,12 +4907,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddTariff           (Tariff, SkipNotifications = false)
 
-        public Tariff AddTariff(Tariff   Tariff,
-                                Boolean  SkipNotifications   = false)
+        public Tariff AddTariff(Tariff             Tariff,
+                                Boolean            SkipNotifications   = false,
+                                EventTracking_Id?  EventTrackingId     = null,
+                                User_Id?           CurrentUserId       = null)
         {
-
-            if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
             lock (tariffs)
             {
@@ -4824,7 +4946,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddTariff), " ", nameof(OnTariffAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddTariff), " ", nameof(OnTariffAdded), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -4846,8 +4968,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddTariffIfNotExists(Tariff, SkipNotifications = false)
 
-        public Tariff AddTariffIfNotExists(Tariff   Tariff,
-                                           Boolean  SkipNotifications   = false)
+        public Tariff AddTariffIfNotExists(Tariff             Tariff,
+                                           Boolean            SkipNotifications   = false,
+                                           EventTracking_Id?  EventTrackingId     = null,
+                                           User_Id?           CurrentUserId       = null)
         {
 
             if (Tariff is null)
@@ -4886,7 +5010,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddTariffIfNotExists), " ", nameof(OnTariffAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddTariffIfNotExists), " ", nameof(OnTariffAdded), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -4906,78 +5030,77 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddOrUpdateTariff   (newOrUpdatedTariff, AllowDowngrades = false)
 
-        public async Task<AddOrUpdateResult<Tariff>> AddOrUpdateTariff(Tariff    newOrUpdatedTariff,
-                                                                       Boolean?  AllowDowngrades = false)
+        public async Task<AddOrUpdateResult<Tariff>> AddOrUpdateTariff(Tariff             Tariff,
+                                                                       Boolean?           AllowDowngrades   = false,
+                                                                       EventTracking_Id?  EventTrackingId   = null,
+                                                                       User_Id?           CurrentUserId     = null)
         {
-
-            if (newOrUpdatedTariff is null)
-                throw new ArgumentNullException(nameof(newOrUpdatedTariff), "The given charging tariff must not be null!");
 
             lock (tariffs)
             {
 
-                if (!this.tariffs.TryGetValue(newOrUpdatedTariff.CountryCode, out var parties))
+                if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
                 {
                     parties = new ConcurrentDictionary<Party_Id, ConcurrentDictionary<Tariff_Id, Tariff>>();
-                    this.tariffs.TryAdd(newOrUpdatedTariff.CountryCode, parties);
+                    this.tariffs.TryAdd(Tariff.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(newOrUpdatedTariff.PartyId, out var tariffs))
+                if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
                 {
                     tariffs = new ConcurrentDictionary<Tariff_Id, Tariff>();
-                    parties.TryAdd(newOrUpdatedTariff.PartyId, tariffs);
+                    parties.TryAdd(Tariff.PartyId, tariffs);
                 }
 
-                if (tariffs.TryGetValue(newOrUpdatedTariff.Id, out var existingTariff))
+                if (tariffs.TryGetValue(Tariff.Id, out var existingTariff))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                        newOrUpdatedTariff.LastUpdated <= existingTariff.LastUpdated)
+                        Tariff.LastUpdated <= existingTariff.LastUpdated)
                     {
-                        return AddOrUpdateResult<Tariff>.Failed(newOrUpdatedTariff,
+                        return AddOrUpdateResult<Tariff>.Failed(Tariff,
                                                                 "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
                     }
 
-                    tariffs[newOrUpdatedTariff.Id] = newOrUpdatedTariff;
+                    tariffs[Tariff.Id] = Tariff;
 
                     var OnTariffChangedLocal = OnTariffChanged;
                     if (OnTariffChangedLocal is not null)
                     {
                         try
                         {
-                            OnTariffChangedLocal(newOrUpdatedTariff).Wait();
+                            OnTariffChangedLocal(Tariff).Wait();
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
                     }
 
-                    return AddOrUpdateResult<Tariff>.Success(newOrUpdatedTariff,
+                    return AddOrUpdateResult<Tariff>.Success(Tariff,
                                                              WasCreated: false);
 
                 }
 
-                tariffs.TryAdd(newOrUpdatedTariff.Id, newOrUpdatedTariff);
+                tariffs.TryAdd(Tariff.Id, Tariff);
 
                 var OnTariffAddedLocal = OnTariffAdded;
                 if (OnTariffAddedLocal is not null)
                 {
                     try
                     {
-                        OnTariffAddedLocal(newOrUpdatedTariff).Wait();
+                        OnTariffAddedLocal(Tariff).Wait();
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffAdded), ": ",
+                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffAdded), ": ",
                                     Environment.NewLine, e.Message,
                                     Environment.NewLine, e.StackTrace ?? "");
                     }
                 }
 
-                return AddOrUpdateResult<Tariff>.Success(newOrUpdatedTariff,
+                return AddOrUpdateResult<Tariff>.Success(Tariff,
                                                          WasCreated: true);
 
             }
@@ -4988,7 +5111,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region UpdateTariff        (Tariff)
 
-        public Tariff? UpdateTariff(Tariff Tariff)
+        public Tariff? UpdateTariff(Tariff             Tariff,
+                                    EventTracking_Id?  EventTrackingId   = null,
+                                    User_Id?           CurrentUserId     = null)
         {
 
             if (Tariff is null)
@@ -5013,7 +5138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateTariff), " ", nameof(OnTariffChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateTariff), " ", nameof(OnTariffChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -5034,9 +5159,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region TryPatchTariff      (Tariff, TariffPatch, AllowDowngrades = false)
 
-        public async Task<PatchResult<Tariff>> TryPatchTariff(Tariff    Tariff,
-                                                              JObject   TariffPatch,
-                                                              Boolean?  AllowDowngrades = false)
+        public async Task<PatchResult<Tariff>> TryPatchTariff(Tariff             Tariff,
+                                                              JObject            TariffPatch,
+                                                              Boolean?           AllowDowngrades   = false,
+                                                              EventTracking_Id?  EventTrackingId   = null,
+                                                              User_Id?           CurrentUserId     = null)
         {
 
             if (Tariff is null)
@@ -5075,7 +5202,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchTariff), " ", nameof(OnTariffChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchTariff), " ", nameof(OnTariffChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -5156,7 +5283,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region GetTariffs  (IncludeTariff)
 
-        public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean> IncludeTariff)
+        public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean>  IncludeTariff)
         {
 
             lock (tariffs)
@@ -5189,8 +5316,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region GetTariffs  (CountryCode = null, PartyId = null)
 
-        public IEnumerable<Tariff> GetTariffs(CountryCode? CountryCode  = null,
-                                              Party_Id?    PartyId      = null)
+        public IEnumerable<Tariff> GetTariffs(CountryCode?  CountryCode   = null,
+                                              Party_Id?     PartyId       = null)
         {
 
             lock (tariffs)
@@ -5291,7 +5418,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Remove the given charging tariff.
         /// </summary>
         /// <param name="Tariff">A charging tariff.</param>
-        public async Task<Boolean> RemoveTariff(Tariff Tariff)
+        public async Task<Boolean> RemoveTariff(Tariff             Tariff,
+                                                EventTracking_Id?  EventTrackingId   = null,
+                                                User_Id?           CurrentUserId     = null)
         {
 
             var success = false;
@@ -5314,7 +5443,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      CustomTariffRestrictionsSerializer,
                                                      CustomEnergyMixSerializer,
                                                      CustomEnergySourceSerializer,
-                                                     CustomEnvironmentalImpactSerializer));
+                                                     CustomEnvironmentalImpactSerializer),
+                                       EventTrackingId ?? EventTracking_Id.New,
+                                       CurrentUserId);
 
                         success = true;
 
@@ -5342,7 +5473,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Remove the given charging tariff.
         /// </summary>
         /// <param name="TariffId">An unique charging tariff identification.</param>
-        public async Task<Boolean> RemoveTariff(Tariff_Id TariffId)
+        public async Task<Boolean> RemoveTariff(Tariff_Id          TariffId,
+                                                EventTracking_Id?  EventTrackingId   = null,
+                                                User_Id?           CurrentUserId     = null)
         {
 
             CountryCode? countryCode   = default;
@@ -5379,7 +5512,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      CustomTariffRestrictionsSerializer,
                                                      CustomEnergyMixSerializer,
                                                      CustomEnergySourceSerializer,
-                                                     CustomEnvironmentalImpactSerializer));
+                                                     CustomEnvironmentalImpactSerializer),
+                                       EventTrackingId ?? EventTracking_Id.New,
+                                       CurrentUserId);
 
                     if (!tariffs[countryCode.Value][partyId.Value].Any())
                         tariffs[countryCode.Value].Remove(partyId.Value, out _);
@@ -5405,13 +5540,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Remove all matching tariffs.
         /// </summary>
         /// <param name="IncludeTariffs">An optional charging tariff filter.</param>
-        public async Task RemoveAllTariffs(Func<Tariff, Boolean>? IncludeTariffs = null)
+        public async Task RemoveAllTariffs(Func<Tariff, Boolean>?  IncludeTariffs    = null,
+                                           EventTracking_Id?       EventTrackingId   = null,
+                                           User_Id?                CurrentUserId     = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             if (IncludeTariffs is null)
             {
                 tariffs.Clear();
-                await LogAsset(removeAllTariffs);
+                await LogAsset(removeAllTariffs,
+                               EventTrackingId,
+                               CurrentUserId);
             }
 
             else
@@ -5434,7 +5575,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  CustomTariffRestrictionsSerializer,
                                                  CustomEnergyMixSerializer,
                                                  CustomEnergySourceSerializer,
-                                                 CustomEnvironmentalImpactSerializer));
+                                                 CustomEnvironmentalImpactSerializer),
+                                   EventTrackingId,
+                                   CurrentUserId);
 
                 }
 
@@ -5450,8 +5593,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Remove all matching tariffs.
         /// </summary>
         /// <param name="IncludeTariffIds">An optional charging tariff identification filter.</param>
-        public async Task<Boolean> RemoveAllTariffs(Func<Tariff_Id, Boolean>? IncludeTariffIds)
+        public async Task<Boolean> RemoveAllTariffs(Func<Tariff_Id, Boolean>?  IncludeTariffIds,
+                                                    EventTracking_Id?          EventTrackingId   = null,
+                                                    User_Id?                   CurrentUserId     = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var success = false;
 
@@ -5460,7 +5607,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 tariffs.Clear();
 
-                await LogAsset(removeAllTariffs);
+                await LogAsset(removeAllTariffs,
+                               EventTrackingId,
+                               CurrentUserId);
 
                 success = true;
 
@@ -5487,7 +5636,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                  CustomTariffRestrictionsSerializer,
                                                  CustomEnergyMixSerializer,
                                                  CustomEnergySourceSerializer,
-                                                 CustomEnvironmentalImpactSerializer));
+                                                 CustomEnvironmentalImpactSerializer),
+                                   EventTrackingId,
+                                   CurrentUserId);
 
                 }
             }
@@ -5505,11 +5656,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
-        public async Task<Boolean> RemoveAllTariffs(CountryCode  CountryCode,
-                                                    Party_Id     PartyId)
+        public async Task<Boolean> RemoveAllTariffs(CountryCode        CountryCode,
+                                                    Party_Id           PartyId,
+                                                    EventTracking_Id?  EventTrackingId   = null,
+                                                    User_Id?           CurrentUserId     = null)
         {
 
-            await LogAssetComment(removeAllTariffs, $"{CountryCode} {PartyId}");
+            EventTrackingId ??= EventTracking_Id.New;
+
+            await LogAssetComment($"{removeAllTariffs}: {CountryCode} {PartyId}",
+                                  EventTrackingId,
+                                  CurrentUserId);
 
             var success = false;
 
@@ -5532,7 +5689,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      CustomTariffRestrictionsSerializer,
                                                      CustomEnergyMixSerializer,
                                                      CustomEnergySourceSerializer,
-                                                     CustomEnvironmentalImpactSerializer));
+                                                     CustomEnvironmentalImpactSerializer),
+                                       EventTrackingId,
+                                       CurrentUserId);
 
                 }
             }
@@ -5561,8 +5720,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddSession           (Session, SkipNotifications = false)
 
-        public Session AddSession(Session  Session,
-                                  Boolean  SkipNotifications   = false)
+        public Session AddSession(Session            Session,
+                                  Boolean            SkipNotifications   = false,
+                                  EventTracking_Id?  EventTrackingId     = null,
+                                  User_Id?           CurrentUserId       = null)
         {
 
             if (Session is null)
@@ -5601,7 +5762,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSession), " ", nameof(OnSessionCreated), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddSession), " ", nameof(OnSessionCreated), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -5623,8 +5784,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddSessionIfNotExists(Session, SkipNotifications = false)
 
-        public Session AddSessionIfNotExists(Session  Session,
-                                             Boolean  SkipNotifications   = false)
+        public Session AddSessionIfNotExists(Session            Session,
+                                             Boolean            SkipNotifications   = false,
+                                             EventTracking_Id?  EventTrackingId     = null,
+                                             User_Id?           CurrentUserId       = null)
         {
 
             if (Session is null)
@@ -5663,7 +5826,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddSessionIfNotExists), " ", nameof(OnSessionCreated), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddSessionIfNotExists), " ", nameof(OnSessionCreated), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -5683,8 +5846,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddOrUpdateSession   (newOrUpdatedSession, AllowDowngrades = false)
 
-        public async Task<AddOrUpdateResult<Session>> AddOrUpdateSession(Session   newOrUpdatedSession,
-                                                                         Boolean?  AllowDowngrades = false)
+        public async Task<AddOrUpdateResult<Session>> AddOrUpdateSession(Session            newOrUpdatedSession,
+                                                                         Boolean?           AllowDowngrades   = false,
+                                                                         EventTracking_Id?  EventTrackingId   = null,
+                                                                         User_Id?           CurrentUserId     = null)
         {
 
             if (newOrUpdatedSession is null)
@@ -5726,7 +5891,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -5748,7 +5913,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionCreated), ": ",
+                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionCreated), ": ",
                                     Environment.NewLine, e.Message,
                                     Environment.NewLine, e.StackTrace ?? "");
                     }
@@ -5765,7 +5930,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region UpdateSession        (Session)
 
-        public Session? UpdateSession(Session Session)
+        public Session? UpdateSession(Session            Session,
+                                      EventTracking_Id?  EventTrackingId   = null,
+                                      User_Id?           CurrentUserId     = null)
         {
 
             if (Session is null)
@@ -5790,7 +5957,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnSessionChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnSessionChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -5811,9 +5978,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region TryPatchSession      (Session, SessionPatch, AllowDowngrades = false)
 
-        public async Task<PatchResult<Session>> TryPatchSession(Session   Session,
-                                                                JObject   SessionPatch,
-                                                                Boolean?  AllowDowngrades = false)
+        public async Task<PatchResult<Session>> TryPatchSession(Session            Session,
+                                                                JObject            SessionPatch,
+                                                                Boolean?           AllowDowngrades   = false,
+                                                                EventTracking_Id?  EventTrackingId   = null,
+                                                                User_Id?           CurrentUserId     = null)
         {
 
             if (Session is null)
@@ -5852,7 +6021,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchSession), " ", nameof(OnSessionChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchSession), " ", nameof(OnSessionChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -6045,7 +6214,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveSession    (Session)
 
-        public Boolean RemoveSession(Session Session)
+        public Boolean RemoveSession(Session            Session,
+                                     EventTracking_Id?  EventTrackingId   = null,
+                                     User_Id?           CurrentUserId     = null)
         {
 
             lock (chargingSessions)
@@ -6084,7 +6255,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveSession    (SessionId)
 
-        public Boolean RemoveSession(Session_Id SessionId)
+        public Boolean RemoveSession(Session_Id         SessionId,
+                                     EventTracking_Id?  EventTrackingId   = null,
+                                     User_Id?           CurrentUserId     = null)
         {
 
             lock (chargingSessions)
@@ -6125,7 +6298,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Remove all matching sessions.
         /// </summary>
         /// <param name="IncludeSessions">An optional charging session filter.</param>
-        public void RemoveAllSessions(Func<Session, Boolean>? IncludeSessions = null)
+        public void RemoveAllSessions(Func<Session, Boolean>?  IncludeSessions   = null,
+                                      EventTracking_Id?        EventTrackingId   = null,
+                                      User_Id?                 CurrentUserId     = null)
         {
 
             lock (chargingSessions)
@@ -6160,8 +6335,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllSessions(CountryCode  CountryCode,
-                                      Party_Id     PartyId)
+        public void RemoveAllSessions(CountryCode        CountryCode,
+                                      Party_Id           PartyId,
+                                      EventTracking_Id?  EventTrackingId   = null,
+                                      User_Id?           CurrentUserId     = null)
         {
 
             lock (chargingSessions)
@@ -6207,9 +6384,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddToken           (Token, Status = AllowedType.ALLOWED, SkipNotifications = false)
 
-        public Token AddToken(Token         Token,
-                              AllowedType?  Status              = null,
-                              Boolean       SkipNotifications   = false)
+        public Token AddToken(Token              Token,
+                              AllowedType?       Status              = null,
+                              Boolean            SkipNotifications   = false,
+                              EventTracking_Id?  EventTrackingId     = null,
+                              User_Id?           CurrentUserId       = null)
         {
 
             Status ??= AllowedType.ALLOWED;
@@ -6247,7 +6426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -6269,9 +6448,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddTokenIfNotExists(Token, Status = AllowedType.ALLOWED, SkipNotifications = false)
 
-        public Token AddTokenIfNotExists(Token         Token,
-                                         AllowedType?  Status              = null,
-                                         Boolean       SkipNotifications   = false)
+        public Token AddTokenIfNotExists(Token              Token,
+                                         AllowedType?       Status              = null,
+                                         Boolean            SkipNotifications   = false,
+                                         EventTracking_Id?  EventTrackingId     = null,
+                                         User_Id?           CurrentUserId       = null)
         {
 
             Status ??= AllowedType.ALLOWED;
@@ -6309,7 +6490,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddTokenIfNotExists), " ", nameof(OnTokenAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddTokenIfNotExists), " ", nameof(OnTokenAdded), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -6329,9 +6510,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddOrUpdateToken   (newOrUpdatedToken, Status = AllowedTypes.ALLOWED, AllowDowngrades = false)
 
-        public async Task<AddOrUpdateResult<Token>> AddOrUpdateToken(Token         newOrUpdatedToken,
-                                                                     AllowedType?  Status            = null,
-                                                                     Boolean?      AllowDowngrades   = false)
+        public async Task<AddOrUpdateResult<Token>> AddOrUpdateToken(Token              newOrUpdatedToken,
+                                                                     AllowedType?       Status            = null,
+                                                                     Boolean?           AllowDowngrades   = false,
+                                                                     EventTracking_Id?  EventTrackingId   = null,
+                                                                     User_Id?           CurrentUserId     = null)
         {
 
             Status ??= AllowedType.ALLOWED;
@@ -6376,7 +6559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -6399,7 +6582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenAdded), ": ",
+                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateToken), " ", nameof(OnTokenAdded), ": ",
                                     Environment.NewLine, e.Message,
                                     Environment.NewLine, e.StackTrace ?? "");
                     }
@@ -6417,9 +6600,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region TryPatchToken      (Token, TokenPatch, AllowDowngrades = false)
 
-        public async Task<PatchResult<Token>> TryPatchToken(Token     Token,
-                                                            JObject   TokenPatch,
-                                                            Boolean?  AllowDowngrades = false)
+        public async Task<PatchResult<Token>> TryPatchToken(Token              Token,
+                                                            JObject            TokenPatch,
+                                                            Boolean?           AllowDowngrades   = false,
+                                                            EventTracking_Id?  EventTrackingId   = null,
+                                                            User_Id?           CurrentUserId     = null)
         {
 
             if (Token is null)
@@ -6459,7 +6644,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryPatchToken), " ", nameof(OnTokenChanged), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryPatchToken), " ", nameof(OnTokenChanged), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -6705,7 +6890,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveToken    (Token)
 
-        public Boolean RemoveToken(Token Token)
+        public Boolean RemoveToken(Token              Token,
+                                   EventTracking_Id?  EventTrackingId   = null,
+                                   User_Id?           CurrentUserId     = null)
         {
 
             lock (tokenStatus)
@@ -6744,7 +6931,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveToken    (TokenId)
 
-        public Boolean RemoveToken(Token_Id TokenId)
+        public Boolean RemoveToken(Token_Id           TokenId,
+                                   EventTracking_Id?  EventTrackingId   = null,
+                                   User_Id?           CurrentUserId     = null)
         {
 
             lock (tokenStatus)
@@ -6785,7 +6974,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Remove all matching tokens.
         /// </summary>
         /// <param name="IncludeSessions">An optional token filter.</param>
-        public void RemoveAllTokens(Func<Token, Boolean>? IncludeTokens = null)
+        public void RemoveAllTokens(Func<Token, Boolean>? IncludeTokens     = null,
+                                    EventTracking_Id?     EventTrackingId   = null,
+                                    User_Id?              CurrentUserId     = null)
         {
 
             lock (tokenStatus)
@@ -6821,8 +7012,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllTokens(CountryCode  CountryCode,
-                                    Party_Id     PartyId)
+        public void RemoveAllTokens(CountryCode        CountryCode,
+                                    Party_Id           PartyId,
+                                    EventTracking_Id?  EventTrackingId   = null,
+                                    User_Id?           CurrentUserId     = null)
         {
 
             lock (tokenStatus)
@@ -6868,8 +7061,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddCDR           (CDR, SkipNotifications = false)
 
-        public CDR AddCDR(CDR      CDR,
-                          Boolean  SkipNotifications   = false)
+        public CDR AddCDR(CDR                CDR,
+                          Boolean            SkipNotifications   = false,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          User_Id?           CurrentUserId       = null)
         {
 
             if (CDR is null)
@@ -6908,7 +7103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -6930,8 +7125,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddCDRIfNotExists(CDR, SkipNotifications = false)
 
-        public CDR AddCDRIfNotExists(CDR      CDR,
-                                     Boolean  SkipNotifications   = false)
+        public CDR AddCDRIfNotExists(CDR                CDR,
+                                     Boolean            SkipNotifications   = false,
+                                     EventTracking_Id?  EventTrackingId     = null,
+                                     User_Id?           CurrentUserId       = null)
         {
 
             if (CDR is null)
@@ -6970,7 +7167,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddCDRIfNotExists), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddCDRIfNotExists), " ", nameof(OnChargeDetailRecordAdded), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
@@ -6990,8 +7187,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region AddOrUpdateCDR   (newOrUpdatedCDR, AllowDowngrades = false)
 
-        public async Task<AddOrUpdateResult<CDR>> AddOrUpdateCDR(CDR       newOrUpdatedCDR,
-                                                                 Boolean?  AllowDowngrades = false)
+        public async Task<AddOrUpdateResult<CDR>> AddOrUpdateCDR(CDR                newOrUpdatedCDR,
+                                                                 Boolean?           AllowDowngrades   = false,
+                                                                 EventTracking_Id?  EventTrackingId   = null,
+                                                                 User_Id?           CurrentUserId     = null)
         {
 
             if (newOrUpdatedCDR is null)
@@ -7033,7 +7232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -7055,7 +7254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
                                     Environment.NewLine, e.Message,
                                     Environment.NewLine, e.StackTrace ?? "");
                     }
@@ -7072,7 +7271,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region UpdateCDR        (CDR)
 
-        public CDR? UpdateCDR(CDR CDR)
+        public CDR? UpdateCDR(CDR                CDR,
+                              EventTracking_Id?  EventTrackingId   = null,
+                              User_Id?           CurrentUserId     = null)
         {
 
             if (CDR is null)
@@ -7097,7 +7298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
                                         Environment.NewLine, e.Message,
                                         Environment.NewLine, e.StackTrace ?? "");
                         }
@@ -7181,7 +7382,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogT($"OCPI {Version.Number} {nameof(CommonAPI)} ", nameof(TryGetCDR), " ", nameof(OnChargeDetailRecordLookup), ": ",
+                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(TryGetCDR), " ", nameof(OnChargeDetailRecordLookup), ": ",
                                     Environment.NewLine, e.Message,
                                     Environment.NewLine, e.StackTrace ?? "");
                     }
@@ -7316,7 +7517,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Remove the given charge detail record.
         /// </summary>
         /// <param name="CDR">A charge detail record.</param>
-        public Boolean RemoveCDR(CDR CDR)
+        public Boolean RemoveCDR(CDR                CDR,
+                                 EventTracking_Id?  EventTrackingId   = null,
+                                 User_Id?           CurrentUserId     = null)
         {
 
             lock (ChargeDetailRecords)
@@ -7355,7 +7558,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region RemoveCDR  (CDRId)
 
-        public Boolean RemoveCDR(CDR_Id CDRId)
+        public Boolean RemoveCDR(CDR_Id             CDRId,
+                                 EventTracking_Id?  EventTrackingId   = null,
+                                 User_Id?           CurrentUserId     = null)
         {
 
             lock (ChargeDetailRecords)
@@ -7396,7 +7601,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Remove all matching charge detail records.
         /// </summary>
         /// <param name="IncludeCDRs">An optional charge detail record filter.</param>
-        public void RemoveAllCDRs(Func<CDR, Boolean>? IncludeCDRs = null)
+        public void RemoveAllCDRs(Func<CDR, Boolean>?  IncludeCDRs       = null,
+                                  EventTracking_Id?    EventTrackingId   = null,
+                                  User_Id?             CurrentUserId     = null)
         {
 
             lock (ChargeDetailRecords)
@@ -7431,8 +7638,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// </summary>
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllCDRs(CountryCode  CountryCode,
-                                  Party_Id     PartyId)
+        public void RemoveAllCDRs(CountryCode        CountryCode,
+                                  Party_Id           PartyId,
+                                  EventTracking_Id?  EventTrackingId   = null,
+                                  User_Id?           CurrentUserId     = null)
         {
 
             lock (ChargeDetailRecords)

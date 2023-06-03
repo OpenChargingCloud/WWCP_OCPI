@@ -31,14 +31,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     {
 
         /// <summary>
-        /// This OCPI version 2.2.1.
+        /// This OCPI version 2.2.1 as text "v2.2.1".
         /// </summary>
-        public const           String      Number  = "v2.2.1";
+        public const           String      String   = "v2.2.1";
 
         /// <summary>
-        /// This OCPI version 2.2.1.
+        /// This OCPI version "2.2.1" as version identification.
         /// </summary>
-        public readonly static Version_Id  Id      = Version_Id.Parse(Number[1..]);
+        public readonly static Version_Id  Id       = Version_Id.Parse(String[1..]);
 
     }
 
