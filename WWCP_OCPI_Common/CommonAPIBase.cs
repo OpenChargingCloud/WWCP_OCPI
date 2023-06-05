@@ -832,8 +832,8 @@ namespace cloud.charging.open.protocols.OCPI
 
                                          // Command is always the first property!
                                          new JProperty(Command,            JToken),
-                                         new JProperty("timestamp",        Timestamp.Now),
-                                         new JProperty("eventTrackingId",  EventTrackingId),
+                                         new JProperty("timestamp",        Timestamp.Now.  ToIso8601()),
+                                         new JProperty("eventTrackingId",  EventTrackingId.ToString()),
 
                                    CurrentUserId is not null
                                        ? new JProperty("userId",           CurrentUserId)
