@@ -678,16 +678,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("status",                      Status.     ToString()),
 
                            StatusSchedule.Any()
-                               ? new JProperty("status_schedule",       new JArray(StatusSchedule.     Select(statusSchedule     => statusSchedule.    ToJSON(CustomStatusScheduleSerializer))))
+                               ? new JProperty("status_schedule",       new JArray(StatusSchedule.     Select (statusSchedule     => statusSchedule.    ToJSON(CustomStatusScheduleSerializer))))
                                : null,
 
                            Capabilities.Any()
-                               ? new JProperty("capabilities",          new JArray(Capabilities.       Select(capabilityType     => capabilityType.    ToString())))
+                               ? new JProperty("capabilities",          new JArray(Capabilities.       Select (capabilityType     => capabilityType.    ToString())))
                                : null,
 
                            Connectors.Any()
-                               ? new JProperty("connectors",            new JArray(Connectors.         Select(connector          => connector.         ToJSON(EMSPId,
-                                                                                                                                                              CustomConnectorSerializer))))
+                               ? new JProperty("connectors",            new JArray(Connectors.         OrderBy(connector          => connector.Id).
+                                                                                                       Select (connector          => connector.         ToJSON(EMSPId,
+                                                                                                                                                                CustomConnectorSerializer))))
                                : null,
 
                            EnergyMeter is not null
@@ -712,15 +713,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null,
 
                            Directions.Any()
-                               ? new JProperty("directions",            new JArray(Directions.         Select(displayText        => displayText.       ToJSON(CustomDisplayTextSerializer))))
+                               ? new JProperty("directions",            new JArray(Directions.         Select (displayText        => displayText.       ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
                            ParkingRestrictions.Any()
-                               ? new JProperty("parking_restrictions",  new JArray(ParkingRestrictions.Select(parkingRestriction => parkingRestriction.ToString())))
+                               ? new JProperty("parking_restrictions",  new JArray(ParkingRestrictions.Select (parkingRestriction => parkingRestriction.ToString())))
                                : null,
 
                            Images.Any()
-                               ? new JProperty("images",                new JArray(Images.             Select(image              => image.             ToJSON(CustomImageSerializer))))
+                               ? new JProperty("images",                new JArray(Images.             Select (image              => image.             ToJSON(CustomImageSerializer))))
                                : null,
 
                                  new JProperty("last_updated",          LastUpdated.ToIso8601())

@@ -1134,8 +1134,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                          )),
 
                            RelatedLocations.Any()
-                               ? new JProperty("related_locations",      new JArray(RelatedLocations.Select(additionalGeoLocation => additionalGeoLocation.ToJSON(CustomAdditionalGeoLocationSerializer,
-                                                                                                                                                                  CustomDisplayTextSerializer))))
+                               ? new JProperty("related_locations",      new JArray(RelatedLocations.Select (additionalGeoLocation => additionalGeoLocation.ToJSON(CustomAdditionalGeoLocationSerializer,
+                                                                                                                                                                   CustomDisplayTextSerializer))))
                                : null,
 
                            ParkingType.HasValue
@@ -1143,19 +1143,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                : null,
 
                            EVSEs.Any()
-                               ? new JProperty("evses",                  new JArray(EVSEs.           Select(evse                  => evse.ToJSON(EMSPId,
-                                                                                                                                                 CustomEVSESerializer,
-                                                                                                                                                 CustomStatusScheduleSerializer,
-                                                                                                                                                 CustomConnectorSerializer,
-                                                                                                                                                 CustomEnergyMeterSerializer,
-                                                                                                                                                 CustomTransparencySoftwareStatusSerializer,
-                                                                                                                                                 CustomTransparencySoftwareSerializer,
-                                                                                                                                                 CustomDisplayTextSerializer,
-                                                                                                                                                 CustomImageSerializer))))
+                               ? new JProperty("evses",                  new JArray(EVSEs.           OrderBy(evse                  => evse.UId).
+                                                                                                     Select (evse                  => evse.ToJSON(EMSPId,
+                                                                                                                                                  CustomEVSESerializer,
+                                                                                                                                                  CustomStatusScheduleSerializer,
+                                                                                                                                                  CustomConnectorSerializer,
+                                                                                                                                                  CustomEnergyMeterSerializer,
+                                                                                                                                                  CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                                  CustomTransparencySoftwareSerializer,
+                                                                                                                                                  CustomDisplayTextSerializer,
+                                                                                                                                                  CustomImageSerializer))))
                                : null,
 
                            Directions.Any()
-                               ? new JProperty("directions",             new JArray(Directions.      Select(displayText           => displayText.ToJSON(CustomDisplayTextSerializer))))
+                               ? new JProperty("directions",             new JArray(Directions.      Select (displayText           => displayText.ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
                            Operator is not null
@@ -1171,7 +1172,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                : null,
 
                            Facilities.Any()
-                               ? new JProperty("facilities",             new JArray(Facilities.      Select(facility              => facility.ToString())))
+                               ? new JProperty("facilities",             new JArray(Facilities.      Select (facility              => facility.ToString())))
                                : null,
 
                            new JProperty("time_zone",                    Timezone),
@@ -1185,7 +1186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                : null,
 
                            Images.Any()
-                               ? new JProperty("images",                 new JArray(Images.          Select(image                 => image.ToJSON(CustomImageSerializer))))
+                               ? new JProperty("images",                 new JArray(Images.          Select (image                 => image.ToJSON(CustomImageSerializer))))
                                : null,
 
                            EnergyMix is not null
