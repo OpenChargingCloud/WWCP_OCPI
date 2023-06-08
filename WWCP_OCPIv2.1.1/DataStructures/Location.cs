@@ -229,6 +229,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public    Boolean?                            Publish                  { get; }
 
         /// <summary>
+        /// The timestamp when this charging location was created.
+        /// </summary>
+        [Mandatory, NonStandard("Pagination")]
+        public    DateTime                            Created                  { get; }
+
+        /// <summary>
         /// The timestamp when this charging location was last updated (or created).
         /// </summary>
         [Mandatory]
@@ -314,6 +320,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         // Non-Standard extensions
                         Boolean?                                                      Publish                                      = null,
 
+                        DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
@@ -357,6 +364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    Publish,
 
+                   Created,
                    LastUpdated,
                    EMSPId,
                    CustomLocationSerializer,
@@ -447,6 +455,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         // Non-Standard extensions
                         Boolean?                                                      Publish                                      = null,
 
+                        DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
@@ -492,6 +501,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // Non-Standard extensions
             this.Publish              = Publish;
 
+            this.Created              = Created                      ?? Timestamp.Now;
             this.LastUpdated          = LastUpdated                  ?? Timestamp.Now;
 
             if (EVSEs is not null && EVSEs.Any())
@@ -952,6 +962,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
+                #region Parse Created               [optional, NonStandard]
+
+                if (!JSON.ParseOptional("created",
+                                        "created",
+                                        out DateTime? Created,
+                                        out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
                 #region Parse LastUpdated           [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
@@ -992,6 +1014,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                         Publish,
 
+                                        Created,
                                         LastUpdated);
 
                 if (CustomLocationParser is not null)
@@ -1146,6 +1169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null,
 
 
+                                 new JProperty("created",                Created.    ToIso8601()),
                                  new JProperty("last_updated",           LastUpdated.ToIso8601())
 
                        );

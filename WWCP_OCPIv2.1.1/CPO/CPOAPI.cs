@@ -2624,53 +2624,91 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        var filters            = Request.GetDateAndPaginationFilters();
+                                        var filters              = Request.GetDateAndPaginationFilters();
 
-                                                                                          //ToDo: Filter to NOT show all locations to everyone!
-                                        var allLocations       = CommonAPI.GetLocations().//location => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == location.CountryCode &&
-                                                                                          //                                                       role.PartyId     == location.PartyId)).
-                                                                           ToArray();
+                                                                                            //ToDo: Filter to NOT show all locations to everyone!
+                                        var allLocations         = CommonAPI.GetLocations().//location => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == location.CountryCode &&
+                                                                                            //                                                       role.PartyId     == location.PartyId)).
+                                                                             ToArray();
 
-                                        var filteredLocations  = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
-                                                                              Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
-                                                                              ToArray();
+                                        var filteredLocations    = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
+                                                                                Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
+                                                                                ToArray();
 
+
+                                        var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                       Server                     = DefaultHTTPServerName,
+                                                                       Date                       = Timestamp.Now,
+                                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                                       AccessControlAllowHeaders  = "Authorization"
+                                                                   }.
+
+                                                                   // The overall number of locations
+                                                                   Set("X-Total-Count",  allLocations.Length).
+
+                                                                   // The maximum number of locations that the server WILL return within a single request
+                                                                   Set("X-Limit",        allLocations.Length);
+
+
+                                        #region When the limit query parameter was set & this is not the last pagination page...
+
+                                        if (filters.Limit.HasValue &&
+                                            allLocations.ULongLength() > ((filters.Offset ?? 0) + (filters.Limit ?? 0)))
+                                        {
+
+                                            // The new query parameters for the "next" page of pagination within the HTTP Link header
+                                            var queryParameters    = new List<String?>() {
+                                                                         filters.From. HasValue ? $"from={filters.From.Value}" :                             null,
+                                                                         filters.To.   HasValue ? $"to={filters.To.Value}" :                                 null,
+                                                                         filters.Limit.HasValue ? $"offset={(filters.Offset ?? 0) + (filters.Limit ?? 0)}" : null,
+                                                                         filters.Limit.HasValue ? $"limit={filters.Limit ?? 0}" :                            null
+                                                                     }.Where(queryParameter => queryParameter is not null).
+                                                                       AggregateWith("&");
+
+                                            if (queryParameters.Length > 0)
+                                                queryParameters = "?" + queryParameters;
+
+                                            // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
+                                            //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
+                                            httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
+                                                                                     ? $"https://{ExternalDNSName}"
+                                                                                     : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/locations{queryParameters}>; rel=\"next\"");
+
+                                        }
+
+                                        #endregion
 
                                         return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
-                                                   StatusMessage        = "Hello world!",
-                                                   Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
-                                                                                                                      filters.Limit).
-                                                                                                       SafeSelect    (location => location.ToJSON(false,
-                                                                                                                                                  Request.EMSPId,
-                                                                                                                                                  CustomLocationSerializer,
-                                                                                                                                                  CustomAdditionalGeoLocationSerializer,
-                                                                                                                                                  CustomEVSESerializer,
-                                                                                                                                                  CustomStatusScheduleSerializer,
-                                                                                                                                                  CustomConnectorSerializer,
-                                                                                                                                                  CustomEnergyMeterSerializer,
-                                                                                                                                                  CustomTransparencySoftwareStatusSerializer,
-                                                                                                                                                  CustomTransparencySoftwareSerializer,
-                                                                                                                                                  CustomDisplayTextSerializer,
-                                                                                                                                                  CustomBusinessDetailsSerializer,
-                                                                                                                                                  CustomHoursSerializer,
-                                                                                                                                                  CustomImageSerializer,
-                                                                                                                                                  CustomEnergyMixSerializer,
-                                                                                                                                                  CustomEnergySourceSerializer,
-                                                                                                                                                  CustomEnvironmentalImpactSerializer))),
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       Server                     = DefaultHTTPServerName,
-                                                       Date                       = Timestamp.Now,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                       AccessControlAllowHeaders  = "Authorization"
-                                                       //LastModified               = ?
-                                                   }.
-                                                   Set("X-Total-Count", allLocations.Length)
-                                                   // X-Limit               The maximum number of objects that the server WILL return.
-                                                   // Link                  Link to the 'next' page should be provided when this is NOT the last page.
-                                            });
+                                                   new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 1000,
+                                                       StatusMessage        = "Hello world!",
+                                                       HTTPResponseBuilder  = httpResponseBuilder,
+                                                       Data                 = new JArray(
+                                                                                  filteredLocations.
+                                                                                      OrderBy       (location => location.Created).
+                                                                                      SkipTakeFilter(filters.Offset,
+                                                                                                     filters.Limit).
+                                                                                      SafeSelect    (location => location.ToJSON(false,
+                                                                                                                                 Request.EMSPId,
+                                                                                                                                 CustomLocationSerializer,
+                                                                                                                                 CustomAdditionalGeoLocationSerializer,
+                                                                                                                                 CustomEVSESerializer,
+                                                                                                                                 CustomStatusScheduleSerializer,
+                                                                                                                                 CustomConnectorSerializer,
+                                                                                                                                 CustomEnergyMeterSerializer,
+                                                                                                                                 CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                 CustomTransparencySoftwareSerializer,
+                                                                                                                                 CustomDisplayTextSerializer,
+                                                                                                                                 CustomBusinessDetailsSerializer,
+                                                                                                                                 CustomHoursSerializer,
+                                                                                                                                 CustomImageSerializer,
+                                                                                                                                 CustomEnergyMixSerializer,
+                                                                                                                                 CustomEnergySourceSerializer,
+                                                                                                                                 CustomEnvironmentalImpactSerializer))
+                                                                              )
+                                                   }
+                                               );
 
                                     });
 
