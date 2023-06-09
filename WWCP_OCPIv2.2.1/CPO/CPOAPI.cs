@@ -2628,41 +2628,102 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                               ToArray();
 
 
+                                        var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                       Server                     = DefaultHTTPServerName,
+                                                                       Date                       = Timestamp.Now,
+                                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                                       AccessControlAllowHeaders  = "Authorization"
+                                                                   }.
+
+                                                                   // The overall number of locations
+                                                                   Set("X-Total-Count",  allLocations.Length).
+
+                                                                   // The maximum number of locations that the server WILL return within a single request
+                                                                   Set("X-Limit",        allLocations.Length);
+
+
+                                        #region When the limit query parameter was set & this is not the last pagination page...
+
+                                        if (filters.Limit.HasValue &&
+                                            allLocations.ULongLength() > ((filters.Offset ?? 0) + (filters.Limit ?? 0)))
+                                        {
+
+                                            // The new query parameters for the "next" page of pagination within the HTTP Link header
+                                            var queryParameters    = new List<String?>() {
+                                                                         filters.From. HasValue ? $"from={filters.From.Value}" :                             null,
+                                                                         filters.To.   HasValue ? $"to={filters.To.Value}" :                                 null,
+                                                                         filters.Limit.HasValue ? $"offset={(filters.Offset ?? 0) + (filters.Limit ?? 0)}" : null,
+                                                                         filters.Limit.HasValue ? $"limit={filters.Limit ?? 0}" :                            null
+                                                                     }.Where(queryParameter => queryParameter is not null).
+                                                                       AggregateWith("&");
+
+                                            if (queryParameters.Length > 0)
+                                                queryParameters = "?" + queryParameters;
+
+                                            // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
+                                            //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
+                                            httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
+                                                                                     ? $"https://{ExternalDNSName}"
+                                                                                     : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/locations{queryParameters}>; rel=\"next\"");
+
+                                        }
+
+                                        #endregion
+
                                         return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = 1000,
-                                                    StatusMessage        = "Hello world!",
-                                                    Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
-                                                                                                                       filters.Limit).
-                                                                                                        SafeSelect(location => location.ToJSON(Request.EMSPId,
-                                                                                                                                               CustomLocationSerializer,
-                                                                                                                                               CustomPublishTokenSerializer,
-                                                                                                                                               CustomAdditionalGeoLocationSerializer,
-                                                                                                                                               CustomEVSESerializer,
-                                                                                                                                               CustomStatusScheduleSerializer,
-                                                                                                                                               CustomConnectorSerializer,
-                                                                                                                                               CustomEnergyMeterSerializer,
-                                                                                                                                               CustomTransparencySoftwareStatusSerializer,
-                                                                                                                                               CustomTransparencySoftwareSerializer,
-                                                                                                                                               CustomDisplayTextSerializer,
-                                                                                                                                               CustomBusinessDetailsSerializer,
-                                                                                                                                               CustomHoursSerializer,
-                                                                                                                                               CustomImageSerializer,
-                                                                                                                                               CustomEnergyMixSerializer,
-                                                                                                                                               CustomEnergySourceSerializer,
-                                                                                                                                               CustomEnvironmentalImpactSerializer))),
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                        AccessControlAllowHeaders  = "Authorization"
-                                                        //LastModified               = ?
-                                                    }.
-                                                    Set("X-Total-Count", allLocations.Length)
-                                                    // X-Limit               The maximum number of objects that the server WILL return.
-                                                    // Link                  Link to the 'next' page should be provided when this is NOT the last page.
-                                            });
+                                                   new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 1000,
+                                                       StatusMessage        = "Hello world!",
+                                                       HTTPResponseBuilder  = httpResponseBuilder,
+                                                       Data                 = new JArray(
+                                                                                  filteredLocations.
+                                                                                      OrderBy       (location => location.Created).
+                                                                                      SkipTakeFilter(filters.Offset,
+                                                                                                     filters.Limit).
+                                                                                      SafeSelect    (location => location.ToJSON(Request.EMSPId,
+                                                                                                                                 CustomLocationSerializer,
+                                                                                                                                 CustomPublishTokenSerializer,
+                                                                                                                                 CustomAdditionalGeoLocationSerializer,
+                                                                                                                                 CustomEVSESerializer,
+                                                                                                                                 CustomStatusScheduleSerializer,
+                                                                                                                                 CustomConnectorSerializer,
+                                                                                                                                 CustomEnergyMeterSerializer,
+                                                                                                                                 CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                 CustomTransparencySoftwareSerializer,
+                                                                                                                                 CustomDisplayTextSerializer,
+                                                                                                                                 CustomBusinessDetailsSerializer,
+                                                                                                                                 CustomHoursSerializer,
+                                                                                                                                 CustomImageSerializer,
+                                                                                                                                 CustomEnergyMixSerializer,
+                                                                                                                                 CustomEnergySourceSerializer,
+                                                                                                                                 CustomEnvironmentalImpactSerializer))
+                                                                              )
+                                                   }
+                                               );
 
                                     });
+
+                                    //    return Task.FromResult(
+                                    //        new OCPIResponse.Builder(Request) {
+                                    //                StatusCode           = 1000,
+                                    //                StatusMessage        = "Hello world!",
+                                    //                Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
+                                    //                                                                                   filters.Limit).
+                                    //                                                                    SafeSelect(location => location.ToJSON(Request.EMSPId,
+                                                                                                                                               
+                                    //                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                    //                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                    //                    AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                    //                    AccessControlAllowHeaders  = "Authorization"
+                                    //                    //LastModified               = ?
+                                    //                }.
+                                    //                Set("X-Total-Count", allLocations.Length)
+                                    //                // X-Limit               The maximum number of objects that the server WILL return.
+                                    //                // Link                  Link to the 'next' page should be provided when this is NOT the last page.
+                                    //        });
+
+                                    //});
 
             #endregion
 
@@ -3035,23 +3096,70 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                           ToArray();
 
 
+                                        var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                       Server                     = DefaultHTTPServerName,
+                                                                       Date                       = Timestamp.Now,
+                                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                                       AccessControlAllowHeaders  = "Authorization"
+                                                                   }.
+
+                                                                   // The overall number of tariffs
+                                                                   Set("X-Total-Count",  allTariffs.Length).
+
+                                                                   // The maximum number of tariffs that the server WILL return within a single request
+                                                                   Set("X-Limit",        allTariffs.Length);
+
+
+                                        #region When the limit query parameter was set & this is not the last pagination page...
+
+                                        if (filters.Limit.HasValue &&
+                                            allTariffs.ULongLength() > ((filters.Offset ?? 0) + (filters.Limit ?? 0)))
+                                        {
+
+                                            // The new query parameters for the "next" page of pagination within the HTTP Link header
+                                            var queryParameters    = new List<String?>() {
+                                                                         filters.From. HasValue ? $"from={filters.From.Value}" :                             null,
+                                                                         filters.To.   HasValue ? $"to={filters.To.Value}" :                                 null,
+                                                                         filters.Limit.HasValue ? $"offset={(filters.Offset ?? 0) + (filters.Limit ?? 0)}" : null,
+                                                                         filters.Limit.HasValue ? $"limit={filters.Limit ?? 0}" :                            null
+                                                                     }.Where(queryParameter => queryParameter is not null).
+                                                                       AggregateWith("&");
+
+                                            if (queryParameters.Length > 0)
+                                                queryParameters = "?" + queryParameters;
+
+                                            // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
+                                            //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
+                                            httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
+                                                                                     ? $"https://{ExternalDNSName}"
+                                                                                     : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/tariffs{queryParameters}>; rel=\"next\"");
+
+                                        }
+
+                                        #endregion
+
                                         return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
-                                                   StatusMessage        = "Hello world!",
-                                                   Data                 = new JArray(filteredTariffs.SkipTakeFilter(filters.Offset,
-                                                                                                                    filters.Limit).
-                                                                                                     SafeSelect(tariff => tariff.ToJSON())),
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                       AccessControlAllowHeaders  = "Authorization"
-                                                       //LastModified               = ?
-                                                   }.
-                                                   Set("X-Total-Count", allTariffs.Length)
-                                                   // X-Limit               The maximum number of objects that the server WILL return.
-                                                   // Link                  Link to the 'next' page should be provided when this is NOT the last page.
-                                            });
+                                                   new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 1000,
+                                                       StatusMessage        = "Hello world!",
+                                                       HTTPResponseBuilder  = httpResponseBuilder,
+                                                       Data                 = new JArray(
+                                                                                  filteredTariffs.
+                                                                                  SkipTakeFilter(filters.Offset,
+                                                                                                 filters.Limit).
+                                                                                  Select(tariff => tariff.ToJSON(CustomTariffSerializer,
+                                                                                                                 CustomDisplayTextSerializer,
+                                                                                                                 CustomPriceSerializer,
+                                                                                                                 CustomTariffElementSerializer,
+                                                                                                                 CustomPriceComponentSerializer,
+                                                                                                                 CustomTariffRestrictionsSerializer,
+                                                                                                                 CustomEnergyMixSerializer,
+                                                                                                                 CustomEnergySourceSerializer,
+                                                                                                                 CustomEnvironmentalImpactSerializer))
+                                                                              )
+                                                   }
+                                               );
 
                                     });
 
@@ -3222,27 +3330,66 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                             ToArray();
 
 
+                                        var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                       Server                     = DefaultHTTPServerName,
+                                                                       Date                       = Timestamp.Now,
+                                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                                       AccessControlAllowHeaders  = "Authorization"
+                                                                   }.
+
+                                                                   // The overall number of sessions
+                                                                   Set("X-Total-Count",  allSessions.Length).
+
+                                                                   // The maximum number of sessions that the server WILL return within a single request
+                                                                   Set("X-Limit",        allSessions.Length);
+
+
+                                        #region When the limit query parameter was set & this is not the last pagination page...
+
+                                        if (filters.Limit.HasValue &&
+                                            allSessions.ULongLength() > ((filters.Offset ?? 0) + (filters.Limit ?? 0)))
+                                        {
+
+                                            // The new query parameters for the "next" page of pagination within the HTTP Link header
+                                            var queryParameters    = new List<String?>() {
+                                                                         filters.From. HasValue ? $"from={filters.From.Value}" :                             null,
+                                                                         filters.To.   HasValue ? $"to={filters.To.Value}" :                                 null,
+                                                                         filters.Limit.HasValue ? $"offset={(filters.Offset ?? 0) + (filters.Limit ?? 0)}" : null,
+                                                                         filters.Limit.HasValue ? $"limit={filters.Limit ?? 0}" :                            null
+                                                                     }.Where(queryParameter => queryParameter is not null).
+                                                                       AggregateWith("&");
+
+                                            if (queryParameters.Length > 0)
+                                                queryParameters = "?" + queryParameters;
+
+                                            // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
+                                            //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
+                                            httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
+                                                                                     ? $"https://{ExternalDNSName}"
+                                                                                     : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/sessions{queryParameters}>; rel=\"next\"");
+
+                                        }
+
+                                        #endregion
+
                                         return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
-                                                   StatusMessage        = "Hello world!",
-                                                   Data                 = new JArray(filteredSessions.SkipTakeFilter(filters.Offset,
-                                                                                                                     filters.Limit).
-                                                                                                      SafeSelect(session => session.ToJSON(CustomSessionSerializer,
-                                                                                                                                           CustomCDRTokenSerializer,
-                                                                                                                                           CustomChargingPeriodSerializer,
-                                                                                                                                           CustomCDRDimensionSerializer,
-                                                                                                                                           CustomPriceSerializer))),
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                       AccessControlAllowHeaders  = "Authorization"
-                                                       //LastModified               = ?
-                                                   }.
-                                                   Set("X-Total-Count", allSessions.Length)
-                                                   // X-Limit               The maximum number of objects that the server WILL return.
-                                                   // Link                  Link to the 'next' page should be provided when this is NOT the last page.
-                                            });
+                                                   new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 1000,
+                                                       StatusMessage        = "Hello world!",
+                                                       HTTPResponseBuilder  = httpResponseBuilder,
+                                                       Data                 = new JArray(
+                                                                                  filteredSessions.
+                                                                                      SkipTakeFilter(filters.Offset,
+                                                                                                     filters.Limit).
+                                                                                      Select(session => session.ToJSON(CustomSessionSerializer,
+                                                                                                                       CustomCDRTokenSerializer,
+                                                                                                                       CustomChargingPeriodSerializer,
+                                                                                                                       CustomCDRDimensionSerializer,
+                                                                                                                       CustomPriceSerializer))
+                                                                              )
+                                                   }
+                                               );
 
                                     });
 
@@ -3461,40 +3608,79 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                          ToArray();
 
 
+                                        var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                       Server                     = DefaultHTTPServerName,
+                                                                       Date                       = Timestamp.Now,
+                                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                                       AccessControlAllowHeaders  = "Authorization"
+                                                                   }.
+
+                                                                   // The overall number of CDRs
+                                                                   Set("X-Total-Count",  allCDRs.Length).
+
+                                                                   // The maximum number of CDRs that the server WILL return within a single request
+                                                                   Set("X-Limit",        allCDRs.Length);
+
+
+                                        #region When the limit query parameter was set & this is not the last pagination page...
+
+                                        if (filters.Limit.HasValue &&
+                                            allCDRs.ULongLength() > ((filters.Offset ?? 0) + (filters.Limit ?? 0)))
+                                        {
+
+                                            // The new query parameters for the "next" page of pagination within the HTTP Link header
+                                            var queryParameters    = new List<String?>() {
+                                                                         filters.From. HasValue ? $"from={filters.From.Value}" :                             null,
+                                                                         filters.To.   HasValue ? $"to={filters.To.Value}" :                                 null,
+                                                                         filters.Limit.HasValue ? $"offset={(filters.Offset ?? 0) + (filters.Limit ?? 0)}" : null,
+                                                                         filters.Limit.HasValue ? $"limit={filters.Limit ?? 0}" :                            null
+                                                                     }.Where(queryParameter => queryParameter is not null).
+                                                                       AggregateWith("&");
+
+                                            if (queryParameters.Length > 0)
+                                                queryParameters = "?" + queryParameters;
+
+                                            // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
+                                            //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
+                                            httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
+                                                                                     ? $"https://{ExternalDNSName}"
+                                                                                     : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/cdrs{queryParameters}>; rel=\"next\"");
+
+                                        }
+
+                                        #endregion
+
                                         return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
-                                                   StatusMessage        = "Hello world!",
-                                                   Data                 = new JArray(filteredCDRs.SkipTakeFilter(filters.Offset,
-                                                                                                                 filters.Limit).
-                                                                                                  SafeSelect(CDR => CDR.ToJSON(CustomCDRSerializer,
-                                                                                                                               CustomCDRTokenSerializer,
-                                                                                                                               CustomCDRLocationSerializer,
-                                                                                                                               CustomEnergyMeterSerializer,
-                                                                                                                               CustomTransparencySoftwareSerializer,
-                                                                                                                               CustomTariffSerializer,
-                                                                                                                               CustomDisplayTextSerializer,
-                                                                                                                               CustomPriceSerializer,
-                                                                                                                               CustomTariffElementSerializer,
-                                                                                                                               CustomPriceComponentSerializer,
-                                                                                                                               CustomTariffRestrictionsSerializer,
-                                                                                                                               CustomEnergyMixSerializer,
-                                                                                                                               CustomEnergySourceSerializer,
-                                                                                                                               CustomEnvironmentalImpactSerializer,
-                                                                                                                               CustomChargingPeriodSerializer,
-                                                                                                                               CustomCDRDimensionSerializer,
-                                                                                                                               CustomSignedDataSerializer,
-                                                                                                                               CustomSignedValueSerializer))),
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                       AccessControlAllowHeaders  = "Authorization"
-                                                       //LastModified               = ?
-                                                   }.
-                                                   Set("X-Total-Count", allCDRs.Length)
-                                                   // X-Limit               The maximum number of objects that the server WILL return.
-                                                   // Link                  Link to the 'next' page should be provided when this is NOT the last page.
-                                            });
+                                                   new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 1000,
+                                                       StatusMessage        = "Hello world!",
+                                                       HTTPResponseBuilder  = httpResponseBuilder,
+                                                       Data                 = new JArray(
+                                                                                  filteredCDRs.
+                                                                                  SkipTakeFilter(filters.Offset,
+                                                                                                 filters.Limit).
+                                                                                  Select(CDR => CDR.ToJSON(CustomCDRSerializer,
+                                                                                                           CustomCDRTokenSerializer,
+                                                                                                           CustomCDRLocationSerializer,
+                                                                                                           CustomEnergyMeterSerializer,
+                                                                                                           CustomTransparencySoftwareSerializer,
+                                                                                                           CustomTariffSerializer,
+                                                                                                           CustomDisplayTextSerializer,
+                                                                                                           CustomPriceSerializer,
+                                                                                                           CustomTariffElementSerializer,
+                                                                                                           CustomPriceComponentSerializer,
+                                                                                                           CustomTariffRestrictionsSerializer,
+                                                                                                           CustomEnergyMixSerializer,
+                                                                                                           CustomEnergySourceSerializer,
+                                                                                                           CustomEnvironmentalImpactSerializer,
+                                                                                                           CustomChargingPeriodSerializer,
+                                                                                                           CustomCDRDimensionSerializer,
+                                                                                                           CustomSignedDataSerializer,
+                                                                                                           CustomSignedValueSerializer))
+                                                                              )
+                                                   }
+                                               );
 
                                     });
 
@@ -3670,11 +3856,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #region Check country code and party identification
 
                                         if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                  out CountryCode?          CountryCode,
-                                                                                  out Party_Id?             PartyId,
-                                                                                  out OCPIResponse.Builder  OCPIResponseBuilder))
+                                                                                out var countryCode,
+                                                                                out var partyId,
+                                                                                out var ocpiResponseBuilder) ||
+                                            !countryCode.HasValue ||
+                                            !partyId.HasValue)
                                         {
-                                            return Task.FromResult(OCPIResponseBuilder);
+                                            return Task.FromResult(ocpiResponseBuilder!);
                                         }
 
                                         #endregion
@@ -3682,8 +3870,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         var filters         = Request.GetDateAndPaginationFilters();
 
-                                        var allTokens       = CommonAPI.GetTokens(CountryCode,
-                                                                                  PartyId).
+                                        var allTokens       = CommonAPI.GetTokens(countryCode,
+                                                                                  partyId).
                                                                         ToArray();
 
                                         var filteredTokens  = allTokens.Select(tokenStatus => tokenStatus.Token).
@@ -3692,24 +3880,63 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                         ToArray();
 
 
+                                        var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                       Server                     = DefaultHTTPServerName,
+                                                                       Date                       = Timestamp.Now,
+                                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                                       AccessControlAllowHeaders  = "Authorization"
+                                                                   }.
+
+                                                                   // The overall number of tokens
+                                                                   Set("X-Total-Count",  allTokens.Length).
+
+                                                                   // The maximum number of tokens that the server WILL return within a single request
+                                                                   Set("X-Limit",        allTokens.Length);
+
+
+                                        #region When the limit query parameter was set & this is not the last pagination page...
+
+                                        if (filters.Limit.HasValue &&
+                                            allTokens.ULongLength() > ((filters.Offset ?? 0) + (filters.Limit ?? 0)))
+                                        {
+
+                                            // The new query parameters for the "next" page of pagination within the HTTP Link header
+                                            var queryParameters    = new List<String?>() {
+                                                                         filters.From. HasValue ? $"from={filters.From.Value}" :                             null,
+                                                                         filters.To.   HasValue ? $"to={filters.To.Value}" :                                 null,
+                                                                         filters.Limit.HasValue ? $"offset={(filters.Offset ?? 0) + (filters.Limit ?? 0)}" : null,
+                                                                         filters.Limit.HasValue ? $"limit={filters.Limit ?? 0}" :                            null
+                                                                     }.Where(queryParameter => queryParameter is not null).
+                                                                       AggregateWith("&");
+
+                                            if (queryParameters.Length > 0)
+                                                queryParameters = "?" + queryParameters;
+
+                                            // Link to the 'next' page should be provided when this is NOT the last page, e.g.:
+                                            //   - Link: <https://www.server.com/ocpi/cpo/2.0/cdrs/?offset=150&limit=50>; rel="next"
+                                            httpResponseBuilder.Set("Link", $"<{(ExternalDNSName.IsNotNullOrEmpty()
+                                                                                     ? $"https://{ExternalDNSName}"
+                                                                                     : $"http://127.0.0.1:{HTTPServer.IPPorts.First()}")}{URLPathPrefix}/tokens/{countryCode}/{partyId}{queryParameters}>; rel=\"next\"");
+
+                                        }
+
+                                        #endregion
+
                                         return Task.FromResult(
-                                                new OCPIResponse.Builder(Request) {
+                                                   new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = new JArray(filteredTokens.SkipTakeFilter(filters.Offset,
-                                                                                                                       filters.Limit).
-                                                                                                        SafeSelect(token => token.ToJSON(CustomTokenSerializer,
-                                                                                                                                         CustomEnergyContractSerializer))),
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "DELETE" },
-                                                           AccessControlAllowHeaders  = "Authorization"
-                                                           //LastModified               = ?
-                                                       }.
-                                                       Set("X-Total-Count", allTokens.Length)
-                                                       // X-Limit               The maximum number of objects that the server WILL return.
-                                                       // Link                  Link to the 'next' page should be provided when this is NOT the last page.
-                                                });
+                                                       HTTPResponseBuilder  = httpResponseBuilder,
+                                                       Data                 = new JArray(
+                                                                                  filteredTokens.
+                                                                                      SkipTakeFilter(filters.Offset,
+                                                                                                     filters.Limit).
+                                                                                      Select(token => token.ToJSON(CustomTokenSerializer,
+                                                                                                                   CustomEnergyContractSerializer))
+                                                                              )
+                                                   }
+                                               );
 
                                     });
 
@@ -4771,6 +4998,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             #endregion
 
             #endregion
+
 
         }
 

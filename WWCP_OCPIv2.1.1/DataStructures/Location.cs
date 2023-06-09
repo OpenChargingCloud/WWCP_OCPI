@@ -1216,6 +1216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     Publish,
 
+                    Created,
                     LastUpdated);
 
         #endregion
@@ -1963,6 +1964,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     Publish,
 
+                    Created,
                     LastUpdated);
 
         #endregion
@@ -2147,13 +2149,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             [Mandatory]
             public Boolean?                            Publish                  { get; set; }
 
-
+            // <summary>
+            /// The timestamp when this charging location was created.
+            /// </summary>
+            [Mandatory, NonStandard("Pagination")]
+            public DateTime?                           Created                  { get; set; }
 
             /// <summary>
             /// The timestamp when this charging location was last updated (or created).
             /// </summary>
             [Mandatory]
-            public DateTime                            LastUpdated              { get; set; }
+            public DateTime?                           LastUpdated              { get; set; }
 
             #endregion
 
@@ -2214,6 +2220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            Boolean?                             Publish              = null,
 
+                           DateTime?                            Created              = null,
                            DateTime?                            LastUpdated          = null)
 
             {
@@ -2245,7 +2252,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 this.Publish             = Publish;
 
-                this.LastUpdated         = LastUpdated ?? Timestamp.Now;
+                this.Created             = Created;
+                this.LastUpdated         = LastUpdated;
 
             }
 
@@ -2366,7 +2374,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                           Publish,
 
-                                          LastUpdated);
+                                          Created     ?? Timestamp.Now,
+                                          LastUpdated ?? Timestamp.Now);
 
             }
 

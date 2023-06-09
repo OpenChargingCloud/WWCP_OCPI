@@ -250,6 +250,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public EnergyMix?                          EnergyMix                { get; }
 
         /// <summary>
+        /// The timestamp when this charging location was created.
+        /// </summary>
+        [Mandatory, NonStandard("Pagination")]
+        public    DateTime                         Created                  { get; }
+
+        /// <summary>
         /// The timestamp when this charging location was last updated (or created).
         /// </summary>
         [Mandatory]
@@ -338,6 +344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         IEnumerable<Image>?                                           Images                                       = null,
                         EnergyMix?                                                    EnergyMix                                    = null,
 
+                        DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
@@ -385,6 +392,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    Images,
                    EnergyMix,
 
+                   Created,
                    LastUpdated,
                    EMSPId,
                    CustomLocationSerializer,
@@ -482,6 +490,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         IEnumerable<Image>?                                           Images                                       = null,
                         EnergyMix?                                                    EnergyMix                                    = null,
 
+                        DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
@@ -531,6 +540,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.Images               = Images?.          Distinct() ?? Array.Empty<Image>();
             this.EnergyMix            = EnergyMix;
 
+            this.Created              = Created                      ?? Timestamp.Now;
             this.LastUpdated          = LastUpdated                  ?? Timestamp.Now;
 
             foreach (var evse in this.EVSEs)
@@ -1000,6 +1010,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
+                #region Parse Created               [optional, NonStandard]
+
+                if (!JSON.ParseOptional("created",
+                                        "created",
+                                        out DateTime? Created,
+                                        out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
                 #region Parse LastUpdated           [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
@@ -1040,6 +1062,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         ChargingWhenClosed,
                                         Images,
                                         EnergyMix,
+                                        Created,
                                         LastUpdated);
 
                 if (CustomLocationParser is not null)
@@ -1195,6 +1218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                             CustomEnvironmentalImpactSerializer))
                                : null,
 
+                           new JProperty("created",                      Created.    ToIso8601()),
                            new JProperty("last_updated",                 LastUpdated.ToIso8601())
 
                        );
@@ -1242,6 +1266,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     Images.          Select(image           => image.          Clone()).ToArray(),
                     EnergyMix?.   Clone(),
 
+                    Created,
                     LastUpdated);
 
         #endregion
@@ -2054,6 +2079,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     Images,
                     EnergyMix,
 
+                    Created,
                     LastUpdated);
 
         #endregion
@@ -2104,7 +2130,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             /// Note: This field may only be used when the publish field is set to false.
             /// </summary>
             [Optional]
-            public HashSet<PublishToken>           PublishAllowedTo         { get; }
+            public HashSet<PublishToken>               PublishAllowedTo         { get; }
 
             /// <summary>
             /// The optional display name of the charging location.
@@ -2252,10 +2278,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             public EnergyMix?                          EnergyMix                { get; set; }
 
             /// <summary>
+            /// The timestamp when this charging location was created.
+            /// </summary>
+            [Mandatory, NonStandard("Pagination")]
+            public DateTime?                           Created                  { get; set; }
+
+            /// <summary>
             /// The timestamp when this charging location was last updated (or created).
             /// </summary>
             [Mandatory]
-            public DateTime                            LastUpdated              { get; set; }
+            public DateTime?                           LastUpdated              { get; set; }
 
             #endregion
 
@@ -2322,6 +2354,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            IEnumerable<Image>?                  Images               = null,
                            EnergyMix?                           EnergyMix            = null,
 
+                           DateTime?                            Created              = null,
                            DateTime?                            LastUpdated          = null)
 
             {
@@ -2353,7 +2386,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 this.Images              = Images           is not null ? new HashSet<Image>                (Images)           : new HashSet<Image>();
                 this.EnergyMix           = EnergyMix;
 
-                this.LastUpdated         = LastUpdated ?? Timestamp.Now;
+                this.Created             = Created;
+                this.LastUpdated         = LastUpdated;
 
             }
 
@@ -2433,7 +2467,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         Images,
                                         EnergyMix,
 
-                                        LastUpdated);
+                                        Created     ?? Timestamp.Now,
+                                        LastUpdated ?? Timestamp.Now);
 
                 }
             }

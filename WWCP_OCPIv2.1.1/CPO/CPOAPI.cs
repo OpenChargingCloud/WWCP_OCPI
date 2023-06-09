@@ -3106,7 +3106,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                           ToArray();
 
 
-
                                         var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                                        Server                     = DefaultHTTPServerName,
