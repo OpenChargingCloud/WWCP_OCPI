@@ -118,6 +118,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public   Languages?      UILanguage       { get; }
 
         /// <summary>
+        /// The timestamp when this token was created.
+        /// </summary>
+        [Mandatory, NonStandard("Pagination")]
+        public   DateTime        Created          { get; }
+
+        /// <summary>
         /// The timestamp when this token was last updated (or created).
         /// </summary>
         [Mandatory]
@@ -143,11 +149,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="AuthId">An unique identification of the EV driver contract token within the eMSP’s platform.</param>
         /// <param name="Issuer">An token issuing company, most of the times the name of the company printed on the token (RFID card), not necessarily the eMSP.</param>
         /// <param name="IsValid">Whether this token is valid.</param>
+        /// 
         /// <param name="WhitelistType">Indicates what type of white-listing is allowed.</param>
         /// <param name="VisualNumber">An optional visual readable number/identification as printed on the token/RFID card.</param>
         /// <param name="UILanguage">An optional ISO 639-1 language code of the token owner’s preferred interface language.</param>
         /// 
-        /// <param name="LastUpdated">The timestamp when this token was last updated (or created).</param>
+        /// <param name="Created">An optional timestamp when this charging token was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charging token was last updated (or created).</param>
+        /// 
         /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
         public Token(CountryCode                              CountryCode,
                      Party_Id                                 PartyId,
@@ -156,10 +165,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                      Auth_Id                                  AuthId,
                      String                                   Issuer,
                      Boolean                                  IsValid,
+
                      WhitelistTypes                           WhitelistType,
                      String?                                  VisualNumber            = null,
                      Languages?                               UILanguage              = null,
+
+                     DateTime?                                Created                 = null,
                      DateTime?                                LastUpdated             = null,
+
                      CustomJObjectSerializerDelegate<Token>?  CustomTokenSerializer   = null)
         {
 
@@ -173,11 +186,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.AuthId         = AuthId;
             this.Issuer         = Issuer;
             this.IsValid        = IsValid;
+
             this.WhitelistType  = WhitelistType;
             this.VisualNumber   = VisualNumber;
             this.UILanguage     = UILanguage;
 
-            this.LastUpdated    = LastUpdated ?? Timestamp.Now;
+            this.Created        = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated    = LastUpdated ?? Created     ?? Timestamp.Now;
 
             this.ETag           = SHA256.HashData(ToJSON(true,
                                                          CustomTokenSerializer).ToUTF8Bytes()).ToBase64();
@@ -185,14 +200,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                hashCode =  this.CountryCode.  GetHashCode()       * 31 ^
-                            this.PartyId.      GetHashCode()       * 29 ^
-                            this.Id.           GetHashCode()       * 23 ^
-                            this.Type.         GetHashCode()       * 19 ^
-                            this.AuthId.       GetHashCode()       * 17 ^
-                            this.Issuer.       GetHashCode()       * 13 ^
-                            this.IsValid.      GetHashCode()       * 11 ^
-                            this.WhitelistType.GetHashCode()       *  7 ^
+                hashCode =  this.CountryCode.  GetHashCode()       * 37 ^
+                            this.PartyId.      GetHashCode()       * 31 ^
+                            this.Id.           GetHashCode()       * 29 ^
+                            this.Type.         GetHashCode()       * 23 ^
+                            this.AuthId.       GetHashCode()       * 19 ^
+                            this.Issuer.       GetHashCode()       * 17 ^
+                            this.IsValid.      GetHashCode()       * 13 ^
+                            this.WhitelistType.GetHashCode()       * 11 ^
+                            this.Created.      GetHashCode()       *  7 ^
                             this.LastUpdated.  GetHashCode()       *  5 ^
                            (this.VisualNumber?.GetHashCode() ?? 0) *  3 ^
                            (this.UILanguage?.  GetHashCode() ?? 0);
@@ -452,6 +468,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
+
+                #region Parse Created          [optional, NonStandard]
+
+                if (!JSON.ParseOptional("created",
+                                        "created",
+                                        out DateTime? Created,
+                                        out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse LastUpdated      [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
@@ -507,7 +537,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<Token>?  CustomTokenSerializer     = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            IncludeOwnerInformation
                                ? new JProperty("country_code",    CountryCode.     ToString())
@@ -539,8 +569,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomTokenSerializer is not null
-                       ? CustomTokenSerializer(this, JSON)
-                       : JSON;
+                       ? CustomTokenSerializer(this, json)
+                       : json;
 
         }
 
@@ -564,6 +594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     VisualNumber is not null ? new String(VisualNumber.ToCharArray()) : null,
                     UILanguage,
 
+                    Created,
                     LastUpdated);
 
         #endregion
@@ -846,6 +877,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 c = WhitelistType.CompareTo(Token.WhitelistType);
 
             if (c == 0)
+                c = Created.      CompareTo(Token.Created);
+
+            if (c == 0)
                 c = LastUpdated.  CompareTo(Token.LastUpdated);
 
             return c;
@@ -889,6 +923,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                Issuer.                 Equals(Token.Issuer)                  &&
                IsValid.                Equals(Token.IsValid)                 &&
                WhitelistType.          Equals(Token.WhitelistType)           &&
+               Created.    ToIso8601().Equals(Token.Created.    ToIso8601()) &&
                LastUpdated.ToIso8601().Equals(Token.LastUpdated.ToIso8601()) &&
 
              ((VisualNumber is     null &&  Token.VisualNumber is     null) ||

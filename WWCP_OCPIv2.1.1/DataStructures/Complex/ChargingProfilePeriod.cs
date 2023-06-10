@@ -305,14 +305,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingProfilePeriod> CustomChargingProfilePeriodSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("start_period",  StartPeriod),
                            new JProperty("Limit",         Math.Round(Limit, 1))
                        );
 
             return CustomChargingProfilePeriodSerializer is not null
-                       ? CustomChargingProfilePeriodSerializer(this, JSON)
-                       : JSON;
+                       ? CustomChargingProfilePeriodSerializer(this, json)
+                       : json;
 
         }
 

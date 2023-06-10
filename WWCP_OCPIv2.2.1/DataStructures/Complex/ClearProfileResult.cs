@@ -198,13 +198,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<ClearProfileResult>? CustomClearProfileResultSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("result",  Result.ToString())
                        );
 
             return CustomClearProfileResultSerializer is not null
-                       ? CustomClearProfileResultSerializer(this, JSON)
-                       : JSON;
+                       ? CustomClearProfileResultSerializer(this, json)
+                       : json;
 
         }
 

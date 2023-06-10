@@ -278,6 +278,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public   Boolean?                            HomeChargingCompensation    { get; }
 
         /// <summary>
+        /// The timestamp when this charge detail record was created.
+        /// </summary>
+        [Mandatory, NonStandard("Pagination")]
+        public   DateTime                            Created                     { get; }
+
+        /// <summary>
         /// The timestamp when this charge detail record was last updated (or created).
         /// </summary>
         [Mandatory]
@@ -328,7 +334,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CreditReferenceId">The optional credit reference identification is required to be set for a "credit CDR". This SHALL contain the identification of the charge detail record for which this is a "credit CDR".</param>
         /// <param name="HomeChargingCompensation">When set to true, this charge detail record is for a charging session using the home charger of the EV driver for which the energy cost needs to be financial compensated to the EV driver.</param>
         /// 
-        /// <param name="LastUpdated">The timestamp when this charge detail record was last updated (or created).</param>
+        /// <param name="Created">An optional timestamp when this charge detail record was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charge detail record was last updated (or created).</param>
+        /// 
         /// <param name="CustomCDRSerializer">A delegate to serialize custom charge detail record JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
         /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
@@ -380,6 +388,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    CreditReference_Id?                                     CreditReferenceId                      = null,
                    Boolean?                                                HomeChargingCompensation               = null,
 
+                   DateTime?                                               Created                                = null,
                    DateTime?                                               LastUpdated                            = null,
                    CustomJObjectSerializerDelegate<CDR>?                   CustomCDRSerializer                    = null,
                    CustomJObjectSerializerDelegate<CDRToken>?              CustomCDRTokenSerializer               = null,
@@ -438,7 +447,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.CreditReferenceId         = CreditReferenceId;
             this.HomeChargingCompensation  = HomeChargingCompensation;
 
-            this.LastUpdated               = LastUpdated           ?? Timestamp.Now;
+            this.Created                   = Created               ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated               = LastUpdated           ?? Created     ?? Timestamp.Now;
 
             this.ETag                      = SHA256.HashData(ToJSON(CustomCDRSerializer,
                                                                                 CustomCDRTokenSerializer,
@@ -462,20 +472,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             unchecked
             {
 
-                hashCode = this.CountryCode.               GetHashCode()        * 131 ^
-                           this.PartyId.                   GetHashCode()        * 127 ^
-                           this.Id.                        GetHashCode()        * 113 ^
-                           this.Start.                     GetHashCode()        * 109 ^
-                           this.End.                       GetHashCode()        * 107 ^
-                           this.CDRToken.                  GetHashCode()        * 103 ^
-                           this.AuthMethod.                GetHashCode()        * 101 ^
-                           this.Location.                  GetHashCode()        *  97 ^
-                           this.Currency.                  GetHashCode()        *  89 ^
-                           this.ChargingPeriods.           CalcHashCode()       *  83 ^
-                           this.Tariffs.                   CalcHashCode()       *  79 ^
-                           this.TotalCosts.                GetHashCode()        *  73 ^
-                           this.TotalEnergy.               GetHashCode()        *  71 ^
-                           this.TotalTime.                 GetHashCode()        *  67 ^
+                hashCode = this.CountryCode.               GetHashCode()        * 137 ^
+                           this.PartyId.                   GetHashCode()        * 131 ^
+                           this.Id.                        GetHashCode()        * 127 ^
+                           this.Start.                     GetHashCode()        * 113 ^
+                           this.End.                       GetHashCode()        * 109 ^
+                           this.CDRToken.                  GetHashCode()        * 107 ^
+                           this.AuthMethod.                GetHashCode()        * 103 ^
+                           this.Location.                  GetHashCode()        * 101 ^
+                           this.Currency.                  GetHashCode()        *  97 ^
+                           this.ChargingPeriods.           CalcHashCode()       *  89 ^
+                           this.Tariffs.                   CalcHashCode()       *  83 ^
+                           this.TotalCosts.                GetHashCode()        *  79 ^
+                           this.TotalEnergy.               GetHashCode()        *  73 ^
+                           this.TotalTime.                 GetHashCode()        *  71 ^
+                           this.Created.                   GetHashCode()        *  67 ^
                            this.LastUpdated.               GetHashCode()        *  61 ^
 
                            (this.SessionId?.               GetHashCode()  ?? 0) *  59 ^
@@ -1043,6 +1054,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
+
+                #region Parse Created                     [optional, NonStandard]
+
+                if (!JSON.ParseOptional("created",
+                                        "created",
+                                        out DateTime? Created,
+                                        out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse LastUpdated                 [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
@@ -1089,6 +1114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               CreditReferenceId,
                               HomeChargingCompensation,
 
+                              Created,
                               LastUpdated);
 
 
@@ -1153,7 +1179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               CustomJObjectSerializerDelegate<SignedValue>?           CustomSignedValueSerializer            = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("country_code",                 CountryCode.                   ToString()),
                                  new JProperty("party_id",                     PartyId.                       ToString()),
@@ -1260,13 +1286,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                ? new JProperty("home_charging_compensation",   HomeChargingCompensation.Value)
                                : null,
 
+                                 new JProperty("create",                       Created.                       ToIso8601()),
                                  new JProperty("last_updated",                 LastUpdated.                   ToIso8601())
 
                        );
 
             return CustomCDRSerializer is not null
-                       ? CustomCDRSerializer(this, JSON)
-                       : JSON;
+                       ? CustomCDRSerializer(this, json)
+                       : json;
 
         }
 
@@ -1312,6 +1339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     CreditReferenceId?.     Clone,
                     HomeChargingCompensation,
 
+                    Created,
                     LastUpdated);
 
         #endregion
@@ -1611,6 +1639,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 c = TotalTime.  CompareTo(CDR.TotalTime);
 
             if (c == 0)
+                c = Created.    CompareTo(CDR.Created);
+
+            if (c == 0)
                 c = LastUpdated.CompareTo(CDR.LastUpdated);
 
             // Location,
@@ -1682,6 +1713,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                TotalCosts.             Equals(CDR.TotalCosts)              &&
                TotalEnergy.            Equals(CDR.TotalEnergy)             &&
                TotalTime.              Equals(CDR.TotalTime)               &&
+               Created.    ToIso8601().Equals(CDR.Created.    ToIso8601()) &&
                LastUpdated.ToIso8601().Equals(CDR.LastUpdated.ToIso8601()) &&
 
             ((!SessionId.               HasValue    && !CDR.SessionId.               HasValue)  ||

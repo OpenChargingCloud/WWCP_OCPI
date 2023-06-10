@@ -296,7 +296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<CDRToken>? CustomCDRTokenSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            new JProperty("country_code", CountryCode.ToString()),
                            new JProperty("party_id",     PartyId.    ToString()),
@@ -307,8 +307,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomCDRTokenSerializer is not null
-                       ? CustomCDRTokenSerializer(this, JSON)
-                       : JSON;
+                       ? CustomCDRTokenSerializer(this, json)
+                       : json;
 
         }
 

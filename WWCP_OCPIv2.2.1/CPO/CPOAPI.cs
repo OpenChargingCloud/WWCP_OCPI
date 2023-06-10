@@ -2681,7 +2681,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                       OrderBy       (location => location.Created).
                                                                                       SkipTakeFilter(filters.Offset,
                                                                                                      filters.Limit).
-                                                                                      SafeSelect    (location => location.ToJSON(Request.EMSPId,
+                                                                                      Select        (location => location.ToJSON(Request.EMSPId,
                                                                                                                                  CustomLocationSerializer,
                                                                                                                                  CustomPublishTokenSerializer,
                                                                                                                                  CustomAdditionalGeoLocationSerializer,
@@ -3146,17 +3146,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        HTTPResponseBuilder  = httpResponseBuilder,
                                                        Data                 = new JArray(
                                                                                   filteredTariffs.
+                                                                                  OrderBy       (tariff => tariff.Created).
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
-                                                                                  Select(tariff => tariff.ToJSON(CustomTariffSerializer,
-                                                                                                                 CustomDisplayTextSerializer,
-                                                                                                                 CustomPriceSerializer,
-                                                                                                                 CustomTariffElementSerializer,
-                                                                                                                 CustomPriceComponentSerializer,
-                                                                                                                 CustomTariffRestrictionsSerializer,
-                                                                                                                 CustomEnergyMixSerializer,
-                                                                                                                 CustomEnergySourceSerializer,
-                                                                                                                 CustomEnvironmentalImpactSerializer))
+                                                                                  Select        (tariff => tariff.ToJSON(CustomTariffSerializer,
+                                                                                                                         CustomDisplayTextSerializer,
+                                                                                                                         CustomPriceSerializer,
+                                                                                                                         CustomTariffElementSerializer,
+                                                                                                                         CustomPriceComponentSerializer,
+                                                                                                                         CustomTariffRestrictionsSerializer,
+                                                                                                                         CustomEnergyMixSerializer,
+                                                                                                                         CustomEnergySourceSerializer,
+                                                                                                                         CustomEnvironmentalImpactSerializer))
                                                                               )
                                                    }
                                                );
@@ -3380,13 +3381,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        HTTPResponseBuilder  = httpResponseBuilder,
                                                        Data                 = new JArray(
                                                                                   filteredSessions.
+                                                                                      OrderBy       (session => session.Created).
                                                                                       SkipTakeFilter(filters.Offset,
                                                                                                      filters.Limit).
-                                                                                      Select(session => session.ToJSON(CustomSessionSerializer,
-                                                                                                                       CustomCDRTokenSerializer,
-                                                                                                                       CustomChargingPeriodSerializer,
-                                                                                                                       CustomCDRDimensionSerializer,
-                                                                                                                       CustomPriceSerializer))
+                                                                                      Select        (session => session.ToJSON(CustomSessionSerializer,
+                                                                                                                               CustomCDRTokenSerializer,
+                                                                                                                               CustomChargingPeriodSerializer,
+                                                                                                                               CustomCDRDimensionSerializer,
+                                                                                                                               CustomPriceSerializer))
                                                                               )
                                                    }
                                                );
@@ -3658,26 +3660,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        HTTPResponseBuilder  = httpResponseBuilder,
                                                        Data                 = new JArray(
                                                                                   filteredCDRs.
+                                                                                  OrderBy       (cdr => cdr.Created).
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
-                                                                                  Select(CDR => CDR.ToJSON(CustomCDRSerializer,
-                                                                                                           CustomCDRTokenSerializer,
-                                                                                                           CustomCDRLocationSerializer,
-                                                                                                           CustomEnergyMeterSerializer,
-                                                                                                           CustomTransparencySoftwareSerializer,
-                                                                                                           CustomTariffSerializer,
-                                                                                                           CustomDisplayTextSerializer,
-                                                                                                           CustomPriceSerializer,
-                                                                                                           CustomTariffElementSerializer,
-                                                                                                           CustomPriceComponentSerializer,
-                                                                                                           CustomTariffRestrictionsSerializer,
-                                                                                                           CustomEnergyMixSerializer,
-                                                                                                           CustomEnergySourceSerializer,
-                                                                                                           CustomEnvironmentalImpactSerializer,
-                                                                                                           CustomChargingPeriodSerializer,
-                                                                                                           CustomCDRDimensionSerializer,
-                                                                                                           CustomSignedDataSerializer,
-                                                                                                           CustomSignedValueSerializer))
+                                                                                  Select        (cdr => cdr.ToJSON(CustomCDRSerializer,
+                                                                                                                   CustomCDRTokenSerializer,
+                                                                                                                   CustomCDRLocationSerializer,
+                                                                                                                   CustomEnergyMeterSerializer,
+                                                                                                                   CustomTransparencySoftwareSerializer,
+                                                                                                                   CustomTariffSerializer,
+                                                                                                                   CustomDisplayTextSerializer,
+                                                                                                                   CustomPriceSerializer,
+                                                                                                                   CustomTariffElementSerializer,
+                                                                                                                   CustomPriceComponentSerializer,
+                                                                                                                   CustomTariffRestrictionsSerializer,
+                                                                                                                   CustomEnergyMixSerializer,
+                                                                                                                   CustomEnergySourceSerializer,
+                                                                                                                   CustomEnvironmentalImpactSerializer,
+                                                                                                                   CustomChargingPeriodSerializer,
+                                                                                                                   CustomCDRDimensionSerializer,
+                                                                                                                   CustomSignedDataSerializer,
+                                                                                                                   CustomSignedValueSerializer))
                                                                               )
                                                    }
                                                );
@@ -3930,10 +3933,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        HTTPResponseBuilder  = httpResponseBuilder,
                                                        Data                 = new JArray(
                                                                                   filteredTokens.
+                                                                                      OrderBy       (token => token.Created).
                                                                                       SkipTakeFilter(filters.Offset,
                                                                                                      filters.Limit).
-                                                                                      Select(token => token.ToJSON(CustomTokenSerializer,
-                                                                                                                   CustomEnergyContractSerializer))
+                                                                                      Select        (token => token.ToJSON(CustomTokenSerializer,
+                                                                                                                           CustomEnergyContractSerializer))
                                                                               )
                                                    }
                                                );

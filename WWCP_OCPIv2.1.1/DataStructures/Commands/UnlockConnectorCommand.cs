@@ -296,7 +296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<UnlockConnectorCommand>? CustomUnlockConnectorCommandSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("location_id",   LocationId. ToString()),
                            new JProperty("evse_uid",      EVSEUId.    ToString()),
                            new JProperty("connector_id",  ConnectorId.ToString()),
@@ -304,8 +304,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomUnlockConnectorCommandSerializer is not null
-                       ? CustomUnlockConnectorCommandSerializer(this, JSON)
-                       : JSON;
+                       ? CustomUnlockConnectorCommandSerializer(this, json)
+                       : json;
 
         }
 

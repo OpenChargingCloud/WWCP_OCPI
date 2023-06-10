@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<DisplayText>?    CustomDisplayTextSerializer     = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("result",   Result.ToString()),
 
@@ -237,8 +237,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomCommandResultSerializer is not null
-                       ? CustomCommandResultSerializer(this, JSON)
-                       : JSON;
+                       ? CustomCommandResultSerializer(this, json)
+                       : json;
 
         }
 

@@ -220,7 +220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<SignedValue>? CustomSignedValueSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            new JProperty("nature",       Nature.ToString()),
                            new JProperty("plain_data",   PlainData),
@@ -229,8 +229,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomSignedValueSerializer is not null
-                       ? CustomSignedValueSerializer(this, JSON)
-                       : JSON;
+                       ? CustomSignedValueSerializer(this, json)
+                       : json;
 
         }
 

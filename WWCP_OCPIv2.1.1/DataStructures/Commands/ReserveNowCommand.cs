@@ -348,7 +348,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<Token>?              CustomTokenSerializer               = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            new JProperty("token",           Token.        ToJSON(false,
                                                                                  CustomTokenSerializer)),
@@ -366,8 +366,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomReserveNowCommandSerializer is not null
-                       ? CustomReserveNowCommandSerializer(this, JSON)
-                       : JSON;
+                       ? CustomReserveNowCommandSerializer(this, json)
+                       : json;
 
         }
 

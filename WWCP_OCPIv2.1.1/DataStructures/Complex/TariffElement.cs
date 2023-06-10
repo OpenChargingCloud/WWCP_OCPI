@@ -265,7 +265,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<TariffRestrictions>?  CustomTariffRestrictionsSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("price_components",  new JArray(PriceComponents.   Select(priceComponent    => priceComponent.   ToJSON(CustomPriceComponentSerializer)))),
 
@@ -276,8 +276,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomTariffElementSerializer is not null
-                       ? CustomTariffElementSerializer(this, JSON)
-                       : JSON;
+                       ? CustomTariffElementSerializer(this, json)
+                       : json;
 
         }
 

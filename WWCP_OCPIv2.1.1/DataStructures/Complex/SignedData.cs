@@ -278,7 +278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<SignedValue>?  CustomSignedValueSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("encoding_method",           EncodingMethod.       ToString()),
 
@@ -301,8 +301,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomSignedDataSerializer is not null
-                       ? CustomSignedDataSerializer(this, JSON)
-                       : JSON;
+                       ? CustomSignedDataSerializer(this, json)
+                       : json;
 
         }
 

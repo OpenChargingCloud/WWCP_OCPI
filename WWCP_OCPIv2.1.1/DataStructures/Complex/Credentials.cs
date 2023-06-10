@@ -272,7 +272,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            new JProperty("token",             Token.          ToString()),
                            new JProperty("url",               URL.            ToString()),
@@ -283,8 +283,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomCredentialsSerializer is not null
-                       ? CustomCredentialsSerializer(this, JSON)
-                       : JSON;
+                       ? CustomCredentialsSerializer(this, json)
+                       : json;
 
         }
 

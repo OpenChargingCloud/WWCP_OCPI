@@ -196,14 +196,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<EnvironmentalImpact>? CustomEnvironmentalImpactSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("category",  Category.ToString()),
                            new JProperty("amount",    Amount)
                        );
 
             return CustomEnvironmentalImpactSerializer is not null
-                       ? CustomEnvironmentalImpactSerializer(this, JSON)
-                       : JSON;
+                       ? CustomEnvironmentalImpactSerializer(this, json)
+                       : json;
 
         }
 

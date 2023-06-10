@@ -327,7 +327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<PriceComponent>? CustomPriceComponentSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            new JProperty("type",       Type.ToString()),
                            new JProperty("price",      Price),
@@ -341,8 +341,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomPriceComponentSerializer is not null
-                       ? CustomPriceComponentSerializer(this, JSON)
-                       : JSON;
+                       ? CustomPriceComponentSerializer(this, json)
+                       : json;
 
         }
 

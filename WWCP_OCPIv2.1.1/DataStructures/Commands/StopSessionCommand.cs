@@ -247,14 +247,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<StopSessionCommand>? CustomStopSessionCommandSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("session_id",    SessionId.  ToString()),
                            new JProperty("response_url",  ResponseURL.ToString())
                        );
 
             return CustomStopSessionCommandSerializer is not null
-                       ? CustomStopSessionCommandSerializer(this, JSON)
-                       : JSON;
+                       ? CustomStopSessionCommandSerializer(this, json)
+                       : json;
 
         }
 

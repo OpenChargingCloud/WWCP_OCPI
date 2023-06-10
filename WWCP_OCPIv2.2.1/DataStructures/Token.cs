@@ -143,6 +143,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public   EnergyContract?  EnergyContract    { get; }
 
         /// <summary>
+        /// The timestamp when this token was created.
+        /// </summary>
+        [Mandatory, NonStandard("Pagination")]
+        public   DateTime         Created           { get; }
+
+        /// <summary>
         /// Timestamp when this token was last updated (or created).
         /// </summary>
         [Mandatory]
@@ -168,12 +174,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Issuer">An token issuing company, most of the times the name of the company printed on the token (RFID card), not necessarily the eMSP.</param>
         /// <param name="IsValid">Whether this token is valid.</param>
         /// <param name="WhitelistType">Indicates what type of white-listing is allowed.</param>
+        /// 
         /// <param name="VisualNumber">An optional visual readable number/identification as printed on the token/RFID card.</param>
         /// <param name="GroupId">An optional group identification that groups a couple of tokens.</param>
         /// <param name="UILanguage">An optional ISO 639-1 language code of the token owner’s preferred interface language.</param>
         /// <param name="DefaultProfile">The default charging preference.</param>
         /// <param name="EnergyContract">The optional energy contract.</param>
-        /// <param name="LastUpdated">The timestamp when this token was last updated (or created).</param>
+        /// 
+        /// <param name="Created">An optional timestamp when this charging token was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charging token was last updated (or created).</param>
+        /// 
         /// <param name="CustomTokenSerializer"></param>
         /// <param name="CustomEnergyContractSerializer"></param>
         public Token(CountryCode                                       CountryCode,
@@ -191,6 +201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                      ProfileTypes?                                     DefaultProfile                   = null,
                      EnergyContract?                                   EnergyContract                   = null,
 
+                     DateTime?                                         Created                          = null,
                      DateTime?                                         LastUpdated                      = null,
                      CustomJObjectSerializerDelegate<Token>?           CustomTokenSerializer            = null,
                      CustomJObjectSerializerDelegate<EnergyContract>?  CustomEnergyContractSerializer   = null)
@@ -215,7 +226,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.DefaultProfile  = DefaultProfile;
             this.EnergyContract  = EnergyContract;
 
-            this.LastUpdated     = LastUpdated ?? Timestamp.Now;
+            this.Created         = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated     = LastUpdated ?? Created     ?? Timestamp.Now;
 
             this.ETag            = SHA256.HashData(ToJSON(CustomTokenSerializer,
                                                           CustomEnergyContractSerializer).ToUTF8Bytes()).ToBase64();
@@ -223,14 +235,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             unchecked
             {
 
-                hashCode = this.CountryCode.    GetHashCode()       * 31 ^
-                           this.PartyId.        GetHashCode()       * 29 ^
-                           this.Id.             GetHashCode()       * 23 ^
-                           this.Type.           GetHashCode()       * 19 ^
-                           this.ContractId.     GetHashCode()       * 17 ^
-                           this.Issuer.         GetHashCode()       * 23 ^
-                           this.IsValid.        GetHashCode()       * 19 ^
-                           this.WhitelistType.  GetHashCode()       * 17 ^
+                hashCode = this.CountryCode.    GetHashCode()       * 47 ^
+                           this.PartyId.        GetHashCode()       * 43 ^
+                           this.Id.             GetHashCode()       * 41 ^
+                           this.Type.           GetHashCode()       * 37 ^
+                           this.ContractId.     GetHashCode()       * 31 ^
+                           this.Issuer.         GetHashCode()       * 29 ^
+                           this.IsValid.        GetHashCode()       * 23 ^
+                           this.WhitelistType.  GetHashCode()       * 19 ^
+                           this.Created.        GetHashCode()       * 17 ^
                            this.LastUpdated.    GetHashCode()       * 13 ^
                           (this.VisualNumber?.  GetHashCode() ?? 0) * 11 ^
                           (this.GroupId?.       GetHashCode() ?? 0) *  7 ^
@@ -534,6 +547,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
+
+                #region Parse Created           [optional, NonStandard]
+
+                if (!JSON.ParseOptional("created",
+                                        "created",
+                                        out DateTime? Created,
+                                        out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse LastUpdated       [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
@@ -560,6 +587,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   UILanguage,
                                   DefaultProfile,
                                   EnergyContract,
+
+                                  Created,
                                   LastUpdated);
 
 
@@ -592,26 +621,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               CustomJObjectSerializerDelegate<EnergyContract>?  CustomEnergyContractSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
-                           new JProperty("country_code",                CountryCode.         ToString()),
-                           new JProperty("party_id",                    PartyId.             ToString()),
-                           new JProperty("uid",                         Id.                  ToString()),
-                           new JProperty("type",                        Type.                ToString()),
-                           new JProperty("contract_id",                 ContractId.          ToString()),
+                                 new JProperty("country_code",          CountryCode.         ToString()),
+                                 new JProperty("party_id",              PartyId.             ToString()),
+                                 new JProperty("uid",                   Id.                  ToString()),
+                                 new JProperty("type",                  Type.                ToString()),
+                                 new JProperty("contract_id",           ContractId.          ToString()),
 
                            VisualNumber.IsNotNullOrEmpty()
                                ? new JProperty("visual_number",         VisualNumber)
                                : null,
 
-                           new JProperty("issuer",                      Issuer),
+                                 new JProperty("issuer",                Issuer),
 
                            GroupId.HasValue
                                ? new JProperty("group_id",              GroupId.       Value.ToString())
                                : null,
 
-                           new JProperty("valid",                       IsValid),
-                           new JProperty("whitelist",                   WhitelistType.       AsText()),
+                                 new JProperty("valid",                 IsValid),
+                                 new JProperty("whitelist",             WhitelistType.       AsText()),
 
                            UILanguage.HasValue
                                ? new JProperty("language",              UILanguage.    Value.ToString())
@@ -625,13 +654,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                ? new JProperty("energy_contract",       EnergyContract.Value.ToJSON(CustomEnergyContractSerializer))
                                : null,
 
-                           new JProperty("last_updated",                LastUpdated.         ToIso8601())
+                                 new JProperty("created",               Created.             ToIso8601()),
+                                 new JProperty("last_updated",          LastUpdated.         ToIso8601())
 
                        );
 
             return CustomTokenSerializer is not null
-                       ? CustomTokenSerializer(this, JSON)
-                       : JSON;
+                       ? CustomTokenSerializer(this, json)
+                       : json;
 
         }
 
@@ -659,6 +689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     DefaultProfile,
                     EnergyContract?.Clone(),
 
+                    Created,
                     LastUpdated);
 
         #endregion
@@ -941,6 +972,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 c = WhitelistType.CompareTo(Token.WhitelistType);
 
             if (c == 0)
+                c = Created.      CompareTo(Token.Created);
+
+            if (c == 0)
                 c = LastUpdated.  CompareTo(Token.LastUpdated);
 
             return c;
@@ -984,6 +1018,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                Issuer.                 Equals(Token.Issuer)                  &&
                IsValid.                Equals(Token.IsValid)                 &&
                WhitelistType.          Equals(Token.WhitelistType)           &&
+               Created.    ToIso8601().Equals(Token.Created.    ToIso8601()) &&
                LastUpdated.ToIso8601().Equals(Token.LastUpdated.ToIso8601()) &&
 
              ((VisualNumber   is     null &&  Token.VisualNumber   is     null) ||

@@ -308,14 +308,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<DisplayText>?              CustomDisplayTextSerializer               = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("result",   Result.ToString()),
                            new JProperty("timeout",  (UInt32) Timeout.TotalSeconds)
                        );
 
             return CustomChargingProfileResponseSerializer is not null
-                       ? CustomChargingProfileResponseSerializer(this, JSON)
-                       : JSON;
+                       ? CustomChargingProfileResponseSerializer(this, json)
+                       : json;
 
         }
 

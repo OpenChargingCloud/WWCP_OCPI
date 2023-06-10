@@ -241,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               CustomJObjectSerializerDelegate<DisplayText>?      CustomDisplayTextSerializer       = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("result",   Result.ToString()),
                                  new JProperty("timeout",  (UInt32) Timeout.TotalSeconds),
@@ -253,8 +253,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomCommandResponseSerializer is not null
-                       ? CustomCommandResponseSerializer(this, JSON)
-                       : JSON;
+                       ? CustomCommandResponseSerializer(this, json)
+                       : json;
 
         }
 

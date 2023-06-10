@@ -279,7 +279,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// 
         /// <param name="Publish">Whether this charging location may be published on an website or app etc., or not.</param>
         /// 
-        /// <param name="LastUpdated">The timestamp when this charging location was last updated (or created).</param>
+        /// <param name="Created">An optional timestamp when this charging location was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charging location was last updated (or created).</param>
+        /// 
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
@@ -323,6 +325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
+
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                         CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -413,7 +416,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// 
         /// <param name="Publish">Whether this charging location may be published on an website or app etc., or not.</param>
         /// 
-        /// <param name="LastUpdated">The timestamp when this charging location was last updated (or created).</param>
+        /// <param name="Created">An optional timestamp when this charging location was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charging location was last updated (or created).</param>
+        /// 
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
@@ -458,6 +463,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
+
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                         CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -501,8 +507,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             // Non-Standard extensions
             this.Publish              = Publish;
 
-            this.Created              = Created                      ?? Timestamp.Now;
-            this.LastUpdated          = LastUpdated                  ?? Timestamp.Now;
+            this.Created              = Created                      ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated          = LastUpdated                  ?? Created     ?? Timestamp.Now;
 
             if (EVSEs is not null && EVSEs.Any())
             {
@@ -535,6 +541,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                        CustomHoursSerializer,
                                                        CustomImageSerializer,
                                                        CustomEnergyMixSerializer);
+
+            unchecked
+            {
+
+                hashCode = CountryCode.        GetHashCode()       * 97 ^
+                           PartyId.            GetHashCode()       * 89 ^
+                           Id.                 GetHashCode()       * 83 ^
+                           LocationType.       GetHashCode()       * 79 ^
+                           Address.            GetHashCode()       * 73 ^
+                           City.               GetHashCode()       * 71 ^
+                           PostalCode.         GetHashCode()       * 67 ^
+                           Country.            GetHashCode()       * 61 ^
+                           Coordinates.        GetHashCode()       * 59 ^
+                           Created.            GetHashCode()       * 53 ^
+                           LastUpdated.        GetHashCode()       * 47 ^
+
+                          (Name?.              GetHashCode() ?? 0) * 43 ^
+                          (RelatedLocations?.  GetHashCode() ?? 0) * 41 ^
+                          (EVSEs?.             GetHashCode() ?? 0) * 37 ^
+                          (Directions?.        GetHashCode() ?? 0) * 31 ^
+                          (Operator?.          GetHashCode() ?? 0) * 29 ^
+                          (SubOperator?.       GetHashCode() ?? 0) * 23 ^
+                          (Owner?.             GetHashCode() ?? 0) * 19 ^
+                          (Facilities?.        GetHashCode() ?? 0) * 17 ^
+                          (Timezone?.          GetHashCode() ?? 0) * 13 ^
+                          (OpeningTimes?.      GetHashCode() ?? 0) * 11 ^
+                          (ChargingWhenClosed?.GetHashCode() ?? 0) *  7 ^
+                          (Images?.            GetHashCode() ?? 0) *  5 ^
+                          (EnergyMix?.         GetHashCode() ?? 0) *  3 ^
+
+                          (Publish?.           GetHashCode() ?? 0);
+
+            }
 
         }
 
@@ -969,7 +1008,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         out DateTime? Created,
                                         out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -1757,6 +1797,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 c = LocationType.CompareTo(Location.LocationType);
 
             if (c == 0)
+                c = Created.     CompareTo(Location.Created);
+
+            if (c == 0)
                 c = LastUpdated. CompareTo(Location.LastUpdated);
 
             if (c == 0)
@@ -1804,6 +1847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                PostalCode.             Equals(Location.PostalCode)              &&
                Country.                Equals(Location.Country)                 &&
                Coordinates.            Equals(Location.Coordinates)             &&
+               Created.    ToIso8601().Equals(Location.Created.    ToIso8601()) &&
                LastUpdated.ToIso8601().Equals(Location.LastUpdated.ToIso8601()) &&
 
              ((Name               is     null &&  Location.Name               is     null) ||
@@ -1851,59 +1895,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region GetHashCode()
 
-        private Int32? cachedHashCode;
-
-        private readonly Object hashSync = new ();
+        private readonly Int32 hashCode;
 
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Return the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-
-            if (cachedHashCode.HasValue)
-                return cachedHashCode.Value;
-
-            lock (hashSync)
-            {
-
-                unchecked
-                {
-
-                    cachedHashCode = CountryCode.        GetHashCode()       * 89 ^
-                                     PartyId.            GetHashCode()       * 83 ^
-                                     Id.                 GetHashCode()       * 79 ^
-                                     LocationType.       GetHashCode()       * 73 ^
-                                     Address.            GetHashCode()       * 71 ^
-                                     City.               GetHashCode()       * 67 ^
-                                     PostalCode.         GetHashCode()       * 61 ^
-                                     Country.            GetHashCode()       * 59 ^
-                                     Coordinates.        GetHashCode()       * 53 ^
-                                     LastUpdated.        GetHashCode()       * 47 ^
-
-                                    (Name?.              GetHashCode() ?? 0) * 43 ^
-                                    (RelatedLocations?.  GetHashCode() ?? 0) * 41 ^
-                                    (EVSEs?.             GetHashCode() ?? 0) * 37 ^
-                                    (Directions?.        GetHashCode() ?? 0) * 31 ^
-                                    (Operator?.          GetHashCode() ?? 0) * 29 ^
-                                    (SubOperator?.       GetHashCode() ?? 0) * 23 ^
-                                    (Owner?.             GetHashCode() ?? 0) * 19 ^
-                                    (Facilities?.        GetHashCode() ?? 0) * 17 ^
-                                    (Timezone?.          GetHashCode() ?? 0) * 13 ^
-                                    (OpeningTimes?.      GetHashCode() ?? 0) * 11 ^
-                                    (ChargingWhenClosed?.GetHashCode() ?? 0) *  7 ^
-                                    (Images?.            GetHashCode() ?? 0) *  5 ^
-                                    (EnergyMix?.         GetHashCode() ?? 0) *  3 ^
-
-                                    (Publish?.           GetHashCode() ?? 0);
-
-                    return cachedHashCode.Value;
-
-                }
-
-            }
-
-        }
+            => hashCode;
 
         #endregion
 

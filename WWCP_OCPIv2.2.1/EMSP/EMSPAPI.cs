@@ -7183,8 +7183,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = new JArray(filteredTokens.SkipTakeFilter(filters.Offset,
                                                                                                                    filters.Limit).
-                                                                                                    SafeSelect(token => token.ToJSON(CustomTokenSerializer,
-                                                                                                                                     CustomEnergyContractSerializer))),
+                                                                                                    Select        (token => token.ToJSON(CustomTokenSerializer,
+                                                                                                                                         CustomEnergyContractSerializer))),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },

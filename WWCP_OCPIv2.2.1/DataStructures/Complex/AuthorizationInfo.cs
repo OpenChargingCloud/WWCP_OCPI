@@ -318,7 +318,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               CustomJObjectSerializerDelegate<DisplayText>?        CustomDisplayTextSerializer         = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("allowed",                   Allowed.                     ToString()),
 
@@ -341,8 +341,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomAuthorizationInfoSerializer is not null
-                       ? CustomAuthorizationInfoSerializer(this, JSON)
-                       : JSON;
+                       ? CustomAuthorizationInfoSerializer(this, json)
+                       : json;
 
         }
 

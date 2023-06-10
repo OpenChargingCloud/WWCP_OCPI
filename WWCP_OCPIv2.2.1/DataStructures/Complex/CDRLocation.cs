@@ -464,7 +464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<CDRLocation>? CustomCDRLocationSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            new JProperty("id",                    Id.                ToString()),
 
@@ -500,8 +500,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomCDRLocationSerializer is not null
-                       ? CustomCDRLocationSerializer(this, JSON)
-                       : JSON;
+                       ? CustomCDRLocationSerializer(this, json)
+                       : json;
 
         }
 

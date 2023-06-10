@@ -255,7 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<LocationReference>?  CustomLocationReferenceSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("token",               Token. ToJSON(IncludeOwnerInformation,
                                                                                     CustomTokenSerializer)),
@@ -268,8 +268,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomTokenStatusSerializer is not null
-                       ? CustomTokenStatusSerializer(this, JSON)
-                       : JSON;
+                       ? CustomTokenStatusSerializer(this, json)
+                       : json;
 
         }
 

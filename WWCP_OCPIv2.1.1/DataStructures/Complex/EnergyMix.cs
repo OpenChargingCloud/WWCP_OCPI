@@ -256,7 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("is_green_energy",      IsGreenEnergy),
 
@@ -279,8 +279,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomEnergyMixSerializer is not null
-                       ? CustomEnergyMixSerializer(this, JSON)
-                       : JSON;
+                       ? CustomEnergyMixSerializer(this, json)
+                       : json;
 
         }
 

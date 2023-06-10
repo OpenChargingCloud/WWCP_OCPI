@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Where         (remoteParty => remoteParty is not null).
                                     OrderBy       (remoteParty => remoteParty.Id).
                                     SkipTakeFilter(Skip, Take).
-                                    SafeSelect    (remoteParty => RemotePartyToJSON is not null
+                                    Select        (remoteParty => RemotePartyToJSON is not null
                                                                       ? RemotePartyToJSON (remoteParty,
                                                                                            Embedded,
                                                                                            CustomRemotePartySerializer,

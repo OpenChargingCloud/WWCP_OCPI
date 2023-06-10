@@ -198,6 +198,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public   String?                                  Remark                      { get; }
 
         /// <summary>
+        /// The timestamp when this charge detail record was created.
+        /// </summary>
+        [Mandatory, NonStandard("Pagination")]
+        public   DateTime                                 Created                     { get; }
+
+        /// <summary>
         /// The timestamp when this charge detail record was last updated (or created).
         /// </summary>
         [Mandatory]
@@ -237,7 +243,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="TotalParkingTime">The optional total duration of the charging session where the EV was not charging (no energy was transferred between EVSE and EV).</param>
         /// <param name="Remark">The optional remark can be used to provide addition human readable information to the charge detail record, for example a reason why a transaction was stopped.</param>
         /// 
-        /// <param name="LastUpdated">The timestamp when this charge detail record was last updated (or created).</param>
+        /// <param name="Created">An optional timestamp when this charge detail record was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charge detail record was last updated (or created).</param>
+        /// 
         /// <param name="CustomCDRSerializer">A delegate to serialize custom charge detail record JSON objects.</param>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
@@ -284,8 +292,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    TimeSpan?                                                     TotalParkingTime                             = null,
                    String?                                                       Remark                                       = null,
 
+                   DateTime?                                                     Created                                      = null,
                    DateTime?                                                     LastUpdated                                  = null,
                    EMSP_Id?                                                      EMSPId                                       = null,
+
                    CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
                    CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                    CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -338,7 +348,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.TotalParkingTime         = TotalParkingTime;
             this.Remark                   = Remark;
 
-            this.LastUpdated              = LastUpdated           ?? Timestamp.Now;
+            this.Created                   = Created              ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated               = LastUpdated          ?? Created     ?? Timestamp.Now;
 
             this.ETag                     = SHA256.HashData(ToJSON(true,
                                                                    EMSPId,
@@ -370,20 +381,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                hashCode = this.CountryCode.          GetHashCode()        * 73 ^
-                           this.PartyId.              GetHashCode()        * 71 ^
-                           this.Id.                   GetHashCode()        * 67 ^
-                           this.Start.                GetHashCode()        * 61 ^
-                           this.End.                  GetHashCode()        * 59 ^
-                           this.AuthId.               GetHashCode()        * 53 ^
-                           this.AuthMethod.           GetHashCode()        * 47 ^
-                           this.Location.             GetHashCode()        * 43 ^
-                           this.Currency.             GetHashCode()        * 41 ^
-                           this.ChargingPeriods.      CalcHashCode()       * 37 ^
-                           this.Tariffs.              CalcHashCode()       * 31 ^
-                           this.TotalCost.            GetHashCode()        * 29 ^
-                           this.TotalEnergy.          GetHashCode()        * 23 ^
-                           this.TotalTime.            GetHashCode()        * 19 ^
+                hashCode = this.CountryCode.          GetHashCode()        * 79 ^
+                           this.PartyId.              GetHashCode()        * 73 ^
+                           this.Id.                   GetHashCode()        * 71 ^
+                           this.Start.                GetHashCode()        * 67 ^
+                           this.End.                  GetHashCode()        * 61 ^
+                           this.AuthId.               GetHashCode()        * 59 ^
+                           this.AuthMethod.           GetHashCode()        * 53 ^
+                           this.Location.             GetHashCode()        * 47 ^
+                           this.Currency.             GetHashCode()        * 43 ^
+                           this.ChargingPeriods.      CalcHashCode()       * 41 ^
+                           this.Tariffs.              CalcHashCode()       * 37 ^
+                           this.TotalCost.            GetHashCode()        * 31 ^
+                           this.TotalEnergy.          GetHashCode()        * 29 ^
+                           this.TotalTime.            GetHashCode()        * 23 ^
+                           this.Created.              GetHashCode()        * 19 ^
                            this.LastUpdated.          GetHashCode()        * 17 ^
 
                           (this.MeterId?.             GetHashCode()  ?? 0) * 13 ^
@@ -810,6 +822,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
+
+                #region Parse Created                   [optional, NonStandard]
+
+                if (!JSON.ParseOptional("created",
+                                        "created",
+                                        out DateTime? Created,
+                                        out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse LastUpdated               [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
@@ -845,6 +871,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               TotalParkingTime,
                               Remark,
 
+                              Created,
                               LastUpdated);
 
 
@@ -1004,6 +1031,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("remark",                   Remark)
                                : null,
 
+                                 new JProperty("create",                   Created.                     ToIso8601()),
                                  new JProperty("last_updated",             LastUpdated.                 ToIso8601())
 
                        );
@@ -1045,6 +1073,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     TotalParkingTime,
                     Remark is not null ? new String(Remark.ToCharArray()) : null,
 
+                    Created,
                     LastUpdated);
 
         #endregion
@@ -1344,6 +1373,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 c = TotalTime.  CompareTo(CDR.TotalTime);
 
             if (c == 0)
+                c = Created.    CompareTo(CDR.Created);
+
+            if (c == 0)
                 c = LastUpdated.CompareTo(CDR.LastUpdated);
 
             // Location,
@@ -1402,6 +1434,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                TotalCost.              Equals(CDR.TotalCost)               &&
                TotalEnergy.            Equals(CDR.TotalEnergy)             &&
                TotalTime.              Equals(CDR.TotalTime)               &&
+               Created.    ToIso8601().Equals(CDR.Created.    ToIso8601()) &&
                LastUpdated.ToIso8601().Equals(CDR.LastUpdated.ToIso8601()) &&
 
             ((!MeterId.              HasValue    && !CDR.MeterId.              HasValue)    ||

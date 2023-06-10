@@ -446,7 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<TariffRestrictions>? CustomTariffRestrictionsSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            StartTime.  HasValue
                                ? new JProperty("start_time",    StartTime.  Value.ToString())
@@ -495,8 +495,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             var JSON2 = CustomTariffRestrictionsSerializer is not null
-                            ? CustomTariffRestrictionsSerializer(this, JSON)
-                            : JSON;
+                            ? CustomTariffRestrictionsSerializer(this, json)
+                            : json;
 
             return JSON2.HasValues
                        ? JSON2

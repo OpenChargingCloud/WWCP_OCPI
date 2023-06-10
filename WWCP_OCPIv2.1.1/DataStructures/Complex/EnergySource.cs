@@ -196,14 +196,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<EnergySource>? CustomEnergySourceSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("source",      Source.ToString()),
                            new JProperty("percentage",  Percentage)
                        );
 
             return CustomEnergySourceSerializer is not null
-                       ? CustomEnergySourceSerializer(this, JSON)
-                       : JSON;
+                       ? CustomEnergySourceSerializer(this, json)
+                       : json;
 
         }
 

@@ -585,8 +585,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                       "Stadtwerke Jena-Ost",
                                                                                       "New Green Deal"
                                                                                   ),
-                                                                                  null,
-                                                                                  DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                                                                  LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                                                                               ));
 
                 var response4            = await graphDefinedEMSP.PutEVSE(new EVSE(
@@ -690,7 +689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                   DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                                                                   DisplayText.Create(Languages.en, "Dave sent me!")
                                                                               },
-                                                                              new ParkingRestrictions[] {
+                                                                              new[] {
                                                                                   ParkingRestrictions.EV_ONLY,
                                                                                   ParkingRestrictions.PLUGGED
                                                                               },
@@ -704,7 +703,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                       URL.Parse("http://example.com/kleine_pinguine.jpg")
                                                                                   )
                                                                               },
-                                                                              DateTime.Parse("2020-09-22")
+                                                                              LastUpdated: DateTime.Parse("2020-09-22")
                                                                           ),
                                                                           Location_Id.Parse("LOC0001"));
 

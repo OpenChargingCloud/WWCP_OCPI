@@ -201,7 +201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               CustomJObjectSerializerDelegate<ChargingProfilePeriod>?        CustomChargingProfilePeriodSerializer         = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("result",   Result. ToString()),
 
@@ -214,8 +214,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomActiveChargingProfileResultSerializer is not null
-                       ? CustomActiveChargingProfileResultSerializer(this, JSON)
-                       : JSON;
+                       ? CustomActiveChargingProfileResultSerializer(this, json)
+                       : json;
 
         }
 

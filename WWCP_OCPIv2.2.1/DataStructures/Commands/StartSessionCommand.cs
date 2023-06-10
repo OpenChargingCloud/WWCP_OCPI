@@ -354,7 +354,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               CustomJObjectSerializerDelegate<EnergyContract>?       CustomEnergyContractSerializer        = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("token",                    Token.                 ToJSON(CustomTokenSerializer,
                                                                                                          CustomEnergyContractSerializer)),
@@ -378,8 +378,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomStartSessionCommandSerializer is not null
-                       ? CustomStartSessionCommandSerializer(this, JSON)
-                       : JSON;
+                       ? CustomStartSessionCommandSerializer(this, json)
+                       : json;
 
         }
 

@@ -171,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
@@ -228,7 +228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
@@ -352,7 +352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region Define Location1
 
-            var Location1 = new Location(
+            var location1 = new Location(
                                 CountryCode. Parse("DE"),
                                 Party_Id.    Parse("GEF"),
                                 Location_Id. Parse("LOC0001"),
@@ -472,7 +472,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
@@ -529,7 +529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
@@ -586,13 +586,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
 
-            var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""country_code"": ""FR"", ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
+            var patchResult = location1.TryPatch(JObject.Parse(@"{ ""country_code"": ""FR"", ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
             Assert.IsNotNull(patchResult);
             Assert.IsFalse  (patchResult.IsSuccess);
@@ -601,8 +600,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.AreEqual ("Patching the 'country code' of a location is not allowed!",  patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                 patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                   patchResult.PatchedData.LastUpdated.ToIso8601());
+            if (patchResult.PatchedData is not null)
+            {
+                Assert.AreEqual (Location_Id.Parse("LOC0001"),                             patchResult.PatchedData.Id);
+                Assert.AreEqual ("2020-09-21T00:00:00.000Z",                               patchResult.PatchedData.LastUpdated.ToIso8601());
+            }
 
         }
 
@@ -619,7 +621,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region Define Location1
 
-            var Location1 = new Location(
+            var location1 = new Location(
                                 CountryCode. Parse("DE"),
                                 Party_Id.    Parse("GEF"),
                                 Location_Id. Parse("LOC0001"),
@@ -739,7 +741,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
@@ -796,7 +798,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
@@ -853,13 +855,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
 
-            var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""party_id"": ""GDF"", ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
+            var patchResult = location1.TryPatch(JObject.Parse(@"{ ""party_id"": ""GDF"", ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
             Assert.IsNotNull(patchResult);
             Assert.IsFalse  (patchResult.IsSuccess);
@@ -868,8 +869,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.AreEqual ("Patching the 'party identification' of a location is not allowed!",  patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                   patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                     patchResult.PatchedData.LastUpdated.ToIso8601());
+            if (patchResult.PatchedData is not null)
+            {
+                Assert.AreEqual (Location_Id.Parse("LOC0001"),                                     patchResult.PatchedData.Id);
+                Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                       patchResult.PatchedData.LastUpdated.ToIso8601());
+            }
 
         }
 
@@ -886,7 +890,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region Define Location1
 
-            var Location1 = new Location(
+            var location1 = new Location(
                                 CountryCode. Parse("DE"),
                                 Party_Id.    Parse("GEF"),
                                 Location_Id. Parse("LOC0001"),
@@ -1006,7 +1010,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
@@ -1063,7 +1067,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
@@ -1120,13 +1124,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
 
-            var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""id"": ""2"", ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
+            var patchResult = location1.TryPatch(JObject.Parse(@"{ ""id"": ""2"", ""last_updated"": ""2020-10-15T00:00:00Z"" }"));
 
             Assert.IsNotNull(patchResult);
             Assert.IsFalse  (patchResult.IsSuccess);
@@ -1135,8 +1138,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.AreEqual ("Patching the 'identification' of a location is not allowed!",  patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                   patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                     patchResult.PatchedData.LastUpdated.ToIso8601());
+            if (patchResult.PatchedData is not null)
+            {
+                Assert.AreEqual (Location_Id.Parse("LOC0001"),                               patchResult.PatchedData.Id);
+                Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                 patchResult.PatchedData.LastUpdated.ToIso8601());
+            }
 
         }
 
@@ -1153,7 +1159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region Define Location1
 
-            var Location1 = new Location(
+            var location1 = new Location(
                                 CountryCode. Parse("DE"),
                                 Party_Id.    Parse("GEF"),
                                 Location_Id. Parse("LOC0001"),
@@ -1273,7 +1279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
@@ -1330,7 +1336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
@@ -1387,13 +1393,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                null,
-                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
+                                LastUpdated: DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
 
-            var patchResult = Location1.TryPatch(JObject.Parse(@"{ ""last_updated"": ""I-N-V-A-L-I-D!"" }"));
+            var patchResult = location1.TryPatch(JObject.Parse(@"{ ""last_updated"": ""I-N-V-A-L-I-D!"" }"));
 
             Assert.IsNotNull(patchResult);
             Assert.IsFalse  (patchResult.IsSuccess);
@@ -1402,7 +1407,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.AreEqual ("Invalid JSON merge patch of a location: Invalid 'last updated'!",   patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                          patchResult.PatchedData.LastUpdated.ToIso8601());
+            if (patchResult.PatchedData is not null)
+            {
+                Assert.AreEqual("2020-09-21T00:00:00.000Z",                                       patchResult.PatchedData.LastUpdated.ToIso8601());
+            }
 
         }
 
@@ -1539,7 +1547,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
@@ -1596,7 +1604,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
@@ -1665,11 +1673,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.IsFalse  (patchResult.IsSuccess);
             Assert.IsTrue   (patchResult.IsFailed);
             Assert.IsNotNull(patchResult.ErrorResponse);
-            Assert.AreEqual ("Invalid JSON merge patch of a location: Invalid 'last updated'!",   patchResult.ErrorResponse);
+            Assert.AreEqual ("Invalid JSON merge patch of a location: Invalid 'last updated'!",  patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                        patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                          patchResult.PatchedData.LastUpdated.ToIso8601());
+            if (patchResult.PatchedData is not null)
+            {
+                Assert.AreEqual (Location_Id.Parse("LOC0001"),                                   patchResult.PatchedData.Id);
+                Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                     patchResult.PatchedData.LastUpdated.ToIso8601());
+            }
 
         }
 
@@ -1807,7 +1818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
@@ -1864,7 +1875,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
@@ -1935,11 +1946,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.IsNull   (patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual   (Location_Id.Parse("LOC0001"),             patchResult.PatchedData.Id);
-            Assert.AreEqual   ("Location 0001a",                         patchResult.PatchedData.Name);
-            Assert.AreNotEqual(DateTime.Parse("2020-09-21T00:00:00Z"),   patchResult.PatchedData.LastUpdated);
+            if (patchResult.PatchedData is not null)
+            {
 
-            Assert.IsTrue     (DateTime.UtcNow - patchResult.PatchedData.LastUpdated < TimeSpan.FromSeconds(5));
+                Assert.AreEqual   (Location_Id.Parse("LOC0001"),             patchResult.PatchedData.Id);
+                Assert.AreEqual   ("Location 0001a",                         patchResult.PatchedData.Name);
+                Assert.AreNotEqual(DateTime.Parse("2020-09-21T00:00:00Z"),   patchResult.PatchedData.LastUpdated);
+
+                Assert.IsTrue     (DateTime.UtcNow - patchResult.PatchedData.LastUpdated < TimeSpan.FromSeconds(5));
+
+            }
 
         }
 
@@ -2076,7 +2092,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
@@ -2133,7 +2149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
@@ -2204,9 +2220,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.IsNull   (patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
-            Assert.AreEqual ("Location 0001a",              patchResult.PatchedData.Name);
-            Assert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            if (patchResult.PatchedData is not null)
+            {
+                Assert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
+                Assert.AreEqual ("Location 0001a",              patchResult.PatchedData.Name);
+                Assert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            }
 
         }
 
@@ -2471,12 +2490,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.IsNull   (patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
-            Assert.AreEqual ("Location 0001",               patchResult.PatchedData.Name);
-            Assert.AreEqual (2,                             patchResult.PatchedData.Facilities.        Count());
-            Assert.AreEqual (Facilities.Parse("CAFE"),      patchResult.PatchedData.Facilities.        First());
-            Assert.AreEqual (Facilities.Parse("AIRPORT"),   patchResult.PatchedData.Facilities.Skip(1).First());
-            Assert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            if (patchResult.PatchedData is not null)
+            {
+                Assert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
+                Assert.AreEqual ("Location 0001",               patchResult.PatchedData.Name);
+                Assert.AreEqual (2,                             patchResult.PatchedData.Facilities.        Count());
+                Assert.AreEqual (Facilities.Parse("CAFE"),      patchResult.PatchedData.Facilities.        First());
+                Assert.AreEqual (Facilities.Parse("AIRPORT"),   patchResult.PatchedData.Facilities.Skip(1).First());
+                Assert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            }
 
         }
 
@@ -2613,7 +2635,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
@@ -2670,7 +2692,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
@@ -2741,10 +2763,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.IsNull   (patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
-            Assert.AreEqual ("Location 0001",               patchResult.PatchedData.Name);
-            Assert.AreEqual (0,                             patchResult.PatchedData.Facilities. Count());
-            Assert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            if (patchResult.PatchedData is not null)
+            {
+                Assert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
+                Assert.AreEqual ("Location 0001",               patchResult.PatchedData.Name);
+                Assert.AreEqual (0,                             patchResult.PatchedData.Facilities. Count());
+                Assert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            }
 
         }
 
@@ -2881,7 +2906,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
@@ -2938,7 +2963,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
@@ -3009,9 +3034,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.IsNull   (patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
-            Assert.IsTrue   (patchResult.PatchedData.Name.IsNullOrEmpty());
-            Assert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            if (patchResult.PatchedData is not null)
+            {
+                Assert.AreEqual (Location_Id.Parse("LOC0001"),  patchResult.PatchedData.Id);
+                Assert.IsTrue   (patchResult.PatchedData.Name.IsNullOrEmpty());
+                Assert.AreEqual ("2020-10-15T00:00:00.000Z",    patchResult.PatchedData.LastUpdated.ToIso8601());
+            }
 
         }
 
@@ -3277,7 +3305,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.AreEqual ("Patching the 'evses' array of a location is not allowed!",   patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                   patchResult.PatchedData.LastUpdated.ToIso8601());
+            if (patchResult.PatchedData is not null)
+            {
+                Assert.AreEqual ("2020-09-21T00:00:00.000Z",                               patchResult.PatchedData.LastUpdated.ToIso8601());
+            }
 
         }
 
@@ -3414,7 +3445,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
                                         },
-                                        new ParkingRestrictions[] {
+                                        new[] {
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
                                         },
@@ -3471,7 +3502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new Facilities[] {
+                                new[] {
                                     Facilities.CAFE
                                 },
                                 "Europe/Berlin",
@@ -3543,8 +3574,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.AreEqual ("Invalid JSON merge patch of a location: Invalid operator!",   patchResult.ErrorResponse);
             Assert.IsNotNull(patchResult.PatchedData);
 
-            Assert.AreEqual (Location_Id.Parse("LOC0001"),                                  patchResult.PatchedData.Id);
-            Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                    patchResult.PatchedData.LastUpdated.ToIso8601());
+            if (patchResult.PatchedData is not null)
+            {
+                Assert.AreEqual (Location_Id.Parse("LOC0001"),                              patchResult.PatchedData.Id);
+                Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                patchResult.PatchedData.LastUpdated.ToIso8601());
+            }
 
         }
 

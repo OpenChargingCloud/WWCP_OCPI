@@ -204,14 +204,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<VersionEndpoint>?  CustomVersionEndpointSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("version",    VersionId.ToString()),
                            new JProperty("endpoints",  new JArray(Endpoints.Select(endpoint => endpoint.ToJSON(CustomVersionEndpointSerializer))))
                        );
 
             return CustomVersionDetailSerializer is not null
-                       ? CustomVersionDetailSerializer(this, JSON)
-                       : JSON;
+                       ? CustomVersionDetailSerializer(this, json)
+                       : json;
 
         }
 

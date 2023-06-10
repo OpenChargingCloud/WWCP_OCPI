@@ -222,7 +222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<EnergyContract>? CustomEnergyContractSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            new JProperty("supplier_name",  SupplierName),
 
@@ -231,8 +231,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomEnergyContractSerializer is not null
-                       ? CustomEnergyContractSerializer(this, JSON)
-                       : JSON;
+                       ? CustomEnergyContractSerializer(this, json)
+                       : json;
 
         }
 

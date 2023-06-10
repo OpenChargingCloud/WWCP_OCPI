@@ -300,7 +300,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Images">An optional enumeration of images related to the charging location such as photos or logos.</param>
         /// <param name="EnergyMix">Optional details on the energy supplied at this charging location.</param>
         /// 
-        /// <param name="LastUpdated">The timestamp when this charging location was last updated (or created).</param>
+        /// <param name="Created">An optional timestamp when this charging location was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charging location was last updated (or created).</param>
+        /// 
         /// <param name="CustomLocationSerializer">A delegate to serialize custom charging location JSON objects.</param>
         /// <param name="CustomPublishTokenSerializer">A delegate to serialize custom publish token type JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
@@ -347,6 +349,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
+
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                         CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -445,7 +448,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Images">An optional enumeration of images related to the charging location such as photos or logos.</param>
         /// <param name="EnergyMix">Optional details on the energy supplied at this charging location.</param>
         /// 
-        /// <param name="LastUpdated">The timestamp when this charging location was last updated (or created).</param>
+        /// <param name="Created">An optional timestamp when this charging location was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charging location was last updated (or created).</param>
+        /// 
         /// <param name="CustomLocationSerializer">A delegate to serialize custom charging location JSON objects.</param>
         /// <param name="CustomPublishTokenSerializer">A delegate to serialize custom publish token type JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
@@ -493,6 +498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         DateTime?                                                     Created                                      = null,
                         DateTime?                                                     LastUpdated                                  = null,
                         EMSP_Id?                                                      EMSPId                                       = null,
+
                         CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                         CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -540,8 +546,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.Images               = Images?.          Distinct() ?? Array.Empty<Image>();
             this.EnergyMix            = EnergyMix;
 
-            this.Created              = Created                      ?? Timestamp.Now;
-            this.LastUpdated          = LastUpdated                  ?? Timestamp.Now;
+            this.Created              = Created                      ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated          = LastUpdated                  ?? Created     ?? Timestamp.Now;
 
             foreach (var evse in this.EVSEs)
                 evse.ParentLocation = this;
@@ -563,6 +569,40 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                        CustomEnergyMixSerializer,
                                                        CustomEnergySourceSerializer,
                                                        CustomEnvironmentalImpactSerializer);
+
+            unchecked
+            {
+
+                hashCode = CountryCode.        GetHashCode()       * 107 ^
+                           PartyId.            GetHashCode()       * 103 ^
+                           Id.                 GetHashCode()       * 101 ^
+                           Publish.            GetHashCode()       *  97 ^
+                           Address.            GetHashCode()       *  89 ^
+                           City.               GetHashCode()       *  83 ^
+                           Country.            GetHashCode()       *  79 ^
+                           Coordinates.        GetHashCode()       *  73 ^
+                           Timezone.           GetHashCode()       *  71 ^
+                           Created.            GetHashCode()       *  67 ^
+                           LastUpdated.        GetHashCode()       *  61 ^
+
+                          (PublishAllowedTo?.  GetHashCode() ?? 0) *  59 ^
+                          (Name?.              GetHashCode() ?? 0) *  53 ^
+                          (PostalCode?.        GetHashCode() ?? 0) *  47 ^
+                          (State?.             GetHashCode() ?? 0) *  41 ^
+                          (RelatedLocations?.  GetHashCode() ?? 0) *  37 ^
+                          (ParkingType?.       GetHashCode() ?? 0) *  31^
+                          (EVSEs?.             GetHashCode() ?? 0) *  29 ^
+                          (Directions?.        GetHashCode() ?? 0) *  23 ^
+                          (Operator?.          GetHashCode() ?? 0) *  19 ^
+                          (SubOperator?.       GetHashCode() ?? 0) *  17 ^
+                          (Owner?.             GetHashCode() ?? 0) *  13 ^
+                          (Facilities?.        GetHashCode() ?? 0) *  11 ^
+                          (OpeningTimes?.      GetHashCode() ?? 0) *   7 ^
+                          (ChargingWhenClosed?.GetHashCode() ?? 0) *   5 ^
+                          (Images?.            GetHashCode() ?? 0) *   3 ^
+                          (EnergyMix?.         GetHashCode() ?? 0);
+
+            }
 
         }
 
@@ -1017,7 +1057,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         out DateTime? Created,
                                         out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -1062,6 +1103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         ChargingWhenClosed,
                                         Images,
                                         EnergyMix,
+
                                         Created,
                                         LastUpdated);
 
@@ -1865,6 +1907,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 c = Id.         CompareTo(Location.Id);
 
             if (c == 0)
+                c = Created.    CompareTo(Location.Created);
+
+            if (c == 0)
                 c = LastUpdated.CompareTo(Location.LastUpdated);
 
             if (c == 0)
@@ -1912,6 +1957,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                Country.                Equals(Location.Country)                 &&
                Coordinates.            Equals(Location.Coordinates)             &&
                Timezone.               Equals(Location.Timezone)                &&
+               Created.    ToIso8601().Equals(Location.Created.    ToIso8601()) &&
                LastUpdated.ToIso8601().Equals(Location.LastUpdated.ToIso8601()) &&
 
              ((Name               is     null &&  Location.Name               is     null) ||
@@ -1964,60 +2010,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region GetHashCode()
 
-        private Int32? cachedHashCode;
-
-        private readonly Object hashSync = new ();
+        private readonly Int32 hashCode;
 
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Return the hash code of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-
-            if (cachedHashCode.HasValue)
-                return cachedHashCode.Value;
-
-            lock (hashSync)
-            {
-
-                unchecked
-                {
-
-                    cachedHashCode = CountryCode.        GetHashCode()       * 103 ^
-                                     PartyId.            GetHashCode()       * 101 ^
-                                     Id.                 GetHashCode()       *  97 ^
-                                     Publish.            GetHashCode()       *  89 ^
-                                     Address.            GetHashCode()       *  83 ^
-                                     City.               GetHashCode()       *  79 ^
-                                     Country.            GetHashCode()       *  73 ^
-                                     Coordinates.        GetHashCode()       *  71 ^
-                                     Timezone.           GetHashCode()       *  67 ^
-                                     LastUpdated.        GetHashCode()       *  61 ^
-
-                                    (PublishAllowedTo?.  GetHashCode() ?? 0) *  59 ^
-                                    (Name?.              GetHashCode() ?? 0) *  53 ^
-                                    (PostalCode?.        GetHashCode() ?? 0) *  47 ^
-                                    (State?.             GetHashCode() ?? 0) *  41 ^
-                                    (RelatedLocations?.  GetHashCode() ?? 0) *  37 ^
-                                    (ParkingType?.       GetHashCode() ?? 0) *  31^
-                                    (EVSEs?.             GetHashCode() ?? 0) *  29 ^
-                                    (Directions?.        GetHashCode() ?? 0) *  23 ^
-                                    (Operator?.          GetHashCode() ?? 0) *  19 ^
-                                    (SubOperator?.       GetHashCode() ?? 0) *  17 ^
-                                    (Owner?.             GetHashCode() ?? 0) *  13 ^
-                                    (Facilities?.        GetHashCode() ?? 0) *  11 ^
-                                    (OpeningTimes?.      GetHashCode() ?? 0) *   7 ^
-                                    (ChargingWhenClosed?.GetHashCode() ?? 0) *   5 ^
-                                    (Images?.            GetHashCode() ?? 0) *   3 ^
-                                    (EnergyMix?.         GetHashCode() ?? 0);
-
-                    return cachedHashCode.Value;
-
-                }
-
-            }
-
-        }
+            => hashCode;
 
         #endregion
 

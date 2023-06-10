@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     Where         (remoteParty => remoteParty is not null).
                                     OrderBy       (remoteParty => remoteParty.Id).
                                     SkipTakeFilter(Skip, Take).
-                                    SafeSelect    (remoteParty => RemotePartyToJSON is not null
+                                    Select        (remoteParty => RemotePartyToJSON is not null
                                                                       ? RemotePartyToJSON (remoteParty,
                                                                                            Embedded,
                                                                                            CustomRemotePartySerializer,
@@ -770,11 +770,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null,
 
                            localAccessInfos.Any()
-                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos. SafeSelect(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
+                               ? new JProperty("localAccessInfos",    new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
                                : null,
 
                            remoteAccessInfos.Any()
-                               ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos.SafeSelect(remoteAccessInfo => remoteAccessInfo.ToJSON(CustomRemoteAccessInfoSerializer))))
+                               ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos.Select(remoteAccessInfo => remoteAccessInfo.ToJSON(CustomRemoteAccessInfoSerializer))))
                                : null,
 
                                  new JProperty("last_updated",        LastUpdated.         ToIso8601())
@@ -1085,6 +1085,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             => Id.ToString();
 
         #endregion
+
 
     }
 

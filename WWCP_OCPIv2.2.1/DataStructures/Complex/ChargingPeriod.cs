@@ -259,7 +259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               CustomJObjectSerializerDelegate<CDRDimension>?    CustomCDRDimensionSerializer     = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("start_date_time",   StartTimestamp.ToIso8601()),
 
@@ -272,8 +272,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomChargingPeriodSerializer is not null
-                       ? CustomChargingPeriodSerializer(this, JSON)
-                       : JSON;
+                       ? CustomChargingPeriodSerializer(this, json)
+                       : json;
 
         }
 

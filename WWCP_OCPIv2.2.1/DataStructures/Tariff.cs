@@ -147,6 +147,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public   EnergyMix?                  EnergyMix            { get;  }
 
         /// <summary>
+        /// The timestamp when this tariff was created.
+        /// </summary>
+        [Mandatory, NonStandard("Pagination")]
+        public   DateTime                    Created              { get; }
+
+        /// <summary>
         /// The timestamp when this tariff was last updated (or created).
         /// </summary>
         [Mandatory]
@@ -179,7 +185,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="End">An optional timestamp after which this tariff is no longer valid (UTC).</param>
         /// <param name="EnergyMix">Optional details on the energy supplied with this tariff.</param>
         /// 
-        /// <param name="LastUpdated">Timestamp when this tariff was last updated (or created).</param>
+        /// <param name="Created">An optional timestamp when this charging tariff was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charging tariff was last updated (or created).</param>
+        /// 
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
@@ -204,7 +212,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       DateTime?                                              End                                   = null,
                       EnergyMix?                                             EnergyMix                             = null,
 
+                      DateTime?                                              Created                               = null,
                       DateTime?                                              LastUpdated                           = null,
+
                       CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
                       CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
                       CustomJObjectSerializerDelegate<Price>?                CustomPriceSerializer                 = null,
@@ -231,7 +241,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    End,
                    EnergyMix,
 
+                   Created,
                    LastUpdated,
+
                    CustomTariffSerializer,
                    CustomDisplayTextSerializer,
                    CustomPriceSerializer,
@@ -263,7 +275,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="End">An optional timestamp after which this tariff is no longer valid (UTC).</param>
         /// <param name="EnergyMix">Optional details on the energy supplied with this tariff.</param>
         /// 
-        /// <param name="LastUpdated">Timestamp when this tariff was last updated (or created).</param>
+        /// <param name="Created">An optional timestamp when this charging tariff was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charging tariff was last updated (or created).</param>
+        /// 
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
@@ -289,7 +303,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       DateTime?                                              End                                   = null,
                       EnergyMix?                                             EnergyMix                             = null,
 
+                      DateTime?                                              Created                               = null,
                       DateTime?                                              LastUpdated                           = null,
+
                       CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
                       CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
                       CustomJObjectSerializerDelegate<Price>?                CustomPriceSerializer                 = null,
@@ -321,7 +337,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.End             = End;
             this.EnergyMix       = EnergyMix;
 
-            this.LastUpdated     = LastUpdated ?? Timestamp.Now;
+            this.Created         = Created                   ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated     = LastUpdated               ?? Created     ?? Timestamp.Now;
 
             this.ETag            = SHA256.HashData(ToJSON(CustomTariffSerializer,
                                                           CustomDisplayTextSerializer,
@@ -658,6 +675,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
+
+                #region Parse Created           [optional, NonStandard]
+
+                if (!JSON.ParseOptional("created",
+                                        "created",
+                                        out DateTime? Created,
+                                        out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse LastUpdated       [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
@@ -685,6 +716,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                     Start,
                                     End,
                                     EnergyMix,
+
+                                    Created,
                                     LastUpdated);
 
                 if (CustomTariffParser is not null)
@@ -730,7 +763,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            new JProperty("country_code",           CountryCode.ToString()),
                            new JProperty("party_id",               PartyId.    ToString()),
@@ -778,13 +811,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                       CustomEnvironmentalImpactSerializer))
                                : null,
 
-                           new JProperty("last_updated",           LastUpdated.ToIso8601())
+                                 new JProperty("created",          Created.    ToIso8601()),
+                                 new JProperty("last_updated",     LastUpdated.ToIso8601())
 
                        );
 
             return CustomTariffSerializer is not null
-                       ? CustomTariffSerializer(this, JSON)
-                       : JSON;
+                       ? CustomTariffSerializer(this, json)
+                       : json;
 
         }
 
@@ -811,6 +845,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     End,
                     EnergyMix?.   Clone(),
 
+                    Created,
                     LastUpdated);
 
         #endregion
@@ -1089,9 +1124,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 c = Currency.   CompareTo(Tariff.Currency);
 
             if (c == 0)
+                c = Created.    CompareTo(Tariff.Created);
+
+            if (c == 0)
                 c = LastUpdated.CompareTo(Tariff.LastUpdated);
 
-             // TariffElements
+            // TariffElements
             // 
             // TariffType
             // TariffAltText
@@ -1135,10 +1173,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             => Tariff is not null &&
 
-               CountryCode.Equals(Tariff.CountryCode) &&
-               PartyId.    Equals(Tariff.PartyId)     &&
-               Id.         Equals(Tariff.Id)          &&
-               Currency.   Equals(Tariff.Currency)    &&
+               CountryCode.            Equals(Tariff.CountryCode) &&
+               PartyId.                Equals(Tariff.PartyId)     &&
+               Id.                     Equals(Tariff.Id)          &&
+               Currency.               Equals(Tariff.Currency)    &&
+               Created.    ToIso8601().Equals(Tariff.Created.    ToIso8601()) &&
+               LastUpdated.ToIso8601().Equals(Tariff.LastUpdated.ToIso8601()) &&
 
             ((!TariffType.HasValue    && !Tariff.TariffType.HasValue) ||
               (TariffType.HasValue    &&  Tariff.TariffType.HasValue    && TariffType.Value.Equals(Tariff.TariffType.Value))) &&
@@ -1160,8 +1200,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
              ((EnergyMix  is     null &&  Tariff.EnergyMix  is null)  ||
               (EnergyMix  is not null &&  Tariff.EnergyMix  is not null && EnergyMix.       Equals(Tariff.EnergyMix)))        &&
-
-               LastUpdated.ToIso8601().Equals(Tariff.LastUpdated.ToIso8601()) &&
 
                TariffElements.Count().Equals(Tariff.TariffElements.Count())     &&
                TariffElements.All(tariffElement => Tariff.TariffElements.Contains(tariffElement)) &&

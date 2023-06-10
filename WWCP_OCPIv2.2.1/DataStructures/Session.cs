@@ -163,6 +163,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public   SessionStatusTypes                  Status                       { get; }
 
         /// <summary>
+        /// The timestamp when this session was created.
+        /// </summary>
+        [Mandatory, NonStandard("Pagination")]
+        public   DateTime                            Created                      { get; }
+
+        /// <summary>
         /// The timestamp when this session was last updated (or created).
         /// </summary>
         [Mandatory]
@@ -199,7 +205,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ChargingPeriods">An optional enumeration of charging periods that can be used to calculate and verify the total cost.</param>
         /// <param name="TotalCosts">The total costs of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price information is given in the Session object, it does not imply the session is/was free of charge.</param>
         /// 
-        /// <param name="LastUpdated">A timestamp when this session was last updated (or created).</param>
+        /// <param name="Created">An optional timestamp when this charging session was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charging session was last updated (or created).</param>
+        /// 
         /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
@@ -224,7 +232,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        IEnumerable<ChargingPeriod>?                      ChargingPeriods                  = null,
                        Price?                                            TotalCosts                       = null,
 
+                       DateTime?                                         Created                          = null,
                        DateTime?                                         LastUpdated                      = null,
+
                        CustomJObjectSerializerDelegate<Session>?         CustomSessionSerializer          = null,
                        CustomJObjectSerializerDelegate<CDRToken>?        CustomCDRTokenSerializer         = null,
                        CustomJObjectSerializerDelegate<ChargingPeriod>?  CustomChargingPeriodSerializer   = null,
@@ -252,7 +262,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.ChargingPeriods         = ChargingPeriods?.Distinct() ?? Array.Empty<ChargingPeriod>();
             this.TotalCosts              = TotalCosts;
 
-            this.LastUpdated             = LastUpdated ?? Timestamp.Now;
+            this.Created                 = Created                     ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated             = LastUpdated                 ?? Created     ?? Timestamp.Now;
 
             this.ETag                    = CalcSHA256Hash(CustomSessionSerializer,
                                                           CustomCDRTokenSerializer,
@@ -263,18 +274,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             unchecked
             {
 
-                hashCode = this.CountryCode.            GetHashCode()       * 61 ^
-                           this.PartyId.                GetHashCode()       * 59 ^
-                           this.Id.                     GetHashCode()       * 53 ^
-                           this.Start.                  GetHashCode()       * 47 ^
-                           this.kWh.                    GetHashCode()       * 43 ^
-                           this.CDRToken.               GetHashCode()       * 41 ^
-                           this.AuthMethod.             GetHashCode()       * 37 ^
-                           this.LocationId.             GetHashCode()       * 31 ^
-                           this.EVSEUId.                GetHashCode()       * 29 ^
-                           this.ConnectorId.            GetHashCode()       * 23 ^
-                           this.Currency.               GetHashCode()       * 19 ^
-                           this.Status.                 GetHashCode()       * 17 ^
+                hashCode = this.CountryCode.            GetHashCode()       * 67 ^
+                           this.PartyId.                GetHashCode()       * 61 ^
+                           this.Id.                     GetHashCode()       * 59 ^
+                           this.Start.                  GetHashCode()       * 53 ^
+                           this.kWh.                    GetHashCode()       * 47 ^
+                           this.CDRToken.               GetHashCode()       * 43 ^
+                           this.AuthMethod.             GetHashCode()       * 41 ^
+                           this.LocationId.             GetHashCode()       * 37 ^
+                           this.EVSEUId.                GetHashCode()       * 31 ^
+                           this.ConnectorId.            GetHashCode()       * 29 ^
+                           this.Currency.               GetHashCode()       * 23 ^
+                           this.Status.                 GetHashCode()       * 19 ^
+                           this.Created.                GetHashCode()       * 17 ^
                            this.LastUpdated.            GetHashCode()       * 13 ^
 
                           (this.End?.                   GetHashCode() ?? 0) * 11 ^
@@ -638,6 +650,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
+
+                #region Parse Created                   [optional, NonStandard]
+
+                if (!JSON.ParseOptional("created",
+                                        "created",
+                                        out DateTime? Created,
+                                        out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse LastUpdated               [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
@@ -670,6 +696,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                       ChargingPeriods,
                                       TotalCosts,
 
+                                      Created,
                                       LastUpdated);
 
 
@@ -708,7 +735,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               CustomJObjectSerializerDelegate<Price>?           CustomPriceSerializer            = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("country_code",              CountryCode.           ToString()),
                                  new JProperty("party_id",                  PartyId.               ToString()),
@@ -751,13 +778,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                  new JProperty("status",                    Status.                ToString()),
 
 
+                                 new JProperty("created",                   Created.               ToIso8601()),
                                  new JProperty("last_updated",              LastUpdated.           ToIso8601())
 
                        );
 
             return CustomSessionSerializer is not null
-                       ? CustomSessionSerializer(this, JSON)
-                       : JSON;
+                       ? CustomSessionSerializer(this, json)
+                       : json;
 
         }
 
@@ -789,6 +817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     ChargingPeriods.Select(chargingPeriod => chargingPeriod.Clone()).ToArray(),
                     TotalCosts,
 
+                    Created,
                     LastUpdated);
 
         #endregion
@@ -1121,6 +1150,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 c = Status.     CompareTo(Session.Status);
 
             if (c == 0)
+                c = Created.    CompareTo(Session.Created);
+
+            if (c == 0)
                 c = LastUpdated.CompareTo(Session.LastUpdated);
 
             // End
@@ -1174,6 +1206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                ConnectorId.            Equals(Session.ConnectorId)             &&
                Currency.               Equals(Session.Currency)                &&
                Status.                 Equals(Session.Status)                  &&
+               Created.    ToIso8601().Equals(Session.Created.    ToIso8601()) &&
                LastUpdated.ToIso8601().Equals(Session.LastUpdated.ToIso8601()) &&
 
             ((!End.                   HasValue    && !Session.End.                   HasValue)    ||

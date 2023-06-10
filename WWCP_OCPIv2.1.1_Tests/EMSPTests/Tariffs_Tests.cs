@@ -17,8 +17,6 @@
 
 #region Usings
 
-using Newtonsoft.Json.Linq;
-
 using NUnit.Framework;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -57,72 +55,71 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #region Define Tariff1
 
-                cpoCommonAPI.AddTariff(new Tariff(
-                                           CountryCode.Parse("DE"),
-                                           Party_Id.   Parse("GEF"),
-                                           Tariff_Id.  Parse("TARIFF0001"),
-                                           OCPI.Currency.EUR,
-                                           new[] {
-                                               new TariffElement(
-                                                   new[] {
-                                                       PriceComponent.ChargingTime(
-                                                           TimeSpan.FromSeconds(300),
-                                                           2.00M
-                                                       )
-                                                   },
-                                                   new[] {
-                                                       new TariffRestrictions(
-                                                           Time.FromHourMin(08,00),       // Start time
-                                                           Time.FromHourMin(18,00),       // End time
-                                                           DateTime.Parse("2020-12-01"),  // Start timestamp
-                                                           DateTime.Parse("2020-12-31"),  // End timestamp
-                                                           1.12M,                         // MinkWh
-                                                           5.67M,                         // MaxkWh
-                                                           1.49M,                         // MinPower
-                                                           9.91M,                         // MaxPower
-                                                           TimeSpan.FromMinutes(10),      // MinDuration
-                                                           TimeSpan.FromMinutes(30),      // MaxDuration
-                                                           new[] {
-                                                               DayOfWeek.Monday,
-                                                               DayOfWeek.Tuesday
-                                                           }
-                                                       )
-                                                   }
-                                               )
-                                           },
-                                           new[] {
-                                               new DisplayText(Languages.de, "Hallo Welt!"),
-                                               new DisplayText(Languages.en, "Hello world!"),
-                                           },
-                                           URL.Parse("https://open.charging.cloud"),
-                                           new EnergyMix(
-                                               true,
-                                               new[] {
-                                                   new EnergySource(
-                                                       EnergySourceCategory.SOLAR,
-                                                       80
-                                                   ),
-                                                   new EnergySource(
-                                                       EnergySourceCategory.WIND,
-                                                       20
-                                                   )
-                                               },
-                                               new[] {
-                                                   new EnvironmentalImpact(
-                                                       EnvironmentalImpactCategory.CARBON_DIOXIDE,
-                                                       0.1
-                                                   )
-                                               },
-                                               "Stadtwerke Jena-Ost",
-                                               "New Green Deal"
-                                           ),
-                                           DateTime.Parse("2020-09-22").ToUniversalTime()
-                                       ),
-                                       SkipNotifications: true
-                                   );
+                await cpoCommonAPI.AddTariff(new Tariff(
+                                                 CountryCode.Parse("DE"),
+                                                 Party_Id.   Parse("GEF"),
+                                                 Tariff_Id.  Parse("TARIFF0001"),
+                                                 OCPI.Currency.EUR,
+                                                 new[] {
+                                                     new TariffElement(
+                                                         new[] {
+                                                             PriceComponent.ChargingTime(
+                                                                 TimeSpan.FromSeconds(300),
+                                                                 2.00M
+                                                             )
+                                                         },
+                                                         new[] {
+                                                             new TariffRestrictions(
+                                                                 Time.FromHourMin(08,00),       // Start time
+                                                                 Time.FromHourMin(18,00),       // End time
+                                                                 DateTime.Parse("2020-12-01"),  // Start timestamp
+                                                                 DateTime.Parse("2020-12-31"),  // End timestamp
+                                                                 1.12M,                         // MinkWh
+                                                                 5.67M,                         // MaxkWh
+                                                                 1.49M,                         // MinPower
+                                                                 9.91M,                         // MaxPower
+                                                                 TimeSpan.FromMinutes(10),      // MinDuration
+                                                                 TimeSpan.FromMinutes(30),      // MaxDuration
+                                                                 new[] {
+                                                                     DayOfWeek.Monday,
+                                                                     DayOfWeek.Tuesday
+                                                                 }
+                                                             )
+                                                         }
+                                                     )
+                                                 },
+                                                 new[] {
+                                                     new DisplayText(Languages.de, "Hallo Welt!"),
+                                                     new DisplayText(Languages.en, "Hello world!"),
+                                                 },
+                                                 URL.Parse("https://open.charging.cloud"),
+                                                 new EnergyMix(
+                                                     true,
+                                                     new[] {
+                                                         new EnergySource(
+                                                             EnergySourceCategory.SOLAR,
+                                                             80
+                                                         ),
+                                                         new EnergySource(
+                                                             EnergySourceCategory.WIND,
+                                                             20
+                                                         )
+                                                     },
+                                                     new[] {
+                                                         new EnvironmentalImpact(
+                                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                                             0.1
+                                                         )
+                                                     },
+                                                     "Stadtwerke Jena-Ost",
+                                                     "New Green Deal"
+                                                 ),
+                                                 LastUpdated: DateTime.Parse("2020-09-22").ToUniversalTime()
+                                             ),
+                                             SkipNotifications: true
+                                         );
 
                 #endregion
-
 
                 var response = await graphDefinedCPO.GetTariffs();
 
@@ -207,72 +204,71 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #region Define Tariff1
 
-                cpoCommonAPI.AddTariff(new Tariff(
-                                           CountryCode.Parse("DE"),
-                                           Party_Id.   Parse("GEF"),
-                                           Tariff_Id.  Parse("TARIFF0001"),
-                                           OCPI.Currency.EUR,
-                                           new[] {
-                                               new TariffElement(
-                                                   new[] {
-                                                       PriceComponent.ChargingTime(
-                                                           TimeSpan.FromSeconds(300),
-                                                           2.00M
-                                                       )
-                                                   },
-                                                   new[] {
-                                                       new TariffRestrictions(
-                                                           Time.FromHourMin(08,00),       // Start time
-                                                           Time.FromHourMin(18,00),       // End time
-                                                           DateTime.Parse("2020-12-01"),  // Start timestamp
-                                                           DateTime.Parse("2020-12-31"),  // End timestamp
-                                                           1.12M,                         // MinkWh
-                                                           5.67M,                         // MaxkWh
-                                                           1.49M,                         // MinPower
-                                                           9.91M,                         // MaxPower
-                                                           TimeSpan.FromMinutes(10),      // MinDuration
-                                                           TimeSpan.FromMinutes(30),      // MaxDuration
-                                                           new[] {
-                                                               DayOfWeek.Monday,
-                                                               DayOfWeek.Tuesday
-                                                           }
-                                                       )
-                                                   }
-                                               )
-                                           },
-                                           new[] {
-                                               new DisplayText(Languages.de, "Hallo Welt!"),
-                                               new DisplayText(Languages.en, "Hello world!"),
-                                           },
-                                           URL.Parse("https://open.charging.cloud"),
-                                           new EnergyMix(
-                                               true,
-                                               new[] {
-                                                   new EnergySource(
-                                                       EnergySourceCategory.SOLAR,
-                                                       80
-                                                   ),
-                                                   new EnergySource(
-                                                       EnergySourceCategory.WIND,
-                                                       20
-                                                   )
-                                               },
-                                               new[] {
-                                                   new EnvironmentalImpact(
-                                                       EnvironmentalImpactCategory.CARBON_DIOXIDE,
-                                                       0.1
-                                                   )
-                                               },
-                                               "Stadtwerke Jena-Ost",
-                                               "New Green Deal"
-                                           ),
-                                           DateTime.Parse("2020-09-22").ToUniversalTime()
-                                       ),
-                                       SkipNotifications: true
-                                   );
+                await cpoCommonAPI.AddTariff(new Tariff(
+                                                 CountryCode.Parse("DE"),
+                                                 Party_Id.   Parse("GEF"),
+                                                 Tariff_Id.  Parse("TARIFF0001"),
+                                                 OCPI.Currency.EUR,
+                                                 new[] {
+                                                     new TariffElement(
+                                                         new[] {
+                                                             PriceComponent.ChargingTime(
+                                                                 TimeSpan.FromSeconds(300),
+                                                                 2.00M
+                                                             )
+                                                         },
+                                                         new[] {
+                                                             new TariffRestrictions(
+                                                                 Time.FromHourMin(08,00),       // Start time
+                                                                 Time.FromHourMin(18,00),       // End time
+                                                                 DateTime.Parse("2020-12-01"),  // Start timestamp
+                                                                 DateTime.Parse("2020-12-31"),  // End timestamp
+                                                                 1.12M,                         // MinkWh
+                                                                 5.67M,                         // MaxkWh
+                                                                 1.49M,                         // MinPower
+                                                                 9.91M,                         // MaxPower
+                                                                 TimeSpan.FromMinutes(10),      // MinDuration
+                                                                 TimeSpan.FromMinutes(30),      // MaxDuration
+                                                                 new[] {
+                                                                     DayOfWeek.Monday,
+                                                                     DayOfWeek.Tuesday
+                                                                 }
+                                                             )
+                                                         }
+                                                     )
+                                                 },
+                                                 new[] {
+                                                     new DisplayText(Languages.de, "Hallo Welt!"),
+                                                     new DisplayText(Languages.en, "Hello world!"),
+                                                 },
+                                                 URL.Parse("https://open.charging.cloud"),
+                                                 new EnergyMix(
+                                                     true,
+                                                     new[] {
+                                                         new EnergySource(
+                                                             EnergySourceCategory.SOLAR,
+                                                             80
+                                                         ),
+                                                         new EnergySource(
+                                                             EnergySourceCategory.WIND,
+                                                             20
+                                                         )
+                                                     },
+                                                     new[] {
+                                                         new EnvironmentalImpact(
+                                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                                             0.1
+                                                         )
+                                                     },
+                                                     "Stadtwerke Jena-Ost",
+                                                     "New Green Deal"
+                                                 ),
+                                                 LastUpdated: DateTime.Parse("2020-09-22").ToUniversalTime()
+                                             ),
+                                             SkipNotifications: true
+                                         );
 
                 #endregion
-
 
                 var response = await graphDefinedCPO.GetTariffs();
 
@@ -358,72 +354,71 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #region Define Tariff1
 
-                cpoCommonAPI.AddTariff(new Tariff(
-                                           CountryCode.Parse("DE"),
-                                           Party_Id.   Parse("GEF"),
-                                           Tariff_Id.  Parse("TARIFF0001"),
-                                           OCPI.Currency.EUR,
-                                           new[] {
-                                               new TariffElement(
-                                                   new[] {
-                                                       PriceComponent.ChargingTime(
-                                                           TimeSpan.FromSeconds(300),
-                                                           2.00M
-                                                       )
-                                                   },
-                                                   new[] {
-                                                       new TariffRestrictions(
-                                                           Time.FromHourMin(08,00),       // Start time
-                                                           Time.FromHourMin(18,00),       // End time
-                                                           DateTime.Parse("2020-12-01"),  // Start timestamp
-                                                           DateTime.Parse("2020-12-31"),  // End timestamp
-                                                           1.12M,                         // MinkWh
-                                                           5.67M,                         // MaxkWh
-                                                           1.49M,                         // MinPower
-                                                           9.91M,                         // MaxPower
-                                                           TimeSpan.FromMinutes(10),      // MinDuration
-                                                           TimeSpan.FromMinutes(30),      // MaxDuration
-                                                           new[] {
-                                                               DayOfWeek.Monday,
-                                                               DayOfWeek.Tuesday
-                                                           }
-                                                       )
-                                                   }
-                                               )
-                                           },
-                                           new[] {
-                                               new DisplayText(Languages.de, "Hallo Welt!"),
-                                               new DisplayText(Languages.en, "Hello world!"),
-                                           },
-                                           URL.Parse("https://open.charging.cloud"),
-                                           new EnergyMix(
-                                               true,
-                                               new[] {
-                                                   new EnergySource(
-                                                       EnergySourceCategory.SOLAR,
-                                                       80
-                                                   ),
-                                                   new EnergySource(
-                                                       EnergySourceCategory.WIND,
-                                                       20
-                                                   )
-                                               },
-                                               new[] {
-                                                   new EnvironmentalImpact(
-                                                       EnvironmentalImpactCategory.CARBON_DIOXIDE,
-                                                       0.1
-                                                   )
-                                               },
-                                               "Stadtwerke Jena-Ost",
-                                               "New Green Deal"
-                                           ),
-                                           DateTime.Parse("2020-09-22").ToUniversalTime()
-                                       ),
-                                       SkipNotifications: true
-                                   );
+                await cpoCommonAPI.AddTariff(new Tariff(
+                                                 CountryCode.Parse("DE"),
+                                                 Party_Id.   Parse("GEF"),
+                                                 Tariff_Id.  Parse("TARIFF0001"),
+                                                 OCPI.Currency.EUR,
+                                                 new[] {
+                                                     new TariffElement(
+                                                         new[] {
+                                                             PriceComponent.ChargingTime(
+                                                                 TimeSpan.FromSeconds(300),
+                                                                 2.00M
+                                                             )
+                                                         },
+                                                         new[] {
+                                                             new TariffRestrictions(
+                                                                 Time.FromHourMin(08,00),       // Start time
+                                                                 Time.FromHourMin(18,00),       // End time
+                                                                 DateTime.Parse("2020-12-01"),  // Start timestamp
+                                                                 DateTime.Parse("2020-12-31"),  // End timestamp
+                                                                 1.12M,                         // MinkWh
+                                                                 5.67M,                         // MaxkWh
+                                                                 1.49M,                         // MinPower
+                                                                 9.91M,                         // MaxPower
+                                                                 TimeSpan.FromMinutes(10),      // MinDuration
+                                                                 TimeSpan.FromMinutes(30),      // MaxDuration
+                                                                 new[] {
+                                                                     DayOfWeek.Monday,
+                                                                     DayOfWeek.Tuesday
+                                                                 }
+                                                             )
+                                                         }
+                                                     )
+                                                 },
+                                                 new[] {
+                                                     new DisplayText(Languages.de, "Hallo Welt!"),
+                                                     new DisplayText(Languages.en, "Hello world!"),
+                                                 },
+                                                 URL.Parse("https://open.charging.cloud"),
+                                                 new EnergyMix(
+                                                     true,
+                                                     new[] {
+                                                         new EnergySource(
+                                                             EnergySourceCategory.SOLAR,
+                                                             80
+                                                         ),
+                                                         new EnergySource(
+                                                             EnergySourceCategory.WIND,
+                                                             20
+                                                         )
+                                                     },
+                                                     new[] {
+                                                         new EnvironmentalImpact(
+                                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                                             0.1
+                                                         )
+                                                     },
+                                                     "Stadtwerke Jena-Ost",
+                                                     "New Green Deal"
+                                                 ),
+                                                 LastUpdated: DateTime.Parse("2020-09-22").ToUniversalTime()
+                                             ),
+                                             SkipNotifications: true
+                                         );
 
                 #endregion
-
 
                 var response = await graphDefinedCPO.GetTariff(Tariff_Id.Parse("TARIFF0001"));
 
@@ -509,72 +504,71 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
 
                 #region Define Tariff1
 
-                cpoCommonAPI.AddTariff(new Tariff(
-                                           CountryCode.Parse("DE"),
-                                           Party_Id.   Parse("GEF"),
-                                           Tariff_Id.  Parse("TARIFF0001"),
-                                           OCPI.Currency.EUR,
-                                           new[] {
-                                               new TariffElement(
-                                                   new[] {
-                                                       PriceComponent.ChargingTime(
-                                                           TimeSpan.FromSeconds(300),
-                                                           2.00M
-                                                       )
-                                                   },
-                                                   new[] {
-                                                       new TariffRestrictions(
-                                                           Time.FromHourMin(08,00),       // Start time
-                                                           Time.FromHourMin(18,00),       // End time
-                                                           DateTime.Parse("2020-12-01"),  // Start timestamp
-                                                           DateTime.Parse("2020-12-31"),  // End timestamp
-                                                           1.12M,                         // MinkWh
-                                                           5.67M,                         // MaxkWh
-                                                           1.49M,                         // MinPower
-                                                           9.91M,                         // MaxPower
-                                                           TimeSpan.FromMinutes(10),      // MinDuration
-                                                           TimeSpan.FromMinutes(30),      // MaxDuration
-                                                           new[] {
-                                                               DayOfWeek.Monday,
-                                                               DayOfWeek.Tuesday
-                                                           }
-                                                       )
-                                                   }
-                                               )
-                                           },
-                                           new[] {
-                                               new DisplayText(Languages.de, "Hallo Welt!"),
-                                               new DisplayText(Languages.en, "Hello world!"),
-                                           },
-                                           URL.Parse("https://open.charging.cloud"),
-                                           new EnergyMix(
-                                               true,
-                                               new[] {
-                                                   new EnergySource(
-                                                       EnergySourceCategory.SOLAR,
-                                                       80
-                                                   ),
-                                                   new EnergySource(
-                                                       EnergySourceCategory.WIND,
-                                                       20
-                                                   )
-                                               },
-                                               new[] {
-                                                   new EnvironmentalImpact(
-                                                       EnvironmentalImpactCategory.CARBON_DIOXIDE,
-                                                       0.1
-                                                   )
-                                               },
-                                               "Stadtwerke Jena-Ost",
-                                               "New Green Deal"
-                                           ),
-                                           DateTime.Parse("2020-09-22").ToUniversalTime()
-                                       ),
-                                       SkipNotifications: true
-                                   );
+                await cpoCommonAPI.AddTariff(new Tariff(
+                                                 CountryCode.Parse("DE"),
+                                                 Party_Id.   Parse("GEF"),
+                                                 Tariff_Id.  Parse("TARIFF0001"),
+                                                 OCPI.Currency.EUR,
+                                                 new[] {
+                                                     new TariffElement(
+                                                         new[] {
+                                                             PriceComponent.ChargingTime(
+                                                                 TimeSpan.FromSeconds(300),
+                                                                 2.00M
+                                                             )
+                                                         },
+                                                         new[] {
+                                                             new TariffRestrictions(
+                                                                 Time.FromHourMin(08,00),       // Start time
+                                                                 Time.FromHourMin(18,00),       // End time
+                                                                 DateTime.Parse("2020-12-01"),  // Start timestamp
+                                                                 DateTime.Parse("2020-12-31"),  // End timestamp
+                                                                 1.12M,                         // MinkWh
+                                                                 5.67M,                         // MaxkWh
+                                                                 1.49M,                         // MinPower
+                                                                 9.91M,                         // MaxPower
+                                                                 TimeSpan.FromMinutes(10),      // MinDuration
+                                                                 TimeSpan.FromMinutes(30),      // MaxDuration
+                                                                 new[] {
+                                                                     DayOfWeek.Monday,
+                                                                     DayOfWeek.Tuesday
+                                                                 }
+                                                             )
+                                                         }
+                                                     )
+                                                 },
+                                                 new[] {
+                                                     new DisplayText(Languages.de, "Hallo Welt!"),
+                                                     new DisplayText(Languages.en, "Hello world!"),
+                                                 },
+                                                 URL.Parse("https://open.charging.cloud"),
+                                                 new EnergyMix(
+                                                     true,
+                                                     new[] {
+                                                         new EnergySource(
+                                                             EnergySourceCategory.SOLAR,
+                                                             80
+                                                         ),
+                                                         new EnergySource(
+                                                             EnergySourceCategory.WIND,
+                                                             20
+                                                         )
+                                                     },
+                                                     new[] {
+                                                         new EnvironmentalImpact(
+                                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
+                                                             0.1
+                                                         )
+                                                     },
+                                                     "Stadtwerke Jena-Ost",
+                                                     "New Green Deal"
+                                                 ),
+                                                 LastUpdated: DateTime.Parse("2020-09-22").ToUniversalTime()
+                                             ),
+                                             SkipNotifications: true
+                                         );
 
                 #endregion
-
 
                 var response = await graphDefinedCPO.GetTariff(Tariff_Id.Parse("TARIFF0001"));
 

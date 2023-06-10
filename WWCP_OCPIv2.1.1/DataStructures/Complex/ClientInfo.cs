@@ -350,7 +350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<ClientInfo> CustomClientInfoSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("country_code",  CountryCode.ToString()),
                            new JProperty("party_id",      PartyId.    ToString()),
                            new JProperty("status",        Status.     ToString()),
@@ -358,8 +358,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomClientInfoSerializer is not null
-                       ? CustomClientInfoSerializer(this, JSON)
-                       : JSON;
+                       ? CustomClientInfoSerializer(this, json)
+                       : json;
 
         }
 

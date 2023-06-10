@@ -151,7 +151,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                 DisplayText.Create(Languages.en, "Ken sent me!")
                             },
-                            new ParkingRestrictions[] {
+                            new[] {
                                 ParkingRestrictions.EV_ONLY,
                                 ParkingRestrictions.PLUGGED
                             },

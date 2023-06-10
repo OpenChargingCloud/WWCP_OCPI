@@ -284,7 +284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<PublishToken>? CustomPublishTokenSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                                  new JProperty("uid",            Id.           ToString()),
 
@@ -307,8 +307,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomPublishTokenSerializer is not null
-                       ? CustomPublishTokenSerializer(this, JSON)
-                       : JSON;
+                       ? CustomPublishTokenSerializer(this, json)
+                       : json;
 
         }
 

@@ -221,7 +221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<StatusSchedule>? CustomStatusScheduleSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            new JProperty("period_begin",      Begin.    ToIso8601()),
 
@@ -234,8 +234,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        );
 
             return CustomStatusScheduleSerializer is not null
-                       ? CustomStatusScheduleSerializer(this, JSON)
-                       : JSON;
+                       ? CustomStatusScheduleSerializer(this, json)
+                       : json;
 
         }
 

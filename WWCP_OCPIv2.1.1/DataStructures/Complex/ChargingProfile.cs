@@ -389,7 +389,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<ChargingProfilePeriod>  CustomChargingProfilePeriodSerializer   = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
 
                            new JProperty("charging_rate_unit",             ChargingRateUnit.     ToString()),
 
@@ -413,8 +413,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             return CustomChargingProfileSerializer is not null
-                       ? CustomChargingProfileSerializer(this, JSON)
-                       : JSON;
+                       ? CustomChargingProfileSerializer(this, json)
+                       : json;
 
         }
 

@@ -221,14 +221,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<CDRDimension>? CustomCDRDimensionSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("type",    Type.ToString()),
                            new JProperty("volume",  Volume)
                        );
 
             return CustomCDRDimensionSerializer is not null
-                       ? CustomCDRDimensionSerializer(this, JSON)
-                       : JSON;
+                       ? CustomCDRDimensionSerializer(this, json)
+                       : json;
 
         }
 

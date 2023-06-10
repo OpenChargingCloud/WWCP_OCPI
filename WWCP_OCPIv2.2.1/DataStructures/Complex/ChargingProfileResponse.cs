@@ -195,14 +195,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingProfileResponse>? CustomChargingProfileResponseSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("result",   Result.ToString()),
                            new JProperty("timeout",  (UInt32) Timeout.TotalSeconds)
                        );
 
             return CustomChargingProfileResponseSerializer is not null
-                       ? CustomChargingProfileResponseSerializer(this, JSON)
-                       : JSON;
+                       ? CustomChargingProfileResponseSerializer(this, json)
+                       : json;
 
         }
 
