@@ -202,7 +202,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            DisablePushData:                     true,
                                            DisablePushStatus:                   true,
                                            DisableAuthentication:               false,
-                                           DisableSendChargeDetailRecords:      true
+                                           DisableSendChargeDetailRecords:      false
 
                                        );
 
@@ -232,7 +232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            DisablePushData:                     true,
                                            DisablePushStatus:                   true,
                                            DisableAuthentication:               false,
-                                           DisableSendChargeDetailRecords:      true
+                                           DisableSendChargeDetailRecords:      false
 
                                        );
 
@@ -262,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            DisablePushData:                     true,
                                            DisablePushStatus:                   true,
                                            DisableAuthentication:               false,
-                                           DisableSendChargeDetailRecords:      true
+                                           DisableSendChargeDetailRecords:      false
 
                                        );
 

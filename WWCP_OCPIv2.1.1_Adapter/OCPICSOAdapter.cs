@@ -2003,208 +2003,211 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #endregion
 
 
-            if (DisableAuthentication)
-                return WWCP.AuthStartResult.AdminDown(
-                           AuthorizatorId:           Id,
-                           ISendAuthorizeStartStop:  this,
-                           SessionId:                SessionId,
-                           Description:              I18NString.Create(Languages.en, "Authentication is disabled!"),
-                           Runtime:                  TimeSpan.Zero
-                       );
-
-
-            var remotes = new PriorityList<RemoteParty>();
-            foreach (var remote in CommonAPI.GetRemoteParties(OCPI.Roles.EMSP))
-                remotes.Add(remote);
-
-            var authorizationInfo = await remotes.WhenFirst(Work:            async remoteParty => {
-
-                                                                                       #region Initial checks
-
-                                                                                       var authToken = LocalAuthentication.AuthToken?.ToString();
-
-                                                                                       if (authToken is null)
-                                                                                           return new AuthorizationInfo(
-                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                      Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
-                                                                                                      RemoteParty:  remoteParty
-                                                                                                  );
-
-
-                                                                                       var tokenId = Token_Id.TryParse(authToken);
-
-                                                                                       if (!tokenId.HasValue)
-                                                                                           return new AuthorizationInfo(
-                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                      Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
-                                                                                                      RemoteParty:  remoteParty
-                                                                                                  );
-
-
-                                                                                       var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
-
-                                                                                       if (remoteAccessInfo is null)
-                                                                                           return new AuthorizationInfo(
-                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                      Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
-                                                                                                      RemoteParty:  remoteParty
-                                                                                                  );
-
-
-                                                                                       var cpoClient = new CPO.HTTP.CPOClient(
-
-                                                                                                           remoteParty,
-                                                                                                           CommonAPI,
-                                                                                                           null, // VirtualHostname
-                                                                                                           null, // Description
-                                                                                                           null, // HTTPLogger
-
-                                                                                                           DisableLogging,
-                                                                                                           ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                                           ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                                           ClientsLogfileCreator,
-                                                                                                           DNSClient
-
-                                                                                                       );
-
-                                                                                       if (cpoClient is null)
-                                                                                           return new AuthorizationInfo(
-                                                                                                      Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                      Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
-                                                                                                      RemoteParty:  remoteParty
-                                                                                                  );
-
-
-                                                                                       var cpoClientLogger = new CPO.HTTP.CPOClient.Logger(
-                                                                                                                 cpoClient,
-                                                                                                                 ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                                                 ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                                                 ClientsLogfileCreator
-                                                                                                             );
-
-                                                                                       #endregion
-
-                                                                                       var authorizationInfo = await cpoClient.PostToken(
-                                                                                                                         TokenId:            tokenId.Value,
-                                                                                                                         TokenType:          TokenType.RFID,
-                                                                                                                         LocationReference:  null
-                                                                                                                     );
-
-                                                                                       return authorizationInfo.Data is not null
-
-                                                                                                  ? new AuthorizationInfo(
-                                                                                                        authorizationInfo.Data.Allowed,
-                                                                                                        authorizationInfo.Data.Location,
-                                                                                                        authorizationInfo.Data.Info,
-                                                                                                        remoteParty,
-                                                                                                        EMSP_Id.From(remoteParty.Id),
-                                                                                                        authorizationInfo.Data.Runtime
-                                                                                                    )
-
-                                                                                                  : new AuthorizationInfo(
-                                                                                                        Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                        Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
-                                                                                                        RemoteParty:  remoteParty
-                                                                                                    );
-
-                                                                                   },
-
-                                                            VerifyResult:    result  => result.Allowed == AllowedType.ALLOWED,
-
-                                                            Timeout:         RequestTimeout ?? TimeSpan.FromSeconds(10),
-
-                                                            OnException:     null,
-
-                                                            DefaultResult:   runtime  => new AuthorizationInfo(
-                                                                                             Allowed:   AllowedType.NOT_ALLOWED,
-                                                                                             Location:  null,
-                                                                                             Info:      new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
-                                                                                             Runtime:   runtime
-                                                                                         ));
-
-
             DateTime              endtime;
             TimeSpan              runtime;
             WWCP.AuthStartResult? authStartResult = null;
 
 
-            if (authorizationInfo is null)
-                authStartResult = WWCP.AuthStartResult.CommunicationTimeout(Id, this, SessionId);
+            if (DisableAuthentication)
+                authStartResult = WWCP.AuthStartResult.AdminDown(
+                                      AuthorizatorId:           Id,
+                                      ISendAuthorizeStartStop:  this,
+                                      SessionId:                SessionId,
+                                      Description:              I18NString.Create(Languages.en, "Authentication is disabled!"),
+                                      Runtime:                  TimeSpan.Zero
+                                  );
 
-            else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
-                authStartResult = WWCP.AuthStartResult.Authorized(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           EMPPartnerSessionId:       null,
-                           ContractId:                null,
-                           PrintedNumber:             null,
-                           ExpiryDate:                null,
-                           MaxkW:                     null,
-                           MaxkWh:                    null,
-                           MaxDuration:               null,
-                           ChargingTariffs:           null,
-                           ListOfAuthStopTokens:      null,
-                           ListOfAuthStopPINs:        null,
-                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                                                      //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+            else
+            {
 
-            else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
-                authStartResult = WWCP.AuthStartResult.Blocked(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                                                      //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                var remotes = new PriorityList<RemoteParty>();
+                foreach (var remote in CommonAPI.GetRemoteParties(OCPI.Roles.EMSP))
+                    remotes.Add(remote);
 
-            else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
-                authStartResult = WWCP.AuthStartResult.Expired(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                                                      //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                var authorizationInfo = await remotes.WhenFirst(Work:            async remoteParty => {
 
-            else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
-                authStartResult = WWCP.AuthStartResult.NoCredit(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
-                                                      //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                                                                                           #region Initial checks
 
-            else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
-                authStartResult = WWCP.AuthStartResult.NotAuthorized(
-                           AuthorizatorId:            Id,
-                           ISendAuthorizeStartStop:   this,
-                           SessionId:                 SessionId,
-                           ProviderId:                null,
-                           Description:               null,
-                           AdditionalInfo:            null,
-                           NumberOfRetries:           0,
-                           Runtime:                   null
-                       );
+                                                                                           var authToken = LocalAuthentication.AuthToken?.ToString();
 
+                                                                                           if (authToken is null)
+                                                                                               return new AuthorizationInfo(
+                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
+                                                                                                          RemoteParty:  remoteParty
+                                                                                                      );
+
+
+                                                                                           var tokenId = Token_Id.TryParse(authToken);
+
+                                                                                           if (!tokenId.HasValue)
+                                                                                               return new AuthorizationInfo(
+                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
+                                                                                                          RemoteParty:  remoteParty
+                                                                                                      );
+
+
+                                                                                           var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
+
+                                                                                           if (remoteAccessInfo is null)
+                                                                                               return new AuthorizationInfo(
+                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                          RemoteParty:  remoteParty
+                                                                                                      );
+
+
+                                                                                           var cpoClient = new CPO.HTTP.CPOClient(
+
+                                                                                                               remoteParty,
+                                                                                                               CommonAPI,
+                                                                                                               null, // VirtualHostname
+                                                                                                               null, // Description
+                                                                                                               null, // HTTPLogger
+
+                                                                                                               DisableLogging,
+                                                                                                               ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                               ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                               ClientsLogfileCreator,
+                                                                                                               DNSClient
+
+                                                                                                           );
+
+                                                                                           if (cpoClient is null)
+                                                                                               return new AuthorizationInfo(
+                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                          RemoteParty:  remoteParty
+                                                                                                      );
+
+
+                                                                                           var cpoClientLogger = new CPO.HTTP.CPOClient.Logger(
+                                                                                                                     cpoClient,
+                                                                                                                     ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                                     ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                                     ClientsLogfileCreator
+                                                                                                                 );
+
+                                                                                           #endregion
+
+                                                                                           var authorizationInfo = await cpoClient.PostToken(
+                                                                                                                             TokenId:            tokenId.Value,
+                                                                                                                             TokenType:          TokenType.RFID,
+                                                                                                                             LocationReference:  null
+                                                                                                                         );
+
+                                                                                           return authorizationInfo.Data is not null
+
+                                                                                                      ? new AuthorizationInfo(
+                                                                                                            authorizationInfo.Data.Allowed,
+                                                                                                            authorizationInfo.Data.Location,
+                                                                                                            authorizationInfo.Data.Info,
+                                                                                                            remoteParty,
+                                                                                                            EMSP_Id.From(remoteParty.Id),
+                                                                                                            authorizationInfo.Data.Runtime
+                                                                                                        )
+
+                                                                                                      : new AuthorizationInfo(
+                                                                                                            Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                            Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                            RemoteParty:  remoteParty
+                                                                                                        );
+
+                                                                                       },
+
+                                                                VerifyResult:    result  => result.Allowed == AllowedType.ALLOWED,
+
+                                                                Timeout:         RequestTimeout ?? TimeSpan.FromSeconds(10),
+
+                                                                OnException:     null,
+
+                                                                DefaultResult:   runtime  => new AuthorizationInfo(
+                                                                                                 Allowed:   AllowedType.NOT_ALLOWED,
+                                                                                                 Location:  null,
+                                                                                                 Info:      new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
+                                                                                                 Runtime:   runtime
+                                                                                             ));
+
+
+                if (authorizationInfo is null)
+                    authStartResult = WWCP.AuthStartResult.CommunicationTimeout(Id, this, SessionId);
+
+                else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+                    authStartResult = WWCP.AuthStartResult.Authorized(
+                               AuthorizatorId:            Id,
+                               ISendAuthorizeStartStop:   this,
+                               SessionId:                 SessionId,
+                               EMPPartnerSessionId:       null,
+                               ContractId:                null,
+                               PrintedNumber:             null,
+                               ExpiryDate:                null,
+                               MaxkW:                     null,
+                               MaxkWh:                    null,
+                               MaxDuration:               null,
+                               ChargingTariffs:           null,
+                               ListOfAuthStopTokens:      null,
+                               ListOfAuthStopPINs:        null,
+                               ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                                                          //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                               Description:               null,
+                               AdditionalInfo:            null,
+                               NumberOfRetries:           0,
+                               Runtime:                   null
+                           );
+
+                else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+                    authStartResult = WWCP.AuthStartResult.Blocked(
+                               AuthorizatorId:            Id,
+                               ISendAuthorizeStartStop:   this,
+                               SessionId:                 SessionId,
+                               ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                                                          //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                               Description:               null,
+                               AdditionalInfo:            null,
+                               NumberOfRetries:           0,
+                               Runtime:                   null
+                           );
+
+                else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
+                    authStartResult = WWCP.AuthStartResult.Expired(
+                               AuthorizatorId:            Id,
+                               ISendAuthorizeStartStop:   this,
+                               SessionId:                 SessionId,
+                               ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                                                          //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                               Description:               null,
+                               AdditionalInfo:            null,
+                               NumberOfRetries:           0,
+                               Runtime:                   null
+                           );
+
+                else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
+                    authStartResult = WWCP.AuthStartResult.NoCredit(
+                               AuthorizatorId:            Id,
+                               ISendAuthorizeStartStop:   this,
+                               SessionId:                 SessionId,
+                               ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                                                          //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                               Description:               null,
+                               AdditionalInfo:            null,
+                               NumberOfRetries:           0,
+                               Runtime:                   null
+                           );
+
+                else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+                    authStartResult = WWCP.AuthStartResult.NotAuthorized(
+                               AuthorizatorId:            Id,
+                               ISendAuthorizeStartStop:   this,
+                               SessionId:                 SessionId,
+                               ProviderId:                null,
+                               Description:               null,
+                               AdditionalInfo:            null,
+                               NumberOfRetries:           0,
+                               Runtime:                   null
+                           );
+
+            }
 
             authStartResult ??= WWCP.AuthStartResult.Error(Id, this, SessionId);
 
@@ -2250,7 +2253,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AuthorizeStop (SessionId, LocalAuthentication, 
+        #region AuthorizeStop (SessionId, LocalAuthentication, ...)
 
         /// <summary>
         /// Create an authorize stop request at the given charging location.
@@ -2265,7 +2268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public Task<WWCP.AuthStopResult>
+        public async Task<WWCP.AuthStopResult>
 
             AuthorizeStop(WWCP.ChargingSession_Id           SessionId,
                           WWCP.LocalAuthentication          LocalAuthentication,
@@ -2319,9 +2322,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             #endregion
 
 
-            DateTime              endtime;
-            TimeSpan              runtime;
-            WWCP.AuthStopResult?  authStopResult   = null;
+            DateTime             endtime;
+            TimeSpan             runtime;
+            WWCP.AuthStopResult? authStopResult = null;
 
             if (DisableAuthentication)
                 authStopResult = WWCP.AuthStopResult.AdminDown(
@@ -2332,7 +2335,179 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      Runtime:                  TimeSpan.Zero
                                  );
 
-            authStopResult ??= WWCP.AuthStopResult.NotAuthorized(Id, this);
+            else
+            {
+
+                var remotes = new PriorityList<RemoteParty>();
+                foreach (var remote in CommonAPI.GetRemoteParties(OCPI.Roles.EMSP))
+                    remotes.Add(remote);
+
+                var authorizationInfo = await remotes.WhenFirst(Work:            async remoteParty => {
+
+                                                                                           #region Initial checks
+
+                                                                                           var authToken = LocalAuthentication.AuthToken?.ToString();
+
+                                                                                           if (authToken is null)
+                                                                                               return new AuthorizationInfo(
+                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
+                                                                                                          RemoteParty:  remoteParty
+                                                                                                      );
+
+
+                                                                                           var tokenId = Token_Id.TryParse(authToken);
+
+                                                                                           if (!tokenId.HasValue)
+                                                                                               return new AuthorizationInfo(
+                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
+                                                                                                          RemoteParty:  remoteParty
+                                                                                                      );
+
+
+                                                                                           var remoteAccessInfo  = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
+
+                                                                                           if (remoteAccessInfo is null)
+                                                                                               return new AuthorizationInfo(
+                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                          RemoteParty:  remoteParty
+                                                                                                      );
+
+
+                                                                                           var cpoClient = new CPO.HTTP.CPOClient(
+
+                                                                                                               remoteParty,
+                                                                                                               CommonAPI,
+                                                                                                               null, // VirtualHostname
+                                                                                                               null, // Description
+                                                                                                               null, // HTTPLogger
+
+                                                                                                               DisableLogging,
+                                                                                                               ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                               ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                               ClientsLogfileCreator,
+                                                                                                               DNSClient
+
+                                                                                                           );
+
+                                                                                           if (cpoClient is null)
+                                                                                               return new AuthorizationInfo(
+                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                          RemoteParty:  remoteParty
+                                                                                                      );
+
+
+                                                                                           var cpoClientLogger = new CPO.HTTP.CPOClient.Logger(
+                                                                                                                     cpoClient,
+                                                                                                                     ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                                                     ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                                     ClientsLogfileCreator
+                                                                                                                 );
+
+                                                                                           #endregion
+
+                                                                                           var authorizationInfo = await cpoClient.PostToken(
+                                                                                                                             TokenId:            tokenId.Value,
+                                                                                                                             TokenType:          TokenType.RFID,
+                                                                                                                             LocationReference:  null
+                                                                                                                         );
+
+                                                                                           return authorizationInfo.Data is not null
+
+                                                                                                      ? new AuthorizationInfo(
+                                                                                                            authorizationInfo.Data.Allowed,
+                                                                                                            authorizationInfo.Data.Location,
+                                                                                                            authorizationInfo.Data.Info,
+                                                                                                            remoteParty,
+                                                                                                            EMSP_Id.From(remoteParty.Id),
+                                                                                                            authorizationInfo.Data.Runtime
+                                                                                                        )
+
+                                                                                                      : new AuthorizationInfo(
+                                                                                                            Allowed:      AllowedType.NOT_ALLOWED,
+                                                                                                            Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                            RemoteParty:  remoteParty
+                                                                                                        );
+
+                                                                                       },
+
+                                                                VerifyResult:    result  => result.Allowed == AllowedType.ALLOWED,
+
+                                                                Timeout:         RequestTimeout ?? TimeSpan.FromSeconds(10),
+
+                                                                OnException:     null,
+
+                                                                DefaultResult:   runtime  => new AuthorizationInfo(
+                                                                                                 Allowed:   AllowedType.NOT_ALLOWED,
+                                                                                                 Location:  null,
+                                                                                                 Info:      new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
+                                                                                                 Runtime:   runtime
+                                                                                             ));
+
+
+
+
+
+                if (authorizationInfo is null)
+                    authStopResult = WWCP.AuthStopResult.CommunicationTimeout(Id, this, SessionId);
+
+                else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+                    authStopResult = WWCP.AuthStopResult.Authorized(
+                               AuthorizatorId:            Id,
+                               ISendAuthorizeStartStop:   this,
+                               SessionId:                 SessionId,
+                               ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                                                          //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                               Description:               null,
+                               AdditionalInfo:            null,
+                               NumberOfRetries:           0,
+                               Runtime:                   null
+                           );
+
+                else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+                    authStopResult = WWCP.AuthStopResult.Blocked(
+                               AuthorizatorId:            Id,
+                               ISendAuthorizeStartStop:   this,
+                               SessionId:                 SessionId,
+                               ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                                                          //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                               Description:               null,
+                               AdditionalInfo:            null,
+                               NumberOfRetries:           0,
+                               Runtime:                   null
+                           );
+
+                //else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
+                //    authStopResult = WWCP.AuthStopResult.Expired(
+                //               AuthorizatorId:            Id,
+                //               ISendAuthorizeStartStop:   this,
+                //               SessionId:                 SessionId,
+                //               ProviderId:                authorizationInfo.EMSPId.ToWWCP(),
+                //                                          //WWCP.EMobilityProvider_Id.Parse($"{authorizationInfo.RemoteParty?.CountryCode.ToString() ?? "XX"}-{authorizationInfo.RemoteParty?.PartyId.ToString() ?? "XXX"}"),
+                //               Description:               null,
+                //               AdditionalInfo:            null,
+                //               NumberOfRetries:           0,
+                //               Runtime:                   null
+                //           );
+
+                else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+                    authStopResult = WWCP.AuthStopResult.NotAuthorized(
+                               AuthorizatorId:            Id,
+                               ISendAuthorizeStartStop:   this,
+                               SessionId:                 SessionId,
+                               ProviderId:                null,
+                               Description:               null,
+                               AdditionalInfo:            null,
+                               NumberOfRetries:           0,
+                               Runtime:                   null
+                           );
+
+            }
+
+            authStopResult ??= WWCP.AuthStopResult.Error(Id, this, SessionId);
 
 
             endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -2368,7 +2543,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            return Task.FromResult(authStopResult);
+            return authStopResult;
 
         }
 
@@ -2453,8 +2628,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #region if disabled => 'AdminDown'...
 
-            DateTime              endtime;
-            TimeSpan              runtime;
+            DateTime?             endtime          = null;
+            TimeSpan?             runtime          = null;
             WWCP.SendCDRsResult?  sendCDRsResult   = null;
 
             if (DisableSendChargeDetailRecords)
@@ -2494,8 +2669,149 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
+            else
+            {
 
-            return WWCP.SendCDRsResult.NoOperation(org.GraphDefined.Vanaheimr.Illias.Timestamp.Now, Id, this, ChargeDetailRecords);
+                //var remotes = new PriorityList<RemoteParty>();
+                //foreach (var remote in CommonAPI.GetRemoteParties(OCPI.Roles.EMSP))
+                //    remotes.Add(remote);
+
+
+
+                //var authToken = LocalAuthentication.AuthToken?.ToString();
+
+                //if (authToken is null)
+                //    return new AuthorizationInfo(
+                //               Allowed:      AllowedType.NOT_ALLOWED,
+                //               Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
+                //               RemoteParty:  remoteParty
+                //           );
+
+
+                //var tokenId = Token_Id.TryParse(authToken);
+
+                //if (!tokenId.HasValue)
+                //    return new AuthorizationInfo(
+                //               Allowed:      AllowedType.NOT_ALLOWED,
+                //               Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
+                //               RemoteParty:  remoteParty
+                //           );
+
+
+                var chargeDetailRecord  = ChargeDetailRecords.First();
+                var emspId              = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString());
+                var remoteParty         = CommonAPI.GetRemoteParty(RemoteParty_Id.From(emspId));
+                var remoteAccessInfo    = remoteParty.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
+
+                //if (remoteAccessInfo is null)
+                //    return new AuthorizationInfo(
+                //               Allowed:      AllowedType.NOT_ALLOWED,
+                //               Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                //               RemoteParty:  remoteParty
+                //           );
+
+
+                var cpoClient = new CPO.HTTP.CPOClient(
+
+                                    remoteParty,
+                                    CommonAPI,
+                                    null, // VirtualHostname
+                                    null, // Description
+                                    null, // HTTPLogger
+
+                                    DisableLogging,
+                                    ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                    ClientsLoggingContext ?? DefaultLoggingContext,
+                                    ClientsLogfileCreator,
+                                    DNSClient
+
+                                );
+
+                //if (cpoClient is null)
+                //    return new AuthorizationInfo(
+                //               Allowed:      AllowedType.NOT_ALLOWED,
+                //               Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                //               RemoteParty:  remoteParty
+                //           );
+
+
+                var cpoClientLogger = new CPO.HTTP.CPOClient.Logger(
+                                          cpoClient,
+                                          ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                          ClientsLoggingContext ?? DefaultLoggingContext,
+                                          ClientsLogfileCreator
+                                      );
+
+
+
+
+
+                var cdr = chargeDetailRecord.ToOCPI(null, null, out var warnings);
+
+                var response = await cpoClient.PostCDR(
+                                         CDR:     cdr,
+                                         EMSPId:  emspId
+                                     );
+
+                if (response is not null)
+                {
+
+                    endtime  = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                    runtime  = endtime - startTime;
+
+                    if (response.StatusCode == 1000)
+                        sendCDRsResult  = WWCP.SendCDRsResult.Success(endtime.Value,
+                                                                      Id,
+                                                                      this,
+                                                                      chargeDetailRecord);
+
+                    else
+                        sendCDRsResult  = WWCP.SendCDRsResult.Error(endtime.Value,
+                                                                    Id,
+                                                                    this,
+                                                                    chargeDetailRecord,
+                                                                    I18NString.Create(Languages.en, "Sending the charge detail record failed: " + response.StatusMessage + " (" + response.StatusCode + ")!"));
+
+                }
+
+
+
+            }
+
+
+            endtime         ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            runtime         ??= endtime - startTime;
+
+            sendCDRsResult  ??= WWCP.SendCDRsResult.Error(endtime.Value,
+                                                          Id,
+                                                          this,
+                                                          ChargeDetailRecords);
+
+            #region Send OnSendCDRsRequest event
+
+            try
+            {
+
+                OnSendCDRsResponse?.Invoke(endtime.Value,
+                                           Timestamp.Value,
+                                           this,
+                                           Id.ToString(),
+                                           EventTrackingId,
+                                           RoamingNetwork.Id,
+                                           ChargeDetailRecords,
+                                           RequestTimeout,
+                                           sendCDRsResult,
+                                           runtime.Value);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(OCPICSOAdapter) + "." + nameof(OnSendCDRsRequest));
+            }
+
+            #endregion
+
+            return sendCDRsResult;
 
         }
 

@@ -641,11 +641,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         IEnumerable<ChargingReservation> IChargingReservations.ChargingReservations => throw new NotImplementedException();
 
-        Boolean IChargingReservations.TryGetChargingReservationById(ChargingReservation_Id ReservationId, out ChargingReservation? ChargingReservation)
-        {
-            throw new NotImplementedException();
-        }
-
         Task<ReservationResult> IChargingReservations.Reserve(ChargingLocation ChargingLocation, ChargingReservationLevel ReservationLevel, DateTime? StartTime, TimeSpan? Duration, ChargingReservation_Id? ReservationId, ChargingReservation_Id? LinkedReservationId, EMobilityProvider_Id? ProviderId, RemoteAuthentication? RemoteAuthentication, ChargingProduct? ChargingProduct, IEnumerable<AuthenticationToken>? AuthTokens, IEnumerable<eMobilityAccount_Id>? eMAIds, IEnumerable<UInt32>? PINs, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
         {
             return Task.FromResult(ReservationResult.NoOperation());
@@ -654,6 +649,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         Task<CancelReservationResult> IChargingReservations.CancelReservation(ChargingReservation_Id ReservationId, ChargingReservationCancellationReason Reason, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
         {
             return Task.FromResult(CancelReservationResult.NoOperation(ReservationId));
+        }
+
+
+        public Boolean TryGetChargingReservationById(ChargingReservation_Id ReservationId, out ChargingReservation? ChargingReservation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Boolean TryGetChargingReservationsById(ChargingReservation_Id ReservationId, out ChargingReservationCollection? ChargingReservations)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ChargingReservation? GetChargingReservationById(ChargingReservation_Id ReservationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ChargingReservationCollection? GetChargingReservationsById(ChargingReservation_Id ReservationId)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

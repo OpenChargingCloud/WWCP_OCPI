@@ -1232,7 +1232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="EVSE">An EVSE to compare with.</param>
         public Int32 CompareTo(EVSE? EVSE)
-{
+        {
 
             if (EVSE is null)
                 throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null!");

@@ -1805,7 +1805,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     chargingPeriods.Add(
                         new ChargingPeriod(
                             energyMeteringValue.Timestamp,
-                            new CDRDimension[] {
+                            new[] {
                                 new CDRDimension(
                                     CDRDimensionType.ENERGY,
                                     energyMeteringValue.Value
