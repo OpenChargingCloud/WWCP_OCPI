@@ -4747,7 +4747,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         if (!StartSessionCommand.TryParse(startSessionJSON,
                                                                           out var startSessionCommand,
-                                                                          out var errorResponse) ||
+                                                                          out var errorResponse,
+                                                                          Request.RemoteParty.CountryCode,
+                                                                          Request.RemoteParty.PartyId) ||
                                              startSessionCommand is null)
                                         {
 

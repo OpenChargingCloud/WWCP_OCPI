@@ -24,6 +24,7 @@ using org.GraphDefined.Vanaheimr.Aegir;
 
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
+using cloud.charging.open.protocols.WWCP.Virtual;
 
 #endregion
 
@@ -2552,7 +2553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
 
-                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
+                var addEVSE1Result1 = await chargingStation1!.AddVirtualEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
                                           Name:                 I18NString.Create(Languages.en, "Test EVSE #1A1"),
@@ -2560,6 +2561,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                           InitialStatus:        EVSEStatusTypes.Available,
+
+                                          ChargingConnectors:   new[] {
+                                                                    new ChargingConnector(
+                                                                       // Id:              ChargingConnector_Id.Parse(1),
+                                                                        Plug:            ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        Lockable:        true,
+                                                                        CableAttached:   true,
+                                                                        CableLength:     Meter.Parse(4)
+                                                                    )
+                                                                },
 
                                           Configurator:         evse => {
                                                                 }
@@ -2574,19 +2585,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                 #endregion
 
 
-                if (evse1 is not null)
+                // Copy locations to the EMSPs
+                foreach (var location in cpoCPOAPI.CommonAPI.GetLocations())
+                {
+                    await emsp1EMSPAPI.CommonAPI.AddLocation(location.Clone());
+                    await emsp2EMSPAPI.CommonAPI.AddLocation(location.Clone());
+                }
+
+
+                if (evse1                 is not null &&
+                    evse1.ChargingStation is not null &&
+                    evse1.ChargingPool    is not null &&
+                    evse1.Operator        is not null)
                 {
 
-                    var providerSessionId  = ChargingSession_Id.NewRandom;
+                    var providerIdStart      = EMobilityProvider_Id.Parse("DE-GDF");
+                    var authenticationStart  = RemoteAuthentication.FromRemoteIdentification(EMobilityAccount_Id.Parse("DE-GDF-C12345678-X"));
+                    var providerSessionId    = ChargingSession_Id.NewRandom;
+                    var chargingProduct      = ChargingProduct.FromId(ChargingProduct_Id.Parse("AC1"));
 
-                    var remoteStartResult  = await emp1RoamingNetwork.RemoteStart(
-
-                                                       ChargingLocation:       ChargingLocation.      FromEVSEId(evse1.Id),
-                                                       ChargingProduct:        ChargingProduct.       FromId    (ChargingProduct_Id.Parse("AC1")),
-                                                       ReservationId:          ChargingReservation_Id.Random    (ChargingStationOperator_Id.Parse("DE*GEF")),
-                                                       SessionId:              providerSessionId,
-                                                       ProviderId:             EMobilityProvider_Id.  Parse("DE-GDF"),
-                                                       RemoteAuthentication:   RemoteAuthentication.  FromRemoteIdentification(eMobilityAccount_Id.Parse("DE-GDF-C12345678")));
+                    var remoteStartResult    = await emp1RoamingNetwork.RemoteStart(
+                                                         ChargingLocation:       ChargingLocation.FromEVSEId(evse1.Id),
+                                                         ChargingProduct:        chargingProduct,
+                                                         ReservationId:          ChargingReservation_Id.Random(ChargingStationOperator_Id.Parse("DE*GEF")),
+                                                         SessionId:              providerSessionId,
+                                                         ProviderId:             providerIdStart,
+                                                         RemoteAuthentication:   authenticationStart
+                                                     );
 
                     Assert.AreEqual(RemoteStartResultTypes.Success, remoteStartResult.Result);
 
@@ -2596,66 +2621,93 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                         Timestamp.TravelForwardInTime(TimeSpan.FromMinutes(5));
 
-                        var remoteStopResult   = await emp1RoamingNetwork.RemoteStop(
+                        var providerIdStop      = EMobilityProvider_Id.Parse("DE-GDF");
+                        var authenticationStop  = RemoteAuthentication.FromRemoteIdentification(EMobilityAccount_Id.Parse("DE-GDF-C56781234-X"));
 
-                                                       SessionId:              remoteStartResult.Session.Id,
-                                                       ReservationHandling:    ReservationHandling.Close,
-                                                       ProviderId:             EMobilityProvider_Id.Parse("DE-GDF"),
-                                                       RemoteAuthentication:   RemoteAuthentication.FromRemoteIdentification(eMobilityAccount_Id.Parse("DE-GDF-C12345678")));
+                        var remoteStopResult    = await emp1RoamingNetwork.RemoteStop(
+                                                            SessionId:              remoteStartResult.Session.Id,
+                                                            ReservationHandling:    ReservationHandling.Close,
+                                                            ProviderId:             providerIdStop,
+                                                            RemoteAuthentication:   RemoteAuthentication.FromRemoteIdentification(EMobilityAccount_Id.Parse("DE-GDF-C12345678"))
+                                                        );
 
 
-                        var sendCDRResult = await csoRoamingNetwork.SendChargeDetailRecord(
-                                                      new ChargeDetailRecord(
-                                                          Id:                           ChargeDetailRecord_Id.NewRandom,
-                                                          SessionId:                    remoteStartResult.Session.Id,
-                                                          SessionTime:                  new StartEndDateTime(
-                                                                                            Timestamp.Now - TimeSpan.FromMinutes(5),
-                                                                                            Timestamp.Now - TimeSpan.FromMinutes(1)
-                                                                                        ),
-                                                          Duration:                     TimeSpan.FromMinutes(4),
 
-                                                          EVSE:                         evse1,
-                                                          EVSEId:                       evse1.Id,
-                                                          ChargingStation:              evse1.ChargingStation,
-                                                          ChargingStationId:            evse1.ChargingStation.Id,
-                                                          ChargingPool:                 evse1.ChargingPool,
-                                                          ChargingPoolId:               evse1.ChargingPool.Id,
-                                                          ChargingStationOperator:      evse1.Operator,
-                                                          ChargingStationOperatorId:    evse1.Operator.Id,
+                        var startTS          = Timestamp.Now - TimeSpan.FromMinutes(5);
+                        var stopTS           = Timestamp.Now - TimeSpan.FromMinutes(1);
 
-                                                          ChargingProduct:              ChargingProduct.FromId(ChargingProduct_Id.Parse("AC1")),
-                                                          ChargingPrice:                null,
+                        var sendCDRResult    = await csoRoamingNetwork.SendChargeDetailRecord(
+                                                         new ChargeDetailRecord(
+                                                             Id:                           ChargeDetailRecord_Id.NewRandom,
+                                                             SessionId:                    remoteStartResult.Session.Id,
+                                                             SessionTime:                  new StartEndDateTime(
+                                                                                               Timestamp.Now - TimeSpan.FromMinutes(5),
+                                                                                               Timestamp.Now - TimeSpan.FromMinutes(1)
+                                                                                           ),
+                                                             Duration:                     TimeSpan.FromMinutes(4),
 
-                                                          AuthenticationStart:          LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
-                                                          AuthenticationStop:           LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
-                                                          AuthMethodStart:              AuthMethod.AUTH_REQUEST,
-                                                          AuthMethodStop:               AuthMethod.WHITELIST,
-                                                          ProviderIdStart:              EMobilityProvider_Id.Parse("DE-GDF"),
-                                                          ProviderIdStop:               EMobilityProvider_Id.Parse("DE-GD2"),
+                                                             EVSE:                        evse1,
+                                                             EVSEId:                      evse1.Id,
+                                                             ChargingStation:             evse1.ChargingStation,
+                                                             ChargingStationId:           evse1.ChargingStation.Id,
+                                                             ChargingPool:                evse1.ChargingPool,
+                                                             ChargingPoolId:              evse1.ChargingPool.Id,
+                                                             ChargingStationOperator:     evse1.Operator,
+                                                             ChargingStationOperatorId:   evse1.Operator.Id,
 
-                                                          EMPRoamingProvider:           null,
-                                                          EMPRoamingProviderId:         null,
+                                                             ChargingProduct:             chargingProduct,
+                                                             ChargingPrice:               new Price(
+                                                                                              1.23M,
+                                                                                              VAT:       0.34M,
+                                                                                              Currency:  org.GraphDefined.Vanaheimr.Illias.Currency.EUR
+                                                                                          ),
 
-                                                          Reservation:                  null,
-                                                          ReservationId:                null,
-                                                          ReservationTime:              null,
-                                                          ReservationFee:               null,
+                                                             AuthenticationStart:         authenticationStart,
+                                                             AuthenticationStop:          authenticationStop,
+                                                             AuthMethodStart:             AuthMethod.AUTH_REQUEST,
+                                                             AuthMethodStop:              AuthMethod.AUTH_REQUEST,
+                                                             ProviderIdStart:             providerIdStart,
+                                                             ProviderIdStop:              providerIdStop,
 
-                                                          ParkingSpaceId:               null,
-                                                          ParkingTime:                  null,
-                                                          ParkingFee:                   null,
+                                                             EMPRoamingProvider:          null,
+                                                             EMPRoamingProviderId:        null,
 
-                                                          EnergyMeterId:                null,
-                                                          EnergyMeter:                  null,
-                                                          EnergyMeteringValues:         null,
-                                                          ConsumedEnergy:               null,
-                                                          ConsumedEnergyFee:            null,
+                                                             Reservation:                 null,
+                                                             ReservationId:               null,
+                                                             ReservationTime:             null,
+                                                             ReservationFee:              null,
 
-                                                          CustomData:                   null,
-                                                          InternalData:                 null,
+                                                             ParkingSpaceId:              null,
+                                                             ParkingTime:                 new StartEndDateTime(
+                                                                                              startTS,
+                                                                                              stopTS
+                                                                                          ),
+                                                             ParkingFee:                  null,
 
-                                                          PublicKey:                    null,
-                                                          Signatures:                   null));
+                                                             EnergyMeterId:               evse1.EnergyMeter?.Id,
+                                                             EnergyMeter:                 evse1.EnergyMeter,
+                                                             EnergyMeteringValues:        new[] {
+                                                                                              new EnergyMeteringValue(
+                                                                                                  startTS,
+                                                                                                  1334.034M,
+                                                                                                  "1334.034",
+                                                                                                  "..."
+                                                                                              ),
+                                                                                              new EnergyMeteringValue(
+                                                                                                  stopTS,
+                                                                                                  1451.241M,
+                                                                                                  "1451.241",
+                                                                                                  "..."
+                                                                                              )
+                                                                                          },
+                                                             ConsumedEnergy:              null,
+                                                             ConsumedEnergyFee:           null,
+
+                                                             CustomData:                  null,
+                                                             InternalData:                null,
+
+                                                             PublicKey:                   null,
+                                                             Signatures:                  null));
 
                         Assert.AreEqual(SendCDRsResultTypes.Success,  sendCDRResult.Result);
 

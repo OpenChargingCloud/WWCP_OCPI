@@ -23,6 +23,8 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
+using org.GraphDefined.Vanaheimr.Hermod.DNS;
 
 #endregion
 
@@ -42,6 +44,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     {
 
         #region Data
+
+        //public  const           String                                                           Default_LoggingPath                     = "default";
+
+        /// <summary>
+        /// The default logging context.
+        /// </summary>
+        public  const       String         DefaultLoggingContext        = "OCPIv2.2_EMPAdapter";
+
+        public  const       String         DefaultHTTPAPI_LoggingPath   = "default";
+
+        public  const       String         DefaultHTTPAPI_LogfileName   = "OCPIv2.2_EMPAdapter.log";
 
         #endregion
 
@@ -82,6 +95,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public HTTP.CommonAPI                               CommonAPI                            { get; }
 
         public HTTP.EMSPAPI                                 EMSPAPI                              { get; }
+
+
+        #region Logging
+
+        public Boolean?                                   IsDevelopment            { get; }
+        public IEnumerable<String>?                       DevelopmentServers       { get; }
+        public Boolean?                                   DisableLogging           { get; set; }
+        public String                                     LoggingPath              { get; }
+        public String?                                    LoggingContext           { get; }
+        public String?                                    LogfileName              { get; }
+        public LogfileCreatorDelegate?                    LogfileCreator           { get; }
+
+        public String                                     ClientsLoggingPath       { get; }
+        public String?                                    ClientsLoggingContext    { get; }
+        public LogfileCreatorDelegate?                    ClientsLogfileCreator    { get; }
+
+        #endregion
+
+        public DNSClient?  DNSClient    { get; }
 
         #endregion
 
@@ -641,7 +673,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         IEnumerable<ChargingReservation> IChargingReservations.ChargingReservations => throw new NotImplementedException();
 
-        Task<ReservationResult> IChargingReservations.Reserve(ChargingLocation ChargingLocation, ChargingReservationLevel ReservationLevel, DateTime? StartTime, TimeSpan? Duration, ChargingReservation_Id? ReservationId, ChargingReservation_Id? LinkedReservationId, EMobilityProvider_Id? ProviderId, RemoteAuthentication? RemoteAuthentication, ChargingProduct? ChargingProduct, IEnumerable<AuthenticationToken>? AuthTokens, IEnumerable<eMobilityAccount_Id>? eMAIds, IEnumerable<UInt32>? PINs, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        Task<ReservationResult> IChargingReservations.Reserve(ChargingLocation ChargingLocation, ChargingReservationLevel ReservationLevel, DateTime? StartTime, TimeSpan? Duration, ChargingReservation_Id? ReservationId, ChargingReservation_Id? LinkedReservationId, EMobilityProvider_Id? ProviderId, RemoteAuthentication? RemoteAuthentication, ChargingProduct? ChargingProduct, IEnumerable<AuthenticationToken>? AuthTokens, IEnumerable<EMobilityAccount_Id>? eMAIds, IEnumerable<UInt32>? PINs, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
         {
             return Task.FromResult(ReservationResult.NoOperation());
         }
@@ -676,14 +708,109 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Remote Start/-Stop
 
-        Task<RemoteStartResult> IRemoteStartStop.RemoteStart(ChargingLocation ChargingLocation, ChargingProduct? ChargingProduct, ChargingReservation_Id? ReservationId, ChargingSession_Id? SessionId, EMobilityProvider_Id? ProviderId, RemoteAuthentication? RemoteAuthentication, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        async Task<RemoteStartResult> IRemoteStartStop.RemoteStart(ChargingLocation         ChargingLocation,
+                                                                   ChargingProduct?         ChargingProduct,
+                                                                   ChargingReservation_Id?  ReservationId,
+                                                                   ChargingSession_Id?      SessionId,
+                                                                   EMobilityProvider_Id?    ProviderId,
+                                                                   RemoteAuthentication?    RemoteAuthentication,
+                                                                   DateTime?                Timestamp,
+                                                                   CancellationToken        CancellationToken,
+                                                                   EventTracking_Id?        EventTrackingId,
+                                                                   TimeSpan?                RequestTimeout)
         {
-            return Task.FromResult(RemoteStartResult.NoOperation());
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var operatorId  = ChargingLocation.EVSEId?.           OperatorId ??
+                              ChargingLocation.ChargingStationId?.OperatorId ??
+                              ChargingLocation.ChargingPoolId?.   OperatorId ??
+                              ChargingLocation.ChargingStationOperatorId;
+
+            if (operatorId.HasValue)
+            {
+
+                var cpoId             = CPO_Id.Parse(operatorId.Value.ToString());
+                var remoteParty       = CommonAPI.GetRemoteParty(RemoteParty_Id.From(cpoId));
+                var remoteAccessInfo  = remoteParty?.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
+
+                if (remoteAccessInfo is null)
+                    return RemoteStartResult.Error();
+
+                var emspClient = new EMSP.HTTP.EMSPClient(
+
+                                     remoteParty,
+                                     CommonAPI,
+                                     null, // VirtualHostname
+                                     null, // Description
+                                     null, // HTTPLogger
+
+                                     DisableLogging,
+                                     ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                     ClientsLoggingContext ?? DefaultLoggingContext,
+                                     ClientsLogfileCreator,
+                                     DNSClient
+
+                                 );
+
+                var emspClientLogger = new EMSP.HTTP.EMSPClient.Logger(
+                                           emspClient,
+                                           ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                           ClientsLoggingContext ?? DefaultLoggingContext,
+                                           ClientsLogfileCreator
+                                       );
+
+
+                var evseId    = ChargingLocation.EVSEId.Value.ToOCPI_EVSEId()!;
+                var location  = CommonAPI.GetLocations(location => location.EVSEs.FirstOrDefault(evse => evse.EVSEId.Value == evseId) is not null).FirstOrDefault();
+                var evse      = location.EVSEs.FirstOrDefault(evse => evse.EVSEId.Value == evseId);
+
+                var response  = await emspClient.StartSession(Token:               new Token(
+                                                                                       CountryCode.Parse(operatorId.Value.CountryCode.Alpha2Code),
+                                                                                       Party_Id.   Parse(operatorId.Value.Suffix),
+                                                                                       Token_Id.   Parse(RemoteAuthentication.RemoteIdentification.ToString()),
+                                                                                       TokenType.OTHER,
+                                                                                       Auth_Id.    Parse(RemoteAuthentication.RemoteIdentification.ToString()),
+                                                                                       "Issuer",
+                                                                                       true,
+
+                                                                                       WhitelistType:   WhitelistTypes.NEVER,
+                                                                                       VisualNumber:    RemoteAuthentication.RemoteIdentification.ToString(),
+                                                                                       UILanguage:      null,
+
+                                                                                       Created:         null,
+                                                                                       LastUpdated:     null
+                                                                                   ),
+                                                              LocationId:          location.Id,
+                                                              EVSEUId:             evse.UId,
+
+                                                              CommandId:           null,
+                                                              RequestId:           null,
+                                                              CorrelationId:       null,
+                                                              VersionId:           null,
+
+                                                              CancellationToken:   CancellationToken,
+                                                              EventTrackingId:     EventTrackingId,
+                                                              RequestTimeout:      RequestTimeout);
+
+            }
+
+            return RemoteStartResult.NoOperation();
+
         }
 
-        Task<RemoteStopResult> IRemoteStartStop.RemoteStop(ChargingSession_Id SessionId, ReservationHandling? ReservationHandling, EMobilityProvider_Id? ProviderId, RemoteAuthentication? RemoteAuthentication, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        Task<RemoteStopResult> IRemoteStartStop.RemoteStop(ChargingSession_Id     SessionId,
+                                                           ReservationHandling?   ReservationHandling,
+                                                           EMobilityProvider_Id?  ProviderId,
+                                                           RemoteAuthentication?  RemoteAuthentication,
+                                                           DateTime?              Timestamp,
+                                                           CancellationToken      CancellationToken,
+                                                           EventTracking_Id?      EventTrackingId,
+                                                           TimeSpan?              RequestTimeout)
         {
+
             return Task.FromResult(RemoteStopResult.NoOperation(SessionId));
+
         }
 
         #endregion

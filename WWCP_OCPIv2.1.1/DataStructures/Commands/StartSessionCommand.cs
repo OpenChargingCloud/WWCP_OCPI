@@ -119,12 +119,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomStartSessionCommandParser">A delegate to parse custom 'start session' command JSON objects.</param>
         public static StartSessionCommand Parse(JObject                                            JSON,
+                                                CountryCode?                                       CountryCodeURL                    = null,
+                                                Party_Id?                                          PartyIdURL                        = null,
                                                 CustomJObjectParserDelegate<StartSessionCommand>?  CustomStartSessionCommandParser   = null)
         {
 
             if (TryParse(JSON,
                          out var startSessionCommand,
                          out var errorResponse,
+                         CountryCodeURL,
+                         PartyIdURL,
                          CustomStartSessionCommandParser))
             {
                 return startSessionCommand!;
@@ -167,6 +171,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean TryParse(JObject                                            JSON,
                                        out StartSessionCommand?                           StartSessionCommand,
                                        out String?                                        ErrorResponse,
+                                       CountryCode?                                       CountryCodeURL                    = null,
+                                       Party_Id?                                          PartyIdURL                        = null,
                                        CustomJObjectParserDelegate<StartSessionCommand>?  CustomStartSessionCommandParser   = null)
         {
 
@@ -183,17 +189,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Token            [mandatory]
 
-                if (!JSON.ParseMandatoryJSON("token",
-                                             "token",
-                                             OCPIv2_1_1.Token.TryParse,
-                                             out Token? Token,
-                                             out ErrorResponse))
+                if (JSON["token"] is not JObject jsonToken)
+                {
+                    ErrorResponse = "Invalid token!";
+                    return false;
+                }
+
+                if (!OCPIv2_1_1.Token.TryParse(jsonToken,
+                                               out Token? Token,
+                                               out ErrorResponse,
+                                               CountryCodeURL,
+                                               PartyIdURL) ||
+                     Token is null)
                 {
                     return false;
                 }
 
-                if (Token is null)
-                    return false;
+                //if (!JSON.ParseMandatoryJSON("token",
+                //                             "token",
+                //                             OCPIv2_1_1.Token.TryParse,
+                //                             out Token? Token,
+                //                             out ErrorResponse) ||
+                //     Token is null)
+                //{
+                //    return false;
+                //}
 
                 #endregion
 

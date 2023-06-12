@@ -307,6 +307,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToWWCP (this EMSPId)
 
+        public static WWCP.EVSE_Id? ToWWCP(this EVSE_Id EVSEId)
+
+            => WWCP.EVSE_Id.TryParse(EVSEId.ToString());
+
+        public static WWCP.EVSE_Id? ToWWCP(this EVSE_Id? EVSEId)
+
+            => EVSEId.HasValue
+                   ? EVSEId.Value.ToWWCP()
+                   : null;
+
+        #endregion
+
+
+        #region ToWWCP (this EMSPId)
+
         public static WWCP.EMobilityProvider_Id? ToWWCP(this EMSP_Id EMSPId)
 
             => WWCP.EMobilityProvider_Id.TryParse(EMSPId.ToString());
