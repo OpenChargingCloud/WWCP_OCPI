@@ -1139,6 +1139,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (AuthMethod == WWCP.AuthMethod.AUTH_REQUEST)
                 return AuthMethods.AUTH_REQUEST;
 
+            if (AuthMethod == WWCP.AuthMethod.RESERVE)
+                return AuthMethods.AUTH_REQUEST;
+
+            if (AuthMethod == WWCP.AuthMethod.REMOTESTART)
+                return AuthMethods.AUTH_REQUEST;
+
             if (AuthMethod == WWCP.AuthMethod.WHITELIST)
                 return AuthMethods.WHITELIST;
 
@@ -1877,7 +1883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            PartyId:                 OCPI.Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
                            Id:                      OCPI.CDR_Id.     Parse(ChargeDetailRecord.Id.ToString()),
                            Start:                   ChargeDetailRecord.SessionTime.StartTime,
-                           End:                     ChargeDetailRecord.SessionTime.EndTime. Value,
+                           Stop:                     ChargeDetailRecord.SessionTime.EndTime. Value,
                            AuthId:                  OCPI.Auth_Id.    Parse(ChargeDetailRecord.SessionId.ToString()),
                            AuthMethod:              authMethod.Value,
                            Location:                filteredLocation,   //ToDo: Might still have not required connectors!

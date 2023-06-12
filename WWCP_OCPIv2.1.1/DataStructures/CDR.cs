@@ -89,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// EV is full, but parking cost also has to be paid.
         /// </summary>
         [Mandatory]
-        public   DateTime                                 End                         { get; }
+        public   DateTime                                 Stop                         { get; }
 
         /// <summary>
         /// The reference to a token, identified by the auth_id field of the token.
@@ -225,7 +225,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="PartyId">An identification of the charge point operator that 'owns' this charge detail record (following the ISO-15118 standard).</param>
         /// <param name="Id">An identification of the charge detail record within the charge point operator's platform (and suboperator platforms).</param>
         /// <param name="Start">The start timestamp of the charging session, or in-case of a reservation (before the start of a session) the start of the reservation.</param>
-        /// <param name="End">The timestamp when the session was completed/finished. Charging might have finished before the session ends, for example: EV is full, but parking cost also has to be paid.</param>
+        /// <param name="Stop">The timestamp when the session was completed/finished. Charging might have finished before the session ends, for example: EV is full, but parking cost also has to be paid.</param>
         /// <param name="AuthId">The reference to a token, identified by the auth_id field of the token.</param>
         /// <param name="Location">The location where the charging session took place, including only the relevant EVSE and connector.</param>
         /// <param name="AuthMethod">The authentication method used.</param>
@@ -274,7 +274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Party_Id                                                      PartyId,
                    CDR_Id                                                        Id,
                    DateTime                                                      Start,
-                   DateTime                                                      End,
+                   DateTime                                                      Stop,
                    Auth_Id                                                       AuthId,
                    AuthMethods                                                   AuthMethod,
                    Location                                                      Location,
@@ -330,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.PartyId                  = PartyId;
             this.Id                       = Id;
             this.Start                    = Start;
-            this.End                      = End;
+            this.Stop                     = Stop;
             this.AuthId                   = AuthId;
             this.AuthMethod               = AuthMethod;
             this.Location                 = Location;
@@ -348,8 +348,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.TotalParkingTime         = TotalParkingTime;
             this.Remark                   = Remark;
 
-            this.Created                   = Created              ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated               = LastUpdated          ?? Created     ?? Timestamp.Now;
+            this.Created                  = Created               ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated              = LastUpdated           ?? Created     ?? Timestamp.Now;
 
             this.ETag                     = SHA256.HashData(ToJSON(true,
                                                                    EMSPId,
@@ -385,7 +385,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            this.PartyId.              GetHashCode()        * 73 ^
                            this.Id.                   GetHashCode()        * 71 ^
                            this.Start.                GetHashCode()        * 67 ^
-                           this.End.                  GetHashCode()        * 61 ^
+                           this.Stop.                 GetHashCode()        * 61 ^
                            this.AuthId.               GetHashCode()        * 59 ^
                            this.AuthMethod.           GetHashCode()        * 53 ^
                            this.Location.             GetHashCode()        * 47 ^
@@ -589,11 +589,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse End                       [mandatory]
+                #region Parse Stop                      [mandatory]
 
-                if (!JSON.ParseMandatory("end_date_time",
-                                         "end timestamp",
-                                         out DateTime End,
+                if (!JSON.ParseMandatory("stop_date_time",
+                                         "stop timestamp",
+                                         out DateTime Stop,
                                          out ErrorResponse))
                 {
                     return false;
@@ -853,7 +853,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               PartyIdBody     ?? PartyIdURL!.    Value,
                               CDRIdBody       ?? CDRIdURL!.      Value,
                               Start,
-                              End,
+                              Stop,
                               AuthId,
                               AuthMethod,
                               Location,
@@ -962,7 +962,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                  new JProperty("id",                       Id.                          ToString()),
                                  new JProperty("start_date_time",          Start.                       ToIso8601()),
-                                 new JProperty("end_date_time",            End.                         ToIso8601()),
+                                 new JProperty("stop_date_time",           Stop.                        ToIso8601()),
                                  new JProperty("auth_id",                  AuthId.                      ToString()),
                                  new JProperty("auth_method",              AuthMethod.                  ToString()),
                                  new JProperty("location",                 Location.                    ToJSON(false,
@@ -1055,7 +1055,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     PartyId.    Clone,
                     Id.         Clone,
                     Start,
-                    End,
+                    Stop,
                     AuthId.     Clone,
                     AuthMethod,
                     Location.   Clone(),
@@ -1352,7 +1352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 c = Start.      CompareTo(CDR.Start);
 
             if (c == 0)
-                c = End.        CompareTo(CDR.End);
+                c = Stop.        CompareTo(CDR.Stop);
 
             if (c == 0)
                 c = AuthId.     CompareTo(CDR.AuthId);
@@ -1426,7 +1426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                PartyId.                Equals(CDR.PartyId)                 &&
                Id.                     Equals(CDR.Id)                      &&
                Start.                  Equals(CDR.Start)                   &&
-               End.                    Equals(CDR.End)                     &&
+               Stop.                    Equals(CDR.Stop)                     &&
                AuthId.                 Equals(CDR.AuthId)                  &&
                AuthMethod.             Equals(CDR.AuthMethod)              &&
                Location.               Equals(CDR.Location)                &&
@@ -1490,7 +1490,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    CountryCode,              "-",
                    PartyId,                  ") ",
                    Start.      ToIso8601(),  ", ",
-                   End.        ToIso8601(),  ", ",
+                   Stop.        ToIso8601(),  ", ",
                    AuthId.     ToString(),   ", ",
                    AuthMethod. ToString(),   ", ",
                    Location.   ToString(),   ", ",

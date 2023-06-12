@@ -126,7 +126,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         AUTH_REQUEST,
 
         /// <summary>
-        /// A command like 'StartSession' or 'ReserveNow' was used to start the charging session, the token provided in the command was used as authorization.
+        /// Command like 'StartSession' or 'ReserveNow' used to start the charging session.
+        /// The token provided within the command was used as authorization.
         /// </summary>
         COMMAND,
 

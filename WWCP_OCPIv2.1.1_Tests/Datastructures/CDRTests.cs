@@ -276,7 +276,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.AreEqual (cdr1.Id,                       parsedCDR!.Id);
 
             Assert.AreEqual (cdr1.Start.ToIso8601(),        parsedCDR!.Start.ToIso8601());
-            Assert.AreEqual (cdr1.End.  ToIso8601(),        parsedCDR!.End.  ToIso8601());
+            Assert.AreEqual (cdr1.Stop.  ToIso8601(),        parsedCDR!.Stop.  ToIso8601());
             Assert.AreEqual (cdr1.AuthId,                   parsedCDR!.AuthId);
             Assert.AreEqual (cdr1.AuthMethod,               parsedCDR!.AuthMethod);
             Assert.IsTrue   (cdr1.Location.Equals(parsedCDR!.Location));
@@ -652,7 +652,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.AreEqual ("GEF",                                      ocpiCDR!.PartyId.    ToString());
             Assert.AreEqual (wwcpCDR.Id.ToString(),                      ocpiCDR!.Id.         ToString());
             Assert.AreEqual (wwcpCDR.SessionTime.StartTime,              ocpiCDR!.Start);
-            Assert.AreEqual (wwcpCDR.SessionTime.EndTime!.Value,         ocpiCDR!.End);
+            Assert.AreEqual (wwcpCDR.SessionTime.EndTime!.Value,         ocpiCDR!.Stop);
             //AuthId
             Assert.AreEqual (wwcpCDR.AuthMethodStart.ToOCPI(),           ocpiCDR!.AuthMethod);
 

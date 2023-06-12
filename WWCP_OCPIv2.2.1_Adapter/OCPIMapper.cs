@@ -525,7 +525,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            City:                 ChargingPool.Address.City.FirstText(),
                            Country:              ChargingPool.Address.Country,
                            Coordinates:          ChargingPool.GeoLocation.Value,
-                           Timezone:             ChargingPool.Address.TimeZone?.ToString(),
+                           Timezone:             ChargingPool.Address.TimeZone?.ToString() ?? "UTC",
 
                            PublishAllowedTo:     null,
                            Name:                 ChargingPool.Name.FirstText(),
@@ -1088,6 +1088,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             if (AuthMethod == WWCP.AuthMethod.AUTH_REQUEST)
                 return AuthMethods.AUTH_REQUEST;
+
+            if (AuthMethod == WWCP.AuthMethod.RESERVE)
+                return AuthMethods.COMMAND;
+
+            if (AuthMethod == WWCP.AuthMethod.REMOTESTART)
+                return AuthMethods.COMMAND;
 
             if (AuthMethod == WWCP.AuthMethod.WHITELIST)
                 return AuthMethods.WHITELIST;

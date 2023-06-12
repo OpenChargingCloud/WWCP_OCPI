@@ -2819,7 +2819,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
                 var chargeDetailRecord  = ChargeDetailRecords.First();
-                var emspId              = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString());
+                var emspId              = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart?.ToString() ?? "DE-8PS");
                 var remoteParty         = CommonAPI.GetRemoteParty(RemoteParty_Id.From(emspId));
                 var remoteAccessInfo    = remoteParty?.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
 

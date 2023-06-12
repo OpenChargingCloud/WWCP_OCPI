@@ -395,8 +395,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    Images,
                    EnergyMix,
 
-                   Created,
-                   LastUpdated,
+                   Created     ?? LastUpdated,
+                   LastUpdated ?? Created,
                    EMSPId,
                    CustomLocationSerializer,
                    CustomPublishTokenSerializer,
