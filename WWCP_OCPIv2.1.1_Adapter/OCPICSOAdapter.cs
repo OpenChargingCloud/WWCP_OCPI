@@ -740,6 +740,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                            CustomEVSEIdConverter,
+                                                           evseId      => true,
+                                                           connectorId => true,
+                                                           null,
                                                            out warnings);
 
                         if (location is not null)
@@ -832,6 +835,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                            CustomEVSEIdConverter,
+                                                           evseId      => true,
+                                                           connectorId => true,
+                                                           null,
                                                            out warnings);
 
                         if (location is not null)
@@ -937,6 +943,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                            CustomEVSEIdConverter,
+                                                           evseId      => true,
+                                                           connectorId => true,
+                                                           null,
                                                            out warnings);
 
                         if (location is not null)
@@ -1087,6 +1096,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             var location = chargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                                CustomEVSEIdConverter,
+                                                               evseId      => true,
+                                                               connectorId => true,
+                                                               null,
                                                                out warnings);
 
                             if (location is not null)
@@ -1162,6 +1174,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             var location = chargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                                CustomEVSEIdConverter,
+                                                               evseId      => true,
+                                                               connectorId => true,
+                                                               null,
                                                                out warnings);
 
                             if (location is not null)
@@ -1316,7 +1331,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
-                                                        id => true,
+                                                        connectorId => true,
+                                                        null,
                                                         EVSE.Status.Timestamp > EVSE.LastChange
                                                             ? EVSE.Status.Timestamp
                                                             : EVSE.LastChange,
@@ -1452,7 +1468,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
-                                                        id => true,
+                                                        connectorId => true,
+                                                        null,
                                                         EVSE.Status.Timestamp > EVSE.LastChange
                                                             ? EVSE.Status.Timestamp
                                                             : EVSE.LastChange,
@@ -1594,7 +1611,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
-                                                        id => true,
+                                                        connectorId => true,
+                                                        null,
                                                         EVSE.Status.Timestamp > EVSE.LastChange
                                                             ? EVSE.Status.Timestamp
                                                             : EVSE.LastChange,
@@ -1755,7 +1773,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             var _evse = evse.ToOCPI(CustomEVSEUIdConverter,
                                                     CustomEVSEIdConverter,
-                                                    id => true,
+                                                    connectorId => true,
+                                                    null,
                                                     evse.Status.Timestamp > evse.LastChange
                                                         ? evse.Status.Timestamp
                                                         : evse.LastChange,
@@ -1834,7 +1853,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             var _evse = evse.ToOCPI(CustomEVSEUIdConverter,
                                                     CustomEVSEIdConverter,
-                                                    id => true,
+                                                    connectorId => true,
+                                                    null,
                                                     evse.Status.Timestamp > evse.LastChange
                                                         ? evse.Status.Timestamp
                                                         : evse.LastChange,
@@ -1995,7 +2015,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                         var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                                 CustomEVSEIdConverter,
-                                                                id => true,
+                                                                connectorId => true,
+                                                                null,
                                                                 evse.Status.Timestamp > evse.LastChange
                                                                     ? evse.Status.Timestamp
                                                                     : evse.LastChange,
@@ -2951,8 +2972,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 sendCDRsResult  = WWCP.SendCDRResultTypesExtensions.Combine(sendCDRResults,
                                                                             Id,
                                                                             this,
-                                                                            null,
-                                                                            warnings);
+                                                                            Warnings: warnings);
 
             }
 

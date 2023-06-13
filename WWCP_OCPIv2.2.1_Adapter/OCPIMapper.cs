@@ -1357,7 +1357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                            ChargeDetailRecord.ChargingPoolId,
                                                            ChargeDetailRecord.ChargingStationId,
                                                            ChargeDetailRecord.EVSEId,
-                                                           ChargeDetailRecord.ConnectorId,
+                                                           ChargeDetailRecord.ChargingConnectorId,
                                                            ChargeDetailRecord.ProviderIdStart
                                                        )),
                            SignedData:                 null,

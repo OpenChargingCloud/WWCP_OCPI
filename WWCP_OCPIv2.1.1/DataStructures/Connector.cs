@@ -133,6 +133,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public String            ETag                     { get; }
 
+
+        public CustomJObjectSerializerDelegate<Connector>? CustomConnectorSerializer { get; }
+
         #endregion
 
         #region Constructor(s)
@@ -172,20 +175,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
-            this.ParentEVSE             = ParentEVSE;
+            this.ParentEVSE                 = ParentEVSE;
 
-            this.Id                     = Id;
-            this.Standard               = Standard;
-            this.Format                 = Format;
-            this.PowerType              = PowerType;
-            this.Voltage                = Voltage;
-            this.Amperage               = Amperage;
-            this.tariffId               = TariffId;
-            this.TermsAndConditionsURL  = TermsAndConditionsURL;
+            this.Id                         = Id;
+            this.Standard                   = Standard;
+            this.Format                     = Format;
+            this.PowerType                  = PowerType;
+            this.Voltage                    = Voltage;
+            this.Amperage                   = Amperage;
+            this.tariffId                   = TariffId;
+            this.TermsAndConditionsURL      = TermsAndConditionsURL;
 
-            this.LastUpdated            = LastUpdated ?? Timestamp.Now;
+            this.LastUpdated                = LastUpdated ?? Timestamp.Now;
 
-            this.ETag                   = SHA256.HashData(ToJSON(EMSPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();    //ToDo: EMP Id must not be null!
+            this.ETag                       = SHA256.HashData(ToJSON(EMSPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();    //ToDo: EMP Id must not be null!
+
+            this.CustomConnectorSerializer  = CustomConnectorSerializer;
 
             unchecked
             {
@@ -485,34 +490,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
-            var tariffIds  = GetTariffIds(EMSPId);
-            var tariffId   = this.tariffId ?? (tariffIds.Any()
-                                                   ? tariffIds.First()
-                                                   : null);
+            var tariffIds   = GetTariffIds(EMSPId);
+            var tariffId    = this.tariffId ?? (tariffIds.Any()
+                                                    ? tariffIds.First()
+                                                    : null);
 
-            var json       = JSONObject.Create(
+            var json        = JSONObject.Create(
 
-                                       new JProperty("id",                     Id.                   ToString()),
-                                       new JProperty("standard",               Standard.             ToString()),
-                                       new JProperty("format",                 Format.               AsText()),
-                                       new JProperty("power_type",             PowerType.            AsText()),
-                                       new JProperty("voltage",                Voltage),
-                                       new JProperty("amperage",               Amperage),
+                                        new JProperty("id",                     Id.                   ToString()),
+                                        new JProperty("standard",               Standard.             ToString()),
+                                        new JProperty("format",                 Format.               AsText()),
+                                        new JProperty("power_type",             PowerType.            AsText()),
+                                        new JProperty("voltage",                Voltage),
+                                        new JProperty("amperage",               Amperage),
 
-                                 tariffId is not null
-                                     ? new JProperty("tariff_id",              tariffId.       Value.ToString())
-                                     : null,
+                                  tariffId is not null
+                                      ? new JProperty("tariff_id",              tariffId.       Value.ToString())
+                                      : null,
 
-                                 TermsAndConditionsURL.HasValue
-                                     ? new JProperty("terms_and_conditions",   TermsAndConditionsURL.ToString())
-                                     : null,
+                                  TermsAndConditionsURL.HasValue
+                                      ? new JProperty("terms_and_conditions",   TermsAndConditionsURL.ToString())
+                                      : null,
 
-                                       new JProperty("last_updated",           LastUpdated.          ToIso8601())
+                                        new JProperty("last_updated",           LastUpdated.          ToIso8601())
 
-                             );
+                              );
 
-            return CustomConnectorSerializer is not null
-                       ? CustomConnectorSerializer(this, json)
+            var serializer  = CustomConnectorSerializer ?? this.CustomConnectorSerializer;
+
+            return serializer is not null
+                       ? serializer(this, json)
                        : json;
 
         }
