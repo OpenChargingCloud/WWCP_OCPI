@@ -47,6 +47,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     /// </summary>
     public delegate Boolean IncludeRemoteParty(RemoteParty RemoteParty);
 
+    public delegate IEnumerable<Tariff>     GetTariffs2_Delegate  (CountryCode    CPOCountryCode,
+                                                                   Party_Id       CPOPartyId,
+                                                                   Location_Id?   LocationId    = null,
+                                                                   EVSE_UId?      EVSEUId       = null,
+                                                                   Connector_Id?  ConnectorId   = null,
+                                                                   EMSP_Id?       EMSPId        = null);
+
     public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
                                                                    Party_Id       CPOPartyId,
                                                                    Location_Id?   LocationId    = null,
@@ -6321,7 +6328,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        public GetTariffIds2_Delegate? GetTariffIdsDelegate { get; set; }
+        public GetTariffs2_Delegate?    GetTariffsDelegate      { get; set; }
+
+        public GetTariffIds2_Delegate?  GetTariffIdsDelegate    { get; set; }
 
 
         #region AddTariff           (Tariff,                          SkipNotifications = false)
@@ -6734,6 +6743,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+        #region GetTariff   (TariffId)
+
+        public Tariff? GetTariff(Tariff_Id TariffId)
+        {
+
+            if (tariffs.TryGetValue(TariffId, out var tariff))
+                return tariff;
+
+            return null;
+
+        }
+
+        #endregion
+
         #region GetTariffs  (IncludeTariff = null)
 
         public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean>? IncludeTariff = null)
@@ -6753,6 +6776,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               tariff.PartyId     == PartyId);
 
         #endregion
+
 
         #region GetTariffIds(CountryCode?, PartyId?, LocationId?, EVSEUId?, ConnectorId?, EMSPId?)
 
@@ -8546,7 +8570,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addChargeDetailRecord,
                                CDR.ToJSON(true,
-                                          null,
+                                          //null,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -8620,7 +8644,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addChargeDetailRecord,
                                CDR.ToJSON(true,
-                                          null,
+                                          //null,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -8704,7 +8728,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addOrUpdateChargeDetailRecord,
                                CDR.ToJSON(true,
-                                          null,
+                                          //null,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -8838,7 +8862,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(updateChargeDetailRecord,
                                CDR.ToJSON(true,
-                                          null,
+                                          //null,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -8926,7 +8950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     await LogAsset(updateChargeDetailRecord,
                                    CDR.ToJSON(true,
-                                              null,
+                                              //null,
                                               CustomCDRSerializer,
                                               CustomLocationSerializer,
                                               CustomAdditionalGeoLocationSerializer,
@@ -9078,7 +9102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(removeChargeDetailRecord,
                                cdr.ToJSON(true,
-                                          null,
+                                          //null,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,

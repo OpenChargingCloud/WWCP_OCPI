@@ -1163,29 +1163,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region ToOCPI(this ChargeDetailRecord, ref Warnings)
-
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
-                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
-                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                  GetTariffIds_Delegate?          GetTariffIdsDelegate,
-                                  ref List<Warning>               Warnings)
-        {
-
-            var result = ChargeDetailRecord.ToOCPI(CustomEVSEUIdConverter,
-                                                   CustomEVSEIdConverter,
-                                                   GetTariffIdsDelegate,
-                                                   out var warnings);
-
-            foreach (var warning in warnings)
-                Warnings.Add(warning);
-
-            return result;
-
-        }
-
-        #endregion
-
         #region ToOCPI(this ChargeDetailRecord, out Warnings)
 
         public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
@@ -1195,43 +1172,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                   out IEnumerable<Warning>        Warnings)
         {
 
-            var warnings = new List<Warning>();
+            var warnings  = new List<Warning>();
+            var cdr       = ChargeDetailRecord.ToOCPI(CustomEVSEUIdConverter,
+                                                      CustomEVSEIdConverter,
+                                                      GetTariffIdsDelegate,
+                                                      ref warnings);
+
+            Warnings = warnings;
+
+            return cdr;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargeDetailRecord, ref Warnings)
+
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                  GetTariffIds_Delegate?          GetTariffIdsDelegate,
+                                  ref List<Warning>               Warnings)
+        {
 
             try
             {
 
                 if (ChargeDetailRecord is null)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The given charge detail record must not be null!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The given charge detail record must not be null!"));
                     return null;
                 }
 
                 if (ChargeDetailRecord.ChargingStationOperator is null)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The given charge detail record must have a valid charging station operator!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The given charge detail record must have a valid charging station operator!"));
                     return null;
                 }
 
                 if (!ChargeDetailRecord.SessionTime.EndTime.HasValue)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The session endtime of the given charge detail record must not be null!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The session endtime of the given charge detail record must not be null!"));
                     return null;
                 }
 
                 if (!ChargeDetailRecord.SessionTime.Duration.HasValue)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The session time duration of the given charge detail record must not be null!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The session time duration of the given charge detail record must not be null!"));
                     return null;
                 }
 
                 if (!ChargeDetailRecord.AuthMethodStart.HasValue)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The authentication (verification) method used for starting of the given charge detail record must not be null!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The authentication (verification) method used for starting of the given charge detail record must not be null!"));
                     return null;
                 }
 
@@ -1239,41 +1232,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!authMethod.HasValue)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The authentication (verification) method used for starting of the given charge detail record is invalid!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The authentication (verification) method used for starting of the given charge detail record is invalid!"));
                     return null;
                 }
 
                 if (ChargeDetailRecord.EVSE is null)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The EVSE of the given charge detail record must not be null!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The EVSE of the given charge detail record must not be null!"));
                     return null;
                 }
 
                 if (ChargeDetailRecord.ChargingStation is null)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The charging station of the given charge detail record must not be null!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The charging station of the given charge detail record must not be null!"));
                     return null;
                 }
 
                 if (ChargeDetailRecord.ChargingPool is null)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The charging pool of the given charge detail record must not be null!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The charging pool of the given charge detail record must not be null!"));
                     return null;
                 }
 
                 var filteredLocation = ChargeDetailRecord.ChargingPool.ToOCPI(CustomEVSEUIdConverter,
                                                                               CustomEVSEIdConverter,
-                                                                              ref warnings,
+                                                                              ref Warnings,
                                                                               evseId => evseId == ChargeDetailRecord.EVSE.Id);
 
                 if (filteredLocation is null)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The charging location of the given charge detail record could not be calculated!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The charging location of the given charge detail record could not be calculated!"));
                     return null;
                 }
 
@@ -1296,33 +1284,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!ChargeDetailRecord.ChargingPrice.HasValue)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The charging price of the given charge detail record must not be null!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The charging price of the given charge detail record must not be null!"));
                     return null;
                 }
 
                 if (ChargeDetailRecord.ChargingPrice.Value.Currency is null)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The currency of the charging price of the given charge detail record must not be null!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The currency of the charging price of the given charge detail record must not be null!"));
                     return null;
                 }
 
                 if (!ChargeDetailRecord.ConsumedEnergy.HasValue)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "The consumed energy of the given charge detail record must not be null!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "The consumed energy of the given charge detail record must not be null!"));
                     return null;
                 }
 
                 if (ChargeDetailRecord.EnergyMeteringValues.Count() < 2)
                 {
-                    warnings.Add(Warning.Create(Languages.en, "At least two energy metering values are expected!"));
-                    Warnings = warnings;
+                    Warnings.Add(Warning.Create(Languages.en, "At least two energy metering values are expected!"));
                     return null;
                 }
-
-                Warnings = Array.Empty<Warning>();
 
                 return new CDR(
 
@@ -1398,8 +1380,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
             catch (Exception ex)
             {
-                warnings.Add(Warning.Create(Languages.en, "Could not convert the given charge detail record to OCPI: " + ex.Message));
-                Warnings = warnings;
+                Warnings.Add(Warning.Create(Languages.en, "Could not convert the given charge detail record to OCPI: " + ex.Message));
             }
 
             return null;
@@ -1407,6 +1388,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         }
 
         #endregion
+
 
     }
 

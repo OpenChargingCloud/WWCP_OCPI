@@ -46,6 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public HTTPResponse?    HTTPResponse              { get; }
         public Request_Id?      RequestId                 { get; }
         public Correlation_Id?  CorrelationId             { get; }
+        public URL?             Location                  { get; }
 
         #endregion
 
@@ -60,7 +61,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
-                            Correlation_Id?  CorrelationId           = null)
+                            Correlation_Id?  CorrelationId           = null,
+                            URL?             Location                = null)
 
         {
 
@@ -74,6 +76,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.HTTPResponse           = HTTPResponse;
             this.RequestId              = RequestId;
             this.CorrelationId          = CorrelationId;
+            this.Location               = Location;
 
         }
 
@@ -84,7 +87,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
-                            Correlation_Id?  CorrelationId           = null)
+                            Correlation_Id?  CorrelationId           = null,
+                            URL?             Location                = null)
 
         {
 
@@ -98,6 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.HTTPResponse           = HTTPResponse;
             this.RequestId              = RequestId;
             this.CorrelationId          = CorrelationId;
+            this.Location               = Location;
 
         }
 
@@ -127,6 +132,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("correlationId",           CorrelationId.Value.ToString())
                                : null,
 
+                           Location.HasValue
+                               ? new JProperty("location",                Location.     Value.ToString())
+                               : null,
+
                                  new JProperty("timestamp",               Timestamp.          ToIso8601())
 
                        );
@@ -148,6 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var remoteRequestId      = HTTPResponse.TryParseHeaderField<Request_Id>    ("X-Request-ID",     Request_Id.    TryParse) ?? RequestId;
                 var remoteCorrelationId  = HTTPResponse.TryParseHeaderField<Correlation_Id>("X-Correlation-ID", Correlation_Id.TryParse) ?? CorrelationId;
+                var location             = HTTPResponse.TryParseHeaderField<URL>           ("Location",         URL.           TryParse);
 
                 if (HTTPResponse.HTTPBody?.Length > 0)
                 {
@@ -174,7 +184,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             timestamp,
                                             HTTPResponse,
                                             remoteRequestId,
-                                            remoteCorrelationId);
+                                            remoteCorrelationId,
+                                            location);
 
                 }
 
@@ -279,7 +290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             public Request_Id?           RequestId                 { get; set; }
             public Correlation_Id?       CorrelationId             { get; set; }
-
+            public URL?                  Location                  { get; set; }
 
             public HTTPResponse.Builder  HTTPResponseBuilder       { get; set; }
 
@@ -294,7 +305,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            DateTime?        Timestamp               = null,
 
                            Request_Id?      RequestId               = null,
-                           Correlation_Id?  CorrelationId           = null)
+                           Correlation_Id?  CorrelationId           = null,
+                           URL?             Location                = null)
             {
 
                 this.Request                = Request;
@@ -305,6 +317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 this.RequestId              = RequestId;
                 this.CorrelationId          = CorrelationId;
+                this.Location               = Location;
 
             }
 
@@ -354,6 +367,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                               CorrelationId.HasValue
                                                                   ? new JProperty("correlationId",           CorrelationId.Value.ToString())
+                                                                  : null,
+
+                                                              Location.HasValue
+                                                                  ? new JProperty("location",                Location.     Value.ToString())
                                                                   : null,
 
                                                               new JProperty("timestamp",                     Timestamp.    Value.ToIso8601())
@@ -416,7 +433,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
-                            Correlation_Id?  CorrelationId           = null)
+                            Correlation_Id?  CorrelationId           = null,
+                            URL?             Location                = null)
 
             : base(StatusCode,
                    StatusMessage,
@@ -425,7 +443,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    HTTPResponse,
                    RequestId,
-                   CorrelationId)
+                   CorrelationId,
+                   Location)
 
         {
 
@@ -440,7 +459,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
-                            Correlation_Id?  CorrelationId           = null)
+                            Correlation_Id?  CorrelationId           = null,
+                            URL?             Location                = null)
 
             : this(null,
                    StatusCode,
@@ -450,7 +470,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    HTTPResponse,
                    RequestId,
-                   CorrelationId)
+                   CorrelationId,
+                   Location)
 
         { }
 
@@ -519,7 +540,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                      HTTPResponse?            Response                = null,
                                      Request_Id?              RequestId               = null,
-                                     Correlation_Id?          CorrelationId           = null)
+                                     Correlation_Id?          CorrelationId           = null,
+                                     URL?                     Location                = null)
 
         {
 
@@ -531,7 +553,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                Response,
                                                RequestId,
-                                               CorrelationId).ToJSON(Serializer);
+                                               CorrelationId,
+                                               Location).ToJSON(Serializer);
 
         }
 
@@ -571,6 +594,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("correlationId",           CorrelationId.Value.ToString())
                                : null,
 
+                           Location.HasValue
+                               ? new JProperty("location",                Location.     Value.ToString())
+                               : null,
+
                                  new JProperty("timestamp",               Timestamp.          ToIso8601())
 
                        );
@@ -593,6 +620,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var remoteRequestId      = Response.TryParseHeaderField<Request_Id>    ("X-Request-ID",     Request_Id.    TryParse) ?? RequestId;
                 var remoteCorrelationId  = Response.TryParseHeaderField<Correlation_Id>("X-Correlation-ID", Correlation_Id.TryParse) ?? CorrelationId;
+                var remoteLocation       = Response.TryParseHeaderField<URL>           ("Location",         URL.           TryParse);
 
                 if (Response.HTTPBody?.Length > 0)
                 {
@@ -651,7 +679,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                           Response,
                                                                           remoteRequestId,
-                                                                          remoteCorrelationId);
+                                                                          remoteCorrelationId,
+                                                                          remoteLocation);
 
                     }
 
@@ -664,7 +693,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                           Response,
                                                                           remoteRequestId,
-                                                                          remoteCorrelationId);
+                                                                          remoteCorrelationId,
+                                                                          remoteLocation);
 
                 }
 
@@ -677,7 +707,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                       Response,
                                                                       remoteRequestId,
-                                                                      remoteCorrelationId);
+                                                                      remoteCorrelationId,
+                                                                      remoteLocation);
 
             }
             catch (Exception e)
@@ -712,6 +743,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var remoteRequestId      = Response.TryParseHeaderField<Request_Id>    ("X-Request-ID",     Request_Id.    TryParse) ?? RequestId;
                 var remoteCorrelationId  = Response.TryParseHeaderField<Correlation_Id>("X-Correlation-ID", Correlation_Id.TryParse) ?? CorrelationId;
+                var remoteLocation       = Response.TryParseHeaderField<URL>           ("Location",         URL.           TryParse);
 
                 if (Response.HTTPBody?.Length > 0)
                 {
@@ -739,7 +771,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                  Response,
                                                                  remoteRequestId,
-                                                                 remoteCorrelationId);
+                                                                 remoteCorrelationId,
+                                                                 remoteLocation);
 
                     }
 
@@ -751,7 +784,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                              Response,
                                                              remoteRequestId,
-                                                             remoteCorrelationId);
+                                                             remoteCorrelationId,
+                                                             remoteLocation);
 
                 }
 
@@ -763,7 +797,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                          Response,
                                                          remoteRequestId,
-                                                         remoteCorrelationId);
+                                                         remoteCorrelationId,
+                                                         remoteLocation);
 
             }
             catch (Exception e)
@@ -809,7 +844,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
-                            Correlation_Id?  CorrelationId           = null)
+                            Correlation_Id?  CorrelationId           = null,
+                            URL?             Location                = null)
 
             : base(Data,
                    StatusCode,
@@ -819,7 +855,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    HTTPResponse,
                    RequestId,
-                   CorrelationId)
+                   CorrelationId,
+                   Location)
 
         {
 
@@ -955,7 +992,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                       r.HTTPResponse,
                                                                       r.RequestId,
-                                                                      r.CorrelationId);
+                                                                      r.CorrelationId,
+                                                                      r.Location);
 
         }
 
@@ -981,12 +1019,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                          r.HTTPResponse,
                                                          r.RequestId,
-                                                         r.CorrelationId);
+                                                         r.CorrelationId,
+                                                         r.Location);
 
         }
 
-
     }
-
 
 }

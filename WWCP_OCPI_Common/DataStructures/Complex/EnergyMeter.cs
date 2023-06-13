@@ -187,7 +187,8 @@ namespace cloud.charging.open.protocols.OCPI
                            DateTime?                                 LastUpdated                 = null)
 
             : base(CustomData,
-                   InternalData)
+                   InternalData,
+                   Timestamp.Now)
 
         {
 

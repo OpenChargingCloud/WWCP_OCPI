@@ -4100,7 +4100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<CDR>>
+        public async Task<OCPIResponse>
 
             PostCDR(CDR                 CDR,
                     EMSP_Id?            EMSPId              = null,
@@ -4125,7 +4125,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
             Counters.PostCDR.IncRequests_OK();
 
-            OCPIResponse<CDR> response;
+            OCPIResponse response;
 
             #endregion
 
@@ -4187,12 +4187,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                     remoteURL.Value.Path, // + CDR.Id.ToString(),
+                                                                                     remoteURL.Value.Path,
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content        = CDR.ToJSON(false,
-                                                                                                                                    EMSPId,
                                                                                                                                     CustomCDRSerializer,
                                                                                                                                     CustomLocationSerializer,
                                                                                                                                     CustomAdditionalGeoLocationSerializer,
@@ -4233,12 +4232,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<CDR>.ParseJObject(httpResponse,
-                                                              requestId,
-                                                              correlationId,
-                                                              json => CDR.Parse(json,
-                                                                                RemoteParty.CountryCode,
-                                                                                RemoteParty.PartyId));
+                    response = OCPIResponse.Parse(httpResponse,
+                                                  requestId,
+                                                  correlationId);
 
                     Counters.PostCDR.IncResponses_OK();
 

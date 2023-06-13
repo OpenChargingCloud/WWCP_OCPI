@@ -32,6 +32,13 @@ using cloud.charging.open.protocols.OCPI;
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
+    public delegate IEnumerable<Tariff>     GetTariffs_Delegate  (WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
+                                                                  WWCP.ChargingPool_Id?             ChargingPoolId,
+                                                                  WWCP.ChargingStation_Id?          ChargingStationId,
+                                                                  WWCP.EVSE_Id?                     EVSEId,
+                                                                  WWCP.ChargingConnector_Id?        ChargingConnectorId,
+                                                                  WWCP.EMobilityProvider_Id?        EMobilityProviderId);
+
     public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
                                                                   WWCP.ChargingPool_Id?             ChargingPoolId,
                                                                   WWCP.ChargingStation_Id?          ChargingStationId,
@@ -86,9 +93,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public HTTP.CPOAPI                                  CPOAPI                               { get; }
 
-
         public GetTariffIds_Delegate?                       GetTariffIds                         { get; }
-
 
         public WWCPEVSEId_2_EVSEUId_Delegate?               CustomEVSEUIdConverter               { get; }
         public WWCPEVSEId_2_EVSEId_Delegate?                CustomEVSEIdConverter                { get; }
@@ -1311,6 +1316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
+                                                        id => true,
                                                         EVSE.Status.Timestamp > EVSE.LastChange
                                                             ? EVSE.Status.Timestamp
                                                             : EVSE.LastChange,
@@ -1446,6 +1452,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
+                                                        id => true,
                                                         EVSE.Status.Timestamp > EVSE.LastChange
                                                             ? EVSE.Status.Timestamp
                                                             : EVSE.LastChange,
@@ -1587,6 +1594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
+                                                        id => true,
                                                         EVSE.Status.Timestamp > EVSE.LastChange
                                                             ? EVSE.Status.Timestamp
                                                             : EVSE.LastChange,
@@ -1747,6 +1755,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             var _evse = evse.ToOCPI(CustomEVSEUIdConverter,
                                                     CustomEVSEIdConverter,
+                                                    id => true,
                                                     evse.Status.Timestamp > evse.LastChange
                                                         ? evse.Status.Timestamp
                                                         : evse.LastChange,
@@ -1825,6 +1834,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             var _evse = evse.ToOCPI(CustomEVSEUIdConverter,
                                                     CustomEVSEIdConverter,
+                                                    id => true,
                                                     evse.Status.Timestamp > evse.LastChange
                                                         ? evse.Status.Timestamp
                                                         : evse.LastChange,
@@ -1985,6 +1995,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                         var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                                 CustomEVSEIdConverter,
+                                                                id => true,
                                                                 evse.Status.Timestamp > evse.LastChange
                                                                     ? evse.Status.Timestamp
                                                                     : evse.LastChange,
@@ -2792,120 +2803,168 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             else
             {
 
-                //var remotes = new PriorityList<RemoteParty>();
-                //foreach (var remote in CommonAPI.GetRemoteParties(OCPI.Roles.EMSP))
-                //    remotes.Add(remote);
+                var warnings        = new List<Warning>();
+                var sendCDRResults  = new List<WWCP.SendCDRResult>();
 
-
-
-                //var authToken = LocalAuthentication.AuthToken?.ToString();
-
-                //if (authToken is null)
-                //    return new AuthorizationInfo(
-                //               Allowed:      AllowedType.NOT_ALLOWED,
-                //               Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
-                //               RemoteParty:  remoteParty
-                //           );
-
-
-                //var tokenId = Token_Id.TryParse(authToken);
-
-                //if (!tokenId.HasValue)
-                //    return new AuthorizationInfo(
-                //               Allowed:      AllowedType.NOT_ALLOWED,
-                //               Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
-                //               RemoteParty:  remoteParty
-                //           );
-
-
-                var chargeDetailRecord  = ChargeDetailRecords.First();
-                var emspId              = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart?.ToString() ?? "DE-8PS");
-                var remoteParty         = CommonAPI.GetRemoteParty(RemoteParty_Id.From(emspId));
-                var remoteAccessInfo    = remoteParty?.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
-
-                //if (remoteAccessInfo is null)
-                //    return new AuthorizationInfo(
-                //               Allowed:      AllowedType.NOT_ALLOWED,
-                //               Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
-                //               RemoteParty:  remoteParty
-                //           );
-
-
-                var cpoClient = new CPO.HTTP.CPOClient(
-
-                                    remoteParty,
-                                    CommonAPI,
-                                    null, // VirtualHostname
-                                    null, // Description
-                                    null, // HTTPLogger
-
-                                    DisableLogging,
-                                    ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                    ClientsLoggingContext ?? DefaultLoggingContext,
-                                    ClientsLogfileCreator,
-                                    DNSClient
-
-                                );
-
-                //if (cpoClient is null)
-                //    return new AuthorizationInfo(
-                //               Allowed:      AllowedType.NOT_ALLOWED,
-                //               Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
-                //               RemoteParty:  remoteParty
-                //           );
-
-
-                var cpoClientLogger = new CPO.HTTP.CPOClient.Logger(
-                                          cpoClient,
-                                          ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                          ClientsLoggingContext ?? DefaultLoggingContext,
-                                          ClientsLogfileCreator
-                                      );
-
-
-
-
-
-                var cdr = chargeDetailRecord.ToOCPI(null, null, out var warnings);
-
-                var response = await cpoClient.PostCDR(
-                                         CDR:     cdr,
-                                         EMSPId:  emspId
-                                     );
-
-                if (response is not null)
+                foreach (var chargeDetailRecord in ChargeDetailRecords)
                 {
 
-                    endtime  = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-                    runtime  = endtime - startTime;
+                    if (chargeDetailRecord.ProviderIdStart.HasValue)
+                    {
 
-                    if (response.StatusCode == 1000)
-                        sendCDRsResult  = WWCP.SendCDRsResult.Success(endtime.Value,
-                                                                      Id,
-                                                                      this,
-                                                                      chargeDetailRecord);
+                        #region Setup remote party
 
+                        var emspId            = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString());
+                        var remoteParty       = CommonAPI.GetRemoteParty(RemoteParty_Id.From(emspId));
+                        var remoteAccessInfo  = remoteParty?.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
+
+                        //if (remoteAccessInfo is null)
+                        //    return new AuthorizationInfo(
+                        //               Allowed:      AllowedType.NOT_ALLOWED,
+                        //               Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                        //               RemoteParty:  remoteParty
+                        //           );
+
+
+                        var cpoClient = new CPO.HTTP.CPOClient(
+
+                                            remoteParty,
+                                            CommonAPI,
+                                            null, // VirtualHostname
+                                            null, // Description
+                                            null, // HTTPLogger
+
+                                            DisableLogging,
+                                            ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
+                                            ClientsLoggingContext ?? DefaultLoggingContext,
+                                            ClientsLogfileCreator,
+                                            DNSClient
+
+                                        );
+
+                        //if (cpoClient is null)
+                        //    return new AuthorizationInfo(
+                        //               Allowed:      AllowedType.NOT_ALLOWED,
+                        //               Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                        //               RemoteParty:  remoteParty
+                        //           );
+
+
+                        var cpoClientLogger = new CPO.HTTP.CPOClient.Logger(
+                                                  cpoClient,
+                                                  ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
+                                                  ClientsLoggingContext ?? DefaultLoggingContext,
+                                                  ClientsLogfileCreator
+                                              );
+
+                        #endregion
+
+                        #region Convert and send charge detail record
+
+                        var cdr = chargeDetailRecord.ToOCPI(CustomEVSEUIdConverter,
+                                                            CustomEVSEIdConverter,
+                                                            CommonAPI.GetTariffIds,
+                                                            EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
+                                                            CommonAPI.GetTariff,
+                                                            ref warnings);
+
+                        if (cdr is null)
+                        {
+
+                            endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                            runtime = endtime - startTime;
+                            sendCDRResults.Add(WWCP.SendCDRResult.Error(endtime.Value,
+                                                                        chargeDetailRecord,
+                                                                        warnings,
+                                                                        I18NString.Create(Languages.en, $"Converting the charge detail record to OCPI {Version.String} failed!"),
+                                                                        runtime));
+
+                        }
+                        else
+                        {
+
+                            var addOrUpdateResult  = await CommonAPI.AddOrUpdateCDR(CDR:                cdr,
+                                                                                    AllowDowngrades:    false,
+                                                                                    SkipNotifications:  false,
+                                                                                    EventTrackingId:    EventTrackingId);
+
+                            var response           = await cpoClient.PostCDR(
+                                                               CDR: cdr,
+                                                               EMSPId: emspId
+                                                           );
+
+                            if (response is not null)
+                            {
+
+                                endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                                runtime = endtime - startTime;
+
+                                if (response.StatusCode == 1000)
+                                    sendCDRResults.Add(WWCP.SendCDRResult.Success(endtime.Value,
+                                                                                  chargeDetailRecord,
+                                                                                  warnings,
+                                                                                  Location:  response.Location,
+                                                                                  Runtime:   runtime));
+
+                                else
+                                    sendCDRResults.Add(WWCP.SendCDRResult.Error(endtime.Value,
+                                                                                chargeDetailRecord,
+                                                                                warnings,
+                                                                                I18NString.Create(Languages.en, "Sending the charge detail record failed: " + response.StatusMessage + " (" + response.StatusCode + ")!"),
+                                                                                runtime));
+
+                            }
+                            else
+                            {
+
+                                endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                                runtime = endtime - startTime;
+                                sendCDRResults.Add(WWCP.SendCDRResult.Error(endtime.Value,
+                                                                            chargeDetailRecord,
+                                                                            warnings,
+                                                                            I18NString.Create(Languages.en, "Sending the charge detail record failed!"),
+                                                                            runtime));
+
+                            }
+
+                        }
+
+                        #endregion
+
+                    }
                     else
-                        sendCDRsResult  = WWCP.SendCDRsResult.Error(endtime.Value,
-                                                                    Id,
-                                                                    this,
+                    {
+
+                        endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                        runtime = endtime - startTime;
+                        sendCDRResults.Add(WWCP.SendCDRResult.Error(endtime.Value,
                                                                     chargeDetailRecord,
-                                                                    I18NString.Create(Languages.en, "Sending the charge detail record failed: " + response.StatusMessage + " (" + response.StatusCode + ")!"));
+                                                                    I18NString.Create(Languages.en, "No ProviderIdStart defined!"),
+                                                                    runtime));
+
+                    }
 
                 }
 
-
+                endtime         = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                runtime         = endtime - startTime;
+                sendCDRsResult  = WWCP.SendCDRResultTypesExtensions.Combine(sendCDRResults,
+                                                                            Id,
+                                                                            this,
+                                                                            null,
+                                                                            warnings);
 
             }
 
 
             endtime         ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
             runtime         ??= endtime - startTime;
-
             sendCDRsResult  ??= WWCP.SendCDRsResult.Error(endtime.Value,
                                                           Id,
                                                           this,
-                                                          ChargeDetailRecords);
+                                                          ChargeDetailRecords,
+                                                          I18NString.Create(Languages.en, "Unknown error!"));
+
 
             #region Send OnSendCDRsRequest event
 

@@ -741,7 +741,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                    EventTracking_Id          EventTrackingId,
                                                    TimeSpan                  RequestTimeout,
 
-                                                   OCPIResponse<CDR>         Response,
+                                                   OCPIResponse              Response,
                                                    TimeSpan                  Runtime);
 
     #endregion
