@@ -855,18 +855,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Get versions.
         /// </summary>
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<VersionInformation>>>
 
             GetVersions(Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
 
                         DateTime?           Timestamp           = null,
-                        CancellationToken   CancellationToken   = default,
                         EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null)
+                        TimeSpan?           RequestTimeout      = null,
+                        CancellationToken   CancellationToken   = default)
 
         {
 
@@ -1072,9 +1072,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="VersionId">The requested version.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Version_Id, VersionDetail>>
 
             GetVersionDetails(Version_Id?        VersionId             = null,
@@ -1083,9 +1083,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                               Correlation_Id?    CorrelationId         = null,
 
                               DateTime?          Timestamp             = null,
-                              CancellationToken  CancellationToken     = default,
                               EventTracking_Id?  EventTrackingId       = null,
-                              TimeSpan?          RequestTimeout        = null)
+                              TimeSpan?          RequestTimeout        = null,
+                              CancellationToken  CancellationToken     = default)
 
         {
 
@@ -1402,9 +1402,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
             GetCredentials(Version_Id?         VersionId           = null,
@@ -1412,9 +1412,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            Correlation_Id?     CorrelationId       = null,
 
                            DateTime?           Timestamp           = null,
-                           CancellationToken   CancellationToken   = default,
                            EventTracking_Id?   EventTrackingId     = null,
-                           TimeSpan?           RequestTimeout      = null)
+                           TimeSpan?           RequestTimeout      = null,
+                           CancellationToken   CancellationToken   = default)
 
         {
 
@@ -1598,9 +1598,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
             PostCredentials(Credentials         Credentials,
@@ -1610,9 +1610,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             Correlation_Id?     CorrelationId       = null,
 
                             DateTime?           Timestamp           = null,
-                            CancellationToken   CancellationToken   = default,
                             EventTracking_Id?   EventTrackingId     = null,
-                            TimeSpan?           RequestTimeout      = null)
+                            TimeSpan?           RequestTimeout      = null,
+                            CancellationToken   CancellationToken   = default)
 
         {
 
@@ -1791,9 +1791,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
             PutCredentials(Credentials         Credentials,
@@ -1803,9 +1803,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            Correlation_Id?     CorrelationId       = null,
 
                            DateTime?           Timestamp           = null,
-                           CancellationToken   CancellationToken   = default,
                            EventTracking_Id?   EventTrackingId     = null,
-                           TimeSpan?           RequestTimeout      = null)
+                           TimeSpan?           RequestTimeout      = null,
+                           CancellationToken   CancellationToken   = default)
 
         {
 
@@ -2044,9 +2044,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse>
 
             DeleteCredentials(Version_Id?        VersionId           = null,
@@ -2054,9 +2054,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                               Correlation_Id?    CorrelationId       = null,
 
                               DateTime?          Timestamp           = null,
-                              CancellationToken  CancellationToken   = default,
                               EventTracking_Id?  EventTrackingId     = null,
-                              TimeSpan?          RequestTimeout      = null)
+                              TimeSpan?          RequestTimeout      = null,
+                              CancellationToken  CancellationToken   = default)
 
         {
 
@@ -2251,9 +2251,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Post the given credentials.
         /// </summary>
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
             Register(Version_Id?                    VersionId             = null,
@@ -2264,9 +2264,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                      Correlation_Id?                CorrelationId         = null,
 
                      DateTime?                      Timestamp             = null,
-                     CancellationToken              CancellationToken     = default,
                      EventTracking_Id?              EventTrackingId       = null,
-                     TimeSpan?                      RequestTimeout        = null)
+                     TimeSpan?                      RequestTimeout        = null,
+                     CancellationToken              CancellationToken     = default)
 
         {
 
@@ -2537,6 +2537,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         { }
 
         #endregion
+
 
     }
 
