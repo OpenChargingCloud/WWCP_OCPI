@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                 requestbuilder => {
 
                                                                     if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                        requestbuilder.Authorization = new HTTPTokenAuthentication(Token);
+                                                                        requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
                                                                     requestbuilder.Set("X-Request-ID",      "1234");
                                                                     requestbuilder.Set("X-Correlation-ID",  "5678");
@@ -76,7 +76,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                      requestbuilder => {
 
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestbuilder.Authorization = new HTTPTokenAuthentication(Token);
+                                                                                             requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
@@ -104,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                      requestbuilder => {
 
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestbuilder.Authorization = new HTTPTokenAuthentication(Token);
+                                                                                             requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
@@ -132,7 +132,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                      requestbuilder => {
 
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+                                                                                             requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
                                                                                          requestbuilder.Accept.Add(HTTPContentType.HTML_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
@@ -160,7 +160,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                      requestbuilder => {
 
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+                                                                                             requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
                                                                                          requestbuilder.Accept.Add(HTTPContentType.TEXT_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
@@ -189,7 +189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                      requestbuilder => {
 
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestbuilder.Authorization = new HTTPTokenAuthentication(Token);
+                                                                                             requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                      requestbuilder => {
 
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+                                                                                             requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content        = JSON.ToUTF8Bytes();
@@ -250,7 +250,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                      requestbuilder => {
 
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
-                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+                                                                                             requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content        = JSON.ToUTF8Bytes();
@@ -307,11 +307,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected       ConcurrentDictionary<DateTime, OCPIRequest>    emsp2APIRequestLogs;
         protected       ConcurrentDictionary<DateTime, OCPIResponse>   emsp2APIResponseLogs;
 
-        protected const String                                         cpo_accessing_emsp1__token    = "cpo_accessing_emsp1::token";
-        protected const String                                         cpo_accessing_emsp2__token    = "cpo_accessing_emsp2::token";
+        protected const String                                         cpo_accessing_emsp1__token    = "cpo_accessing_emsp1++token";
+        protected const String                                         cpo_accessing_emsp2__token    = "cpo_accessing_emsp2++token";
 
-        protected const String                                         emsp1_accessing_cpo__token    = "emsp1_accessing_cpo::token";
-        protected const String                                         emsp2_accessing_cpo__token    = "emsp2_accessing_cpo::token";
+        protected const String                                         emsp1_accessing_cpo__token    = "emsp1_accessing_cpo++token";
+        protected const String                                         emsp2_accessing_cpo__token    = "emsp2_accessing_cpo++token";
 
         protected const String                                         UnknownToken                  = "UnknownUnknownUnknownToken";
 

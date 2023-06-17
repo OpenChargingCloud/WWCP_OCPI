@@ -316,7 +316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             var JSON = @"{
                            ""id"": ""12345"",
                            ""start_date_time"": ""2015-06-29T21:39:09Z"",
-                           ""end_date_time"": ""2015-06-29T23:37:32Z"",
+                           ""stop_date_time"": ""2015-06-29T23:37:32Z"",
                            ""auth_id"": ""012345678"",
                            ""auth_method"": ""WHITELIST"",
                            ""location"": {
@@ -572,7 +572,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                               ),
                               //Duration                      // automagic!
 
-                              EVSE:                           evse1!,
+                              ChargingConnector:              evse1.ChargingConnectors.First(),
+                              //EVSE:                         // automagic!
                               //EVSEId                        // automagic!
                               //ChargingStation               // automagic!
                               //ChargingStationId             // automagic!
@@ -581,9 +582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                               //ChargingStationOperator       // automagic!
                               //ChargingStationOperatorId     // automagic!
 
-                              ChargingProduct:                new ChargingProduct(
-                                                                  ChargingProduct_Id.AC3
-                                                              ),
+                              ChargingProduct:                ChargingProduct.AC3,
                               ChargingPrice:                  Price.EURO(
                                                                   21.34M,
                                                                    1.00M
@@ -644,8 +643,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             Assert.IsTrue   (wwcpCDR.ConsumedEnergy.   HasValue);
             Assert.AreEqual (17, wwcpCDR.ConsumedEnergy!.Value);
 
-            var ocpiCDR = wwcpCDR.ToOCPI(null, null, null, null, null, out var warnings);
-            Assert.AreEqual (0, warnings.Count());
+            var ocpiCDR = wwcpCDR.ToOCPI(CustomEVSEUIdConverter:  null,
+                                         CustomEVSEIdConverter:   null,
+                                         GetTariffIdsDelegate:    null,
+                                         EMSPId:                  null,
+                                         TariffGetter:            null,
+                                         out var warnings);
+            Assert.AreEqual (0, warnings.Count(), 0, warnings.FirstOrDefault()?.Text.FirstText());
 
             Assert.IsNotNull(ocpiCDR);
             Assert.AreEqual ("DE",                                       ocpiCDR!.CountryCode.ToString());

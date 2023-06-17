@@ -305,7 +305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                            Sun, 30 Apr 2023 07:26:24 GMT
                 // Accept:                          application/json; charset=utf-8;q=1
                 // Host:                            localhost:3301
-                // Authorization:                   Token emsp1_accessing_cpo::token
+                // Authorization:                   Token emsp1_accessing_cpo++token
                 // Connection:                      close
                 // X-Request-ID:                    5KKtp1dQSSt948x7M5zzhQ75SQfUE8
                 // X-Correlation-ID:                bCzY2217tvEK829hn7f7AW9Y29v56E
@@ -1538,7 +1538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                           Wed, 26 Apr 2023 05:07:21 GMT
                 // Accept:                         application/json; charset=utf-8;q=1
                 // Host:                           localhost:3301
-                // Authorization:                  Token emsp1_accessing_cpo::token
+                // Authorization:                  Token emsp1_accessing_cpo++token
                 // Connection:                     close
                 // X-Request-ID:                   5UAb53YK9533x9r1vAGG8G22K5M861
                 // X-Correlation-ID:               4M12E4Q4SMn8zMpxUxAz2d22b6n89j
@@ -2185,7 +2185,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                           Wed, 26 Apr 2023 05:07:21 GMT
                 // Accept:                         application/json; charset=utf-8;q=1
                 // Host:                           localhost:3301
-                // Authorization:                  Token emsp1_accessing_cpo::token
+                // Authorization:                  Token emsp1_accessing_cpo++token
                 // Connection:                     close
                 // X-Request-ID:                   5UAb53YK9533x9r1vAGG8G22K5M861
                 // X-Correlation-ID:               4M12E4Q4SMn8zMpxUxAz2d22b6n89j
@@ -2833,7 +2833,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 // Date:                           Wed, 26 Apr 2023 05:07:21 GMT
                 // Accept:                         application/json; charset=utf-8;q=1
                 // Host:                           localhost:3301
-                // Authorization:                  Token emsp1_accessing_cpo::token
+                // Authorization:                  Token emsp1_accessing_cpo++token
                 // Connection:                     close
                 // X-Request-ID:                   5UAb53YK9533x9r1vAGG8G22K5M861
                 // X-Correlation-ID:               4M12E4Q4SMn8zMpxUxAz2d22b6n89j

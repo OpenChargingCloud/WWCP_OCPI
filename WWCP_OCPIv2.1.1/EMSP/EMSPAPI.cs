@@ -6200,7 +6200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            Data                 = newCDR.ToJSON(),
                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                HTTPStatusCode             = HTTPStatusCode.Created,
-                                                               Location                   = URLPathPrefix + "cdrs" + newCDR.Id.ToString(),
+                                                               Location                   = org.GraphDefined.Vanaheimr.Hermod.HTTP.Location.From(URLPathPrefix + "cdrs" + newCDR.Id.ToString()),
                                                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "DELETE" },
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = newCDR.LastUpdated.ToIso8601(),

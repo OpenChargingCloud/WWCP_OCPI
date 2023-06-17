@@ -685,9 +685,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.RemoteParty        = RemoteParty;
             this.AccessToken        = RemoteParty.RemoteAccessInfos.First().AccessToken;
             this.RemoteVersionsURL  = RemoteParty.RemoteAccessInfos.First().VersionsURL;
-            this.TokenAuth          = new HTTPTokenAuthentication(RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded
-                                                                      ? RemoteParty.RemoteAccessInfos.First().AccessToken.ToString().ToBase64()
-                                                                      : RemoteParty.RemoteAccessInfos.First().AccessToken.ToString());
+            this.TokenAuth          = HTTPTokenAuthentication.Parse(RemoteParty.RemoteAccessInfos.First().AccessTokenIsBase64Encoded
+                                                                         ? RemoteParty.RemoteAccessInfos.First().AccessToken.ToString().ToBase64()
+                                                                         : RemoteParty.RemoteAccessInfos.First().AccessToken.ToString());
             this.MyCommonAPI        = MyCommonAPI;
 
             this.Counters           = new CommonAPICounters();
@@ -781,9 +781,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           Status:                      PartyStatus.ENABLED
                                       );
 
-            this.TokenAuth          = new HTTPTokenAuthentication(AccessTokenBase64Encoding
-                                                                      ? AccessToken.ToString().ToBase64()
-                                                                      : AccessToken.ToString());
+            this.TokenAuth          = HTTPTokenAuthentication.Parse(AccessTokenBase64Encoding
+                                                                         ? AccessToken.ToString().ToBase64()
+                                                                         : AccessToken.ToString());
             this.AccessToken        = AccessToken;
             this.RemoteVersionsURL  = RemoteVersionsURL;
             this.MyCommonAPI        = MyCommonAPI;
@@ -1911,7 +1911,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             Credentials.PartyId     == RemoteParty.PartyId)
                         {
 
-                            TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
+                            TokenAuth = HTTPTokenAuthentication.Parse(response.Data.Token.ToString().ToBase64());
 
                             // Only the access token and the business details are allowed to be changed!
                             await MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:         RemoteParty.CountryCode,
@@ -2386,7 +2386,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         SelectedOCPIVersionId  = versionId;
                         AccessToken            = response.Data.Token;
-                        TokenAuth              = new HTTPTokenAuthentication(response.Data.Token.ToString());
+                        TokenAuth              = HTTPTokenAuthentication.Parse(response.Data.Token.ToString());
 
                         await MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:         response.Data.CountryCode,
                                                                  PartyId:             response.Data.PartyId,

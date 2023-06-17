@@ -60,7 +60,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // Date:                            Sun, 30 Apr 2023 01:29:27 GMT
                 // Accept:                          application/json; charset=utf-8;q=1
                 // Host:                            localhost:3401
-                // Authorization:                   Token cpo_accessing_emsp1::token
+                // Authorization:                   Token cpo_accessing_emsp1++token
                 // User-Agent:                      GraphDefined OCPI HTTP Client v1.0
                 // X-Request-ID:                    bjxW4W594CMfSnWCz5v74Q24UKtp92
                 // X-Correlation-ID:                SM5WpMtE22h3d2p8vSz9hGSC4W3n12
@@ -135,7 +135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // Date:                            Sun, 30 Apr 2023 01:35:47 GMT
                 // Accept:                          application/json; charset=utf-8;q=1
                 // Host:                            localhost:3402
-                // Authorization:                   Token cpo_accessing_emsp2::token
+                // Authorization:                   Token cpo_accessing_emsp2++token
                 // User-Agent:                      GraphDefined OCPI HTTP Client v1.0
                 // X-Request-ID:                    Yx9xWSSG45bdE6jMAj9pWA6ES2jnr2
                 // X-Correlation-ID:                52f41UGdWn681QU9rEtK69Ef9bhE9p
@@ -595,7 +595,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             if (emsp1VersionsAPIURL.HasValue)
             {
 
-                var response  = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value, "cpo_accessing_emsp1::token");
+                var response  = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value, "cpo_accessing_emsp1++token");
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPStatusCode.Code);
@@ -643,7 +643,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             if (emsp2VersionsAPIURL.HasValue)
             {
 
-                var response  = await TestHelpers.GetJSONRequest(emsp2VersionsAPIURL.Value, "cpo_accessing_emsp2::token");
+                var response  = await TestHelpers.GetJSONRequest(emsp2VersionsAPIURL.Value, "cpo_accessing_emsp2++token");
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPStatusCode.Code);
@@ -920,7 +920,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             if (emsp1VersionsAPIURL.HasValue)
             {
 
-                var response  = await TestHelpers.GetHTMLRequest(emsp1VersionsAPIURL.Value, "cpo_accessing_emsp1::token");
+                var response  = await TestHelpers.GetHTMLRequest(emsp1VersionsAPIURL.Value, "cpo_accessing_emsp1++token");
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPStatusCode.Code);
@@ -950,7 +950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
             if (emsp2VersionsAPIURL.HasValue)
             {
 
-                var response  = await TestHelpers.GetHTMLRequest(emsp2VersionsAPIURL.Value, "cpo_accessing_emsp2::token");
+                var response  = await TestHelpers.GetHTMLRequest(emsp2VersionsAPIURL.Value, "cpo_accessing_emsp2++token");
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,            response.HTTPStatusCode.Code);

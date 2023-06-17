@@ -6780,7 +6780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                             CustomSignedValueSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Created,
-                                                           Location                   = URLPathPrefix + "cdrs" + newCDR.CountryCode.ToString() + newCDR.PartyId.ToString() + newCDR.Id.ToString(),
+                                                           Location                   = org.GraphDefined.Vanaheimr.Hermod.HTTP.Location.From(URLPathPrefix + "cdrs" + newCDR.CountryCode.ToString() + newCDR.PartyId.ToString() + newCDR.Id.ToString()),
                                                            AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = newCDR.LastUpdated.ToIso8601(),

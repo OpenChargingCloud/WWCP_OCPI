@@ -400,7 +400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                   Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                          remoteURL.Path,
                                                                                          requestbuilder => {
-                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication("1234xyz");
+                                                                                             requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
                                                                                              requestbuilder.Connection     = "close";
                                                                                              requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
@@ -1067,7 +1067,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                   Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                          remoteURL.Path,
                                                                                          requestbuilder => {
-                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication("1234xyz");
+                                                                                             requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
                                                                                              requestbuilder.Connection     = "close";
                                                                                              requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
@@ -1607,7 +1607,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                   Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                          remoteURL.Path,
                                                                                          requestbuilder => {
-                                                                                             requestbuilder.Authorization  = new HTTPTokenAuthentication("1234xyz");
+                                                                                             requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
                                                                                              requestbuilder.Connection     = "close";
                                                                                              requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");

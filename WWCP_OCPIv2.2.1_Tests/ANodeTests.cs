@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      RemoteURL.Path,
                                                                                      requestbuilder => {
-                                                                                         requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+                                                                                         requestbuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
@@ -66,7 +66,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                               Execute(client => client.CreateRequest(Method,
                                                                                      RemoteURL.Path,
                                                                                      requestbuilder => {
-                                                                                         requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+                                                                                         requestbuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
                                                                                          requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content        = JSON.ToUTF8Bytes();
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);

@@ -63,7 +63,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // Date:                            Sun, 30 Apr 2023 08:03:44 GMT
                 // Accept:                          application/json; charset=utf-8;q=1
                 // Host:                            localhost:3401
-                // Authorization:                   Token cpo-accessing-emsp1::token
+                // Authorization:                   Token cpo-accessing-emsp1++token
                 // X-Request-ID:                    ACjnj252Gvr647rW86KYxWYMCdjv6U
                 // X-Correlation-ID:                jM2KMp89jK575MfMf67Kjfr2CM5EW7
 
@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // 
                 // {
                 //     "data": {
-                //         "token":         "cpo-accessing-emsp1::token",
+                //         "token":         "cpo-accessing-emsp1++token",
                 //         "url":           "http://127.0.0.1:3401/ocpi/v2.1/versions",
                 //         "business_details": {
                 //             "name":          "GraphDefined EMSP #1 Services",
@@ -159,7 +159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // Date:                            Sun, 30 Apr 2023 08:07:42 GMT
                 // Accept:                          application/json; charset=utf-8;q=1
                 // Host:                            localhost:3402
-                // Authorization:                   Token cpo-accessing-emsp2::token
+                // Authorization:                   Token cpo-accessing-emsp2++token
                 // X-Request-ID:                    xt167nt9WCjzKpfp5btn3CG4bzM3dS
                 // X-Correlation-ID:                732phS8A686tMb4hE82982ftYbp38S
 
@@ -178,7 +178,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // 
                 // {
                 //     "data": {
-                //         "token":         "cpo-accessing-emsp2::token",
+                //         "token":         "cpo-accessing-emsp2++token",
                 //         "url":           "http://127.0.0.1:3402/ocpi/v2.1/versions",
                 //         "business_details": {
                 //             "name":          "GraphDefined EMSP #2 Services",
@@ -272,7 +272,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // Date:               Sat, 06 May 2023 02:40:46 GMT
                 // Accept:             application/json; charset=utf-8; q=1
                 // Host:               localhost:3401
-                // Authorization:      Token cpo_accessing_emsp1::token
+                // Authorization:      Token cpo_accessing_emsp1++token
                 // Content-Type:       application/json; charset=utf-8
                 // Content-Length:     300
                 // X-Request-ID:       72fQ7S1fAKC1trnv2zECGv14tfn5Y8
@@ -467,7 +467,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // Date:                            Fri, 05 May 2023 12:31:07 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3401
-                // Authorization:                   Token cpo_accessing_emsp1::token
+                // Authorization:                   Token cpo_accessing_emsp1++token
                 // X-Request-ID:                    1234
                 // X-Correlation-ID:                5678
 
@@ -486,14 +486,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // 
                 // {
                 //     "status_code":      1000,
-                //     "status_message":  "The given access token 'cpo_accessing_emsp1::token' was deleted!",
+                //     "status_message":  "The given access token 'cpo_accessing_emsp1++token' was deleted!",
                 //     "timestamp":       "2023-05-05T12:31:07.181Z"
                 // }
 
                 Assert.IsNotNull(response);
                 Assert.AreEqual (200,                                                                  response.HTTPResponse?.HTTPStatusCode.Code);
                 Assert.AreEqual (1000,                                                                 response.StatusCode);
-                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1::token' was deleted!",   response.StatusMessage);
+                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1++token' was deleted!",   response.StatusMessage);
                 Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 Assert.IsNotNull(response.RequestId);
@@ -761,7 +761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // 
                 // {
                 //     "data": {
-                //         "token":         "cpo_accessing_emsp1::token",
+                //         "token":         "cpo_accessing_emsp1++token",
                 //         "url":           "http://127.0.0.1:3401/ocpi/v2.1/versions",
                 //         "business_details": {
                 //             "name":          "GraphDefined EMSP #1 Services",
@@ -1021,7 +1021,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // OPTIONS /ocpi/v2.1/v2.1.1/credentials HTTP/1.1
                 // Date:                            Sat, 06 May 2023 02:16:02 GMT
                 // Host:                            127.0.0.1:3301
-                // Authorization:                   Token emsp1_accessing_cpo::token
+                // Authorization:                   Token emsp1_accessing_cpo++token
                 // X-Request-ID:                    1234
                 // X-Correlation-ID:                5678
 
@@ -1395,7 +1395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // Date:                            Thu, 04 May 2023 04:35:10 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3401
-                // Authorization:                   Token cpo_accessing_emsp1::token
+                // Authorization:                   Token cpo_accessing_emsp1++token
                 // Content-Type:                    application/json; charset=utf-8
                 // Content-Length:                  223
                 // X-Request-ID:                    1234
@@ -1534,7 +1534,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // Date:                            Thu, 04 May 2023 05:04:31 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3401
-                // Authorization:                   Token cpo-accessing-emsp1::token
+                // Authorization:                   Token cpo-accessing-emsp1++token
                 // Content-Type:                    application/json; charset=utf-8
                 // Content-Length:                  223
                 // X-Request-ID:                    1234
@@ -1650,7 +1650,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // Date:                            Thu, 04 May 2023 05:04:31 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3401
-                // Authorization:                   Token cpo-accessing-emsp1::token
+                // Authorization:                   Token cpo-accessing-emsp1++token
                 // Content-Type:                    application/json; charset=utf-8
                 // Content-Length:                  223
                 // X-Request-ID:                    1234
@@ -1750,7 +1750,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                               AccessToken:                 AccessToken.Parse(cpo_accessing_emsp1__token),
                                               AccessStatus:                AccessStatus.ALLOWED,
 
-                                              //RemoteAccessToken:           AccessToken.Parse("cpo_accessing_emsp1::token"),
+                                              //RemoteAccessToken:           AccessToken.Parse("cpo_accessing_emsp1++token"),
                                               //RemoteVersionsURL:           null, // 
                                               //RemoteVersionIds:            new[] { Version.Id },
                                               //SelectedVersionId:           Version.Id,
@@ -1785,7 +1785,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // Date:                            Fri, 05 May 2023 10:19:29 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3401
-                // Authorization:                   Token cpo-accessing-emsp1::token
+                // Authorization:                   Token cpo-accessing-emsp1++token
                 // Content-Type:                    application/json; charset=utf-8
                 // Content-Length:                  223
                 // X-Request-ID:                    1234
@@ -1817,7 +1817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // 
                 // {
                 //     "status_code":      2000,
-                //     "status_message":  "The given access token 'emsp1_accessing_cpo::token' is not yet registered!",
+                //     "status_message":  "The given access token 'emsp1_accessing_cpo++token' is not yet registered!",
                 //     "timestamp":       "2023-05-05T10:19:29.735Z"
                 // }
 
@@ -1833,7 +1833,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual (2000,                                                                           json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1::token' is not yet registered!",   json["status_message"]?.Value<String>());
+                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1++token' is not yet registered!",   json["status_message"]?.Value<String>());
 
                 var timestamp         = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);
@@ -1892,7 +1892,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // Date:                            Fri, 05 May 2023 12:31:07 GMT
                 // Accept:                          application/json; charset=utf-8; q=1
                 // Host:                            127.0.0.1:3401
-                // Authorization:                   Token cpo_accessing_emsp1::token
+                // Authorization:                   Token cpo_accessing_emsp1++token
                 // X-Request-ID:                    1234
                 // X-Correlation-ID:                5678
 
@@ -1911,7 +1911,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // 
                 // {
                 //     "status_code":      1000,
-                //     "status_message":  "The given access token 'cpo_accessing_emsp1::token' was deleted!",
+                //     "status_message":  "The given access token 'cpo_accessing_emsp1++token' was deleted!",
                 //     "timestamp":       "2023-05-05T12:31:07.181Z"
                 // }
 
@@ -1929,7 +1929,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 Assert.IsNotNull(json);
 
                 Assert.AreEqual (1000,                                                                 json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1::token' was deleted!",   json["status_message"]?.Value<String>());
+                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1++token' was deleted!",   json["status_message"]?.Value<String>());
 
                 var timestamp                = json["timestamp"]?.Value<DateTime>();
                 Assert.IsNotNull(timestamp);

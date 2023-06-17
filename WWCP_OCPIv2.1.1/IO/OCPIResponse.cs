@@ -180,7 +180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     return new OCPIResponse(json["status_code"]?.   Value<Int32>()  ?? -1,
                                             json["status_message"]?.Value<String>() ?? String.Empty,
-                                            json["data"]?.          Value<String>(),
+                                            json["data"]?.ToString(),
                                             timestamp,
                                             HTTPResponse,
                                             remoteRequestId,
