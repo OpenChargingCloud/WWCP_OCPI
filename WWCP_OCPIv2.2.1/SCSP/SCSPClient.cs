@@ -369,9 +369,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
         /// <summary>
         /// Create a new SCSP client.
         /// </summary>
+        /// <param name="CommonAPI">The CommonAPI.</param>
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
         /// <param name="AccessToken">The access token.</param>
-        /// <param name="MyCommonAPI">My Common API.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
         /// <param name="RemoteCertificateValidator">The remote SSL/TLS certificate validator.</param>
@@ -385,9 +385,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public SCSPClient(URL                                   RemoteVersionsURL,
+        public SCSPClient(CommonAPI                             CommonAPI,
+                          URL                                   RemoteVersionsURL,
                           AccessToken                           AccessToken,
-                          CommonAPI                             MyCommonAPI,
                           HTTPHostname?                         VirtualHostname              = null,
                           String?                               Description                  = null,
                           RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
@@ -409,9 +409,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                           LogfileCreatorDelegate?               LogfileCreator               = null,
                           DNSClient?                            DNSClient                    = null)
 
-            : base(RemoteVersionsURL,
+            : base(CommonAPI,
+                   RemoteVersionsURL,
                    AccessToken,
-                   MyCommonAPI,
                    VirtualHostname,
                    Description,
                    RemoteCertificateValidator,

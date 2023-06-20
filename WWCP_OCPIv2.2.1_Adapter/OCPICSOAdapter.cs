@@ -2296,8 +2296,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                                                                        var cpoClient = new CPO.HTTP.CPOClient(
 
-                                                                                                           remoteParty,
                                                                                                            CommonAPI,
+                                                                                                           remoteParty,
                                                                                                            null, // VirtualHostname
                                                                                                            null, // Description
                                                                                                            null, // HTTPLogger

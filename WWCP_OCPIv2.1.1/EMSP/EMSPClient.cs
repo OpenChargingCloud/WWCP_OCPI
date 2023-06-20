@@ -652,7 +652,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Create a new EMSP client.
         /// </summary>
-        /// <param name="MyCommonAPI">My Common API.</param>
+        /// <param name="CommonAPI">The CommonAPI.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
@@ -660,8 +660,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSPClient(RemoteParty              RemoteParty,
-                          CommonAPI                MyCommonAPI,
+        public EMSPClient(CommonAPI                CommonAPI,
+                          RemoteParty              RemoteParty,
                           HTTPHostname?            VirtualHostname   = null,
                           String?                  Description       = null,
                           HTTPClientLogger?        HTTPLogger        = null,
@@ -672,8 +672,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                           LogfileCreatorDelegate?  LogfileCreator    = null,
                           DNSClient?               DNSClient         = null)
 
-            : base(RemoteParty,
-                   MyCommonAPI,
+            : base(CommonAPI,
+                   RemoteParty,
                    VirtualHostname,
                    Description,
                    HTTPLogger,
@@ -3184,14 +3184,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                        ExpirationTimestamp,
                                                        ReservationId,
                                                        LocationId,
-                                                       MyCommonAPI.GetModuleURL(Module_Id.Commands,
+                                                       CommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                 SelectedOCPIVersionId.ToString() + "/emsp") + "RESERVE_NOW" + commandId.ToString(),
                                                        EVSEUId,
                                                        commandId,
                                                        requestId,
                                                        correlationId);
 
-                MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
+                CommonAPI.CommandValueStore.AddOrUpdate(commandId,
                                                           (id)    => CommandValues.FromCommand(command),
                                                           (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand));
 
@@ -3256,7 +3256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     Counters.ReserveNow.IncRequests_Error();
                 }
 
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
+                if (CommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }
@@ -3383,13 +3383,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                     VersionId);
 
                 var command    = new CancelReservationCommand(ReservationId,
-                                                              MyCommonAPI.GetModuleURL(Module_Id.Commands,
+                                                              CommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                        SelectedOCPIVersionId.ToString() + "/emsp") + "CANCEL_RESERVATION" + commandId.ToString(),
                                                               commandId,
                                                               requestId,
                                                               correlationId);
 
-                MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
+                CommonAPI.CommandValueStore.AddOrUpdate(commandId,
                                                           (id)    => CommandValues.FromCommand(command),
                                                           (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand));
 
@@ -3454,7 +3454,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     Counters.CancelReservation.IncRequests_Error();
                 }
 
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
+                if (CommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }
@@ -3583,14 +3583,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
                 var command    = new StartSessionCommand(Token,
                                                          LocationId,
-                                                         MyCommonAPI.GetModuleURL(Module_Id.Commands,
+                                                         CommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                   SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + commandId.ToString(),
                                                          EVSEUId,
                                                          commandId,
                                                          requestId,
                                                          correlationId);
 
-                MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
+                CommonAPI.CommandValueStore.AddOrUpdate(commandId,
                                                           (id)    => CommandValues.FromCommand(command),
                                                           (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand));
 
@@ -3655,7 +3655,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     Counters.StartSession.IncRequests_Error();
                 }
 
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
+                if (CommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }
@@ -3781,13 +3781,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                     VersionId);
 
                 var command    = new StopSessionCommand(SessionId,
-                                                        MyCommonAPI.GetModuleURL(Module_Id.Commands,
+                                                        CommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                  SelectedOCPIVersionId.ToString() + "/emsp") + "STOP_SESSION" + commandId.ToString(),
                                                         commandId,
                                                         requestId,
                                                         correlationId);
 
-                MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
+                CommonAPI.CommandValueStore.AddOrUpdate(commandId,
                                                           (id)    => CommandValues.FromCommand(command),
                                                           (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand));
 
@@ -3852,7 +3852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     Counters.StopSession.IncRequests_Error();
                 }
 
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
+                if (CommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }
@@ -3982,13 +3982,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                 var command    = new UnlockConnectorCommand(LocationId,
                                                             EVSEUId,
                                                             ConnectorId,
-                                                            MyCommonAPI.GetModuleURL(Module_Id.Commands,
+                                                            CommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                      SelectedOCPIVersionId.ToString() + "/emsp") + "UNLOCK_CONNECTOR" + commandId.ToString(),
                                                             commandId,
                                                             requestId,
                                                             correlationId);
 
-                MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
+                CommonAPI.CommandValueStore.AddOrUpdate(commandId,
                                                           (id)    => CommandValues.FromCommand(command),
                                                           (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand));
 
@@ -4053,7 +4053,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     Counters.UnlockConnector.IncRequests_Error();
                 }
 
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
+                if (CommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }

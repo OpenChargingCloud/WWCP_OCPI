@@ -2587,9 +2587,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
-            var commonClient              = new CommonClient(receivedCredentials.URL,
+            var commonClient              = new CommonClient(this,
+                                                             receivedCredentials.URL,
                                                              receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
-                                                             this,
                                                              DNSClient: HTTPServer.DNSClient);
 
             var otherVersions             = await commonClient.GetVersions();
@@ -4479,8 +4479,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 var cpoClient = new CPOClient(
-                                    remoteParty,
                                     this,
+                                    remoteParty,
                                     null,
                                     Description ?? ClientConfigurations.Description?.Invoke(remotePartyId),
                                     null,
@@ -4528,8 +4528,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 var cpoClient = new CPOClient(
-                                    RemoteParty,
                                     this,
+                                    RemoteParty,
                                     null,
                                     Description ?? ClientConfigurations.Description?.Invoke(RemoteParty.Id),
                                     null,
@@ -4578,8 +4578,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 var cpoClient = new CPOClient(
-                                    remoteParty,
                                     this,
+                                    remoteParty,
                                     null,
                                     Description ?? ClientConfigurations.Description?.Invoke(RemotePartyId),
                                     null,
@@ -4644,8 +4644,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 var emspClient = new EMSPClient(
-                                     remoteParty,
                                      this,
+                                     remoteParty,
                                      null,
                                      Description ?? ClientConfigurations.Description?.Invoke(remotePartyId),
                                      null,
@@ -4693,8 +4693,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 var emspClient = new EMSPClient(
-                                     RemoteParty,
                                      this,
+                                     RemoteParty,
                                      null,
                                      Description ?? ClientConfigurations.Description?.Invoke(RemoteParty.Id),
                                      null,
@@ -4743,8 +4743,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 var emspClient = new EMSPClient(
-                                     remoteParty,
                                      this,
+                                     remoteParty,
                                      null,
                                      Description ?? ClientConfigurations.Description?.Invoke(RemotePartyId),
                                      null,

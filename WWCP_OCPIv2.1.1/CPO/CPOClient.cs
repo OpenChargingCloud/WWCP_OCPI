@@ -797,10 +797,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new EMSP client.
+        /// Create a new CPO client.
         /// </summary>
+        /// <param name="CommonAPI">The CommonAPI.</param>
         /// <param name="RemoteParty">The remote party.</param>
-        /// <param name="MyCommonAPI">My Common API.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="Description">An optional description of this CPO client.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
@@ -808,8 +808,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPOClient(RemoteParty              RemoteParty,
-                         CommonAPI                MyCommonAPI,
+        public CPOClient(CommonAPI                CommonAPI,
+                         RemoteParty              RemoteParty,
                          HTTPHostname?            VirtualHostname   = null,
                          String?                  Description       = null,
                          HTTPClientLogger?        HTTPLogger        = null,
@@ -820,8 +820,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                          LogfileCreatorDelegate?  LogfileCreator    = null,
                          DNSClient?               DNSClient         = null)
 
-            : base(RemoteParty,
-                   MyCommonAPI,
+            : base(CommonAPI,
+                   RemoteParty,
                    VirtualHostname,
                    Description,
                    HTTPLogger,
@@ -1167,8 +1167,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                    requestId,
                                                                    correlationId,
                                                                    json => Location.Parse(json,
-                                                                                          MyCommonAPI.OurCountryCode,
-                                                                                          MyCommonAPI.OurPartyId));
+                                                                                          CommonAPI.OurCountryCode,
+                                                                                          CommonAPI.OurPartyId));
 
                     Counters.PutLocation.IncResponses_OK();
 

@@ -359,7 +359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.CustomEVSEStatusUpdateConverter    = CustomEVSEStatusUpdateConverter;
             this.CustomChargeDetailRecordConverter  = CustomChargeDetailRecordConverter;
 
-            Link();
+            WireIncomingRequests();
 
         }
 
@@ -495,17 +495,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.CustomEVSEStatusUpdateConverter    = CustomEVSEStatusUpdateConverter;
             this.CustomChargeDetailRecordConverter  = CustomChargeDetailRecordConverter;
 
-            Link();
+            WireIncomingRequests();
 
         }
 
         #endregion
 
 
-        private void Link()
+        private void WireIncomingRequests()
         {
 
-            #region OnStartSessionCommand
+            #region OnStartSessionCommand  => RemoteStart
 
             this.CPOAPI.OnStartSessionCommand += async (emspId, startSessionCommand) => {
 
@@ -582,7 +582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-            #region OnStopSessionCommand
+            #region OnStopSessionCommand   => RemoteStop
 
             this.CPOAPI.OnStopSessionCommand += async (emspId, stopSessionCommand) => {
 
@@ -613,9 +613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             #endregion
 
-
         }
-
 
 
         #region AddRemoteParty(...)
@@ -2082,7 +2080,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region AuthorizeStart(LocalAuthentication, ...)
+        #region AuthorizeStart         (LocalAuthentication, ...)
 
         /// <summary>
         /// Create an authorize start request at the given charging location.
@@ -2212,8 +2210,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                                            var cpoClient = new CPO.HTTP.CPOClient(
 
-                                                                                                               remoteParty,
                                                                                                                CommonAPI,
+                                                                                                               remoteParty,
                                                                                                                null, // VirtualHostname
                                                                                                                null, // Description
                                                                                                                null, // HTTPLogger
@@ -2240,6 +2238,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                                      ClientsLoggingContext ?? DefaultLoggingContext,
                                                                                                                      ClientsLogfileCreator
                                                                                                                  );
+
+                                                                                           //ToDo: Make client debugging more flexible!
+                                                                                           cpoClientLogger.Debug("all", LogTargets.Disc);
 
                                                                                            #endregion
 
@@ -2405,7 +2406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region AuthorizeStop (SessionId, LocalAuthentication, ...)
+        #region AuthorizeStop          (SessionId, LocalAuthentication, ...)
 
         /// <summary>
         /// Create an authorize stop request at the given charging location.
@@ -2530,8 +2531,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                                            var cpoClient = new CPO.HTTP.CPOClient(
 
-                                                                                                               remoteParty,
                                                                                                                CommonAPI,
+                                                                                                               remoteParty,
                                                                                                                null, // VirtualHostname
                                                                                                                null, // Description
                                                                                                                null, // HTTPLogger
@@ -2558,6 +2559,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                                      ClientsLoggingContext ?? DefaultLoggingContext,
                                                                                                                      ClientsLogfileCreator
                                                                                                                  );
+
+                                                                                           //ToDo: Make client debugging more flexible!
+                                                                                           cpoClientLogger.Debug("all", LogTargets.Disc);
 
                                                                                            #endregion
 
@@ -2701,7 +2705,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region SendChargeDetailRecords
+        #region SendChargeDetailRecords(ChargeDetailRecords, TransmissionType, ...)
 
         /// <summary>
         /// Send charge detail records to an OICP server.
@@ -2849,8 +2853,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         var cpoClient = new CPO.HTTP.CPOClient(
 
-                                            remoteParty,
                                             CommonAPI,
+                                            remoteParty,
                                             null, // VirtualHostname
                                             null, // Description
                                             null, // HTTPLogger
@@ -2877,6 +2881,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                   ClientsLoggingContext ?? DefaultLoggingContext,
                                                   ClientsLogfileCreator
                                               );
+
+                        //ToDo: Make client debugging more flexible!
+                        cpoClientLogger.Debug("all", LogTargets.Disc);
 
                         #endregion
 
