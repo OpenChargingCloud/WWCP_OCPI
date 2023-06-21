@@ -720,12 +720,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                    TimeSpan?                RequestTimeout)
         {
 
-            EventTrackingId ??= EventTracking_Id.New;
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
 
-            var operatorId  = ChargingLocation.EVSEId?.           OperatorId ??
-                              ChargingLocation.ChargingStationId?.OperatorId ??
-                              ChargingLocation.ChargingPoolId?.   OperatorId ??
-                              ChargingLocation.ChargingStationOperatorId;
+            var operatorId       = ChargingLocation.EVSEId?.           OperatorId ??
+                                   ChargingLocation.ChargingStationId?.OperatorId ??
+                                   ChargingLocation.ChargingPoolId?.   OperatorId ??
+                                   ChargingLocation.ChargingStationOperatorId;
 
             if (operatorId.HasValue)
             {
@@ -792,6 +792,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                               CancellationToken:   CancellationToken,
                                                               EventTrackingId:     EventTrackingId,
                                                               RequestTimeout:      RequestTimeout);
+
+                if (response.StatusCode == 1000)
+                    // The OCPI response is just a "command accepted" information!
+                    return RemoteStartResult.AsyncOperation(new ChargingSession(
+                                                                ChargingSession_Id.NewRandom,
+                                                                eventTrackingId
+                                                            ));
+
+                return RemoteStartResult.Error();
 
             }
 

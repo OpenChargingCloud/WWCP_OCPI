@@ -280,7 +280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
                 Assert.IsNotNull(response.RequestId);
                 Assert.IsNotNull(response.CorrelationId);
-                Assert.IsNotNull(response.Location);
+                Assert.IsNotNull(response.HTTPLocation);
                 //Assert.IsTrue(response.Location == URL.Parse("https://127.0.0.1/ocpi/emsp/2.1.1/cdrs/e5295528-6286-4d02-a2b4-39d82b3b6ab6"));
 
                 //Assert.IsNotNull(response.Request);

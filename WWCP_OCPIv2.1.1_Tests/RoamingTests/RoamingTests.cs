@@ -2052,7 +2052,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                           InitialStatus:        EVSEStatusTypes.Available,
 
-                                          Configurator:         evse => {
+                                          ChargingConnectors:   new[] {
+                                                                    new ChargingConnector(
+                                                                        Plug:            ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        Lockable:        true,
+                                                                        CableAttached:   true,
+                                                                        CableLength:     Meter.Parse(4)
+                                                                    )
                                                                 }
 
                                       );
@@ -2102,14 +2108,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                                     ),
                                                       Duration:                     TimeSpan.FromMinutes(118),
 
-                                                      EVSE:                         evse1,
-                                                      EVSEId:                       evse1.Id,
-                                                      ChargingStation:              evse1.ChargingStation,
-                                                      ChargingStationId:            evse1.ChargingStation.Id,
-                                                      ChargingPool:                 evse1.ChargingPool,
-                                                      ChargingPoolId:               evse1.ChargingPool.Id,
-                                                      ChargingStationOperator:      evse1.Operator,
-                                                      ChargingStationOperatorId:    evse1.Operator.Id,
+                                                      ChargingConnector:            evse1.ChargingConnectors.First(),
+                                                      //EVSE:                         evse1,                      // automagic!
+                                                      //EVSEId:                       evse1.Id,                   // automagic!
+                                                      //ChargingStation:              evse1.ChargingStation,      // automagic!
+                                                      //ChargingStationId:            evse1.ChargingStation.Id,   // automagic!
+                                                      //ChargingPool:                 evse1.ChargingPool,         // automagic!
+                                                      //ChargingPoolId:               evse1.ChargingPool.Id,      // automagic!
+                                                      //ChargingStationOperator:      evse1.Operator,             // automagic!
+                                                      //ChargingStationOperatorId:    evse1.Operator.Id,          // automagic!
 
                                                       ChargingProduct:              ChargingProduct.FromId(ChargingProduct_Id.Parse("AC1")),
                                                       ChargingPrice:                null,
@@ -2267,15 +2274,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                                           ChargingConnectors:   new[] {
                                                                     new ChargingConnector(
-                                                                       // Id:              ChargingConnector_Id.Parse(1),
                                                                         Plug:            ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:        true,
                                                                         CableAttached:   true,
                                                                         CableLength:     Meter.Parse(4)
                                                                     )
-                                                                },
-
-                                          Configurator:         evse => {
                                                                 }
 
                                       );
@@ -2375,14 +2378,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                                           ),
                                                              Duration:                    TimeSpan.FromMinutes(4),
 
-                                                             EVSE:                        evse1,
-                                                             EVSEId:                      evse1.Id,
-                                                             ChargingStation:             evse1.ChargingStation,
-                                                             ChargingStationId:           evse1.ChargingStation.Id,
-                                                             ChargingPool:                evse1.ChargingPool,
-                                                             ChargingPoolId:              evse1.ChargingPool.Id,
-                                                             ChargingStationOperator:     evse1.Operator,
-                                                             ChargingStationOperatorId:   evse1.Operator.Id,
+                                                             ChargingConnector:           evse1.ChargingConnectors.First(),
+                                                             //EVSE:                        evse1,                      // automagic!
+                                                             //EVSEId:                      evse1.Id,                   // automagic!
+                                                             //ChargingStation:             evse1.ChargingStation,      // automagic!
+                                                             //ChargingStationId:           evse1.ChargingStation.Id,   // automagic!
+                                                             //ChargingPool:                evse1.ChargingPool,         // automagic!
+                                                             //ChargingPoolId:              evse1.ChargingPool.Id,      // automagic!
+                                                             //ChargingStationOperator:     evse1.Operator,             // automagic!
+                                                             //ChargingStationOperatorId:   evse1.Operator.Id,          // automagic!
 
                                                              ChargingProduct:             chargingProduct,
                                                              ChargingPrice:               new Price(
@@ -2564,15 +2568,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                                           ChargingConnectors:   new[] {
                                                                     new ChargingConnector(
-                                                                       // Id:              ChargingConnector_Id.Parse(1),
                                                                         Plug:            ChargingPlugTypes.Type2Connector_CableAttached,
                                                                         Lockable:        true,
                                                                         CableAttached:   true,
                                                                         CableLength:     Meter.Parse(4)
                                                                     )
-                                                                },
-
-                                          Configurator:         evse => {
                                                                 }
 
                                       );
@@ -2613,7 +2613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                          RemoteAuthentication:   authenticationStart
                                                      );
 
-                    Assert.AreEqual(RemoteStartResultTypes.Success, remoteStartResult.Result);
+                    Assert.AreEqual(RemoteStartResultTypes.AsyncOperation, remoteStartResult.Result);
 
                     if (remoteStartResult         is not null &&
                         remoteStartResult.Session is not null)
@@ -2628,10 +2628,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                             SessionId:              remoteStartResult.Session.Id,
                                                             ReservationHandling:    ReservationHandling.Close,
                                                             ProviderId:             providerIdStop,
-                                                            RemoteAuthentication:   RemoteAuthentication.FromRemoteIdentification(EMobilityAccount_Id.Parse("DE-GDF-C12345678"))
+                                                            RemoteAuthentication:   authenticationStop
                                                         );
 
 
+                        Timestamp.TravelForwardInTime(TimeSpan.FromSeconds(10));
 
                         var startTS          = Timestamp.Now - TimeSpan.FromMinutes(5);
                         var stopTS           = Timestamp.Now - TimeSpan.FromMinutes(1);
@@ -2646,14 +2647,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                                                            ),
                                                              Duration:                     TimeSpan.FromMinutes(4),
 
-                                                             EVSE:                        evse1,
-                                                             EVSEId:                      evse1.Id,
-                                                             ChargingStation:             evse1.ChargingStation,
-                                                             ChargingStationId:           evse1.ChargingStation.Id,
-                                                             ChargingPool:                evse1.ChargingPool,
-                                                             ChargingPoolId:              evse1.ChargingPool.Id,
-                                                             ChargingStationOperator:     evse1.Operator,
-                                                             ChargingStationOperatorId:   evse1.Operator.Id,
+                                                             ChargingConnector:           evse1.ChargingConnectors.First(),
+                                                             //EVSE:                        evse1,                      // automagic!
+                                                             //EVSEId:                      evse1.Id,                   // automagic!
+                                                             //ChargingStation:             evse1.ChargingStation,      // automagic!
+                                                             //ChargingStationId:           evse1.ChargingStation.Id,   // automagic!
+                                                             //ChargingPool:                evse1.ChargingPool,         // automagic!
+                                                             //ChargingPoolId:              evse1.ChargingPool.Id,      // automagic!
+                                                             //ChargingStationOperator:     evse1.Operator,             // automagic!
+                                                             //ChargingStationOperatorId:   evse1.Operator.Id,          // automagic!
 
                                                              ChargingProduct:             chargingProduct,
                                                              ChargingPrice:               new Price(

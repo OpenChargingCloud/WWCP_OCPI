@@ -2931,7 +2931,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     sendCDRResults.Add(WWCP.SendCDRResult.Success(endtime.Value,
                                                                                   chargeDetailRecord,
                                                                                   warnings,
-                                                                                  Location:  response.Location,
+                                                                                  Location:  response.HTTPLocation,
                                                                                   Runtime:   runtime));
 
                                 else

@@ -596,7 +596,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         {
 
-            #region Send OnGetVersionsRequest event
+            #region Init
 
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
@@ -607,10 +607,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
+            Counters.GetVersions.IncRequests_OK();
+
+            #endregion
+
+            #region Send OnGetVersionsRequest event
+
             try
             {
-
-                Counters.GetVersions.IncRequests_OK();
 
                 if (OnGetVersionsRequest is not null)
                     await Task.WhenAll(OnGetVersionsRequest.GetInvocationList().
@@ -811,7 +815,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         {
 
-            #region Send OnGetVersionDetailsRequest event
+            #region Init
 
             var versionId        = VersionId       ?? SelectedOCPIVersionId;
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
@@ -823,10 +827,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
+            Counters.GetVersionDetails.IncRequests_OK();
+
+            #endregion
+
+            #region Send OnGetVersionDetailsRequest event
+
             try
             {
-
-                Counters.GetVersionDetails.IncRequests_OK();
 
                 if (OnGetVersionDetailsRequest is not null)
                     await Task.WhenAll(OnGetVersionDetailsRequest.GetInvocationList().
@@ -1154,7 +1162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         {
 
-            #region Send OnGetCredentialsHTTPRequest event
+            #region Init
 
             var versionId        = VersionId       ?? SelectedOCPIVersionId;
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
@@ -1166,10 +1174,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
+            Counters.GetCredentials.IncRequests_OK();
+
+            #endregion
+
+            #region Send OnGetCredentialsHTTPRequest event
+
             try
             {
-
-                Counters.GetCredentials.IncRequests_OK();
 
                 if (OnGetCredentialsRequest is not null)
                     await Task.WhenAll(OnGetCredentialsRequest.GetInvocationList().
@@ -1359,7 +1371,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         {
 
-            #region Send OnPostCredentialsHTTPRequest event
+            #region Init
 
             var versionId        = VersionId       ?? SelectedOCPIVersionId;
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
@@ -1371,10 +1383,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
+            Counters.PostCredentials.IncRequests_OK();
+
+            #endregion
+
+            #region Send OnPostCredentialsHTTPRequest event
+
             try
             {
-
-                Counters.PostCredentials.IncRequests_OK();
 
                 if (OnPostCredentialsRequest is not null)
                     await Task.WhenAll(OnPostCredentialsRequest.GetInvocationList().
@@ -1568,7 +1584,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         {
 
-            #region Send OnPutCredentialsHTTPRequest event
+            #region Init
 
             var versionId        = VersionId       ?? SelectedOCPIVersionId;
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
@@ -1580,10 +1596,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
+            Counters.PutCredentials.IncRequests_OK();
+
+            #endregion
+
+            #region Send OnPutCredentialsHTTPRequest event
+
             try
             {
-
-                Counters.PutCredentials.IncRequests_OK();
 
                 if (OnPutCredentialsRequest is not null)
                     await Task.WhenAll(OnPutCredentialsRequest.GetInvocationList().
@@ -1837,7 +1857,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         {
 
-            #region Send OnDeleteCredentialsHTTPRequest event
+            #region Init
 
             var versionId        = VersionId       ?? SelectedOCPIVersionId;
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
@@ -1849,10 +1869,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
+            Counters.DeleteCredentials.IncRequests_OK();
+
+            #endregion
+
+            #region Send OnDeleteCredentialsHTTPRequest event
+
             try
             {
-
-                Counters.DeleteCredentials.IncRequests_OK();
 
                 if (OnDeleteCredentialsRequest is not null)
                     await Task.WhenAll(OnDeleteCredentialsRequest.GetInvocationList().
@@ -2059,7 +2083,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         {
 
-            #region Send OnRegisterRequest event
+            #region Init
 
             var versionId        = VersionId       ?? SelectedOCPIVersionId;
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
@@ -2071,10 +2095,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
+            Counters.Register.IncRequests_OK();
+
+            #endregion
+
+            #region Send OnRegisterRequest event
+
             try
             {
-
-                Counters.Register.IncRequests_OK();
 
                 if (OnRegisterRequest is not null)
                     await Task.WhenAll(OnRegisterRequest.GetInvocationList().

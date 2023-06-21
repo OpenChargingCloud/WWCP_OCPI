@@ -6181,17 +6181,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
+                                        //ToDo: How do we verify, that this CPO does not send CDRs for other CPOs?
+
+
                                         var addResult = await CommonAPI.AddCDR(newCDR);
 
 
-                                        // https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/mod_cdrs.asciidoc#mod_cdrs_post_method
-                                        // The response should contain the URL to the just created CDR object in the eMSP’s system.
+                                        // https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/mod_cdrs.md#response-headers
+                                        // The response should contain the URL to the just created CDR object in the eMSP system.
                                         //
                                         // Parameter    Location
                                         // Datatype     URL
                                         // Required     yes
-                                        // Description  URL to the newly created CDR in the eMSP’s system, can be used by the CPO system to perform a GET on the same CDR.
-                                        // Example      https://www.server.com/ocpi/emsp/2.2/cdrs/123456
+                                        // Description  URL to the newly created CDR in the eMSP system, can be used by the CPO system to do a GET on of the same CDR.
+                                        // Example      Location: /ocpi/emsp/2.0/cdrs/123456
 
                                         if (addResult.IsSuccess)
                                             return new OCPIResponse.Builder(Request) {

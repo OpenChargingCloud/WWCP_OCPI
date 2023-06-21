@@ -4174,9 +4174,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         /// <summary>
         /// Post/store the given charge detail record on/within the remote API.
         /// </summary>
-        /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
         public async Task<OCPIResponse<CDR>>
 
             PostCDR(CDR                 CDR,
@@ -4185,9 +4185,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                     Correlation_Id?     CorrelationId       = null,
                     Version_Id?         VersionId           = null,
 
-                    CancellationToken   CancellationToken   = default,
                     EventTracking_Id?   EventTrackingId     = null,
-                    TimeSpan?           RequestTimeout      = null)
+                    TimeSpan?           RequestTimeout      = null,
+                    CancellationToken   CancellationToken   = default)
 
         {
 
@@ -4239,7 +4239,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
                 var remoteURL = await GetRemoteURL(Module_Id.CDRs,
                                                    InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                                                   VersionId,
+                                                   eventTrackingId,
+                                                   CancellationToken);
 
                 if (remoteURL.HasValue)
                 {
@@ -4355,9 +4357,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         /// <summary>
         /// Get the charge detail record specified by the given charge detail record identification from the remote API.
         /// </summary>
-        /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
         public async Task<OCPIResponse<CDR>>
 
             GetCDR(CountryCode         CountryCode,
@@ -4368,9 +4370,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
                    Correlation_Id?     CorrelationId       = null,
                    Version_Id?         VersionId           = null,
 
-                   CancellationToken   CancellationToken   = default,
                    EventTracking_Id?   EventTrackingId     = null,
-                   TimeSpan?           RequestTimeout      = null)
+                   TimeSpan?           RequestTimeout      = null,
+                   CancellationToken   CancellationToken   = default)
 
         {
 
@@ -4424,7 +4426,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
 
                 var remoteURL = await GetRemoteURL(Module_Id.CDRs,
                                                    InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                                                   VersionId,
+                                                   eventTrackingId,
+                                                   CancellationToken);
 
                 if (remoteURL.HasValue)
                 {
