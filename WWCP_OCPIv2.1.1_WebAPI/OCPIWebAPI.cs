@@ -716,7 +716,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                 HTTPServer.AddMethodCallback(this,
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
-                                             OverlayURLPathPrefix.Value + "2.1.1/cpo/locations",
+                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/locations",
                                              HTTPContentType.HTML_UTF8,
                                              HTTPDelegate: Request => {
 
