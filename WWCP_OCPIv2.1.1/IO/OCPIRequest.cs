@@ -353,10 +353,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
-        public Boolean TryParseJObjectRequestBody(out JObject               JSON,
-                                                  out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                  Boolean                   AllowEmptyHTTPBody   = false,
-                                                  String?                   JSONLDContext        = null)
+        public Boolean TryParseJObjectRequestBody(out JObject?               JSON,
+                                                  out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                                  Boolean                    AllowEmptyHTTPBody   = false,
+                                                  String?                    JSONLDContext        = null)
         {
 
             var result = HTTPRequest.TryParseJObjectRequestBody(out JSON,
@@ -364,11 +364,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                 AllowEmptyHTTPBody,
                                                                 JSONLDContext);
 
-            if (HTTPResponseBuilder != null)
-            {
-                HTTPResponseBuilder.Set("X-Request-ID",      RequestId).
-                                    Set("X-Correlation-ID",  CorrelationId);
-            }
+            HTTPResponseBuilder?.Set("X-Request-ID",      RequestId?.    ToString() ?? String.Empty).
+                                 Set("X-Correlation-ID",  CorrelationId?.ToString() ?? String.Empty);
 
             OCPIResponseBuilder = new OCPIResponse.Builder(this) {
                 StatusCode           = result ? 1000 : 2001,

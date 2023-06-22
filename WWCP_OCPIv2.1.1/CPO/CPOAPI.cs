@@ -890,6 +890,122 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+        #region ParseTokenId                 (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId,                                           out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the tariff identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CPOAPI">The Users API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="TokenId">The parsed unique tariff identification.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        public static Boolean ParseTokenId(this OCPIRequest           Request,
+                                           CPOAPI                     CPOAPI,
+                                           out CountryCode?           CountryCode,
+                                           out Party_Id?              PartyId,
+                                           out Token_Id?              TokenId,
+                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CPOAPI  is null)
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
+
+            #endregion
+
+            CountryCode          = default;
+            PartyId              = default;
+            TokenId              = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 3)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid country code!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid party identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
+
+            if (!TokenId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid token identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
         #region ParseToken                   (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId, out Token,                                out HTTPResponse)
 
         /// <summary>
@@ -905,7 +1021,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="TokenStatus">The resolved tariff with status.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingToken">Whether to fail when the tariff for the given tariff identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseToken(this OCPIRequest           Request,
                                          CPOAPI                     CPOAPI,
                                          out CountryCode?           CountryCode,
@@ -1028,31 +1143,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                TokenStatus = tokenStatus;
-
             }
-
-            if (tokenStatus.Token.CountryCode != CountryCode ||
-                tokenStatus.Token.PartyId     != PartyId)
+            else
             {
 
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2004,
-                    StatusMessage        = "Invalid token identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.UnprocessableEntity,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
+                if (tokenStatus.Token.CountryCode != CountryCode ||
+                    tokenStatus.Token.PartyId     != PartyId)
+                {
+
+                    OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                        StatusCode           = 2004,
+                        StatusMessage        = "Invalid token identification!",
+                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                            HTTPStatusCode             = HTTPStatusCode.UnprocessableEntity,
+                            //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                            AccessControlAllowHeaders  = "Authorization"
+                        }
+                    };
+
+                }
+
+                TokenStatus = tokenStatus;
+                return true;
 
             }
 
-            return true;
+            return false;
 
         }
 
         #endregion
+
 
 
         #region ParseCommandId               (this Request, CPOAPI, out CommandId,                                                                       out HTTPResponse)
@@ -4189,13 +4310,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check country code, party identification and token identification
 
-                                        if (!Request.ParseToken(this,
-                                                                out var countryCode,
-                                                                out var partyId,
-                                                                out var tokenId,
-                                                                out var existingTokenStatus,
-                                                                out var ocpiResponseBuilder,
-                                                                FailOnMissingToken: false))
+                                        if (!Request.ParseTokenId(this,
+                                                                  out var countryCode,
+                                                                  out var partyId,
+                                                                  out var tokenIdURL,
+                                                                  out var ocpiResponseBuilder))
                                         {
                                             return ocpiResponseBuilder!;
                                         }
@@ -4204,15 +4323,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Parse new or updated token JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out var tokenJSON, out ocpiResponseBuilder))
-                                            return ocpiResponseBuilder;
+                                        if (!Request.TryParseJObjectRequestBody(out var tokenJSON, out ocpiResponseBuilder) ||
+                                             tokenJSON is null)
+                                        {
+                                            return ocpiResponseBuilder!;
+                                        }
 
                                         if (!Token.TryParse(tokenJSON,
                                                             out var newOrUpdatedToken,
                                                             out var errorResponse,
                                                             countryCode,
                                                             partyId,
-                                                            tokenId) ||
+                                                            tokenIdURL) ||
                                              newOrUpdatedToken is null)
                                         {
 
@@ -4232,29 +4354,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
                                         //ToDo: What exactly to do with this information?
-                                        var tokenType  = Request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
+                                        var tokenType          = Request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
 
-                                        var result     = await CommonAPI.AddOrUpdateToken(newOrUpdatedToken,
-                                                                                          AllowDowngrades: AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
+                                        var addOrUpdateResult  = await CommonAPI.AddOrUpdateToken(newOrUpdatedToken,
+                                                                                                  AllowDowngrades: AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
 
-                                        if (result.IsSuccess &&
-                                            result.Data is not null)
+                                        if (addOrUpdateResult.IsSuccess &&
+                                            addOrUpdateResult.Data is not null)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = result.Data.ToJSON(false,
+                                                       Data                 = addOrUpdateResult.Data.ToJSON(false,
                                                                                                  CustomTokenSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = result.WasCreated == true
+                                                           HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                             ? HTTPStatusCode.Created
                                                                                             : HTTPStatusCode.OK,
                                                            AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                            AccessControlAllowHeaders  = "Authorization",
-                                                           LastModified               = result.Data.LastUpdated.ToIso8601(),
-                                                           ETag                       = result.Data.ETag
+                                                           LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
+                                                           ETag                       = addOrUpdateResult.Data.ETag
                                                        }
                                                    };
 
@@ -4262,15 +4384,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 2000,
-                                                   StatusMessage        = result.ErrorResponse,
+                                                   StatusMessage        = addOrUpdateResult.ErrorResponse,
                                                    Data                 = newOrUpdatedToken.ToJSON(false,
                                                                                                    CustomTokenSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
                                                        AccessControlAllowHeaders  = "Authorization",
-                                                       LastModified               = result.Data?.LastUpdated.ToIso8601(),
-                                                       ETag                       = result.Data?.ETag
+                                                       LastModified               = addOrUpdateResult.Data?.LastUpdated.ToIso8601(),
+                                                       ETag                       = addOrUpdateResult.Data?.ETag
                                                    }
                                                };
 

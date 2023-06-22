@@ -892,7 +892,123 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #endregion
 
-        #region ParseToken                 (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId, out Token,                                out HTTPResponse)
+        #region ParseTokenId               (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId,                                           out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the tariff identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CPOAPI">The Users API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="TokenId">The parsed unique tariff identification.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        public static Boolean ParseTokenId(this OCPIRequest           Request,
+                                           CPOAPI                     CPOAPI,
+                                           out CountryCode?           CountryCode,
+                                           out Party_Id?              PartyId,
+                                           out Token_Id?              TokenId,
+                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CPOAPI  is null)
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
+
+            #endregion
+
+            CountryCode          = default;
+            PartyId              = default;
+            TokenId              = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 3)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid country code!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid party identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
+
+            if (!TokenId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid token identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseToken                 (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -907,7 +1023,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="TokenStatus">The resolved tariff with status.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingToken">Whether to fail when the tariff for the given tariff identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseToken(this OCPIRequest                           Request,
                                          CPOAPI                                     CPOAPI,
                                          IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
@@ -1039,7 +1154,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 }
             }
-
 
             if (FailOnMissingToken)
             {
@@ -4144,14 +4258,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check token
 
-                                        if (!Request.ParseToken(this,
-                                                                Request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)), 
-                                                                out var countryCode,
-                                                                out var partyId,
-                                                                out var tokenId,
-                                                                out var existingTokenStatus,
-                                                                out var ocpiResponseBuilder,
-                                                                FailOnMissingToken: false))
+                                        if (!Request.ParseTokenId(this,
+                                                                  out var countryCode,
+                                                                  out var partyId,
+                                                                  out var tokenId,
+                                                                  out var ocpiResponseBuilder))
                                         {
                                             return ocpiResponseBuilder!;
                                         }
@@ -4186,45 +4297,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #endregion
 
-                                        #region Check whether the new token is "newer" than the existing location
-
-                                        var bbb = Request.QueryString.GetBoolean("forceDowngrade") ??
-                                                  // ToDo: Check AccessToken
-                                                  AllowDowngrades;
-
-                                        if (AllowDowngrades == false &&
-                                            // ToDo: Check AccessToken
-                                            newOrUpdatedToken.LastUpdated < existingTokenStatus.Token.LastUpdated &&
-                                            !Request.QueryString.GetBoolean("forceDowngrade", false))
-                                        {
-
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2000,
-                                                       StatusMessage        = "LastUpdated must ne newer then the existing one!",
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.FailedDependency,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
-                                                           AccessControlAllowHeaders  = "Authorization"
-                                                       }
-                                                   };
-
-                                        }
-
-                                        #endregion
-
-
-                                        var wasCreated = CommonAPI.TokenExists(newOrUpdatedToken.CountryCode,
-                                                                               newOrUpdatedToken.PartyId,
-                                                                               newOrUpdatedToken.Id);
 
                                         //ToDo: What exactly to do with this information?
-                                        var TokenType  = Request.QueryString.TryParseEnum<TokenType>("type") ?? OCPIv2_2_1.TokenType.RFID;
+                                        var TokenType          = Request.QueryString.TryParseEnum<TokenType>("type") ?? OCPIv2_2_1.TokenType.RFID;
 
-                                        var addOrUpdateResult = await CommonAPI.AddOrUpdateToken(newOrUpdatedToken,
-                                                                                                 AllowDowngrades: AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
+                                        var addOrUpdateResult  = await CommonAPI.AddOrUpdateToken(newOrUpdatedToken,
+                                                                                                  AllowDowngrades: AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
 
-                                        if (addOrUpdateResult.IsSuccess)
+                                        if (addOrUpdateResult.IsSuccess &&
+                                            addOrUpdateResult.Data is not null)
+                                        {
+
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
@@ -4240,6 +4324,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                            ETag                       = addOrUpdateResult.Data.ETag
                                                        }
                                                    };
+
+                                        }
 
                                         return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 2000,

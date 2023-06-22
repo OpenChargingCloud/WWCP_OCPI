@@ -315,20 +315,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             #region Properties
 
-            public OCPIRequest?          Request                   { get; }
+            public OCPIRequest?           Request                  { get; }
 
-            public JToken?               Data                      { get; set; }
-            public Int32?                StatusCode                { get; set; }
-            public String?               StatusMessage             { get; set; }
+            public JToken?                Data                     { get; set; }
+            public Int32?                 StatusCode               { get; set; }
+            public String?                StatusMessage            { get; set; }
 
-            public String?               AdditionalInformation     { get; set; }
-            public DateTime?             Timestamp                 { get; set; }
+            public String?                AdditionalInformation    { get; set; }
+            public DateTime?              Timestamp                { get; set; }
 
-            public Request_Id?           RequestId                 { get; set; }
-            public Correlation_Id?       CorrelationId             { get; set; }
-            public Hermod.Location?      HTTPLocation              { get; set; }
+            public Request_Id?            RequestId                { get; set; }
+            public Correlation_Id?        CorrelationId            { get; set; }
+            public Hermod.Location?       HTTPLocation             { get; set; }
 
-            public HTTPResponse.Builder  HTTPResponseBuilder       { get; set; }
+            public HTTPResponse.Builder?  HTTPResponseBuilder      { get; set; }
 
             #endregion
 
@@ -365,6 +365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 Timestamp                                      ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
+                HTTPResponseBuilder                            ??= new HTTPResponse.Builder(Request?.HTTPRequest);
                 HTTPResponseBuilder.Server                     ??= Request?.HTTPRequest.HTTPServer.DefaultServerName;
                 HTTPResponseBuilder.Date                       ??= Timestamp.Value;
                 HTTPResponseBuilder.AccessControlAllowOrigin   ??= "*";
