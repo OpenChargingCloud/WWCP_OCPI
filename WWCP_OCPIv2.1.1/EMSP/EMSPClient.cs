@@ -715,18 +715,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Location>>>
 
             GetLocations(Version_Id?         VersionId           = null,
                          Request_Id?         RequestId           = null,
                          Correlation_Id?     CorrelationId       = null,
 
-                         CancellationToken   CancellationToken   = default,
                          EventTracking_Id?   EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null)
+                         TimeSpan?           RequestTimeout      = null,
+                         CancellationToken   CancellationToken   = default)
 
         {
 
@@ -893,9 +893,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Location>>
 
             GetLocation(Location_Id         LocationId,
@@ -904,9 +904,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
 
-                        CancellationToken   CancellationToken   = default,
                         EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null)
+                        TimeSpan?           RequestTimeout      = null,
+                        CancellationToken   CancellationToken   = default)
 
         {
 
@@ -1078,9 +1078,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
             GetEVSE(Location_Id         LocationId,
@@ -1090,9 +1090,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
 
-                    CancellationToken   CancellationToken   = default,
                     EventTracking_Id?   EventTrackingId     = null,
-                    TimeSpan?           RequestTimeout      = null)
+                    TimeSpan?           RequestTimeout      = null,
+                    CancellationToken   CancellationToken   = default)
 
         {
 
@@ -1265,9 +1265,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Connector>>
 
             GetConnector(Location_Id         LocationId,
@@ -1278,9 +1278,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                          Request_Id?         RequestId           = null,
                          Correlation_Id?     CorrelationId       = null,
 
-                         CancellationToken   CancellationToken   = default,
                          EventTracking_Id?   EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null)
+                         TimeSpan?           RequestTimeout      = null,
+                         CancellationToken   CancellationToken   = default)
 
         {
 
@@ -1453,18 +1453,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Tariff>>>
 
             GetTariffs(Version_Id?         VersionId           = null,
                        Request_Id?         RequestId           = null,
                        Correlation_Id?     CorrelationId       = null,
 
-                       CancellationToken   CancellationToken   = default,
                        EventTracking_Id?   EventTrackingId     = null,
-                       TimeSpan?           RequestTimeout      = null)
+                       TimeSpan?           RequestTimeout      = null,
+                       CancellationToken   CancellationToken   = default)
 
         {
 
@@ -1631,10 +1631,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Tariff>>
 
             GetTariff(Tariff_Id           TariffId,
@@ -1643,9 +1642,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                       Request_Id?         RequestId           = null,
                       Correlation_Id?     CorrelationId       = null,
 
-                      CancellationToken   CancellationToken   = default,
                       EventTracking_Id?   EventTrackingId     = null,
-                      TimeSpan?           RequestTimeout      = null)
+                      TimeSpan?           RequestTimeout      = null,
+                      CancellationToken   CancellationToken   = default)
 
         {
 
@@ -1816,18 +1815,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Session>>>
 
             GetSessions(Version_Id?         VersionId           = null,
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
 
-                        CancellationToken   CancellationToken   = default,
                         EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null)
+                        TimeSpan?           RequestTimeout      = null,
+                        CancellationToken   CancellationToken   = default)
 
         {
 
@@ -1994,9 +1993,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Session>>
 
             GetSession(Session_Id          SessionId,
@@ -2005,9 +2004,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                        Request_Id?         RequestId           = null,
                        Correlation_Id?     CorrelationId       = null,
 
-                       CancellationToken   CancellationToken   = default,
                        EventTracking_Id?   EventTrackingId     = null,
-                       TimeSpan?           RequestTimeout      = null)
+                       TimeSpan?           RequestTimeout      = null,
+                       CancellationToken   CancellationToken   = default)
 
         {
 
@@ -2180,19 +2179,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<CDR>>>
 
             GetCDRs(Version_Id?         VersionId           = null,
                     Request_Id?         RequestId           = null,
                     Correlation_Id?     CorrelationId       = null,
 
-                    CancellationToken   CancellationToken   = default,
                     EventTracking_Id?   EventTrackingId     = null,
-                    TimeSpan?           RequestTimeout      = null)
+                    TimeSpan?           RequestTimeout      = null,
+                    CancellationToken   CancellationToken   = default)
 
         {
 
@@ -2359,10 +2357,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<CDR>>
 
             GetCDR(CDR_Id              CDRId,
@@ -2371,9 +2368,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                    Request_Id?         RequestId           = null,
                    Correlation_Id?     CorrelationId       = null,
 
-                   CancellationToken   CancellationToken   = default,
                    EventTracking_Id?   EventTrackingId     = null,
-                   TimeSpan?           RequestTimeout      = null)
+                   TimeSpan?           RequestTimeout      = null,
+                   CancellationToken   CancellationToken   = default)
 
         {
 
@@ -2539,10 +2536,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Get the token specified by the given token identification from the remote API.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Token>>
 
             GetToken(CountryCode         CountryCode,
@@ -2553,9 +2549,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                      Correlation_Id?     CorrelationId       = null,
                      Version_Id?         VersionId           = null,
 
-                     CancellationToken   CancellationToken   = default,
                      EventTracking_Id?   EventTrackingId     = null,
-                     TimeSpan?           RequestTimeout      = null)
+                     TimeSpan?           RequestTimeout      = null,
+                     CancellationToken   CancellationToken   = default)
 
         {
 
@@ -2725,9 +2721,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// </summary>
         /// <param name="Token">The token to store/put at/onto the remote API.</param>
         /// 
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Token>>
 
             PutToken(Token               Token,
@@ -2736,9 +2732,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                      Correlation_Id?     CorrelationId       = null,
                      Version_Id?         VersionId           = null,
 
-                     CancellationToken   CancellationToken   = default,
                      EventTracking_Id?   EventTrackingId     = null,
-                     TimeSpan?           RequestTimeout      = null)
+                     TimeSpan?           RequestTimeout      = null,
+                     CancellationToken   CancellationToken   = default)
 
         {
 
@@ -2902,10 +2898,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Start a charging token.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<Token>>
 
             PatchToken(CountryCode         CountryCode,
@@ -2917,9 +2912,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                        Request_Id?         RequestId           = null,
                        Correlation_Id?     CorrelationId       = null,
 
-                       CancellationToken   CancellationToken   = default,
                        EventTracking_Id?   EventTrackingId     = null,
-                       TimeSpan?           RequestTimeout      = null)
+                       TimeSpan?           RequestTimeout      = null,
+                       CancellationToken   CancellationToken   = default)
 
         {
 
@@ -3103,9 +3098,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<ReserveNowCommand, CommandResponse>>
 
             ReserveNow(Token                    Token,
@@ -3120,9 +3115,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                        Correlation_Id?          CorrelationId            = null,
                        Version_Id?              VersionId                = null,
 
-                       CancellationToken        CancellationToken        = default,
                        EventTracking_Id?        EventTrackingId          = null,
-                       TimeSpan?                RequestTimeout           = null)
+                       TimeSpan?                RequestTimeout           = null,
+                       CancellationToken        CancellationToken        = default)
 
         {
 
@@ -3315,9 +3310,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<CancelReservationCommand, CommandResponse>>
 
             CancelReservation(Reservation_Id      ReservationId,
@@ -3327,9 +3322,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                               Correlation_Id?     CorrelationId       = null,
                               Version_Id?         VersionId           = null,
 
-                              CancellationToken   CancellationToken   = default,
                               EventTracking_Id?   EventTrackingId     = null,
-                              TimeSpan?           RequestTimeout      = null)
+                              TimeSpan?           RequestTimeout      = null,
+                              CancellationToken   CancellationToken   = default)
 
         {
 
@@ -3509,9 +3504,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<StartSessionCommand, CommandResponse>>
 
             StartSession(Token               Token,
@@ -3523,9 +3518,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                          Correlation_Id?     CorrelationId       = null,
                          Version_Id?         VersionId           = null,
 
-                         CancellationToken   CancellationToken   = default,
                          EventTracking_Id?   EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null)
+                         TimeSpan?           RequestTimeout      = null,
+                         CancellationToken   CancellationToken   = default)
 
         {
 
@@ -3712,9 +3707,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<StopSessionCommand, CommandResponse>>
 
             StopSession(Session_Id          SessionId,
@@ -3724,9 +3719,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                         Correlation_Id?     CorrelationId       = null,
                         Version_Id?         VersionId           = null,
 
-                        CancellationToken   CancellationToken   = default,
                         EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null)
+                        TimeSpan?           RequestTimeout      = null,
+                        CancellationToken   CancellationToken   = default)
 
         {
 
@@ -3907,9 +3902,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<UnlockConnectorCommand, CommandResponse>>
 
             UnlockConnector(Location_Id         LocationId,
@@ -3921,9 +3916,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                             Correlation_Id?     CorrelationId       = null,
                             Version_Id?         VersionId           = null,
 
-                            CancellationToken   CancellationToken   = default,
                             EventTracking_Id?   EventTrackingId     = null,
-                            TimeSpan?           RequestTimeout      = null)
+                            TimeSpan?           RequestTimeout      = null,
+                            CancellationToken   CancellationToken   = default)
 
         {
 
@@ -4111,10 +4106,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Dispose this object.
         /// </summary>
-        public void Dispose()
-        { }
+        public override void Dispose()
+        {
+            base.Dispose();
+        }
 
         #endregion
+
 
     }
 

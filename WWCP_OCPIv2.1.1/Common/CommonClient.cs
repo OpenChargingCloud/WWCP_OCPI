@@ -2307,8 +2307,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// Dispose this object.
         /// </summary>
-        public void Dispose()
-        { }
+        public override void Dispose()
+        {
+            base.Dispose();
+        }
 
         #endregion
 
