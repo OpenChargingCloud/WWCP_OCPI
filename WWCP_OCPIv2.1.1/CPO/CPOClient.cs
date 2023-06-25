@@ -860,7 +860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional location to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Location>>
 
             GetLocation(Location_Id         LocationId,
@@ -1038,7 +1038,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional location to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Location>>
 
             PutLocation(Location            Location,
@@ -1235,7 +1235,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional location to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<Location>>
 
             PatchLocation(Location_Id         LocationId,
@@ -1424,7 +1424,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional location to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
             GetEVSE(Location_Id         LocationId,
@@ -1606,7 +1606,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional location to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE                EVSE,
@@ -1651,7 +1651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// 
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional location to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE                EVSE,
@@ -1842,7 +1842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         /// </summary>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional location to cancel this request.</param>
+        /// <param name="CancellationToken">An optional cancellation token to cancel this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
             PatchEVSE(Location_Id         LocationId,
