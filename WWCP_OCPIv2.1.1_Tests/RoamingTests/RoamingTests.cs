@@ -2599,21 +2599,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                     evse1.Operator        is not null)
                 {
 
-                    var providerIdStart      = EMobilityProvider_Id.Parse("DE-GDF");
+                    //var providerIdStart      = EMobilityProvider_Id.Parse("DE-GDF");
                     var authenticationStart  = RemoteAuthentication.FromRemoteIdentification(EMobilityAccount_Id.Parse("DE-GDF-C12345678-X"));
                     var providerSessionId    = ChargingSession_Id.NewRandom;
                     var chargingProduct      = ChargingProduct.FromId(ChargingProduct_Id.Parse("AC1"));
 
-                    var remoteStartResult    = await emp1RoamingNetwork.RemoteStart(
+                    var remoteStartResult    = await graphDefinedEMP1Local.RemoteStart(
                                                          ChargingLocation:       ChargingLocation.FromEVSEId(evse1.Id),
                                                          ChargingProduct:        chargingProduct,
                                                          ReservationId:          ChargingReservation_Id.Random(ChargingStationOperator_Id.Parse("DE*GEF")),
                                                          SessionId:              providerSessionId,
-                                                         ProviderId:             providerIdStart,
                                                          RemoteAuthentication:   authenticationStart
                                                      );
 
                     Assert.AreEqual(RemoteStartResultTypes.AsyncOperation, remoteStartResult.Result);
+
+
+                    var ss1 = emp1RoamingNetwork.SessionsStore.ContainsKey(providerSessionId);
+                    var ss2 = emp1RoamingNetwork.ChargingStationOperators.First().Contains(providerSessionId);
+
+
+
 
                     if (remoteStartResult         is not null &&
                         remoteStartResult.Session is not null)
@@ -2668,7 +2674,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                              AuthenticationStop:          authenticationStop,
                                                              AuthMethodStart:             AuthMethod.AUTH_REQUEST,
                                                              AuthMethodStop:              AuthMethod.AUTH_REQUEST,
-                                                             ProviderIdStart:             providerIdStart,
+                                                             ProviderIdStart:             graphDefinedEMP1Local.Id,
                                                              ProviderIdStop:              providerIdStop,
 
                                                              EMPRoamingProvider:          null,

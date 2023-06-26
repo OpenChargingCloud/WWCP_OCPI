@@ -42,11 +42,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected  RoamingNetwork?            csoRoamingNetwork;
         protected  IChargingStationOperator?  graphDefinedCSO;
 
-        protected  VirtualEMobilityProvider?    graphDefinedEMP1Local;
+        protected  VirtualEMobilityProvider?  graphDefinedEMP1Local;
         protected  RoamingNetwork?            emp1RoamingNetwork;
         protected  IEMobilityProvider?        graphDefinedEMP1;
 
-        protected  VirtualEMobilityProvider?    graphDefinedEMP2Local;
+        protected  VirtualEMobilityProvider?  graphDefinedEMP2Local;
         protected  RoamingNetwork?            emp2RoamingNetwork;
         protected  IEMobilityProvider?        graphDefinedEMP2;
 
@@ -69,14 +69,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         {
 
             await base.SetupEachTest();
-
-            graphDefinedEMP1Local = new VirtualEMobilityProvider(
-                                        EMobilityProvider_Id.Parse("DE-GDF")
-                                    );
-
-            graphDefinedEMP2Local = new VirtualEMobilityProvider(
-                                        EMobilityProvider_Id.Parse("DE-GD2")
-                                    );
 
             #region Create cso/emp1/emp2 roaming network
 
@@ -112,56 +104,63 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Create graphDefinedCSO / graphDefinedEMP1 / graphDefinedEMP2
 
-            var csoResult     = await csoRoamingNetwork.CreateChargingStationOperator(
-                                                            Id:                   ChargingStationOperator_Id.Parse("DE*GEF"),
-                                                            Name:                 I18NString.Create(Languages.en, "GraphDefined CSO"),
-                                                            Description:          I18NString.Create(Languages.en, "GraphDefined CSO Services"),
-                                                            InitialAdminStatus:   ChargingStationOperatorAdminStatusTypes.Operational,
-                                                            InitialStatus:        ChargingStationOperatorStatusTypes.Available
-                                                        );
+            var csoResult          = await csoRoamingNetwork.CreateChargingStationOperator(
+                                                                 Id:                   ChargingStationOperator_Id.Parse("DE*GEF"),
+                                                                 Name:                 I18NString.Create(Languages.en, "GraphDefined CSO"),
+                                                                 Description:          I18NString.Create(Languages.en, "GraphDefined CSO Services"),
+                                                                 InitialAdminStatus:   ChargingStationOperatorAdminStatusTypes.Operational,
+                                                                 InitialStatus:        ChargingStationOperatorStatusTypes.Available
+                                                             );
 
             Assert.IsTrue   (csoResult.IsSuccess);
             Assert.IsNotNull(csoResult.ChargingStationOperator);
 
-            graphDefinedCSO   = csoResult.ChargingStationOperator;
+            graphDefinedCSO        = csoResult.ChargingStationOperator;
 
 
 
-            var emp1result    = await emp1RoamingNetwork.CreateEMobilityProvider(
+            var emp1result         = await emp1RoamingNetwork.CreateEMobilityProvider(
 
-                                                             Id:                               EMobilityProvider_Id.Parse("DE-GDF"),
-                                                             Name:                             I18NString.Create(Languages.en, "GraphDefined EMP #1"),
-                                                             Description:                      I18NString.Create(Languages.en, "GraphDefined EMP #1 Services"),
-                                                             InitialAdminStatus:               EMobilityProviderAdminStatusTypes.Operational,
-                                                             InitialStatus:                    EMobilityProviderStatusTypes.Available,
+                                                                  Id:                               EMobilityProvider_Id.Parse("DE-GDF"),
+                                                                  Name:                             I18NString.Create(Languages.en, "GraphDefined EMP #1"),
+                                                                  Description:                      I18NString.Create(Languages.en, "GraphDefined EMP #1 Services"),
+                                                                  InitialAdminStatus:               EMobilityProviderAdminStatusTypes.Operational,
+                                                                  InitialStatus:                    EMobilityProviderStatusTypes.Available,
 
-                                                             RemoteEMobilityProviderCreator:   eMobilityProvider => graphDefinedEMP1Local
+                                                                  RemoteEMobilityProviderCreator:   eMobilityProvider => new VirtualEMobilityProvider(
+                                                                                                                             EMobilityProvider_Id.Parse("DE-GDF"),
+                                                                                                                             eMobilityProvider.RoamingNetwork
+                                                                                                                         )
 
-                                                         );
+                                                              );
 
             Assert.IsTrue   (emp1result.IsSuccess);
             Assert.IsNotNull(emp1result.EMobilityProvider);
 
-            graphDefinedEMP1  = emp1result.EMobilityProvider;
+            graphDefinedEMP1       = emp1result.EMobilityProvider;
+            graphDefinedEMP1Local  = graphDefinedEMP1?.RemoteEMobilityProvider as VirtualEMobilityProvider;
 
 
+            var emp2result         = await emp2RoamingNetwork.CreateEMobilityProvider(
 
-            var emp2result    = await emp2RoamingNetwork.CreateEMobilityProvider(
+                                                                  Id:                               EMobilityProvider_Id.Parse("DE-GD2"),
+                                                                  Name:                             I18NString.Create(Languages.en, "GraphDefined EMP #2"),
+                                                                  Description:                      I18NString.Create(Languages.en, "GraphDefined EMP #2 Services"),
+                                                                  InitialAdminStatus:               EMobilityProviderAdminStatusTypes.Operational,
+                                                                  InitialStatus:                    EMobilityProviderStatusTypes.Available,
 
-                                                             Id:                               EMobilityProvider_Id.Parse("DE-GD2"),
-                                                             Name:                             I18NString.Create(Languages.en, "GraphDefined EMP #2"),
-                                                             Description:                      I18NString.Create(Languages.en, "GraphDefined EMP #2 Services"),
-                                                             InitialAdminStatus:               EMobilityProviderAdminStatusTypes.Operational,
-                                                             InitialStatus:                    EMobilityProviderStatusTypes.Available,
+                                                                  RemoteEMobilityProviderCreator:   eMobilityProvider => new VirtualEMobilityProvider(
+                                                                                                                             EMobilityProvider_Id.Parse("DE-GD2"),
+                                                                                                                             eMobilityProvider.RoamingNetwork
+                                                                                                                         )
 
-                                                             RemoteEMobilityProviderCreator:   eMobilityProvider => graphDefinedEMP2Local
-
-                                                         );
+                                                              );
 
             Assert.IsTrue   (emp2result.IsSuccess);
             Assert.IsNotNull(emp2result.EMobilityProvider);
 
-            graphDefinedEMP2  = emp2result.EMobilityProvider;
+            graphDefinedEMP2       = emp2result.EMobilityProvider;
+            graphDefinedEMP2Local  = graphDefinedEMP2?.RemoteEMobilityProvider as VirtualEMobilityProvider;
 
             #endregion
 

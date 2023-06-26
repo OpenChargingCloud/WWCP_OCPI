@@ -566,10 +566,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Charging Sessions
 
-        IEnumerable<ChargingSession> IChargingSessions.ChargingSessions => throw new NotImplementedException();
+        IEnumerable<ChargingSession> IChargingSessions.ChargingSessions
+            => Array.Empty<ChargingSession>();
 
 
-        Boolean IChargingSessions.TryGetChargingSessionById(ChargingSession_Id ChargingSessionId, out ChargingSession? ChargingSession)
+        /// <summary>
+        /// Whether the given charging session identification is known within the roaming network.
+        /// </summary>
+        /// <param name="ChargingSessionId">The charging session identification.</param>
+        public Boolean Contains(ChargingSession_Id ChargingSessionId)
+            => false;
+
+        /// <summary>
+        /// Return the charging session specified by the given charging session identification.
+        /// </summary>
+        /// <param name="ChargingSessionId">The charging session identification.</param>
+        /// <param name="ChargingSession">The charging session.</param>
+        Boolean IChargingSessions.TryGetChargingSessionById(ChargingSession_Id    ChargingSessionId,
+                                                            out ChargingSession?  ChargingSession)
         {
             ChargingSession = null;
             return false;
