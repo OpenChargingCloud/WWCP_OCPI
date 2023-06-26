@@ -19,11 +19,12 @@
 
 using NUnit.Framework;
 
-using Newtonsoft.Json.Linq;
-
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.WWCP;
+using cloud.charging.open.protocols.WWCP.MobilityProvider;
 
 #endregion
 
@@ -45,10 +46,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected  VirtualEMobilityProvider?  graphDefinedEMP1Local;
         protected  RoamingNetwork?            emp1RoamingNetwork;
         protected  IEMobilityProvider?        graphDefinedEMP1;
+        protected  EMobilityProviderAPI?      graphDefinedEMP1API;
 
         protected  VirtualEMobilityProvider?  graphDefinedEMP2Local;
         protected  RoamingNetwork?            emp2RoamingNetwork;
         protected  IEMobilityProvider?        graphDefinedEMP2;
+        protected  EMobilityProviderAPI?      graphDefinedEMP2API;
+
+        protected  VirtualSmartPhone?         ahzfPhone;
+        protected  EVehicle?                  ahzfCar;
 
         #endregion
 
@@ -161,6 +167,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             graphDefinedEMP2       = emp2result.EMobilityProvider;
             graphDefinedEMP2Local  = graphDefinedEMP2?.RemoteEMobilityProvider as VirtualEMobilityProvider;
+            graphDefinedEMP2Local?.StartAPI(HTTPServerPort: IPPort.Parse(3501));
 
             #endregion
 
@@ -272,6 +279,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             }
 
             #endregion
+
+
+            ahzfPhone = new VirtualSmartPhone();
+            ahzfPhone?.Connect(URL.Parse("http://127.0.0.1:3501"));
 
         }
 

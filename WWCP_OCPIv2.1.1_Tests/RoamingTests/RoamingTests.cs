@@ -2481,7 +2481,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 graphDefinedCSO        is not null &&
                 graphDefinedEMP1Local  is not null &&
-                graphDefinedEMP2Local  is not null)
+                graphDefinedEMP2Local  is not null &&
+
+                ahzfPhone              is not null)
             {
 
                 #region Add DE*GEF*POOL1
@@ -2604,13 +2606,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                     var providerSessionId    = ChargingSession_Id.NewRandom;
                     var chargingProduct      = ChargingProduct.FromId(ChargingProduct_Id.Parse("AC1"));
 
-                    var remoteStartResult    = await graphDefinedEMP1Local.RemoteStart(
-                                                         ChargingLocation:       ChargingLocation.FromEVSEId(evse1.Id),
-                                                         ChargingProduct:        chargingProduct,
-                                                         ReservationId:          ChargingReservation_Id.Random(ChargingStationOperator_Id.Parse("DE*GEF")),
-                                                         SessionId:              providerSessionId,
-                                                         RemoteAuthentication:   authenticationStart
-                                                     );
+                    var remoteStartResult    = await ahzfPhone.RemoteStart(new WWCP.MobilityProvider.RemoteStartRequest(
+                                                                   ChargingLocation:       ChargingLocation.FromEVSEId(evse1.Id),
+                                                                   ChargingProduct:        chargingProduct,
+                                                                   ReservationId:          ChargingReservation_Id.Random(ChargingStationOperator_Id.Parse("DE*GEF")),
+                                                                   ChargingSessionId:      providerSessionId,
+                                                                   RemoteAuthentication:   authenticationStart)
+                                                               );
+
+                                               //await graphDefinedEMP1Local.RemoteStart(
+                                               //          ChargingLocation:       ChargingLocation.FromEVSEId(evse1.Id),
+                                               //          ChargingProduct:        chargingProduct,
+                                               //          ReservationId:          ChargingReservation_Id.Random(ChargingStationOperator_Id.Parse("DE*GEF")),
+                                               //          SessionId:              providerSessionId,
+                                               //          RemoteAuthentication:   authenticationStart
+                                               //      );
 
                     Assert.AreEqual(RemoteStartResultTypes.AsyncOperation, remoteStartResult.Result);
 
@@ -2621,8 +2631,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
 
 
-                    if (remoteStartResult         is not null &&
-                        remoteStartResult.Session is not null)
+                    if (remoteStartResult                 is not null &&
+                        remoteStartResult.ChargingSession is not null)
                     {
 
                         Timestamp.TravelForwardInTime(TimeSpan.FromMinutes(5));
@@ -2631,7 +2641,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                         var authenticationStop  = RemoteAuthentication.FromRemoteIdentification(EMobilityAccount_Id.Parse("DE-GDF-C56781234-X"));
 
                         var remoteStopResult    = await emp1RoamingNetwork.RemoteStop(
-                                                            SessionId:              remoteStartResult.Session.Id,
+                                                            SessionId:              remoteStartResult.ChargingSession.Id,
                                                             ReservationHandling:    ReservationHandling.Close,
                                                             ProviderId:             providerIdStop,
                                                             RemoteAuthentication:   authenticationStop
@@ -2646,7 +2656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                         var sendCDRResult    = await csoRoamingNetwork.SendChargeDetailRecord(
                                                          new ChargeDetailRecord(
                                                              Id:                           ChargeDetailRecord_Id.NewRandom,
-                                                             SessionId:                    remoteStartResult.Session.Id,
+                                                             SessionId:                    remoteStartResult.ChargingSession.Id,
                                                              SessionTime:                  new StartEndDateTime(
                                                                                                Timestamp.Now - TimeSpan.FromMinutes(5),
                                                                                                Timestamp.Now - TimeSpan.FromMinutes(1)
