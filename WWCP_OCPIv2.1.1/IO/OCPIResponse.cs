@@ -334,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 HTTPResponseBuilder.Server                     ??= Request?.HTTPRequest.HTTPServer.DefaultServerName;
                 HTTPResponseBuilder.Date                       ??= Timestamp.Value;
                 HTTPResponseBuilder.AccessControlAllowOrigin   ??= "*";
-                HTTPResponseBuilder.AccessControlAllowHeaders  ??= "Authorization";
+                HTTPResponseBuilder.AccessControlAllowHeaders  ??= new[] { "Authorization" };
                 HTTPResponseBuilder.Vary                       ??= "Accept";
                 HTTPResponseBuilder.Connection                 ??= "close";
 

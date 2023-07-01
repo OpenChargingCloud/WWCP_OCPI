@@ -44,9 +44,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         {
 
             var graphDefinedEMSP1 = cpoCommonAPI?.GetCPOClient(
-                                       CountryCode: CountryCode.Parse("DE"),
-                                       PartyId:     Party_Id.   Parse("GDF")
-                                   );
+                                        CountryCode:  CountryCode.Parse("DE"),
+                                        PartyId:      Party_Id.   Parse("GDF")
+                                    );
 
             Assert.IsNotNull(graphDefinedEMSP1);
 

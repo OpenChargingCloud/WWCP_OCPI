@@ -850,17 +850,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 Assert.IsNotNull(response3.AccessControlAllowMethods);
                 if (response3.AccessControlAllowMethods is not null)
                 {
-                    Assert.AreEqual (2,                    response3.AccessControlAllowMethods.Count());
-                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("GET"));
+                    Assert.AreEqual(2,                    response3.AccessControlAllowMethods.Count());
+                    Assert.IsTrue  (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                    Assert.IsTrue  (response3.AccessControlAllowMethods?.Contains("GET"));
                 }
 
                 Assert.IsNotNull(response3.Allow);
                 if (response3.Allow is not null)
                 {
-                    Assert.AreEqual (2,                    response3.Allow.Count);
-                    Assert.Contains (HTTPMethod.OPTIONS,   response3.Allow);
-                    Assert.Contains (HTTPMethod.GET,       response3.Allow);
+                    var allowSet = new HashSet<HTTPMethod>(response3.Allow);
+                    Assert.AreEqual(2, allowSet.Count);
+                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.OPTIONS));
+                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.GET));
                 }
 
             }
@@ -915,17 +916,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 Assert.IsNotNull(response3.AccessControlAllowMethods);
                 if (response3.AccessControlAllowMethods is not null)
                 {
-                    Assert.AreEqual (2,                    response3.AccessControlAllowMethods.Count());
-                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("GET"));
+                    Assert.AreEqual(2,                    response3.AccessControlAllowMethods.Count());
+                    Assert.IsTrue  (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                    Assert.IsTrue  (response3.AccessControlAllowMethods?.Contains("GET"));
                 }
 
                 Assert.IsNotNull(response3.Allow);
                 if (response3.Allow is not null)
                 {
-                    Assert.AreEqual (2,                    response3.Allow.Count);
-                    Assert.Contains (HTTPMethod.OPTIONS,   response3.Allow);
-                    Assert.Contains (HTTPMethod.GET,       response3.Allow);
+                    var allowSet = new HashSet<HTTPMethod>(response3.Allow);
+                    Assert.AreEqual(2, allowSet.Count);
+                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.OPTIONS));
+                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.GET));
                 }
 
             }
@@ -980,17 +982,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 Assert.IsNotNull(response3.AccessControlAllowMethods);
                 if (response3.AccessControlAllowMethods is not null)
                 {
-                    Assert.AreEqual (2,                    response3.AccessControlAllowMethods.Count());
-                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("GET"));
+                    Assert.AreEqual(2,                    response3.AccessControlAllowMethods.Count());
+                    Assert.IsTrue  (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                    Assert.IsTrue  (response3.AccessControlAllowMethods?.Contains("GET"));
                 }
 
                 Assert.IsNotNull(response3.Allow);
                 if (response3.Allow is not null)
                 {
-                    Assert.AreEqual (2,                    response3.Allow.Count);
-                    Assert.Contains (HTTPMethod.OPTIONS,   response3.Allow);
-                    Assert.Contains (HTTPMethod.GET,       response3.Allow);
+                    var allowSet = new HashSet<HTTPMethod>(response3.Allow);
+                    Assert.AreEqual(2, allowSet.Count);
+                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.OPTIONS));
+                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.GET));
                 }
 
             }
@@ -1056,14 +1059,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.EMSPTests
                 Assert.IsNotNull(response3.Allow);
                 if (response3.Allow is not null)
                 {
-                    Assert.AreEqual (5,                    response3.Allow.Count);
-                    Assert.Contains (HTTPMethod.OPTIONS,   response3.Allow);
-                    Assert.Contains (HTTPMethod.GET,       response3.Allow);
-                    Assert.Contains (HTTPMethod.POST,      response3.Allow);
-                    Assert.Contains (HTTPMethod.PUT,       response3.Allow);
-                    Assert.Contains (HTTPMethod.DELETE,    response3.Allow);
+                    var allowSet = new HashSet<HTTPMethod>(response3.Allow);
+                    Assert.AreEqual(5, allowSet.Count);
+                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.OPTIONS));
+                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.GET));
+                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.POST));
+                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.PUT));
+                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.DELETE));
                 }
-
 
                 // GET ~/versions, GET ~/version/2.1.1
                 Assert.AreEqual(2,  cpoAPIRequestLogs. Count);
