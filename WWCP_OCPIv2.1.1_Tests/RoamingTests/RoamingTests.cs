@@ -2601,16 +2601,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                     evse1.Operator        is not null)
                 {
 
-                    //var providerIdStart      = EMobilityProvider_Id.Parse("DE-GDF");
                     var authenticationStart  = RemoteAuthentication.FromRemoteIdentification(EMobilityAccount_Id.Parse("DE-GDF-C12345678-X"));
-                    var providerSessionId    = ChargingSession_Id.NewRandom;
+                    var smartPhoneSessionId  = ChargingSession_Id.NewRandom;
                     var chargingProduct      = ChargingProduct.FromId(ChargingProduct_Id.Parse("AC1"));
 
                     var remoteStartResult    = await ahzfPhone.RemoteStart(new WWCP.MobilityProvider.RemoteStartRequest(
                                                                    ChargingLocation:       ChargingLocation.FromEVSEId(evse1.Id),
                                                                    ChargingProduct:        chargingProduct,
                                                                    ReservationId:          ChargingReservation_Id.Random(ChargingStationOperator_Id.Parse("DE*GEF")),
-                                                                   ChargingSessionId:      providerSessionId,
+                                                                   ChargingSessionId:      smartPhoneSessionId,
                                                                    RemoteAuthentication:   authenticationStart)
                                                                );
 
@@ -2625,8 +2624,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                     Assert.AreEqual(RemoteStartResultTypes.AsyncOperation, remoteStartResult.Result);
 
 
-                    var ss1 = emp1RoamingNetwork.SessionsStore.ContainsKey(providerSessionId);
-                    var ss2 = emp1RoamingNetwork.ChargingStationOperators.First().Contains(providerSessionId);
+                    var ss1 = emp1RoamingNetwork.SessionsStore.ContainsKey(smartPhoneSessionId);
+                    var ss2 = emp1RoamingNetwork.ChargingStationOperators.First().Contains(smartPhoneSessionId);
 
 
 
