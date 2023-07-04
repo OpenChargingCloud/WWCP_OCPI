@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The length of the energy source category.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(Text, out var energySourceCategory))
                 return energySourceCategory;
 
-            throw new ArgumentException("Invalid text representation of a energy source category: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a energy source category: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     EnergySourceCategory = new EnergySourceCategory(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

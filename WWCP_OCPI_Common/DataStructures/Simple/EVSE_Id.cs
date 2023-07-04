@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The length of the official EVSE identification.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var evseId))
                 return evseId;
 
-            throw new ArgumentException("Invalid text representation of an official EVSE identification: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an official EVSE identification: '{Text}'!",
                                         nameof(Text));
 
         }
@@ -155,7 +155,7 @@ namespace cloud.charging.open.protocols.OCPI
                     EVSEId = new EVSE_Id(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

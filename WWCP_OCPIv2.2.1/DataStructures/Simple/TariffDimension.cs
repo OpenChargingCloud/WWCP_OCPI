@@ -112,7 +112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (TryParse(Text, out var tariffDimension))
                 return tariffDimension;
 
-            throw new ArgumentException("Invalid text representation of a tariff dimension: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a tariff dimension: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -156,7 +156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     TariffDimension = new TariffDimension(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The length of the session identification.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -122,7 +122,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var sessionId))
                 return sessionId;
 
-            throw new ArgumentException("Invalid text representation of a session identification: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a session identification: '{Text}'!",
                                         nameof(Text));
 
         }
@@ -166,7 +166,7 @@ namespace cloud.charging.open.protocols.OCPI
                     SessionId = new Session_Id(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

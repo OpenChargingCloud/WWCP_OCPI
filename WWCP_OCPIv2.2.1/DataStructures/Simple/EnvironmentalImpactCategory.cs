@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The length of the environmental impact category.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (TryParse(Text, out var environmentalImpactCategory))
                 return environmentalImpactCategory;
 
-            throw new ArgumentException("Invalid text representation of an environmental impact category: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an environmental impact category: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     EnvironmentalImpactCategory = new EnvironmentalImpactCategory(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

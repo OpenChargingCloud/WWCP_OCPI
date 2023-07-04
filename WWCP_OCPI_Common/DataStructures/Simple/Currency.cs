@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The length of the currency.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var currency))
                 return currency;
 
-            throw new ArgumentException("Invalid text representation of a currency: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a currency: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPI
                     Currency = new Currency(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

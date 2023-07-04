@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The length of the signed value nature.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(Text, out var signedValueNature))
                 return signedValueNature;
 
-            throw new ArgumentException("Invalid text representation of a signed value nature: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a signed value nature: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -155,7 +155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     SignedValueNature = new SignedValueNature(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

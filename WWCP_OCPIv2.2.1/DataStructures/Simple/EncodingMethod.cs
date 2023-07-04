@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The length of the encoding method.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (TryParse(Text, out var encodingMethod))
                 return encodingMethod;
 
-            throw new ArgumentException("Invalid text representation of an encoding method: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an encoding method: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     EncodingMethod = new EncodingMethod(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

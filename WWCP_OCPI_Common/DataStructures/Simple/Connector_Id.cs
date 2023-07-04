@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var connectorId))
                 return connectorId;
 
-            throw new ArgumentException("Invalid text representation of a connector identification: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a connector identification: '{Text}'!",
                                         nameof(Text));
 
         }
@@ -126,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPI
                     ConnectorId = new Connector_Id(Text.Trim());
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

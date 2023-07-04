@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The length of the location type.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(Text, out var locationType))
                 return locationType;
 
-            throw new ArgumentException("Invalid text representation of a location type: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a location type: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     LocationType = new LocationType(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The length of the authorization reference.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -122,7 +122,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (TryParse(Text, out var authorizationReference))
                 return authorizationReference;
 
-            throw new ArgumentException("Invalid text representation of an authorization reference: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an authorization reference: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -166,7 +166,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     AuthorizationReference = new AuthorizationReference(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

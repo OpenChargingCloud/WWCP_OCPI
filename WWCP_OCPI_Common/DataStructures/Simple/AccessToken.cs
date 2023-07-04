@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The length of the access token.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -122,7 +122,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var accessToken))
                 return accessToken;
 
-            throw new ArgumentException("Invalid text representation of an access token: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an access token: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -166,7 +166,7 @@ namespace cloud.charging.open.protocols.OCPI
                     AccessToken = new AccessToken(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

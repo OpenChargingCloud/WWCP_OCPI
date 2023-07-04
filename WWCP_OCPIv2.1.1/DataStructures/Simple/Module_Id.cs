@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The length of the module identification.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -112,7 +112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(Text, out var moduleId))
                 return moduleId;
 
-            throw new ArgumentException("Invalid text representation of a module identification: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a module identification: '{Text}'!",
                                         nameof(Text));
 
         }
@@ -156,7 +156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     ModuleId = new Module_Id(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

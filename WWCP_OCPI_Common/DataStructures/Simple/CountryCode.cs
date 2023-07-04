@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The length of the country code.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -112,7 +112,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var countryCode))
                 return countryCode;
 
-            throw new ArgumentException("Invalid text representation of a country code: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a country code: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -157,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPI
                     CountryCode = new CountryCode(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The length of the reservation identification.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -122,7 +122,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var reservationId))
                 return reservationId;
 
-            throw new ArgumentException("Invalid text representation of a reservation identification: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a reservation identification: '{Text}'!",
                                         nameof(Text));
 
         }
@@ -166,7 +166,7 @@ namespace cloud.charging.open.protocols.OCPI
                     ReservationId = new Reservation_Id(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

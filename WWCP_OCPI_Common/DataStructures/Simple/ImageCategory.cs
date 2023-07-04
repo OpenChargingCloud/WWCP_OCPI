@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The length of the image category.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var imageCategory))
                 return imageCategory;
 
-            throw new ArgumentException("Invalid text representation of an image category: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an image category: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPI
                     ImageCategory = new ImageCategory(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

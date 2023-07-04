@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The length of the authentication credential identification.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var authId))
                 return authId;
 
-            throw new ArgumentException("Invalid text representation of an authentication credential identification: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an authentication credential identification: '{Text}'!",
                                         nameof(Text));
 
         }
@@ -155,7 +155,7 @@ namespace cloud.charging.open.protocols.OCPI
                     AuthId = new Auth_Id(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

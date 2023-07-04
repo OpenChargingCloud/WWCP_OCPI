@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The length of the connector type.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(Text, out var connectorType))
                 return connectorType;
 
-            throw new ArgumentException("Invalid text representation of a connector type: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a connector type: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     ConnectorType = new ConnectorType(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

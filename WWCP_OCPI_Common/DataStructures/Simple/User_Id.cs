@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The length of the user identification.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -121,7 +121,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var userId))
                 return userId;
 
-            throw new ArgumentException("Invalid text representation of an user identification: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of an user identification: '{Text}'!",
                                         nameof(Text));
 
         }
@@ -165,7 +165,7 @@ namespace cloud.charging.open.protocols.OCPI
                     UserId = new User_Id(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

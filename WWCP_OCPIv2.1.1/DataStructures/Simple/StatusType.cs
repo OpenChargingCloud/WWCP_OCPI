@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The length of the status type.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(Text, out var statusType))
                 return statusType;
 
-            throw new ArgumentException("Invalid text representation of a status type: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a status type: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     StatusType = new StatusType(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (TryParse(Text, out var cdrDimensionType))
                 return cdrDimensionType;
 
-            throw new ArgumentException("Invalid text representation of a CDR dimension type: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a CDR dimension type: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     CDRDimensionType = new CDRDimensionType(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

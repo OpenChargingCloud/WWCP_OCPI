@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The length of the facility.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             if (TryParse(Text, out var facilityId))
                 return facilityId;
 
-            throw new ArgumentException("Invalid text representation of a facility: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a facility: '" + Text + "'!",
                                         nameof(Text));
 
         }
@@ -154,7 +154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     Facilities = new Facilities(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 

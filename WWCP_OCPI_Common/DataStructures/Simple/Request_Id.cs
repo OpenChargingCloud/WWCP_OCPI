@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// The length of the request identification.
         /// </summary>
         public UInt64 Length
-            => (UInt64) InternalId.Length;
+            => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
 
@@ -125,7 +125,7 @@ namespace cloud.charging.open.protocols.OCPI
             if (TryParse(Text, out var requestId))
                 return requestId;
 
-            throw new ArgumentException("Invalid text representation of a request identification: '" + Text + "'!",
+            throw new ArgumentException($"Invalid text representation of a request identification: '{Text}'!",
                                         nameof(Text));
 
         }
@@ -169,7 +169,7 @@ namespace cloud.charging.open.protocols.OCPI
                     RequestId = new Request_Id(Text);
                     return true;
                 }
-                catch (Exception)
+                catch
                 { }
             }
 
