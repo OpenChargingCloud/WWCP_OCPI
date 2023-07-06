@@ -362,20 +362,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Create cpo/emsp1/emsp2 HTTP API
 
-            cpoHTTPAPI           = new HTTPAPI(
-                                       HTTPServerPort:  IPPort.Parse(3301),
-                                       Autostart:       true
-                                   );
+            cpoHTTPAPI            = new HTTPAPI(
+                                        HTTPServerPort:  IPPort.Parse(3301),
+                                        Autostart:       true
+                                    );
 
             emsp1HTTPAPI          = new HTTPAPI(
-                                       HTTPServerPort:  IPPort.Parse(3401),
-                                       Autostart:       true
-                                   );
+                                        HTTPServerPort:  IPPort.Parse(3401),
+                                        Autostart:       true
+                                    );
 
             emsp2HTTPAPI          = new HTTPAPI(
-                                       HTTPServerPort:  IPPort.Parse(3402),
-                                       Autostart:       true
-                                   );
+                                        HTTPServerPort:  IPPort.Parse(3402),
+                                        Autostart:       true
+                                    );
 
             Assert.IsNotNull(cpoHTTPAPI);
             Assert.IsNotNull(emsp1HTTPAPI);
