@@ -1120,8 +1120,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EVSE1">An EVSE.</param>
         /// <param name="EVSE2">Another EVSE.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (EVSE EVSE1,
-                                           EVSE EVSE2)
+        public static Boolean operator == (EVSE? EVSE1,
+                                           EVSE? EVSE2)
         {
 
             if (Object.ReferenceEquals(EVSE1, EVSE2))
@@ -1144,8 +1144,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EVSE1">An EVSE.</param>
         /// <param name="EVSE2">Another EVSE.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (EVSE EVSE1,
-                                           EVSE EVSE2)
+        public static Boolean operator != (EVSE? EVSE1,
+                                           EVSE? EVSE2)
 
             => !(EVSE1 == EVSE2);
 
@@ -1159,8 +1159,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EVSE1">An EVSE.</param>
         /// <param name="EVSE2">Another EVSE.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (EVSE EVSE1,
-                                          EVSE EVSE2)
+        public static Boolean operator < (EVSE? EVSE1,
+                                          EVSE? EVSE2)
 
             => EVSE1 is null
                    ? throw new ArgumentNullException(nameof(EVSE1), "The given EVSE must not be null!")
@@ -1176,8 +1176,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EVSE1">An EVSE.</param>
         /// <param name="EVSE2">Another EVSE.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (EVSE EVSE1,
-                                           EVSE EVSE2)
+        public static Boolean operator <= (EVSE? EVSE1,
+                                           EVSE? EVSE2)
 
             => !(EVSE1 > EVSE2);
 
@@ -1191,8 +1191,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EVSE1">An EVSE.</param>
         /// <param name="EVSE2">Another EVSE.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (EVSE EVSE1,
-                                          EVSE EVSE2)
+        public static Boolean operator > (EVSE? EVSE1,
+                                          EVSE? EVSE2)
 
             => EVSE1 is null
                    ? throw new ArgumentNullException(nameof(EVSE1), "The given EVSE must not be null!")
@@ -1208,8 +1208,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EVSE1">An EVSE.</param>
         /// <param name="EVSE2">Another EVSE.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (EVSE EVSE1,
-                                           EVSE EVSE2)
+        public static Boolean operator >= (EVSE? EVSE1,
+                                           EVSE? EVSE2)
 
             => !(EVSE1 < EVSE2);
 

@@ -1041,8 +1041,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Session1">A charging session.</param>
         /// <param name="Session2">Another charging session.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Session Session1,
-                                           Session Session2)
+        public static Boolean operator == (Session? Session1,
+                                           Session? Session2)
         {
 
             if (Object.ReferenceEquals(Session1, Session2))
@@ -1065,8 +1065,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Session1">A charging session.</param>
         /// <param name="Session2">Another charging session.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Session Session1,
-                                           Session Session2)
+        public static Boolean operator != (Session? Session1,
+                                           Session? Session2)
 
             => !(Session1 == Session2);
 
@@ -1080,8 +1080,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Session1">A charging session.</param>
         /// <param name="Session2">Another charging session.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Session Session1,
-                                          Session Session2)
+        public static Boolean operator < (Session? Session1,
+                                          Session? Session2)
 
             => Session1 is null
                    ? throw new ArgumentNullException(nameof(Session1), "The given charging session must not be null!")
@@ -1097,8 +1097,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Session1">A charging session.</param>
         /// <param name="Session2">Another charging session.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Session Session1,
-                                           Session Session2)
+        public static Boolean operator <= (Session? Session1,
+                                           Session? Session2)
 
             => !(Session1 > Session2);
 
@@ -1112,8 +1112,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Session1">A charging session.</param>
         /// <param name="Session2">Another charging session.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Session Session1,
-                                          Session Session2)
+        public static Boolean operator > (Session? Session1,
+                                          Session? Session2)
 
             => Session1 is null
                    ? throw new ArgumentNullException(nameof(Session1), "The given charging session must not be null!")
@@ -1129,8 +1129,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Session1">A charging session.</param>
         /// <param name="Session2">Another charging session.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Session Session1,
-                                           Session Session2)
+        public static Boolean operator >= (Session? Session1,
+                                           Session? Session2)
 
             => !(Session1 < Session2);
 

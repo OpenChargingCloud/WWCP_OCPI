@@ -1211,8 +1211,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CDR1">A charge detail record.</param>
         /// <param name="CDR2">Another charge detail record.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (CDR CDR1,
-                                           CDR CDR2)
+        public static Boolean operator == (CDR? CDR1,
+                                           CDR? CDR2)
         {
 
             if (Object.ReferenceEquals(CDR1, CDR2))
@@ -1235,8 +1235,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CDR1">A charge detail record.</param>
         /// <param name="CDR2">Another charge detail record.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (CDR CDR1,
-                                           CDR CDR2)
+        public static Boolean operator != (CDR? CDR1,
+                                           CDR? CDR2)
 
             => !(CDR1 == CDR2);
 
@@ -1250,8 +1250,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CDR1">A charge detail record.</param>
         /// <param name="CDR2">Another charge detail record.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (CDR CDR1,
-                                          CDR CDR2)
+        public static Boolean operator < (CDR? CDR1,
+                                          CDR? CDR2)
 
             => CDR1 is null
                    ? throw new ArgumentNullException(nameof(CDR1), "The given charge detail record must not be null!")
@@ -1267,8 +1267,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CDR1">A charge detail record.</param>
         /// <param name="CDR2">Another charge detail record.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (CDR CDR1,
-                                           CDR CDR2)
+        public static Boolean operator <= (CDR? CDR1,
+                                           CDR? CDR2)
 
             => !(CDR1 > CDR2);
 
@@ -1282,8 +1282,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CDR1">A charge detail record.</param>
         /// <param name="CDR2">Another charge detail record.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (CDR CDR1,
-                                          CDR CDR2)
+        public static Boolean operator > (CDR? CDR1,
+                                          CDR? CDR2)
 
             => CDR1 is null
                    ? throw new ArgumentNullException(nameof(CDR1), "The given charge detail record must not be null!")
@@ -1299,8 +1299,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CDR1">A charge detail record.</param>
         /// <param name="CDR2">Another charge detail record.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (CDR CDR1,
-                                           CDR CDR2)
+        public static Boolean operator >= (CDR? CDR1,
+                                           CDR? CDR2)
 
             => !(CDR1 < CDR2);
 

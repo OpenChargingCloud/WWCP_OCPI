@@ -986,8 +986,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Tariff1">A tariff.</param>
         /// <param name="Tariff2">Another tariff.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Tariff Tariff1,
-                                           Tariff Tariff2)
+        public static Boolean operator == (Tariff? Tariff1,
+                                           Tariff? Tariff2)
         {
 
             if (Object.ReferenceEquals(Tariff1, Tariff2))
@@ -1010,8 +1010,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Tariff1">A tariff.</param>
         /// <param name="Tariff2">Another tariff.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Tariff Tariff1,
-                                           Tariff Tariff2)
+        public static Boolean operator != (Tariff? Tariff1,
+                                           Tariff? Tariff2)
 
             => !(Tariff1 == Tariff2);
 
@@ -1025,8 +1025,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Tariff1">A tariff.</param>
         /// <param name="Tariff2">Another tariff.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Tariff Tariff1,
-                                          Tariff Tariff2)
+        public static Boolean operator < (Tariff? Tariff1,
+                                          Tariff? Tariff2)
 
             => Tariff1 is null
                    ? throw new ArgumentNullException(nameof(Tariff1), "The given tariff must not be null!")
@@ -1042,8 +1042,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Tariff1">A tariff.</param>
         /// <param name="Tariff2">Another tariff.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Tariff Tariff1,
-                                           Tariff Tariff2)
+        public static Boolean operator <= (Tariff? Tariff1,
+                                           Tariff? Tariff2)
 
             => !(Tariff1 > Tariff2);
 
@@ -1057,8 +1057,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Tariff1">A tariff.</param>
         /// <param name="Tariff2">Another tariff.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Tariff Tariff1,
-                                          Tariff Tariff2)
+        public static Boolean operator > (Tariff? Tariff1,
+                                          Tariff? Tariff2)
 
             => Tariff1 is null
                    ? throw new ArgumentNullException(nameof(Tariff1), "The given tariff must not be null!")
@@ -1074,8 +1074,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Tariff1">A tariff.</param>
         /// <param name="Tariff2">Another tariff.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Tariff Tariff1,
-                                           Tariff Tariff2)
+        public static Boolean operator >= (Tariff? Tariff1,
+                                           Tariff? Tariff2)
 
             => !(Tariff1 < Tariff2);
 

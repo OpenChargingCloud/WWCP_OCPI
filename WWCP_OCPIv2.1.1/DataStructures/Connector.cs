@@ -685,8 +685,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Connector1">A connector.</param>
         /// <param name="Connector2">Another connector.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Connector Connector1,
-                                           Connector Connector2)
+        public static Boolean operator == (Connector? Connector1,
+                                           Connector? Connector2)
         {
 
             if (Object.ReferenceEquals(Connector1, Connector2))
@@ -709,8 +709,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Connector1">A connector.</param>
         /// <param name="Connector2">Another connector.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Connector Connector1,
-                                           Connector Connector2)
+        public static Boolean operator != (Connector? Connector1,
+                                           Connector? Connector2)
 
             => !(Connector1 == Connector2);
 
@@ -724,8 +724,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Connector1">A connector.</param>
         /// <param name="Connector2">Another connector.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Connector Connector1,
-                                          Connector Connector2)
+        public static Boolean operator < (Connector? Connector1,
+                                          Connector? Connector2)
 
             => Connector1 is null
                    ? throw new ArgumentNullException(nameof(Connector1), "The given connector must not be null!")
@@ -741,8 +741,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Connector1">A connector.</param>
         /// <param name="Connector2">Another connector.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Connector Connector1,
-                                           Connector Connector2)
+        public static Boolean operator <= (Connector? Connector1,
+                                           Connector? Connector2)
 
             => !(Connector1 > Connector2);
 
@@ -756,8 +756,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Connector1">A connector.</param>
         /// <param name="Connector2">Another connector.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Connector Connector1,
-                                          Connector Connector2)
+        public static Boolean operator > (Connector? Connector1,
+                                          Connector? Connector2)
 
             => Connector1 is null
                    ? throw new ArgumentNullException(nameof(Connector1), "The given connector must not be null!")
@@ -773,8 +773,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Connector1">A connector.</param>
         /// <param name="Connector2">Another connector.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Connector Connector1,
-                                           Connector Connector2)
+        public static Boolean operator >= (Connector? Connector1,
+                                           Connector? Connector2)
 
             => !(Connector1 < Connector2);
 

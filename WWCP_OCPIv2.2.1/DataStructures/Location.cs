@@ -1772,8 +1772,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Location Location1,
-                                           Location Location2)
+        public static Boolean operator == (Location? Location1,
+                                           Location? Location2)
         {
 
             if (Object.ReferenceEquals(Location1, Location2))
@@ -1796,8 +1796,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Location Location1,
-                                           Location Location2)
+        public static Boolean operator != (Location? Location1,
+                                           Location? Location2)
 
             => !(Location1 == Location2);
 
@@ -1811,8 +1811,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Location Location1,
-                                          Location Location2)
+        public static Boolean operator < (Location? Location1,
+                                          Location? Location2)
 
             => Location1 is null
                    ? throw new ArgumentNullException(nameof(Location1), "The given location must not be null!")
@@ -1828,8 +1828,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Location Location1,
-                                           Location Location2)
+        public static Boolean operator <= (Location? Location1,
+                                           Location? Location2)
 
             => !(Location1 > Location2);
 
@@ -1843,8 +1843,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Location Location1,
-                                          Location Location2)
+        public static Boolean operator > (Location? Location1,
+                                          Location? Location2)
 
             => Location1 is null
                    ? throw new ArgumentNullException(nameof(Location1), "The given location must not be null!")
@@ -1860,8 +1860,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Location Location1,
-                                           Location Location2)
+        public static Boolean operator >= (Location? Location1,
+                                           Location? Location2)
 
             => !(Location1 < Location2);
 
