@@ -673,12 +673,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         IEnumerable<ChargingReservation> IChargingReservations.ChargingReservations => throw new NotImplementedException();
 
-        Task<ReservationResult> IChargingReservations.Reserve(ChargingLocation ChargingLocation, ChargingReservationLevel ReservationLevel, DateTime? StartTime, TimeSpan? Duration, ChargingReservation_Id? ReservationId, ChargingReservation_Id? LinkedReservationId, EMobilityProvider_Id? ProviderId, RemoteAuthentication? RemoteAuthentication, ChargingProduct? ChargingProduct, IEnumerable<AuthenticationToken>? AuthTokens, IEnumerable<EMobilityAccount_Id>? eMAIds, IEnumerable<UInt32>? PINs, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        Task<ReservationResult> IChargingReservations.Reserve(ChargingLocation ChargingLocation, ChargingReservationLevel ReservationLevel, DateTime? StartTime, TimeSpan? Duration, ChargingReservation_Id? ReservationId, ChargingReservation_Id? LinkedReservationId, EMobilityProvider_Id? ProviderId, RemoteAuthentication? RemoteAuthentication, ChargingProduct? ChargingProduct, IEnumerable<AuthenticationToken>? AuthTokens, IEnumerable<EMobilityAccount_Id>? eMAIds, IEnumerable<UInt32>? PINs, DateTime? Timestamp, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
         {
             return Task.FromResult(ReservationResult.NoOperation());
         }
 
-        Task<CancelReservationResult> IChargingReservations.CancelReservation(ChargingReservation_Id ReservationId, ChargingReservationCancellationReason Reason, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        Task<CancelReservationResult> IChargingReservations.CancelReservation(ChargingReservation_Id ReservationId, ChargingReservationCancellationReason Reason, DateTime? Timestamp, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
         {
             return Task.FromResult(CancelReservationResult.NoOperation(ReservationId));
         }
@@ -716,9 +716,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                    RemoteAuthentication?    RemoteAuthentication,
 
                                                                    DateTime?                Timestamp,
-                                                                   CancellationToken        CancellationToken,
                                                                    EventTracking_Id?        EventTrackingId,
-                                                                   TimeSpan?                RequestTimeout)
+                                                                   TimeSpan?                RequestTimeout,
+                                                                   CancellationToken        CancellationToken)
         {
 
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -813,10 +813,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                            ReservationHandling?   ReservationHandling,
                                                            EMobilityProvider_Id?  ProviderId,
                                                            RemoteAuthentication?  RemoteAuthentication,
+
                                                            DateTime?              Timestamp,
-                                                           CancellationToken      CancellationToken,
                                                            EventTracking_Id?      EventTrackingId,
-                                                           TimeSpan?              RequestTimeout)
+                                                           TimeSpan?              RequestTimeout,
+                                                           CancellationToken      CancellationToken)
         {
 
             return Task.FromResult(RemoteStopResult.NoOperation(SessionId));
@@ -864,7 +865,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Charge Detail Records
 
-        Task<IEnumerable<ChargeDetailRecord>> ICSORoamingProvider.GetChargeDetailRecords(DateTime From, DateTime? To, EMobilityProvider_Id? ProviderId, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout)
+        Task<IEnumerable<ChargeDetailRecord>> ICSORoamingProvider.GetChargeDetailRecords(DateTime From, DateTime? To, EMobilityProvider_Id? ProviderId, DateTime? Timestamp, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
         {
             return Task.FromResult((IEnumerable<ChargeDetailRecord>) Array.Empty<ChargeDetailRecord>());
         }
@@ -1385,9 +1386,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                           ChargingStationOperator_Id?  OperatorId            = null,
 
                                                           DateTime?                    Timestamp             = null,
-                                                          CancellationToken            CancellationToken     = default,
                                                           EventTracking_Id?            EventTrackingId       = null,
-                                                          TimeSpan?                    RequestTimeout        = null)
+                                                          TimeSpan?                    RequestTimeout        = null,
+                                                          CancellationToken            CancellationToken     = default)
         {
 
             return await RoamingNetwork.AuthorizeStart(LocalAuthentication,
@@ -1396,10 +1397,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                        SessionId,
                                                        CPOPartnerSessionId,
                                                        OperatorId,
+
                                                        Timestamp,
-                                                       CancellationToken,
                                                        EventTrackingId,
-                                                       RequestTimeout);
+                                                       RequestTimeout,
+                                                       CancellationToken);
 
         }
 
@@ -1414,9 +1416,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         ChargingStationOperator_Id?  OperatorId            = null,
 
                                                         DateTime?                    Timestamp             = null,
-                                                        CancellationToken            CancellationToken     = default,
                                                         EventTracking_Id?            EventTrackingId       = null,
-                                                        TimeSpan?                    RequestTimeout        = null)
+                                                        TimeSpan?                    RequestTimeout        = null,
+                                                        CancellationToken            CancellationToken     = default)
         {
 
             return await RoamingNetwork.AuthorizeStop(SessionId,
@@ -1426,9 +1428,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                       OperatorId,
 
                                                       Timestamp,
-                                                      CancellationToken,
                                                       EventTrackingId,
-                                                      RequestTimeout);
+                                                      RequestTimeout,
+                                                      CancellationToken);
 
         }
 
@@ -1439,16 +1441,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public async Task<SendCDRsResult> ReceiveChargeDetailRecords(IEnumerable<ChargeDetailRecord>  ChargeDetailRecords,
 
                                                                      DateTime?                        Timestamp             = null,
-                                                                     CancellationToken                CancellationToken     = default,
                                                                      EventTracking_Id?                EventTrackingId       = null,
-                                                                     TimeSpan?                        RequestTimeout        = null)
+                                                                     TimeSpan?                        RequestTimeout        = null,
+                                                                     CancellationToken                CancellationToken     = default)
         {
 
             return await RoamingNetwork.ReceiveChargeDetailRecords(ChargeDetailRecords,
+
                                                                    Timestamp,
-                                                                   CancellationToken,
                                                                    EventTrackingId,
-                                                                   RequestTimeout);
+                                                                   RequestTimeout,
+                                                                   CancellationToken);
 
         }
 
