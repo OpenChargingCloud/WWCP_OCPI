@@ -119,24 +119,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             catch (Exception e)
                                             {
 
-                                                return new HTTPResponse.Builder(HTTPStatusCode.InternalServerError) {
-                                                           ContentType  = HTTPContentType.JSON_UTF8,
-                                                           Content      = new OCPIResponse<JObject>(
-                                                                              JSONObject.Create(
-                                                                                  new JProperty("description", e.Message),
-                                                                                  new JProperty("stacktrace",  e.StackTrace.Split(new String[] { Environment.NewLine }, StringSplitOptions.None).ToArray()),
-                                                                                  new JProperty("source",      e.TargetSite.Module.Name),
-                                                                                  new JProperty("type",        e.TargetSite.ReflectedType.Name)
-                                                                              ),
-                                                                              2000,
-                                                                              e.Message,
-                                                                              null,
-                                                                              Timestamp.Now,
-                                                                              null,
-                                                                              (httpRequest.SubprotocolRequest as OCPIRequest)?.RequestId,
-                                                                              (httpRequest.SubprotocolRequest as OCPIRequest)?.CorrelationId
-                                                                          ).ToJSON(json => json).ToUTF8Bytes(),
-                                                           Connection   = "close"
+                                                return new HTTPResponse.Builder() {
+                                                           HTTPStatusCode  = HTTPStatusCode.InternalServerError,
+                                                           ContentType     = HTTPContentType.JSON_UTF8,
+                                                           Content         = new OCPIResponse<JObject>(
+                                                                                 JSONObject.Create(
+                                                                                     new JProperty("description",  e.Message),
+                                                                                     new JProperty("stacktrace",   new JArray(e.StackTrace?.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToArray() ?? Array.Empty<String>())),
+                                                                                     new JProperty("source",       e.TargetSite?.Module.Name),
+                                                                                     new JProperty("type",         e.TargetSite?.ReflectedType?.Name)
+                                                                                 ),
+                                                                                 2000,
+                                                                                 e.Message,
+                                                                                 null,
+                                                                                 Timestamp.Now,
+                                                                                 null,
+                                                                                 (httpRequest.SubprotocolRequest as OCPIRequest)?.RequestId,
+                                                                                 (httpRequest.SubprotocolRequest as OCPIRequest)?.CorrelationId
+                                                                             ).ToJSON(json => json).ToUTF8Bytes(),
+                                                           Connection      = "close"
                                                        };
 
                                             }
