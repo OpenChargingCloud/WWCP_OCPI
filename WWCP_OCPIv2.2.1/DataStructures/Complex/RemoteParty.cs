@@ -205,6 +205,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public UInt16?                               MaxNumberOfRetries             { get; }
 
         /// <summary>
+        /// The size of the internal buffers of HTTP clients.
+        /// </summary>
+        public UInt32?                               InternalBufferSize             { get; }
+
+        /// <summary>
         /// Whether to pipeline multiple HTTP request through a single HTTP/TCP connection.
         /// </summary>
         public Boolean?                              UseHTTPPipelining              { get; }
@@ -241,15 +246,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            DateTime?                             LocalAccessNotBefore         = null,
                            DateTime?                             LocalAccessNotAfter          = null,
 
+                           Boolean?                              PreferIPv4                   = null,
                            RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                            LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                            X509Certificate?                      ClientCert                   = null,
                            SslProtocols?                         TLSProtocol                  = null,
-                           Boolean?                              PreferIPv4                   = null,
                            String?                               HTTPUserAgent                = null,
                            TimeSpan?                             RequestTimeout               = null,
                            TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                            UInt16?                               MaxNumberOfRetries           = null,
+                           UInt32?                               InternalBufferSize           = null,
                            Boolean?                              UseHTTPPipelining            = null,
 
                            DateTime?                             LastUpdated                  = null)
@@ -270,15 +276,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    Array.Empty<RemoteAccessInfo>(),
                    Status,
 
+                   PreferIPv4,
                    RemoteCertificateValidator,
                    ClientCertificateSelector,
                    ClientCert,
                    TLSProtocol,
-                   PreferIPv4,
                    HTTPUserAgent,
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
+                   InternalBufferSize,
                    UseHTTPPipelining,
 
                    LastUpdated)
@@ -304,15 +311,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            DateTime?                             RemoteAccessNotBefore        = null,
                            DateTime?                             RemoteAccessNotAfter         = null,
 
+                           Boolean?                              PreferIPv4                   = null,
                            RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                            LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                            X509Certificate?                      ClientCert                   = null,
                            SslProtocols?                         TLSProtocol                  = null,
-                           Boolean?                              PreferIPv4                   = null,
                            String?                               HTTPUserAgent                = null,
                            TimeSpan?                             RequestTimeout               = null,
                            TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                            UInt16?                               MaxNumberOfRetries           = null,
+                           UInt32?                               InternalBufferSize           = null,
                            Boolean?                              UseHTTPPipelining            = null,
 
                            DateTime?                             LastUpdated                  = null)
@@ -336,15 +344,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    },
                    Status,
 
+                   PreferIPv4,
                    RemoteCertificateValidator,
                    ClientCertificateSelector,
                    ClientCert,
                    TLSProtocol,
-                   PreferIPv4,
                    HTTPUserAgent,
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
+                   InternalBufferSize,
                    UseHTTPPipelining,
 
                    LastUpdated)
@@ -376,15 +385,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            DateTime?                             RemoteAccessNotBefore        = null,
                            DateTime?                             RemoteAccessNotAfter         = null,
 
+                           Boolean?                              PreferIPv4                   = null,
                            RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                            LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                            X509Certificate?                      ClientCert                   = null,
                            SslProtocols?                         TLSProtocol                  = null,
-                           Boolean?                              PreferIPv4                   = null,
                            String?                               HTTPUserAgent                = null,
                            TimeSpan?                             RequestTimeout               = null,
                            TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                            UInt16?                               MaxNumberOfRetries           = null,
+                           UInt32?                               InternalBufferSize           = null,
                            Boolean?                              UseHTTPPipelining            = null,
 
                            DateTime?                             LastUpdated                  = null)
@@ -417,15 +427,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    },
                    Status,
 
+                   PreferIPv4,
                    RemoteCertificateValidator,
                    ClientCertificateSelector,
                    ClientCert,
                    TLSProtocol,
-                   PreferIPv4,
                    HTTPUserAgent,
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
+                   InternalBufferSize,
                    UseHTTPPipelining,
 
                    LastUpdated)
@@ -444,15 +455,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                            PartyStatus                           Status                       = PartyStatus.ENABLED,
 
+                           Boolean?                              PreferIPv4                   = null,
                            RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                            LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                            X509Certificate?                      ClientCert                   = null,
                            SslProtocols?                         TLSProtocol                  = null,
-                           Boolean?                              PreferIPv4                   = null,
                            String?                               HTTPUserAgent                = null,
                            TimeSpan?                             RequestTimeout               = null,
                            TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                            UInt16?                               MaxNumberOfRetries           = null,
+                           UInt32?                               InternalBufferSize           = null,
                            Boolean?                              UseHTTPPipelining            = null,
 
                            DateTime?                             LastUpdated                  = null)
@@ -463,15 +475,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.Roles                       = Roles;
             this.Status                      = Status;
 
+            this.PreferIPv4                  = PreferIPv4;
             this.RemoteCertificateValidator  = RemoteCertificateValidator;
             this.ClientCertificateSelector   = ClientCertificateSelector;
             this.ClientCert                  = ClientCert;
             this.TLSProtocol                 = TLSProtocol;
-            this.PreferIPv4                  = PreferIPv4;
             this.HTTPUserAgent               = HTTPUserAgent;
             this.RequestTimeout              = RequestTimeout;
             this.TransmissionRetryDelay      = TransmissionRetryDelay;
             this.MaxNumberOfRetries          = MaxNumberOfRetries;
+            this.InternalBufferSize          = InternalBufferSize;
             this.UseHTTPPipelining           = UseHTTPPipelining;
 
             this.LastUpdated                 = LastUpdated ?? Timestamp.Now;
@@ -567,15 +580,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
                     Status,
 
+                    PreferIPv4,
                     RemoteCertificateValidator,
                     ClientCertificateSelector,
                     ClientCert,
                     TLSProtocol,
-                    PreferIPv4,
                     HTTPUserAgent,
                     RequestTimeout,
                     TransmissionRetryDelay,
                     MaxNumberOfRetries,
+                    InternalBufferSize,
                     UseHTTPPipelining,
 
                     LastUpdated);

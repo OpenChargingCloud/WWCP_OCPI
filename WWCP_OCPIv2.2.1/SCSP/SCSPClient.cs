@@ -390,15 +390,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                           AccessToken                           AccessToken,
                           HTTPHostname?                         VirtualHostname              = null,
                           String?                               Description                  = null,
+                          Boolean?                              PreferIPv4                   = null,
                           RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                           LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                           X509Certificate?                      ClientCert                   = null,
                           SslProtocols?                         TLSProtocol                  = null,
-                          Boolean?                              PreferIPv4                   = null,
                           String?                               HTTPUserAgent                = null,
                           TimeSpan?                             RequestTimeout               = null,
                           TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                           UInt16?                               MaxNumberOfRetries           = null,
+                          UInt32?                               InternalBufferSize           = null,
                           Boolean                               UseHTTPPipelining            = false,
                           HTTPClientLogger?                     HTTPLogger                   = null,
                           Boolean                               AccessTokenBase64Encoding    = true,
@@ -414,15 +415,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                    AccessToken,
                    VirtualHostname,
                    Description,
+                   PreferIPv4,
                    RemoteCertificateValidator,
                    ClientCertificateSelector,
                    ClientCert,
                    TLSProtocol,
-                   PreferIPv4,
                    HTTPUserAgent,
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
+                   InternalBufferSize,
                    UseHTTPPipelining,
                    HTTPLogger,
                    AccessTokenBase64Encoding,
@@ -532,18 +534,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
                                                              Description,
+                                                             PreferIPv4,
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
-                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
+                                                             InternalBufferSize,
                                                              UseHTTPPipelining,
                                                              DisableLogging,
                                                              HTTPLogger,
@@ -569,7 +572,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Location>.ParseJArray(HTTPResponse,
+                    response = OCPIResponse<Location>.ParseJArray(httpResponse,
                                                                   requestId,
                                                                   correlationId,
                                                                   json => Location.Parse(json));
@@ -713,22 +716,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse     = await new HTTPSClient(remoteURL.Value,
-                                                                 VirtualHostname,
-                                                                 Description,
-                                                                 RemoteCertificateValidator,
-                                                                 ClientCertificateSelector,
-                                                                 ClientCert,
-                                                                 TLSProtocol,
-                                                                 PreferIPv4,
-                                                                 HTTPUserAgent,
-                                                                 RequestTimeout,
-                                                                 TransmissionRetryDelay,
-                                                                 MaxNumberOfRetries,
-                                                                 UseHTTPPipelining,
-                                                                 DisableLogging,
-                                                                 HTTPLogger,
-                                                                 DNSClient).
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             PreferIPv4,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             TLSProtocol,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             InternalBufferSize,
+                                                             UseHTTPPipelining,
+                                                             DisableLogging,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                    remoteURL.Value.Path + LocationId.ToString(),
@@ -750,7 +754,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Location>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Location>.ParseJObject(httpResponse,
                                                                    requestId,
                                                                    correlationId,
                                                                    json => Location.Parse(json));
@@ -899,22 +903,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse     = await new HTTPSClient(remoteURL.Value,
-                                                                 VirtualHostname,
-                                                                 Description,
-                                                                 RemoteCertificateValidator,
-                                                                 ClientCertificateSelector,
-                                                                 ClientCert,
-                                                                 TLSProtocol,
-                                                                 PreferIPv4,
-                                                                 HTTPUserAgent,
-                                                                 RequestTimeout,
-                                                                 TransmissionRetryDelay,
-                                                                 MaxNumberOfRetries,
-                                                                 UseHTTPPipelining,
-                                                                 DisableLogging,
-                                                                 HTTPLogger,
-                                                                 DNSClient).
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             PreferIPv4,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             TLSProtocol,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             InternalBufferSize,
+                                                             UseHTTPPipelining,
+                                                             DisableLogging,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                    remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString(),
@@ -936,7 +941,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<EVSE>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<EVSE>.ParseJObject(httpResponse,
                                                                requestId,
                                                                correlationId,
                                                                json => EVSE.Parse(json));
@@ -1089,22 +1094,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse     = await new HTTPSClient(remoteURL.Value,
-                                                                 VirtualHostname,
-                                                                 Description,
-                                                                 RemoteCertificateValidator,
-                                                                 ClientCertificateSelector,
-                                                                 ClientCert,
-                                                                 TLSProtocol,
-                                                                 PreferIPv4,
-                                                                 HTTPUserAgent,
-                                                                 RequestTimeout,
-                                                                 TransmissionRetryDelay,
-                                                                 MaxNumberOfRetries,
-                                                                 UseHTTPPipelining,
-                                                                 DisableLogging,
-                                                                 HTTPLogger,
-                                                                 DNSClient).
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             PreferIPv4,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             TLSProtocol,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             InternalBufferSize,
+                                                             UseHTTPPipelining,
+                                                             DisableLogging,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                    remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString() + ConnectorId.ToString(),
@@ -1126,7 +1132,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Connector>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Connector>.ParseJObject(httpResponse,
                                                                     requestId,
                                                                     correlationId,
                                                                     json => Connector.Parse(json));
@@ -1270,22 +1276,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse     = await new HTTPSClient(remoteURL.Value,
-                                                                 VirtualHostname,
-                                                                 Description,
-                                                                 RemoteCertificateValidator,
-                                                                 ClientCertificateSelector,
-                                                                 ClientCert,
-                                                                 TLSProtocol,
-                                                                 PreferIPv4,
-                                                                 HTTPUserAgent,
-                                                                 RequestTimeout,
-                                                                 TransmissionRetryDelay,
-                                                                 MaxNumberOfRetries,
-                                                                 UseHTTPPipelining,
-                                                                 DisableLogging,
-                                                                 HTTPLogger,
-                                                                 DNSClient).
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             PreferIPv4,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             TLSProtocol,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             InternalBufferSize,
+                                                             UseHTTPPipelining,
+                                                             DisableLogging,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                    remoteURL.Value.Path,
@@ -1307,7 +1314,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Session>.ParseJArray(HTTPResponse,
+                    response = OCPIResponse<Session>.ParseJArray(httpResponse,
                                                                  requestId,
                                                                  correlationId,
                                                                  json => Session.Parse(json));
@@ -1451,22 +1458,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse     = await new HTTPSClient(remoteURL.Value,
-                                                                 VirtualHostname,
-                                                                 Description,
-                                                                 RemoteCertificateValidator,
-                                                                 ClientCertificateSelector,
-                                                                 ClientCert,
-                                                                 TLSProtocol,
-                                                                 PreferIPv4,
-                                                                 HTTPUserAgent,
-                                                                 RequestTimeout,
-                                                                 TransmissionRetryDelay,
-                                                                 MaxNumberOfRetries,
-                                                                 UseHTTPPipelining,
-                                                                 DisableLogging,
-                                                                 HTTPLogger,
-                                                                 DNSClient).
+                    var httpResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             PreferIPv4,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             TLSProtocol,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             InternalBufferSize,
+                                                             UseHTTPPipelining,
+                                                             DisableLogging,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                    remoteURL.Value.Path + SessionId.ToString(),
@@ -1488,7 +1496,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Session>.ParseJObject(HTTPResponse,
+                    response = OCPIResponse<Session>.ParseJObject(httpResponse,
                                                                   requestId,
                                                                   correlationId,
                                                                   json => Session.Parse(json));

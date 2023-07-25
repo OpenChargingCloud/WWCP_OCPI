@@ -2875,15 +2875,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   DateTime?                             RemoteAccessNotBefore        = null,
                                                   DateTime?                             RemoteAccessNotAfter         = null,
 
+                                                  Boolean?                              PreferIPv4                   = null,
                                                   RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                   LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                   X509Certificate?                      ClientCert                   = null,
                                                   SslProtocols?                         TLSProtocol                  = null,
-                                                  Boolean?                              PreferIPv4                   = null,
                                                   String?                               HTTPUserAgent                = null,
                                                   TimeSpan?                             RequestTimeout               = null,
                                                   TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                   UInt16?                               MaxNumberOfRetries           = null,
+                                                  UInt32?                               InternalBufferSize           = null,
                                                   Boolean?                              UseHTTPPipelining            = null,
 
                                                   EventTracking_Id?                     EventTrackingId              = null,
@@ -2914,15 +2915,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  RemoteAccessNotBefore,
                                                  RemoteAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -2959,15 +2961,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                   PartyStatus                           PartyStatus                  = PartyStatus. ENABLED,
 
+                                                  Boolean?                              PreferIPv4                   = null,
                                                   RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                   LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                   X509Certificate?                      ClientCert                   = null,
                                                   SslProtocols?                         TLSProtocol                  = null,
-                                                  Boolean?                              PreferIPv4                   = null,
                                                   String?                               HTTPUserAgent                = null,
                                                   TimeSpan?                             RequestTimeout               = null,
                                                   TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                   UInt16?                               MaxNumberOfRetries           = null,
+                                                  UInt32?                               InternalBufferSize           = null,
                                                   Boolean?                              UseHTTPPipelining            = null,
 
                                                   EventTracking_Id?                     EventTrackingId              = null,
@@ -2988,15 +2991,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  LocalAccessNotBefore,
                                                  LocalAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -3037,15 +3041,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   DateTime?                             RemoteAccessNotBefore        = null,
                                                   DateTime?                             RemoteAccessNotAfter         = null,
 
+                                                  Boolean?                              PreferIPv4                   = null,
                                                   RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                   LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                   X509Certificate?                      ClientCert                   = null,
                                                   SslProtocols?                         TLSProtocol                  = null,
-                                                  Boolean?                              PreferIPv4                   = null,
                                                   String?                               HTTPUserAgent                = null,
                                                   TimeSpan?                             RequestTimeout               = null,
                                                   TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                   UInt16?                               MaxNumberOfRetries           = null,
+                                                  UInt32?                               InternalBufferSize           = null,
                                                   Boolean?                              UseHTTPPipelining            = null,
 
                                                   EventTracking_Id?                     EventTrackingId              = null,
@@ -3069,15 +3074,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  RemoteAccessNotBefore,
                                                  RemoteAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
@@ -3111,15 +3117,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                   PartyStatus                           Status                       = PartyStatus.ENABLED,
 
+                                                  Boolean?                              PreferIPv4                   = null,
                                                   RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                   LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                   X509Certificate?                      ClientCert                   = null,
                                                   SslProtocols?                         TLSProtocol                  = null,
-                                                  Boolean?                              PreferIPv4                   = null,
                                                   String?                               HTTPUserAgent                = null,
                                                   TimeSpan?                             RequestTimeout               = null,
                                                   TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                   UInt16?                               MaxNumberOfRetries           = null,
+                                                  UInt32?                               InternalBufferSize           = null,
                                                   Boolean?                              UseHTTPPipelining            = null,
 
                                                   DateTime?                             LastUpdated                  = null,
@@ -3138,15 +3145,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                  Status,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining,
 
                                                  LastUpdated);
@@ -3196,15 +3204,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DateTime?                             RemoteAccessNotBefore        = null,
                                                              DateTime?                             RemoteAccessNotAfter         = null,
 
+                                                             Boolean?                              PreferIPv4                   = null,
                                                              RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                              LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                              X509Certificate?                      ClientCert                   = null,
                                                              SslProtocols?                         TLSProtocol                  = null,
-                                                             Boolean?                              PreferIPv4                   = null,
                                                              String?                               HTTPUserAgent                = null,
                                                              TimeSpan?                             RequestTimeout               = null,
                                                              TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                              UInt16?                               MaxNumberOfRetries           = null,
+                                                             UInt32?                               InternalBufferSize           = null,
                                                              Boolean?                              UseHTTPPipelining            = null,
 
                                                              EventTracking_Id?                     EventTrackingId              = null,
@@ -3235,15 +3244,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  RemoteAccessNotBefore,
                                                  RemoteAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             var result = remoteParties.GetOrAdd(newRemoteParty.Id,
@@ -3283,15 +3293,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                              PartyStatus                           PartyStatus                  = PartyStatus. ENABLED,
 
+                                                             Boolean?                              PreferIPv4                   = null,
                                                              RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                              LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                              X509Certificate?                      ClientCert                   = null,
                                                              SslProtocols?                         TLSProtocol                  = null,
-                                                             Boolean?                              PreferIPv4                   = null,
                                                              String?                               HTTPUserAgent                = null,
                                                              TimeSpan?                             RequestTimeout               = null,
                                                              TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                              UInt16?                               MaxNumberOfRetries           = null,
+                                                             UInt32?                               InternalBufferSize           = null,
                                                              Boolean?                              UseHTTPPipelining            = null,
 
                                                              EventTracking_Id?                     EventTrackingId              = null,
@@ -3312,15 +3323,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  LocalAccessNotBefore,
                                                  LocalAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             var result = remoteParties.GetOrAdd(newRemoteParty.Id,
@@ -3363,15 +3375,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DateTime?                             RemoteAccessNotBefore        = null,
                                                              DateTime?                             RemoteAccessNotAfter         = null,
 
+                                                             Boolean?                              PreferIPv4                   = null,
                                                              RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                              LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                              X509Certificate?                      ClientCert                   = null,
                                                              SslProtocols?                         TLSProtocol                  = null,
-                                                             Boolean?                              PreferIPv4                   = null,
                                                              String?                               HTTPUserAgent                = null,
                                                              TimeSpan?                             RequestTimeout               = null,
                                                              TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                              UInt16?                               MaxNumberOfRetries           = null,
+                                                             UInt32?                               InternalBufferSize           = null,
                                                              Boolean?                              UseHTTPPipelining            = null,
 
                                                              EventTracking_Id?                     EventTrackingId              = null,
@@ -3395,15 +3408,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  RemoteAccessNotBefore,
                                                  RemoteAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             var result = remoteParties.GetOrAdd(newRemoteParty.Id,
@@ -3439,15 +3453,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                              PartyStatus                           Status                       = PartyStatus.ENABLED,
 
+                                                             Boolean?                              PreferIPv4                   = null,
                                                              RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                              LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                              X509Certificate?                      ClientCert                   = null,
                                                              SslProtocols?                         TLSProtocol                  = null,
-                                                             Boolean?                              PreferIPv4                   = null,
                                                              String?                               HTTPUserAgent                = null,
                                                              TimeSpan?                             RequestTimeout               = null,
                                                              TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                              UInt16?                               MaxNumberOfRetries           = null,
+                                                             UInt32?                               InternalBufferSize           = null,
                                                              Boolean?                              UseHTTPPipelining            = null,
 
                                                              DateTime?                             LastUpdated                  = null,
@@ -3466,15 +3481,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                  Status,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining,
 
                                                  LastUpdated);
@@ -3526,15 +3542,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           DateTime?                             RemoteAccessNotBefore        = null,
                                                           DateTime?                             RemoteAccessNotAfter         = null,
 
+                                                          Boolean?                              PreferIPv4                   = null,
                                                           RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                           LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                           X509Certificate?                      ClientCert                   = null,
                                                           SslProtocols?                         TLSProtocol                  = null,
-                                                          Boolean?                              PreferIPv4                   = null,
                                                           String?                               HTTPUserAgent                = null,
                                                           TimeSpan?                             RequestTimeout               = null,
                                                           TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                           UInt16?                               MaxNumberOfRetries           = null,
+                                                          UInt32?                               InternalBufferSize           = null,
                                                           Boolean?                              UseHTTPPipelining            = null,
 
                                                           EventTracking_Id?                     EventTrackingId              = null,
@@ -3565,15 +3582,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  RemoteAccessNotBefore,
                                                  RemoteAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             var added = false;
@@ -3618,15 +3636,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                           PartyStatus                           PartyStatus                  = PartyStatus. ENABLED,
 
+                                                          Boolean?                              PreferIPv4                   = null,
                                                           RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                           LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                           X509Certificate?                      ClientCert                   = null,
                                                           SslProtocols?                         TLSProtocol                  = null,
-                                                          Boolean?                              PreferIPv4                   = null,
                                                           String?                               HTTPUserAgent                = null,
                                                           TimeSpan?                             RequestTimeout               = null,
                                                           TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                           UInt16?                               MaxNumberOfRetries           = null,
+                                                          UInt32?                               InternalBufferSize           = null,
                                                           Boolean?                              UseHTTPPipelining            = null,
 
                                                           EventTracking_Id?                     EventTrackingId              = null,
@@ -3647,15 +3666,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  LocalAccessNotBefore,
                                                  LocalAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             var added = false;
@@ -3703,15 +3723,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           DateTime?                             RemoteAccessNotBefore        = null,
                                                           DateTime?                             RemoteAccessNotAfter         = null,
 
+                                                          Boolean?                              PreferIPv4                   = null,
                                                           RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                           LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                           X509Certificate?                      ClientCert                   = null,
                                                           SslProtocols?                         TLSProtocol                  = null,
-                                                          Boolean?                              PreferIPv4                   = null,
                                                           String?                               HTTPUserAgent                = null,
                                                           TimeSpan?                             RequestTimeout               = null,
                                                           TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                           UInt16?                               MaxNumberOfRetries           = null,
+                                                          UInt32?                               InternalBufferSize           = null,
                                                           Boolean?                              UseHTTPPipelining            = null,
 
                                                           EventTracking_Id?                     EventTrackingId              = null,
@@ -3735,15 +3756,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  RemoteAccessNotBefore,
                                                  RemoteAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             var added = false;
@@ -3784,15 +3806,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                           PartyStatus                           Status                       = PartyStatus.ENABLED,
 
+                                                          Boolean?                              PreferIPv4                   = null,
                                                           RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                           LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                           X509Certificate?                      ClientCert                   = null,
                                                           SslProtocols?                         TLSProtocol                  = null,
-                                                          Boolean?                              PreferIPv4                   = null,
                                                           String?                               HTTPUserAgent                = null,
                                                           TimeSpan?                             RequestTimeout               = null,
                                                           TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                           UInt16?                               MaxNumberOfRetries           = null,
+                                                          UInt32?                               InternalBufferSize           = null,
                                                           Boolean?                              UseHTTPPipelining            = null,
 
                                                           DateTime?                             LastUpdated                  = null,
@@ -3811,15 +3834,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                  Status,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining,
 
                                                  LastUpdated);
@@ -3874,15 +3898,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      DateTime?                             RemoteAccessNotBefore        = null,
                                                      DateTime?                             RemoteAccessNotAfter         = null,
 
+                                                     Boolean?                              PreferIPv4                   = null,
                                                      RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                      LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                      X509Certificate?                      ClientCert                   = null,
                                                      SslProtocols?                         TLSProtocol                  = null,
-                                                     Boolean?                              PreferIPv4                   = null,
                                                      String?                               HTTPUserAgent                = null,
                                                      TimeSpan?                             RequestTimeout               = null,
                                                      TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                      UInt16?                               MaxNumberOfRetries           = null,
+                                                     UInt32?                               InternalBufferSize           = null,
                                                      Boolean?                              UseHTTPPipelining            = null,
 
                                                      EventTracking_Id?                     EventTrackingId              = null,
@@ -3913,15 +3938,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  RemoteAccessNotBefore,
                                                  RemoteAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             if (remoteParties.TryUpdate(newRemoteParty.Id,
@@ -3958,15 +3984,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                      PartyStatus                           PartyStatus                  = PartyStatus. ENABLED,
 
+                                                     Boolean?                              PreferIPv4                   = null,
                                                      RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                      LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                      X509Certificate?                      ClientCert                   = null,
                                                      SslProtocols?                         TLSProtocol                  = null,
-                                                     Boolean?                              PreferIPv4                   = null,
                                                      String?                               HTTPUserAgent                = null,
                                                      TimeSpan?                             RequestTimeout               = null,
                                                      TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                      UInt16?                               MaxNumberOfRetries           = null,
+                                                     UInt32?                               InternalBufferSize           = null,
                                                      Boolean?                              UseHTTPPipelining            = null,
 
                                                      EventTracking_Id?                     EventTrackingId              = null,
@@ -3987,15 +4014,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  LocalAccessNotBefore,
                                                  LocalAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             if (remoteParties.TryUpdate(newRemoteParty.Id,
@@ -4035,15 +4063,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      DateTime?                             RemoteAccessNotBefore        = null,
                                                      DateTime?                             RemoteAccessNotAfter         = null,
 
+                                                     Boolean?                              PreferIPv4                   = null,
                                                      RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                      LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                      X509Certificate?                      ClientCert                   = null,
                                                      SslProtocols?                         TLSProtocol                  = null,
-                                                     Boolean?                              PreferIPv4                   = null,
                                                      String?                               HTTPUserAgent                = null,
                                                      TimeSpan?                             RequestTimeout               = null,
                                                      TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                      UInt16?                               MaxNumberOfRetries           = null,
+                                                     UInt32?                               InternalBufferSize           = null,
                                                      Boolean?                              UseHTTPPipelining            = null,
 
                                                      EventTracking_Id?                     EventTrackingId              = null,
@@ -4067,15 +4096,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  RemoteAccessNotBefore,
                                                  RemoteAccessNotAfter,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining);
 
             if (remoteParties.TryUpdate(newRemoteParty.Id,
@@ -4108,15 +4138,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                      PartyStatus                           Status                       = PartyStatus.ENABLED,
 
+                                                     Boolean?                              PreferIPv4                   = null,
                                                      RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
                                                      LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
                                                      X509Certificate?                      ClientCert                   = null,
                                                      SslProtocols?                         TLSProtocol                  = null,
-                                                     Boolean?                              PreferIPv4                   = null,
                                                      String?                               HTTPUserAgent                = null,
                                                      TimeSpan?                             RequestTimeout               = null,
                                                      TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                                                      UInt16?                               MaxNumberOfRetries           = null,
+                                                     UInt32?                               InternalBufferSize           = null,
                                                      Boolean?                              UseHTTPPipelining            = null,
 
                                                      DateTime?                             LastUpdated                  = null,
@@ -4135,15 +4166,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                  Status,
 
+                                                 PreferIPv4,
                                                  RemoteCertificateValidator,
                                                  ClientCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
-                                                 PreferIPv4,
                                                  HTTPUserAgent,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
+                                                 InternalBufferSize,
                                                  UseHTTPPipelining,
 
                                                  LastUpdated);
