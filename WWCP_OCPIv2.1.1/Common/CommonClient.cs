@@ -394,6 +394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    RemoteParty.ClientCert,
                    RemoteParty.TLSProtocol,
                    RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent,
+                   RemoteParty.HTTPAuthentication,
                    RemoteParty.RequestTimeout,
                    RemoteParty.TransmissionRetryDelay,
                    RemoteParty.MaxNumberOfRetries,
@@ -441,6 +442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="RemoteCertificateValidator">The remote SSL/TLS certificate validator.</param>
         /// <param name="ClientCert">The SSL/TLS client certificate to use of HTTP authentication.</param>
         /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
+        /// <param name="HTTPAuthentication">The optional HTTP authentication to use.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries for HTTP request.</param>
@@ -459,6 +461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             X509Certificate?                      ClientCert                   = null,
                             SslProtocols?                         TLSProtocol                  = null,
                             String?                               HTTPUserAgent                = null,
+                            IHTTPAuthentication?                  HTTPAuthentication           = null,
                             TimeSpan?                             RequestTimeout               = null,
                             TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
                             UInt16?                               MaxNumberOfRetries           = null,
@@ -482,6 +485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    ClientCert,
                    TLSProtocol,
                    HTTPUserAgent ?? DefaultHTTPUserAgent,
+                   HTTPAuthentication,
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
@@ -662,6 +666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              ClientCert,
                                                              TLSProtocol,
                                                              HTTPUserAgent,
+                                                             HTTPAuthentication,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -902,6 +907,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                      ClientCert,
                                                                      TLSProtocol,
                                                                      HTTPUserAgent,
+                                                                     HTTPAuthentication,
                                                                      RequestTimeout,
                                                                      TransmissionRetryDelay,
                                                                      MaxNumberOfRetries,
@@ -1248,6 +1254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                  ClientCert,
                                                                  TLSProtocol,
                                                                  HTTPUserAgent,
+                                                                 HTTPAuthentication,
                                                                  RequestTimeout,
                                                                  TransmissionRetryDelay,
                                                                  MaxNumberOfRetries,
@@ -1457,6 +1464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                  ClientCert,
                                                                  TLSProtocol,
                                                                  HTTPUserAgent,
+                                                                 HTTPAuthentication,
                                                                  RequestTimeout,
                                                                  TransmissionRetryDelay,
                                                                  MaxNumberOfRetries,
@@ -1671,6 +1679,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                  ClientCert,
                                                                  TLSProtocol,
                                                                  HTTPUserAgent,
+                                                                 HTTPAuthentication,
                                                                  RequestTimeout,
                                                                  TransmissionRetryDelay,
                                                                  MaxNumberOfRetries,
@@ -1915,6 +1924,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                  ClientCert,
                                                                  TLSProtocol,
                                                                  HTTPUserAgent,
+                                                                 HTTPAuthentication,
                                                                  RequestTimeout,
                                                                  TransmissionRetryDelay,
                                                                  MaxNumberOfRetries,
@@ -2152,6 +2162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              ClientCert,
                                                              TLSProtocol,
                                                              HTTPUserAgent,
+                                                             HTTPAuthentication,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,

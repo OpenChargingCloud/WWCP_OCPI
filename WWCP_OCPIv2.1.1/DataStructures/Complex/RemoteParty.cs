@@ -204,6 +204,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public String?                               HTTPUserAgent                 { get; }
 
         /// <summary>
+        /// The optional HTTP authentication to use.
+        /// </summary>
+        public IHTTPAuthentication?                  HTTPAuthentication            { get; }
+
+        /// <summary>
         /// The timeout for upstream requests.
         /// </summary>
         public TimeSpan?                             RequestTimeout                { get; set; }
