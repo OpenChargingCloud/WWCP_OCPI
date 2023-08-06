@@ -533,7 +533,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="DNSClient">The DNS client of the API.</param>
-        /// <param name="Autostart">Whether to start the API automatically.</param>
+        /// <param name="AutoStart">Whether to start the API automatically.</param>
         public CommonAPIBase(Version_Id                            OCPIVersion,
                              URL                                   OurBaseURL,
                              URL                                   OurVersionsURL,
@@ -587,7 +587,7 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                               RemotePartyDBFileName         = null,
                              String?                               AssetsDBFileName              = null,
                              DNSClient?                            DNSClient                     = null,
-                             Boolean                               Autostart                     = false)
+                             Boolean                               AutoStart                     = false)
 
             : base(HTTPHostname,
                    ExternalDNSName,
@@ -630,7 +630,7 @@ namespace cloud.charging.open.protocols.OCPI
                    LogfileName,
                    LogfileCreator,
                    DNSClient,
-                   Autostart)
+                   AutoStart)
 
         {
 
@@ -699,7 +699,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LoggingPath">The path for all logfiles.</param>
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
-        /// <param name="Autostart">Whether to start the API automatically.</param>
+        /// <param name="AutoStart">Whether to start the API automatically.</param>
         public CommonAPIBase(Version_Id               OCPIVersion,
                              URL                      OurBaseURL,
                              URL                      OurVersionsURL,
@@ -736,7 +736,7 @@ namespace cloud.charging.open.protocols.OCPI
                              String?                  DatabaseFilePath           = null,
                              String?                  RemotePartyDBFileName      = null,
                              String?                  AssetsDBFileName           = null,
-                             Boolean                  Autostart                  = false)
+                             Boolean                  AutoStart                  = false)
 
             : base(HTTPServer,
                    HTTPHostname,
@@ -762,7 +762,7 @@ namespace cloud.charging.open.protocols.OCPI
                    LoggingPath,
                    LogfileName,
                    LogfileCreator,
-                   Autostart)
+                   AutoStart)
 
         {
 

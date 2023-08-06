@@ -2566,7 +2566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LoggingPath">The path for all logfiles.</param>
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
-        /// <param name="Autostart">Whether to start the API automatically.</param>
+        /// <param name="AutoStart">Whether to start the API automatically.</param>
         public CPOAPI(CommonAPI                CommonAPI,
                       CountryCode              DefaultCountryCode,
                       Party_Id                 DefaultPartyId,
@@ -2595,7 +2595,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                       String?                  LoggingPath               = null,
                       String?                  LogfileName               = DefaultLogfileName,
                       LogfileCreatorDelegate?  LogfileCreator            = null,
-                      Boolean                  Autostart                 = false)
+                      Boolean                  AutoStart                 = false)
 
             : base(CommonAPI.HTTPServer,
                    HTTPHostname,
@@ -2621,7 +2621,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    LoggingPath,
                    LogfileName     ?? DefaultLogfileName,
                    LogfileCreator,
-                   Autostart)
+                   AutoStart)
 
         {
 

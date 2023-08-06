@@ -512,7 +512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          String?                                RemotePartyDBFileName              = null,
                          String?                                AssetsDBFileName                   = null,
                          DNSClient?                             DNSClient                          = null,
-                         Boolean                                Autostart                          = false)
+                         Boolean                                AutoStart                          = false)
 
 
             : base(Version.Id,
@@ -568,7 +568,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    RemotePartyDBFileName,
                    AssetsDBFileName,
                    DNSClient,
-                   Autostart)
+                   AutoStart)
 
         {
 
@@ -659,7 +659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          String?                       DatabaseFilePath          = null,
                          String?                       RemotePartyDBFileName     = null,
                          String?                       AssetsDBFileName          = null,
-                         Boolean                       Autostart                 = false)
+                         Boolean                       AutoStart                 = false)
 
             : base(Version.Id,
                    OurBaseURL,
@@ -697,7 +697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    DatabaseFilePath,
                    RemotePartyDBFileName,
                    AssetsDBFileName,
-                   Autostart)
+                   AutoStart)
 
         {
 

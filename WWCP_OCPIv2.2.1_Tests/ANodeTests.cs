@@ -157,17 +157,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
             cpoHTTPAPI           = new HTTPAPI(
                                        HTTPServerPort:                      IPPort.Parse(3301),
-                                       Autostart:                           true
+                                       AutoStart:                           true
                                    );
 
             emsp1HTTPAPI          = new HTTPAPI(
                                        HTTPServerPort:                      IPPort.Parse(3401),
-                                       Autostart:                           true
+                                       AutoStart:                           true
                                    );
 
             emsp2HTTPAPI          = new HTTPAPI(
                                        HTTPServerPort:                      IPPort.Parse(3402),
-                                       Autostart:                           true
+                                       AutoStart:                           true
                                    );
 
             Assert.IsNotNull(cpoHTTPAPI);
@@ -225,7 +225,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
                                        LogfileCreator:                      null,
-                                       Autostart:                           false
+                                       AutoStart:                           false
 
                                    );
 
@@ -277,7 +277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
                                        LogfileCreator:                      null,
-                                       Autostart:                           false
+                                       AutoStart:                           false
 
                                    );
 
@@ -329,7 +329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
                                        LogfileCreator:                      null,
-                                       Autostart:                           false
+                                       AutoStart:                           false
 
                                    );
 
@@ -374,7 +374,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
                                        LogfileCreator:                      null,
-                                       Autostart:                           false
+                                       AutoStart:                           false
 
                                    );
 
@@ -407,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
                                        LogfileCreator:                      null,
-                                       Autostart:                           false
+                                       AutoStart:                           false
 
                                    );
 
@@ -440,7 +440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                        LoggingPath:                         null,
                                        LogfileName:                         null,
                                        LogfileCreator:                      null,
-                                       Autostart:                           false
+                                       AutoStart:                           false
 
                                    );
 

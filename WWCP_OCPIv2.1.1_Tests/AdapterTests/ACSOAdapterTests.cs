@@ -133,7 +133,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             httpAPI          = new HTTPAPI(
                                    HTTPServerPort:                      IPPort.Parse(3473),
-                                   Autostart:                           true
+                                   AutoStart:                           true
                                );
 
             Assert.IsNotNull(httpAPI);
@@ -181,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    LoggingPath:                         null,
                                    LogfileName:                         null,
                                    LogfileCreator:                      null,
-                                   Autostart:                           false
+                                   AutoStart:                           false
 
                                );
 
@@ -217,7 +217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    LoggingPath:                         null,
                                    LogfileName:                         null,
                                    LogfileCreator:                      null,
-                                   Autostart:                           false
+                                   AutoStart:                           false
 
                                );
 
