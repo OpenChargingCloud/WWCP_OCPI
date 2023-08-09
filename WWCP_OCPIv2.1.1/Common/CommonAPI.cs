@@ -540,63 +540,62 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="DNSClient">The DNS client of the API.</param>
         /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonAPI(URL                                    OurBaseURL,
-                         URL                                    OurVersionsURL,
-                         BusinessDetails                        OurBusinessDetails,
-                         CountryCode                            OurCountryCode,
-                         Party_Id                               OurPartyId,
+        public CommonAPI(URL                                  OurBaseURL,
+                         URL                                  OurVersionsURL,
+                         BusinessDetails                      OurBusinessDetails,
+                         CountryCode                          OurCountryCode,
+                         Party_Id                             OurPartyId,
 
-                         HTTPPath?                              AdditionalURLPathPrefix            = null,
-                         Func<EVSE, Boolean>?                   KeepRemovedEVSEs                   = null,
-                         Boolean                                LocationsAsOpenData                = true,
-                         Boolean?                               AllowDowngrades                    = null,
-                         Boolean                                Disable_RootServices               = true,
+                         HTTPPath?                            AdditionalURLPathPrefix      = null,
+                         Func<EVSE, Boolean>?                 KeepRemovedEVSEs             = null,
+                         Boolean                              LocationsAsOpenData          = true,
+                         Boolean?                             AllowDowngrades              = null,
+                         Boolean                              Disable_RootServices         = true,
 
-                         HTTPHostname?                          HTTPHostname                       = null,
-                         String?                                ExternalDNSName                    = null,
-                         IPPort?                                HTTPServerPort                     = null,
-                         HTTPPath?                              BasePath                           = null,
-                         String?                                HTTPServerName                     = DefaultHTTPServerName,
+                         HTTPHostname?                        HTTPHostname                 = null,
+                         String?                              ExternalDNSName              = null,
+                         IPPort?                              HTTPServerPort               = null,
+                         HTTPPath?                            BasePath                     = null,
+                         String?                              HTTPServerName               = DefaultHTTPServerName,
 
-                         HTTPPath?                              URLPathPrefix                      = null,
-                         String?                                HTTPServiceName                    = DefaultHTTPServiceName,
-                         JObject?                               APIVersionHashes                   = null,
+                         HTTPPath?                            URLPathPrefix                = null,
+                         String?                              HTTPServiceName              = DefaultHTTPServiceName,
+                         JObject?                             APIVersionHashes             = null,
 
-                         ServerCertificateSelectorDelegate?     ServerCertificateSelector          = null,
-                         RemoteCertificateValidationCallback?   ClientCertificateValidator         = null,
-                         LocalCertificateSelectionCallback?     ClientCertificateSelector          = null,
-                         SslProtocols?                          AllowedTLSProtocols                = null,
-                         Boolean?                               ClientCertificateRequired          = null,
-                         Boolean?                               CheckCertificateRevocation         = null,
+                         ServerCertificateSelectorDelegate?   ServerCertificateSelector    = null,
+                         RemoteCertificateValidationHandler?  ClientCertificateValidator   = null,
+                         LocalCertificateSelectionHandler?    ClientCertificateSelector    = null,
+                         SslProtocols?                        AllowedTLSProtocols          = null,
+                         Boolean?                             ClientCertificateRequired    = null,
+                         Boolean?                             CheckCertificateRevocation   = null,
 
-                         String?                                ServerThreadName                   = null,
-                         ThreadPriority?                        ServerThreadPriority               = null,
-                         Boolean?                               ServerThreadIsBackground           = null,
+                         ServerThreadNameCreatorDelegate?     ServerThreadNameCreator      = null,
+                         ServerThreadPriorityDelegate?        ServerThreadPrioritySetter   = null,
+                         Boolean?                             ServerThreadIsBackground     = null,
+                         ConnectionIdBuilder?                 ConnectionIdBuilder          = null,
+                         TimeSpan?                            ConnectionTimeout            = null,
+                         UInt32?                              MaxClientConnections         = null,
 
-                         ConnectionIdBuilder?                   ConnectionIdBuilder                = null,
-                         TimeSpan?                              ConnectionTimeout                  = null,
-                         UInt32?                                MaxClientConnections               = null,
+                         Boolean?                             DisableMaintenanceTasks      = null,
+                         TimeSpan?                            MaintenanceInitialDelay      = null,
+                         TimeSpan?                            MaintenanceEvery             = null,
 
-                         Boolean?                               DisableMaintenanceTasks            = null,
-                         TimeSpan?                              MaintenanceInitialDelay            = null,
-                         TimeSpan?                              MaintenanceEvery                   = null,
+                         Boolean?                             DisableWardenTasks           = null,
+                         TimeSpan?                            WardenInitialDelay           = null,
+                         TimeSpan?                            WardenCheckEvery             = null,
 
-                         Boolean?                               DisableWardenTasks                 = null,
-                         TimeSpan?                              WardenInitialDelay                 = null,
-                         TimeSpan?                              WardenCheckEvery                   = null,
-
-                         Boolean?                               IsDevelopment                      = null,
-                         IEnumerable<String>?                   DevelopmentServers                 = null,
-                         Boolean?                               DisableLogging                     = null,
-                         String?                                LoggingContext                     = null,
-                         String?                                LoggingPath                        = null,
-                         String?                                LogfileName                        = null,
-                         LogfileCreatorDelegate?                LogfileCreator                     = null,
-                         String?                                DatabaseFilePath                   = null,
-                         String?                                RemotePartyDBFileName              = null,
-                         String?                                AssetsDBFileName                   = null,
-                         DNSClient?                             DNSClient                          = null,
-                         Boolean                                AutoStart                          = false)
+                         Boolean?                             IsDevelopment                = null,
+                         IEnumerable<String>?                 DevelopmentServers           = null,
+                         Boolean?                             DisableLogging               = null,
+                         String?                              LoggingContext               = null,
+                         String?                              LoggingPath                  = null,
+                         String?                              LogfileName                  = null,
+                         LogfileCreatorDelegate?              LogfileCreator               = null,
+                         String?                              DatabaseFilePath             = null,
+                         String?                              RemotePartyDBFileName        = null,
+                         String?                              AssetsDBFileName             = null,
+                         DNSClient?                           DNSClient                    = null,
+                         Boolean                              AutoStart                    = false)
 
             : base(Version.Id,
                    OurBaseURL,
@@ -624,10 +623,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    ClientCertificateRequired,
                    CheckCertificateRevocation,
 
-                   ServerThreadName,
-                   ServerThreadPriority,
+                   ServerThreadNameCreator,
+                   ServerThreadPrioritySetter,
                    ServerThreadIsBackground,
-
                    ConnectionIdBuilder,
                    ConnectionTimeout,
                    MaxClientConnections,
@@ -655,20 +653,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            this.OurBusinessDetails    = OurBusinessDetails;
-            this.OurCountryCode        = OurCountryCode;
-            this.OurPartyId            = OurPartyId;
+            this.OurBusinessDetails  = OurBusinessDetails;
+            this.OurCountryCode      = OurCountryCode;
+            this.OurPartyId          = OurPartyId;
 
-            this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
+            this.KeepRemovedEVSEs    = KeepRemovedEVSEs ?? (evse => true);
 
-            this.CommonAPILogger       = this.DisableLogging == false
-                                             ? new CommonAPILogger(
-                                                   this,
-                                                   LoggingContext,
-                                                   LoggingPath,
-                                                   LogfileCreator
-                                               )
-                                             : null;
+            this.CommonAPILogger     = this.DisableLogging == false
+                                           ? new CommonAPILogger(
+                                                 this,
+                                                 LoggingContext,
+                                                 LoggingPath,
+                                                 LogfileCreator
+                                             )
+                                           : null;
 
             if (!this.DisableLogging)
             {
@@ -2876,8 +2874,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   DateTime?                             RemoteAccessNotAfter         = null,
 
                                                   Boolean?                              PreferIPv4                   = null,
-                                                  RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                  LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                  RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                  LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                   X509Certificate?                      ClientCert                   = null,
                                                   SslProtocols?                         TLSProtocol                  = null,
                                                   String?                               HTTPUserAgent                = null,
@@ -2962,8 +2960,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   PartyStatus                           PartyStatus                  = PartyStatus. ENABLED,
 
                                                   Boolean?                              PreferIPv4                   = null,
-                                                  RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                  LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                  RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                  LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                   X509Certificate?                      ClientCert                   = null,
                                                   SslProtocols?                         TLSProtocol                  = null,
                                                   String?                               HTTPUserAgent                = null,
@@ -3042,8 +3040,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   DateTime?                             RemoteAccessNotAfter         = null,
 
                                                   Boolean?                              PreferIPv4                   = null,
-                                                  RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                  LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                  RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                  LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                   X509Certificate?                      ClientCert                   = null,
                                                   SslProtocols?                         TLSProtocol                  = null,
                                                   String?                               HTTPUserAgent                = null,
@@ -3107,57 +3105,59 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region AddRemoteParty(...)
 
-        public async Task<Boolean> AddRemoteParty(CountryCode                           CountryCode,
-                                                  Party_Id                              PartyId,
-                                                  Roles                                 Role,
-                                                  BusinessDetails                       BusinessDetails,
+        public async Task<Boolean> AddRemoteParty(CountryCode                          CountryCode,
+                                                  Party_Id                             PartyId,
+                                                  Roles                                Role,
+                                                  BusinessDetails                      BusinessDetails,
 
-                                                  IEnumerable<LocalAccessInfo>          LocalAccessInfos,
-                                                  IEnumerable<RemoteAccessInfo>         RemoteAccessInfos,
+                                                  IEnumerable<LocalAccessInfo>         LocalAccessInfos,
+                                                  IEnumerable<RemoteAccessInfo>        RemoteAccessInfos,
 
-                                                  PartyStatus                           Status                       = PartyStatus.ENABLED,
+                                                  PartyStatus                          Status                       = PartyStatus.ENABLED,
 
-                                                  Boolean?                              PreferIPv4                   = null,
-                                                  RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                  LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
-                                                  X509Certificate?                      ClientCert                   = null,
-                                                  SslProtocols?                         TLSProtocol                  = null,
-                                                  String?                               HTTPUserAgent                = null,
-                                                  TimeSpan?                             RequestTimeout               = null,
-                                                  TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
-                                                  UInt16?                               MaxNumberOfRetries           = null,
-                                                  UInt32?                               InternalBufferSize           = null,
-                                                  Boolean?                              UseHTTPPipelining            = null,
+                                                  Boolean?                             PreferIPv4                   = null,
+                                                  RemoteCertificateValidationHandler?  RemoteCertificateValidator   = null,
+                                                  LocalCertificateSelectionHandler?    ClientCertificateSelector    = null,
+                                                  X509Certificate?                     ClientCert                   = null,
+                                                  SslProtocols?                        TLSProtocol                  = null,
+                                                  String?                              HTTPUserAgent                = null,
+                                                  TimeSpan?                            RequestTimeout               = null,
+                                                  TransmissionRetryDelayDelegate?      TransmissionRetryDelay       = null,
+                                                  UInt16?                              MaxNumberOfRetries           = null,
+                                                  UInt32?                              InternalBufferSize           = null,
+                                                  Boolean?                             UseHTTPPipelining            = null,
 
-                                                  DateTime?                             LastUpdated                  = null,
+                                                  DateTime?                            LastUpdated                  = null,
 
-                                                  EventTracking_Id?                     EventTrackingId              = null,
-                                                  User_Id?                              CurrentUserId                = null)
+                                                  EventTracking_Id?                    EventTrackingId              = null,
+                                                  User_Id?                             CurrentUserId                = null)
         {
 
-            var newRemoteParty = new RemoteParty(CountryCode,
-                                                 PartyId,
-                                                 Role,
-                                                 BusinessDetails,
+            var newRemoteParty = new RemoteParty(
+                                     CountryCode,
+                                     PartyId,
+                                     Role,
+                                     BusinessDetails,
 
-                                                 LocalAccessInfos,
-                                                 RemoteAccessInfos,
+                                     LocalAccessInfos,
+                                     RemoteAccessInfos,
 
-                                                 Status,
+                                     Status,
 
-                                                 PreferIPv4,
-                                                 RemoteCertificateValidator,
-                                                 ClientCertificateSelector,
-                                                 ClientCert,
-                                                 TLSProtocol,
-                                                 HTTPUserAgent,
-                                                 RequestTimeout,
-                                                 TransmissionRetryDelay,
-                                                 MaxNumberOfRetries,
-                                                 InternalBufferSize,
-                                                 UseHTTPPipelining,
+                                     PreferIPv4,
+                                     RemoteCertificateValidator,
+                                     ClientCertificateSelector,
+                                     ClientCert,
+                                     TLSProtocol,
+                                     HTTPUserAgent,
+                                     RequestTimeout,
+                                     TransmissionRetryDelay,
+                                     MaxNumberOfRetries,
+                                     InternalBufferSize,
+                                     UseHTTPPipelining,
 
-                                                 LastUpdated);
+                                     LastUpdated
+                                 );
 
             if (remoteParties.TryAdd(newRemoteParty.Id,
                                      newRemoteParty))
@@ -3205,8 +3205,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DateTime?                             RemoteAccessNotAfter         = null,
 
                                                              Boolean?                              PreferIPv4                   = null,
-                                                             RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                             LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                             RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                             LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                              X509Certificate?                      ClientCert                   = null,
                                                              SslProtocols?                         TLSProtocol                  = null,
                                                              String?                               HTTPUserAgent                = null,
@@ -3294,8 +3294,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              PartyStatus                           PartyStatus                  = PartyStatus. ENABLED,
 
                                                              Boolean?                              PreferIPv4                   = null,
-                                                             RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                             LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                             RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                             LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                              X509Certificate?                      ClientCert                   = null,
                                                              SslProtocols?                         TLSProtocol                  = null,
                                                              String?                               HTTPUserAgent                = null,
@@ -3376,8 +3376,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DateTime?                             RemoteAccessNotAfter         = null,
 
                                                              Boolean?                              PreferIPv4                   = null,
-                                                             RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                             LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                             RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                             LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                              X509Certificate?                      ClientCert                   = null,
                                                              SslProtocols?                         TLSProtocol                  = null,
                                                              String?                               HTTPUserAgent                = null,
@@ -3454,8 +3454,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              PartyStatus                           Status                       = PartyStatus.ENABLED,
 
                                                              Boolean?                              PreferIPv4                   = null,
-                                                             RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                             LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                             RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                             LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                              X509Certificate?                      ClientCert                   = null,
                                                              SslProtocols?                         TLSProtocol                  = null,
                                                              String?                               HTTPUserAgent                = null,
@@ -3543,8 +3543,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           DateTime?                             RemoteAccessNotAfter         = null,
 
                                                           Boolean?                              PreferIPv4                   = null,
-                                                          RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                          LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                          RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                          LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                           X509Certificate?                      ClientCert                   = null,
                                                           SslProtocols?                         TLSProtocol                  = null,
                                                           String?                               HTTPUserAgent                = null,
@@ -3637,8 +3637,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           PartyStatus                           PartyStatus                  = PartyStatus. ENABLED,
 
                                                           Boolean?                              PreferIPv4                   = null,
-                                                          RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                          LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                          RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                          LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                           X509Certificate?                      ClientCert                   = null,
                                                           SslProtocols?                         TLSProtocol                  = null,
                                                           String?                               HTTPUserAgent                = null,
@@ -3724,8 +3724,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           DateTime?                             RemoteAccessNotAfter         = null,
 
                                                           Boolean?                              PreferIPv4                   = null,
-                                                          RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                          LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                          RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                          LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                           X509Certificate?                      ClientCert                   = null,
                                                           SslProtocols?                         TLSProtocol                  = null,
                                                           String?                               HTTPUserAgent                = null,
@@ -3807,8 +3807,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           PartyStatus                           Status                       = PartyStatus.ENABLED,
 
                                                           Boolean?                              PreferIPv4                   = null,
-                                                          RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                          LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                          RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                          LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                           X509Certificate?                      ClientCert                   = null,
                                                           SslProtocols?                         TLSProtocol                  = null,
                                                           String?                               HTTPUserAgent                = null,
@@ -3899,8 +3899,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      DateTime?                             RemoteAccessNotAfter         = null,
 
                                                      Boolean?                              PreferIPv4                   = null,
-                                                     RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                     LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                     RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                     LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                      X509Certificate?                      ClientCert                   = null,
                                                      SslProtocols?                         TLSProtocol                  = null,
                                                      String?                               HTTPUserAgent                = null,
@@ -3985,8 +3985,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      PartyStatus                           PartyStatus                  = PartyStatus. ENABLED,
 
                                                      Boolean?                              PreferIPv4                   = null,
-                                                     RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                     LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                     RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                     LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                      X509Certificate?                      ClientCert                   = null,
                                                      SslProtocols?                         TLSProtocol                  = null,
                                                      String?                               HTTPUserAgent                = null,
@@ -4064,8 +4064,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      DateTime?                             RemoteAccessNotAfter         = null,
 
                                                      Boolean?                              PreferIPv4                   = null,
-                                                     RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                     LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                     RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                     LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                      X509Certificate?                      ClientCert                   = null,
                                                      SslProtocols?                         TLSProtocol                  = null,
                                                      String?                               HTTPUserAgent                = null,
@@ -4139,8 +4139,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      PartyStatus                           Status                       = PartyStatus.ENABLED,
 
                                                      Boolean?                              PreferIPv4                   = null,
-                                                     RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                                                     LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                                                     RemoteCertificateValidationHandler?   RemoteCertificateValidator   = null,
+                                                     LocalCertificateSelectionHandler?     ClientCertificateSelector    = null,
                                                      X509Certificate?                      ClientCert                   = null,
                                                      SslProtocols?                         TLSProtocol                  = null,
                                                      String?                               HTTPUserAgent                = null,

@@ -30,6 +30,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod;
 
 #endregion
 
@@ -386,31 +387,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public SCSPClient(CommonAPI                             CommonAPI,
-                          URL                                   RemoteVersionsURL,
-                          AccessToken                           AccessToken,
-                          HTTPHostname?                         VirtualHostname              = null,
-                          String?                               Description                  = null,
-                          Boolean?                              PreferIPv4                   = null,
-                          RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
-                          LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
-                          X509Certificate?                      ClientCert                   = null,
-                          SslProtocols?                         TLSProtocol                  = null,
-                          String?                               HTTPUserAgent                = null,
-                          IHTTPAuthentication?                  HTTPAuthentication           = null,
-                          TimeSpan?                             RequestTimeout               = null,
-                          TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
-                          UInt16?                               MaxNumberOfRetries           = null,
-                          UInt32?                               InternalBufferSize           = null,
-                          Boolean                               UseHTTPPipelining            = false,
-                          HTTPClientLogger?                     HTTPLogger                   = null,
-                          Boolean                               AccessTokenBase64Encoding    = true,
+        public SCSPClient(CommonAPI                            CommonAPI,
+                          URL                                  RemoteVersionsURL,
+                          AccessToken                          AccessToken,
+                          HTTPHostname?                        VirtualHostname              = null,
+                          String?                              Description                  = null,
+                          Boolean?                             PreferIPv4                   = null,
+                          RemoteCertificateValidationHandler?  RemoteCertificateValidator   = null,
+                          LocalCertificateSelectionHandler?    ClientCertificateSelector    = null,
+                          X509Certificate?                     ClientCert                   = null,
+                          SslProtocols?                        TLSProtocol                  = null,
+                          String?                              HTTPUserAgent                = null,
+                          IHTTPAuthentication?                 HTTPAuthentication           = null,
+                          TimeSpan?                            RequestTimeout               = null,
+                          TransmissionRetryDelayDelegate?      TransmissionRetryDelay       = null,
+                          UInt16?                              MaxNumberOfRetries           = null,
+                          UInt32?                              InternalBufferSize           = null,
+                          Boolean                              UseHTTPPipelining            = false,
+                          HTTPClientLogger?                    HTTPLogger                   = null,
+                          Boolean                              AccessTokenBase64Encoding    = true,
 
-                          Boolean?                              DisableLogging               = false,
-                          String?                               LoggingPath                  = null,
-                          String?                               LoggingContext               = null,
-                          LogfileCreatorDelegate?               LogfileCreator               = null,
-                          DNSClient?                            DNSClient                    = null)
+                          Boolean?                             DisableLogging               = false,
+                          String?                              LoggingPath                  = null,
+                          String?                              LoggingContext               = null,
+                          LogfileCreatorDelegate?              LogfileCreator               = null,
+                          DNSClient?                           DNSClient                    = null)
 
             : base(CommonAPI,
                    RemoteVersionsURL,
