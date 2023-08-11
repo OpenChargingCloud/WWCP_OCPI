@@ -453,278 +453,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region (Set/Add/Update/Delete) Roaming network...
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.SetStaticData(WWCP.IRoamingNetwork    RoamingNetwork,
-                                                                      WWCP.TransmissionTypes  TransmissionType,
-                                                                      DateTime?               Timestamp,
-                                                                      CancellationToken       CancellationToken,
-                                                                      EventTracking_Id?       EventTrackingId,
-                                                                      TimeSpan?               RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.AddStaticData(WWCP.IRoamingNetwork    RoamingNetwork,
-                                                                      WWCP.TransmissionTypes  TransmissionType,
-                                                                      DateTime?               Timestamp,
-                                                                      CancellationToken       CancellationToken,
-                                                                      EventTracking_Id?       EventTrackingId,
-                                                                      TimeSpan?               RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.UpdateStaticData(WWCP.IRoamingNetwork    RoamingNetwork,
-                                                                         String                  PropertyName,
-                                                                         Object?                 NewValue,
-                                                                         Object?                 OldValue,
-                                                                         Context?                DataSource,
-                                                                         WWCP.TransmissionTypes  TransmissionType,
-                                                                         DateTime?               Timestamp,
-                                                                         CancellationToken       CancellationToken,
-                                                                         EventTracking_Id?       EventTrackingId,
-                                                                         TimeSpan?               RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.DeleteStaticData(WWCP.IRoamingNetwork    RoamingNetwork,
-                                                                         WWCP.TransmissionTypes  TransmissionType,
-                                                                         DateTime?               Timestamp,
-                                                                         CancellationToken       CancellationToken,
-                                                                         EventTracking_Id?       EventTrackingId,
-                                                                         TimeSpan?               RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-
-        Task<WWCP.PushRoamingNetworkAdminStatusResult> WWCP.ISendAdminStatus.UpdateAdminStatus(IEnumerable<WWCP.RoamingNetworkAdminStatusUpdate>  AdminStatusUpdates,
-                                                                                               WWCP.TransmissionTypes                             TransmissionType,
-                                                                                               DateTime?                                          Timestamp,
-                                                                                               CancellationToken                                  CancellationToken,
-                                                                                               EventTracking_Id?                                  EventTrackingId,
-                                                                                               TimeSpan?                                          RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushRoamingNetworkAdminStatusResult.NoOperation(Id, this));
-        }
-
-        Task<WWCP.PushRoamingNetworkStatusResult> WWCP.ISendStatus.UpdateStatus(IEnumerable<WWCP.RoamingNetworkStatusUpdate>  StatusUpdates,
-                                                                                WWCP.TransmissionTypes                        TransmissionType,
-                                                                                DateTime?                                     Timestamp,
-                                                                                CancellationToken                             CancellationToken,
-                                                                                EventTracking_Id?                             EventTrackingId,
-                                                                                TimeSpan?                                     RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushRoamingNetworkStatusResult.NoOperation(Id, this));
-        }
-
-        #endregion
-
-        #region (Set/Add/Update/Delete) Charging station operator(s)...
-
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.SetStaticData(WWCP.IChargingStationOperator  ChargingStationOperator,
-                                                                      WWCP.TransmissionTypes         TransmissionType,
-                                                                      DateTime?                      Timestamp,
-                                                                      CancellationToken              CancellationToken,
-                                                                      EventTracking_Id?              EventTrackingId,
-                                                                      TimeSpan?                      RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.AddStaticData(WWCP.IChargingStationOperator  ChargingStationOperator,
-                                                                      WWCP.TransmissionTypes         TransmissionType,
-                                                                      DateTime?                      Timestamp,
-                                                                      CancellationToken              CancellationToken,
-                                                                      EventTracking_Id?              EventTrackingId,
-                                                                      TimeSpan?                      RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.UpdateStaticData(WWCP.IChargingStationOperator  ChargingStationOperator,
-                                                                         String                         PropertyName,
-                                                                         Object?                        NewValue,
-                                                                         Object?                        OldValue,
-                                                                         Context?                       DataSource,
-                                                                         WWCP.TransmissionTypes         TransmissionType,
-                                                                         DateTime?                      Timestamp,
-                                                                         CancellationToken              CancellationToken,
-                                                                         EventTracking_Id?              EventTrackingId,
-                                                                         TimeSpan?                      RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.DeleteStaticData(WWCP.IChargingStationOperator  ChargingStationOperator,
-                                                                         WWCP.TransmissionTypes         TransmissionType,
-                                                                         DateTime?                      Timestamp,
-                                                                         CancellationToken              CancellationToken,
-                                                                         EventTracking_Id?              EventTrackingId,
-                                                                         TimeSpan?                      RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-
-
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.SetStaticData(IEnumerable<WWCP.IChargingStationOperator>  ChargingStationOperators,
-                                                                      WWCP.TransmissionTypes                      TransmissionType,
-                                                                      DateTime?                                   Timestamp,
-                                                                      CancellationToken                           CancellationToken,
-                                                                      EventTracking_Id?                           EventTrackingId,
-                                                                      TimeSpan?                                   RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.AddStaticData(IEnumerable<WWCP.IChargingStationOperator>  ChargingStationOperators,
-                                                                      WWCP.TransmissionTypes                      TransmissionType,
-                                                                      DateTime?                                   Timestamp,
-                                                                      CancellationToken                           CancellationToken,
-                                                                      EventTracking_Id?                           EventTrackingId,
-                                                                      TimeSpan?                                   RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.UpdateStaticData(IEnumerable<WWCP.IChargingStationOperator>  ChargingStationOperators,
-                                                                         WWCP.TransmissionTypes                      TransmissionType,
-                                                                         DateTime?                                   Timestamp,
-                                                                         CancellationToken                           CancellationToken,
-                                                                         EventTracking_Id?                           EventTrackingId,
-                                                                         TimeSpan?                                   RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-        Task<WWCP.PushEVSEDataResult> WWCP.ISendPOIData.DeleteStaticData(IEnumerable<WWCP.IChargingStationOperator>  ChargingStationOperators,
-                                                                         WWCP.TransmissionTypes                      TransmissionType,
-                                                                         DateTime?                                   Timestamp,
-                                                                         CancellationToken                           CancellationToken,
-                                                                         EventTracking_Id?                           EventTrackingId,
-                                                                         TimeSpan?                                   RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, null));
-        }
-
-
-
-        Task<WWCP.PushChargingStationOperatorAdminStatusResult> WWCP.ISendAdminStatus.UpdateAdminStatus(IEnumerable<WWCP.ChargingStationOperatorAdminStatusUpdate>  AdminStatusUpdates,
-                                                                                                        WWCP.TransmissionTypes                                      TransmissionType,
-                                                                                                        DateTime?                                                   Timestamp,
-                                                                                                        CancellationToken                                           CancellationToken,
-                                                                                                        EventTracking_Id?                                           EventTrackingId,
-                                                                                                        TimeSpan?                                                   RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushChargingStationOperatorAdminStatusResult.NoOperation(Id, this));
-        }
-
-        Task<WWCP.PushChargingStationOperatorStatusResult> WWCP.ISendStatus.UpdateStatus(IEnumerable<WWCP.ChargingStationOperatorStatusUpdate>  StatusUpdates,
-                                                                                         WWCP.TransmissionTypes                                 TransmissionType,
-                                                                                         DateTime?                                              Timestamp,
-                                                                                         CancellationToken                                      CancellationToken,
-                                                                                         EventTracking_Id?                                      EventTrackingId,
-                                                                                         TimeSpan?                                              RequestTimeout)
-        {
-            return Task.FromResult(WWCP.PushChargingStationOperatorStatusResult.NoOperation(Id, this));
-        }
-
-        #endregion
-
         #region (Set/Add/Update/Delete) Charging pool(s)...
 
-        #region SetStaticData   (ChargingPool, TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Set the given charging pool.
-        /// </summary>
-        /// <param name="ChargingPool">A charging pool.</param>
-        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        async Task<WWCP.PushChargingPoolDataResult>
-
-            WWCP.ISendPOIData.SetStaticData(WWCP.IChargingPool      ChargingPool,
-                                            WWCP.TransmissionTypes  TransmissionType,
-
-                                            DateTime?               Timestamp,
-                                            CancellationToken       CancellationToken,
-                                            EventTracking_Id?       EventTrackingId,
-                                            TimeSpan?               RequestTimeout)
-
-        {
-
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
-
-            try
-            {
-
-                if (lockTaken)
-                {
-
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
-
-                    if (IncludeChargingPools is null ||
-                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
-                    {
-
-
-                        var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
-                                                           CustomEVSEIdConverter,
-                                                           out warnings);
-
-                        if (location is not null)
-                            CommonAPI.AddLocation(location);
-
-
-                        return WWCP.PushChargingPoolDataResult.Enqueued(
-                                    Id,
-                                    this,
-                                    new WWCP.IChargingPool[] {
-                                        ChargingPool
-                                    },
-                                    "",
-                                    warnings,
-                                    TimeSpan.FromMilliseconds(10)
-                                );
-
-                    }
-                    else
-                        return WWCP.PushChargingPoolDataResult.NoOperation(
-                                    Id,
-                                    this,
-                                    new WWCP.IChargingPool[] {
-                                        ChargingPool
-                                    }
-                                );
-
-                }
-                else
-                    return WWCP.PushChargingPoolDataResult.LockTimeout(
-                                Id,
-                                this,
-                                new WWCP.IChargingPool[] {
-                                    ChargingPool
-                                }
-                            );
-
-            }
-            finally
-            {
-                if (lockTaken)
-                    DataAndStatusLock.Release();
-            }
-
-        }
-
-        #endregion
-
-        #region AddStaticData   (ChargingPool, TransmissionType = Enqueue, ...)
+        #region AddChargingPool         (ChargingPool, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Add the given charging pool.
@@ -733,18 +464,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         async Task<WWCP.PushChargingPoolDataResult>
 
-            WWCP.ISendPOIData.AddStaticData(WWCP.IChargingPool      ChargingPool,
-                                            WWCP.TransmissionTypes  TransmissionType,
+            WWCP.IPushPOIData.AddChargingPool(WWCP.IChargingPool      ChargingPool,
+                                              WWCP.TransmissionTypes  TransmissionType,
 
-                                            DateTime?               Timestamp,
-                                            CancellationToken       CancellationToken,
-                                            EventTracking_Id?       EventTrackingId,
-                                            TimeSpan?               RequestTimeout)
+                                              DateTime?               Timestamp,
+                                              EventTracking_Id?       EventTrackingId,
+                                              TimeSpan?               RequestTimeout,
+                                              CancellationToken       CancellationToken)
 
         {
 
@@ -819,7 +550,96 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region UpdateStaticData(ChargingPool, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
+        #region AddOrUpdateChargingPool (ChargingPool, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Set the given charging pool.
+        /// </summary>
+        /// <param name="ChargingPool">A charging pool.</param>
+        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        async Task<WWCP.PushChargingPoolDataResult>
+
+            WWCP.IPushPOIData.AddOrUpdateChargingPool(WWCP.IChargingPool      ChargingPool,
+                                                      WWCP.TransmissionTypes  TransmissionType,
+
+                                                      DateTime?               Timestamp,
+                                                      EventTracking_Id?       EventTrackingId,
+                                                      TimeSpan?               RequestTimeout,
+                                                      CancellationToken       CancellationToken)
+
+        {
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+
+                    if (IncludeChargingPools is null ||
+                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
+                    {
+
+
+                        var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
+                                                           CustomEVSEIdConverter,
+                                                           out warnings);
+
+                        if (location is not null)
+                            CommonAPI.AddLocation(location);
+
+
+                        return WWCP.PushChargingPoolDataResult.Enqueued(
+                                    Id,
+                                    this,
+                                    new WWCP.IChargingPool[] {
+                                        ChargingPool
+                                    },
+                                    "",
+                                    warnings,
+                                    TimeSpan.FromMilliseconds(10)
+                                );
+
+                    }
+                    else
+                        return WWCP.PushChargingPoolDataResult.NoOperation(
+                                    Id,
+                                    this,
+                                    new WWCP.IChargingPool[] {
+                                        ChargingPool
+                                    }
+                                );
+
+                }
+                else
+                    return WWCP.PushChargingPoolDataResult.LockTimeout(
+                                Id,
+                                this,
+                                new WWCP.IChargingPool[] {
+                                    ChargingPool
+                                }
+                            );
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+        }
+
+        #endregion
+
+        #region UpdateChargingPool      (ChargingPool, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the given charging pool.
@@ -831,18 +651,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<WWCP.PushChargingPoolDataResult> UpdateStaticData(WWCP.IChargingPool      ChargingPool,
-                                                                            String?                 PropertyName        = null,
-                                                                            Object?                 OldValue            = null,
-                                                                            Object?                 NewValue            = null,
-                                                                            WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
-                                                                            DateTime?               Timestamp           = null,
-                                                                            CancellationToken?      CancellationToken   = null,
-                                                                            EventTracking_Id?       EventTrackingId     = null,
-                                                                            TimeSpan?               RequestTimeout      = null)
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        async Task<WWCP.PushChargingPoolDataResult>
+
+            WWCP.IPushPOIData.UpdateChargingPool(WWCP.IChargingPool      ChargingPool,
+                                                 String?                 PropertyName,
+                                                 Object?                 OldValue,
+                                                 Object?                 NewValue,
+                                                 Context?                DataSource,
+                                                 WWCP.TransmissionTypes  TransmissionType,
+
+                                                 DateTime?               Timestamp,
+                                                 EventTracking_Id?       EventTrackingId,
+                                                 TimeSpan?               RequestTimeout,
+                                                 CancellationToken       CancellationToken)
         {
 
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
@@ -928,715 +752,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region DeleteStaticData(ChargingPool, TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Delete the charging pool.
-        /// </summary>
-        /// <param name="ChargingPool">A charging pool.</param>
-        /// <param name="TransmissionType">Whether to send the charging station update directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        Task<WWCP.PushChargingPoolDataResult>
-
-            WWCP.ISendPOIData.DeleteStaticData(WWCP.IChargingPool       ChargingPool,
-                                               WWCP.TransmissionTypes   TransmissionType,
-
-                                               DateTime?                Timestamp,
-                                               CancellationToken        CancellationToken,
-                                               EventTracking_Id?        EventTrackingId,
-                                               TimeSpan?                RequestTimeout)
-
-        {
-
-            return Task.FromResult(WWCP.PushChargingPoolDataResult.NoOperation(Id, this, new WWCP.IChargingPool[] { ChargingPool }));
-
-        }
-
-        #endregion
-
-
-        Task<WWCP.PushChargingPoolDataResult>
-
-            WWCP.ISendPOIData.SetStaticData(IEnumerable<WWCP.IChargingPool>  ChargingPools,
-                                            WWCP.TransmissionTypes           TransmissionType,
-
-                                            DateTime?                        Timestamp,
-                                            CancellationToken                CancellationToken,
-                                            EventTracking_Id?                EventTrackingId,
-                                            TimeSpan?                        RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingPoolDataResult.NoOperation(Id, this, ChargingPools));
-        }
-
-        Task<WWCP.PushChargingPoolDataResult>
-
-            WWCP.ISendPOIData.AddStaticData(IEnumerable<WWCP.IChargingPool>  ChargingPools,
-                                            WWCP.TransmissionTypes           TransmissionType,
-
-                                            DateTime?                        Timestamp,
-                                            CancellationToken                CancellationToken,
-                                            EventTracking_Id?                EventTrackingId,
-                                            TimeSpan?                        RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingPoolDataResult.NoOperation(Id, this, ChargingPools));
-        }
-
-        Task<WWCP.PushChargingPoolDataResult>
-
-            WWCP.ISendPOIData.UpdateStaticData(IEnumerable<WWCP.IChargingPool>  ChargingPools,
-                                               WWCP.TransmissionTypes           TransmissionType,
-
-                                               DateTime?                        Timestamp,
-                                               CancellationToken                CancellationToken,
-                                               EventTracking_Id?                EventTrackingId,
-                                               TimeSpan?                        RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingPoolDataResult.NoOperation(Id, this, ChargingPools));
-        }
-
-        Task<WWCP.PushChargingPoolDataResult>
-
-            WWCP.ISendPOIData.DeleteStaticData(IEnumerable<WWCP.IChargingPool>  ChargingPools,
-                                               WWCP.TransmissionTypes           TransmissionType,
-
-                                               DateTime?                        Timestamp,
-                                               CancellationToken                CancellationToken,
-                                               EventTracking_Id?                EventTrackingId,
-                                               TimeSpan?                        RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingPoolDataResult.NoOperation(Id, this, ChargingPools));
-        }
-
-
-        Task<WWCP.PushChargingPoolAdminStatusResult>
-
-            WWCP.ISendAdminStatus.UpdateAdminStatus(IEnumerable<WWCP.ChargingPoolAdminStatusUpdate>  AdminStatusUpdates,
-                                                    WWCP.TransmissionTypes                           TransmissionType,
-
-                                                    DateTime?                                        Timestamp,
-                                                    CancellationToken                                CancellationToken,
-                                                    EventTracking_Id?                                EventTrackingId,
-                                                    TimeSpan?                                        RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingPoolAdminStatusResult.NoOperation(Id, this));
-        }
-
-        Task<WWCP.PushChargingPoolStatusResult>
-
-            WWCP.ISendStatus.UpdateStatus(IEnumerable<WWCP.ChargingPoolStatusUpdate>  StatusUpdates,
-                                          WWCP.TransmissionTypes                      TransmissionType,
-
-                                          DateTime?                                   Timestamp,
-                                          CancellationToken                           CancellationToken,
-                                          EventTracking_Id?                           EventTrackingId,
-                                          TimeSpan?                                   RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingPoolStatusResult.NoOperation(Id, this));
-        }
-
-        #endregion
-
-        #region (Set/Add/Update/Delete) Charging station(s)...
-
-        #region SetStaticData   (ChargingStation, TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Set the given charging station.
-        /// </summary>
-        /// <param name="ChargingStation">A charging station.</param>
-        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        async Task<WWCP.PushChargingStationDataResult>
-
-            WWCP.ISendPOIData.SetStaticData(WWCP.IChargingStation   ChargingStation,
-                                            WWCP.TransmissionTypes  TransmissionType,
-
-                                            DateTime?               Timestamp,
-                                            CancellationToken       CancellationToken,
-                                            EventTracking_Id?       EventTrackingId,
-                                            TimeSpan?               RequestTimeout)
-
-        {
-
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
-
-            try
-            {
-
-                if (lockTaken)
-                {
-
-                    var countryCode  = OCPI.CountryCode.TryParse(ChargingStation.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(ChargingStation.Id.OperatorId.Suffix);
-                    var locationId   = OCPI.Location_Id.TryParse(ChargingStation.ChargingPool?.Id.ToString() ?? "");
-
-                    if (countryCode.HasValue &&
-                        partyId.    HasValue &&
-                        locationId. HasValue)
-                    {
-
-                        var warnings  = new List<Warning>();
-                        var results   = new List<AddOrUpdateResult<EVSE>>();
-
-                        foreach (var evse in ChargingStation)
-                        {
-
-                            if (IncludeEVSEs is null ||
-                               (IncludeEVSEs is not null && IncludeEVSEs(evse)))
-                            {
-
-                                if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                             partyId.    Value,
-                                                             locationId. Value,
-                                                             out var location) &&
-                                    location is not null)
-                                {
-
-                                    var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
-                                                            CustomEVSEIdConverter,
-                                                            evse.Status.Timestamp > evse.LastChange
-                                                                ? evse.Status.Timestamp
-                                                                : evse.LastChange,
-                                                            out var warning);
-
-                                    if (evse2 is not null)
-                                        results.Add(await CommonAPI.AddOrUpdateEVSE(location, evse2));
-                                    else
-                                        results.Add(AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!"));
-
-                                    if (warning is not null && warning.Any())
-                                        warnings.AddRange(warning);
-
-                                }
-
-                            }
-
-                        }
-
-
-                        //ToDo: Process errors!!!
-
-
-                    }
-
-                }
-
-            }
-            finally
-            {
-                if (lockTaken)
-                    DataAndStatusLock.Release();
-            }
-
-            return lockTaken
-                        ? WWCP.PushChargingStationDataResult.Enqueued   (Id, this, new WWCP.IChargingStation[] { ChargingStation })
-                        : WWCP.PushChargingStationDataResult.LockTimeout(Id, this, new WWCP.IChargingStation[] { ChargingStation });
-
-        }
-
-        #endregion
-
-        #region AddStaticData   (ChargingStation, TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Add the given charging station.
-        /// </summary>
-        /// <param name="ChargingStation">A charging station.</param>
-        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        async Task<WWCP.PushChargingStationDataResult>
-
-            WWCP.ISendPOIData.AddStaticData(WWCP.IChargingStation    ChargingStation,
-                                            WWCP.TransmissionTypes   TransmissionType,
-
-                                            DateTime?                Timestamp,
-                                            CancellationToken        CancellationToken,
-                                            EventTracking_Id?        EventTrackingId,
-                                            TimeSpan?                RequestTimeout)
-
-        {
-
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
-
-            try
-            {
-
-                if (lockTaken)
-                {
-
-                    var countryCode  = OCPI.CountryCode.TryParse(ChargingStation.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(ChargingStation.Id.OperatorId.Suffix);
-                    var locationId   = OCPI.Location_Id.TryParse(ChargingStation.ChargingPool?.Id.ToString() ?? "");
-
-                    if (countryCode.HasValue &&
-                        partyId.    HasValue &&
-                        locationId. HasValue)
-                    {
-
-                        var warnings  = new List<Warning>();
-                        var results   = new List<AddOrUpdateResult<EVSE>>();
-
-                        foreach (var evse in ChargingStation)
-                        {
-
-                            if (IncludeEVSEs is null ||
-                               (IncludeEVSEs is not null && IncludeEVSEs(evse)))
-                            {
-
-                                if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                             partyId.    Value,
-                                                             locationId. Value,
-                                                             out var location) &&
-                                    location is not null)
-                                {
-
-                                    var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
-                                                            CustomEVSEIdConverter,
-                                                            evse.Status.Timestamp > evse.LastChange
-                                                                ? evse.Status.Timestamp
-                                                                : evse.LastChange,
-                                                            out var warning);
-
-                                    if (evse2 is not null)
-                                        results.Add(await CommonAPI.AddOrUpdateEVSE(location, evse2));
-                                    else
-                                        results.Add(AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!"));
-
-                                    if (warning is not null && warning.Any())
-                                        warnings.AddRange(warning);
-
-                                }
-
-                            }
-
-                        }
-
-
-                        //ToDo: Process errors!!!
-
-
-                    }
-
-                }
-
-            }
-            finally
-            {
-                if (lockTaken)
-                    DataAndStatusLock.Release();
-            }
-
-            return lockTaken
-                       ? WWCP.PushChargingStationDataResult.Enqueued   (Id, this, new WWCP.IChargingStation[] { ChargingStation })
-                       : WWCP.PushChargingStationDataResult.LockTimeout(Id, this, new WWCP.IChargingStation[] { ChargingStation });
-
-        }
-
-        #endregion
-
-        #region UpdateStaticData(ChargingStation, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Update the EVSE data of the given charging station within the static EVSE data at the OICP server.
-        /// </summary>
-        /// <param name="ChargingStation">A charging station.</param>
-        /// <param name="PropertyName">The name of the charging station property to update.</param>
-        /// <param name="OldValue">The old value of the charging station property to update.</param>
-        /// <param name="NewValue">The new value of the charging station property to update.</param>
-        /// <param name="TransmissionType">Whether to send the charging station update directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        async Task<WWCP.PushChargingStationDataResult>
-
-            WWCP.ISendPOIData.UpdateStaticData(WWCP.IChargingStation    ChargingStation,
-                                               String                   PropertyName,
-                                               Object?                  NewValue,
-                                               Object?                  OldValue,
-                                               Context?                 DataSource,
-                                               WWCP.TransmissionTypes   TransmissionType,
-
-                                               DateTime?                Timestamp,
-                                               CancellationToken        CancellationToken,
-                                               EventTracking_Id?        EventTrackingId,
-                                               TimeSpan?                RequestTimeout)
-
-        {
-
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
-
-            try
-            {
-
-                if (lockTaken)
-                {
-
-                    var countryCode  = OCPI.CountryCode.TryParse(ChargingStation.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(ChargingStation.Id.OperatorId.Suffix);
-                    var locationId   = OCPI.Location_Id.TryParse(ChargingStation.ChargingPool?.Id.ToString() ?? "");
-
-                    if (countryCode.HasValue &&
-                        partyId.    HasValue &&
-                        locationId. HasValue)
-                    {
-
-                        var warnings  = new List<Warning>();
-                        var results   = new List<AddOrUpdateResult<EVSE>>();
-
-                        foreach (var evse in ChargingStation)
-                        {
-
-                            if (IncludeEVSEs is null ||
-                               (IncludeEVSEs is not null && IncludeEVSEs(evse)))
-                            {
-
-                                if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                             partyId.    Value,
-                                                             locationId. Value,
-                                                             out var location) &&
-                                    location is not null)
-                                {
-
-                                    var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
-                                                            CustomEVSEIdConverter,
-                                                            evse.Status.Timestamp > evse.LastChange
-                                                                ? evse.Status.Timestamp
-                                                                : evse.LastChange,
-                                                            out var warning);
-
-                                    if (evse2 is not null)
-                                        results.Add(await CommonAPI.AddOrUpdateEVSE(location, evse2));
-                                    else
-                                        results.Add(AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!"));
-
-                                    if (warning is not null && warning.Any())
-                                        warnings.AddRange(warning);
-
-                                }
-
-                            }
-
-                        }
-
-
-                        //ToDo: Process errors!!!
-
-
-                    }
-
-                }
-
-            }
-            finally
-            {
-                if (lockTaken)
-                    DataAndStatusLock.Release();
-            }
-
-            return lockTaken
-                       ? WWCP.PushChargingStationDataResult.Enqueued   (Id, this, new WWCP.IChargingStation[] { ChargingStation })
-                       : WWCP.PushChargingStationDataResult.LockTimeout(Id, this, new WWCP.IChargingStation[] { ChargingStation });
-
-        }
-
-        #endregion
-
-        #region DeleteStaticData(ChargingStation, TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Delete the EVSE data of the given charging station from the static EVSE data at the OICP server.
-        /// </summary>
-        /// <param name="ChargingStation">A charging station.</param>
-        /// <param name="TransmissionType">Whether to send the charging station update directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        Task<WWCP.PushChargingStationDataResult>
-
-            WWCP.ISendPOIData.DeleteStaticData(WWCP.IChargingStation    ChargingStation,
-                                               WWCP.TransmissionTypes   TransmissionType,
-
-                                               DateTime?                Timestamp,
-                                               CancellationToken        CancellationToken,
-                                               EventTracking_Id?        EventTrackingId,
-                                               TimeSpan?                RequestTimeout)
-
-        {
-
-            return Task.FromResult(WWCP.PushChargingStationDataResult.NoOperation(Id, this, new WWCP.IChargingStation[] { ChargingStation }));
-
-        }
-
-        #endregion
-
-
-        Task<WWCP.PushChargingStationDataResult>
-
-            WWCP.ISendPOIData.SetStaticData(IEnumerable<WWCP.IChargingStation>  ChargingStations,
-                                            WWCP.TransmissionTypes              TransmissionType,
-
-                                            DateTime?                           Timestamp,
-                                            CancellationToken                   CancellationToken,
-                                            EventTracking_Id?                   EventTrackingId,
-                                            TimeSpan?                           RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingStationDataResult.NoOperation(Id, this, ChargingStations));
-        }
-
-        Task<WWCP.PushChargingStationDataResult>
-
-            WWCP.ISendPOIData.AddStaticData(IEnumerable<WWCP.IChargingStation>  ChargingStations,
-                                            WWCP.TransmissionTypes              TransmissionType,
-
-                                            DateTime?                           Timestamp,
-                                            CancellationToken                   CancellationToken,
-                                            EventTracking_Id?                   EventTrackingId,
-                                            TimeSpan?                           RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingStationDataResult.NoOperation(Id, this, ChargingStations));
-        }
-
-        Task<WWCP.PushChargingStationDataResult>
-
-            WWCP.ISendPOIData.UpdateStaticData(IEnumerable<WWCP.IChargingStation>  ChargingStations,
-                                               WWCP.TransmissionTypes              TransmissionType,
-
-                                               DateTime?                           Timestamp,
-                                               CancellationToken                   CancellationToken,
-                                               EventTracking_Id?                   EventTrackingId,
-                                               TimeSpan?                           RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingStationDataResult.NoOperation(Id, this, ChargingStations));
-        }
-
-        Task<WWCP.PushChargingStationDataResult>
-
-            WWCP.ISendPOIData.DeleteStaticData(IEnumerable<WWCP.IChargingStation>  ChargingStations,
-                                               WWCP.TransmissionTypes              TransmissionType,
-
-                                               DateTime?                           Timestamp,
-                                               CancellationToken                   CancellationToken,
-                                               EventTracking_Id?                   EventTrackingId,
-                                               TimeSpan?                           RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingStationDataResult.NoOperation(Id, this, ChargingStations));
-        }
-
-
-        Task<WWCP.PushChargingStationAdminStatusResult>
-
-            WWCP.ISendAdminStatus.UpdateAdminStatus(IEnumerable<WWCP.ChargingStationAdminStatusUpdate>  AdminStatusUpdates,
-                                                    WWCP.TransmissionTypes                              TransmissionType,
-
-                                                    DateTime?                                           Timestamp,
-                                                    CancellationToken                                   CancellationToken,
-                                                    EventTracking_Id?                                   EventTrackingId,
-                                                    TimeSpan?                                           RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingStationAdminStatusResult.NoOperation(Id, this));
-        }
-
-        Task<WWCP.PushChargingStationStatusResult>
-            WWCP.ISendStatus.UpdateStatus(IEnumerable<WWCP.ChargingStationStatusUpdate>  StatusUpdates,
-                                          WWCP.TransmissionTypes                         TransmissionType,
-
-                                          DateTime?                                      Timestamp,
-                                          CancellationToken                              CancellationToken,
-                                          EventTracking_Id?                              EventTrackingId,
-                                          TimeSpan?                                      RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushChargingStationStatusResult.NoOperation(Id, this));
-        }
-
         #endregion
 
         #region (Set/Add/Update/Delete) EVSE(s)...
 
-        #region SetStaticData   (EVSE, TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Set the given EVSE as new static EVSE data at the OICP server.
-        /// </summary>
-        /// <param name="EVSE">An EVSE to upload.</param>
-        /// <param name="TransmissionType">Whether to send the EVSE directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        async Task<WWCP.PushEVSEDataResult>
-
-            WWCP.ISendPOIData.SetStaticData(WWCP.IEVSE              EVSE,
-                                            WWCP.TransmissionTypes  TransmissionType,
-
-                                            DateTime?               Timestamp,
-                                            CancellationToken       CancellationToken,
-                                            EventTracking_Id?       EventTrackingId,
-                                            TimeSpan?               RequestTimeout)
-
-        {
-
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
-
-            try
-            {
-
-                if (lockTaken)
-                {
-
-                    AddOrUpdateResult<EVSE> result;
-
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
-
-                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
-
-                    if (countryCode.HasValue &&
-                        partyId.    HasValue &&
-                        locationId. HasValue)
-                    {
-
-                        if (IncludeEVSEs is null ||
-                           (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
-                        {
-
-                            if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                         partyId.    Value,
-                                                         locationId. Value,
-                                                         out var location) &&
-                                location is not null)
-                            {
-
-                                var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
-                                                        CustomEVSEIdConverter,
-                                                        EVSE.Status.Timestamp > EVSE.LastChange
-                                                            ? EVSE.Status.Timestamp
-                                                            : EVSE.LastChange,
-                                                        out warnings);
-
-                                if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
-                                else
-                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
-
-                            }
-                            else
-                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
-
-                        }
-                        else
-                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
-
-                    }
-                    else
-                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
-
-
-                    return result.IsSuccess
-
-                               ? new WWCP.PushEVSEDataResult(
-                                       Id,
-                                       this,
-                                       WWCP.PushDataResultTypes.Success,
-                                       new WWCP.PushSingleEVSEDataResult[] {
-                                           new WWCP.PushSingleEVSEDataResult(
-                                               EVSE,
-                                               WWCP.PushSingleDataResultTypes.Error,
-                                               warnings
-                                           )
-                                       },
-                                       Array.Empty<WWCP.PushSingleEVSEDataResult>(),
-                                       result.ErrorResponse,
-                                       warnings,
-                                       TimeSpan.FromMilliseconds(10)
-                                   )
-
-                               : new WWCP.PushEVSEDataResult(
-                                       Id,
-                                       this,
-                                       WWCP.PushDataResultTypes.Error,
-                                       Array.Empty<WWCP.PushSingleEVSEDataResult>(),
-                                       new WWCP.PushSingleEVSEDataResult[] {
-                                           new WWCP.PushSingleEVSEDataResult(
-                                               EVSE,
-                                               WWCP.PushSingleDataResultTypes.Success,
-                                               warnings
-                                           )
-                                       },
-                                       result.ErrorResponse,
-                                       warnings,
-                                       TimeSpan.FromMilliseconds(10)
-                                   );
-
-                }
-
-            }
-            finally
-            {
-                if (lockTaken)
-                    DataAndStatusLock.Release();
-            }
-
-            return lockTaken
-                       ? WWCP.PushEVSEDataResult.Enqueued   (Id, this, new WWCP.IEVSE[] { EVSE })
-                       : WWCP.PushEVSEDataResult.LockTimeout(Id, this, new WWCP.IEVSE[] { EVSE });
-
-        }
-
-        #endregion
-
-        #region AddStaticData   (EVSE, TransmissionType = Enqueue, ...)
+        #region AddEVSE         (EVSE, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Add the given EVSE.
         /// </summary>
-        /// <param name="EVSE">An EVSE.</param>
+        /// <param name="EVSE">An EVSE to add.</param>
         /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         async Task<WWCP.PushEVSEDataResult>
 
-            WWCP.ISendPOIData.AddStaticData(WWCP.IEVSE              EVSE,
-                                            WWCP.TransmissionTypes  TransmissionType,
+            WWCP.IPushPOIData.AddEVSE(WWCP.IEVSE              EVSE,
+                                      WWCP.TransmissionTypes  TransmissionType,
 
-                                            DateTime?               Timestamp,
-                                            CancellationToken       CancellationToken,
-                                            EventTracking_Id?       EventTrackingId,
-                                            TimeSpan?               RequestTimeout)
+                                      DateTime?               Timestamp,
+                                      EventTracking_Id?       EventTrackingId,
+                                      TimeSpan?               RequestTimeout,
+                                      CancellationToken       CancellationToken)
 
         {
 
@@ -1752,12 +892,148 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region UpdateStaticData(ChargingPool, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
+        #region AddOrUpdateEVSE (EVSE, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Add or update the given EVSE.
+        /// </summary>
+        /// <param name="EVSE">An EVSE to add or update.</param>
+        /// <param name="TransmissionType">Whether to send the EVSE directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        async Task<WWCP.PushEVSEDataResult>
+
+            WWCP.IPushPOIData.AddOrUpdateEVSE(WWCP.IEVSE              EVSE,
+                                              WWCP.TransmissionTypes  TransmissionType,
+
+                                              DateTime?               Timestamp,
+                                              EventTracking_Id?       EventTrackingId,
+                                              TimeSpan?               RequestTimeout,
+                                              CancellationToken       CancellationToken)
+
+        {
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    AddOrUpdateResult<EVSE> result;
+
+                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+
+                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var locationId   = EVSE.ChargingPool is not null
+                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                           : null;
+
+                    if (countryCode.HasValue &&
+                        partyId.    HasValue &&
+                        locationId. HasValue)
+                    {
+
+                        if (IncludeEVSEs is null ||
+                           (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
+                        {
+
+                            if (CommonAPI.TryGetLocation(countryCode.Value,
+                                                         partyId.    Value,
+                                                         locationId. Value,
+                                                         out var location) &&
+                                location is not null)
+                            {
+
+                                var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
+                                                        CustomEVSEIdConverter,
+                                                        EVSE.Status.Timestamp > EVSE.LastChange
+                                                            ? EVSE.Status.Timestamp
+                                                            : EVSE.LastChange,
+                                                        out warnings);
+
+                                if (evse2 is not null)
+                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                else
+                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+
+                            }
+                            else
+                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+
+                        }
+                        else
+                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+
+                    }
+                    else
+                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+
+
+                    return result.IsSuccess
+
+                               ? new WWCP.PushEVSEDataResult(
+                                       Id,
+                                       this,
+                                       WWCP.PushDataResultTypes.Success,
+                                       new WWCP.PushSingleEVSEDataResult[] {
+                                           new WWCP.PushSingleEVSEDataResult(
+                                               EVSE,
+                                               WWCP.PushSingleDataResultTypes.Error,
+                                               warnings
+                                           )
+                                       },
+                                       Array.Empty<WWCP.PushSingleEVSEDataResult>(),
+                                       result.ErrorResponse,
+                                       warnings,
+                                       TimeSpan.FromMilliseconds(10)
+                                   )
+
+                               : new WWCP.PushEVSEDataResult(
+                                       Id,
+                                       this,
+                                       WWCP.PushDataResultTypes.Error,
+                                       Array.Empty<WWCP.PushSingleEVSEDataResult>(),
+                                       new WWCP.PushSingleEVSEDataResult[] {
+                                           new WWCP.PushSingleEVSEDataResult(
+                                               EVSE,
+                                               WWCP.PushSingleDataResultTypes.Success,
+                                               warnings
+                                           )
+                                       },
+                                       result.ErrorResponse,
+                                       warnings,
+                                       TimeSpan.FromMilliseconds(10)
+                                   );
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return lockTaken
+                       ? WWCP.PushEVSEDataResult.Enqueued   (Id, this, new WWCP.IEVSE[] { EVSE })
+                       : WWCP.PushEVSEDataResult.LockTimeout(Id, this, new WWCP.IEVSE[] { EVSE });
+
+        }
+
+        #endregion
+
+        #region UpdateEVSE      (EVSE, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the EVSE data of the given charging pool within the static EVSE data at the OICP server.
         /// </summary>
-        /// <param name="ChargingPool">A charging pool.</param>
+        /// <param name="EVSE">An EVSE.</param>
         /// <param name="PropertyName">The name of the charging pool property to update.</param>
         /// <param name="OldValue">The old value of the charging pool property to update.</param>
         /// <param name="NewValue">The new value of the charging pool property to update.</param>
@@ -1769,21 +1045,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         async Task<WWCP.PushEVSEDataResult>
 
-            WWCP.ISendPOIData.UpdateStaticData(WWCP.IEVSE              EVSE,
-                                               String                  PropertyName,
-                                               Object?                 NewValue,
-                                               Object?                 OldValue,
-                                               Context?                DataSource,
-                                               WWCP.TransmissionTypes  TransmissionType,
+            WWCP.IPushPOIData.UpdateEVSE(WWCP.IEVSE              EVSE,
+                                         String                  PropertyName,
+                                         Object?                 NewValue,
+                                         Object?                 OldValue,
+                                         Context?                DataSource,
+                                         WWCP.TransmissionTypes  TransmissionType,
 
-                                               DateTime?               Timestamp,
-                                               CancellationToken       CancellationToken,
-                                               EventTracking_Id?       EventTrackingId,
-                                               TimeSpan?               RequestTimeout)
+                                         DateTime?               Timestamp,
+                                         EventTracking_Id?       EventTrackingId,
+                                         TimeSpan?               RequestTimeout,
+                                         CancellationToken       CancellationToken)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
+                                                              CancellationToken);
 
             try
             {
@@ -1895,7 +1172,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region DeleteStaticData(EVSE, TransmissionType = Enqueue, ...)
+        #region DeleteEVSE      (EVSE, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Delete the EVSE data of the given EVSE from the static EVSE data at the OICP server.
@@ -1909,13 +1186,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         Task<WWCP.PushEVSEDataResult>
 
-            WWCP.ISendPOIData.DeleteStaticData(WWCP.IEVSE               EVSE,
-                                               WWCP.TransmissionTypes   TransmissionType,
+            WWCP.IPushPOIData.DeleteEVSE(WWCP.IEVSE               EVSE,
+                                         WWCP.TransmissionTypes   TransmissionType,
 
-                                               DateTime?                Timestamp,
-                                               CancellationToken        CancellationToken,
-                                               EventTracking_Id?        EventTrackingId,
-                                               TimeSpan?                RequestTimeout)
+                                         DateTime?                Timestamp,
+                                         EventTracking_Id?        EventTrackingId,
+                                         TimeSpan?                RequestTimeout,
+                                         CancellationToken        CancellationToken)
 
         {
 
@@ -1926,111 +1203,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        Task<WWCP.PushEVSEDataResult>
-
-            WWCP.ISendPOIData.SetStaticData(IEnumerable<WWCP.IEVSE>  EVSEs,
-                                            WWCP.TransmissionTypes   TransmissionType,
-
-                                            DateTime?                Timestamp,
-                                            CancellationToken        CancellationToken,
-                                            EventTracking_Id?        EventTrackingId,
-                                            TimeSpan?                RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, EVSEs));
-        }
-
-        Task<WWCP.PushEVSEDataResult>
-
-            WWCP.ISendPOIData.AddStaticData(IEnumerable<WWCP.IEVSE>  EVSEs,
-                                            WWCP.TransmissionTypes   TransmissionType,
-
-                                            DateTime?                Timestamp,
-                                            CancellationToken        CancellationToken,
-                                            EventTracking_Id?        EventTrackingId,
-                                            TimeSpan?                RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, EVSEs));
-        }
-
-        Task<WWCP.PushEVSEDataResult>
-
-            WWCP.ISendPOIData.UpdateStaticData(IEnumerable<WWCP.IEVSE>  EVSEs,
-                                               WWCP.TransmissionTypes   TransmissionType,
-
-                                               DateTime?                Timestamp,
-                                               CancellationToken        CancellationToken,
-                                               EventTracking_Id?        EventTrackingId,
-                                               TimeSpan?                RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, EVSEs));
-        }
-
-        Task<WWCP.PushEVSEDataResult>
-
-            WWCP.ISendPOIData.DeleteStaticData(IEnumerable<WWCP.IEVSE>  EVSEs,
-                                               WWCP.TransmissionTypes   TransmissionType,
-
-                                               DateTime?                Timestamp,
-                                               CancellationToken        CancellationToken,
-                                               EventTracking_Id?        EventTrackingId,
-                                               TimeSpan?                RequestTimeout)
-
-        {
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, EVSEs));
-        }
-
-
-        #region UpdateAdminStatus (AdminStatusUpdates,  TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Update the given enumeration of EVSE admin status updates.
-        /// </summary>
-        /// <param name="AdminStatusUpdates">An enumeration of EVSE admin status updates.</param>
-        /// <param name="TransmissionType">Whether to send the EVSE admin status updates directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        Task<WWCP.PushEVSEAdminStatusResult>
-
-            WWCP.ISendAdminStatus.UpdateAdminStatus(IEnumerable<WWCP.EVSEAdminStatusUpdate>  AdminStatusUpdates,
-                                                    WWCP.TransmissionTypes                   TransmissionType,
-
-                                                    DateTime?                                Timestamp,
-                                                    CancellationToken                        CancellationToken,
-                                                    EventTracking_Id?                        EventTrackingId,
-                                                    TimeSpan?                                RequestTimeout)
-
-
-                => Task.FromResult(WWCP.PushEVSEAdminStatusResult.NoOperation(Id, this));
-
-        #endregion
-
-        #region UpdateStatus      (StatusUpdates,       TransmissionType = Enqueue, ...)
+        #region UpdateEVSEStatus      (EVSEStatusUpdates,       TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Update the given enumeration of EVSE status updates.
         /// </summary>
-        /// <param name="StatusUpdates">An enumeration of EVSE status updates.</param>
+        /// <param name="EVSEStatusUpdates">An enumeration of EVSE status updates.</param>
         /// <param name="TransmissionType">Whether to send the EVSE status updates directly or enqueue it for a while.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
         async Task<WWCP.PushEVSEStatusResult>
 
-            WWCP.ISendStatus.UpdateStatus(IEnumerable<WWCP.EVSEStatusUpdate>  StatusUpdates,
-                                          WWCP.TransmissionTypes              TransmissionType,
+            WWCP.ISendStatus.UpdateEVSEStatus(IEnumerable<WWCP.EVSEStatusUpdate>  EVSEStatusUpdates,
+                                              WWCP.TransmissionTypes              TransmissionType,
 
-                                          DateTime?                           Timestamp,
-                                          CancellationToken                   CancellationToken,
-                                          EventTracking_Id?                   EventTrackingId,
-                                          TimeSpan?                           RequestTimeout)
+                                              DateTime?                           Timestamp,
+                                              EventTracking_Id?                   EventTrackingId,
+                                              TimeSpan?                           RequestTimeout,
+                                              CancellationToken                   CancellationToken)
 
         {
 
@@ -2048,7 +1241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     var warnings   = new List<Warning>();
                     var results    = new List<WWCP.PushEVSEStatusResult>();
 
-                    foreach (var statusUpdate in StatusUpdates)
+                    foreach (var statusUpdate in EVSEStatusUpdates)
                     {
 
                         if (RoamingNetwork.TryGetEVSEById(statusUpdate.Id, out var evse) && evse is not null)
@@ -2090,27 +1283,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                                             result = result2.IsSuccess
                                                          ? WWCP.PushEVSEStatusResult.Success(Id, this, null, warnings)
-                                                         : WWCP.PushEVSEStatusResult.Failed (Id, this, StatusUpdates, result2.ErrorResponse, warnings);
+                                                         : WWCP.PushEVSEStatusResult.Failed (Id, this, EVSEStatusUpdates, result2.ErrorResponse, warnings);
 
                                         }
                                         else
-                                            result = WWCP.PushEVSEStatusResult.Failed(Id, this, StatusUpdates, "Could not convert the given EVSE!");
+                                            result = WWCP.PushEVSEStatusResult.Failed(Id, this, EVSEStatusUpdates, "Could not convert the given EVSE!");
 
                                     }
                                     else
-                                        result = WWCP.PushEVSEStatusResult.Failed(Id, this, StatusUpdates, "Unknown location identification!");
+                                        result = WWCP.PushEVSEStatusResult.Failed(Id, this, EVSEStatusUpdates, "Unknown location identification!");
 
                                 }
                                 else
-                                    result = WWCP.PushEVSEStatusResult.Failed(Id, this, StatusUpdates, "Invalid location identification!");
+                                    result = WWCP.PushEVSEStatusResult.Failed(Id, this, EVSEStatusUpdates, "Invalid location identification!");
 
                             }
                             else
-                                result = WWCP.PushEVSEStatusResult.Failed(Id, this, StatusUpdates, "The given EVSE was filtered!");
+                                result = WWCP.PushEVSEStatusResult.Failed(Id, this, EVSEStatusUpdates, "The given EVSE was filtered!");
 
                         }
                         else
-                            result = WWCP.PushEVSEStatusResult.Failed(Id, this, StatusUpdates, "The given EVSE does not exist!");
+                            result = WWCP.PushEVSEStatusResult.Failed(Id, this, EVSEStatusUpdates, "The given EVSE does not exist!");
 
                         results.Add(result);
 
@@ -2137,32 +1330,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        : WWCP.PushEVSEStatusResult.LockTimeout(Id, this);
 
         }
-
-        #endregion
-
-        #region UpdateEnergyStatus(EnergyStatusUpdates, TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Update the given enumeration of EVSE status updates.
-        /// </summary>
-        /// <param name="EnergyStatusUpdates">An enumeration of EVSE status updates.</param>
-        /// <param name="TransmissionType">Whether to send the EVSE status updates directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        Task<WWCP.PushEVSEEnergyStatusResult>
-
-            WWCP.ISendEnergyStatus.UpdateEnergyStatus(IEnumerable<WWCP.EVSEEnergyStatusUpdate>  EnergyStatusUpdates,
-                                                      WWCP.TransmissionTypes                    TransmissionType,
-
-                                                      DateTime?                                 Timestamp,
-                                                      CancellationToken                         CancellationToken,
-                                                      EventTracking_Id?                         EventTrackingId,
-                                                      TimeSpan?                                 RequestTimeout)
-
-                => Task.FromResult(WWCP.PushEVSEEnergyStatusResult.NoOperation(Id, this));
 
         #endregion
 

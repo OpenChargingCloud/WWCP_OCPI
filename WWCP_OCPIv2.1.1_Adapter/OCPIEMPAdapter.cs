@@ -1289,27 +1289,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region UpdateAdminStatus
 
-        public Task<PushEVSEAdminStatusResult> UpdateAdminStatus(IEnumerable<EVSEAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushEVSEAdminStatusResult> UpdateEVSEAdminStatus(IEnumerable<EVSEAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushChargingStationAdminStatusResult> UpdateAdminStatus(IEnumerable<ChargingStationAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingStationAdminStatusResult> UpdateChargingStationAdminStatus(IEnumerable<ChargingStationAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushChargingPoolAdminStatusResult> UpdateAdminStatus(IEnumerable<ChargingPoolAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingPoolAdminStatusResult> UpdateChargingPoolAdminStatus(IEnumerable<ChargingPoolAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushChargingStationOperatorAdminStatusResult> UpdateAdminStatus(IEnumerable<ChargingStationOperatorAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushChargingStationOperatorAdminStatusResult> UpdateChargingStationOperatorAdminStatus(IEnumerable<ChargingStationOperatorAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PushRoamingNetworkAdminStatusResult> UpdateAdminStatus(IEnumerable<RoamingNetworkAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<PushRoamingNetworkAdminStatusResult> UpdateRoamingNetworkAdminStatus(IEnumerable<RoamingNetworkAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
         {
             throw new NotImplementedException();
         }
@@ -1318,12 +1318,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region UpdateStatus
 
-        public async Task<PushEVSEStatusResult> UpdateStatus(IEnumerable<EVSEStatusUpdate>  StatusUpdates,
+        public async Task<PushEVSEStatusResult> UpdateEVSEStatus(IEnumerable<EVSEStatusUpdate>  StatusUpdates,
 
-                                                             DateTime?                      Timestamp           = null,
-                                                             CancellationToken              CancellationToken   = default,
-                                                             EventTracking_Id?              EventTrackingId     = null,
-                                                             TimeSpan?                      RequestTimeout      = null)
+                                                                 DateTime?                      Timestamp           = null,
+                                                                 EventTracking_Id?              EventTrackingId     = null,
+                                                                 TimeSpan?                      RequestTimeout      = null,
+                                                                 CancellationToken              CancellationToken   = default)
         {
 
             //return await RoamingNetwork.updateevse
@@ -1332,42 +1332,42 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         }
 
-        public async Task<PushChargingStationStatusResult> UpdateStatus(IEnumerable<ChargingStationStatusUpdate>  StatusUpdates,
+        public async Task<PushChargingStationStatusResult> UpdateChargingStationStatus(IEnumerable<ChargingStationStatusUpdate>  StatusUpdates,
 
-                                                                        DateTime?                                 Timestamp           = null,
-                                                                        CancellationToken                         CancellationToken   = default,
-                                                                        EventTracking_Id?                         EventTrackingId     = null,
-                                                                        TimeSpan?                                 RequestTimeout      = null)
+                                                                                       DateTime?                                 Timestamp           = null,
+                                                                                       EventTracking_Id?                         EventTrackingId     = null,
+                                                                                       TimeSpan?                                 RequestTimeout      = null,
+                                                                                       CancellationToken                         CancellationToken   = default)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<PushChargingPoolStatusResult> UpdateStatus(IEnumerable<ChargingPoolStatusUpdate>  StatusUpdates,
+        public async Task<PushChargingPoolStatusResult> UpdateChargingPoolStatus(IEnumerable<ChargingPoolStatusUpdate>  StatusUpdates,
 
-                                                                     DateTime?                              Timestamp           = null,
-                                                                     CancellationToken                      CancellationToken   = default,
-                                                                     EventTracking_Id?                      EventTrackingId     = null,
-                                                                     TimeSpan?                              RequestTimeout      = null)
+                                                                                 DateTime?                              Timestamp           = null,
+                                                                                 EventTracking_Id?                      EventTrackingId     = null,
+                                                                                 TimeSpan?                              RequestTimeout      = null,
+                                                                                 CancellationToken                      CancellationToken   = default)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<PushChargingStationOperatorStatusResult> UpdateStatus(IEnumerable<ChargingStationOperatorStatusUpdate>  StatusUpdates,
+        public async Task<PushChargingStationOperatorStatusResult> UpdateChargingStationOperatorStatus(IEnumerable<ChargingStationOperatorStatusUpdate>  StatusUpdates,
 
-                                                                                DateTime?                                         Timestamp           = null,
-                                                                                CancellationToken                                 CancellationToken   = default,
-                                                                                EventTracking_Id?                                 EventTrackingId     = null,
-                                                                                TimeSpan?                                         RequestTimeout      = null)
+                                                                                                       DateTime?                                         Timestamp           = null,
+                                                                                                       EventTracking_Id?                                 EventTrackingId     = null,
+                                                                                                       TimeSpan?                                         RequestTimeout      = null,
+                                                                                                       CancellationToken                                 CancellationToken   = default)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<PushRoamingNetworkStatusResult> UpdateStatus(IEnumerable<RoamingNetworkStatusUpdate>  StatusUpdates,
+        public async Task<PushRoamingNetworkStatusResult> UpdateRoamingNetworkStatus(IEnumerable<RoamingNetworkStatusUpdate>  StatusUpdates,
 
-                                                                       DateTime?                                Timestamp           = null,
-                                                                       CancellationToken                        CancellationToken   = default,
-                                                                       EventTracking_Id?                        EventTrackingId     = null,
-                                                                       TimeSpan?                                RequestTimeout      = null)
+                                                                                     DateTime?                                Timestamp           = null,
+                                                                                     EventTracking_Id?                        EventTrackingId     = null,
+                                                                                     TimeSpan?                                RequestTimeout      = null,
+                                                                                     CancellationToken                        CancellationToken   = default)
         {
             throw new NotImplementedException();
         }
