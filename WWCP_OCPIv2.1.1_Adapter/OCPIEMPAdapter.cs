@@ -17,6 +17,8 @@
 
 #region Usings
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
@@ -34,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// Receive charging stations downstream from an OCPI partner...
     /// </summary>
-    public class OCPIEMPAdapter : //AWWCPEMPAdapter<ChargeDetailRecord>,
+    public class OCPIEMPAdapter : AWWCP__EMPAdapter,
                                   IRemoteEMobilityProvider,
                                   ICSORoamingProvider,
                                   IEquatable <OCPIEMPAdapter>,
@@ -384,36 +386,68 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Constructor(s)
 
-        public OCPIEMPAdapter(CSORoamingProvider_Id                        Id,
-                              I18NString                                   Name,
-                              I18NString                                   Description,
-                              IRoamingNetwork                              RoamingNetwork,
+        public OCPIEMPAdapter(CSORoamingProvider_Id                             Id,
+                              I18NString                                        Name,
+                              I18NString                                        Description,
+                              IRoamingNetwork                                   RoamingNetwork,
 
-                              HTTP.CommonAPI                               CommonAPI,
-                              OCPI.CountryCode                             DefaultCountryCode,
-                              OCPI.Party_Id                                DefaultPartyId,
+                              HTTP.CommonAPI                                    CommonAPI,
+                              OCPI.CountryCode                                  DefaultCountryCode,
+                              OCPI.Party_Id                                     DefaultPartyId,
 
-                              EVSEId_2_WWCPEVSEId_Delegate?                CustomEVSEIdConverter               = null,
-                              EVSE_2_WWCPEVSE_Delegate?                    CustomEVSEConverter                 = null,
-                              StatusType_2_WWCPEVSEStatusUpdate_Delegate?  CustomEVSEStatusUpdateConverter     = null,
-                              CDR_2_WWCPChargeDetailRecord_Delegate?       CustomChargeDetailRecordConverter   = null,
+                              EVSEId_2_WWCPEVSEId_Delegate?                     CustomEVSEIdConverter               = null,
+                              EVSE_2_WWCPEVSE_Delegate?                         CustomEVSEConverter                 = null,
+                              StatusType_2_WWCPEVSEStatusUpdate_Delegate?       CustomEVSEStatusUpdateConverter     = null,
+                              CDR_2_WWCPChargeDetailRecord_Delegate?            CustomChargeDetailRecordConverter   = null,
 
-                              IncludeChargingStationOperatorIdDelegate?    IncludeChargingStationOperatorIds   = null,
-                              IncludeChargingStationOperatorDelegate?      IncludeChargingStationOperators     = null,
-                              IncludeChargingPoolIdDelegate?               IncludeChargingPoolIds              = null,
-                              IncludeChargingPoolDelegate?                 IncludeChargingPools                = null,
-                              IncludeChargingStationIdDelegate?            IncludeChargingStationIds           = null,
-                              IncludeChargingStationDelegate?              IncludeChargingStations             = null,
-                              IncludeEVSEIdDelegate?                       IncludeEVSEIds                      = null,
-                              IncludeEVSEDelegate?                         IncludeEVSEs                        = null,
-                              ChargeDetailRecordFilterDelegate?            ChargeDetailRecordFilter            = null,
+                              IncludeChargingStationOperatorIdDelegate?         IncludeChargingStationOperatorIds   = null,
+                              IncludeChargingStationOperatorDelegate?           IncludeChargingStationOperators     = null,
+                              IncludeChargingPoolIdDelegate?                    IncludeChargingPoolIds              = null,
+                              IncludeChargingPoolDelegate?                      IncludeChargingPools                = null,
+                              IncludeChargingStationIdDelegate?                 IncludeChargingStationIds           = null,
+                              IncludeChargingStationDelegate?                   IncludeChargingStations             = null,
+                              IncludeEVSEIdDelegate?                            IncludeEVSEIds                      = null,
+                              IncludeEVSEDelegate?                              IncludeEVSEs                        = null,
+                              ChargeDetailRecordFilterDelegate?                 ChargeDetailRecordFilter            = null,
 
-                              Boolean                                      DisablePushData                     = false,
-                              Boolean                                      DisablePushAdminStatus              = false,
-                              Boolean                                      DisablePushStatus                   = false,
-                              Boolean                                      DisablePushEnergyStatus             = false,
-                              Boolean                                      DisableAuthentication               = false,
-                              Boolean                                      DisableSendChargeDetailRecords      = false)
+                              Boolean                                           DisablePushData                     = false,
+                              Boolean                                           DisablePushAdminStatus              = false,
+                              Boolean                                           DisablePushStatus                   = false,
+                              Boolean                                           DisablePushEnergyStatus             = false,
+                              Boolean                                           DisableAuthentication               = false,
+                              Boolean                                           DisableSendChargeDetailRecords      = false,
+
+                              Timestamped<CSORoamingProviderAdminStatusTypes>?  InitialAdminStatus                  = null,
+                              Timestamped<CSORoamingProviderStatusTypes>?       InitialStatus                       = null,
+                              UInt16                                            MaxAdminStatusScheduleSize          = DefaultMaxAdminStatusScheduleSize,
+                              UInt16                                            MaxStatusScheduleSize               = DefaultMaxStatusScheduleSize,
+
+                              String?                                           DataSource                          = null,
+                              DateTime?                                         LastChange                          = null,
+
+                              JObject?                                          CustomData                          = null,
+                              UserDefinedDictionary?                            InternalData                        = null)
+
+            : base(Id,
+                   RoamingNetwork,
+
+                   Name,
+                   Description,
+
+                   null, // EllipticCurve
+                   null, // PrivateKey
+                   null, // PublicKeyCertificates
+
+                   InitialAdminStatus,
+                   InitialStatus,
+                   MaxAdminStatusScheduleSize,
+                   MaxStatusScheduleSize,
+
+                   DataSource,
+                   LastChange,
+
+                   CustomData,
+                   InternalData)
 
         {
 
@@ -457,34 +491,66 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
 
-        public OCPIEMPAdapter(CSORoamingProvider_Id                        Id,
-                              I18NString                                   Name,
-                              I18NString                                   Description,
-                              IRoamingNetwork                              RoamingNetwork,
+        public OCPIEMPAdapter(CSORoamingProvider_Id                             Id,
+                              I18NString                                        Name,
+                              I18NString                                        Description,
+                              IRoamingNetwork                                   RoamingNetwork,
 
-                              HTTP.EMSPAPI                                 EMSPAPI,
+                              HTTP.EMSPAPI                                      EMSPAPI,
 
-                              EVSEId_2_WWCPEVSEId_Delegate?                CustomEVSEIdConverter               = null,
-                              EVSE_2_WWCPEVSE_Delegate?                    CustomEVSEConverter                 = null,
-                              StatusType_2_WWCPEVSEStatusUpdate_Delegate?  CustomEVSEStatusUpdateConverter     = null,
-                              CDR_2_WWCPChargeDetailRecord_Delegate?       CustomChargeDetailRecordConverter   = null,
+                              EVSEId_2_WWCPEVSEId_Delegate?                     CustomEVSEIdConverter               = null,
+                              EVSE_2_WWCPEVSE_Delegate?                         CustomEVSEConverter                 = null,
+                              StatusType_2_WWCPEVSEStatusUpdate_Delegate?       CustomEVSEStatusUpdateConverter     = null,
+                              CDR_2_WWCPChargeDetailRecord_Delegate?            CustomChargeDetailRecordConverter   = null,
 
-                              IncludeChargingStationOperatorIdDelegate?    IncludeChargingStationOperatorIds   = null,
-                              IncludeChargingStationOperatorDelegate?      IncludeChargingStationOperators     = null,
-                              IncludeChargingPoolIdDelegate?               IncludeChargingPoolIds              = null,
-                              IncludeChargingPoolDelegate?                 IncludeChargingPools                = null,
-                              IncludeChargingStationIdDelegate?            IncludeChargingStationIds           = null,
-                              IncludeChargingStationDelegate?              IncludeChargingStations             = null,
-                              IncludeEVSEIdDelegate?                       IncludeEVSEIds                      = null,
-                              IncludeEVSEDelegate?                         IncludeEVSEs                        = null,
-                              ChargeDetailRecordFilterDelegate?            ChargeDetailRecordFilter            = null,
+                              IncludeChargingStationOperatorIdDelegate?         IncludeChargingStationOperatorIds   = null,
+                              IncludeChargingStationOperatorDelegate?           IncludeChargingStationOperators     = null,
+                              IncludeChargingPoolIdDelegate?                    IncludeChargingPoolIds              = null,
+                              IncludeChargingPoolDelegate?                      IncludeChargingPools                = null,
+                              IncludeChargingStationIdDelegate?                 IncludeChargingStationIds           = null,
+                              IncludeChargingStationDelegate?                   IncludeChargingStations             = null,
+                              IncludeEVSEIdDelegate?                            IncludeEVSEIds                      = null,
+                              IncludeEVSEDelegate?                              IncludeEVSEs                        = null,
+                              ChargeDetailRecordFilterDelegate?                 ChargeDetailRecordFilter            = null,
 
-                              Boolean                                      DisablePushData                     = false,
-                              Boolean                                      DisablePushAdminStatus              = false,
-                              Boolean                                      DisablePushStatus                   = false,
-                              Boolean                                      DisablePushEnergyStatus             = false,
-                              Boolean                                      DisableAuthentication               = false,
-                              Boolean                                      DisableSendChargeDetailRecords      = false)
+                              Boolean                                           DisablePushData                     = false,
+                              Boolean                                           DisablePushAdminStatus              = false,
+                              Boolean                                           DisablePushStatus                   = false,
+                              Boolean                                           DisablePushEnergyStatus             = false,
+                              Boolean                                           DisableAuthentication               = false,
+                              Boolean                                           DisableSendChargeDetailRecords      = false,
+
+                              Timestamped<CSORoamingProviderAdminStatusTypes>?  InitialAdminStatus                  = null,
+                              Timestamped<CSORoamingProviderStatusTypes>?       InitialStatus                       = null,
+                              UInt16                                            MaxAdminStatusScheduleSize          = DefaultMaxAdminStatusScheduleSize,
+                              UInt16                                            MaxStatusScheduleSize               = DefaultMaxStatusScheduleSize,
+
+                              String?                                           DataSource                          = null,
+                              DateTime?                                         LastChange                          = null,
+
+                              JObject?                                          CustomData                          = null,
+                              UserDefinedDictionary?                            InternalData                        = null)
+
+            : base(Id,
+                   RoamingNetwork,
+
+                   Name,
+                   Description,
+
+                   null, // EllipticCurve
+                   null, // PrivateKey
+                   null, // PublicKeyCertificates
+
+                   InitialAdminStatus,
+                   InitialStatus,
+                   MaxAdminStatusScheduleSize,
+                   MaxStatusScheduleSize,
+
+                   DataSource,
+                   LastChange,
+
+                   CustomData,
+                   InternalData)
 
         {
 
@@ -996,14 +1062,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two OCPI CSO adapters.
+        /// Compares two OCPI EMP adapters.
         /// </summary>
-        /// <param name="Object">An OCPI CSO adapter to compare with.</param>
-        public Int32 CompareTo(Object? Object)
+        /// <param name="Object">An OCPI EMP adapter to compare with.</param>
+        public override Int32 CompareTo(Object? Object)
 
-            => Object is OCPIEMPAdapter evseDataRecord
-                   ? CompareTo(evseDataRecord)
-                   : throw new ArgumentException("The given object is not an OCPI CSO adapter!",
+            => Object is OCPIEMPAdapter ocpiEMPAdapter
+                   ? CompareTo(ocpiEMPAdapter)
+                   : throw new ArgumentException("The given object is not an OCPI EMP adapter!",
                                                  nameof(Object));
 
         #endregion
@@ -1011,15 +1077,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(OCPIEMPAdapter)
 
         /// <summary>
-        /// Compares two OCPI CSO adapters.
+        /// Compares two OCPI EMP adapters.
         /// </summary>
-        /// <param name="OCPIEMPAdapter">An OCPI CSO adapter to compare with.</param>
+        /// <param name="OCPIEMPAdapter">An OCPI EMP adapter to compare with.</param>
         public Int32 CompareTo(OCPIEMPAdapter? OCPIEMPAdapter)
         {
 
             if (OCPIEMPAdapter is null)
                 throw new ArgumentNullException(nameof(OCPIEMPAdapter),
-                                                "The given OCPI CSO adapter must not be null!");
+                                                "The given OCPI EMP adapter must not be null!");
 
             return Id.CompareTo(OCPIEMPAdapter.Id);
 
@@ -1079,298 +1145,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public override String ToString()
 
             => Id.ToString();
-
-        #endregion
-
-
-
-        #region EVSE
-
-        public Task<PushEVSEDataResult> SetStaticData(WWCP.EVSE EVSE, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(WWCP.EVSE EVSE, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(WWCP.EVSE EVSE, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(WWCP.EVSE EVSE, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<WWCP.EVSE> EVSEs, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<WWCP.EVSE> EVSEs, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<WWCP.EVSE> EVSEs, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<WWCP.EVSE> EVSEs, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region ChargingStations
-
-        public Task<PushEVSEDataResult> SetStaticData(ChargingStation ChargingStation, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(ChargingStation ChargingStation, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(ChargingStation ChargingStation, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(ChargingStation ChargingStation, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<ChargingStation> ChargingStations, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<ChargingStation> ChargingStations, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<ChargingStation> ChargingStations, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<ChargingStation> ChargingStations, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region ChargingPools
-
-        public Task<PushEVSEDataResult> SetStaticData(ChargingPool ChargingPool, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(ChargingPool ChargingPool, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(ChargingPool ChargingPool, String? PropertyName = null, Object? OldValue = null, Object? NewValue = null, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(ChargingPool ChargingPool, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<ChargingPool> ChargingPools, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<ChargingPool> ChargingPools, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<ChargingPool> ChargingPools, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<ChargingPool> ChargingPools, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region ChargingStationOperators
-
-        public Task<PushEVSEDataResult> SetStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(ChargingStationOperator ChargingStationOperator, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public Task<PushEVSEDataResult> SetStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(IEnumerable<ChargingStationOperator> ChargingStationOperators, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region RoamingNetwork
-
-        public Task<PushEVSEDataResult> SetStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> AddStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> UpdateStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushEVSEDataResult> DeleteStaticData(RoamingNetwork RoamingNetwork, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region UpdateAdminStatus
-
-        public Task<PushEVSEAdminStatusResult> UpdateEVSEAdminStatus(IEnumerable<EVSEAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushChargingStationAdminStatusResult> UpdateChargingStationAdminStatus(IEnumerable<ChargingStationAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushChargingPoolAdminStatusResult> UpdateChargingPoolAdminStatus(IEnumerable<ChargingPoolAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushChargingStationOperatorAdminStatusResult> UpdateChargingStationOperatorAdminStatus(IEnumerable<ChargingStationOperatorAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PushRoamingNetworkAdminStatusResult> UpdateRoamingNetworkAdminStatus(IEnumerable<RoamingNetworkAdminStatusUpdate> AdminStatusUpdates, DateTime? Timestamp = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null, CancellationToken CancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region UpdateStatus
-
-        public async Task<PushEVSEStatusResult> UpdateEVSEStatus(IEnumerable<EVSEStatusUpdate>  StatusUpdates,
-
-                                                                 DateTime?                      Timestamp           = null,
-                                                                 EventTracking_Id?              EventTrackingId     = null,
-                                                                 TimeSpan?                      RequestTimeout      = null,
-                                                                 CancellationToken              CancellationToken   = default)
-        {
-
-            //return await RoamingNetwork.updateevse
-
-            throw new NotImplementedException();
-
-        }
-
-        public async Task<PushChargingStationStatusResult> UpdateChargingStationStatus(IEnumerable<ChargingStationStatusUpdate>  StatusUpdates,
-
-                                                                                       DateTime?                                 Timestamp           = null,
-                                                                                       EventTracking_Id?                         EventTrackingId     = null,
-                                                                                       TimeSpan?                                 RequestTimeout      = null,
-                                                                                       CancellationToken                         CancellationToken   = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PushChargingPoolStatusResult> UpdateChargingPoolStatus(IEnumerable<ChargingPoolStatusUpdate>  StatusUpdates,
-
-                                                                                 DateTime?                              Timestamp           = null,
-                                                                                 EventTracking_Id?                      EventTrackingId     = null,
-                                                                                 TimeSpan?                              RequestTimeout      = null,
-                                                                                 CancellationToken                      CancellationToken   = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PushChargingStationOperatorStatusResult> UpdateChargingStationOperatorStatus(IEnumerable<ChargingStationOperatorStatusUpdate>  StatusUpdates,
-
-                                                                                                       DateTime?                                         Timestamp           = null,
-                                                                                                       EventTracking_Id?                                 EventTrackingId     = null,
-                                                                                                       TimeSpan?                                         RequestTimeout      = null,
-                                                                                                       CancellationToken                                 CancellationToken   = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<PushRoamingNetworkStatusResult> UpdateRoamingNetworkStatus(IEnumerable<RoamingNetworkStatusUpdate>  StatusUpdates,
-
-                                                                                     DateTime?                                Timestamp           = null,
-                                                                                     EventTracking_Id?                        EventTrackingId     = null,
-                                                                                     TimeSpan?                                RequestTimeout      = null,
-                                                                                     CancellationToken                        CancellationToken   = default)
-        {
-            throw new NotImplementedException();
-        }
 
         #endregion
 

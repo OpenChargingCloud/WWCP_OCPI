@@ -50,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// Receive charging stations downstream from an OCPI partner...
     /// </summary>
-    public class OCPICSOAdapter : WWCP.AWWCPEMPAdapter<CDR>,
+    public class OCPICSOAdapter : WWCP.AWWCP__CSOAdapter<CDR>,
                                   WWCP.IEMPRoamingProvider,
                                   WWCP.ISendEnergyStatus,
                                   IEquatable <OCPICSOAdapter>,

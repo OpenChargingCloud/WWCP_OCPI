@@ -17,6 +17,8 @@
 
 #region Usings
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
@@ -31,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     /// <summary>
     /// Send charging stations upstream towards an OCPI partner...
     /// </summary>
-    public class OCPIEMPAdapter : //AWWCPEMPAdapter<ChargeDetailRecord>,
+    public class OCPIEMPAdapter : AWWCP__EMPAdapter,
                                   ICSORoamingProvider,
                                   IEquatable<OCPIEMPAdapter>,
                                   IComparable<OCPIEMPAdapter>,
@@ -348,36 +350,71 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        public OCPIEMPAdapter(CSORoamingProvider_Id                        Id,
-                              I18NString                                   Name,
-                              I18NString                                   Description,
-                              IRoamingNetwork                              RoamingNetwork,
+        #region Constructor(s)
 
-                              HTTP.CommonAPI                               CommonAPI,
-                              OCPI.CountryCode                             DefaultCountryCode,
-                              OCPI.Party_Id                                DefaultPartyId,
+        public OCPIEMPAdapter(CSORoamingProvider_Id                             Id,
+                              I18NString                                        Name,
+                              I18NString                                        Description,
+                              IRoamingNetwork                                   RoamingNetwork,
 
-                              EVSEId_2_WWCPEVSEId_Delegate?                CustomEVSEIdConverter               = null,
-                              EVSE_2_WWCPEVSE_Delegate?                    CustomEVSEConverter                 = null,
-                              StatusType_2_WWCPEVSEStatusUpdate_Delegate?  CustomEVSEStatusUpdateConverter     = null,
-                              CDR_2_WWCPChargeDetailRecord_Delegate?       CustomChargeDetailRecordConverter   = null,
+                              HTTP.CommonAPI                                    CommonAPI,
+                              OCPI.CountryCode                                  DefaultCountryCode,
+                              OCPI.Party_Id                                     DefaultPartyId,
 
-                              IncludeChargingStationOperatorIdDelegate?    IncludeChargingStationOperatorIds   = null,
-                              IncludeChargingStationOperatorDelegate?      IncludeChargingStationOperators     = null,
-                              IncludeChargingPoolIdDelegate?               IncludeChargingPoolIds              = null,
-                              IncludeChargingPoolDelegate?                 IncludeChargingPools                = null,
-                              IncludeChargingStationIdDelegate?            IncludeChargingStationIds           = null,
-                              IncludeChargingStationDelegate?              IncludeChargingStations             = null,
-                              IncludeEVSEIdDelegate?                       IncludeEVSEIds                      = null,
-                              IncludeEVSEDelegate?                         IncludeEVSEs                        = null,
-                              ChargeDetailRecordFilterDelegate?            ChargeDetailRecordFilter            = null,
+                              EVSEId_2_WWCPEVSEId_Delegate?                     CustomEVSEIdConverter               = null,
+                              EVSE_2_WWCPEVSE_Delegate?                         CustomEVSEConverter                 = null,
+                              StatusType_2_WWCPEVSEStatusUpdate_Delegate?       CustomEVSEStatusUpdateConverter     = null,
+                              CDR_2_WWCPChargeDetailRecord_Delegate?            CustomChargeDetailRecordConverter   = null,
 
-                              Boolean                                      DisablePushData                     = false,
-                              Boolean                                      DisablePushAdminStatus              = false,
-                              Boolean                                      DisablePushStatus                   = false,
-                              Boolean                                      DisablePushEnergyStatus             = false,
-                              Boolean                                      DisableAuthentication               = false,
-                              Boolean                                      DisableSendChargeDetailRecords      = false)
+                              IncludeChargingStationOperatorIdDelegate?         IncludeChargingStationOperatorIds   = null,
+                              IncludeChargingStationOperatorDelegate?           IncludeChargingStationOperators     = null,
+                              IncludeChargingPoolIdDelegate?                    IncludeChargingPoolIds              = null,
+                              IncludeChargingPoolDelegate?                      IncludeChargingPools                = null,
+                              IncludeChargingStationIdDelegate?                 IncludeChargingStationIds           = null,
+                              IncludeChargingStationDelegate?                   IncludeChargingStations             = null,
+                              IncludeEVSEIdDelegate?                            IncludeEVSEIds                      = null,
+                              IncludeEVSEDelegate?                              IncludeEVSEs                        = null,
+                              ChargeDetailRecordFilterDelegate?                 ChargeDetailRecordFilter            = null,
+
+                              Boolean                                           DisablePushData                     = false,
+                              Boolean                                           DisablePushAdminStatus              = false,
+                              Boolean                                           DisablePushStatus                   = false,
+                              Boolean                                           DisablePushEnergyStatus             = false,
+                              Boolean                                           DisableAuthentication               = false,
+                              Boolean                                           DisableSendChargeDetailRecords      = false,
+
+                              Timestamped<CSORoamingProviderAdminStatusTypes>?  InitialAdminStatus                  = null,
+                              Timestamped<CSORoamingProviderStatusTypes>?       InitialStatus                       = null,
+                              UInt16                                            MaxAdminStatusScheduleSize          = DefaultMaxAdminStatusScheduleSize,
+                              UInt16                                            MaxStatusScheduleSize               = DefaultMaxStatusScheduleSize,
+
+                              String?                                           DataSource                          = null,
+                              DateTime?                                         LastChange                          = null,
+
+                              JObject?                                          CustomData                          = null,
+                              UserDefinedDictionary?                            InternalData                        = null)
+
+
+            : base(Id,
+                   RoamingNetwork,
+
+                   Name,
+                   Description,
+
+                   null, // EllipticCurve
+                   null, // PrivateKey
+                   null, // PublicKeyCertificates
+
+                   InitialAdminStatus,
+                   InitialStatus,
+                   MaxAdminStatusScheduleSize,
+                   MaxStatusScheduleSize,
+
+                   DataSource,
+                   LastChange,
+
+                   CustomData,
+                   InternalData)
 
         {
 
@@ -420,6 +457,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                       );
 
         }
+
+        #endregion
 
 
         #region AddRemoteParty(...)
@@ -749,14 +788,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two OCPI CSO adapters.
+        /// Compares two OCPI EMP adapters.
         /// </summary>
-        /// <param name="Object">An OCPI CSO adapter to compare with.</param>
-        public Int32 CompareTo(Object? Object)
+        /// <param name="Object">An OCPI EMP adapter to compare with.</param>
+        public override Int32 CompareTo(Object? Object)
 
-            => Object is OCPIEMPAdapter evseDataRecord
-                   ? CompareTo(evseDataRecord)
-                   : throw new ArgumentException("The given object is not an OCPI CSO adapter!",
+            => Object is OCPIEMPAdapter ocpiEMPAdapter
+                   ? CompareTo(ocpiEMPAdapter)
+                   : throw new ArgumentException("The given object is not an OCPI EMP adapter!",
                                                  nameof(Object));
 
         #endregion
@@ -764,15 +803,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #region CompareTo(OCPIEMPAdapter)
 
         /// <summary>
-        /// Compares two OCPI CSO adapters.
+        /// Compares two OCPI EMP adapters.
         /// </summary>
-        /// <param name="OCPIEMPAdapter">An OCPI CSO adapter to compare with.</param>
+        /// <param name="OCPIEMPAdapter">An OCPI EMP adapter to compare with.</param>
         public Int32 CompareTo(OCPIEMPAdapter? OCPIEMPAdapter)
         {
 
             if (OCPIEMPAdapter is null)
                 throw new ArgumentNullException(nameof(OCPIEMPAdapter),
-                                                "The given OCPI CSO adapter must not be null!");
+                                                "The given OCPI EMP adapter must not be null!");
 
             return Id.CompareTo(OCPIEMPAdapter.Id);
 
