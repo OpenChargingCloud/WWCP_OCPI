@@ -26,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
+using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 
 #endregion
 
@@ -467,19 +468,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        async Task<WWCP.PushChargingPoolDataResult>
+        public override async Task<WWCP.AddChargingPoolResult>
 
-            WWCP.IPushPOIData.AddChargingPool(WWCP.IChargingPool      ChargingPool,
-                                              WWCP.TransmissionTypes  TransmissionType,
+            AddChargingPool(WWCP.IChargingPool      ChargingPool,
+                            WWCP.TransmissionTypes  TransmissionType,
 
-                                              DateTime?               Timestamp,
-                                              EventTracking_Id?       EventTrackingId,
-                                              TimeSpan?               RequestTimeout,
-                                              CancellationToken       CancellationToken)
+                            DateTime?               Timestamp,
+                            EventTracking_Id?       EventTrackingId,
+                            TimeSpan?               RequestTimeout,
+                            CancellationToken       CancellationToken)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
+                                                              CancellationToken);
 
             try
             {
@@ -502,41 +504,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                             var result = CommonAPI.AddLocation(location);
 
-
-                            //ToDo: Process errors!!!
-
+                            //ToDo: Handle errors!!!
 
                         }
 
-                        return WWCP.PushChargingPoolDataResult.Enqueued(
+                        return WWCP.AddChargingPoolResult.Enqueued(
+                                   ChargingPool,
+                                   EventTrackingId,
                                    Id,
                                    this,
-                                   new WWCP.IChargingPool[] {
-                                       ChargingPool
-                                   },
-                                   "",
-                                   warnings,
-                                   TimeSpan.FromMilliseconds(10)
+                                   Warnings: warnings
                                );
 
                     }
                     else
-                        return WWCP.PushChargingPoolDataResult.NoOperation(
+                        return WWCP.AddChargingPoolResult.NoOperation(
+                                   ChargingPool,
+                                   EventTrackingId,
                                    Id,
-                                   this,
-                                   new WWCP.IChargingPool[] {
-                                       ChargingPool
-                                   }
+                                   this
                                );
 
                 }
                 else
-                    return WWCP.PushChargingPoolDataResult.LockTimeout(
+                    return WWCP.AddChargingPoolResult.LockTimeout(
+                               ChargingPool,
+                               MaxLockWaitingTime,
+                               EventTrackingId,
                                Id,
-                               this,
-                               new WWCP.IChargingPool[] {
-                                   ChargingPool
-                               }
+                               this
                            );
 
             }
@@ -562,19 +558,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        async Task<WWCP.PushChargingPoolDataResult>
+        public override async Task<WWCP.AddOrUpdateChargingPoolResult>
 
-            WWCP.IPushPOIData.AddOrUpdateChargingPool(WWCP.IChargingPool      ChargingPool,
-                                                      WWCP.TransmissionTypes  TransmissionType,
+            AddOrUpdateChargingPool(WWCP.IChargingPool      ChargingPool,
+                                    WWCP.TransmissionTypes  TransmissionType,
 
-                                                      DateTime?               Timestamp,
-                                                      EventTracking_Id?       EventTrackingId,
-                                                      TimeSpan?               RequestTimeout,
-                                                      CancellationToken       CancellationToken)
+                                    DateTime?               Timestamp,
+                                    EventTracking_Id?       EventTrackingId,
+                                    TimeSpan?               RequestTimeout,
+                                    CancellationToken       CancellationToken)
 
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
+                                                              CancellationToken);
 
             try
             {
@@ -585,7 +582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
                     if (IncludeChargingPools is null ||
-                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
+                       (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
                     {
 
 
@@ -594,39 +591,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                            out warnings);
 
                         if (location is not null)
-                            CommonAPI.AddLocation(location);
+                        {
+
+                            var result = CommonAPI.AddLocation(location);
+
+                            //ToDo: Handle errors!
+
+                        }
 
 
-                        return WWCP.PushChargingPoolDataResult.Enqueued(
-                                    Id,
-                                    this,
-                                    new WWCP.IChargingPool[] {
-                                        ChargingPool
-                                    },
-                                    "",
-                                    warnings,
-                                    TimeSpan.FromMilliseconds(10)
-                                );
+                        return WWCP.AddOrUpdateChargingPoolResult.Enqueued(
+                                   ChargingPool,
+                                   EventTrackingId,
+                                   Id,
+                                   this,
+                                   Warnings: warnings
+                               );
 
                     }
                     else
-                        return WWCP.PushChargingPoolDataResult.NoOperation(
-                                    Id,
-                                    this,
-                                    new WWCP.IChargingPool[] {
-                                        ChargingPool
-                                    }
-                                );
+                        return WWCP.AddOrUpdateChargingPoolResult.NoOperation(
+                                   ChargingPool,
+                                   EventTrackingId,
+                                   Id,
+                                   this
+                               );
 
                 }
                 else
-                    return WWCP.PushChargingPoolDataResult.LockTimeout(
-                                Id,
-                                this,
-                                new WWCP.IChargingPool[] {
-                                    ChargingPool
-                                }
-                            );
+                    return WWCP.AddOrUpdateChargingPoolResult.LockTimeout(
+                               ChargingPool,
+                               MaxLockWaitingTime,
+                               EventTrackingId,
+                               Id,
+                               this
+                           );
 
             }
             finally
@@ -654,22 +653,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        async Task<WWCP.PushChargingPoolDataResult>
+        public override async Task<WWCP.UpdateChargingPoolResult>
 
-            WWCP.IPushPOIData.UpdateChargingPool(WWCP.IChargingPool      ChargingPool,
-                                                 String?                 PropertyName,
-                                                 Object?                 OldValue,
-                                                 Object?                 NewValue,
-                                                 Context?                DataSource,
-                                                 WWCP.TransmissionTypes  TransmissionType,
+            UpdateChargingPool(WWCP.IChargingPool      ChargingPool,
+                               String?                 PropertyName,
+                               Object?                 OldValue,
+                               Object?                 NewValue,
+                               Context?                DataSource,
+                               WWCP.TransmissionTypes  TransmissionType,
 
-                                                 DateTime?               Timestamp,
-                                                 EventTracking_Id?       EventTrackingId,
-                                                 TimeSpan?               RequestTimeout,
-                                                 CancellationToken       CancellationToken)
+                               DateTime?               Timestamp,
+                               EventTracking_Id?       EventTrackingId,
+                               TimeSpan?               RequestTimeout,
+                               CancellationToken       CancellationToken)
         {
 
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
+                                                              CancellationToken);
 
             try
             {
@@ -708,26 +708,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                             }
 
-                            return WWCP.PushChargingPoolDataResult.Enqueued(
+                            return WWCP.UpdateChargingPoolResult.Enqueued(
+                                       ChargingPool,
+                                       EventTrackingId,
                                        Id,
                                        this,
-                                       new WWCP.IChargingPool[] { ChargingPool },
-                                       String.Empty,
-                                       warnings,
-                                       TimeSpan.Zero
+                                       Warnings: warnings
                                    );
 
                         }
 
                     }
 
-                    return WWCP.PushChargingPoolDataResult.NoOperation(
+                    return WWCP.UpdateChargingPoolResult.NoOperation(
+                               ChargingPool,
+                               EventTrackingId,
                                Id,
-                               this,
-                               new WWCP.IChargingPool[] { ChargingPool },
-                               String.Empty,
-                               warnings,
-                               TimeSpan.Zero
+                               this
                            );
 
                 }
@@ -739,13 +736,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     DataAndStatusLock.Release();
             }
 
-            return WWCP.PushChargingPoolDataResult.LockTimeout(
+            return WWCP.UpdateChargingPoolResult.LockTimeout(
+                       ChargingPool,
+                       MaxLockWaitingTime,
+                       EventTrackingId,
                        Id,
-                       this,
-                       new WWCP.IChargingPool[] { ChargingPool },
-                       "",
-                       Array.Empty<Warning>(),
-                       TimeSpan.Zero
+                       this
                    );
 
         }
@@ -768,294 +764,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        async Task<WWCP.PushEVSEDataResult>
+        public override async Task<WWCP.AddEVSEResult>
 
-            WWCP.IPushPOIData.AddEVSE(WWCP.IEVSE              EVSE,
-                                      WWCP.TransmissionTypes  TransmissionType,
+            AddEVSE(WWCP.IEVSE              EVSE,
+                    WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                                      DateTime?               Timestamp,
-                                      EventTracking_Id?       EventTrackingId,
-                                      TimeSpan?               RequestTimeout,
-                                      CancellationToken       CancellationToken)
-
-        {
-
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
-
-            try
-            {
-
-                if (lockTaken)
-                {
-
-                    AddOrUpdateResult<EVSE> result;
-
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
-
-                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
-
-                    if (countryCode.HasValue &&
-                        partyId.    HasValue &&
-                        locationId. HasValue)
-                    {
-
-                        if (IncludeEVSEs is null ||
-                           (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
-                        {
-
-                            if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                         partyId.    Value,
-                                                         locationId. Value,
-                                                         out var location) &&
-                                location is not null)
-                            {
-
-                                var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
-                                                        CustomEVSEIdConverter,
-                                                        EVSE.Status.Timestamp > EVSE.LastChange
-                                                            ? EVSE.Status.Timestamp
-                                                            : EVSE.LastChange,
-                                                        out warnings);
-
-                                if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
-                                else
-                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
-
-                            }
-                            else
-                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
-
-                        }
-                        else
-                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
-
-                    }
-                    else
-                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
-
-
-                    return result.IsSuccess
-
-                               ? new WWCP.PushEVSEDataResult(
-                                       Id,
-                                       this,
-                                       WWCP.PushDataResultTypes.Success,
-                                       new WWCP.PushSingleEVSEDataResult[] {
-                                           new WWCP.PushSingleEVSEDataResult(
-                                               EVSE,
-                                               WWCP.PushSingleDataResultTypes.Error,
-                                               warnings
-                                           )
-                                       },
-                                       Array.Empty<WWCP.PushSingleEVSEDataResult>(),
-                                       result.ErrorResponse,
-                                       warnings,
-                                       TimeSpan.FromMilliseconds(10)
-                                   )
-
-                               : new WWCP.PushEVSEDataResult(
-                                       Id,
-                                       this,
-                                       WWCP.PushDataResultTypes.Error,
-                                       Array.Empty<WWCP.PushSingleEVSEDataResult>(),
-                                       new WWCP.PushSingleEVSEDataResult[] {
-                                           new WWCP.PushSingleEVSEDataResult(
-                                               EVSE,
-                                               WWCP.PushSingleDataResultTypes.Success,
-                                               warnings
-                                           )
-                                       },
-                                       result.ErrorResponse,
-                                       warnings,
-                                       TimeSpan.FromMilliseconds(10)
-                                   );
-
-                }
-
-            }
-            finally
-            {
-                if (lockTaken)
-                    DataAndStatusLock.Release();
-            }
-
-            return lockTaken
-                       ? WWCP.PushEVSEDataResult.Enqueued   (Id, this, new WWCP.IEVSE[] { EVSE })
-                       : WWCP.PushEVSEDataResult.LockTimeout(Id, this, new WWCP.IEVSE[] { EVSE });
-
-        }
-
-        #endregion
-
-        #region AddOrUpdateEVSE (EVSE, TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Add or update the given EVSE.
-        /// </summary>
-        /// <param name="EVSE">An EVSE to add or update.</param>
-        /// <param name="TransmissionType">Whether to send the EVSE directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        async Task<WWCP.PushEVSEDataResult>
-
-            WWCP.IPushPOIData.AddOrUpdateEVSE(WWCP.IEVSE              EVSE,
-                                              WWCP.TransmissionTypes  TransmissionType,
-
-                                              DateTime?               Timestamp,
-                                              EventTracking_Id?       EventTrackingId,
-                                              TimeSpan?               RequestTimeout,
-                                              CancellationToken       CancellationToken)
-
-        {
-
-            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime);
-
-            try
-            {
-
-                if (lockTaken)
-                {
-
-                    AddOrUpdateResult<EVSE> result;
-
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
-
-                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
-
-                    if (countryCode.HasValue &&
-                        partyId.    HasValue &&
-                        locationId. HasValue)
-                    {
-
-                        if (IncludeEVSEs is null ||
-                           (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
-                        {
-
-                            if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                         partyId.    Value,
-                                                         locationId. Value,
-                                                         out var location) &&
-                                location is not null)
-                            {
-
-                                var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
-                                                        CustomEVSEIdConverter,
-                                                        EVSE.Status.Timestamp > EVSE.LastChange
-                                                            ? EVSE.Status.Timestamp
-                                                            : EVSE.LastChange,
-                                                        out warnings);
-
-                                if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
-                                else
-                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
-
-                            }
-                            else
-                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
-
-                        }
-                        else
-                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
-
-                    }
-                    else
-                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
-
-
-                    return result.IsSuccess
-
-                               ? new WWCP.PushEVSEDataResult(
-                                       Id,
-                                       this,
-                                       WWCP.PushDataResultTypes.Success,
-                                       new WWCP.PushSingleEVSEDataResult[] {
-                                           new WWCP.PushSingleEVSEDataResult(
-                                               EVSE,
-                                               WWCP.PushSingleDataResultTypes.Error,
-                                               warnings
-                                           )
-                                       },
-                                       Array.Empty<WWCP.PushSingleEVSEDataResult>(),
-                                       result.ErrorResponse,
-                                       warnings,
-                                       TimeSpan.FromMilliseconds(10)
-                                   )
-
-                               : new WWCP.PushEVSEDataResult(
-                                       Id,
-                                       this,
-                                       WWCP.PushDataResultTypes.Error,
-                                       Array.Empty<WWCP.PushSingleEVSEDataResult>(),
-                                       new WWCP.PushSingleEVSEDataResult[] {
-                                           new WWCP.PushSingleEVSEDataResult(
-                                               EVSE,
-                                               WWCP.PushSingleDataResultTypes.Success,
-                                               warnings
-                                           )
-                                       },
-                                       result.ErrorResponse,
-                                       warnings,
-                                       TimeSpan.FromMilliseconds(10)
-                                   );
-
-                }
-
-            }
-            finally
-            {
-                if (lockTaken)
-                    DataAndStatusLock.Release();
-            }
-
-            return lockTaken
-                       ? WWCP.PushEVSEDataResult.Enqueued   (Id, this, new WWCP.IEVSE[] { EVSE })
-                       : WWCP.PushEVSEDataResult.LockTimeout(Id, this, new WWCP.IEVSE[] { EVSE });
-
-        }
-
-        #endregion
-
-        #region UpdateEVSE      (EVSE, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
-
-        /// <summary>
-        /// Update the EVSE data of the given charging pool within the static EVSE data at the OICP server.
-        /// </summary>
-        /// <param name="EVSE">An EVSE.</param>
-        /// <param name="PropertyName">The name of the charging pool property to update.</param>
-        /// <param name="OldValue">The old value of the charging pool property to update.</param>
-        /// <param name="NewValue">The new value of the charging pool property to update.</param>
-        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        async Task<WWCP.PushEVSEDataResult>
-
-            WWCP.IPushPOIData.UpdateEVSE(WWCP.IEVSE              EVSE,
-                                         String                  PropertyName,
-                                         Object?                 NewValue,
-                                         Object?                 OldValue,
-                                         Context?                DataSource,
-                                         WWCP.TransmissionTypes  TransmissionType,
-
-                                         DateTime?               Timestamp,
-                                         EventTracking_Id?       EventTrackingId,
-                                         TimeSpan?               RequestTimeout,
-                                         CancellationToken       CancellationToken)
+                    DateTime?               Timestamp           = null,
+                    EventTracking_Id?       EventTrackingId     = null,
+                    TimeSpan?               RequestTimeout      = null,
+                    CancellationToken       CancellationToken   = default)
 
         {
 
@@ -1121,39 +838,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     return result.IsSuccess
 
-                               ? new WWCP.PushEVSEDataResult(
-                                       Id,
-                                       this,
-                                       WWCP.PushDataResultTypes.Success,
-                                       new WWCP.PushSingleEVSEDataResult[] {
-                                           new WWCP.PushSingleEVSEDataResult(
-                                               EVSE,
-                                               WWCP.PushSingleDataResultTypes.Error,
-                                               warnings
-                                           )
-                                       },
-                                       Array.Empty<WWCP.PushSingleEVSEDataResult>(),
-                                       result.ErrorResponse,
-                                       warnings,
-                                       TimeSpan.FromMilliseconds(10)
-                                   )
+                               ? WWCP.AddEVSEResult.Success(
+                                     EVSE,
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 )
 
-                               : new WWCP.PushEVSEDataResult(
-                                       Id,
-                                       this,
-                                       WWCP.PushDataResultTypes.Error,
-                                       Array.Empty<WWCP.PushSingleEVSEDataResult>(),
-                                       new WWCP.PushSingleEVSEDataResult[] {
-                                           new WWCP.PushSingleEVSEDataResult(
-                                               EVSE,
-                                               WWCP.PushSingleDataResultTypes.Success,
-                                               warnings
-                                           )
-                                       },
-                                       result.ErrorResponse,
-                                       warnings,
-                                       TimeSpan.FromMilliseconds(10)
-                                   );
+                               : WWCP.AddEVSEResult.Error(
+                                     EVSE,
+                                     I18NString.Create(
+                                         Languages.en,
+                                         result.ErrorResponse ?? "error"
+                                     ),
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 );
 
                 }
 
@@ -1165,8 +868,271 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
 
             return lockTaken
-                       ? WWCP.PushEVSEDataResult.Enqueued   (Id, this, new WWCP.IEVSE[] { EVSE })
-                       : WWCP.PushEVSEDataResult.LockTimeout(Id, this, new WWCP.IEVSE[] { EVSE });
+                       ? WWCP.AddEVSEResult.Enqueued   (EVSE,                     EventTrackingId, Id, this)
+                       : WWCP.AddEVSEResult.LockTimeout(EVSE, MaxLockWaitingTime, EventTrackingId, Id, this);
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateEVSE (EVSE, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Add or update the given EVSE.
+        /// </summary>
+        /// <param name="EVSE">An EVSE to add or update.</param>
+        /// <param name="TransmissionType">Whether to send the EVSE directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        public override async Task<WWCP.AddOrUpdateEVSEResult>
+
+            AddOrUpdateEVSE(WWCP.IEVSE              EVSE,
+                            WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+
+                            DateTime?               Timestamp           = null,
+                            EventTracking_Id?       EventTrackingId     = null,
+                            TimeSpan?               RequestTimeout      = null,
+                            CancellationToken       CancellationToken   = default)
+
+        {
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
+                                                              CancellationToken);
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    AddOrUpdateResult<EVSE> result;
+
+                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+
+                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var locationId   = EVSE.ChargingPool is not null
+                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                           : null;
+
+                    if (countryCode.HasValue &&
+                        partyId.    HasValue &&
+                        locationId. HasValue)
+                    {
+
+                        if (IncludeEVSEs is null ||
+                           (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
+                        {
+
+                            if (CommonAPI.TryGetLocation(countryCode.Value,
+                                                         partyId.    Value,
+                                                         locationId. Value,
+                                                         out var location) &&
+                                location is not null)
+                            {
+
+                                var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
+                                                        CustomEVSEIdConverter,
+                                                        EVSE.Status.Timestamp > EVSE.LastChange
+                                                            ? EVSE.Status.Timestamp
+                                                            : EVSE.LastChange,
+                                                        out warnings);
+
+                                if (evse2 is not null)
+                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                else
+                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+
+                            }
+                            else
+                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+
+                        }
+                        else
+                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+
+                    }
+                    else
+                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+
+
+                    return result.IsSuccess
+
+                               ? result.WasCreated == true
+
+                                     ? WWCP.AddOrUpdateEVSEResult.Added(
+                                           EVSE,
+                                           EventTrackingId,
+                                           Id,
+                                           this,
+                                           Warnings: warnings
+                                       )
+
+                                     : WWCP.AddOrUpdateEVSEResult.Updated(
+                                           EVSE,
+                                           EventTrackingId,
+                                           Id,
+                                           this,
+                                           Warnings: warnings
+                                       )
+
+                               : WWCP.AddOrUpdateEVSEResult.Error(
+                                     EVSE,
+                                     I18NString.Create(
+                                         Languages.en,
+                                         result.ErrorResponse ?? "error"
+                                     ),
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 );
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return lockTaken
+                       ? WWCP.AddOrUpdateEVSEResult.Enqueued   (EVSE,                     EventTrackingId, Id, this)
+                       : WWCP.AddOrUpdateEVSEResult.LockTimeout(EVSE, MaxLockWaitingTime, EventTrackingId, Id, this);
+
+        }
+
+        #endregion
+
+        #region UpdateEVSE      (EVSE, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Update the EVSE data of the given charging pool within the static EVSE data at the OICP server.
+        /// </summary>
+        /// <param name="EVSE">An EVSE.</param>
+        /// <param name="PropertyName">The name of the charging pool property to update.</param>
+        /// <param name="OldValue">The old value of the charging pool property to update.</param>
+        /// <param name="NewValue">The new value of the charging pool property to update.</param>
+        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public override async Task<WWCP.UpdateEVSEResult>
+
+            UpdateEVSE(WWCP.IEVSE              EVSE,
+                       String                  PropertyName,
+                       Object?                 NewValue,
+                       Object?                 OldValue,
+                       Context?                DataSource,
+                       WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+
+                       DateTime?               Timestamp           = null,
+                       EventTracking_Id?       EventTrackingId     = null,
+                       TimeSpan?               RequestTimeout      = null,
+                       CancellationToken       CancellationToken   = default)
+
+        {
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
+                                                              CancellationToken);
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    AddOrUpdateResult<EVSE> result;
+
+                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+
+                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
+                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
+                    var locationId   = EVSE.ChargingPool is not null
+                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                           : null;
+
+                    if (countryCode.HasValue &&
+                        partyId.    HasValue &&
+                        locationId. HasValue)
+                    {
+
+                        if (IncludeEVSEs is null ||
+                           (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
+                        {
+
+                            if (CommonAPI.TryGetLocation(countryCode.Value,
+                                                         partyId.    Value,
+                                                         locationId. Value,
+                                                         out var location) &&
+                                location is not null)
+                            {
+
+                                var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
+                                                        CustomEVSEIdConverter,
+                                                        EVSE.Status.Timestamp > EVSE.LastChange
+                                                            ? EVSE.Status.Timestamp
+                                                            : EVSE.LastChange,
+                                                        out warnings);
+
+                                if (evse2 is not null)
+                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                else
+                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+
+                            }
+                            else
+                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+
+                        }
+                        else
+                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+
+                    }
+                    else
+                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+
+
+                    return result.IsSuccess
+
+                               ? WWCP.UpdateEVSEResult.Success(
+                                     EVSE,
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 )
+
+                               : WWCP.UpdateEVSEResult.Error(
+                                     EVSE,
+                                     I18NString.Create(
+                                         Languages.en,
+                                         result.ErrorResponse ?? "error"
+                                     ),
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 );
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return lockTaken
+                       ? WWCP.UpdateEVSEResult.Enqueued   (EVSE,                     EventTrackingId, Id, this)
+                       : WWCP.UpdateEVSEResult.LockTimeout(EVSE, MaxLockWaitingTime, EventTrackingId, Id, this);
 
         }
 
@@ -1184,19 +1150,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        Task<WWCP.PushEVSEDataResult>
+        public override Task<WWCP.DeleteEVSEResult>
 
-            WWCP.IPushPOIData.DeleteEVSE(WWCP.IEVSE               EVSE,
-                                         WWCP.TransmissionTypes   TransmissionType,
+            DeleteEVSE(WWCP.IEVSE              EVSE,
+                       WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                                         DateTime?                Timestamp,
-                                         EventTracking_Id?        EventTrackingId,
-                                         TimeSpan?                RequestTimeout,
-                                         CancellationToken        CancellationToken)
+                       DateTime?               Timestamp           = null,
+                       EventTracking_Id?       EventTrackingId     = null,
+                       TimeSpan?               RequestTimeout      = null,
+                       CancellationToken       CancellationToken   = default)
 
         {
 
-            return Task.FromResult(WWCP.PushEVSEDataResult.NoOperation(Id, this, new WWCP.IEVSE[] { EVSE }));
+            return Task.FromResult(WWCP.DeleteEVSEResult.NoOperation(EVSE, EventTrackingId, Id, this));
 
         }
 
