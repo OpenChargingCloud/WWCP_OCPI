@@ -709,7 +709,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     EnergyMeter.Description.ToOCPI(),
                     EnergyMeter.CustomData,
                     EnergyMeter.InternalData,
-                    EnergyMeter.LastUpdate);
+                    EnergyMeter.LastChange);
 
         #endregion
 

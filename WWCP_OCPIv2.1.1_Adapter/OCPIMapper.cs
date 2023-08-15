@@ -22,9 +22,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
-using static Org.BouncyCastle.Bcpg.Attr.ImageAttrib;
-using System.Linq;
-using social.OpenData.UsersAPI.Notifications;
 
 #endregion
 
@@ -781,7 +778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     EnergyMeter.Description.ToOCPI(),
                     EnergyMeter.CustomData,
                     EnergyMeter.InternalData,
-                    EnergyMeter.LastUpdate);
+                    EnergyMeter.LastChange);
 
         #endregion
 
