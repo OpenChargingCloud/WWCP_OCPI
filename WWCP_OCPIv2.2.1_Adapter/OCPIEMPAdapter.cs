@@ -34,7 +34,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     /// Send charging stations upstream towards an OCPI partner...
     /// </summary>
     public class OCPIEMPAdapter : AWWCPEMPAdapter,
-                                  ICSORoamingProvider,
+                                  IEMPRoamingProvider,
                                   IEquatable<OCPIEMPAdapter>,
                                   IComparable<OCPIEMPAdapter>,
                                   IComparable
@@ -51,7 +51,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The global unique identification.
         /// </summary>
         [Mandatory]
-        public CSORoamingProvider_Id                        Id                                   { get; }
+        public EMPRoamingProvider_Id                        Id                                   { get; }
 
         /// <summary>
         /// The multi-language name.
@@ -87,7 +87,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Events
 
-        event OnGetCDRsRequestDelegate ICSORoamingProvider.OnGetChargeDetailRecordsRequest
+        event OnGetCDRsRequestDelegate IEMPRoamingProvider.OnGetChargeDetailRecordsRequest
         {
             add
             {
@@ -100,7 +100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
         }
 
-        event OnGetCDRsResponseDelegate ICSORoamingProvider.OnGetChargeDetailRecordsResponse
+        event OnGetCDRsResponseDelegate IEMPRoamingProvider.OnGetChargeDetailRecordsResponse
         {
             add
             {
@@ -113,7 +113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
         }
 
-        event OnAuthorizeStartRequestDelegate ICSORoamingProvider.OnAuthorizeStartRequest
+        event OnAuthorizeStartRequestDelegate IEMPRoamingProvider.OnAuthorizeStartRequest
         {
             add
             {
@@ -126,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
         }
 
-        event OnAuthorizeStartResponseDelegate ICSORoamingProvider.OnAuthorizeStartResponse
+        event OnAuthorizeStartResponseDelegate IEMPRoamingProvider.OnAuthorizeStartResponse
         {
             add
             {
@@ -139,7 +139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
         }
 
-        event OnAuthorizeStopRequestDelegate ICSORoamingProvider.OnAuthorizeStopRequest
+        event OnAuthorizeStopRequestDelegate IEMPRoamingProvider.OnAuthorizeStopRequest
         {
             add
             {
@@ -152,7 +152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
         }
 
-        event OnAuthorizeStopResponseDelegate ICSORoamingProvider.OnAuthorizeStopResponse
+        event OnAuthorizeStopResponseDelegate IEMPRoamingProvider.OnAuthorizeStopResponse
         {
             add
             {
@@ -165,7 +165,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
         }
 
-        event OnSendCDRsRequestDelegate ICSORoamingProvider.OnChargeDetailRecordRequest
+        event OnSendCDRsRequestDelegate IEMPRoamingProvider.OnChargeDetailRecordRequest
         {
             add
             {
@@ -178,7 +178,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             }
         }
 
-        event OnSendCDRsResponseDelegate ICSORoamingProvider.OnChargeDetailRecordResponse
+        event OnSendCDRsResponseDelegate IEMPRoamingProvider.OnChargeDetailRecordResponse
         {
             add
             {
@@ -352,7 +352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Constructor(s)
 
-        public OCPIEMPAdapter(CSORoamingProvider_Id                             Id,
+        public OCPIEMPAdapter(EMPRoamingProvider_Id                             Id,
                               I18NString                                        Name,
                               I18NString                                        Description,
                               IRoamingNetwork                                   RoamingNetwork,
@@ -383,8 +383,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               Boolean                                           DisableAuthentication               = false,
                               Boolean                                           DisableSendChargeDetailRecords      = false,
 
-                              Timestamped<CSORoamingProviderAdminStatusTypes>?  InitialAdminStatus                  = null,
-                              Timestamped<CSORoamingProviderStatusTypes>?       InitialStatus                       = null,
+                              Timestamped<EMPRoamingProviderAdminStatusTypes>?  InitialAdminStatus                  = null,
+                              Timestamped<EMPRoamingProviderStatusTypes>?       InitialStatus                       = null,
                               UInt16                                            MaxAdminStatusScheduleSize          = DefaultMaxAdminStatusScheduleSize,
                               UInt16                                            MaxStatusScheduleSize               = DefaultMaxStatusScheduleSize,
 
@@ -650,7 +650,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Charge Detail Records
 
-        Task<IEnumerable<ChargeDetailRecord>> ICSORoamingProvider.GetChargeDetailRecords(DateTime               From,
+        Task<IEnumerable<ChargeDetailRecord>> IEMPRoamingProvider.GetChargeDetailRecords(DateTime               From,
                                                                                          DateTime?              To,
                                                                                          EMobilityProvider_Id?  ProviderId,
 

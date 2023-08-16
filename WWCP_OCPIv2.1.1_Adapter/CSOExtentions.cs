@@ -59,7 +59,7 @@ namespace cloud.charging.open.protocols.WWCP
         public static OCPIv2_1_1.OCPICSOAdapter?
 
             CreateOCPIv2_1_1_CSOAdapter(this IRoamingNetwork                                     RoamingNetwork,
-                                        EMPRoamingProvider_Id                                    Id,
+                                        CSORoamingProvider_Id                                    Id,
                                         I18NString                                               Name,
                                         I18NString                                               Description,
 
@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.WWCP
                                         Boolean                                                  DisableSendChargeDetailRecords       = false,
 
                                         Action<OCPIv2_1_1.OCPICSOAdapter>?                       OCPIConfigurator                     = null,
-                                        Action<IEMPRoamingProvider>?                             Configurator                         = null,
+                                        Action<ICSORoamingProvider>?                             Configurator                         = null,
 
                                         String                                                   EllipticCurve                        = "P-256",
                                         ECPrivateKeyParameters?                                  PrivateKey                           = null,
@@ -218,7 +218,7 @@ namespace cloud.charging.open.protocols.WWCP
         public static OCPIv2_1_1.OCPICSOAdapter?
 
             CreateOCPIv2_1_1_CSOAdapter(this IRoamingNetwork                                     RoamingNetwork,
-                                        EMPRoamingProvider_Id                                    Id,
+                                        CSORoamingProvider_Id                                    Id,
                                         I18NString                                               Name,
                                         I18NString                                               Description,
 
@@ -254,7 +254,7 @@ namespace cloud.charging.open.protocols.WWCP
                                         Boolean                                                  DisableSendChargeDetailRecords       = false,
 
                                         Action<OCPIv2_1_1.OCPICSOAdapter>?                       OCPIConfigurator                     = null,
-                                        Action<IEMPRoamingProvider>?                             Configurator                         = null,
+                                        Action<ICSORoamingProvider>?                             Configurator                         = null,
 
                                         String                                                   EllipticCurve                        = "P-256",
                                         ECPrivateKeyParameters?                                  PrivateKey                           = null,

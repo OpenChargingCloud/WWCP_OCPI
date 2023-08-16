@@ -51,7 +51,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// Receive charging stations downstream from an OCPI partner...
     /// </summary>
     public class OCPICSOAdapter : WWCP.AWWCPCSOAdapter<CDR>,
-                                  WWCP.IEMPRoamingProvider,
+                                  WWCP.ICSORoamingProvider,
                                   WWCP.ISendEnergyStatus,
                                   IEquatable <OCPICSOAdapter>,
                                   IComparable<OCPICSOAdapter>,
@@ -195,7 +195,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Constructor(s)
 
-        public OCPICSOAdapter(WWCP.EMPRoamingProvider_Id                      Id,
+        public OCPICSOAdapter(WWCP.CSORoamingProvider_Id                      Id,
                               I18NString                                      Name,
                               I18NString                                      Description,
                               WWCP.IRoamingNetwork                            RoamingNetwork,
@@ -364,7 +364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
 
-        public OCPICSOAdapter(WWCP.EMPRoamingProvider_Id                      Id,
+        public OCPICSOAdapter(WWCP.CSORoamingProvider_Id                      Id,
                               I18NString                                      Name,
                               I18NString                                      Description,
                               WWCP.IRoamingNetwork                            RoamingNetwork,

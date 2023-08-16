@@ -596,7 +596,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                               //ProviderIdStop
 
                               //EMPRoamingProvider
-                              EMPRoamingProviderId:           EMPRoamingProvider_Id.Parse("Hubject"),
+                              EMPRoamingProviderId:           CSORoamingProvider_Id.Parse("Hubject"),
 
                               //Reservation
                               //ReservationId

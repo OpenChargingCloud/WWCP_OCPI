@@ -61,7 +61,7 @@ namespace cloud.charging.open.protocols.WWCP
         public static OCPIv2_2_1.OCPIEMPAdapter?
 
             CreateOCPIv2_2_1_EMPAdapter(this IRoamingNetwork                                     RoamingNetwork,
-                                        CSORoamingProvider_Id                                    Id,
+                                        EMPRoamingProvider_Id                                    Id,
                                         I18NString                                               Name,
                                         I18NString                                               Description,
 
@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.WWCP
                                         Boolean                                                  DisableSendChargeDetailRecords       = false,
 
                                         Action<OCPIv2_2_1.OCPIEMPAdapter>?                         OCPIConfigurator                     = null,
-                                        Action<ICSORoamingProvider>?                             Configurator                         = null,
+                                        Action<IEMPRoamingProvider>?                             Configurator                         = null,
 
                                         String                                                   EllipticCurve                        = "P-256",
                                         ECPrivateKeyParameters?                                  PrivateKey                           = null,
