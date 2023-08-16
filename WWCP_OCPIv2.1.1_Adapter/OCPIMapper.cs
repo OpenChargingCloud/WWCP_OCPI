@@ -386,19 +386,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
 
-            if (ChargingStation.Features.Contains(WWCP.Features.Reservable))
+            if (ChargingStation.Features.Contains(WWCP.ChargingStationFeature.Reservable))
                 capabilities.Add(Capability.RESERVABLE);
 
-            if (ChargingStation.Features.Contains(WWCP.Features.ChargingProfilesSupported))
+            if (ChargingStation.Features.Contains(WWCP.ChargingStationFeature.ChargingProfilesSupported))
                 capabilities.Add(Capability.CHARGING_PROFILE_CAPABLE);
 
-            if (ChargingStation.Features.Contains(WWCP.Features.ChargingPreferencesSupported))
+            if (ChargingStation.Features.Contains(WWCP.ChargingStationFeature.ChargingPreferencesSupported))
                 capabilities.Add(Capability.CHARGING_PREFERENCES_CAPABLE);
 
-            if (ChargingStation.Features.Contains(WWCP.Features.TokenGroupsSupported))
+            if (ChargingStation.Features.Contains(WWCP.ChargingStationFeature.TokenGroupsSupported))
                 capabilities.Add(Capability.TOKEN_GROUP_CAPABLE);
 
-            if (ChargingStation.Features.Contains(WWCP.Features.CSOUnlockSupported))
+            if (ChargingStation.Features.Contains(WWCP.ChargingStationFeature.CSOUnlockSupported))
                 capabilities.Add(Capability.UNLOCK_CAPABLE);
 
 

@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// Receive charging stations downstream from an OCPI partner...
     /// </summary>
-    public class OCPIEMPAdapter : AWWCP__EMPAdapter,
+    public class OCPIEMPAdapter : AWWCPEMPAdapter,
                                   IRemoteEMobilityProvider,
                                   ICSORoamingProvider,
                                   IEquatable <OCPIEMPAdapter>,
