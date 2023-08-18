@@ -106,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                              );
 
                 Assert.IsNotNull(addChargingPoolResult1);
-                Assert.AreEqual (org.GraphDefined.Vanaheimr.Hermod.CommandResult.Success, addChargingPoolResult1.Result);
+                Assert.AreEqual (org.GraphDefined.Vanaheimr.Illias.CommandResult.Success, addChargingPoolResult1.Result);
 
                 var chargingPool1 = addChargingPoolResult1.ChargingPool;
                 Assert.IsNotNull(chargingPool1);
@@ -180,7 +180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                              );
 
                 Assert.IsNotNull(addChargingPoolResult2);
-                Assert.AreEqual (org.GraphDefined.Vanaheimr.Hermod.CommandResult.Success, addChargingPoolResult2.Result);
+                Assert.AreEqual (org.GraphDefined.Vanaheimr.Illias.CommandResult.Success, addChargingPoolResult2.Result);
 
                 var chargingPool2 = addChargingPoolResult2.ChargingPool;
                 Assert.IsNotNull(chargingPool2);
@@ -232,7 +232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                 );
 
                 Assert.IsNotNull(addChargingStationResult1);
-                Assert.AreEqual (org.GraphDefined.Vanaheimr.Hermod.CommandResult.Success, addChargingStationResult1.Result);
+                Assert.AreEqual (org.GraphDefined.Vanaheimr.Illias.CommandResult.Success, addChargingStationResult1.Result);
 
                 var chargingStation1 = addChargingStationResult1.ChargingStation;
                 Assert.IsNotNull(chargingStation1);
@@ -259,7 +259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                 );
 
                 Assert.IsNotNull(addChargingStationResult2);
-                Assert.AreEqual (org.GraphDefined.Vanaheimr.Hermod.CommandResult.Success, addChargingStationResult2.Result);
+                Assert.AreEqual (org.GraphDefined.Vanaheimr.Illias.CommandResult.Success, addChargingStationResult2.Result);
 
                 var chargingStation2 = addChargingStationResult2.ChargingStation;
                 Assert.IsNotNull(chargingStation2);
@@ -286,7 +286,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                 );
 
                 Assert.IsNotNull(addChargingStationResult3);
-                Assert.AreEqual (org.GraphDefined.Vanaheimr.Hermod.CommandResult.Success, addChargingStationResult3.Result);
+                Assert.AreEqual (org.GraphDefined.Vanaheimr.Illias.CommandResult.Success, addChargingStationResult3.Result);
 
                 var chargingStation3 = addChargingStationResult3.ChargingStation;
                 Assert.IsNotNull(chargingStation3);
@@ -322,7 +322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                       );
 
                 Assert.IsNotNull(addEVSE1Result1);
-                Assert.AreEqual (org.GraphDefined.Vanaheimr.Hermod.CommandResult.Success, addEVSE1Result1.Result);
+                Assert.AreEqual (org.GraphDefined.Vanaheimr.Illias.CommandResult.Success, addEVSE1Result1.Result);
 
                 var evse1 = addEVSE1Result1.EVSE;
                 Assert.IsNotNull(evse1);

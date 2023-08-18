@@ -123,7 +123,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                      InitialStatus:                       ChargingStationOperatorStatusTypes.Available
                                                  );
 
-            Assert.IsTrue   (result.IsSuccess);
+            Assert.IsTrue   (result.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
             Assert.IsNotNull(result.ChargingStationOperator);
 
             graphDefinedCSO = result.ChargingStationOperator;

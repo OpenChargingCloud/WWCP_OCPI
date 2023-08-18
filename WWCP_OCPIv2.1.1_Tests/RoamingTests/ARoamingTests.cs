@@ -118,7 +118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                  InitialStatus:        ChargingStationOperatorStatusTypes.Available
                                                              );
 
-            Assert.IsTrue   (csoResult.IsSuccess);
+            Assert.IsTrue   (csoResult.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
             Assert.IsNotNull(csoResult.ChargingStationOperator);
 
             graphDefinedCSO        = csoResult.ChargingStationOperator;
@@ -140,7 +140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                                               );
 
-            Assert.IsTrue   (emp1result.IsSuccess);
+            Assert.IsTrue   (emp1result.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
             Assert.IsNotNull(emp1result.EMobilityProvider);
 
             graphDefinedEMP1       = emp1result.EMobilityProvider;
@@ -162,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                                               );
 
-            Assert.IsTrue   (emp2result.IsSuccess);
+            Assert.IsTrue   (emp2result.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
             Assert.IsNotNull(emp2result.EMobilityProvider);
 
             graphDefinedEMP2       = emp2result.EMobilityProvider;

@@ -1,376 +1,376 @@
-﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH <achim.friedland@graphdefined.com>
- * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
- *
- * Licensed under the Apache License, User 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#region Usings
-
-using org.GraphDefined.Vanaheimr.Illias;
-
-#endregion
-
-namespace cloud.charging.open.protocols.OCPI
-{
-
-    /// <summary>
-    /// Extension methods for user identifications.
-    /// </summary>
-    public static class UserIdExtensions
-    {
+﻿///*
+// * Copyright (c) 2015-2023 GraphDefined GmbH <achim.friedland@graphdefined.com>
+// * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
+// *
+// * Licensed under the Apache License, User 2.0 (the "License");
+// * you may not use this file except in compliance with the License.
+// * You may obtain a copy of the License at
+// *
+// *     http://www.apache.org/licenses/LICENSE-2.0
+// *
+// * Unless required by applicable law or agreed to in writing, software
+// * distributed under the License is distributed on an "AS IS" BASIS,
+// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// * See the License for the specific language governing permissions and
+// * limitations under the License.
+// */
+
+//#region Usings
+
+//using org.GraphDefined.Vanaheimr.Illias;
+
+//#endregion
+
+//namespace cloud.charging.open.protocols.OCPI
+//{
+
+//    /// <summary>
+//    /// Extension methods for user identifications.
+//    /// </summary>
+//    public static class UserIdExtensions
+//    {
 
-        /// <summary>
-        /// Indicates whether this user identification is null or empty.
-        /// </summary>
-        /// <param name="UserId">An user identification.</param>
-        public static Boolean IsNullOrEmpty(this User_Id? UserId)
-            => !UserId.HasValue || UserId.Value.IsNullOrEmpty;
-
-        /// <summary>
-        /// Indicates whether this user identification is NOT null or empty.
-        /// </summary>
-        /// <param name="UserId">An user identification.</param>
-        public static Boolean IsNotNullOrEmpty(this User_Id? UserId)
-            => UserId.HasValue && UserId.Value.IsNotNullOrEmpty;
+//        /// <summary>
+//        /// Indicates whether this user identification is null or empty.
+//        /// </summary>
+//        /// <param name="UserId">An user identification.</param>
+//        public static Boolean IsNullOrEmpty(this User_Id? UserId)
+//            => !UserId.HasValue || UserId.Value.IsNullOrEmpty;
+
+//        /// <summary>
+//        /// Indicates whether this user identification is NOT null or empty.
+//        /// </summary>
+//        /// <param name="UserId">An user identification.</param>
+//        public static Boolean IsNotNullOrEmpty(this User_Id? UserId)
+//            => UserId.HasValue && UserId.Value.IsNotNullOrEmpty;
 
-    }
+//    }
 
 
-    /// <summary>
-    /// The unique identification of an user.
-    /// </summary>
-    public readonly struct User_Id : IId<User_Id>
-    {
+//    /// <summary>
+//    /// The unique identification of an user.
+//    /// </summary>
+//    public readonly struct User_Id : IId<User_Id>
+//    {
 
-        #region Data
+//        #region Data
 
-        /// <summary>
-        /// The internal identification.
-        /// </summary>
-        private readonly String InternalId;
+//        /// <summary>
+//        /// The internal identification.
+//        /// </summary>
+//        private readonly String InternalId;
 
-        #endregion
+//        #endregion
 
-        #region Properties
+//        #region Properties
 
-        /// <summary>
-        /// Indicates whether this user identification is null or empty.
-        /// </summary>
-        public Boolean IsNullOrEmpty
-            => InternalId.IsNullOrEmpty();
+//        /// <summary>
+//        /// Indicates whether this user identification is null or empty.
+//        /// </summary>
+//        public Boolean IsNullOrEmpty
+//            => InternalId.IsNullOrEmpty();
 
-        /// <summary>
-        /// Indicates whether this user identification is NOT null or empty.
-        /// </summary>
-        public Boolean IsNotNullOrEmpty
-            => InternalId.IsNotNullOrEmpty();
+//        /// <summary>
+//        /// Indicates whether this user identification is NOT null or empty.
+//        /// </summary>
+//        public Boolean IsNotNullOrEmpty
+//            => InternalId.IsNotNullOrEmpty();
 
-        /// <summary>
-        /// The length of the user identification.
-        /// </summary>
-        public UInt64 Length
-            => (UInt64) (InternalId?.Length ?? 0);
+//        /// <summary>
+//        /// The length of the user identification.
+//        /// </summary>
+//        public UInt64 Length
+//            => (UInt64) (InternalId?.Length ?? 0);
 
-        #endregion
+//        #endregion
 
-        #region Constructor(s)
+//        #region Constructor(s)
 
-        /// <summary>
-        /// Create a new user identification based on the given text.
-        /// </summary>
-        /// <param name="Text">The text representation of an user identification.</param>
-        private User_Id(String Text)
-        {
-            this.InternalId = Text;
-        }
+//        /// <summary>
+//        /// Create a new user identification based on the given text.
+//        /// </summary>
+//        /// <param name="Text">The text representation of an user identification.</param>
+//        private User_Id(String Text)
+//        {
+//            this.InternalId = Text;
+//        }
 
-        #endregion
+//        #endregion
 
 
-        #region (static) NewRandom
+//        #region (static) NewRandom
 
-        /// <summary>
-        /// Create a new random user identification.
-        /// </summary>
-        public static User_Id NewRandom
+//        /// <summary>
+//        /// Create a new random user identification.
+//        /// </summary>
+//        public static User_Id NewRandom
 
-            => Parse(Guid.NewGuid().ToString());
+//            => Parse(Guid.NewGuid().ToString());
 
-        #endregion
+//        #endregion
 
-        #region (static) Parse   (Text)
+//        #region (static) Parse   (Text)
 
-        /// <summary>
-        /// Parse the given text as an user identification.
-        /// </summary>
-        /// <param name="Text">A text representation of an user identification.</param>
-        public static User_Id Parse(String Text)
-        {
+//        /// <summary>
+//        /// Parse the given text as an user identification.
+//        /// </summary>
+//        /// <param name="Text">A text representation of an user identification.</param>
+//        public static User_Id Parse(String Text)
+//        {
 
-            if (TryParse(Text, out var userId))
-                return userId;
+//            if (TryParse(Text, out var userId))
+//                return userId;
 
-            throw new ArgumentException($"Invalid text representation of an user identification: '{Text}'!",
-                                        nameof(Text));
+//            throw new ArgumentException($"Invalid text representation of an user identification: '{Text}'!",
+//                                        nameof(Text));
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
-        #region (static) TryParse(Text)
+//        #region (static) TryParse(Text)
 
-        /// <summary>
-        /// Try to parse the given text as an user identification.
-        /// </summary>
-        /// <param name="Text">A text representation of an user identification.</param>
-        public static User_Id? TryParse(String Text)
-        {
+//        /// <summary>
+//        /// Try to parse the given text as an user identification.
+//        /// </summary>
+//        /// <param name="Text">A text representation of an user identification.</param>
+//        public static User_Id? TryParse(String Text)
+//        {
 
-            if (TryParse(Text, out var userId))
-                return userId;
+//            if (TryParse(Text, out var userId))
+//                return userId;
 
-            return null;
+//            return null;
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
-        #region (static) TryParse(Text, out UserId)
+//        #region (static) TryParse(Text, out UserId)
 
-        /// <summary>
-        /// Try to parse the given text as an user identification.
-        /// </summary>
-        /// <param name="Text">A text representation of an user identification.</param>
-        /// <param name="UserId">The parsed user identification.</param>
-        public static Boolean TryParse(String Text, out User_Id UserId)
-        {
+//        /// <summary>
+//        /// Try to parse the given text as an user identification.
+//        /// </summary>
+//        /// <param name="Text">A text representation of an user identification.</param>
+//        /// <param name="UserId">The parsed user identification.</param>
+//        public static Boolean TryParse(String Text, out User_Id UserId)
+//        {
 
-            Text = Text.Trim();
+//            Text = Text.Trim();
 
-            if (Text.IsNotNullOrEmpty())
-            {
-                try
-                {
-                    UserId = new User_Id(Text);
-                    return true;
-                }
-                catch
-                { }
-            }
+//            if (Text.IsNotNullOrEmpty())
+//            {
+//                try
+//                {
+//                    UserId = new User_Id(Text);
+//                    return true;
+//                }
+//                catch
+//                { }
+//            }
 
-            UserId = default;
-            return false;
+//            UserId = default;
+//            return false;
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
-        #region Clone
+//        #region Clone
 
-        /// <summary>
-        /// Clone this user identification.
-        /// </summary>
-        public User_Id Clone
+//        /// <summary>
+//        /// Clone this user identification.
+//        /// </summary>
+//        public User_Id Clone
 
-            => new (
-                   new String(InternalId?.ToCharArray())
-               );
+//            => new (
+//                   new String(InternalId?.ToCharArray())
+//               );
 
-        #endregion
+//        #endregion
 
 
-        #region Operator overloading
+//        #region Operator overloading
 
-        #region Operator == (UserId1, UserId2)
+//        #region Operator == (UserId1, UserId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="UserId1">An user identification.</param>
-        /// <param name="UserId2">Another user identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator == (User_Id UserId1,
-                                           User_Id UserId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="UserId1">An user identification.</param>
+//        /// <param name="UserId2">Another user identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator == (User_Id UserId1,
+//                                           User_Id UserId2)
 
-            => UserId1.Equals(UserId2);
+//            => UserId1.Equals(UserId2);
 
-        #endregion
+//        #endregion
 
-        #region Operator != (UserId1, UserId2)
+//        #region Operator != (UserId1, UserId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="UserId1">An user identification.</param>
-        /// <param name="UserId2">Another user identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator != (User_Id UserId1,
-                                           User_Id UserId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="UserId1">An user identification.</param>
+//        /// <param name="UserId2">Another user identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator != (User_Id UserId1,
+//                                           User_Id UserId2)
 
-            => !UserId1.Equals(UserId2);
+//            => !UserId1.Equals(UserId2);
 
-        #endregion
+//        #endregion
 
-        #region Operator <  (UserId1, UserId2)
+//        #region Operator <  (UserId1, UserId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="UserId1">An user identification.</param>
-        /// <param name="UserId2">Another user identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator < (User_Id UserId1,
-                                          User_Id UserId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="UserId1">An user identification.</param>
+//        /// <param name="UserId2">Another user identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator < (User_Id UserId1,
+//                                          User_Id UserId2)
 
-            => UserId1.CompareTo(UserId2) < 0;
+//            => UserId1.CompareTo(UserId2) < 0;
 
-        #endregion
+//        #endregion
 
-        #region Operator <= (UserId1, UserId2)
+//        #region Operator <= (UserId1, UserId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="UserId1">An user identification.</param>
-        /// <param name="UserId2">Another user identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator <= (User_Id UserId1,
-                                           User_Id UserId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="UserId1">An user identification.</param>
+//        /// <param name="UserId2">Another user identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator <= (User_Id UserId1,
+//                                           User_Id UserId2)
 
-            => UserId1.CompareTo(UserId2) <= 0;
+//            => UserId1.CompareTo(UserId2) <= 0;
 
-        #endregion
+//        #endregion
 
-        #region Operator >  (UserId1, UserId2)
+//        #region Operator >  (UserId1, UserId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="UserId1">An user identification.</param>
-        /// <param name="UserId2">Another user identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator > (User_Id UserId1,
-                                          User_Id UserId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="UserId1">An user identification.</param>
+//        /// <param name="UserId2">Another user identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator > (User_Id UserId1,
+//                                          User_Id UserId2)
 
-            => UserId1.CompareTo(UserId2) > 0;
+//            => UserId1.CompareTo(UserId2) > 0;
 
-        #endregion
+//        #endregion
 
-        #region Operator >= (UserId1, UserId2)
+//        #region Operator >= (UserId1, UserId2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="UserId1">An user identification.</param>
-        /// <param name="UserId2">Another user identification.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator >= (User_Id UserId1,
-                                           User_Id UserId2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="UserId1">An user identification.</param>
+//        /// <param name="UserId2">Another user identification.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator >= (User_Id UserId1,
+//                                           User_Id UserId2)
 
-            => UserId1.CompareTo(UserId2) >= 0;
+//            => UserId1.CompareTo(UserId2) >= 0;
 
-        #endregion
+//        #endregion
 
-        #endregion
+//        #endregion
 
-        #region IComparable<UserId> Members
+//        #region IComparable<UserId> Members
 
-        #region CompareTo(Object)
+//        #region CompareTo(Object)
 
-        /// <summary>
-        /// Compares two user identifications.
-        /// </summary>
-        /// <param name="Object">An user identification to compare with.</param>
-        public Int32 CompareTo(Object? Object)
+//        /// <summary>
+//        /// Compares two user identifications.
+//        /// </summary>
+//        /// <param name="Object">An user identification to compare with.</param>
+//        public Int32 CompareTo(Object? Object)
 
-            => Object is User_Id userId
-                   ? CompareTo(userId)
-                   : throw new ArgumentException("The given object is not an user identification!",
-                                                 nameof(Object));
+//            => Object is User_Id userId
+//                   ? CompareTo(userId)
+//                   : throw new ArgumentException("The given object is not an user identification!",
+//                                                 nameof(Object));
 
-        #endregion
+//        #endregion
 
-        #region CompareTo(UserId)
+//        #region CompareTo(UserId)
 
-        /// <summary>
-        /// Compares two user identifications.
-        /// </summary>
-        /// <param name="UserId">An user identification to compare with.</param>
-        public Int32 CompareTo(User_Id UserId)
+//        /// <summary>
+//        /// Compares two user identifications.
+//        /// </summary>
+//        /// <param name="UserId">An user identification to compare with.</param>
+//        public Int32 CompareTo(User_Id UserId)
 
-            => String.Compare(InternalId,
-                              UserId.InternalId,
-                              StringComparison.OrdinalIgnoreCase);
+//            => String.Compare(InternalId,
+//                              UserId.InternalId,
+//                              StringComparison.OrdinalIgnoreCase);
 
-        #endregion
+//        #endregion
 
-        #endregion
+//        #endregion
 
-        #region IEquatable<UserId> Members
+//        #region IEquatable<UserId> Members
 
-        #region Equals(Object)
+//        #region Equals(Object)
 
-        /// <summary>
-        /// Compares two user identifications for equality.
-        /// </summary>
-        /// <param name="Object">An user identification to compare with.</param>
-        public override Boolean Equals(Object? Object)
+//        /// <summary>
+//        /// Compares two user identifications for equality.
+//        /// </summary>
+//        /// <param name="Object">An user identification to compare with.</param>
+//        public override Boolean Equals(Object? Object)
 
-            => Object is User_Id userId &&
-                   Equals(userId);
+//            => Object is User_Id userId &&
+//                   Equals(userId);
 
-        #endregion
+//        #endregion
 
-        #region Equals(UserId)
+//        #region Equals(UserId)
 
-        /// <summary>
-        /// Compares two user identifications for equality.
-        /// </summary>
-        /// <param name="UserId">An user identification to compare with.</param>
-        public Boolean Equals(User_Id UserId)
+//        /// <summary>
+//        /// Compares two user identifications for equality.
+//        /// </summary>
+//        /// <param name="UserId">An user identification to compare with.</param>
+//        public Boolean Equals(User_Id UserId)
 
-            => String.Equals(InternalId,
-                             UserId.InternalId,
-                             StringComparison.OrdinalIgnoreCase);
+//            => String.Equals(InternalId,
+//                             UserId.InternalId,
+//                             StringComparison.OrdinalIgnoreCase);
 
-        #endregion
+//        #endregion
 
-        #endregion
+//        #endregion
 
-        #region GetHashCode()
+//        #region GetHashCode()
 
-        /// <summary>
-        /// Return the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code of this object.</returns>
-        public override Int32 GetHashCode()
+//        /// <summary>
+//        /// Return the hash code of this object.
+//        /// </summary>
+//        /// <returns>The hash code of this object.</returns>
+//        public override Int32 GetHashCode()
 
-            => InternalId?.ToLower().GetHashCode() ?? 0;
+//            => InternalId?.ToLower().GetHashCode() ?? 0;
 
-        #endregion
+//        #endregion
 
-        #region (override) ToString()
+//        #region (override) ToString()
 
-        /// <summary>
-        /// Return a text representation of this object.
-        /// </summary>
-        public override String ToString()
+//        /// <summary>
+//        /// Return a text representation of this object.
+//        /// </summary>
+//        public override String ToString()
 
-            => InternalId ?? "";
+//            => InternalId ?? "";
 
-        #endregion
+//        #endregion
 
-    }
+//    }
 
-}
+//}
