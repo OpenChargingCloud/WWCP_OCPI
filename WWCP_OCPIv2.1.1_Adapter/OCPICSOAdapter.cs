@@ -552,12 +552,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                });
 
 
-                var result = await RoamingNetwork.RemoteStart(ChargingLocation:       WWCP.ChargingLocation.FromEVSEId(wwcpEVSEId.Value),
-                                                              ChargingProduct:        null,
-                                                              ReservationId:          null,
-                                                              SessionId:              WWCP.ChargingSession_Id.NewRandom, // OCPI does not have its own charging session identification!
-                                                              ProviderId:             emspId.ToWWCP(),
-                                                              RemoteAuthentication:   WWCP.RemoteAuthentication.FromRemoteIdentification(WWCP.EMobilityAccount_Id.Parse(startSessionCommand.Token.Id.ToString())));
+                var providerId  = emspId.ToWWCP();
+
+                var result      = await RoamingNetwork.RemoteStart(ChargingLocation:       WWCP.ChargingLocation.FromEVSEId(wwcpEVSEId.Value),
+                                                                   ChargingProduct:        null,
+                                                                   ReservationId:          null,
+                                                                   SessionId:              providerId.HasValue // OCPI does not have its own charging session identification!
+                                                                                               ? WWCP.ChargingSession_Id.NewRandom(providerId.Value)
+                                                                                               : WWCP.ChargingSession_Id.NewRandom(),
+                                                                   ProviderId:             providerId,
+                                                                   RemoteAuthentication:   WWCP.RemoteAuthentication.FromRemoteIdentification(WWCP.EMobilityAccount_Id.Parse(startSessionCommand.Token.Id.ToString())));
 
 
                 if (result.Result == WWCP.RemoteStartResultTypes.Success)
@@ -1274,9 +1278,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         CustomEVSEIdConverter,
                                                         connectorId => true,
                                                         null,
-                                                        EVSE.Status.Timestamp > EVSE.LastChange
+                                                        EVSE.Status.Timestamp > EVSE.LastChangeDate
                                                             ? EVSE.Status.Timestamp
-                                                            : EVSE.LastChange,
+                                                            : EVSE.LastChangeDate,
                                                         out warnings);
 
                                 if (evse2 is not null)
@@ -1397,9 +1401,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         CustomEVSEIdConverter,
                                                         connectorId => true,
                                                         null,
-                                                        EVSE.Status.Timestamp > EVSE.LastChange
+                                                        EVSE.Status.Timestamp > EVSE.LastChangeDate
                                                             ? EVSE.Status.Timestamp
-                                                            : EVSE.LastChange,
+                                                            : EVSE.LastChangeDate,
                                                         out warnings);
 
                                 if (evse2 is not null)
@@ -1538,9 +1542,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         CustomEVSEIdConverter,
                                                         connectorId => true,
                                                         null,
-                                                        EVSE.Status.Timestamp > EVSE.LastChange
+                                                        EVSE.Status.Timestamp > EVSE.LastChangeDate
                                                             ? EVSE.Status.Timestamp
-                                                            : EVSE.LastChange,
+                                                            : EVSE.LastChangeDate,
                                                         out warnings);
 
                                 if (evse2 is not null)
@@ -1699,9 +1703,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                 CustomEVSEIdConverter,
                                                                 connectorId => true,
                                                                 null,
-                                                                evse.Status.Timestamp > evse.LastChange
+                                                                evse.Status.Timestamp > evse.LastChangeDate
                                                                     ? evse.Status.Timestamp
-                                                                    : evse.LastChange,
+                                                                    : evse.LastChangeDate,
                                                                 ref warnings);
 
                                         if (evse2 is not null)

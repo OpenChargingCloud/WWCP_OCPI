@@ -564,8 +564,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var wwcpCDR = new ChargeDetailRecord(
 
-                              Id:                             ChargeDetailRecord_Id.NewRandom,
-                              SessionId:                      ChargingSession_Id.   NewRandom,
+                              Id:                             ChargeDetailRecord_Id.NewRandom(),
+                              SessionId:                      ChargingSession_Id.   NewRandom(),
                               SessionTime:                    new StartEndDateTime(
                                                                   startTime,
                                                                   startTime + TimeSpan.FromHours(2)

@@ -504,9 +504,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     var ocpiEVSE = evse.ToOCPI(CustomEVSEUIdConverter,
                                                CustomEVSEIdConverter,
-                                               evse.Status.Timestamp > evse.LastChange
+                                               evse.Status.Timestamp > evse.LastChangeDate
                                                    ? evse.Status.Timestamp
-                                                   : evse.LastChange,
+                                                   : evse.LastChangeDate,
                                                ref warnings);
 
                     if (ocpiEVSE is not null)
@@ -561,7 +561,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            Images:               Array.Empty<Image>(),
                            EnergyMix:            null,
 
-                           LastUpdated:          ChargingPool.LastChange
+                           LastUpdated:          ChargingPool.LastChangeDate
 
                        );
 
@@ -709,7 +709,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     EnergyMeter.Description.ToOCPI(),
                     EnergyMeter.CustomData,
                     EnergyMeter.InternalData,
-                    EnergyMeter.LastChange);
+                    EnergyMeter.LastChangeDate);
 
         #endregion
 
@@ -818,7 +818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            ParkingRestrictions:   Array.Empty<ParkingRestrictions>(),
                            Images:                Array.Empty<Image>(),
 
-                           LastUpdated:           LastUpdate ?? EVSE.LastChange
+                           LastUpdated:           LastUpdate ?? EVSE.LastChangeDate
 
                        );
 
@@ -875,9 +875,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                             CustomEVSEIdConverter,
-                                            evse.Status.Timestamp > evse.LastChange
+                                            evse.Status.Timestamp > evse.LastChangeDate
                                                 ? evse.Status.Timestamp
-                                                : evse.LastChange,
+                                                : evse.LastChangeDate,
                                             out var warning);
 
                     if (evse2 is not null)
@@ -1063,7 +1063,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            //TariffId:              Via lookup table!
                            TermsAndConditionsURL:   EVSE.Operator?.TermsAndConditionsURL,
 
-                           LastUpdated:             EVSE.LastChange
+                           LastUpdated:             EVSE.LastChangeDate
 
                        );
 
@@ -1373,7 +1373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            CreditReferenceId:          null,
                            HomeChargingCompensation:   null,
 
-                           LastUpdated:                ChargeDetailRecord.LastChange// Timestamp.Now
+                           LastUpdated:                ChargeDetailRecord.LastChangeDate// Timestamp.Now
 
                        );
 

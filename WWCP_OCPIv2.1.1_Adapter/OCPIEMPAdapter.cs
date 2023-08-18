@@ -62,31 +62,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Properties
 
-        /// <summary>
-        /// The global unique identification.
-        /// </summary>
-        [Mandatory]
-        public EMPRoamingProvider_Id                        Id                                   { get; }
-
-        /// <summary>
-        /// The multi-language name.
-        /// </summary>
-        [Optional]
-        public I18NString                                   Name                                 { get; }
-
-        /// <summary>
-        /// The multi-language description.
-        /// </summary>
-        [Optional]
-        public I18NString                                   Description                          { get; }
-
-        /// <summary>
-        /// The roaming network.
-        /// </summary>
-        [Mandatory]
-        public IRoamingNetwork                              RoamingNetwork                       { get; }
-
-
         public EVSEId_2_WWCPEVSEId_Delegate?                CustomEVSEIdConverter                { get; }
         public EVSE_2_WWCPEVSE_Delegate?                    CustomEVSEConverter                  { get; }
         public StatusType_2_WWCPEVSEStatusUpdate_Delegate?  CustomEVSEStatusUpdateConverter      { get; }
@@ -451,11 +426,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
-            this.Id                                 = Id;
-            this.Name                               = Name;
-            this.Description                        = Description;
-            this.RoamingNetwork                     = RoamingNetwork;
-
             this.CommonAPI                          = CommonAPI;
             this.EMSPAPI                            = new HTTP.EMSPAPI(
                                                           this.CommonAPI,
@@ -553,11 +523,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    InternalData)
 
         {
-
-            this.Id                                 = Id;
-            this.Name                               = Name;
-            this.Description                        = Description;
-            this.RoamingNetwork                     = RoamingNetwork;
 
             this.CommonAPI                          = EMSPAPI.CommonAPI;
             this.EMSPAPI                            = EMSPAPI;
@@ -863,7 +828,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (response.StatusCode == 1000)
                     // The OCPI response is just a "command accepted" information!
                     return RemoteStartResult.AsyncOperation(new ChargingSession(
-                                                                ChargingSession_Id.NewRandom,
+                                                                ChargingSession_Id.NewRandom(),
                                                                 eventTrackingId
                                                             ));
 
