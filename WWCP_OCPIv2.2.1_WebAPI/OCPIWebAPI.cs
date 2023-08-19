@@ -1313,7 +1313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              #region Parse JSON, Token, ExpirationTimestamp, ...
 
-                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse))
+                                             if (!Request.TryParseJSONObjectRequestBody(out JObject JSON, out HTTPResponse))
                                                  return HTTPResponse.AsImmutable;
 
                                              #region Parse Token                     [mandatory]
@@ -1799,7 +1799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              #region Parse JSON and ReservationId
 
-                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse))
+                                             if (!Request.TryParseJSONObjectRequestBody(out JObject JSON, out HTTPResponse))
                                                  return HTTPResponse.AsImmutable;
 
                                              #region Parse ReservationId    [mandatory]
@@ -2139,7 +2139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              #region Parse JSON and SessionId
 
-                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse))
+                                             if (!Request.TryParseJSONObjectRequestBody(out JObject JSON, out HTTPResponse))
                                                  return HTTPResponse.AsImmutable;
 
                                              #region Parse Token                     [mandatory]
@@ -2598,7 +2598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              #region Parse JSON and SessionId
 
-                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse))
+                                             if (!Request.TryParseJSONObjectRequestBody(out JObject JSON, out HTTPResponse))
                                                  return HTTPResponse.AsImmutable;
 
                                              #region Parse SessionId    [mandatory]
@@ -2932,7 +2932,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
                                              #region Parse JSON and LocationId, EVSEUId, ConnectorId
 
-                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse))
+                                             if (!Request.TryParseJSONObjectRequestBody(out JObject JSON, out HTTPResponse))
                                                  return HTTPResponse.AsImmutable;
 
                                              #region Parse LocationId    [mandatory]

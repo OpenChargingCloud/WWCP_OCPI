@@ -360,7 +360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   String?                    JSONLDContext        = null)
         {
 
-            var result = HTTPRequest.TryParseJObjectRequestBody(out JSON,
+            var result = HTTPRequest.TryParseJSONObjectRequestBody(out JSON,
                                                                 out var HTTPResponseBuilder,
                                                                 AllowEmptyHTTPBody,
                                                                 JSONLDContext);
@@ -384,7 +384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  String?                   JSONLDContext        = null)
         {
 
-            var result = HTTPRequest.TryParseJArrayRequestBody(out JSON,
+            var result = HTTPRequest.TryParseJSONArrayRequestBody(out JSON,
                                                                out var HTTPResponseBuilder,
                                                                AllowEmptyHTTPBody,
                                                                JSONLDContext);
