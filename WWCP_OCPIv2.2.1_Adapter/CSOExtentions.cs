@@ -191,7 +191,7 @@ namespace cloud.charging.open.protocols.WWCP
             OCPIConfigurator?.Invoke(newRoamingProvider);
 
             return RoamingNetwork.
-                       CreateEMPRoamingProvider(newRoamingProvider,
+                       CreateCSORoamingProvider(newRoamingProvider,
                                                 Configurator) as OCPIv2_2_1.OCPICSOAdapter;
 
         }
