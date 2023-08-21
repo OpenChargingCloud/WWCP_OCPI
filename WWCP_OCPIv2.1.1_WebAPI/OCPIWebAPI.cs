@@ -30,6 +30,8 @@ using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using org.GraphDefined.Vanaheimr.Hermod.Mail;
+using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 
 #endregion
 
@@ -453,14 +455,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                           CommonAPI                                   CommonAPI,
 
-                          HTTPPath?                                   OverlayURLPathPrefix   = null,
-                          HTTPPath?                                   WebAPIURLPathPrefix    = null,
-                          HTTPPath?                                   BasePath               = null,
-                          String                                      HTTPRealm              = DefaultHTTPRealm,
-                          IEnumerable<KeyValuePair<String, String>>?  HTTPLogins             = null,
-                          String?                                     HTMLTemplate           = null,
+                          HTTPPath?                                   OverlayURLPathPrefix             = null,
+                          HTTPPath?                                   WebAPIURLPathPrefix              = null,
+                          HTTPPath?                                   BasePath                         = null,
+                          String                                      HTTPRealm                        = DefaultHTTPRealm,
+                          IEnumerable<KeyValuePair<String, String>>?  HTTPLogins                       = null,
+                          String?                                     HTMLTemplate                     = null,
 
-                          TimeSpan?                                   RequestTimeout         = null)
+                          Organization_Id?                            AdminOrganizationId              = null,
+                          EMailAddress?                               APIRobotEMailAddress             = null,
+                          String?                                     APIRobotGPGPassphrase            = null,
+                          ISMTPClient?                                SMTPClient                       = null,
+
+                          PasswordQualityCheckDelegate?               PasswordQualityCheck             = null,
+                          HTTPCookieName?                             CookieName                       = null,
+                          Boolean                                     UseSecureCookies                 = true,
+                          TimeSpan?                                   MaxSignInSessionLifetime         = null,
+                          Languages?                                  DefaultLanguage                  = null,
+                          Byte?                                       MinUserIdLength                  = null,
+                          Byte?                                       MinRealmLength                   = null,
+                          Byte?                                       MinUserNameLength                = null,
+                          Byte?                                       MinUserGroupIdLength             = null,
+                          UInt16?                                     MinAPIKeyLength                  = null,
+                          Byte?                                       MinMessageIdLength               = null,
+                          Byte?                                       MinOrganizationIdLength          = null,
+                          Byte?                                       MinOrganizationGroupIdLength     = null,
+                          Byte?                                       MinNotificationMessageIdLength   = null,
+                          Byte?                                       MinNewsPostingIdLength           = null,
+                          Byte?                                       MinNewsBannerIdLength            = null,
+                          Byte?                                       MinFAQIdLength                   = null,
+
+                          Boolean                                     SkipURLTemplates                 = true,
+
+                          TimeSpan?                                   RequestTimeout                   = null)
 
             : base(HTTPServer,
                    null,
@@ -469,24 +496,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                    BasePath,
 
                    WebAPIURLPathPrefix ?? DefaultURLPathPrefix,
-                   null, // HTMLTemplate,
-                   null, // APIVersionHashes,
 
-                   null, // DisableMaintenanceTasks,
-                   null, // MaintenanceInitialDelay,
-                   null, // MaintenanceEvery,
+                   //AdminOrganizationId:              AdminOrganizationId,
+                   //APIRobotEMailAddress:             APIRobotEMailAddress,
+                   //APIRobotGPGPassphrase:            APIRobotGPGPassphrase,
+                   //SMTPClient:                       SMTPClient,
+                   //SkipURLTemplates:                 SkipURLTemplates,
+                   //
+                   //PasswordQualityCheck:             PasswordQualityCheck,
+                   //CookieName:                       CookieName,
+                   //UseSecureCookies:                 UseSecureCookies,
+                   //MaxSignInSessionLifetime:         MaxSignInSessionLifetime,
+                   //DefaultLanguage:                  DefaultLanguage,
+                   //MinUserIdLength:                  MinUserIdLength,
+                   //MinRealmLength:                   MinRealmLength,
+                   //MinUserNameLength:                MinUserNameLength,
+                   //MinUserGroupIdLength:             MinUserGroupIdLength,
+                   //MinAPIKeyLength:                  MinAPIKeyLength,
+                   //MinMessageIdLength:               MinMessageIdLength,
+                   //MinOrganizationIdLength:          MinOrganizationIdLength,
+                   //MinOrganizationGroupIdLength:     MinOrganizationGroupIdLength,
+                   //MinNotificationMessageIdLength:   MinNotificationMessageIdLength,
+                   //MinNewsPostingIdLength:           MinNewsPostingIdLength,
+                   //MinNewsBannerIdLength:            MinNewsBannerIdLength,
+                   //MinFAQIdLength:                   MinFAQIdLength,
 
-                   null, // DisableWardenTasks,
-                   null, // WardenInitialDelay,
-                   null, // WardenCheckEvery,
-
-                   null, // IsDevelopment,
-                   null, // DevelopmentServers,
-                   null, // DisableLogging,
-                   null, // LoggingPath,
-                   null, // LogfileName,
-                   null, // LogfileCreator,
-                   false)// AutoStart
+                   AutoStart: false)// AutoStart
 
         {
 
@@ -827,7 +862,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                     ToArray();
                                              var filteredCount                = filteredRemoteParties.ULongCount();
 
-                                             var JSONResults                  = filteredRemoteParties.
+                                             var jsonResults                  = filteredRemoteParties.
                                                                                     OrderBy(remoteParty => remoteParty.Id).
                                                                                     ToJSON (skip,
                                                                                             take,
@@ -851,9 +886,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                          ? JSONObject.Create(
                                                                                                new JProperty("totalCount",     totalCount),
                                                                                                new JProperty("filteredCount",  filteredCount),
-                                                                                               new JProperty("searchResults",  JSONResults)
+                                                                                               new JProperty("searchResults",  jsonResults)
                                                                                            ).ToUTF8Bytes()
-                                                                                         : JSONResults.ToUTF8Bytes(),
+                                                                                         : jsonResults.ToUTF8Bytes(),
                                                      X_ExpectedTotalNumberOfItems  = filteredCount,
                                                      Connection                    = "close",
                                                      Vary                          = "Accept"
@@ -954,34 +989,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
-                                             #region Check RemotePartyId URI parameter
-
-                                             if (!Request.ParseRemoteParty(this,
-                                                                           out RemoteParty_Id?       RemotePartyId,
-                                                                           out RemoteParty           RemoteParty,
-                                                                           out HTTPResponse.Builder  HTTPResponse))
-                                             {
-                                                 return Task.FromResult(HTTPResponse.AsImmutable);
-                                             }
-
-                                             #endregion
-
                                              #region Get HTTP user and its organizations
 
                                              // Will return HTTP 401 Unauthorized, when the HTTP user is unknown!
                                              //if (!TryGetHTTPUser(Request,
-                                             //                    out User                   HTTPUser,
-                                             //                    out HashSet<Organization>  HTTPOrganizations,
-                                             //                    out HTTPResponse.Builder   Response,
-                                             //                    Recursive:                 true))
+                                             //                    out var httpUser,
+                                             //                    out var httpOrganizations,
+                                             //                    out var httpResponseBuilder1,
+                                             //                    Access_Levels.ReadWrite,
+                                             //                    Recursive: true) ||
+                                             //    httpUser is null)
                                              //{
-                                             //    return Task.FromResult(Response.AsImmutable);
+                                             //    return Task.FromResult(httpResponseBuilder1!.AsImmutable);
                                              //}
 
                                              #endregion
 
+                                             #region Check RemotePartyId URI parameter
 
-                                             var includeCryptoHash  = Request.QueryString.GetBoolean("includeCryptoHash", true);
+                                             if (!Request.ParseRemoteParty(this,
+                                                                           out var remotePartyId,
+                                                                           out var remoteParty,
+                                                                           out var httpResponseBuilder))
+                                             {
+                                                 return Task.FromResult(httpResponseBuilder!.AsImmutable);
+                                             }
+
+                                             #endregion
+
 
                                              return Task.FromResult(
                                                         //HTTPOrganizations.Contains(RemoteParty.Owner) ||
@@ -995,13 +1030,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
-                                                                  ETag                       = RemoteParty.ETag,
+                                                                  ETag                       = remoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
-                                                                                               RemoteParty.ToJSON(false,
+                                                                                               remoteParty.ToJSON(false,
                                                                                                                   CustomRemotePartySerializer,
                                                                                                                   CustomBusinessDetailsSerializer,
                                                                                                                   CustomImageSerializer,
@@ -3102,11 +3137,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         }
 
         #endregion
-
-
-
-
-
 
 
 

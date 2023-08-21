@@ -213,7 +213,7 @@ interface IAccessInfo {
 }
 
 interface IRemoteAccessInfo {
-    token:                           string;
+    accessToken:                     string;
     versionsURL:                     string;
     versionIds:                      Array<string>;
     selectedVersionId:               string;

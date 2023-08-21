@@ -21,7 +21,7 @@ function StartRemoteParties() {
                     remoteTokensDiv.className = "remoteTokens";
                     remoteTokensDiv.innerHTML = ((_b = remoteParty.remoteAccessInfos) === null || _b === void 0 ? void 0 : _b.length) > 0
                         ? (remoteParty.remoteAccessInfos.map(remoteAccessInfo => remoteAccessInfo.versionsURL + "<br />" +
-                            "<i class=\"far fa-arrow-alt-circle-right\"></i>" + EncodeToken(remoteAccessInfo.token) + "<br />").
+                            "<i class=\"far fa-arrow-alt-circle-right\"></i>" + EncodeToken(remoteAccessInfo.accessToken) + "<br />").
                             join())
                         : "";
                     const accessTokensDiv = remotePartyDiv.appendChild(document.createElement('div'));

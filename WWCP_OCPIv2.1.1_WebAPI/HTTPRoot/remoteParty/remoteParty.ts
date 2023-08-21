@@ -100,7 +100,7 @@ function StartRemoteParty(versionId: string) {
                             remoteAccessTokenValue.className   = "value";
 
                             const remoteAccessTokenInput       = remoteAccessTokenValue.appendChild(document.createElement('input')) as HTMLInputElement;
-                            remoteAccessTokenInput.value       = remoteAccessInfo.token;
+                            remoteAccessTokenInput.value       = remoteAccessInfo.accessToken;
 
 
                             const remoteAccessStatus           = remoteAccessInfoDiv.appendChild(document.createElement('div')) as HTMLDivElement;
