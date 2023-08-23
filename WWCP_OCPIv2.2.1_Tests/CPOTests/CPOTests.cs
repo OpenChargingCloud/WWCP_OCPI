@@ -2054,9 +2054,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                           new TariffElement(
                                                                                               new[] {
                                                                                                   PriceComponent.ChargingTime(
-                                                                                                      TimeSpan.FromSeconds(300),
                                                                                                       2.00M,
-                                                                                                      0.10M
+                                                                                                      0.10M,
+                                                                                                      TimeSpan.FromSeconds(300)
                                                                                                   )
                                                                                               },
                                                                                               new TariffRestrictions(

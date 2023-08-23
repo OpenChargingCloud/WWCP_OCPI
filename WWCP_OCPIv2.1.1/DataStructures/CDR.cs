@@ -33,6 +33,58 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
+    /// Extensions method for charge detail records.
+    /// </summary>
+    public static class CDRExtensions
+    {
+
+        #region AugemntCDRWithTariff(this CDR, Tariff)
+
+        public static CDR AugemntCDRWithTariff(this CDR  CDR,
+                                               Tariff    Tariff)
+        {
+
+            var chargingPeriods = CDR.ChargingPeriods;
+
+
+
+
+            var augmentedCDR  = new CDR(
+                                    CDR.CountryCode,
+                                    CDR.PartyId,
+                                    CDR.Id,
+                                    CDR.Start,
+                                    CDR.Stop,
+                                    CDR.AuthId,
+                                    CDR.AuthMethod,
+                                    CDR.Location,
+                                      Tariff.Currency,
+                                      CDR.ChargingPeriods,
+                                      CDR.TotalCost,
+                                      CDR.TotalEnergy,
+                                      CDR.TotalTime,
+
+                                    CDR.MeterId,
+                                    CDR.EnergyMeter,
+                                    CDR.TransparencySoftwares,
+                                    new[] { Tariff },
+                                    CDR.SignedData,
+                                      CDR.TotalParkingTime,
+                                    CDR.Remark,
+                                    CDR.Created,
+                                    CDR.LastUpdated
+                                );
+
+            return augmentedCDR;
+
+        }
+
+        #endregion
+
+    }
+
+
+    /// <summary>
     /// The charge detail record describes the charging session and its costs,
     /// how these costs are composed, etc.
     /// </summary>
