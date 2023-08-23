@@ -92,13 +92,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
-        #region Flat                          (Price, VAT = null)
+        #region Flat        (Price, VAT = null)
 
         /// <summary>
         /// Create a new flat rate price component.
         /// </summary>
         /// <param name="Price">A flat rate price (excl. VAT).</param>
-        /// <param name="VAT">An applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
         public static PriceComponent FlatRate(Decimal   Price,
                                               Decimal?  VAT   = null)
 
@@ -109,41 +108,61 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ChargingTime(BillingIncrement, Price, VAT = null)
+        #region Energy      (Price, VAT = null, StepSize = 1)
+
+        /// <summary>
+        /// Create a new energy price component.
+        /// </summary>
+        /// <param name="Price">An energy price (excl. VAT).</param>
+        /// <param name="StepSize">An optional minimum granularity of Wh that will be billed.</param>
+        public static PriceComponent Energy(Decimal   Price,
+                                            Decimal?  VAT        = null,
+                                            UInt32    StepSize   = 1)
+
+            => new (TariffDimension.ENERGY,
+                    Price,
+                    VAT,
+                    StepSize);
+
+        #endregion
+
+        #region ChargingTime(Price, VAT = null, Duration = null)
 
         /// <summary>
         /// Create a new time-based charging price component.
         /// </summary>
-        /// <param name="BillingIncrement">A minimum granularity of time in seconds that you will be billed.</param>
         /// <param name="Price">A price per time span (excl. VAT).</param>
-        /// <param name="VAT">An applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
-        public static PriceComponent ChargingTime(TimeSpan  BillingIncrement,
-                                                  Decimal   Price,
-                                                  Decimal?  VAT   = null)
+        /// <param name="Duration">An optional minimum granularity of time that will be billed.</param>
+        public static PriceComponent ChargingTime(Decimal    Price,
+                                                  Decimal?   VAT        = null,
+                                                  TimeSpan?  Duration   = null)
 
             => new (TariffDimension.TIME,
                     Price,
                     VAT,
-                    (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
+                    Duration.HasValue
+                        ? (UInt32) Math.Round(Duration.Value.TotalSeconds, 0)
+                        : 1);
 
         #endregion
 
-        #region ParkingTime (BillingIncrement, Price, VAT = null)
+        #region ParkingTime (Price, VAT = null, Duration = null)
 
         /// <summary>
         /// Create a new time-based parking price component.
         /// </summary>
-        /// <param name="BillingIncrement">A minimum granularity of time in seconds that you will be billed.</param>
         /// <param name="Price">A price per time span (excl. VAT).</param>
-        /// <param name="VAT">An applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
-        public static PriceComponent ParkingTime(TimeSpan  BillingIncrement,
-                                                 Decimal   Price,
-                                                 Decimal?  VAT = null)
+        /// <param name="Duration">An optional minimum granularity of time that will be billed.</param>
+        public static PriceComponent ParkingTime(Decimal    Price,
+                                                 Decimal?   VAT        = null,
+                                                 TimeSpan?  Duration   = null)
 
-            => new PriceComponent(TariffDimension.PARKING_TIME,
-                                  Price,
-                                  VAT,
-                                  (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
+            => new (TariffDimension.PARKING_TIME,
+                    Price,
+                    VAT,
+                    Duration.HasValue
+                        ? (UInt32) Math.Round(Duration.Value.TotalSeconds, 0)
+                        : 1);
 
         #endregion
 

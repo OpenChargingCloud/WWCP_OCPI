@@ -99,18 +99,19 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) NewRandom
+        #region (static) NewRandom(Length = 20)
 
         /// <summary>
         /// Create a new random location identification.
         /// </summary>
-        public static Location_Id NewRandom
+        /// <param name="Length">The expected length of the location identification.</param>
+        public static Location_Id NewRandom(Byte Length = 30)
 
-            => Parse(Guid.NewGuid().ToString());
+            => new (RandomExtensions.RandomString(Length));
 
         #endregion
 
-        #region (static) Parse   (Text)
+        #region (static) Parse    (Text)
 
         /// <summary>
         /// Parse the given text as a location identification.
@@ -129,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as a location identification.
@@ -147,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text, out LocationId)
+        #region (static) TryParse (Text, out LocationId)
 
         /// <summary>
         /// Try to parse the given text as a location identification.

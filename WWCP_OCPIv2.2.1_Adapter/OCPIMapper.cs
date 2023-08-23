@@ -1270,10 +1270,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 foreach (var energyMeteringValue in ChargeDetailRecord.EnergyMeteringValues)
                 {
                     chargingPeriods.Add(
-                        new ChargingPeriod(
+                        ChargingPeriod.Create(
                             energyMeteringValue.Timestamp,
-                            new CDRDimension[] {
-                                new CDRDimension(
+                            new[] {
+                                CDRDimension.Create(
                                     CDRDimensionType.ENERGY,
                                     energyMeteringValue.Value
                                 )

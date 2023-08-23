@@ -99,7 +99,19 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) Parse   (Text)
+        #region (static) NewRandom(Length = 20)
+
+        /// <summary>
+        /// Create a new random authentication credential identification.
+        /// </summary>
+        /// <param name="Length">The expected length of the authentication credential identification.</param>
+        public static Auth_Id NewRandom(Byte Length = 30)
+
+            => new (RandomExtensions.RandomString(Length));
+
+        #endregion
+
+        #region (static) Parse    (Text)
 
         /// <summary>
         /// Parse the given text as an authentication credential identification.
@@ -118,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as an authentication credential identification.
@@ -136,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text, out AuthId)
+        #region (static) TryParse (Text, out AuthId)
 
         /// <summary>
         /// Try to parse the given text as an authentication credential identification.

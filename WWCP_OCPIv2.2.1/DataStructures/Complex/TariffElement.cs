@@ -38,13 +38,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Enumeration of price components that make up the pricing of this tariff.
         /// </summary>
         [Mandatory]
-        public IEnumerable<PriceComponent>      PriceComponents       { get; }
+        public IEnumerable<PriceComponent>  PriceComponents       { get; }
 
         /// <summary>
         /// Enumeration of tariff restrictions.
         /// </summary>
         [Optional]
-        public IEnumerable<TariffRestrictions>  TariffRestrictions    { get;  }
+        public TariffRestrictions?          TariffRestrictions    { get;  }
 
         #endregion
 
@@ -59,7 +59,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public TariffElement(params PriceComponent[]  PriceComponents)
 
             : this(PriceComponents,
-                   Array.Empty<TariffRestrictions>())
+                   null)
 
         { }
 
@@ -72,15 +72,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="PriceComponents">An enumeration of price components that make up the pricing of this tariff.</param>
         /// <param name="TariffRestrictions">An enumeration of tariff restrictions.</param>
-        public TariffElement(IEnumerable<PriceComponent>       PriceComponents,
-                             IEnumerable<TariffRestrictions>?  TariffRestrictions   = null)
+        public TariffElement(IEnumerable<PriceComponent>  PriceComponents,
+                             TariffRestrictions?          TariffRestrictions   = null)
         {
 
             if (!PriceComponents.Any())
-                throw new ArgumentNullException(nameof(PriceComponents),  "The given enumeration of price components must not be null or empty!");
+                throw new ArgumentNullException(nameof(PriceComponents), "The given enumeration of price components must not be empty!");
 
-            this.PriceComponents     = PriceComponents.    Distinct();
-            this.TariffRestrictions  = TariffRestrictions?.Distinct() ?? Array.Empty<TariffRestrictions>();
+            this.PriceComponents     = PriceComponents.Distinct();
+            this.TariffRestrictions  = TariffRestrictions;
 
         }
 
@@ -97,8 +97,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                              TariffRestrictions  TariffRestriction)
         {
 
-            this.PriceComponents     = new PriceComponent[]     { PriceComponent };
-            this.TariffRestrictions  = new TariffRestrictions[] { TariffRestriction };
+            this.PriceComponents     = new[] { PriceComponent };
+            this.TariffRestrictions  = TariffRestriction;
 
         }
 
@@ -202,7 +202,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     return false;
                 }
 
-                #region Parse PriceComponents           [mandatory]
+                #region Parse PriceComponents       [mandatory]
 
                 if (!JSON.ParseMandatoryHashSet("price_components",
                                                 "price components",
@@ -215,13 +215,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #endregion
 
-                #region Parse TariffRestrictions        [optional]
+                #region Parse TariffRestrictions    [optional]
 
-                if (JSON.ParseOptionalHashSet("restrictions",
-                                              "tariff restrictions",
-                                              OCPIv2_2_1.TariffRestrictions.TryParse,
-                                              out HashSet<TariffRestrictions> TariffRestrictions,
-                                              out ErrorResponse))
+                if (JSON.ParseOptionalJSON("restrictions",
+                                           "tariff restrictions",
+                                           OCPIv2_2_1.TariffRestrictions.TryParse,
+                                           out TariffRestrictions? TariffRestrictions,
+                                           out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -267,10 +267,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var json = JSONObject.Create(
 
-                                 new JProperty("price_components",  new JArray(PriceComponents.   Select(priceComponent    => priceComponent.   ToJSON(CustomPriceComponentSerializer)))),
+                                 new JProperty("price_components",  new JArray(PriceComponents.Select(priceComponent => priceComponent.ToJSON(CustomPriceComponentSerializer)))),
 
-                           TariffRestrictions.SafeAny()
-                               ? new JProperty("restrictions",      new JArray(TariffRestrictions.Select(tariffRestriction => tariffRestriction.ToJSON(CustomTariffRestrictionsSerializer))))
+                           TariffRestrictions is not null
+                               ? new JProperty("restrictions",      TariffRestrictions.ToJSON(CustomTariffRestrictionsSerializer))
                                : null
 
                        );
@@ -290,8 +290,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public TariffElement Clone()
 
-            => new (PriceComponents.   Select(priceComponent    => priceComponent.   Clone()).ToArray(),
-                    TariffRestrictions.Select(tariffRestriction => tariffRestriction.Clone()).ToArray());
+            => new (PriceComponents.Select(priceComponent => priceComponent.Clone()).ToArray(),
+                    TariffRestrictions?.Clone());
 
         #endregion
 
@@ -353,11 +353,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="TariffElement">A charging tariff element to compare with.</param>
         public Boolean Equals(TariffElement TariffElement)
 
-            => PriceComponents.   Count().Equals(TariffElement.PriceComponents.   Count())        &&
-               TariffRestrictions.Count().Equals(TariffElement.TariffRestrictions.Count())        &&
+            => PriceComponents.Count().Equals(TariffElement.PriceComponents.Count()) &&
+               PriceComponents.All(priceComponents => TariffElement.PriceComponents.Contains(priceComponents)) &&
 
-               PriceComponents.   All(priceComponents    => TariffElement.PriceComponents.   Contains(priceComponents)) &&
-               TariffRestrictions.All(tariffRestrictions => TariffElement.TariffRestrictions.Contains(tariffRestrictions));
+             ((TariffRestrictions is     null && TariffElement.TariffRestrictions is     null) ||
+              (TariffRestrictions is not null && TariffElement.TariffRestrictions is not null && TariffRestrictions == TariffElement.TariffRestrictions));
 
         #endregion
 
@@ -374,8 +374,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             unchecked
             {
 
-                return PriceComponents.   CalcHashCode() * 3 ^
-                       TariffRestrictions.CalcHashCode();
+                return PriceComponents.    CalcHashCode() * 3 ^
+                      (TariffRestrictions?.GetHashCode() ?? 0);
 
             }
         }
@@ -389,12 +389,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(
-
-                   PriceComponents.   Count(), " price component(s), ",
-                   TariffRestrictions.Count(), " tariff restriction(s)"
-
-               );
+            => $"{PriceComponents.Count()} price component(s){(TariffRestrictions is not null ? " with tariff restrictions" : "")}!";
 
         #endregion
 

@@ -57,8 +57,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="Type">The charging dimension type.</param>
         /// <param name="Volume">Volume of the dimension consumed, measured according to the dimension type.</param>
-        public CDRDimension(CDRDimensionType  Type,
-                            Decimal           Volume)
+        private CDRDimension(CDRDimensionType  Type,
+                             Decimal           Volume)
         {
 
             this.Type    = Type;
@@ -68,6 +68,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+
+        #region (static) Create  (Type, Volume)
+
+        /// <summary>
+        /// Create new charging dimension.
+        /// </summary>
+        /// <param name="Type">The charging dimension type.</param>
+        /// <param name="Volume">Volume of the dimension consumed, measured according to the dimension type.</param>
+        public static CDRDimension Create(CDRDimensionType  Type,
+                                          Decimal           Volume)
+
+            => new (Type, Volume);
+
+        #endregion
 
         #region (static) Parse   (JSON, CustomCDRDimensionParser = null)
 

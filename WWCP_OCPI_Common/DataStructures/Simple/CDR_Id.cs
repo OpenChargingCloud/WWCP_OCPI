@@ -99,7 +99,19 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) Parse   (Text)
+        #region (static) NewRandom(Length = 20)
+
+        /// <summary>
+        /// Create a new random charge detail record identification.
+        /// </summary>
+        /// <param name="Length">The expected length of the charge detail record identification suffix.</param>
+        public static CDR_Id NewRandom(Byte Length = 30)
+
+            => new (RandomExtensions.RandomString(Length));
+
+        #endregion
+
+        #region (static) Parse    (Text)
 
         /// <summary>
         /// Parse the given text as a charge detail record identification.
@@ -118,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as a charge detail record identification.
@@ -136,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text, out CDRId)
+        #region (static) TryParse (Text, out CDRId)
 
         /// <summary>
         /// Try to parse the given text as a charge detail record identification.

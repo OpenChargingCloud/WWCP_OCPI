@@ -83,20 +83,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                            OCPI.Currency.EUR,
 
                            new ChargingPeriod[] {
-                               new ChargingPeriod(
+                               ChargingPeriod.Create(
                                    DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
                                    new[] {
-                                       new CDRDimension(
+                                       CDRDimension.Create(
                                            CDRDimensionType.ENERGY,
                                            1.33M
                                        )
                                    },
                                    Tariff_Id.Parse("DE*GEF*T0001")
                                ),
-                               new ChargingPeriod(
+                               ChargingPeriod.Create(
                                    DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
                                    new[] {
-                                       new CDRDimension(
+                                       CDRDimension.Create(
                                            CDRDimensionType.TIME,
                                            5.12M
                                        )
@@ -179,34 +179,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                    OCPI.Currency.EUR,
                                    new[] {
                                        new TariffElement(
-                                           new PriceComponent[] {
+                                           new[] {
                                                PriceComponent.ChargingTime(
                                                    TimeSpan.FromSeconds(300),
                                                    2.00M,
                                                    0.10M
                                                )
                                            },
-                                           new[] {
-                                               new TariffRestrictions(
-                                                   Time.FromHourMin(08,00),       // Start time
-                                                   Time.FromHourMin(18,00),       // End time
-                                                   DateTime.Parse("2020-12-01"),  // Start timestamp
-                                                   DateTime.Parse("2020-12-31"),  // End timestamp
-                                                   1.12M,                         // MinkWh
-                                                   5.67M,                         // MaxkWh
-                                                   1.34M,                         // MinCurrent
-                                                   8.89M,                         // MaxCurrent
-                                                   1.49M,                         // MinPower
-                                                   9.91M,                         // MaxPower
-                                                   TimeSpan.FromMinutes(10),      // MinDuration
-                                                   TimeSpan.FromMinutes(30),      // MaxDuration
-                                                   new DayOfWeek[] {
-                                                       DayOfWeek.Monday,
-                                                       DayOfWeek.Tuesday
-                                                   },
-                                                   ReservationRestrictions.RESERVATION
-                                               )
-                                           }
+                                           new TariffRestrictions(
+                                               Time.FromHourMin(08,00),       // Start time
+                                               Time.FromHourMin(18,00),       // End time
+                                               DateTime.Parse("2020-12-01"),  // Start timestamp
+                                               DateTime.Parse("2020-12-31"),  // End timestamp
+                                               1.12M,                         // MinkWh
+                                               5.67M,                         // MaxkWh
+                                               1.34M,                         // MinCurrent
+                                               8.89M,                         // MaxCurrent
+                                               1.49M,                         // MinPower
+                                               9.91M,                         // MaxPower
+                                               TimeSpan.FromMinutes(10),      // MinDuration
+                                               TimeSpan.FromMinutes(30),      // MaxDuration
+                                               new DayOfWeek[] {
+                                                   DayOfWeek.Monday,
+                                                   DayOfWeek.Tuesday
+                                               },
+                                               ReservationRestrictions.RESERVATION
+                                           )
                                        )
                                    },
                                    TariffTypes.PROFILE_GREEN,

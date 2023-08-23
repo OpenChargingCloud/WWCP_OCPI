@@ -76,19 +76,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                OCPI.Currency.EUR,
 
                                new[] {
-                                   new ChargingPeriod(
+                                   ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:49Z"),
                                        new[] {
-                                           new CDRDimension(
+                                           CDRDimension.Create(
                                                CDRDimensionType.ENERGY,
                                                1.33M
                                            )
                                        }
                                    ),
-                                   new ChargingPeriod(
+                                   ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:50Z"),
                                        new[] {
-                                           new CDRDimension(
+                                           CDRDimension.Create(
                                                CDRDimensionType.TIME,
                                                5.12M
                                            )
@@ -166,28 +166,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                            new TariffElement(
                                                new[] {
                                                    PriceComponent.ChargingTime(
-                                                       TimeSpan.FromSeconds(300),
-                                                       2.00M
+                                                       2.00M,
+                                                       TimeSpan.FromSeconds(300)
                                                    )
                                                },
-                                               new[] {
-                                                   new TariffRestrictions(
-                                                       Time.FromHourMin(08,00),       // Start time
-                                                       Time.FromHourMin(18,00),       // End time
-                                                       DateTime.Parse("2020-12-01"),  // Start timestamp
-                                                       DateTime.Parse("2020-12-31"),  // End timestamp
-                                                       1.12M,                         // MinkWh
-                                                       5.67M,                         // MaxkWh
-                                                       1.49M,                         // MinPower
-                                                       9.91M,                         // MaxPower
-                                                       TimeSpan.FromMinutes(10),      // MinDuration
-                                                       TimeSpan.FromMinutes(30),      // MaxDuration
-                                                       new DayOfWeek[] {
-                                                           DayOfWeek.Monday,
-                                                           DayOfWeek.Tuesday
-                                                       }
-                                                   )
-                                               }
+                                               new TariffRestrictions(
+                                                   Time.FromHourMin(08,00),       // Start time
+                                                   Time.FromHourMin(18,00),       // End time
+                                                   DateTime.Parse("2020-12-01"),  // Start timestamp
+                                                   DateTime.Parse("2020-12-31"),  // End timestamp
+                                                   1.12M,                         // MinkWh
+                                                   5.67M,                         // MaxkWh
+                                                   1.49M,                         // MinPower
+                                                   9.91M,                         // MaxPower
+                                                   TimeSpan.FromMinutes(10),      // MinDuration
+                                                   TimeSpan.FromMinutes(30),      // MaxDuration
+                                                   new[] {
+                                                       DayOfWeek.Monday,
+                                                       DayOfWeek.Tuesday
+                                                   }
+                                               )
                                            )
                                        },
                                        new[] {
@@ -740,6 +738,71 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
         }
 
         #endregion
+
+
+        #region AugmentCDRWithTariffinformation_Test01()
+
+        /// <summary>
+        /// Augment an OCPI charge detail record with charging tariff information.
+        /// </summary>
+        [Test]
+        public static async Task AugmentCDRWithTariffinformation_Test01()
+        {
+
+            var now        = Timestamp.Now;
+            var startTime  = now - TimeSpan.FromHours(3);
+            var stopTime   = now;
+
+            var cdrIn      = new CDR(
+                                 CountryCode:         CountryCode.Parse("DE"),
+                                 PartyId:             Party_Id.   Parse("GEF"),
+                                 Id:                  CDR_Id.     NewRandom(),
+                                 Start:               startTime,
+                                 Stop:                stopTime,
+                                 AuthId:              Auth_Id.    NewRandom(),
+                                 AuthMethod:          AuthMethods.AUTH_REQUEST,
+                                 Location:            new Location(
+                                                          CountryCode:    CountryCode.Parse("DE"),
+                                                          PartyId:        Party_Id.   Parse("GEF"),
+                                                          Id:             Location_Id.NewRandom(),
+                                                          LocationType:   LocationType.ON_STREET,
+                                                          Address:        "Biberweg 18",
+                                                          City:           "Jena",
+                                                          PostalCode:     "07749",
+                                                          Country:        Country.Germany,
+                                                          Coordinates:    GeoCoordinate.FromLatLng(50.928365, 11.589986)
+                                                      ),
+                                 Currency:            OCPI.Currency.EUR,
+                                 ChargingPeriods:     Array.Empty<ChargingPeriod>(),
+                                 TotalCost:           0,
+                                 TotalEnergy:         0,
+                                 TotalTime:           TimeSpan.Zero
+                             );
+
+            var tariff     = new Tariff(
+                                 CountryCode:         CountryCode.Parse("DE"),
+                                 PartyId:             Party_Id.   Parse("GEF"),
+                                 Id:                  Tariff_Id.  NewRandom(),
+                                 Currency:            OCPI.Currency.EUR,
+                                 TariffElements:      new[] {
+                                                          new TariffElement(
+                                                              PriceComponent.Energy(
+                                                                  Price:     0.5m,
+                                                                  StepSize:  1
+                                                              ),
+                                                              PriceComponent.ChargingTime(
+                                                                  Price:     0.25m,
+                                                                  Duration:  TimeSpan.FromMinutes(1)
+                                                              )
+                                                          )
+                                                  } 
+                             );
+
+
+        }
+
+        #endregion
+
 
     }
 

@@ -72,20 +72,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                AuthorizationReference.Parse("Auth1234"),
                                Meter_Id.Parse("Meter0001"),
                                new ChargingPeriod[] {
-                                   new ChargingPeriod(
+                                   ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
-                                       new CDRDimension[] {
-                                           new CDRDimension(
+                                       new[] {
+                                           CDRDimension.Create(
                                                CDRDimensionType.ENERGY,
                                                1.33M
                                            )
                                        },
                                        Tariff_Id.Parse("DE*GEF*T0001")
                                    ),
-                                   new ChargingPeriod(
+                                   ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
-                                       new CDRDimension[] {
-                                           new CDRDimension(
+                                       new[] {
+                                           CDRDimension.Create(
                                                CDRDimensionType.TIME,
                                                5.12M
                                            )

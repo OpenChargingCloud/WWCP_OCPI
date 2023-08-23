@@ -348,19 +348,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                Meter_Id.Parse("Meter0001"),
 
                                new[] {
-                                   new ChargingPeriod(
+                                   ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
                                        new[] {
-                                           new CDRDimension(
+                                           CDRDimension.Create(
                                                CDRDimensionType.ENERGY,
                                                1.33M
                                            )
                                        }
                                    ),
-                                   new ChargingPeriod(
+                                   ChargingPeriod.Create(
                                        DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
                                        new[] {
-                                           new CDRDimension(
+                                           CDRDimension.Create(
                                                CDRDimensionType.TIME,
                                                5.12M
                                            )

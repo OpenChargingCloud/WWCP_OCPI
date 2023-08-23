@@ -106,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         /// <summary>
         /// The maximum duration in seconds the charging session MUST last (exclusive). When the
-        /// duration of a Charging Session is shorter than the defined value, this tariff element
+        /// duration of a charging session is shorter than the defined value, this tariff element
         /// is or becomes active. After that moment, this tariff element is no longer active.
         /// </summary>
         [Optional]
@@ -133,8 +133,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="MaxkWh">A maximum consumed energy in kWh, for example 50, valid until this amount of energy (exclusive) being used.</param>
         /// <param name="MinPower">A minimum power in kW, for example 5.</param>
         /// <param name="MaxPower">A maximum power in kW, for example 20.</param>
-        /// <param name="MinDuration">A minimum duration in seconds the charging session MUST last (inclusive).</param>
-        /// <param name="MaxDuration">A maximum duration in seconds the charging session MUST last (exclusive).</param>
+        /// <param name="MinDuration">A minimum duration in seconds the charging session MUST last (inclusive) => Active when longer.</param>
+        /// <param name="MaxDuration">A maximum duration in seconds the charging session MUST last (exclusive) => Active when shorter.</param>
         /// <param name="DayOfWeek">All day(s) of the week this tariff element is active.</param>
         public TariffRestrictions(Time?                    StartTime     = null,
                                   Time?                    EndTime       = null,

@@ -98,7 +98,19 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region (static) Parse   (Text)
+        #region (static) NewRandom(Length = 20)
+
+        /// <summary>
+        /// Create a new random tariff identification.
+        /// </summary>
+        /// <param name="Length">The expected length of the tariff identification.</param>
+        public static Tariff_Id NewRandom(Byte Length = 30)
+
+            => new (RandomExtensions.RandomString(Length));
+
+        #endregion
+
+        #region (static) Parse    (Text)
 
         /// <summary>
         /// Parse the given text as a tariff identification.
@@ -117,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as a tariff identification.
@@ -135,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (static) TryParse(Text, out TariffId)
+        #region (static) TryParse (Text, out TariffId)
 
         /// <summary>
         /// Try to parse the given text as a tariff identification.

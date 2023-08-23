@@ -40,13 +40,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The tariff dimension.
         /// </summary>
         [Mandatory]
-        public TariffDimension  Type           { get; }
+        public TariffDimension  Type       { get; }
 
         /// <summary>
         /// The price per unit (excl. VAT) for this tariff dimension.
         /// </summary>
         [Mandatory]
-        public Decimal          Price          { get; }
+        public Decimal          Price      { get; }
 
         /// <summary>
         /// Minimum amount to be billed. This unit will be billed in this step_size blocks.
@@ -56,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// so if 6 minutes is used, 10 minutes (2 blocks of step_size) will be billed.
         /// </example>
         [Mandatory]
-        public UInt32           StepSize       { get; }
+        public UInt32           StepSize   { get; }
 
         #endregion
 
@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="Type">A tariff dimension.</param>
         /// <param name="Price">Price per unit (excl. VAT) for this tariff dimension.</param>
-        /// <param name="StepSize">Minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
+        /// <param name="StepSize">Optional minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
         public PriceComponent(TariffDimension  Type,
                               Decimal          Price,
                               UInt32           StepSize   = 1)
@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region Flat        (                  Price)
+        #region Flat        (Price)
 
         /// <summary>
         /// Create a new flat rate price component.
@@ -96,35 +96,55 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ChargingTime(BillingIncrement, Price)
+        #region Energy      (Price, StepSize = 1)
+
+        /// <summary>
+        /// Create a new energy price component.
+        /// </summary>
+        /// <param name="Price">An energy price (excl. VAT).</param>
+        /// <param name="StepSize">An optional minimum granularity of Wh that will be billed.</param>
+        public static PriceComponent Energy(Decimal  Price,
+                                            UInt32   StepSize   = 1)
+
+            => new (TariffDimension.ENERGY,
+                    Price,
+                    StepSize);
+
+        #endregion
+
+        #region ChargingTime(Price, Duration = null)
 
         /// <summary>
         /// Create a new time-based charging price component.
         /// </summary>
-        /// <param name="BillingIncrement">A minimum granularity of time in seconds that you will be billed.</param>
         /// <param name="Price">A price per time span (excl. VAT).</param>
-        public static PriceComponent ChargingTime(TimeSpan  BillingIncrement,
-                                                  Decimal   Price)
+        /// <param name="Duration">An optional minimum granularity of time that will be billed.</param>
+        public static PriceComponent ChargingTime(Decimal    Price,
+                                                  TimeSpan?  Duration = null)
 
             => new (TariffDimension.TIME,
                     Price,
-                    (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
+                    Duration.HasValue
+                        ? (UInt32) Math.Round(Duration.Value.TotalSeconds, 0)
+                        : 1);
 
         #endregion
 
-        #region ParkingTime (BillingIncrement, Price)
+        #region ParkingTime (Price, Duration = null)
 
         /// <summary>
         /// Create a new time-based parking price component.
         /// </summary>
-        /// <param name="BillingIncrement">A minimum granularity of time in seconds that you will be billed.</param>
         /// <param name="Price">A price per time span (excl. VAT).</param>
-        public static PriceComponent ParkingTime(TimeSpan  BillingIncrement,
-                                                 Decimal   Price)
+        /// <param name="Duration">An optional minimum granularity of time that will be billed.</param>
+        public static PriceComponent ParkingTime(Decimal    Price,
+                                                 TimeSpan?  Duration = null)
 
             => new (TariffDimension.PARKING_TIME,
                     Price,
-                    (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
+                    Duration.HasValue
+                        ? (UInt32) Math.Round(Duration.Value.TotalSeconds, 0)
+                        : 1);
 
         #endregion
 
@@ -291,7 +311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<PriceComponent> CustomPriceComponentSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<PriceComponent>? CustomPriceComponentSerializer = null)
         {
 
             var json = JSONObject.Create(

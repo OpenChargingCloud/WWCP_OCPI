@@ -1567,7 +1567,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 return new TariffElement(
                            PriceComponents:     priceComponents,
-                           TariffRestrictions:  tariffRestrictions
+                           TariffRestrictions:  tariffRestrictions.First()
                        );
 
             }
@@ -1812,25 +1812,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (ChargeDetailRecord is null)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The given charge detail record must not be null!"));
+                    Warnings.Add("The given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
                 if (ChargeDetailRecord.ChargingStationOperator is null)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The given charge detail record must have a valid charging station operator!"));
+                    Warnings.Add("The given charge detail record must have a valid charging station operator!".ToWarning());
                     return null;
                 }
 
                 if (!ChargeDetailRecord.SessionTime.EndTime.HasValue)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The session endtime of the given charge detail record must not be null!"));
+                    Warnings.Add("The session endtime of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
                 if (!ChargeDetailRecord.SessionTime.Duration.HasValue)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The session time duration of the given charge detail record must not be null!"));
+                    Warnings.Add("The session time duration of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
@@ -1861,13 +1861,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (authId is null)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The authentication identification used for starting of the given charge detail record must not be null!"));
+                    Warnings.Add("The authentication identification used for starting of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
                 if (!ChargeDetailRecord.AuthMethodStart.HasValue)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The authentication (verification) method used for starting of the given charge detail record must not be null!"));
+                    Warnings.Add("The authentication (verification) method used for starting of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
@@ -1875,31 +1875,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!authMethod.HasValue)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The authentication (verification) method used for starting of the given charge detail record is invalid!"));
+                    Warnings.Add("The authentication (verification) method used for starting of the given charge detail record is invalid!".ToWarning());
                     return null;
                 }
 
                 if (ChargeDetailRecord.ChargingConnector is null)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The Connector of the given charge detail record must not be null!"));
+                    Warnings.Add("The Connector of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
                 if (ChargeDetailRecord.EVSE is null)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The EVSE of the given charge detail record must not be null!"));
+                    Warnings.Add("The EVSE of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
                 if (ChargeDetailRecord.ChargingStation is null)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The charging station of the given charge detail record must not be null!"));
+                    Warnings.Add("The charging station of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
                 if (ChargeDetailRecord.ChargingPool is null)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The charging pool of the given charge detail record must not be null!"));
+                    Warnings.Add("The charging pool of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
@@ -1925,79 +1925,85 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (filteredLocation is null)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The charging location of the given charge detail record could not be calculated!"));
+                    Warnings.Add("The charging location of the given charge detail record could not be calculated!".ToWarning());
                     return null;
-                }
-
-                var chargingPeriods = new List<ChargingPeriod>();
-
-                foreach (var energyMeteringValue in ChargeDetailRecord.EnergyMeteringValues)
-                {
-                    chargingPeriods.Add(
-                        new ChargingPeriod(
-                            energyMeteringValue.Timestamp,
-                            new[] {
-                                new CDRDimension(
-                                    CDRDimensionType.ENERGY,
-                                    energyMeteringValue.Value
-                                )
-                            }
-                        )
-                    );
                 }
 
                 if (!ChargeDetailRecord.ChargingPrice.HasValue)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The charging price of the given charge detail record must not be null!"));
+                    Warnings.Add("The charging price of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
                 if (ChargeDetailRecord.ChargingPrice.Value.Currency is null)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The currency of the charging price of the given charge detail record must not be null!"));
+                    Warnings.Add("The currency of the charging price of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
                 if (!ChargeDetailRecord.ConsumedEnergy.HasValue)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "The consumed energy of the given charge detail record must not be null!"));
+                    Warnings.Add("The consumed energy of the given charge detail record must not be null!".ToWarning());
                     return null;
                 }
 
                 if (ChargeDetailRecord.EnergyMeteringValues.Count() < 2)
                 {
-                    Warnings.Add(Warning.Create(Languages.en, "At least two energy metering values are expected!"));
+                    Warnings.Add("At least two energy metering values are expected!".ToWarning());
                     return null;
                 }
 
 
-                var countryCode  = CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code);
-                var partyId      = Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix);
+                var countryCode      = CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code);
+                var partyId          = Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix);
 
                 // Within CDRs multiple tariffs are possible??!
-                var tariffIds    = GetTariffIdsDelegate?.Invoke(countryCode,
-                                                                partyId,
-                                                                filteredLocation.Id,
-                                                                filteredLocation.EVSEs.First().UId,
-                                                                filteredLocation.EVSEs.First().Connectors.First().Id,
-                                                                EMSPId);
+                var tariffIds        = GetTariffIdsDelegate?.Invoke(countryCode,
+                                                                    partyId,
+                                                                    filteredLocation.Id,
+                                                                    filteredLocation.EVSEs.First().UId,
+                                                                    filteredLocation.EVSEs.First().Connectors.First().Id,
+                                                                    EMSPId);
 
-                var tariffs      = tariffIds?.Select(tariffId => TariffGetter?.Invoke(tariffId))?.
-                                              Where (tariff   => tariff is not null)?.
-                                              Cast<Tariff>()
-                                   ?? Array.Empty<Tariff>();
+                var tariffs          = tariffIds?.Select(tariffId => TariffGetter?.Invoke(tariffId))?.
+                                                  Where (tariff   => tariff is not null)?.
+                                                  Cast<Tariff>()
+                                       ?? Array.Empty<Tariff>();
+
+                var chargingPeriods  = new List<ChargingPeriod>();
+                var cdrDimensions    = new List<CDRDimension>();
+
+                if (tariffs.First().TariffElements.First().PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.ENERGY))
+                    cdrDimensions.Add(CDRDimension.Create(
+                                          CDRDimensionType.ENERGY,
+                                          ChargeDetailRecord.EnergyMeteringValues.Last().Value - ChargeDetailRecord.EnergyMeteringValues.First().Value
+                                      ));
+
+                if (tariffs.First().TariffElements.First().PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.TIME))
+                    cdrDimensions.Add(CDRDimension.Create(
+                                          CDRDimensionType.TIME,
+                                          Convert.ToDecimal((ChargeDetailRecord.SessionTime.EndTime! - ChargeDetailRecord.SessionTime.StartTime).Value.TotalHours)
+                                      ));
+
+                chargingPeriods.Add(
+                    ChargingPeriod.Create(
+                        ChargeDetailRecord.SessionTime.StartTime,
+                        cdrDimensions
+                    )
+                );
+
 
                 return new CDR(
 
                            CountryCode:             countryCode,
                            PartyId:                 partyId,
-                           Id:                      CDR_Id.     Parse(ChargeDetailRecord.Id.ToString()),
+                           Id:                      CDR_Id.       Parse(ChargeDetailRecord.Id.ToString()),
                            Start:                   ChargeDetailRecord.SessionTime.StartTime,
                            Stop:                    ChargeDetailRecord.SessionTime.EndTime.Value,
                            AuthId:                  authId.    Value,
                            AuthMethod:              authMethod.Value,
                            Location:                filteredLocation,   //ToDo: Might still have not required connectors!
-                           Currency:                OCPI.Currency.   Parse(ChargeDetailRecord.ChargingPrice.Value.Currency.ISOCode),
+                           Currency:                OCPI.Currency.Parse(ChargeDetailRecord.ChargingPrice.Value.Currency.ISOCode),
                            ChargingPeriods:         chargingPeriods,
                            TotalCost:               ChargeDetailRecord.ChargingPrice.       Value.Total,
                            TotalEnergy:             ChargeDetailRecord.ConsumedEnergy.      Value,
@@ -2017,9 +2023,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        );
 
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Warnings.Add(Warning.Create(Languages.en, "Could not convert the given charge detail record to OCPI: " + ex.Message));
+                Warnings.Add($"Could not convert the given charge detail record to OCPI: {e.Message}".ToWarning());
             }
 
             return null;

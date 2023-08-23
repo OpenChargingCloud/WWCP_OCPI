@@ -32,6 +32,8 @@ namespace cloud.charging.open.protocols.OCPI
     public static class DisplayTextExtensions
     {
 
+        #region Add(DisplayTexts, Language, Text)
+
         /// <summary>
         /// Add the given multi-language text to the hash set of multi-language texts.
         /// </summary>
@@ -49,6 +51,24 @@ namespace cloud.charging.open.protocols.OCPI
             return DisplayTexts;
 
         }
+
+        #endregion
+
+        #region ToDisplayText(this Text, Language = Languages.en)
+
+        /// <summary>
+        /// Convert the given string into a display text.
+        /// </summary>
+        /// <param name="Text">The given text.</param>
+        /// <param name="Language">An optional language.</param>
+        public static DisplayText ToDisplayText(this String  Text,
+                                                Languages    Language = Languages.en)
+
+            => new (Language,
+                    Text);
+
+        #endregion
+
 
     }
 
