@@ -756,7 +756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region GetHashCode()
+        #region (override) GetHashCode()
 
         /// <summary>
         /// Get the hashcode of this object.
