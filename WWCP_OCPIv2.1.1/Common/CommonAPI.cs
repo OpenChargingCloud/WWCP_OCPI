@@ -1737,7 +1737,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = ServiceName,
+                                                     Server                     = HTTPServiceName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
@@ -1793,7 +1793,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = ServiceName,
+                                                     Server                     = HTTPServiceName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
@@ -1824,7 +1824,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         new OCPIResponse.Builder(Request) {
                                             HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                                Server                     = ServiceName,
+                                                Server                     = HTTPServiceName,
                                                 Date                       = Timestamp.Now,
                                                 AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                 Allow                      = new[] {

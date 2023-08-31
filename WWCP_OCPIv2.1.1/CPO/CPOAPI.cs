@@ -2934,7 +2934,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                           CustomEnvironmentalImpactSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       Server                     = ServiceName,
+                                                       Server                     = HTTPServiceName,
                                                        Date                       = Timestamp.Now,
                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                        AccessControlAllowHeaders  = new[] { "Authorization" },

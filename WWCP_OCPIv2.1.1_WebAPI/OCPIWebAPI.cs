@@ -549,7 +549,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             RegisterURITemplates();
 
-            this.HTMLTemplate          = HTMLTemplate ?? GetResourceString("template.html");
+            //this.HTMLTemplate          = HTMLTemplate ?? GetResourceString("template.html");
             this.RequestTimeout        = RequestTimeout;
 
         }
