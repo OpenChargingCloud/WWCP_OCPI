@@ -61,18 +61,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        protected readonly  SemaphoreSlim  DataAndStatusLock            = new(1, 1);
-
-        protected readonly  TimeSpan       MaxLockWaitingTime           = TimeSpan.FromSeconds(120);
-
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public  const       String         DefaultLoggingContext        = "OCPIv2.2_CSOAdapter";
+        public  const       String         DefaultLoggingContext        = $"OCPI{Version.String}_CSOAdapter";
 
         public  const       String         DefaultHTTPAPI_LoggingPath   = "default";
 
-        public  const       String         DefaultHTTPAPI_LogfileName   = "OCPIv2.2_CSOAdapter.log";
+        public  const       String         DefaultHTTPAPI_LogfileName   = $"OCPI{Version.String}_CSOAdapter.log";
 
 
         /// <summary>
@@ -1896,6 +1892,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                       );
 
 
+                                                                                           var remotePartyLoggingPath = Path.Combine(ClientsLoggingPath, remoteParty.Id.ToString());
+
+                                                                                           if (!Directory.Exists(remotePartyLoggingPath))
+                                                                                                Directory.CreateDirectory(remotePartyLoggingPath);
+
                                                                                            var cpoClient = new CPO.HTTP.CPOClient(
 
                                                                                                                CommonAPI,
@@ -1905,8 +1906,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                                null, // HTTPLogger
 
                                                                                                                DisableLogging,
-                                                                                                               ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                                               ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                                               remotePartyLoggingPath,
+                                                                                                               ClientsLoggingContext,
                                                                                                                ClientsLogfileCreator,
                                                                                                                DNSClient
 
@@ -1920,15 +1921,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                       );
 
 
-                                                                                           var cpoClientLogger = new CPO.HTTP.CPOClient.Logger(
-                                                                                                                     cpoClient,
-                                                                                                                     ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
-                                                                                                                     ClientsLoggingContext ?? DefaultLoggingContext,
-                                                                                                                     ClientsLogfileCreator
-                                                                                                                 );
+                                                                                           //var cpoClientLogger = new CPO.HTTP.CPOClient.Logger(
+                                                                                           //                          cpoClient,
+                                                                                           //                          ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
+                                                                                           //                          ClientsLoggingContext ?? DefaultLoggingContext,
+                                                                                           //                          ClientsLogfileCreator
+                                                                                           //                      );
 
                                                                                            //ToDo: Make client debugging more flexible!
-                                                                                           cpoClientLogger.Debug("all", LogTargets.Disc);
+                                                                                           //cpoClientLogger.Debug("all", LogTargets.Disc);
+
+                                                                                           cpoClient.HTTPLogger.Debug("all", LogTargets.Disc);
 
                                                                                            #endregion
 

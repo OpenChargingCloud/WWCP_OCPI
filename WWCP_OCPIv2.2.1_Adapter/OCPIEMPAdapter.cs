@@ -47,31 +47,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Properties
 
-        /// <summary>
-        /// The global unique identification.
-        /// </summary>
-        [Mandatory]
-        public EMPRoamingProvider_Id                        Id                                   { get; }
-
-        /// <summary>
-        /// The multi-language name.
-        /// </summary>
-        [Optional]
-        public I18NString                                   Name                                 { get; }
-
-        /// <summary>
-        /// The multi-language description.
-        /// </summary>
-        [Optional]
-        public I18NString                                   Description                          { get; }
-
-        /// <summary>
-        /// The roaming network.
-        /// </summary>
-        [Mandatory]
-        public IRoamingNetwork                              RoamingNetwork                       { get; }
-
-
         public EVSEId_2_WWCPEVSEId_Delegate?                CustomEVSEIdConverter                { get; }
         public EVSE_2_WWCPEVSE_Delegate?                    CustomEVSEConverter                  { get; }
         public StatusType_2_WWCPEVSEStatusUpdate_Delegate?  CustomEVSEStatusUpdateConverter      { get; }
@@ -417,11 +392,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    InternalData)
 
         {
-
-            this.Id                                 = Id;
-            this.Name                               = Name;
-            this.Description                        = Description;
-            this.RoamingNetwork                     = RoamingNetwork;
 
             this.CommonAPI                          = CommonAPI;
 

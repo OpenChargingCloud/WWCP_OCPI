@@ -26,7 +26,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
-using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 
 #endregion
 
@@ -56,19 +55,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Data
 
-        protected readonly  SemaphoreSlim  DataAndStatusLock            = new(1, 1);
-
-        protected readonly  TimeSpan       MaxLockWaitingTime           = TimeSpan.FromSeconds(120);
-
-
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public  const       String         DefaultLoggingContext        = "OCPIv2.1.1_CSOAdapter";
+        public  const       String         DefaultLoggingContext        = $"OCPI{Version.String}_CSOAdapter";
 
         public  const       String         DefaultHTTPAPI_LoggingPath   = "default";
 
-        public  const       String         DefaultHTTPAPI_LogfileName   = "OCPIv2.1.1_CSOAdapter.log";
+        public  const       String         DefaultHTTPAPI_LogfileName   = $"OCPI{Version.String}_CSOAdapter.log";
 
 
         /// <summary>

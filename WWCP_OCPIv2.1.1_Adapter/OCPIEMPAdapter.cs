@@ -52,11 +52,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The default logging context.
         /// </summary>
-        public  const       String         DefaultLoggingContext        = "OCPIv2.2_EMPAdapter";
+        public  const       String         DefaultLoggingContext        = $"OCPI{Version.String}_EMPAdapter";
 
         public  const       String         DefaultHTTPAPI_LoggingPath   = "default";
 
-        public  const       String         DefaultHTTPAPI_LogfileName   = "OCPIv2.2_EMPAdapter.log";
+        public  const       String         DefaultHTTPAPI_LogfileName   = $"OCPI{Version.String}_EMPAdapter.log";
 
         #endregion
 
