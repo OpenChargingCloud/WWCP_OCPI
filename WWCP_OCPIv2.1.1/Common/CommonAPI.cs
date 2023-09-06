@@ -512,10 +512,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="HTTPServiceName">The name of the HTTP service.</param>
         /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
         /// 
-        /// <param name="ServerCertificateSelector">An optional delegate to select a SSL/TLS server certificate.</param>
-        /// <param name="ClientCertificateValidator">An optional delegate to verify the SSL/TLS client certificate used for authentication.</param>
-        /// <param name="ClientCertificateSelector">An optional delegate to select the SSL/TLS client certificate used for authentication.</param>
-        /// <param name="AllowedTLSProtocols">The SSL/TLS protocol(s) allowed for this connection.</param>
+        /// <param name="ServerCertificateSelector">An optional delegate to select a TLS server certificate.</param>
+        /// <param name="ClientCertificateValidator">An optional delegate to verify the TLS client certificate used for authentication.</param>
+        /// <param name="ClientCertificateSelector">An optional delegate to select the TLS client certificate used for authentication.</param>
+        /// <param name="AllowedTLSProtocols">The TLS protocol(s) allowed for this connection.</param>
         /// 
         /// <param name="ServerThreadName">The optional name of the TCP server thread.</param>
         /// <param name="ServerThreadPriority">The optional priority of the TCP server thread.</param>
@@ -590,7 +590,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          String?                              LoggingContext               = null,
                          String?                              LoggingPath                  = null,
                          String?                              LogfileName                  = null,
-                         LogfileCreatorDelegate?              LogfileCreator               = null,
+                         OCPILogfileCreatorDelegate?          LogfileCreator               = null,
                          String?                              DatabaseFilePath             = null,
                          String?                              RemotePartyDBFileName        = null,
                          String?                              AssetsDBFileName             = null,
@@ -644,7 +644,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    LoggingContext,
                    LoggingPath,
                    LogfileName,
-                   LogfileCreator,
+                   LogfileCreator is not null
+                       ? (loggingPath, remotePartyId, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                       : null,
                    DatabaseFilePath,
                    RemotePartyDBFileName,
                    AssetsDBFileName,
@@ -722,48 +724,48 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonAPI(URL                      OurBaseURL,
-                         URL                      OurVersionsURL,
-                         BusinessDetails          OurBusinessDetails,
-                         CountryCode              OurCountryCode,
-                         Party_Id                 OurPartyId,
-                         Roles                    OurRole,
+        public CommonAPI(URL                          OurBaseURL,
+                         URL                          OurVersionsURL,
+                         BusinessDetails              OurBusinessDetails,
+                         CountryCode                  OurCountryCode,
+                         Party_Id                     OurPartyId,
+                         Roles                        OurRole,
 
-                         HTTPServer               HTTPServer,
+                         HTTPServer                   HTTPServer,
 
-                         HTTPPath?                AdditionalURLPathPrefix   = null,
-                         Func<EVSE, Boolean>?     KeepRemovedEVSEs          = null,
-                         Boolean                  LocationsAsOpenData       = true,
-                         Boolean?                 AllowDowngrades           = null,
-                         Boolean                  Disable_RootServices      = false,
+                         HTTPPath?                    AdditionalURLPathPrefix   = null,
+                         Func<EVSE, Boolean>?         KeepRemovedEVSEs          = null,
+                         Boolean                      LocationsAsOpenData       = true,
+                         Boolean?                     AllowDowngrades           = null,
+                         Boolean                      Disable_RootServices      = false,
 
-                         HTTPHostname?            HTTPHostname              = null,
-                         String?                  ExternalDNSName           = "",
-                         String?                  HTTPServiceName           = DefaultHTTPServiceName,
-                         HTTPPath?                BasePath                  = null,
+                         HTTPHostname?                HTTPHostname              = null,
+                         String?                      ExternalDNSName           = "",
+                         String?                      HTTPServiceName           = DefaultHTTPServiceName,
+                         HTTPPath?                    BasePath                  = null,
 
-                         HTTPPath?                URLPathPrefix             = null,
-                         JObject?                 APIVersionHashes          = null,
+                         HTTPPath?                    URLPathPrefix             = null,
+                         JObject?                     APIVersionHashes          = null,
 
-                         Boolean?                 DisableMaintenanceTasks   = false,
-                         TimeSpan?                MaintenanceInitialDelay   = null,
-                         TimeSpan?                MaintenanceEvery          = null,
+                         Boolean?                     DisableMaintenanceTasks   = false,
+                         TimeSpan?                    MaintenanceInitialDelay   = null,
+                         TimeSpan?                    MaintenanceEvery          = null,
 
-                         Boolean?                 DisableWardenTasks        = false,
-                         TimeSpan?                WardenInitialDelay        = null,
-                         TimeSpan?                WardenCheckEvery          = null,
+                         Boolean?                     DisableWardenTasks        = false,
+                         TimeSpan?                    WardenInitialDelay        = null,
+                         TimeSpan?                    WardenCheckEvery          = null,
 
-                         Boolean?                 IsDevelopment             = false,
-                         IEnumerable<String>?     DevelopmentServers        = null,
-                         Boolean?                 DisableLogging            = false,
-                         String?                  LoggingContext            = null,
-                         String?                  LoggingPath               = null,
-                         String?                  LogfileName               = null,
-                         LogfileCreatorDelegate?  LogfileCreator            = null,
-                         String?                  DatabaseFilePath          = null,
-                         String?                  RemotePartyDBFileName     = null,
-                         String?                  AssetsDBFileName          = null,
-                         Boolean                  AutoStart                 = false)
+                         Boolean?                     IsDevelopment             = false,
+                         IEnumerable<String>?         DevelopmentServers        = null,
+                         Boolean?                     DisableLogging            = false,
+                         String?                      LoggingContext            = null,
+                         String?                      LoggingPath               = null,
+                         String?                      LogfileName               = null,
+                         OCPILogfileCreatorDelegate?  LogfileCreator            = null,
+                         String?                      DatabaseFilePath          = null,
+                         String?                      RemotePartyDBFileName     = null,
+                         String?                      AssetsDBFileName          = null,
+                         Boolean                      AutoStart                 = false)
 
             : base(Version.Id,
                    OurBaseURL,
@@ -797,7 +799,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    LoggingContext,
                    LoggingPath,
                    LogfileName ?? DefaultLogfileName,
-                   LogfileCreator,
+                   LogfileCreator is not null
+                       ? (loggingPath, remotePartyId, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                       : null,
                    DatabaseFilePath,
                    RemotePartyDBFileName,
                    AssetsDBFileName,

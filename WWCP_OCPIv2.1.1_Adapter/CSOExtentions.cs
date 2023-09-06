@@ -109,11 +109,11 @@ namespace cloud.charging.open.protocols.WWCP
                                         String?                                                  LoggingPath                          = null,
                                         String?                                                  LoggingContext                       = null,
                                         String?                                                  LogfileName                          = null,
-                                        LogfileCreatorDelegate?                                  LogfileCreator                       = null,
+                                        OCPIv2_1_1.HTTP.OCPILogfileCreatorDelegate?              LogfileCreator                       = null,
 
                                         String?                                                  ClientsLoggingPath                   = null,
                                         String?                                                  ClientsLoggingContext                = null,
-                                        LogfileCreatorDelegate?                                  ClientsLogfileCreator                = null,
+                                        OCPIv2_1_1.HTTP.OCPILogfileCreatorDelegate?              ClientsLogfileCreator                = null,
                                         DNSClient?                                               DNSClient                            = null)
 
         {
@@ -175,11 +175,15 @@ namespace cloud.charging.open.protocols.WWCP
                                          LoggingPath,
                                          LoggingContext,
                                          LogfileName,
-                                         LogfileCreator,
+                                         LogfileCreator is not null
+                                             ? (loggingPath, remotePartyId, context, logfileName) => LogfileCreator       (loggingPath, null, context, logfileName)
+                                             : null,
 
                                          ClientsLoggingPath,
                                          ClientsLoggingContext,
-                                         ClientsLogfileCreator,
+                                         ClientsLogfileCreator is not null
+                                             ? (loggingPath, remotePartyId, context, logfileName) => ClientsLogfileCreator(loggingPath, null, context, logfileName)
+                                             : null,
                                          DNSClient
 
                                      );

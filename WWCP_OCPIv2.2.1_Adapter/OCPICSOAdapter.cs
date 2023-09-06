@@ -23,9 +23,6 @@ using org.GraphDefined.Vanaheimr.Styx;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Logging;
-
-using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
@@ -234,11 +231,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               String?                                         LoggingPath                         = DefaultHTTPAPI_LoggingPath,
                               String?                                         LoggingContext                      = DefaultLoggingContext,
                               String?                                         LogfileName                         = DefaultHTTPAPI_LogfileName,
-                              LogfileCreatorDelegate?                         LogfileCreator                      = null,
+                              HTTP.OCPILogfileCreatorDelegate?                LogfileCreator                      = null,
 
                               String?                                         ClientsLoggingPath                  = DefaultHTTPAPI_LoggingPath,
                               String?                                         ClientsLoggingContext               = DefaultLoggingContext,
-                              LogfileCreatorDelegate?                         ClientsLogfileCreator               = null,
+                              HTTP.OCPILogfileCreatorDelegate?                ClientsLogfileCreator               = null,
                               DNSClient?                                      DNSClient                           = null)
 
             : base(Id,
@@ -280,11 +277,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    LoggingPath,
                    LoggingContext,
                    LogfileName,
-                   LogfileCreator,
+                   LogfileCreator is not null
+                       ? (loggingPath, context, logfileName) => LogfileCreator       (loggingPath, null, context, logfileName)
+                       : null,
 
                    ClientsLoggingPath,
                    ClientsLoggingContext,
-                   ClientsLogfileCreator,
+                   ClientsLogfileCreator is not null
+                       ? (loggingPath, context, logfileName) => ClientsLogfileCreator(loggingPath, null, context, logfileName)
+                       : null,
                    DNSClient)
 
         {
@@ -779,7 +780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (lockTaken)
                 {
 
-                    AddOrUpdateResult<EVSE> result;
+                    OCPI.AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
@@ -815,19 +816,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 if (evse2 is not null)
                                     result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
                                 else
-                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
 
                             }
                             else
-                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+                                result = OCPI.AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
 
                         }
                         else
-                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+                            result = OCPI.AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
 
                     }
                     else
-                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+                        result = OCPI.AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -902,7 +903,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (lockTaken)
                 {
 
-                    AddOrUpdateResult<EVSE> result;
+                    OCPI.AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
@@ -938,19 +939,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 if (evse2 is not null)
                                     result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
                                 else
-                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
 
                             }
                             else
-                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+                                result = OCPI.AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
 
                         }
                         else
-                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+                            result = OCPI.AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
 
                     }
                     else
-                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+                        result = OCPI.AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1042,7 +1043,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (lockTaken)
                 {
 
-                    AddOrUpdateResult<EVSE> result;
+                    OCPI.AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
@@ -1078,19 +1079,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 if (evse2 is not null)
                                     result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
                                 else
-                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
 
                             }
                             else
-                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+                                result = OCPI.AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
 
                         }
                         else
-                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+                            result = OCPI.AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
 
                     }
                     else
-                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+                        result = OCPI.AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
 
 
                     return result.IsSuccess

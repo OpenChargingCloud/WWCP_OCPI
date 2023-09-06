@@ -3162,35 +3162,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LogfileName">The name of the logfile.</param>
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public EMSPAPI(CommonAPI                CommonAPI,
-                       CountryCode              DefaultCountryCode,
-                       Party_Id                 DefaultPartyId,
-                       Boolean?                 AllowDowngrades           = null,
+        public EMSPAPI(CommonAPI                    CommonAPI,
+                       CountryCode                  DefaultCountryCode,
+                       Party_Id                     DefaultPartyId,
+                       Boolean?                     AllowDowngrades           = null,
 
-                       HTTPHostname?            HTTPHostname              = null,
-                       String?                  ExternalDNSName           = "",
-                       String?                  HTTPServiceName           = DefaultHTTPServiceName,
-                       HTTPPath?                BasePath                  = null,
+                       HTTPHostname?                HTTPHostname              = null,
+                       String?                      ExternalDNSName           = "",
+                       String?                      HTTPServiceName           = DefaultHTTPServiceName,
+                       HTTPPath?                    BasePath                  = null,
 
-                       HTTPPath?                URLPathPrefix             = null,
-                       JObject?                 APIVersionHashes          = null,
+                       HTTPPath?                    URLPathPrefix             = null,
+                       JObject?                     APIVersionHashes          = null,
 
-                       Boolean?                 DisableMaintenanceTasks   = false,
-                       TimeSpan?                MaintenanceInitialDelay   = null,
-                       TimeSpan?                MaintenanceEvery          = null,
+                       Boolean?                     DisableMaintenanceTasks   = false,
+                       TimeSpan?                    MaintenanceInitialDelay   = null,
+                       TimeSpan?                    MaintenanceEvery          = null,
 
-                       Boolean?                 DisableWardenTasks        = false,
-                       TimeSpan?                WardenInitialDelay        = null,
-                       TimeSpan?                WardenCheckEvery          = null,
+                       Boolean?                     DisableWardenTasks        = false,
+                       TimeSpan?                    WardenInitialDelay        = null,
+                       TimeSpan?                    WardenCheckEvery          = null,
 
-                       Boolean?                 IsDevelopment             = false,
-                       IEnumerable<String>?     DevelopmentServers        = null,
-                       Boolean?                 DisableLogging            = false,
-                       String?                  LoggingContext            = null,
-                       String?                  LoggingPath               = null,
-                       String?                  LogfileName               = DefaultLogfileName,
-                       LogfileCreatorDelegate?  LogfileCreator            = null,
-                       Boolean                  AutoStart                 = false)
+                       Boolean?                     IsDevelopment             = false,
+                       IEnumerable<String>?         DevelopmentServers        = null,
+                       Boolean?                     DisableLogging            = false,
+                       String?                      LoggingContext            = null,
+                       String?                      LoggingPath               = null,
+                       String?                      LogfileName               = DefaultLogfileName,
+                       OCPILogfileCreatorDelegate?  LogfileCreator            = null,
+                       Boolean                      AutoStart                 = false)
 
             : base(CommonAPI.HTTPServer,
                    HTTPHostname,
@@ -3215,7 +3215,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    DisableLogging,
                    LoggingPath,
                    LogfileName     ?? DefaultLogfileName,
-                   LogfileCreator,
+                   LogfileCreator is not null
+                       ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                       : null,
                    AutoStart)
 
         {

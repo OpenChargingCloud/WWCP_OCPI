@@ -105,10 +105,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// A remote party.
     /// In OCPI v2.1 this is a single CPO or EMSP.
     /// </summary>
-    public class RemoteParty : IHasId<RemoteParty_Id>,
+    public class RemoteParty : IRemoteParty,
                                IEquatable<RemoteParty>,
-                               IComparable<RemoteParty>,
-                               IComparable
+                               IComparable<RemoteParty>
     {
 
         #region Data
@@ -127,54 +126,54 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// (country code + party identification + role).
         /// </summary>
         [Mandatory]
-        public RemoteParty_Id           Id                   { get; }
+        public RemoteParty_Id                        Id                            { get; }
 
         /// <summary>
         /// ISO-3166 alpha-2 country code of the country this party is operating in.
         /// </summary>
         [Mandatory]
-        public CountryCode              CountryCode          { get; }
+        public CountryCode                           CountryCode                   { get; }
 
         /// <summary>
         /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id                 PartyId              { get; }
+        public Party_Id                              PartyId                       { get; }
 
         /// <summary>
         /// The type of the role.
         /// </summary>
         [Mandatory]
-        public Roles                    Role                 { get; }
+        public Roles                                 Role                          { get; }
 
         /// <summary>
         /// Business details of this party.
         /// </summary>
         [Mandatory]
-        public BusinessDetails          BusinessDetails      { get; }
+        public BusinessDetails                       BusinessDetails               { get; }
 
         /// <summary>
         /// The current status of the party.
         /// </summary>
         [Mandatory]
-        public PartyStatus              Status               { get; }
+        public PartyStatus                           Status                        { get; }
 
         /// <summary>
         /// Timestamp when this remote party was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                 LastUpdated          { get; }
+        public DateTime                              LastUpdated                   { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this remote party.
         /// </summary>
         [Mandatory]
-        public String                   ETag                 { get; private set; }
+        public String                                ETag                          { get; private set; }
 
 
 
         /// <summary>
-        /// The remote SSL/TLS certificate validator.
+        /// The remote TLS certificate validator.
         /// </summary>
         public RemoteCertificateValidationHandler?   RemoteCertificateValidator    { get; }
 
@@ -184,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public LocalCertificateSelectionHandler?     ClientCertificateSelector     { get; }
 
         /// <summary>
-        /// The SSL/TLS client certificate to use of HTTP authentication.
+        /// The TLS client certificate to use of HTTP authentication.
         /// </summary>
         public X509Certificate?                      ClientCert                    { get; }
 
@@ -239,6 +238,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         private readonly List<LocalAccessInfo> localAccessInfos;
 
+        /// <summary>
+        /// Local access information.
+        /// </summary>
         public IEnumerable<LocalAccessInfo> LocalAccessInfos
             => localAccessInfos;
 
@@ -246,6 +248,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         private readonly List<RemoteAccessInfo> remoteAccessInfos;
 
+        /// <summary>
+        /// Remote access information.
+        /// </summary>
         public IEnumerable<RemoteAccessInfo> RemoteAccessInfos
             => remoteAccessInfos;
 

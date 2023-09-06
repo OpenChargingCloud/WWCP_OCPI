@@ -25,26 +25,24 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
-using cloud.charging.open.protocols.OCPI;
-
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
-    public delegate IEnumerable<Tariff>     GetTariffs_Delegate  (WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
-                                                                  WWCP.ChargingPool_Id?             ChargingPoolId,
-                                                                  WWCP.ChargingStation_Id?          ChargingStationId,
-                                                                  WWCP.EVSE_Id?                     EVSEId,
-                                                                  WWCP.ChargingConnector_Id?        ChargingConnectorId,
-                                                                  WWCP.EMobilityProvider_Id?        EMobilityProviderId);
+    public delegate IEnumerable<Tariff>          GetTariffs_Delegate  (WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
+                                                                       WWCP.ChargingPool_Id?             ChargingPoolId,
+                                                                       WWCP.ChargingStation_Id?          ChargingStationId,
+                                                                       WWCP.EVSE_Id?                     EVSEId,
+                                                                       WWCP.ChargingConnector_Id?        ChargingConnectorId,
+                                                                       WWCP.EMobilityProvider_Id?        EMobilityProviderId);
 
-    public delegate IEnumerable<Tariff_Id>  GetTariffIds_Delegate(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
-                                                                  WWCP.ChargingPool_Id?             ChargingPoolId,
-                                                                  WWCP.ChargingStation_Id?          ChargingStationId,
-                                                                  WWCP.EVSE_Id?                     EVSEId,
-                                                                  WWCP.ChargingConnector_Id?        ChargingConnectorId,
-                                                                  WWCP.EMobilityProvider_Id?        EMobilityProviderId);
+    public delegate IEnumerable<OCPI.Tariff_Id>  GetTariffIds_Delegate(WWCP.ChargingStationOperator_Id?  ChargingStationOperatorId,
+                                                                       WWCP.ChargingPool_Id?             ChargingPoolId,
+                                                                       WWCP.ChargingStation_Id?          ChargingStationId,
+                                                                       WWCP.EVSE_Id?                     EVSEId,
+                                                                       WWCP.ChargingConnector_Id?        ChargingConnectorId,
+                                                                       WWCP.EMobilityProvider_Id?        EMobilityProviderId);
 
 
     /// <summary>
@@ -239,11 +237,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               String?                                         LoggingPath                         = DefaultHTTPAPI_LoggingPath,
                               String?                                         LoggingContext                      = DefaultLoggingContext,
                               String?                                         LogfileName                         = DefaultHTTPAPI_LogfileName,
-                              LogfileCreatorDelegate?                         LogfileCreator                      = null,
+                              HTTP.OCPILogfileCreatorDelegate?                LogfileCreator                      = null,
 
                               String?                                         ClientsLoggingPath                  = DefaultHTTPAPI_LoggingPath,
                               String?                                         ClientsLoggingContext               = DefaultLoggingContext,
-                              LogfileCreatorDelegate?                         ClientsLogfileCreator               = null,
+                              HTTP.OCPILogfileCreatorDelegate?                ClientsLogfileCreator               = null,
                               DNSClient?                                      DNSClient                           = null)
 
             : base(Id,
@@ -285,11 +283,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    LoggingPath,
                    LoggingContext,
                    LogfileName,
-                   LogfileCreator,
-
+                   LogfileCreator is not null
+                       ? (loggingPath, context, logfileName) => LogfileCreator       (loggingPath, null, context, logfileName)
+                       : null,
                    ClientsLoggingPath,
                    ClientsLoggingContext,
-                   ClientsLogfileCreator,
+                   ClientsLogfileCreator is not null
+                       ? (loggingPath, context, logfileName) => ClientsLogfileCreator(loggingPath, null, context, logfileName)
+                       : null,
                    DNSClient)
 
         {
@@ -510,7 +511,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                CommandResponseTypes.REJECTED,
                                                TimeSpan.FromMinutes(1),
                                                new[] {
-                                                   DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
+                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
                                                });
 
                 if (!startSessionCommand.EVSEUId.HasValue)
@@ -518,7 +519,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                CommandResponseTypes.REJECTED,
                                                TimeSpan.FromMinutes(1),
                                                new[] {
-                                                   DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
+                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
                                                });
 
                 if (!location.TryGetEVSE(startSessionCommand.EVSEUId.Value, out var evse) || evse is null)
@@ -526,7 +527,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                CommandResponseTypes.REJECTED,
                                                TimeSpan.FromMinutes(1),
                                                new[] {
-                                                   DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
+                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
                                                });
 
                 if (!evse.EVSEId.HasValue)
@@ -534,7 +535,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                CommandResponseTypes.REJECTED,
                                                TimeSpan.FromMinutes(1),
                                                new[] {
-                                                   DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
+                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
                                                });
 
                 var wwcpEVSEId = evse.EVSEId.Value.ToWWCP();
@@ -544,7 +545,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                CommandResponseTypes.REJECTED,
                                                TimeSpan.FromMinutes(1),
                                                new[] {
-                                                   DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
+                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
                                                });
 
 
@@ -566,7 +567,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                CommandResponseTypes.ACCEPTED,
                                                TimeSpan.FromMinutes(1),
                                                new[] {
-                                                   DisplayText.Create(Languages.en, "StartSessionCommand accepted!")
+                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand accepted!")
                                                });
                 }
 
@@ -575,7 +576,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                CommandResponseTypes.REJECTED,
                                                TimeSpan.FromMinutes(1),
                                                new[] {
-                                                   DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
+                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
                                                });
 
             };
@@ -597,7 +598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                CommandResponseTypes.ACCEPTED,
                                                TimeSpan.FromMinutes(1),
                                                new[] {
-                                                   DisplayText.Create(Languages.en, "StopSessionCommand accepted!")
+                                                   OCPI.DisplayText.Create(Languages.en, "StopSessionCommand accepted!")
                                                });
                 }
 
@@ -606,7 +607,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                CommandResponseTypes.REJECTED,
                                                TimeSpan.FromMinutes(1),
                                                new[] {
-                                                   DisplayText.Create(Languages.en, "StopSessionCommand rejected!")
+                                                   OCPI.DisplayText.Create(Languages.en, "StopSessionCommand rejected!")
                                                });
 
             };
@@ -618,26 +619,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddRemoteParty(...)
 
-        public Task<Boolean> AddRemoteParty(CountryCode               CountryCode,
-                                            Party_Id                  PartyId,
-                                            Roles                     Role,
-                                            BusinessDetails           BusinessDetails,
+        public Task<Boolean> AddRemoteParty(OCPI.CountryCode               CountryCode,
+                                            OCPI.Party_Id                  PartyId,
+                                            OCPI.Roles                     Role,
+                                            OCPI.BusinessDetails           BusinessDetails,
 
-                                            AccessToken               AccessToken,
+                                            OCPI.AccessToken               AccessToken,
 
-                                            AccessToken               RemoteAccessToken,
-                                            URL                       RemoteVersionsURL,
-                                            IEnumerable<Version_Id>?  RemoteVersionIds            = null,
-                                            Version_Id?               SelectedVersionId           = null,
+                                            OCPI.AccessToken               RemoteAccessToken,
+                                            URL                            RemoteVersionsURL,
+                                            IEnumerable<OCPI.Version_Id>?  RemoteVersionIds            = null,
+                                            OCPI.Version_Id?               SelectedVersionId           = null,
 
-                                            DateTime?                 LocalAccessNotBefore        = null,
-                                            DateTime?                 LocalAccessNotAfter         = null,
+                                            DateTime?                      LocalAccessNotBefore        = null,
+                                            DateTime?                      LocalAccessNotAfter         = null,
 
-                                            Boolean?                  AccessTokenBase64Encoding   = null,
-                                            Boolean?                  AllowDowngrades             = false,
-                                            AccessStatus              AccessStatus                = AccessStatus.      ALLOWED,
-                                            RemoteAccessStatus?       RemoteStatus                = RemoteAccessStatus.ONLINE,
-                                            PartyStatus               PartyStatus                 = PartyStatus.       ENABLED)
+                                            Boolean?                       AccessTokenBase64Encoding   = null,
+                                            Boolean?                       AllowDowngrades             = false,
+                                            OCPI.AccessStatus              AccessStatus                = OCPI.AccessStatus.      ALLOWED,
+                                            OCPI.RemoteAccessStatus?       RemoteStatus                = OCPI.RemoteAccessStatus.ONLINE,
+                                            OCPI.PartyStatus               PartyStatus                 = OCPI.PartyStatus.       ENABLED)
 
             => CommonAPI.AddRemoteParty(CountryCode,
                                         PartyId,
@@ -664,19 +665,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region AddRemoteParty(...)
 
-        public Task<Boolean> AddRemoteParty(CountryCode      CountryCode,
-                                            Party_Id         PartyId,
-                                            Roles            Role,
-                                            BusinessDetails  BusinessDetails,
+        public Task<Boolean> AddRemoteParty(OCPI.CountryCode      CountryCode,
+                                            OCPI.Party_Id         PartyId,
+                                            OCPI.Roles            Role,
+                                            OCPI.BusinessDetails  BusinessDetails,
 
-                                            AccessToken      AccessToken,
-                                            DateTime?        LocalAccessNotBefore        = null,
-                                            DateTime?        LocalAccessNotAfter         = null,
-                                            Boolean?         AccessTokenBase64Encoding   = null,
-                                            Boolean?         AllowDowngrades             = false,
-                                            AccessStatus     AccessStatus                = AccessStatus.ALLOWED,
+                                            OCPI.AccessToken      AccessToken,
+                                            DateTime?             LocalAccessNotBefore        = null,
+                                            DateTime?             LocalAccessNotAfter         = null,
+                                            Boolean?              AccessTokenBase64Encoding   = null,
+                                            Boolean?              AllowDowngrades             = false,
+                                            OCPI.AccessStatus     AccessStatus                = OCPI.AccessStatus.ALLOWED,
 
-                                            PartyStatus      PartyStatus                 = PartyStatus. ENABLED)
+                                            OCPI.PartyStatus      PartyStatus                 = OCPI.PartyStatus. ENABLED)
 
             => CommonAPI.AddRemoteParty(CountryCode,
                                         PartyId,
@@ -1251,12 +1252,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (lockTaken)
                 {
 
-                    AddResult<EVSE> result;
+                    OCPI.AddResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
                     var locationId  = EVSE.ChargingPool is not null
-                                          ? Location_Id.TryParse(EVSE.ChargingPool.ToString())
+                                          ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.ToString())
                                           : null;
 
                     if (locationId.HasValue)
@@ -1285,19 +1286,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                      false,
                                                                      EventTrackingId);
                                 else
-                                    result = AddResult<EVSE>.Failed("Could not convert the given EVSE!");
+                                    result = OCPI.AddResult<EVSE>.Failed("Could not convert the given EVSE!");
 
                             }
                             else
-                                result = AddResult<EVSE>.Failed("Unknown location identification!");
+                                result = OCPI.AddResult<EVSE>.Failed("Unknown location identification!");
 
                         }
                         else
-                            result = AddResult<EVSE>.Failed("The given EVSE was filtered!");
+                            result = OCPI.AddResult<EVSE>.Failed("The given EVSE was filtered!");
 
                     }
                     else
-                        result = AddResult<EVSE>.Failed("Invalid location identification!");
+                        result = OCPI.AddResult<EVSE>.Failed("Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1374,12 +1375,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (lockTaken)
                 {
 
-                    AddOrUpdateResult<EVSE> result;
+                    OCPI.AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
                     var locationId  = EVSE.ChargingPool is not null
-                                          ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                          ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
                                           : null;
 
                     if (locationId.HasValue)
@@ -1409,19 +1410,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                              false,
                                                                              EventTrackingId);
                                 else
-                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
 
                             }
                             else
-                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+                                result = OCPI.AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
 
                         }
                         else
-                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+                            result = OCPI.AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
 
                     }
                     else
-                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+                        result = OCPI.AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1515,12 +1516,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (lockTaken)
                 {
 
-                    AddOrUpdateResult<EVSE> result;
+                    OCPI.AddOrUpdateResult<EVSE> result;
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
                     var locationId  = EVSE.ChargingPool is not null
-                                          ? Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
+                                          ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
                                           : null;
 
                     if (locationId.HasValue)
@@ -1550,19 +1551,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                              false,
                                                                              EventTrackingId);
                                 else
-                                    result = AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
 
                             }
                             else
-                                result = AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+                                result = OCPI.AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
 
                         }
                         else
-                            result = AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+                            result = OCPI.AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
 
                     }
                     else
-                        result = AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+                        result = OCPI.AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1685,7 +1686,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             {
 
                                 var locationId = evse.ChargingPool is not null
-                                                     ? Location_Id.TryParse(evse.ChargingPool.Id.ToString())
+                                                     ? OCPI.Location_Id.TryParse(evse.ChargingPool.Id.ToString())
                                                      : null;
 
                                 if (locationId.HasValue)
@@ -1866,18 +1867,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                                            if (authToken is null)
                                                                                                return new AuthorizationInfo(
-                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                          Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
+                                                                                                          Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new OCPI.DisplayText(Languages.en, $"The local authentication must not be null!"),
                                                                                                           RemoteParty:  remoteParty
                                                                                                       );
 
 
-                                                                                           var tokenId = Token_Id.TryParse(authToken);
+                                                                                           var tokenId = OCPI.Token_Id.TryParse(authToken);
 
                                                                                            if (!tokenId.HasValue)
                                                                                                return new AuthorizationInfo(
-                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                          Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
+                                                                                                          Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new OCPI.DisplayText(Languages.en, $"The token identification is invalid!"),
                                                                                                           RemoteParty:  remoteParty
                                                                                                       );
 
@@ -1886,13 +1887,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                                            if (remoteAccessInfo is null)
                                                                                                return new AuthorizationInfo(
-                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                          Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                          Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new OCPI.DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
                                                                                                           RemoteParty:  remoteParty
                                                                                                       );
 
 
-                                                                                           var remotePartyLoggingPath = Path.Combine(ClientsLoggingPath, remoteParty.Id.ToString());
+                                                                                           var remotePartyLoggingPath = Path.Combine(ClientsLoggingPath, remoteParty.Id.ToString()) + Path.DirectorySeparatorChar;
 
                                                                                            if (!Directory.Exists(remotePartyLoggingPath))
                                                                                                 Directory.CreateDirectory(remotePartyLoggingPath);
@@ -1915,8 +1916,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                                            if (cpoClient is null)
                                                                                                return new AuthorizationInfo(
-                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                          Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                          Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new OCPI.DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
                                                                                                           RemoteParty:  remoteParty
                                                                                                       );
 
@@ -1948,28 +1949,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                             authorizationInfo.Data.Location,
                                                                                                             authorizationInfo.Data.Info,
                                                                                                             remoteParty,
-                                                                                                            EMSP_Id.From(remoteParty.Id),
+                                                                                                            OCPI.EMSP_Id.From(remoteParty.Id),
                                                                                                             authorizationInfo.Data.Runtime
                                                                                                         )
 
                                                                                                       : new AuthorizationInfo(
-                                                                                                            Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                            Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                            Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                                            Info:         new OCPI.DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
                                                                                                             RemoteParty:  remoteParty
                                                                                                         );
 
                                                                                        },
 
-                                                                VerifyResult:    result  => result.Allowed == AllowedType.ALLOWED,
+                                                                VerifyResult:    result  => result.Allowed == OCPI.AllowedType.ALLOWED,
 
                                                                 Timeout:         RequestTimeout ?? TimeSpan.FromSeconds(10),
 
                                                                 OnException:     null,
 
                                                                 DefaultResult:   runtime  => new AuthorizationInfo(
-                                                                                                 Allowed:   AllowedType.NOT_ALLOWED,
+                                                                                                 Allowed:   OCPI.AllowedType.NOT_ALLOWED,
                                                                                                  Location:  null,
-                                                                                                 Info:      new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
+                                                                                                 Info:      new OCPI.DisplayText(Languages.en, "No authorization service returned a positiv result!"),
                                                                                                  Runtime:   runtime
                                                                                              ));
 
@@ -1977,7 +1978,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (authorizationInfo is null)
                     authStartResult = WWCP.AuthStartResult.CommunicationTimeout(Id, this, SessionId);
 
-                else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+                else if (authorizationInfo.Allowed == OCPI.AllowedType.ALLOWED)
                     authStartResult = WWCP.AuthStartResult.Authorized(
                                AuthorizatorId:            Id,
                                ISendAuthorizeStartStop:   this,
@@ -2000,7 +2001,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                Runtime:                   null
                            );
 
-                else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+                else if (authorizationInfo.Allowed == OCPI.AllowedType.BLOCKED)
                     authStartResult = WWCP.AuthStartResult.Blocked(
                                AuthorizatorId:            Id,
                                ISendAuthorizeStartStop:   this,
@@ -2013,7 +2014,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                Runtime:                   null
                            );
 
-                else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
+                else if (authorizationInfo.Allowed == OCPI.AllowedType.EXPIRED)
                     authStartResult = WWCP.AuthStartResult.Expired(
                                AuthorizatorId:            Id,
                                ISendAuthorizeStartStop:   this,
@@ -2026,7 +2027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                Runtime:                   null
                            );
 
-                else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
+                else if (authorizationInfo.Allowed == OCPI.AllowedType.NO_CREDIT)
                     authStartResult = WWCP.AuthStartResult.NoCredit(
                                AuthorizatorId:            Id,
                                ISendAuthorizeStartStop:   this,
@@ -2039,7 +2040,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                Runtime:                   null
                            );
 
-                else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+                else if (authorizationInfo.Allowed == OCPI.AllowedType.NOT_ALLOWED)
                     authStartResult = WWCP.AuthStartResult.NotAuthorized(
                                AuthorizatorId:            Id,
                                ISendAuthorizeStartStop:   this,
@@ -2194,18 +2195,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                                            if (authToken is null)
                                                                                                return new AuthorizationInfo(
-                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                          Info:         new DisplayText(Languages.en, $"The local authentication must not be null!"),
+                                                                                                          Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new OCPI.DisplayText(Languages.en, $"The local authentication must not be null!"),
                                                                                                           RemoteParty:  remoteParty
                                                                                                       );
 
 
-                                                                                           var tokenId = Token_Id.TryParse(authToken);
+                                                                                           var tokenId = OCPI.Token_Id.TryParse(authToken);
 
                                                                                            if (!tokenId.HasValue)
                                                                                                return new AuthorizationInfo(
-                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                          Info:         new DisplayText(Languages.en, $"The token identification is invalid!"),
+                                                                                                          Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new OCPI.DisplayText(Languages.en, $"The token identification is invalid!"),
                                                                                                           RemoteParty:  remoteParty
                                                                                                       );
 
@@ -2214,8 +2215,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                                            if (remoteAccessInfo is null)
                                                                                                return new AuthorizationInfo(
-                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                          Info:         new DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                          Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new OCPI.DisplayText(Languages.en, $"No remote access information for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
                                                                                                           RemoteParty:  remoteParty
                                                                                                       );
 
@@ -2238,8 +2239,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                                            if (cpoClient is null)
                                                                                                return new AuthorizationInfo(
-                                                                                                          Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                          Info:         new DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                          Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                                          Info:         new OCPI.DisplayText(Languages.en, $"Could not get/create a CPO client for '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
                                                                                                           RemoteParty:  remoteParty
                                                                                                       );
 
@@ -2269,28 +2270,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                             authorizationInfo.Data.Location,
                                                                                                             authorizationInfo.Data.Info,
                                                                                                             remoteParty,
-                                                                                                            EMSP_Id.From(remoteParty.Id),
+                                                                                                            OCPI.EMSP_Id.From(remoteParty.Id),
                                                                                                             authorizationInfo.Data.Runtime
                                                                                                         )
 
                                                                                                       : new AuthorizationInfo(
-                                                                                                            Allowed:      AllowedType.NOT_ALLOWED,
-                                                                                                            Info:         new DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
+                                                                                                            Allowed:      OCPI.AllowedType.NOT_ALLOWED,
+                                                                                                            Info:         new OCPI.DisplayText(Languages.en, authorizationInfo.StatusMessage ?? $"No valid response from '{remoteParty.BusinessDetails.Name} ({remoteParty.CountryCode}-{remoteParty.PartyId})'"),
                                                                                                             RemoteParty:  remoteParty
                                                                                                         );
 
                                                                                        },
 
-                                                                VerifyResult:    result  => result.Allowed == AllowedType.ALLOWED,
+                                                                VerifyResult:    result  => result.Allowed == OCPI.AllowedType.ALLOWED,
 
                                                                 Timeout:         RequestTimeout ?? TimeSpan.FromSeconds(10),
 
                                                                 OnException:     null,
 
                                                                 DefaultResult:   runtime  => new AuthorizationInfo(
-                                                                                                 Allowed:   AllowedType.NOT_ALLOWED,
+                                                                                                 Allowed:   OCPI.AllowedType.NOT_ALLOWED,
                                                                                                  Location:  null,
-                                                                                                 Info:      new DisplayText(Languages.en, "No authorization service returned a positiv result!"),
+                                                                                                 Info:      new OCPI.DisplayText(Languages.en, "No authorization service returned a positiv result!"),
                                                                                                  Runtime:   runtime
                                                                                              ));
 
@@ -2301,7 +2302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (authorizationInfo is null)
                     authStopResult = WWCP.AuthStopResult.CommunicationTimeout(Id, this, SessionId);
 
-                else if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+                else if (authorizationInfo.Allowed == OCPI.AllowedType.ALLOWED)
                     authStopResult = WWCP.AuthStopResult.Authorized(
                                AuthorizatorId:            Id,
                                ISendAuthorizeStartStop:   this,
@@ -2314,7 +2315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                Runtime:                   null
                            );
 
-                else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+                else if (authorizationInfo.Allowed == OCPI.AllowedType.BLOCKED)
                     authStopResult = WWCP.AuthStopResult.Blocked(
                                AuthorizatorId:            Id,
                                ISendAuthorizeStartStop:   this,
@@ -2340,7 +2341,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 //               Runtime:                   null
                 //           );
 
-                else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+                else if (authorizationInfo.Allowed == OCPI.AllowedType.NOT_ALLOWED)
                     authStopResult = WWCP.AuthStopResult.NotAuthorized(
                                AuthorizatorId:            Id,
                                ISendAuthorizeStartStop:   this,
@@ -2530,8 +2531,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #region Setup remote party
 
-                        var emspId            = EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString());
-                        var remoteParty       = CommonAPI.GetRemoteParty(RemoteParty_Id.From(emspId));
+                        var emspId            = OCPI.EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString());
+                        var remoteParty       = CommonAPI.GetRemoteParty(OCPI.RemoteParty_Id.From(emspId));
                         var remoteAccessInfo  = remoteParty?.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
 
                         //if (remoteAccessInfo is null)
@@ -2583,7 +2584,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         var cdr = chargeDetailRecord.ToOCPI(CustomEVSEUIdConverter,
                                                             CustomEVSEIdConverter,
                                                             CommonAPI.GetTariffIds,
-                                                            EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
+                                                            OCPI.EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
                                                             CommonAPI.GetTariff,
                                                             ref warnings);
 
