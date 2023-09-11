@@ -46,14 +46,18 @@ namespace cloud.charging.open.protocols.OCPI
         /// Indicates whether this identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the connector identification.
         /// </summary>
         public UInt64 Length
-
             => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
