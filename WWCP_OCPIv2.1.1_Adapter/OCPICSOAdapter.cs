@@ -541,43 +541,57 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 var wwcpEVSEId = evse.EVSEId.Value.ToWWCP();
 
                 if (!wwcpEVSEId.HasValue)
-                    return new CommandResponse(startSessionCommand,
-                                               CommandResponseTypes.REJECTED,
-                                               TimeSpan.FromMinutes(1),
-                                               new[] {
-                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
-                                               });
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               new[] {
+                                   OCPI.DisplayText.Create(
+                                       Languages.en,
+                                       "StartSessionCommand rejected!"
+                                   )
+                               }
+                           );
 
 
                 var providerId  = emspId.ToWWCP();
 
-                var result      = await RoamingNetwork.RemoteStart(ChargingLocation:       WWCP.ChargingLocation.FromEVSEId(wwcpEVSEId.Value),
-                                                                   ChargingProduct:        null,
-                                                                   ReservationId:          null,
-                                                                   SessionId:              providerId.HasValue // OCPI does not have its own charging session identification!
-                                                                                               ? WWCP.ChargingSession_Id.NewRandom(providerId.Value)
-                                                                                               : WWCP.ChargingSession_Id.NewRandom(),
-                                                                   ProviderId:             providerId,
-                                                                   RemoteAuthentication:   WWCP.RemoteAuthentication.FromRemoteIdentification(WWCP.EMobilityAccount_Id.Parse(startSessionCommand.Token.Id.ToString())));
+                var result      = await RoamingNetwork.RemoteStart(
+                                            WWCP.ChargingLocation.FromEVSEId(wwcpEVSEId.Value),
+                                            null,                                   // ChargingProduct
+                                            null,                                   // ReservationId
+                                            providerId.HasValue                     // OCPI does not have its own charging session identification!
+                                                ? WWCP.ChargingSession_Id.NewRandom(providerId.Value)
+                                                : WWCP.ChargingSession_Id.NewRandom(),
+                                            providerId,
+                                            WWCP.RemoteAuthentication.FromRemoteIdentification(WWCP.EMobilityAccount_Id.Parse(startSessionCommand.Token.Id.ToString())),
+                                            WWCP.Auth_Path.Parse(Id.ToString())     // Authentication path == CSO Roaming Provider identification!
+                                        );
 
 
                 if (result.Result == WWCP.RemoteStartResultTypes.Success)
                 {
-                    return new CommandResponse(startSessionCommand,
-                                               CommandResponseTypes.ACCEPTED,
-                                               TimeSpan.FromMinutes(1),
-                                               new[] {
-                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand accepted!")
-                                               });
+
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.ACCEPTED,
+                               TimeSpan.FromMinutes(1),
+                               new[] {
+                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand accepted!")
+                               }
+                           );
+
                 }
 
                 else
-                    return new CommandResponse(startSessionCommand,
-                                               CommandResponseTypes.REJECTED,
-                                               TimeSpan.FromMinutes(1),
-                                               new[] {
-                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
-                                               });
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               new[] {
+                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
+                               }
+                           );
 
             };
 
@@ -587,28 +601,38 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.CPOAPI.OnStopSessionCommand += async (emspId, stopSessionCommand) => {
 
-                var result = await RoamingNetwork.RemoteStop(SessionId:             WWCP.ChargingSession_Id.Parse(stopSessionCommand.SessionId.ToString()),
-                                                             ReservationHandling:   WWCP.ReservationHandling.Close,
-                                                             ProviderId:            emspId.ToWWCP());
+                var result = await RoamingNetwork.RemoteStop(
+                                       WWCP.ChargingSession_Id.Parse(stopSessionCommand.SessionId.ToString()),
+                                       WWCP.ReservationHandling.Close,
+                                       emspId.ToWWCP(),
+                                       null,                                   // Remote authentication
+                                       WWCP.Auth_Path.Parse(Id.ToString())     // Authentication path == CSO Roaming Provider identification!
+                                   );
 
 
                 if (result.Result == WWCP.RemoteStopResultTypes.Success)
                 {
-                    return new CommandResponse(stopSessionCommand,
-                                               CommandResponseTypes.ACCEPTED,
-                                               TimeSpan.FromMinutes(1),
-                                               new[] {
-                                                   OCPI.DisplayText.Create(Languages.en, "StopSessionCommand accepted!")
-                                               });
+
+                    return new CommandResponse(
+                               stopSessionCommand,
+                               CommandResponseTypes.ACCEPTED,
+                               TimeSpan.FromMinutes(1),
+                               new[] {
+                                   OCPI.DisplayText.Create(Languages.en, "StopSessionCommand accepted!")
+                               }
+                           );
+
                 }
 
                 else
-                    return new CommandResponse(stopSessionCommand,
-                                               CommandResponseTypes.REJECTED,
-                                               TimeSpan.FromMinutes(1),
-                                               new[] {
-                                                   OCPI.DisplayText.Create(Languages.en, "StopSessionCommand rejected!")
-                                               });
+                    return new CommandResponse(
+                               stopSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               new[] {
+                                   OCPI.DisplayText.Create(Languages.en, "StopSessionCommand rejected!")
+                               }
+                           );
 
             };
 

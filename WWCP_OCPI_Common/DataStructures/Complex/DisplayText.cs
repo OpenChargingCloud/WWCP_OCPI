@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                      String     Text)
 
             => new (
-                   new DisplayText[] {
+                   new[] {
                        new DisplayText(Language,
                                        Text)
                    }
