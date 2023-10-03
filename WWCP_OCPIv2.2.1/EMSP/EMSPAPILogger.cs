@@ -15,12 +15,6 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using org.GraphDefined.Vanaheimr.Hermod.Logging;
-
-#endregion
-
 namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 {
 
@@ -56,10 +50,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="EMSPAPI">An EMSP API.</param>
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public EMSPAPILogger(EMSPAPI                  EMSPAPI,
-                             String?                  Context          = DefaultContext,
-                             String?                  LoggingPath      = null,
-                             LogfileCreatorDelegate?  LogfileCreator   = null)
+        public EMSPAPILogger(EMSPAPI                      EMSPAPI,
+                             String?                      Context          = DefaultContext,
+                             String?                      LoggingPath      = null,
+                             OCPILogfileCreatorDelegate?  LogfileCreator   = null)
 
             : base(EMSPAPI.CommonAPI,
                    Context ?? DefaultContext,

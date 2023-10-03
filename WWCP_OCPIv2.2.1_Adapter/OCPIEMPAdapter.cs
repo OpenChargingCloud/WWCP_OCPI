@@ -47,31 +47,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Properties
 
-        /// <summary>
-        /// The global unique identification.
-        /// </summary>
-        [Mandatory]
-        public EMPRoamingProvider_Id                        Id                                   { get; }
-
-        /// <summary>
-        /// The multi-language name.
-        /// </summary>
-        [Optional]
-        public I18NString                                   Name                                 { get; }
-
-        /// <summary>
-        /// The multi-language description.
-        /// </summary>
-        [Optional]
-        public I18NString                                   Description                          { get; }
-
-        /// <summary>
-        /// The roaming network.
-        /// </summary>
-        [Mandatory]
-        public IRoamingNetwork                              RoamingNetwork                       { get; }
-
-
         public EVSEId_2_WWCPEVSEId_Delegate?                CustomEVSEIdConverter                { get; }
         public EVSE_2_WWCPEVSE_Delegate?                    CustomEVSEConverter                  { get; }
         public StatusType_2_WWCPEVSEStatusUpdate_Delegate?  CustomEVSEStatusUpdateConverter      { get; }
@@ -418,11 +393,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         {
 
-            this.Id                                 = Id;
-            this.Name                               = Name;
-            this.Description                        = Description;
-            this.RoamingNetwork                     = RoamingNetwork;
-
             this.CommonAPI                          = CommonAPI;
 
             this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
@@ -556,12 +526,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         IEnumerable<ChargingReservation> IChargingReservations.ChargingReservations => throw new NotImplementedException();
 
-        Task<ReservationResult> IChargingReservations.Reserve(ChargingLocation ChargingLocation, ChargingReservationLevel ReservationLevel, DateTime? StartTime, TimeSpan? Duration, ChargingReservation_Id? ReservationId, ChargingReservation_Id? LinkedReservationId, EMobilityProvider_Id? ProviderId, RemoteAuthentication? RemoteAuthentication, ChargingProduct? ChargingProduct, IEnumerable<AuthenticationToken>? AuthTokens, IEnumerable<EMobilityAccount_Id>? eMAIds, IEnumerable<UInt32>? PINs, DateTime? Timestamp, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
+        Task<ReservationResult> IChargingReservations.Reserve(ChargingLocation ChargingLocation,
+                                                              ChargingReservationLevel ReservationLevel,
+                                                              DateTime? StartTime,
+                                                              TimeSpan? Duration,
+                                                              ChargingReservation_Id? ReservationId,
+                                                              ChargingReservation_Id? LinkedReservationId,
+                                                              EMobilityProvider_Id? ProviderId,
+                                                              RemoteAuthentication? RemoteAuthentication,
+                                                              Auth_Path? AuthenticationPath,
+                                                              ChargingProduct? ChargingProduct,
+                                                              IEnumerable<AuthenticationToken>? AuthTokens,
+                                                              IEnumerable<EMobilityAccount_Id>? eMAIds,
+                                                              IEnumerable<UInt32>? PINs,
+                                                              DateTime? Timestamp,
+                                                              EventTracking_Id? EventTrackingId,
+                                                              TimeSpan? RequestTimeout,
+                                                              CancellationToken CancellationToken)
         {
             return Task.FromResult(ReservationResult.NoOperation());
         }
 
-        Task<CancelReservationResult> IChargingReservations.CancelReservation(ChargingReservation_Id ReservationId, ChargingReservationCancellationReason Reason, DateTime? Timestamp, EventTracking_Id? EventTrackingId, TimeSpan? RequestTimeout, CancellationToken CancellationToken)
+        Task<CancelReservationResult> IChargingReservations.CancelReservation(ChargingReservation_Id ReservationId,
+                                                                              ChargingReservationCancellationReason Reason,
+                                                                              DateTime? Timestamp,
+                                                                              EventTracking_Id? EventTrackingId,
+                                                                              TimeSpan? RequestTimeout,
+                                                                              CancellationToken CancellationToken)
         {
             return Task.FromResult(CancelReservationResult.NoOperation(ReservationId));
         }
@@ -597,6 +588,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                              ChargingSession_Id?      SessionId,
                                                              EMobilityProvider_Id?    ProviderId,
                                                              RemoteAuthentication?    RemoteAuthentication,
+                                                             Auth_Path?               AuthenticationPath,
 
                                                              DateTime?                Timestamp,
                                                              EventTracking_Id?        EventTrackingId,
@@ -610,6 +602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                            ReservationHandling?   ReservationHandling,
                                                            EMobilityProvider_Id?  ProviderId,
                                                            RemoteAuthentication?  RemoteAuthentication,
+                                                           Auth_Path?             AuthenticationPath,
 
                                                            DateTime?              Timestamp,
                                                            EventTracking_Id?      EventTrackingId,
@@ -851,7 +844,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region GetHashCode()
+        #region (override) GetHashCode()
 
         /// <summary>
         /// Return the hash code of this object.

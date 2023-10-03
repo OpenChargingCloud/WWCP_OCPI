@@ -506,7 +506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          String?                              LoggingContext               = null,
                          String?                              LoggingPath                  = null,
                          String?                              LogfileName                  = null,
-                         LogfileCreatorDelegate?              LogfileCreator               = null,
+                         OCPILogfileCreatorDelegate?          LogfileCreator               = null,
                          String?                              DatabaseFilePath             = null,
                          String?                              RemotePartyDBFileName        = null,
                          String?                              AssetsDBFileName             = null,
@@ -561,7 +561,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    LoggingContext,
                    LoggingPath,
                    LogfileName,
-                   LogfileCreator,
+                   LogfileCreator is not null
+                       ? (loggingPath, remotePartyId, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                       : null,
                    DatabaseFilePath,
                    RemotePartyDBFileName,
                    AssetsDBFileName,
@@ -653,7 +655,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          String?                       LoggingContext            = null,
                          String?                       LoggingPath               = null,
                          String?                       LogfileName               = null,
-                         LogfileCreatorDelegate?       LogfileCreator            = null,
+                         OCPILogfileCreatorDelegate?   LogfileCreator            = null,
                          String?                       DatabaseFilePath          = null,
                          String?                       RemotePartyDBFileName     = null,
                          String?                       AssetsDBFileName          = null,
@@ -691,7 +693,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                    LoggingContext,
                    LoggingPath,
                    LogfileName ?? DefaultLogfileName,
-                   LogfileCreator,
+                   LogfileCreator is not null
+                       ? (loggingPath, remotePartyId, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                       : null,
                    DatabaseFilePath,
                    RemotePartyDBFileName,
                    AssetsDBFileName,

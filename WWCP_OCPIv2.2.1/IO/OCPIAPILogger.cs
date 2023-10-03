@@ -29,6 +29,8 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 {
 
+    public delegate String OCPILogfileCreatorDelegate(String LoggingPath, RemoteParty? RemoteParty, String Context, String LogfileName);
+
     public static class OCPIAPILoggerExtensions
     {
 
@@ -581,7 +583,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         try
                         {
 
-                            File.AppendAllText(LogfileCreator(LoggingPath, Context, LogEventName),
+                            File.AppendAllText(LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName),
                                                String.Concat(Request.HTTPRequest.HTTPSource, " -> ", Request.HTTPRequest.LocalSocket,             Environment.NewLine,
                                                              ">>>>>>--Request----->>>>>>------>>>>>>------>>>>>>------>>>>>>------>>>>>>------",  Environment.NewLine,
                                                              Request.HTTPRequest.Timestamp.ToIso8601(),                                                       Environment.NewLine,
@@ -597,20 +599,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                             if (e.HResult != -2147024864)
                             {
-                                DebugX.LogT("File access error while logging to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "' (retry: " + retry + "): " + e.Message);
+                                DebugX.LogT("File access error while logging to '" + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "' (retry: " + retry + "): " + e.Message);
                                 Thread.Sleep(100);
                             }
 
                             else
                             {
-                                DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "': " + e.Message);
+                                DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "': " + e.Message);
                                 break;
                             }
 
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "': " + e.Message);
+                            DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "': " + e.Message);
                             break;
                         }
 
@@ -618,15 +620,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     while (retry++ < MaxRetries);
 
                     if (retry >= MaxRetries)
-                        DebugX.LogT("Could not write to logfile '"      + LogfileCreator(LoggingPath, Context, LogEventName) + "' for "   + retry + " retries!");
+                        DebugX.LogT("Could not write to logfile '"      + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "' for "   + retry + " retries!");
 
                     else if (retry > 0)
-                        DebugX.LogT("Successfully written to logfile '" + LogfileCreator(LoggingPath, Context, LogEventName) + "' after " + retry + " retries!");
+                        DebugX.LogT("Successfully written to logfile '" + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "' after " + retry + " retries!");
 
                 }
 
                 else
-                    DebugX.LogT("Could not get lock to log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "'!");
+                    DebugX.LogT("Could not get lock to log to '" + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "'!");
 
             }
             finally
@@ -672,7 +674,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         try
                         {
 
-                            File.AppendAllText(LogfileCreator(LoggingPath, Context, LogEventName),
+                            File.AppendAllText(LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName),
                                                String.Concat(Request.HTTPRequest.HTTPSource, " -> ", Request.HTTPRequest.LocalSocket,             Environment.NewLine,
                                                              ">>>>>>--Request----->>>>>>------>>>>>>------>>>>>>------>>>>>>------>>>>>>------",  Environment.NewLine,
                                                              Request.HTTPRequest.Timestamp.ToIso8601(),                                                       Environment.NewLine,
@@ -693,20 +695,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                             if (e.HResult != -2147024864)
                             {
-                                DebugX.LogT("File access error while logging to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "' (retry: " + retry + "): " + e.Message);
+                                DebugX.LogT("File access error while logging to '" + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "' (retry: " + retry + "): " + e.Message);
                                 Thread.Sleep(100);
                             }
 
                             else
                             {
-                                DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "': " + e.Message);
+                                DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "': " + e.Message);
                                 break;
                             }
 
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "': " + e.Message);
+                            DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "': " + e.Message);
                             break;
                         }
 
@@ -714,15 +716,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     while (retry++ < MaxRetries);
 
                     if (retry >= MaxRetries)
-                        DebugX.LogT("Could not write to logfile '"      + LogfileCreator(LoggingPath, Context, LogEventName) + "' for "   + retry + " retries!");
+                        DebugX.LogT("Could not write to logfile '"      + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "' for "   + retry + " retries!");
 
                     else if (retry > 0)
-                        DebugX.LogT("Successfully written to logfile '" + LogfileCreator(LoggingPath, Context, LogEventName) + "' after " + retry + " retries!");
+                        DebugX.LogT("Successfully written to logfile '" + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "' after " + retry + " retries!");
 
                 }
 
                 else
-                    DebugX.LogT("Could not get lock to log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "'!");
+                    DebugX.LogT("Could not get lock to log to '" + LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName) + "'!");
 
             }
             finally
@@ -739,35 +741,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Data
 
-        private static readonly Object         lockObject                   = new();
-        private static readonly SemaphoreSlim  logHTTPRequest_toDisc_Lock   = new(1,1);
-        private static readonly SemaphoreSlim  logHTTPResponse_toDisc_Lock  = new(1,1);
+        private static readonly  Object                                               lockObject                    = new();
+        private static readonly  SemaphoreSlim                                        logHTTPRequest_toDisc_Lock    = new(1,1);
+        private static readonly  SemaphoreSlim                                        logHTTPResponse_toDisc_Lock   = new(1,1);
 
         /// <summary>
         /// The maximum number of retries to write to a logfile.
         /// </summary>
-        public  static readonly Byte           MaxRetries                   = 5;
+        public  static readonly  Byte                                                 MaxRetries                    = 5;
 
         /// <summary>
         /// Maximum waiting time to enter a lock around a logfile.
         /// </summary>
-        public  static readonly TimeSpan       MaxWaitingForALock           = TimeSpan.FromSeconds(15);
-
-        /// <summary>
-        /// A delegate for the default ToDisc logger returning a
-        /// valid logfile name based on the given log event name.
-        /// </summary>
-        public         LogfileCreatorDelegate  LogfileCreator               { get; }
+        public  static readonly  TimeSpan                                             MaxWaitingForALock            = TimeSpan.FromSeconds(15);
 
 
-        protected readonly ConcurrentDictionary<String, HashSet<String>>        groupTags;
-        private   readonly ConcurrentDictionary<String, OCPIAPIRequestLogger>   requestLoggers;
-        private   readonly ConcurrentDictionary<String, OCPIAPIResponseLogger>  responseLoggers;
+        protected readonly       ConcurrentDictionary<String, HashSet<String>>        groupTags;
+        private   readonly       ConcurrentDictionary<String, OCPIAPIRequestLogger>   requestLoggers;
+        private   readonly       ConcurrentDictionary<String, OCPIAPIResponseLogger>  responseLoggers;
 
         /// <summary>
         /// The default context of this logger.
         /// </summary>
-        public    const    String                                               DefaultContext   = "OCPIAPI";
+        public    const          String                                               DefaultContext                = "OCPIAPI";
 
         #endregion
 
@@ -776,14 +772,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// The HTTP server of this logger.
         /// </summary>
-        public IHTTPServer  HTTPServer     { get; }
+        public IHTTPServer                 HTTPServer        { get; }
 
-        public String       LoggingPath    { get; }
+        public String                      LoggingPath       { get; }
 
         /// <summary>
         /// The context of this HTTP logger.
         /// </summary>
-        public String       Context        { get; }
+        public String                      Context           { get; }
+
+        /// <summary>
+        /// A delegate for the default ToDisc logger returning a
+        /// valid logfile name based on the given log event name.
+        /// </summary>
+        public OCPILogfileCreatorDelegate  LogfileCreator    { get; }
 
         #endregion
 
@@ -795,10 +797,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="HTTPServer">A HTTP server.</param>
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public OCPIAPILogger(IHTTPServer              HTTPServer,
-                             String                   Context,
-                             String?                  LoggingPath      = null,
-                             LogfileCreatorDelegate?  LogfileCreator   = null)
+        public OCPIAPILogger(IHTTPServer                  HTTPServer,
+                             String                       Context,
+                             String?                      LoggingPath      = null,
+                             OCPILogfileCreatorDelegate?  LogfileCreator   = null)
         {
 
             this.HTTPServer       = HTTPServer  ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
@@ -809,12 +811,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.responseLoggers  = new ConcurrentDictionary<String, OCPIAPIResponseLogger>();
             this.groupTags        = new ConcurrentDictionary<String, HashSet<String>>();
 
-            this.LogfileCreator   = LogfileCreator ?? ((loggingPath, context, logfilename) => String.Concat(loggingPath,
-                                                                                                            context is not null ? context + "_" : "",
-                                                                                                            logfilename, "_",
-                                                                                                            Timestamp.Now.Year, "-",
-                                                                                                            Timestamp.Now.Month.ToString("D2"),
-                                                                                                            ".log"));
+            this.LogfileCreator   = LogfileCreator ?? ((loggingPath,
+                                                        remoteParty,
+                                                        context,
+                                                        logfilename) => String.Concat(
+                                                                            loggingPath,
+                                                                            remoteParty is not null
+                                                                                ? remoteParty.Id.ToString() + Path.DirectorySeparatorChar
+                                                                                : null,
+                                                                            context is not null ? context + "_" : "",
+                                                                            logfilename, "_",
+                                                                            Timestamp.Now.Year, "-",
+                                                                            Timestamp.Now.Month.ToString("D2"),
+                                                                            ".log"
+                                                                        ));
 
         }
 
