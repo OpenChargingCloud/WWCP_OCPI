@@ -44,7 +44,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                Tariff    Tariff)
         {
 
-            var chargingPeriods = CDR.ChargingPeriods;
+            var chargingPeriods = CDR.ChargingPeriods.ToList();
+
+            if (!chargingPeriods.Any())
+            {
+
+                chargingPeriods.Add(ChargingPeriod.Create(
+                                        CDR.Start,
+                                        new[] {
+                                            CDRDimension.TIME  (Convert.ToDecimal((CDR.Stop - CDR.Start).TotalHours)),
+                                            CDRDimension.ENERGY()
+                                        }
+                                    ));
+
+            }
+
+            foreach (var chargingPeriod in chargingPeriods)
+            {
+
+                var energyInfos = chargingPeriod.Dimensions.Any(dimension => dimension.Type == CDRDimensionType.ENERGY);
+
+            }
 
 
 
@@ -58,7 +78,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     CDR.AuthId,
                                     CDR.AuthMethod,
                                     CDR.Location,
-                                      Tariff.Currency,
+                                    Tariff.Currency,
                                       CDR.ChargingPeriods,
                                       CDR.TotalCost,
                                       CDR.TotalEnergy,

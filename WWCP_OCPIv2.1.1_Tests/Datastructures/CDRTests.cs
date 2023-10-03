@@ -799,6 +799,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                              );
 
 
+            var cdrOut     = cdrIn.AugemntCDRWithTariff(tariff);
+
+
         }
 
         #endregion
