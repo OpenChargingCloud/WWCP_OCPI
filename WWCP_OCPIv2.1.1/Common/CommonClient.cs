@@ -730,20 +730,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         case 1000:
 
-                            if (response.Data is not null)
+                            if (response.Data is not null &&
+                                response.Data.Any())
                             {
-                                lock (versions)
+
+                                versions.Clear();
+
+                                foreach (var versionInformation in response.Data)
                                 {
-
-                                    versions.Clear();
-
-                                    foreach (var versionInformation in response.Data)
-                                    {
-                                        versions.TryAdd(versionInformation.Id,
-                                                        versionInformation.URL);
-                                    }
-
+                                    versions.TryAdd(versionInformation.Id,
+                                                    versionInformation.URL);
                                 }
+
                             }
 
                             break;
@@ -1018,18 +1016,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                     if (response.Data is not null)
                                     {
-                                        lock (versionDetails)
-                                        {
 
-                                            if (versionDetails.ContainsKey(versionId.Value))
-                                                versionDetails.TryRemove  (versionId.Value, out _);
+                                        if (versionDetails.ContainsKey(versionId.Value))
+                                            versionDetails.TryRemove  (versionId.Value, out _);
 
-                                            versionDetails.TryAdd(versionId.Value, response.Data);
+                                        versionDetails.TryAdd(versionId.Value, response.Data);
 
-                                            if (SetAsDefaultVersion)
-                                                SelectedOCPIVersionId = VersionId;
+                                        if (SetAsDefaultVersion)
+                                            SelectedOCPIVersionId = VersionId;
 
-                                        }
                                     }
 
                                     break;
