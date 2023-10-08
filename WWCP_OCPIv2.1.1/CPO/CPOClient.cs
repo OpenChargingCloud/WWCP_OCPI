@@ -5037,7 +5037,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                 }
 
             }
-
             catch (Exception e)
             {
                 response = OCPIResponse<String, AuthorizationInfo>.Exception(e);
