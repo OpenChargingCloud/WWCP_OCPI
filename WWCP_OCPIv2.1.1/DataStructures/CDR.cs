@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         CDR.Start,
                                         new[] {
                                             CDRDimension.TIME  (Convert.ToDecimal((CDR.Stop - CDR.Start).TotalHours)),
-                                            CDRDimension.ENERGY()
+                                            CDRDimension.ENERGY(0)
                                         }
                                     ));
 
@@ -79,17 +79,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     CDR.AuthMethod,
                                     CDR.Location,
                                     Tariff.Currency,
-                                      CDR.ChargingPeriods,
-                                      CDR.TotalCost,
-                                      CDR.TotalEnergy,
-                                      CDR.TotalTime,
-
+                                    CDR.ChargingPeriods,
+                                    CDR.TotalCost,
+                                    CDR.TotalEnergy,
+                                    CDR.TotalTime,
                                     CDR.MeterId,
                                     CDR.EnergyMeter,
                                     CDR.TransparencySoftwares,
                                     new[] { Tariff },
                                     CDR.SignedData,
-                                      CDR.TotalParkingTime,
+                                    CDR.TotalParkingTime,
                                     CDR.Remark,
                                     CDR.Created,
                                     CDR.LastUpdated
