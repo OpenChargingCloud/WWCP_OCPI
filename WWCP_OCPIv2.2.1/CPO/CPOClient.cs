@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System.Net.Security;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -926,9 +922,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Locations,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -1112,9 +1112,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Locations,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -1323,9 +1327,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Locations,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -1512,9 +1520,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Locations,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -1753,9 +1765,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Locations,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -1963,9 +1979,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Locations,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -2160,9 +2180,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Locations,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -2360,9 +2384,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Locations,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -2555,9 +2583,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Locations,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Locations,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -2678,7 +2710,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #endregion
 
 
-
         #region GetTariff      (CountryCode, PartyId, TariffId, ...)
 
         /// <summary>
@@ -2751,9 +2782,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Tariffs,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Tariffs,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -2936,9 +2971,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Tariffs,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Tariffs,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -3132,9 +3171,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Tariffs,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Tariffs,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -3322,9 +3365,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Tariffs,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Tariffs,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -3438,7 +3485,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #endregion
 
 
-
         #region GetSession     (CountryCode, PartyId, SessionId, ...)
 
         /// <summary>
@@ -3511,9 +3557,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Sessions,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Sessions,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -3696,9 +3746,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Sessions,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Sessions,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -3892,9 +3946,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Sessions,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Sessions,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -4082,9 +4140,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Sessions,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Sessions,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -4198,7 +4260,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #endregion
 
 
-
         #region PostCDR        (CDR, ...)
 
         /// <summary>
@@ -4267,11 +4328,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.CDRs,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId,
-                                                   eventTrackingId,
-                                                   CancellationToken);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.CDRs,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -4456,11 +4519,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.CDRs,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId,
-                                                   eventTrackingId,
-                                                   CancellationToken);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.CDRs,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -4574,7 +4639,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         #endregion
 
 
-
         #region GetTokens      (Offset = null, Limit = null, ...)
 
         /// <summary>
@@ -4650,9 +4714,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Tokens,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Tokens,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 var offsetLimit    = "";
 
@@ -4846,9 +4914,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.Tokens,
-                                                   InterfaceRoles.SENDER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.Tokens,
+                                    InterfaceRoles.SENDER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 if (remoteURL.HasValue)
                 {
@@ -5071,9 +5143,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             try
             {
 
-                var remoteURL = await GetRemoteURL(Module_Id.ChargingProfiles,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
+                var remoteURL = await GetRemoteURL(
+                                    Module_Id.ChargingProfiles,
+                                    InterfaceRoles.RECEIVER,
+                                    VersionId,
+                                    eventTrackingId,
+                                    CancellationToken
+                                );
 
                 var command   = new SetChargingProfileCommand(ChargingProfile,
                                                               CommonAPI.GetModuleURL(Module_Id.Commands) + "SET_CHARGING_PROFILE" + RandomExtensions.RandomString(50));
