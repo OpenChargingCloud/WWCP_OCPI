@@ -160,15 +160,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region DateAndPaginationFilters
 
+        /// <summary>
+        /// Date and pagination filters.
+        /// </summary>
         public readonly struct DateAndPaginationFilters
         {
 
-            public DateTime?  From     { get; }
-            public DateTime?  To       { get; }
-            public UInt64?    Offset   { get; }
-            public UInt64?    Limit    { get; }
+            #region Properties
 
+            /// <summary>
+            /// The optional 'from' timestamp (inclusive).
+            /// </summary>
+            public DateTime?  From      { get; }
 
+            /// <summary>
+            /// The optional 'to' timestamp (exclusive).
+            /// </summary>
+            public DateTime?  To        { get; }
+
+            /// <summary>
+            /// The optional 'offset' within the result set.
+            /// </summary>
+            public UInt64?    Offset    { get; }
+
+            /// <summary>
+            /// The optional 'limit' of the result set.
+            /// </summary>
+            public UInt64?    Limit     { get; }
+
+            #endregion
+
+            #region Constructor(s)
+
+            /// <summary>
+            /// Create new date and pagination filters.
+            /// </summary>
+            /// <param name="From">An optional 'from' timestamp (inclusive).</param>
+            /// <param name="To">An optional 'to' timestamp (exclusive).</param>
+            /// <param name="Offset">An optional 'offset' within the result set.</param>
+            /// <param name="Limit">An optional 'limit' of the result set.</param>
             public DateAndPaginationFilters(DateTime?  From,
                                             DateTime?  To,
                                             UInt64?    Offset,
@@ -181,6 +211,58 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 this.Limit   = Limit;
 
             }
+
+            #endregion
+
+
+            #region ToHTTPQueryString()
+
+            /// <summary>
+            /// Return a HTTP QueryString representation of this object.
+            /// </summary>
+            public String ToHTTPQueryString()
+
+                => (From.  HasValue ||
+                    To.    HasValue ||
+                    Offset.HasValue ||
+                    Limit. HasValue)
+
+                    ? "?" + new String[] {
+                          From.  HasValue ? "date_from=" + From.  Value.ToIso8601() : "",
+                          To.    HasValue ? "date_to="   + To.    Value.ToIso8601() : "",
+                          Offset.HasValue ? "offset="    + Offset.Value.ToString()  : "",
+                          Limit. HasValue ? "limit="     + Limit. Value.ToString()  : ""
+                      }.Where(text => text.IsNotNullOrEmpty()).
+                        AggregateWith("&")
+
+                    : "";
+
+            #endregion
+
+            #region (override) ToString()
+
+            /// <summary>
+            /// Return a text representation of this object.
+            /// </summary>
+            public override String ToString()
+
+                => (From.  HasValue ||
+                    To.    HasValue ||
+                    Offset.HasValue ||
+                    Limit. HasValue)
+
+                    ? new String[] {
+                          From.  HasValue ? "from: "   + From.  Value.ToString() : "",
+                          To.    HasValue ? "to: "     + To.    Value.ToString() : "",
+                          Offset.HasValue ? "offset: " + Offset.Value.ToString() : "",
+                          Limit. HasValue ? "limit: "  + Limit. Value.ToString() : ""
+                      }.Where(text => text.IsNotNullOrEmpty()).
+                        AggregateWith(", ")
+
+                    : "";
+
+            #endregion
+
 
         }
 
@@ -397,11 +479,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         {
 
             var result = HTTPRequest.TryParseJSONObjectRequestBody(out JSON,
-                                                                out var HTTPResponseBuilder,
-                                                                AllowEmptyHTTPBody,
-                                                                JSONLDContext);
+                                                                   out var HTTPResponseBuilder,
+                                                                   AllowEmptyHTTPBody,
+                                                                   JSONLDContext);
 
-            if (HTTPResponseBuilder != null)
+            if (HTTPResponseBuilder is not null)
             {
                 HTTPResponseBuilder.Set("X-Request-ID",      RequestId).
                                     Set("X-Correlation-ID",  CorrelationId);
@@ -424,11 +506,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         {
 
             var result = HTTPRequest.TryParseJSONArrayRequestBody(out JSON,
-                                                               out var HTTPResponseBuilder,
-                                                               AllowEmptyHTTPBody,
-                                                               JSONLDContext);
+                                                                  out var HTTPResponseBuilder,
+                                                                  AllowEmptyHTTPBody,
+                                                                  JSONLDContext);
 
-            if (HTTPResponseBuilder != null)
+            if (HTTPResponseBuilder is not null)
             {
                 HTTPResponseBuilder.Set("X-Request-ID",      RequestId).
                                     Set("X-Correlation-ID",  CorrelationId);

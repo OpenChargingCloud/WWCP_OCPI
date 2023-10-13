@@ -262,11 +262,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                CDRToken = new CDRToken(CountryCode,
-                                        PartyId,
-                                        UID,
-                                        TokenType,
-                                        ContractId);
+                CDRToken = new CDRToken(
+                               CountryCode,
+                               PartyId,
+                               UID,
+                               TokenType,
+                               ContractId
+                           );
 
 
                 if (CustomCDRTokenParser is not null)

@@ -677,27 +677,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                Session = new Session(CountryCodeBody ?? CountryCodeURL!.Value,
-                                      PartyIdBody     ?? PartyIdURL!.    Value,
-                                      SessionIdBody   ?? SessionIdURL!.  Value,
-                                      Start,
-                                      KWh,
-                                      CDRToken,
-                                      AuthMethod,
-                                      LocationId,
-                                      EVSEUId,
-                                      ConnectorId,
-                                      Currency,
-                                      Status,
+                Session = new Session(
+                              CountryCodeBody ?? CountryCodeURL!.Value,
+                              PartyIdBody     ?? PartyIdURL!.    Value,
+                              SessionIdBody   ?? SessionIdURL!.  Value,
+                              Start,
+                              KWh,
+                              CDRToken,
+                              AuthMethod,
+                              LocationId,
+                              EVSEUId,
+                              ConnectorId,
+                              Currency,
+                              Status,
 
-                                      End,
-                                      AuthorizationReference,
-                                      MeterId,
-                                      ChargingPeriods,
-                                      TotalCosts,
+                              End,
+                              AuthorizationReference,
+                              MeterId,
+                              ChargingPeriods,
+                              TotalCosts,
 
-                                      Created,
-                                      LastUpdated);
+                              Created,
+                              LastUpdated
+                          );
 
 
                 if (CustomSessionParser is not null)
