@@ -70,7 +70,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public   Party_Id                    PartyId              { get; }
 
         /// <summary>
-        /// The identification of the tariff within the CPOs platform (and suboperator platforms). 
+        /// The identification of the tariff within the CPOs platform (and suboperator platforms).
         /// </summary>
         [Mandatory]
         public   Tariff_Id                   Id                   { get; }

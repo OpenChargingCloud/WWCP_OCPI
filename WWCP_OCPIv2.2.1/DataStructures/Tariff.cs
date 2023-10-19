@@ -86,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// When omitted, this tariff is valid for all charging sessions.
         /// </summary>
         [Optional]
-        public   TariffTypes?                TariffType           { get; }
+        public   TariffType?                 TariffType           { get; }
 
         /// <summary>
         /// The optional multi-language alternative tariff info text.
@@ -199,11 +199,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         public Tariff(CountryCode                                            CountryCode,
                       Party_Id                                               PartyId,
-                      Tariff_Id                                              Id ,
+                      Tariff_Id                                              Id,
                       OCPI.Currency                                          Currency,
                       IEnumerable<TariffElement>                             TariffElements,
 
-                      TariffTypes?                                           TariffType                            = null,
+                      TariffType?                                            TariffType                            = null,
                       IEnumerable<DisplayText>?                              TariffAltText                         = null,
                       URL?                                                   TariffAltURL                          = null,
                       Price?                                                 MinPrice                              = null,
@@ -290,11 +290,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public Tariff(CommonAPI?                                             CommonAPI,
                       CountryCode                                            CountryCode,
                       Party_Id                                               PartyId,
-                      Tariff_Id                                              Id ,
+                      Tariff_Id                                              Id,
                       OCPI.Currency                                          Currency,
                       IEnumerable<TariffElement>                             TariffElements,
 
-                      TariffTypes?                                           TariffType                            = null,
+                      TariffType?                                            TariffType                            = null,
                       IEnumerable<DisplayText>?                              TariffAltText                         = null,
                       URL?                                                   TariffAltURL                          = null,
                       Price?                                                 MinPrice                              = null,
@@ -554,10 +554,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #region Parse TariffType        [optional]
 
-                if (JSON.ParseOptionalEnum("type",
-                                           "tariff type",
-                                           out TariffTypes? TariffType,
-                                           out ErrorResponse))
+                if (JSON.ParseOptional("type",
+                                       "tariff type",
+                                       OCPIv2_2_1.TariffType.TryParse,
+                                       out TariffType? TariffType,
+                                       out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -702,23 +703,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                Tariff = new Tariff(CountryCodeBody ?? CountryCodeURL!.Value,
-                                    PartyIdBody     ?? PartyIdURL!.    Value,
-                                    TariffIdBody    ?? TariffIdURL!.   Value,
-                                    Currency,
-                                    TariffElements,
+                Tariff = new Tariff(
+                             CountryCodeBody ?? CountryCodeURL!.Value,
+                             PartyIdBody     ?? PartyIdURL!.    Value,
+                             TariffIdBody    ?? TariffIdURL!.   Value,
+                             Currency,
+                             TariffElements,
 
-                                    TariffType,
-                                    TariffAltText,
-                                    TariffAltURL,
-                                    MinPrice,
-                                    MaxPrice,
-                                    Start,
-                                    End,
-                                    EnergyMix,
+                             TariffType,
+                             TariffAltText,
+                             TariffAltURL,
+                             MinPrice,
+                             MaxPrice,
+                             Start,
+                             End,
+                             EnergyMix,
 
-                                    Created,
-                                    LastUpdated);
+                             Created,
+                             LastUpdated
+                         );
 
                 if (CustomTariffParser is not null)
                     Tariff = CustomTariffParser(JSON,
@@ -765,54 +768,54 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var json = JSONObject.Create(
 
-                           new JProperty("country_code",           CountryCode.ToString()),
-                           new JProperty("party_id",               PartyId.    ToString()),
-                           new JProperty("id",                     Id.         ToString()),
+                           new JProperty("country_code",            CountryCode.ToString()),
+                           new JProperty("party_id",                PartyId.    ToString()),
+                           new JProperty("id",                      Id.         ToString()),
 
-                           new JProperty("currency",               Currency.   ToString()),
+                           new JProperty("currency",                Currency.   ToString()),
 
                            TariffType.HasValue
-                               ? new JProperty("type",             TariffType.Value.ToString())
+                               ? new JProperty("type",              TariffType.Value.ToString())
                                : null,
 
                            TariffAltText.SafeAny()
-                               ? new JProperty("tariff_alt_text",  new JArray(TariffAltText.Select(tariffAltText => tariffAltText.ToJSON(CustomDisplayTextSerializer))))
+                               ? new JProperty("tariff_alt_text",   new JArray(TariffAltText.Select(tariffAltText => tariffAltText.ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
                            TariffAltURL.HasValue
-                               ? new JProperty("tariff_alt_url",   TariffAltURL.  ToString())
+                               ? new JProperty("tariff_alt_url",    TariffAltURL.  ToString())
                                : null,
 
                            MinPrice.HasValue
-                               ? new JProperty("min_price",        MinPrice.Value.ToJSON(CustomPriceSerializer))
+                               ? new JProperty("min_price",         MinPrice.Value.ToJSON(CustomPriceSerializer))
                                : null,
 
                            MaxPrice.HasValue
-                               ? new JProperty("max_price",        MaxPrice.Value.ToJSON(CustomPriceSerializer))
+                               ? new JProperty("max_price",         MaxPrice.Value.ToJSON(CustomPriceSerializer))
                                : null,
 
                            TariffElements.SafeAny()
-                               ? new JProperty("elements",         new JArray(TariffElements.Select(tariffElement => tariffElement.ToJSON(CustomTariffElementSerializer,
-                                                                                                                                          CustomPriceComponentSerializer,
-                                                                                                                                          CustomTariffRestrictionsSerializer))))
+                               ? new JProperty("elements",          new JArray(TariffElements.Select(tariffElement => tariffElement.ToJSON(CustomTariffElementSerializer,
+                                                                                                                                           CustomPriceComponentSerializer,
+                                                                                                                                           CustomTariffRestrictionsSerializer))))
                                : null,
 
                            Start.HasValue
-                               ? new JProperty("start_date_time",  Start.Value.ToIso8601())
+                               ? new JProperty("start_date_time",   Start.Value.ToIso8601())
                                : null,
 
                            End.HasValue
-                               ? new JProperty("end_date_time",    End.  Value.ToIso8601())
+                               ? new JProperty("end_date_time",     End.  Value.ToIso8601())
                                : null,
 
                            EnergyMix is not null
-                               ? new JProperty("energy_mix",       EnergyMix.  ToJSON(CustomEnergyMixSerializer,
-                                                                                      CustomEnergySourceSerializer,
-                                                                                      CustomEnvironmentalImpactSerializer))
+                               ? new JProperty("energy_mix",        EnergyMix.  ToJSON(CustomEnergyMixSerializer,
+                                                                                       CustomEnergySourceSerializer,
+                                                                                       CustomEnvironmentalImpactSerializer))
                                : null,
 
-                                 new JProperty("created",          Created.    ToIso8601()),
-                                 new JProperty("last_updated",     LastUpdated.ToIso8601())
+                                 new JProperty("created",           Created.    ToIso8601()),
+                                 new JProperty("last_updated",      LastUpdated.ToIso8601())
 
                        );
 
@@ -983,8 +986,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (Tariff? Tariff1,
                                            Tariff? Tariff2)
@@ -1007,8 +1010,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (Tariff? Tariff1,
                                            Tariff? Tariff2)
@@ -1022,8 +1025,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (Tariff? Tariff1,
                                           Tariff? Tariff2)
@@ -1039,8 +1042,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (Tariff? Tariff1,
                                            Tariff? Tariff2)
@@ -1054,8 +1057,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (Tariff? Tariff1,
                                           Tariff? Tariff2)
@@ -1071,8 +1074,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (Tariff? Tariff1,
                                            Tariff? Tariff2)

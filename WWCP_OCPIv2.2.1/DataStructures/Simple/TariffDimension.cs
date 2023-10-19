@@ -49,8 +49,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
 
     /// <summary>
-    /// The unique identification of a meter.
-    /// string(255)
+    /// The unique identification of a tariff dimension.
     /// </summary>
     public readonly struct TariffDimension : IId<TariffDimension>
     {
@@ -193,13 +192,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Flat fee without unit for step_size.
         /// </summary>
         public static TariffDimension FLAT
-            => new("FLAT");
+            => new ("FLAT");
 
         /// <summary>
         /// Time not charging: defined in hours, step_size multiplier: 1 second.
         /// </summary>
         public static TariffDimension PARKING_TIME
-            => new("PARKING_TIME");
+            => new ("PARKING_TIME");
 
         /// <summary>
         /// Time charging: defined in hours, step_size multiplier: 1 second.
@@ -207,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// the price of the reservation time.
         /// </summary>
         public static TariffDimension TIME
-            => new("TIME");
+            => new ("TIME");
 
         #endregion
 

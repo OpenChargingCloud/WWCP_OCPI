@@ -2080,7 +2080,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                               )
                                                                                           )
                                                                                       },
-                                                                                      TariffTypes.PROFILE_GREEN,
+                                                                                      TariffType.PROFILE_GREEN,
                                                                                       new[] {
                                                                                           new DisplayText(Languages.de, "Hallo Welt!"),
                                                                                           new DisplayText(Languages.en, "Hello world!"),
