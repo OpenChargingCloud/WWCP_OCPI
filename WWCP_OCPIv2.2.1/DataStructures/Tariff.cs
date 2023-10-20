@@ -353,12 +353,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             unchecked
             {
 
-                hashCode = this.CountryCode.   GetHashCode()        * 41 ^
-                           this.PartyId.       GetHashCode()        * 37 ^
-                           this.Id.            GetHashCode()        * 31 ^
-                           this.Currency.      GetHashCode()        * 29 ^
-                           this.TariffElements.CalcHashCode()       * 23 ^
-                           this.LastUpdated.   GetHashCode()        * 19 ^
+                hashCode = this.CountryCode.   GetHashCode()        * 43 ^
+                           this.PartyId.       GetHashCode()        * 41 ^
+                           this.Id.            GetHashCode()        * 37 ^
+                           this.Currency.      GetHashCode()        * 31 ^
+                           this.TariffElements.CalcHashCode()       * 29 ^
+                           this.LastUpdated.   GetHashCode()        * 23 ^
+                          (this.TariffType?.   GetHashCode()  ?? 0) * 19 ^
                            this.TariffAltText. CalcHashCode()       * 17 ^
                           (this.TariffAltURL?. GetHashCode()  ?? 0) * 13 ^
                           (this.MinPrice?.     GetHashCode()  ?? 0) * 11 ^

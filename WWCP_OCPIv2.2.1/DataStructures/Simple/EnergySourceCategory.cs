@@ -33,14 +33,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Indicates whether this energy source category is null or empty.
         /// </summary>
-        /// <param name="EnergySourceCategory">A energy source category.</param>
+        /// <param name="EnergySourceCategory">An energy source category.</param>
         public static Boolean IsNullOrEmpty(this EnergySourceCategory? EnergySourceCategory)
             => !EnergySourceCategory.HasValue || EnergySourceCategory.Value.IsNullOrEmpty;
 
         /// <summary>
         /// Indicates whether this energy source category is NOT null or empty.
         /// </summary>
-        /// <param name="EnergySourceCategory">A energy source category.</param>
+        /// <param name="EnergySourceCategory">An energy source category.</param>
         public static Boolean IsNotNullOrEmpty(this EnergySourceCategory? EnergySourceCategory)
             => EnergySourceCategory.HasValue && EnergySourceCategory.Value.IsNotNullOrEmpty;
 
@@ -191,43 +191,43 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// All kinds of fossil power sources.
         /// </summary>
         public static EnergySourceCategory GENERAL_FOSSIL
-            => new("GENERAL_FOSSIL");
+            => new ("GENERAL_FOSSIL");
 
         /// <summary>
         /// Fossil power from coal.
         /// </summary>
         public static EnergySourceCategory COAL
-            => new("COAL");
+            => new ("COAL");
 
         /// <summary>
         /// Fossil power from gas.
         /// </summary>
         public static EnergySourceCategory GAS
-            => new("GAS");
+            => new ("GAS");
 
         /// <summary>
         /// All kinds of regenerative power sources.
         /// </summary>
         public static EnergySourceCategory GENERAL_GREEN
-            => new("GENERAL_GREEN");
+            => new ("GENERAL_GREEN");
 
         /// <summary>
         /// Regenerative power from PV.
         /// </summary>
         public static EnergySourceCategory SOLAR
-            => new("SOLAR");
+            => new ("SOLAR");
 
         /// <summary>
         /// Regenerative power from wind turbines.
         /// </summary>
         public static EnergySourceCategory WIND
-            => new("WIND");
+            => new ("WIND");
 
         /// <summary>
         /// Regenerative power from water turbines.
         /// </summary>
         public static EnergySourceCategory WATER
-            => new("WATER");
+            => new ("WATER");
 
         #endregion
 
@@ -239,7 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EnergySourceCategory1">A energy source category.</param>
+        /// <param name="EnergySourceCategory1">An energy source category.</param>
         /// <param name="EnergySourceCategory2">Another energy source category.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (EnergySourceCategory EnergySourceCategory1,
@@ -254,7 +254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EnergySourceCategory1">A energy source category.</param>
+        /// <param name="EnergySourceCategory1">An energy source category.</param>
         /// <param name="EnergySourceCategory2">Another energy source category.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (EnergySourceCategory EnergySourceCategory1,
@@ -269,7 +269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EnergySourceCategory1">A energy source category.</param>
+        /// <param name="EnergySourceCategory1">An energy source category.</param>
         /// <param name="EnergySourceCategory2">Another energy source category.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (EnergySourceCategory EnergySourceCategory1,
@@ -284,7 +284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EnergySourceCategory1">A energy source category.</param>
+        /// <param name="EnergySourceCategory1">An energy source category.</param>
         /// <param name="EnergySourceCategory2">Another energy source category.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (EnergySourceCategory EnergySourceCategory1,
@@ -299,7 +299,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EnergySourceCategory1">A energy source category.</param>
+        /// <param name="EnergySourceCategory1">An energy source category.</param>
         /// <param name="EnergySourceCategory2">Another energy source category.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (EnergySourceCategory EnergySourceCategory1,
@@ -314,7 +314,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EnergySourceCategory1">A energy source category.</param>
+        /// <param name="EnergySourceCategory1">An energy source category.</param>
         /// <param name="EnergySourceCategory2">Another energy source category.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (EnergySourceCategory EnergySourceCategory1,
@@ -333,7 +333,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two energy source categories.
         /// </summary>
-        /// <param name="Object">A energy source category to compare with.</param>
+        /// <param name="Object">An energy source category to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
             => Object is EnergySourceCategory energySourceCategory
@@ -348,7 +348,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two energy source categories.
         /// </summary>
-        /// <param name="EnergySourceCategory">A energy source category to compare with.</param>
+        /// <param name="EnergySourceCategory">An energy source category to compare with.</param>
         public Int32 CompareTo(EnergySourceCategory EnergySourceCategory)
 
             => String.Compare(InternalId,
@@ -366,7 +366,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two energy source categories for equality.
         /// </summary>
-        /// <param name="Object">A energy source category to compare with.</param>
+        /// <param name="Object">An energy source category to compare with.</param>
         public override Boolean Equals(Object? Object)
 
             => Object is EnergySourceCategory energySourceCategory &&
@@ -379,7 +379,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Compares two energy source categories for equality.
         /// </summary>
-        /// <param name="EnergySourceCategory">A energy source category to compare with.</param>
+        /// <param name="EnergySourceCategory">An energy source category to compare with.</param>
         public Boolean Equals(EnergySourceCategory EnergySourceCategory)
 
             => String.Equals(InternalId,
