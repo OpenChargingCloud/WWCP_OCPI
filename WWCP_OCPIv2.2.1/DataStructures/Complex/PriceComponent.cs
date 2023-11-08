@@ -501,16 +501,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public Int32 CompareTo(PriceComponent PriceComponent)
         {
 
-            var c = Type.    CompareTo(PriceComponent.Type);
+            var c = Type.     CompareTo(PriceComponent.Type);
 
             if (c == 0)
-                c = Price.   CompareTo(PriceComponent.Price);
+                c = Price.    CompareTo(PriceComponent.Price);
 
             if (c == 0)
-                c = StepSize.CompareTo(PriceComponent.StepSize);
+                c = StepSize. CompareTo(PriceComponent.StepSize);
 
             if (c == 0 && VAT.HasValue && PriceComponent.VAT.HasValue)
-                c = Price.   CompareTo(PriceComponent.Price);
+                c = VAT.Value.CompareTo(PriceComponent.VAT.Value);
 
             return c;
 
