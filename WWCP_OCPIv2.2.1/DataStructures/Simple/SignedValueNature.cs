@@ -185,20 +185,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Signed value at the start of the charging session.
         /// </summary>
-        public static SignedValueNature START
-            => new ("START");
+        public static SignedValueNature START           { get; }
+            = new ("START");
 
         /// <summary>
         /// Signed values take during the charging session, after start, before end.
         /// </summary>
-        public static SignedValueNature INTERMEDIATE
-            => new ("INTERMEDIATE");
+        public static SignedValueNature INTERMEDIATE    { get; }
+            = new ("INTERMEDIATE");
 
         /// <summary>
         /// Signed value at the end of the charging session.
         /// </summary>
-        public static SignedValueNature END
-            => new ("END");
+        public static SignedValueNature END             { get; }
+            = new ("END");
 
         #endregion
 

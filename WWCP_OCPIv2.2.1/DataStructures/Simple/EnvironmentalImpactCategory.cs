@@ -184,14 +184,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Produced nuclear waste in gramms per kWh.
         /// </summary>
-        public static EnvironmentalImpactCategory NUCLEAR_WASTE
-            => new ("NUCLEAR_WASTE");
+        public static EnvironmentalImpactCategory NUCLEAR_WASTE     { get; }
+            = new ("NUCLEAR_WASTE");
 
         /// <summary>
         /// Exhausted carbon dioxide in gramms per kWh.
         /// </summary>
-        public static EnvironmentalImpactCategory CARBON_DIOXIDE
-            => new ("CARBON_DIOXIDE");
+        public static EnvironmentalImpactCategory CARBON_DIOXIDE    { get; }
+            = new ("CARBON_DIOXIDE");
 
         #endregion
 

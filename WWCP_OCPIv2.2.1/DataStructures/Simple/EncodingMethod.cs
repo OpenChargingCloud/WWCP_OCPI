@@ -186,51 +186,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Proposed by SAFE.
         /// </summary>
-        public static EncodingMethod OCMF
-            => new ("OCMF");
+        public static EncodingMethod OCMF               { get; }
+            = new ("OCMF");
 
         /// <summary>
         /// Alfen Eichrecht encoding / implementation.
         /// </summary>
-        public static EncodingMethod Alfen
-            => new ("Alfen Eichrecht");
+        public static EncodingMethod Alfen              { get; }
+            = new ("Alfen Eichrecht");
 
         /// <summary>
         /// eBee smart technologies implementation.
         /// </summary>
 
-        public static EncodingMethod eBee
-            => new ("EDL40 E-Mobility Extension");
+        public static EncodingMethod eBee               { get; }
+            = new ("EDL40 E-Mobility Extension");
 
         /// <summary>
         /// Mennekes implementation.
         /// </summary>
-        public static EncodingMethod Mennekes
-            => new ("EDL40 Mennekes");
+        public static EncodingMethod Mennekes           { get; }
+            = new ("EDL40 Mennekes");
 
         /// <summary>
         /// GraphDefined implementation.
         /// </summary>
-        public static EncodingMethod GraphDefined
-            => new ("GraphDefined");
+        public static EncodingMethod GraphDefined       { get; }
+            = new ("GraphDefined");
 
         /// <summary>
         /// chargeIT Mobility implementation.
         /// </summary>
-        public static EncodingMethod chargeIT
-            => new ("chargeIT Mobility");
+        public static EncodingMethod chargeIT           { get; }
+            = new ("chargeIT Mobility");
 
         /// <summary>
         /// ChargePoint implementation.
         /// </summary>
-        public static EncodingMethod ChargePoint
-            => new ("ChargePoint");
+        public static EncodingMethod ChargePoint        { get; }
+            = new ("ChargePoint");
 
         /// <summary>
         /// Porsche implementation.
         /// </summary>
-        public static EncodingMethod Porsche
-            => new ("Porsche");
+        public static EncodingMethod Porsche            { get; }
+            = new ("Porsche");
 
 #pragma warning restore IDE1006 // Naming Styles
 

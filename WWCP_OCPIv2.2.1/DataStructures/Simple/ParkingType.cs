@@ -184,44 +184,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Parking location type is not known by the operator (default).
         /// </summary>
-        public static ParkingType UNKNOWN
-            => new("UNKNOWN");
+        public static ParkingType UNKNOWN               { get; }
+            = new ("UNKNOWN");
 
         /// <summary>
         /// Location on a parking facility/rest area along a motorway, freeway, interstate, highway etc.
         /// </summary>
-        public static ParkingType ALONG_MOTORWAY
-            => new("ALONG_MOTORWAY");
+        public static ParkingType ALONG_MOTORWAY        { get; }
+            = new ("ALONG_MOTORWAY");
 
         /// <summary>
         /// Multistorey car park.
         /// </summary>
-        public static ParkingType PARKING_GARAGE
-            => new("PARKING_GARAGE");
+        public static ParkingType PARKING_GARAGE        { get; }
+            = new ("PARKING_GARAGE");
 
         /// <summary>
         /// A cleared area that is intended for parking vehicles, i.e.at super markets, bars, etc.
         /// </summary>
-        public static ParkingType PARKING_LOT
-            => new("PARKING_LOT");
+        public static ParkingType PARKING_LOT           { get; }
+            = new ("PARKING_LOT");
 
         /// <summary>
         /// Location is on the driveway of a house/building.
         /// </summary>
-        public static ParkingType ON_DRIVEWAY
-            => new("ON_DRIVEWAY");
+        public static ParkingType ON_DRIVEWAY           { get; }
+            = new ("ON_DRIVEWAY");
 
         /// <summary>
         /// Parking in public space.
         /// </summary>
-        public static ParkingType ON_STREET
-            => new("ON_STREET");
+        public static ParkingType ON_STREET             { get; }
+            = new ("ON_STREET");
 
         /// <summary>
         /// Multistorey car park, mainly underground.
         /// </summary>
-        public static ParkingType UNDERGROUND_GARAGE
-            => new("UNDERGROUND_GARAGE");
+        public static ParkingType UNDERGROUND_GARAGE    { get; }
+            = new ("UNDERGROUND_GARAGE");
 
         #endregion
 

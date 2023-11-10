@@ -186,37 +186,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Used to describe that a tariff is valid when ad-hoc payment is used at the charging station
         /// (for example: Debit or credit card payment terminal).
         /// </summary>
-        public static TariffType AD_HOC_PAYMENT
-            => new ("AD_HOC_PAYMENT");
+        public static TariffType AD_HOC_PAYMENT    { get; }
+            = new ("AD_HOC_PAYMENT");
 
         /// <summary>
         /// Used to describe that a tariff is valid when charging preference:
         /// CHEAP is set for the charging session.
         /// </summary>
-        public static TariffType PROFILE_CHEAP
-            => new ("PROFILE_CHEAP");
+        public static TariffType PROFILE_CHEAP     { get; }
+            = new ("PROFILE_CHEAP");
 
         /// <summary>
         /// Used to describe that a tariff is valid when charging preference:
         /// FAST is set for the charging session.
         /// </summary>
-        public static TariffType PROFILE_FAST
-            => new ("PROFILE_FAST");
+        public static TariffType PROFILE_FAST      { get; }
+            = new ("PROFILE_FAST");
 
         /// <summary>
         /// Used to describe that a tariff is valid when charging preference:
         /// GREEN is set for the charging session.
         /// </summary>
-        public static TariffType PROFILE_GREEN
-            => new("PROFILE_GREEN");
+        public static TariffType PROFILE_GREEN     { get; }
+            = new("PROFILE_GREEN");
 
         /// <summary>
         /// Used to describe that a tariff is valid when using an RFID, without
         /// any charging preference, or when Charging Preference:
         /// REGULAR is set for the charging session.
         /// </summary>
-        public static TariffType REGULAR
-            => new ("REGULAR");
+        public static TariffType REGULAR           { get; }
+            = new ("REGULAR");
 
         #endregion
 

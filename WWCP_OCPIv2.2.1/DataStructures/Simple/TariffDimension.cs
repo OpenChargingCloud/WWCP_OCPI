@@ -185,28 +185,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Defined in kWh, step_size multiplier: 1 Wh.
         /// </summary>
-        public static TariffDimension ENERGY
-            => new ("ENERGY");
+        public static TariffDimension ENERGY          { get; }
+            = new ("ENERGY");
 
         /// <summary>
         /// Flat fee without unit for step_size.
         /// </summary>
-        public static TariffDimension FLAT
-            => new ("FLAT");
+        public static TariffDimension FLAT            { get; }
+            = new ("FLAT");
 
         /// <summary>
         /// Time not charging: defined in hours, step_size multiplier: 1 second.
         /// </summary>
-        public static TariffDimension PARKING_TIME
-            => new ("PARKING_TIME");
+        public static TariffDimension PARKING_TIME    { get; }
+            = new ("PARKING_TIME");
 
         /// <summary>
         /// Time charging: defined in hours, step_size multiplier: 1 second.
         /// Can also be used in combination with a RESERVATION restriction to describe
         /// the price of the reservation time.
         /// </summary>
-        public static TariffDimension TIME
-            => new ("TIME");
+        public static TariffDimension TIME            { get; }
+            = new ("TIME");
 
         #endregion
 

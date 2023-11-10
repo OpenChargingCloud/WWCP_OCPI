@@ -184,56 +184,56 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// No status information available (also used when offline).
         /// </summary>
-        public static StatusType UNKNOWN
-            => new ("UNKNOWN");
+        public static StatusType UNKNOWN        { get; }
+            = new ("UNKNOWN");
 
         /// <summary>
         /// The EVSE/Connector is able to start a new charging session.
         /// </summary>
-        public static StatusType AVAILABLE
-            => new ("AVAILABLE");
+        public static StatusType AVAILABLE      { get; }
+            = new ("AVAILABLE");
 
         /// <summary>
         /// The EVSE/Connector is not accessible because of a physical barrier, i.e. a car.
         /// </summary>
-        public static StatusType BLOCKED
-            => new ("BLOCKED");
+        public static StatusType BLOCKED        { get; }
+            = new ("BLOCKED");
 
         /// <summary>
         /// The EVSE/Connector is in use.
         /// </summary>
-        public static StatusType CHARGING
-            => new ("CHARGING");
+        public static StatusType CHARGING       { get; }
+            = new ("CHARGING");
 
         /// <summary>
         /// The EVSE/Connector is not yet active or it is no longer available (deleted).
         /// </summary>
-        public static StatusType INOPERATIVE
-            => new ("INOPERATIVE");
+        public static StatusType INOPERATIVE    { get; }
+            = new ("INOPERATIVE");
 
         /// <summary>
         /// The EVSE/Connector is currently out of order.
         /// </summary>
-        public static StatusType OUTOFORDER
-            => new ("OUTOFORDER");
+        public static StatusType OUTOFORDER     { get; }
+            = new ("OUTOFORDER");
 
         /// <summary>
         /// The EVSE/Connector is planned, will be operating soon.
         /// </summary>
-        public static StatusType PLANNED
-            => new ("PLANNED");
+        public static StatusType PLANNED        { get; }
+            = new ("PLANNED");
 
         /// <summary>
         /// The EVSE/Connector was discontinued/removed.
         /// </summary>
-        public static StatusType REMOVED
-            => new ("REMOVED");
+        public static StatusType REMOVED        { get; }
+            = new ("REMOVED");
 
         /// <summary>
         /// The EVSE/Connector is reserved for a particular EV driver and is unavailable for other drivers.
         /// </summary>
-        public static StatusType RESERVED
-            => new ("RESERVED");
+        public static StatusType RESERVED       { get; }
+            = new ("RESERVED");
 
         #endregion
 

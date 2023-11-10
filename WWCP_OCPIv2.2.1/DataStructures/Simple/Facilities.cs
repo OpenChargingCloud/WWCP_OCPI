@@ -184,122 +184,122 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// A hotel.
         /// </summary>
-        public static Facilities HOTEL
-            => new ("HOTEL");
+        public static Facilities HOTEL              { get; }
+            = new ("HOTEL");
 
         /// <summary>
         /// A restaurant.
         /// </summary>
-        public static Facilities RESTAURANT
-            => new ("RESTAURANT");
+        public static Facilities RESTAURANT         { get; }
+            = new ("RESTAURANT");
 
         /// <summary>
         /// A cafe.
         /// </summary>
-        public static Facilities CAFE
-            => new ("CAFE");
+        public static Facilities CAFE               { get; }
+            = new ("CAFE");
 
         /// <summary>
         /// A mall or shopping center.
         /// </summary>
-        public static Facilities MALL
-            => new ("MALL");
+        public static Facilities MALL               { get; }
+            = new ("MALL");
 
         /// <summary>
         /// A supermarket.
         /// </summary>
-        public static Facilities SUPERMARKET
-            => new ("SUPERMARKET");
+        public static Facilities SUPERMARKET        { get; }
+            = new ("SUPERMARKET");
 
         /// <summary>
         /// Sport facilities: gym, field etc.
         /// </summary>
-        public static Facilities SPORT
-            => new ("SPORT");
+        public static Facilities SPORT              { get; }
+            = new ("SPORT");
 
         /// <summary>
         /// A recreation area.
         /// </summary>
-        public static Facilities RECREATION_AREA
-            => new ("RECREATION_AREA");
+        public static Facilities RECREATION_AREA    { get; }
+            = new ("RECREATION_AREA");
 
         /// <summary>
         /// Located in, or close to, a park, nature reserve etc.
         /// </summary>
-        public static Facilities NATURE
-            => new ("NATURE");
+        public static Facilities NATURE             { get; }
+            = new ("NATURE");
 
         /// <summary>
         /// A museum.
         /// </summary>
-        public static Facilities MUSEUM
-            => new ("MUSEUM");
+        public static Facilities MUSEUM             { get; }
+            = new ("MUSEUM");
 
         /// <summary>
         /// A bike/e-bike/e-scooter sharing location.
         /// </summary>
-        public static Facilities BIKE_SHARING
-            => new ("BIKE_SHARING");
+        public static Facilities BIKE_SHARING       { get; }
+            = new ("BIKE_SHARING");
 
         /// <summary>
         /// A bus stop.
         /// </summary>
-        public static Facilities BUS_STOP
-            => new ("BUS_STOP");
+        public static Facilities BUS_STOP           { get; }
+            = new ("BUS_STOP");
 
         /// <summary>
         /// A taxi stand.
         /// </summary>
-        public static Facilities TAXI_STAND
-            => new ("TAXI_STAND");
+        public static Facilities TAXI_STAND         { get; }
+            = new ("TAXI_STAND");
 
         /// <summary>
         /// A tram stop/station.
         /// </summary>
-        public static Facilities TRAM_STOP
-            => new ("TRAM_STOP");
+        public static Facilities TRAM_STOP          { get; }
+            = new ("TRAM_STOP");
 
         /// <summary>
         /// A metro station.
         /// </summary>
-        public static Facilities METRO_STATION
-            => new ("METRO_STATION");
+        public static Facilities METRO_STATION      { get; }
+            = new ("METRO_STATION");
 
         /// <summary>
         /// A train station.
         /// </summary>
-        public static Facilities TRAIN_STATION
-            => new ("TRAIN_STATION");
+        public static Facilities TRAIN_STATION      { get; }
+            = new ("TRAIN_STATION");
 
         /// <summary>
         /// An airport.
         /// </summary>
-        public static Facilities AIRPORT
-            => new ("AIRPORT");
+        public static Facilities AIRPORT            { get; }
+            = new ("AIRPORT");
 
         /// <summary>
         /// A parking lot.
         /// </summary>
-        public static Facilities PARKING_LOT
-            => new ("PARKING_LOT");
+        public static Facilities PARKING_LOT        { get; }
+            = new ("PARKING_LOT");
 
         /// <summary>
         /// A carpool parking.
         /// </summary>
-        public static Facilities CARPOOL_PARKING
-            => new ("CARPOOL_PARKING");
+        public static Facilities CARPOOL_PARKING    { get; }
+            = new ("CARPOOL_PARKING");
 
         /// <summary>
         /// A Fuel station.
         /// </summary>
-        public static Facilities FUEL_STATION
-            => new ("FUEL_STATION");
+        public static Facilities FUEL_STATION       { get; }
+            = new ("FUEL_STATION");
 
         /// <summary>
         /// Wifi or other type of internet available.
         /// </summary>
-        public static Facilities WIFI
-            => new ("WIFI");
+        public static Facilities WIFI               { get; }
+            = new ("WIFI");
 
         #endregion
 

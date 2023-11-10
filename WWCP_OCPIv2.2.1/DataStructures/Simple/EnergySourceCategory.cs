@@ -184,50 +184,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Nuclear power sources.
         /// </summary>
-        public static EnergySourceCategory NUCLEAR
-            => new ("NUCLEAR");
+        public static EnergySourceCategory NUCLEAR           { get; }
+            = new ("NUCLEAR");
 
         /// <summary>
         /// All kinds of fossil power sources.
         /// </summary>
-        public static EnergySourceCategory GENERAL_FOSSIL
-            => new ("GENERAL_FOSSIL");
+        public static EnergySourceCategory GENERAL_FOSSIL    { get; }
+            = new ("GENERAL_FOSSIL");
 
         /// <summary>
         /// Fossil power from coal.
         /// </summary>
-        public static EnergySourceCategory COAL
-            => new ("COAL");
+        public static EnergySourceCategory COAL              { get; }
+            = new ("COAL");
 
         /// <summary>
         /// Fossil power from gas.
         /// </summary>
-        public static EnergySourceCategory GAS
-            => new ("GAS");
+        public static EnergySourceCategory GAS               { get; }
+            = new ("GAS");
 
         /// <summary>
         /// All kinds of regenerative power sources.
         /// </summary>
-        public static EnergySourceCategory GENERAL_GREEN
-            => new ("GENERAL_GREEN");
+        public static EnergySourceCategory GENERAL_GREEN     { get; }
+            = new ("GENERAL_GREEN");
 
         /// <summary>
         /// Regenerative power from PV.
         /// </summary>
-        public static EnergySourceCategory SOLAR
-            => new ("SOLAR");
+        public static EnergySourceCategory SOLAR             { get; }
+            = new ("SOLAR");
 
         /// <summary>
         /// Regenerative power from wind turbines.
         /// </summary>
-        public static EnergySourceCategory WIND
-            => new ("WIND");
+        public static EnergySourceCategory WIND              { get; }
+            = new ("WIND");
 
         /// <summary>
         /// Regenerative power from water turbines.
         /// </summary>
-        public static EnergySourceCategory WATER
-            => new ("WATER");
+        public static EnergySourceCategory WATER             { get; }
+            = new ("WATER");
 
         #endregion
 
