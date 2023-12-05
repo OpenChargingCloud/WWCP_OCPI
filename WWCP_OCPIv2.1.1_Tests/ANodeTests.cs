@@ -78,7 +78,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
                                                                                              requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
 
@@ -106,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
                                                                                              requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
 
@@ -134,7 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
                                                                                              requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.HTML_UTF8);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.Text.HTML_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
 
@@ -162,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
                                                                                              requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.TEXT_UTF8);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.Text.PLAIN);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
 
@@ -191,7 +191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
                                                                                              requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
 
@@ -221,9 +221,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
                                                                                              requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                                          requestbuilder.Content        = JSON.ToUTF8Bytes();
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
 
@@ -252,9 +252,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                                          if (Token is not null && Token.IsNotNullOrEmpty())
                                                                                              requestbuilder.Authorization = HTTPTokenAuthentication.Parse(Token);
 
-                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                                          requestbuilder.Content        = JSON.ToUTF8Bytes();
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
 

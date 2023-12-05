@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = HTTPServer.DefaultServerName,
                     Date            = Timestamp.Now,
-                    ContentType     = HTTPContentType.JSON_UTF8,
+                    ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid RoamingNetworkId!"" }".ToUTF8Bytes()
                 };
 
@@ -115,7 +115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
                     Server          = HTTPServer.DefaultServerName,
                     Date            = Timestamp.Now,
-                    ContentType     = HTTPContentType.JSON_UTF8,
+                    ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown RoamingNetworkId!"" }".ToUTF8Bytes()
                 };
 
@@ -184,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
                     Date            = Timestamp.Now,
-                    ContentType     = HTTPContentType.JSON_UTF8,
+                    ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
                 };
@@ -254,7 +254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
                     Date            = Timestamp.Now,
-                    ContentType     = HTTPContentType.JSON_UTF8,
+                    ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
                 };
@@ -269,7 +269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
                     Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
                     Date            = Timestamp.Now,
-                    ContentType     = HTTPContentType.JSON_UTF8,
+                    ContentType     = HTTPContentType.Application.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown remote party identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
                 };
@@ -602,18 +602,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
 
             #region / (HTTPRoot)
 
-            HTTPServer.RegisterResourcesFolder(this,
-                                               HTTPHostname.Any,
-                                               URLPathPrefix,
-                                               "cloud.charging.open.protocols.OCPIv2_2_1.WebAPI.HTTPRoot",
-                                               DefaultFilename: "index.html");
+            this.MapResourceAssemblyFolder(HTTPHostname.Any,
+                                           URLPathPrefix,
+                                           "cloud.charging.open.protocols.OCPIv2_2_1.WebAPI.HTTPRoot",
+                                           DefaultFilename: "index.html");
 
             if (OverlayURLPathPrefix.HasValue)
                 HTTPServer.AddMethodCallback(this,
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
                                              OverlayURLPathPrefix.Value,
-                                             HTTPContentType.HTML_UTF8,
+                                             HTTPContentType.Text.HTML_UTF8,
                                              HTTPDelegate: Request => {
 
                                                  return Task.FromResult(
@@ -624,7 +623,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                          AccessControlAllowHeaders  = new[] { "Authorization" },
-                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("index.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
@@ -637,7 +636,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
                                              OverlayURLPathPrefix.Value + "/",
-                                             HTTPContentType.HTML_UTF8,
+                                             HTTPContentType.Text.HTML_UTF8,
                                              HTTPDelegate: Request => {
 
                                                  return Task.FromResult(
@@ -648,7 +647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                          AccessControlAllowHeaders  = new[] { "Authorization" },
-                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("index.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
@@ -662,7 +661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
                                              OverlayURLPathPrefix.Value + "versions",
-                                             HTTPContentType.HTML_UTF8,
+                                             HTTPContentType.Text.HTML_UTF8,
                                              HTTPDelegate: Request => {
 
                                                  return Task.FromResult(
@@ -673,7 +672,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                          AccessControlAllowHeaders  = new[] { "Authorization" },
-                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("versions.versions.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
@@ -687,7 +686,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                              HTTPHostname.Any,
                                              HTTPMethod.GET,
                                              OverlayURLPathPrefix.Value + "versions/{versionId}",
-                                             HTTPContentType.HTML_UTF8,
+                                             HTTPContentType.Text.HTML_UTF8,
                                              HTTPDelegate: Request => {
 
                                                  return Task.FromResult(
@@ -698,7 +697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                          AccessControlAllowHeaders  = new[] { "Authorization" },
-                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("locations.locations.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
@@ -758,7 +757,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Get HTTP user and its organizations
@@ -817,7 +816,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                      AccessControlAllowMethods     = new[] { "GET", "OPTIONS" },
                                                      AccessControlAllowHeaders     = new[] { "Content-Type", "Accept", "Authorization" },
                                                      //ETag                          = "1",
-                                                     ContentType                   = HTTPContentType.JSON_UTF8,
+                                                     ContentType                   = HTTPContentType.Application.JSON_UTF8,
                                                      Content                       = withMetadata
                                                                                          ? JSONObject.Create(
                                                                                                new JProperty("totalCount",     totalCount),
@@ -843,7 +842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties",
-                                         HTTPContentType.HTML_UTF8,
+                                         HTTPContentType.Text.HTML_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Get HTTP user and its organizations
@@ -868,7 +867,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
                                                          AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteParties.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
@@ -922,7 +921,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Check RemotePartyId URI parameter
@@ -967,7 +966,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
                                                                   ETag                       = RemoteParty.ETag,
-                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
@@ -1008,7 +1007,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
-                                         HTTPContentType.HTML_UTF8,
+                                         HTTPContentType.Text.HTML_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Get HTTP user and its organizations
@@ -1050,7 +1049,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
                                                          AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteParty.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
@@ -1118,7 +1117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/reserveNow",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Check RemotePartyId URI parameter
@@ -1163,7 +1162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
                                                                   ETag                       = RemoteParty.ETag,
-                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
@@ -1204,7 +1203,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/reserveNow",
-                                         HTTPContentType.HTML_UTF8,
+                                         HTTPContentType.Text.HTML_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Get HTTP user and its organizations
@@ -1246,7 +1245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
                                                          AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.reserveNow.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
@@ -1281,7 +1280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTP_ReserveNow,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
                                              #region Check RemotePartyId URI parameter
@@ -1332,7 +1331,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
@@ -1359,7 +1358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
@@ -1387,7 +1386,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
@@ -1415,7 +1414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
@@ -1444,7 +1443,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                 AccessControlAllowOrigin   = "*",
                                                                 AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                 AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                                ContentType                = HTTPContentType.JSON_UTF8,
+                                                                ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                 Content                    = I18NString.Create(Languages.en,
                                                                                                                ErrorResponse).
                                                                                                         ToJSON().
@@ -1473,7 +1472,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                 AccessControlAllowOrigin   = "*",
                                                                 AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                 AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                                ContentType                = HTTPContentType.JSON_UTF8,
+                                                                ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                 Content                    = I18NString.Create(Languages.en,
                                                                                                                ErrorResponse).
                                                                                                         ToJSON().
@@ -1499,7 +1498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            "Could not find a apropriate EMSP client for this request!").
                                                                                                     ToJSON().
@@ -1530,7 +1529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
                                                                   ETag                       = RemoteParty.ETag,
-                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
@@ -1604,7 +1603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/cancelReservation",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Check RemotePartyId URI parameter
@@ -1649,7 +1648,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
                                                                   ETag                       = RemoteParty.ETag,
-                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
@@ -1690,7 +1689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/cancelReservation",
-                                         HTTPContentType.HTML_UTF8,
+                                         HTTPContentType.Text.HTML_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Get HTTP user and its organizations
@@ -1732,7 +1731,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
                                                          AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.cancelReservation.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
@@ -1767,7 +1766,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTP_CancelReservation,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
                                              #region Check RemotePartyId URI parameter
@@ -1818,7 +1817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
@@ -1844,7 +1843,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            "Could not find a apropriate EMSP client for this request!").
                                                                                                     ToJSON().
@@ -1870,7 +1869,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
                                                                   ETag                       = RemoteParty.ETag,
-                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
@@ -1944,7 +1943,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/startSession",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Check RemotePartyId URI parameter
@@ -1989,7 +1988,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
                                                                   ETag                       = RemoteParty.ETag,
-                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
@@ -2030,7 +2029,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/startSession",
-                                         HTTPContentType.HTML_UTF8,
+                                         HTTPContentType.Text.HTML_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Get HTTP user and its organizations
@@ -2072,7 +2071,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
                                                          AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.startSession.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
@@ -2107,7 +2106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTP_StartSession,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
                                              #region Check RemotePartyId URI parameter
@@ -2158,7 +2157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse!).
                                                                                                     ToJSON().
@@ -2186,7 +2185,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
@@ -2215,7 +2214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                 AccessControlAllowOrigin   = "*",
                                                                 AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                 AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                                ContentType                = HTTPContentType.JSON_UTF8,
+                                                                ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                 Content                    = I18NString.Create(Languages.en,
                                                                                                                ErrorResponse).
                                                                                                         ToJSON().
@@ -2244,7 +2243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                 AccessControlAllowOrigin   = "*",
                                                                 AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                 AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                                ContentType                = HTTPContentType.JSON_UTF8,
+                                                                ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                 Content                    = I18NString.Create(Languages.en,
                                                                                                                ErrorResponse).
                                                                                                         ToJSON().
@@ -2273,7 +2272,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                 AccessControlAllowOrigin   = "*",
                                                                 AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                 AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                                ContentType                = HTTPContentType.JSON_UTF8,
+                                                                ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                 Content                    = I18NString.Create(Languages.en,
                                                                                                                ErrorResponse).
                                                                                                         ToJSON().
@@ -2299,7 +2298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            "Could not find a apropriate EMSP client for this request!").
                                                                                                     ToJSON().
@@ -2329,7 +2328,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
                                                                   ETag                       = RemoteParty.ETag,
-                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
@@ -2403,7 +2402,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/stopSession",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Check RemotePartyId URI parameter
@@ -2448,7 +2447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
                                                                   ETag                       = RemoteParty.ETag,
-                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
@@ -2489,7 +2488,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/stopSession",
-                                         HTTPContentType.HTML_UTF8,
+                                         HTTPContentType.Text.HTML_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Get HTTP user and its organizations
@@ -2531,7 +2530,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
                                                          AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.stopSession.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
@@ -2566,7 +2565,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTP_StopSession,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
                                              #region Check RemotePartyId URI parameter
@@ -2617,7 +2616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
@@ -2643,7 +2642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            "Could not find a apropriate EMSP client for this request!").
                                                                                                     ToJSON().
@@ -2669,7 +2668,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
                                                                   ETag                       = RemoteParty.ETag,
-                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
@@ -2737,7 +2736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/unlockConnector",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Check RemotePartyId URI parameter
@@ -2782,7 +2781,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
                                                                   ETag                       = RemoteParty.ETag,
-                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
@@ -2823,7 +2822,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/unlockConnector",
-                                         HTTPContentType.HTML_UTF8,
+                                         HTTPContentType.Text.HTML_UTF8,
                                          HTTPDelegate: Request => {
 
                                              #region Get HTTP user and its organizations
@@ -2865,7 +2864,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = new[] { "GET" },
                                                          AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.unlockConnector.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
@@ -2900,7 +2899,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          Hostname,
                                          HTTP_UnlockConnector,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
                                              #region Check RemotePartyId URI parameter
@@ -2951,7 +2950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
@@ -2979,7 +2978,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
@@ -3007,7 +3006,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
@@ -3033,7 +3032,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
                                                                                                            "Could not find a apropriate EMSP client for this request!").
                                                                                                     ToJSON().
@@ -3061,7 +3060,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                                   AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                                   AccessControlAllowHeaders  = new[] { "X-PINGOTHER", "Content-Type", "Accept", "Authorization", "X-App-Version" },
                                                                   ETag                       = RemoteParty.ETag,
-                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
@@ -3096,7 +3095,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "clients",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
                                              var clients = new List<CommonClient>();
@@ -3106,7 +3105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                      Content                    = new JArray(clients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
                                                      AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                      AccessControlAllowHeaders  = new[] { "Authorization" }
@@ -3124,7 +3123,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "cpoclients",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
 
@@ -3132,7 +3131,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                  new HTTPResponse.Builder(Request)
                                                  {
                                                      HTTPStatusCode = HTTPStatusCode.OK,
-                                                     ContentType = HTTPContentType.JSON_UTF8,
+                                                     ContentType = HTTPContentType.Application.JSON_UTF8,
                                                      Content = new JArray(CommonAPI.CPOClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
                                                      AccessControlAllowMethods = new[] { "OPTIONS", "GET" },
                                                      AccessControlAllowHeaders = new[] { "Authorization" }
@@ -3150,14 +3149,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                          HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "emspclients",
-                                         HTTPContentType.JSON_UTF8,
+                                         HTTPContentType.Application.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
 
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                      Content                    = new JArray(CommonAPI.EMSPClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
                                                      AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                      AccessControlAllowHeaders  = new[] { "Authorization" }

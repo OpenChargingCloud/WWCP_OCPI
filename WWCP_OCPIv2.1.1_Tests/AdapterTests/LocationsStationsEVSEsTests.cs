@@ -344,7 +344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          remoteURL.Path,
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
@@ -402,7 +402,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
                                                                                              requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
@@ -1011,7 +1011,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          remoteURL.Path,
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
@@ -1069,7 +1069,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
                                                                                              requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
@@ -1543,7 +1543,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          remoteURL.Path,
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
@@ -1609,7 +1609,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
                                                                                              requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).

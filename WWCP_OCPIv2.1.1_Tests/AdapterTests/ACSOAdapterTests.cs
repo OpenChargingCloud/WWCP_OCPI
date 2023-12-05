@@ -103,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                             //    port:                 IPPort.Parse(4001),
                                                                             //    transport:            TransportTypes.TCP,
                                                                             //    URLPrefix:            "",
-                                                                            //    contentType:          HTTPContentType.JSONLD_UTF8,
+                                                                            //    contentType:          HTTPContentType.Application.JSONLD_UTF8,
                                                                             //    protocolType:         ProtocolTypes.WWCP,
                                                                             //    PublicKeys:           null)
 
@@ -121,7 +121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                             //    port:                 IPPort.Parse(4002),
                                                                             //    transport:            TransportTypes.TCP,
                                                                             //    URLPrefix:            "",
-                                                                            //    contentType:          HTTPContentType.JSONLD_UTF8,
+                                                                            //    contentType:          HTTPContentType.Application.JSONLD_UTF8,
                                                                             //    protocolType:         ProtocolTypes.WWCP,
                                                                             //    PublicKeys:           null)
 

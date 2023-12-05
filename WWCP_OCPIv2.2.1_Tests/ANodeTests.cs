@@ -45,7 +45,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                      RemoteURL.Path,
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
                                                                                      })).
@@ -67,9 +67,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                      RemoteURL.Path,
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
-                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                                          requestbuilder.Content        = JSON.ToUTF8Bytes();
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      "1234");
                                                                                          requestbuilder.Set("X-Correlation-ID",  "5678");
                                                                                      })).

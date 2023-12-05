@@ -824,7 +824,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -1013,7 +1013,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -1207,7 +1207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -1403,7 +1403,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -1590,7 +1590,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -1779,7 +1779,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -1966,7 +1966,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -2155,7 +2155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -2344,7 +2344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -2533,7 +2533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -2725,7 +2725,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -2911,9 +2911,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                          requestbuilder.Content        = Token.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -3111,9 +3111,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                          requestbuilder.Content        = TokenPatch.ToUTF8Bytes(JSONFormat);
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -3338,9 +3338,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                          requestbuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -3551,9 +3551,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                          requestbuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -3767,9 +3767,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                          requestbuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -3979,9 +3979,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                          requestbuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
@@ -4195,9 +4195,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
-                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                          requestbuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }

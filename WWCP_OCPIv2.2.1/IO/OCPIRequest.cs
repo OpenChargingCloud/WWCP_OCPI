@@ -121,7 +121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                                 return new HTTPResponse.Builder() {
                                                            HTTPStatusCode  = HTTPStatusCode.InternalServerError,
-                                                           ContentType     = HTTPContentType.JSON_UTF8,
+                                                           ContentType     = HTTPContentType.Application.JSON_UTF8,
                                                            Content         = new OCPIResponse<JObject>(
                                                                                  JSONObject.Create(
                                                                                      new JProperty("description",  e.Message),

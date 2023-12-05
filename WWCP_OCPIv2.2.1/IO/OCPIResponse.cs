@@ -404,7 +404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (Request.HTTPRequest.HTTPMethod != HTTPMethod.OPTIONS)
                     {
 
-                        HTTPResponseBuilder.ContentType = HTTPContentType.JSON_UTF8;
+                        HTTPResponseBuilder.ContentType = HTTPContentType.Application.JSON_UTF8;
 
                         if (HTTPResponseBuilder.Content is null)
                             HTTPResponseBuilder.Content = JSONObject.Create(
