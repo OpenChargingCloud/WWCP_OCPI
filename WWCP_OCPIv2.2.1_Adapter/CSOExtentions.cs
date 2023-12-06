@@ -22,7 +22,6 @@ using Org.BouncyCastle.Crypto.Parameters;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
@@ -73,8 +72,8 @@ namespace cloud.charging.open.protocols.WWCP
 
                                       OCPIv2_2_1.GetTariffIds_Delegate?                        GetTariffIds                         = null,
 
-                                      OCPIv2_2_1.WWCPEVSEId_2_EVSEUId_Delegate?                CustomEVSEUIdConverter               = null,
-                                      OCPIv2_2_1.WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
+                                      OCPI.      WWCPEVSEId_2_EVSEUId_Delegate?                CustomEVSEUIdConverter               = null,
+                                      OCPI.      WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
                                       OCPIv2_2_1.WWCPEVSE_2_EVSE_Delegate?                     CustomEVSEConverter                  = null,
                                       OCPIv2_2_1.WWCPEVSEStatusUpdate_2_StatusType_Delegate?   CustomEVSEStatusUpdateConverter      = null,
                                       OCPIv2_2_1.WWCPChargeDetailRecord_2_CDR_Delegate?        CustomChargeDetailRecordConverter    = null,

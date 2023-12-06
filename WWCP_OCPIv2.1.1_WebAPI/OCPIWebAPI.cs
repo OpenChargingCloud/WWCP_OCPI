@@ -301,17 +301,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <summary>
         /// The default HTTP URI prefix.
         /// </summary>
-        public new static readonly HTTPPath                         DefaultURLPathPrefix        = HTTPPath.Parse("webapi");
+        public new static readonly  HTTPPath                        DefaultURLPathPrefix       = HTTPPath.Parse("webapi");
 
         /// <summary>
         /// The default HTTP realm, if HTTP Basic Authentication is used.
         /// </summary>
-        public const String DefaultHTTPRealm = "Open Charging Cloud OCPIPlus WebAPI";
+        public const                String                          DefaultHTTPRealm           = "Open Charging Cloud OCPIPlus WebAPI";
 
         /// <summary>
         /// The HTTP root for embedded ressources.
         /// </summary>
-        public new const       String                               HTTPRoot                    = "cloud.charging.open.protocols.OCPIv2_1_1.WebAPI.HTTPRoot.";
+        public new const            String                          HTTPRoot                   = "cloud.charging.open.protocols.OCPIv2_1_1.WebAPI.HTTPRoot.";
 
 
         //ToDo: http://www.iana.org/form/media-types
@@ -319,15 +319,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <summary>
         /// The HTTP content type for serving OCPI+ XML data.
         /// </summary>
-        public static readonly HTTPContentType                      OCPIPlusJSONContentType     = new HTTPContentType("application", "vnd.OCPIPlus+json", "utf-8", null, null);
+        public static readonly HTTPContentType                      OCPIPlusJSONContentType    = new ("application", "vnd.OCPIPlus+json", "utf-8", null, null);
 
         /// <summary>
         /// The HTTP content type for serving OCPI+ HTML data.
         /// </summary>
-        public static readonly HTTPContentType                      OCPIPlusHTMLContentType     = new HTTPContentType("application", "vnd.OCPIPlus+html", "utf-8", null, null);
+        public static readonly HTTPContentType                      OCPIPlusHTMLContentType    = new ("application", "vnd.OCPIPlus+html", "utf-8", null, null);
 
 
-        public static readonly HTTPEventSource_Id                   DebugLogId                  = HTTPEventSource_Id.Parse("OCPIDebugLog");
+        public static readonly HTTPEventSource_Id                   DebugLogId                 = HTTPEventSource_Id.Parse("OCPIDebugLog");
 
         #endregion
 
@@ -336,27 +336,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <summary>
         /// HTTP method for creating a charging reservation.
         /// </summary>
-        public static readonly HTTPMethod HTTP_ReserveNow         = HTTPMethod.Register("ReserveNow")!.       Value;
+        public static readonly HTTPMethod HTTP_ReserveNow         = HTTPMethod.TryParse("ReserveNow",        false)!;
 
         /// <summary>
         /// HTTP method for canceling a charging reservation.
         /// </summary>
-        public static readonly HTTPMethod HTTP_CancelReservation  = HTTPMethod.Register("CancelReservation")!.Value;
+        public static readonly HTTPMethod HTTP_CancelReservation  = HTTPMethod.TryParse("CancelReservation", false)!;
 
         /// <summary>
         /// HTTP method for starting a charging reservation.
         /// </summary>
-        public static readonly HTTPMethod HTTP_StartSession       = HTTPMethod.Register("StartSession")!.     Value;
+        public static readonly HTTPMethod HTTP_StartSession       = HTTPMethod.TryParse("StartSession",      false)!;
 
         /// <summary>
         /// HTTP method for stopping a charging reservation.
         /// </summary>
-        public static readonly HTTPMethod HTTP_StopSession        = HTTPMethod.Register("StopSession")!.      Value;
+        public static readonly HTTPMethod HTTP_StopSession        = HTTPMethod.TryParse("StopSession",       false)!;
 
         /// <summary>
         /// HTTP method for unlocking a charging connector.
         /// </summary>
-        public static readonly HTTPMethod HTTP_UnlockConnector    = HTTPMethod.Register("UnlockConnector")!.  Value;
+        public static readonly HTTPMethod HTTP_UnlockConnector    = HTTPMethod.TryParse("UnlockConnector",   false)!;
 
         #endregion
 
