@@ -20,6 +20,7 @@
 using Newtonsoft.Json.Linq;
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
@@ -49,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                         PartyId:     Party_Id.   Parse("GDF")
                                     );
 
-            Assert.IsNotNull(graphDefinedEMSP1);
+            ClassicAssert.IsNotNull(graphDefinedEMSP1);
 
             if (graphDefinedEMSP1 is not null)
             {
@@ -117,31 +118,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-04-30T03:50:50.151Z"
                 // }
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,           response.StatusCode);
-                Assert.AreEqual ("Hello world!", response.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (1000,           response.StatusCode);
+                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 var versionDetail  = response.Data;
-                Assert.IsNotNull(versionDetail);
+                ClassicAssert.IsNotNull(versionDetail);
 
                 if (versionDetail is not null)
                 {
 
                     var versionId      = versionDetail.VersionId;
-                    Assert.IsTrue   (versionId == Version.Id);
+                    ClassicAssert.IsTrue   (versionId == Version.Id);
 
                     var endpoints      = versionDetail.Endpoints;
-                    Assert.AreEqual (7, endpoints.Count());
+                    ClassicAssert.AreEqual (7, endpoints.Count());
 
-                    Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "credentials"));
-                    Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "locations"));
-                    Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tariffs"));
-                    Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "sessions"));
-                    Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "cdrs"));
-                    Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "commands"));
-                    Assert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tokens"));
+                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "credentials"));
+                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "locations"));
+                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tariffs"));
+                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "sessions"));
+                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "cdrs"));
+                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "commands"));
+                    ClassicAssert.IsTrue(versionDetail.Endpoints.Any(endpoint => endpoint.Identifier.ToString() == "tokens"));
 
                 }
 
@@ -165,22 +166,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                         PartyId:     Party_Id.   Parse("GDF")
                                     );
 
-            Assert.IsNotNull(graphDefinedEMSP1);
+            ClassicAssert.IsNotNull(graphDefinedEMSP1);
 
             if (graphDefinedEMSP1 is not null)
             {
 
                 var response = await graphDefinedEMSP1.GetVersionDetails(Version_Id.Parse("0.7"));
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (-1,                                response.StatusCode); // local error!
-                Assert.AreEqual ("Unkown version identification!",  response.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (-1,                                response.StatusCode); // local error!
+                ClassicAssert.AreEqual ("Unkown version identification!",  response.StatusMessage);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 // There is not HTTP response, as this is a local error!
-                Assert.IsNull   (response.HTTPResponse);
-                Assert.IsNull   (response.RequestId);
-                Assert.IsNull   (response.CorrelationId);
+                ClassicAssert.IsNull   (response.HTTPResponse);
+                ClassicAssert.IsNull   (response.RequestId);
+                ClassicAssert.IsNull   (response.CorrelationId);
 
             }
 
@@ -205,9 +206,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
                 var response2   = await TestHelpers.GetJSONRequest(versionURL);
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (200,            response2.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response2);
+                ClassicAssert.AreEqual (200,            response2.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
                 // {
                 //   "data": {
@@ -225,21 +226,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // }
 
                 var json        = response2.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual ("2.1.1",                                                  json["data"]?["version"]?.Value<String>());
+                ClassicAssert.AreEqual ("2.1.1",                                                  json["data"]?["version"]?.Value<String>());
 
-                Assert.AreEqual (1,                                                        json["data"]?["endpoints"]?.Count());
+                ClassicAssert.AreEqual (1,                                                        json["data"]?["endpoints"]?.Count());
 
-                Assert.AreEqual ("credentials",                                            json["data"]?["endpoints"]?[0]?["identifier"]?.Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/credentials",     json["data"]?["endpoints"]?[0]?["url"]?.       Value<String>());
+                ClassicAssert.AreEqual ("credentials",                                            json["data"]?["endpoints"]?[0]?["identifier"]?.Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/credentials",     json["data"]?["endpoints"]?[0]?["url"]?.       Value<String>());
 
-                Assert.AreEqual (1000,                                                     json["status_code"]?.                          Value<UInt32>());
-                Assert.AreEqual ("Hello world!",                                           json["status_message"]?.                       Value<String>());
+                ClassicAssert.AreEqual (1000,                                                     json["status_code"]?.                          Value<UInt32>());
+                ClassicAssert.AreEqual ("Hello world!",                                           json["status_message"]?.                       Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -263,9 +264,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
                 var response2   = await TestHelpers.GetJSONRequest(versionURL, UnknownToken);
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (200,            response2.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response2);
+                ClassicAssert.AreEqual (200,            response2.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
                 // {
                 //   "data": {
@@ -283,21 +284,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // }
 
                 var json        = response2.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual ("2.1.1",                                                  json["data"]?["version"]?.Value<String>());
+                ClassicAssert.AreEqual ("2.1.1",                                                  json["data"]?["version"]?.Value<String>());
 
-                Assert.AreEqual (1,                                                        json["data"]?["endpoints"]?.Count());
+                ClassicAssert.AreEqual (1,                                                        json["data"]?["endpoints"]?.Count());
 
-                Assert.AreEqual ("credentials",                                            json["data"]?["endpoints"]?[0]?["identifier"]?.Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/credentials",     json["data"]?["endpoints"]?[0]?["url"]?.       Value<String>());
+                ClassicAssert.AreEqual ("credentials",                                            json["data"]?["endpoints"]?[0]?["identifier"]?.Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/credentials",     json["data"]?["endpoints"]?[0]?["url"]?.       Value<String>());
 
-                Assert.AreEqual (1000,                                                     json["status_code"]?.                          Value<UInt32>());
-                Assert.AreEqual ("Hello world!",                                           json["status_message"]?.                       Value<String>());
+                ClassicAssert.AreEqual (1000,                                                     json["status_code"]?.                          Value<UInt32>());
+                ClassicAssert.AreEqual ("Hello world!",                                           json["status_message"]?.                       Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -321,9 +322,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
                 var response2   = await TestHelpers.GetJSONRequest(versionURL,                "cpo_accessing_emsp1++token");
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (200,            response2.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response2);
+                ClassicAssert.AreEqual (200,            response2.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
                 // {
                 //     "data": {
@@ -365,39 +366,39 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // }
 
                 var json        = response2.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual ("2.1.1",                                                  json["data"]?["version"]?.Value<String>());
+                ClassicAssert.AreEqual ("2.1.1",                                                  json["data"]?["version"]?.Value<String>());
 
-                Assert.AreEqual (7,                                                        json["data"]?["endpoints"]?.Count());
+                ClassicAssert.AreEqual (7,                                                        json["data"]?["endpoints"]?.Count());
 
-                Assert.AreEqual ("credentials",                                            json["data"]?["endpoints"]?[0]?["identifier"]?.Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/credentials",     json["data"]?["endpoints"]?[0]?["url"]?.       Value<String>());
+                ClassicAssert.AreEqual ("credentials",                                            json["data"]?["endpoints"]?[0]?["identifier"]?.Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/credentials",     json["data"]?["endpoints"]?[0]?["url"]?.       Value<String>());
 
-                Assert.AreEqual ("locations",                                              json["data"]?["endpoints"]?[1]?["identifier"]?.Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/locations",  json["data"]?["endpoints"]?[1]?["url"]?.       Value<String>());
+                ClassicAssert.AreEqual ("locations",                                              json["data"]?["endpoints"]?[1]?["identifier"]?.Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/locations",  json["data"]?["endpoints"]?[1]?["url"]?.       Value<String>());
 
-                Assert.AreEqual ("tariffs",                                                json["data"]?["endpoints"]?[2]?["identifier"]?.Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/tariffs",    json["data"]?["endpoints"]?[2]?["url"]?.       Value<String>());
+                ClassicAssert.AreEqual ("tariffs",                                                json["data"]?["endpoints"]?[2]?["identifier"]?.Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/tariffs",    json["data"]?["endpoints"]?[2]?["url"]?.       Value<String>());
 
-                Assert.AreEqual ("sessions",                                               json["data"]?["endpoints"]?[3]?["identifier"]?.Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/sessions",   json["data"]?["endpoints"]?[3]?["url"]?.       Value<String>());
+                ClassicAssert.AreEqual ("sessions",                                               json["data"]?["endpoints"]?[3]?["identifier"]?.Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/sessions",   json["data"]?["endpoints"]?[3]?["url"]?.       Value<String>());
 
-                Assert.AreEqual ("cdrs",                                                   json["data"]?["endpoints"]?[4]?["identifier"]?.Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/cdrs",       json["data"]?["endpoints"]?[4]?["url"]?.       Value<String>());
+                ClassicAssert.AreEqual ("cdrs",                                                   json["data"]?["endpoints"]?[4]?["identifier"]?.Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/cdrs",       json["data"]?["endpoints"]?[4]?["url"]?.       Value<String>());
 
-                Assert.AreEqual ("commands",                                               json["data"]?["endpoints"]?[5]?["identifier"]?.Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/commands",   json["data"]?["endpoints"]?[5]?["url"]?.       Value<String>());
+                ClassicAssert.AreEqual ("commands",                                               json["data"]?["endpoints"]?[5]?["identifier"]?.Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/commands",   json["data"]?["endpoints"]?[5]?["url"]?.       Value<String>());
 
-                Assert.AreEqual ("tokens",                                                 json["data"]?["endpoints"]?[6]?["identifier"]?.Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/tokens",     json["data"]?["endpoints"]?[6]?["url"]?.       Value<String>());
+                ClassicAssert.AreEqual ("tokens",                                                 json["data"]?["endpoints"]?[6]?["identifier"]?.Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/v2.1.1/emsp/tokens",     json["data"]?["endpoints"]?[6]?["url"]?.       Value<String>());
 
-                Assert.AreEqual (1000,                                                     json["status_code"]?.                          Value<UInt32>());
-                Assert.AreEqual ("Hello world!",                                           json["status_message"]?.                       Value<String>());
+                ClassicAssert.AreEqual (1000,                                                     json["status_code"]?.                          Value<UInt32>());
+                ClassicAssert.AreEqual ("Hello world!",                                           json["status_message"]?.                       Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -440,19 +441,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-04-30T02:17:25.970Z"
                 // }
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (403,            response2.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response2);
+                ClassicAssert.AreEqual (403,            response2.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json        = response2.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual (2000,                                json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("Invalid or blocked access token!",  json["status_message"]?.Value<String>());
+                ClassicAssert.AreEqual (2000,                                json["status_code"]?.   Value<UInt32>());
+                ClassicAssert.AreEqual ("Invalid or blocked access token!",  json["status_message"]?.Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -502,19 +503,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-04-30T02:33:26.044Z"
                 // }
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (404,            response2.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response2);
+                ClassicAssert.AreEqual (404,            response2.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json        = response2.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual (2000,                                    json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("This OCPI version is not supported!",   json["status_message"]?.Value<String>());
+                ClassicAssert.AreEqual (2000,                                    json["status_code"]?.   Value<UInt32>());
+                ClassicAssert.AreEqual ("This OCPI version is not supported!",   json["status_message"]?.Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -532,7 +533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         public async Task CPO_GetVersion_HTML_NoToken_Test()
         {
 
-            Assert.IsNotNull(cpoWebAPI);
+            ClassicAssert.IsNotNull(cpoWebAPI);
 
             if (emsp1VersionsAPIURL.HasValue)
             {
@@ -541,13 +542,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
                 var response2   = await TestHelpers.GetHTMLRequest(versionURL);
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (200,            response2.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response2);
+                ClassicAssert.AreEqual (200,            response2.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
                 var html      = response2.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(html);
-                Assert.IsTrue   (html?.Length > 0);
+                ClassicAssert.IsNotNull(html);
+                ClassicAssert.IsTrue   (html?.Length > 0);
 
             }
 
@@ -564,7 +565,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         public async Task CPO_GetVersion_HTML_UnknownToken_Test()
         {
 
-            Assert.IsNotNull(cpoWebAPI);
+            ClassicAssert.IsNotNull(cpoWebAPI);
 
             if (emsp1VersionsAPIURL.HasValue)
             {
@@ -573,13 +574,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
                 var response2   = await TestHelpers.GetHTMLRequest(versionURL, UnknownToken);
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (200,            response2.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response2);
+                ClassicAssert.AreEqual (200,            response2.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
                 var html      = response2.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(html);
-                Assert.IsTrue   (html?.Length > 0);
+                ClassicAssert.IsNotNull(html);
+                ClassicAssert.IsTrue   (html?.Length > 0);
 
             }
 
@@ -596,7 +597,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         public async Task CPO_GetVersion_HTML_RegisteredToken_Test()
         {
 
-            Assert.IsNotNull(cpoWebAPI);
+            ClassicAssert.IsNotNull(cpoWebAPI);
 
             if (emsp1VersionsAPIURL.HasValue)
             {
@@ -605,13 +606,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()!);
                 var response2   = await TestHelpers.GetHTMLRequest(versionURL,              "emsp1_accessing_cpo++token");
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (200,            response2.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response2);
+                ClassicAssert.AreEqual (200,            response2.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
                 var html      = response2.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(html);
-                Assert.IsTrue   (html?.Length > 0);
+                ClassicAssert.IsNotNull(html);
+                ClassicAssert.IsTrue   (html?.Length > 0);
 
             }
 
@@ -654,13 +655,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-04-30T02:17:25.970Z"
                 // }
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (200,            response2.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response2);
+                ClassicAssert.AreEqual (200,            response2.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
                 var html      = response2.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(html);
-                Assert.IsTrue   (html?.Length > 0);
+                ClassicAssert.IsNotNull(html);
+                ClassicAssert.IsTrue   (html?.Length > 0);
 
             }
 
@@ -677,7 +678,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
         public async Task CPO_GetVersion_HTML_UnknownVersion_Test()
         {
 
-            Assert.IsNotNull(cpoWebAPI);
+            ClassicAssert.IsNotNull(cpoWebAPI);
 
             if (emsp1VersionsAPIURL.HasValue)
             {
@@ -686,13 +687,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 var versionURL  = URL.Parse(JObject.Parse(response1.HTTPBodyAsUTF8String!)?["data"]?[0]?["url"]?.Value<String>()?.Replace("2.1.1", "0.7")!);
                 var response2   = await TestHelpers.GetHTMLRequest(versionURL);
 
-                Assert.IsNotNull(response2);
-                Assert.AreEqual (200,            response2.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response2);
+                ClassicAssert.AreEqual (200,            response2.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
 
                 var html      = response2.HTTPBodyAsUTF8String;
-                Assert.IsNotNull(html);
-                Assert.IsTrue   (html?.Length > 0);
+                ClassicAssert.IsNotNull(html);
+                ClassicAssert.IsTrue   (html?.Length > 0);
 
             }
 

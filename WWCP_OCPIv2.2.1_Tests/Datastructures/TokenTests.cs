@@ -18,6 +18,8 @@
 #region Usings
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -68,39 +70,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var JSON = Token1.ToJSON();
 
-            Assert.AreEqual("DE",                            JSON["country_code"].                    Value<String>());
-            Assert.AreEqual("GEF",                           JSON["party_id"].                        Value<String>());
-            Assert.AreEqual("Token0001",                     JSON["uid"].                             Value<String>());
-            Assert.AreEqual("RFID",                          JSON["type"].                            Value<String>());
-            Assert.AreEqual("0815",                          JSON["contract_id"].                     Value<String>());
-            Assert.AreEqual("RFID:0815",                     JSON["visual_number"].                   Value<String>());
-            Assert.AreEqual("GraphDefined GmbH",             JSON["issuer"].                          Value<String>());
-            Assert.AreEqual("G1234",                         JSON["group_id"].                        Value<String>());
-            Assert.AreEqual(true,                            JSON["valid"].                           Value<Boolean>());
-            Assert.AreEqual("NEVER",                         JSON["whitelist"].                       Value<String>());
-            Assert.AreEqual("de",                            JSON["language"].                        Value<String>());
-            Assert.AreEqual("FAST",                          JSON["default_profile_type"].            Value<String>());
-            Assert.AreEqual("Stadtwerke Jena-Ost",           JSON["energy_contract"]["supplier_name"].Value<String>());
-            Assert.AreEqual("GDF012324",                     JSON["energy_contract"]["contract_id"].  Value<String>());
-            Assert.AreEqual("2020-09-21T00:00:00.000Z",      JSON["last_updated"].                    Value<String>());
+            ClassicAssert.AreEqual("DE",                            JSON["country_code"].                    Value<String>());
+            ClassicAssert.AreEqual("GEF",                           JSON["party_id"].                        Value<String>());
+            ClassicAssert.AreEqual("Token0001",                     JSON["uid"].                             Value<String>());
+            ClassicAssert.AreEqual("RFID",                          JSON["type"].                            Value<String>());
+            ClassicAssert.AreEqual("0815",                          JSON["contract_id"].                     Value<String>());
+            ClassicAssert.AreEqual("RFID:0815",                     JSON["visual_number"].                   Value<String>());
+            ClassicAssert.AreEqual("GraphDefined GmbH",             JSON["issuer"].                          Value<String>());
+            ClassicAssert.AreEqual("G1234",                         JSON["group_id"].                        Value<String>());
+            ClassicAssert.AreEqual(true,                            JSON["valid"].                           Value<Boolean>());
+            ClassicAssert.AreEqual("NEVER",                         JSON["whitelist"].                       Value<String>());
+            ClassicAssert.AreEqual("de",                            JSON["language"].                        Value<String>());
+            ClassicAssert.AreEqual("FAST",                          JSON["default_profile_type"].            Value<String>());
+            ClassicAssert.AreEqual("Stadtwerke Jena-Ost",           JSON["energy_contract"]["supplier_name"].Value<String>());
+            ClassicAssert.AreEqual("GDF012324",                     JSON["energy_contract"]["contract_id"].  Value<String>());
+            ClassicAssert.AreEqual("2020-09-21T00:00:00.000Z",      JSON["last_updated"].                    Value<String>());
 
-            Assert.IsTrue(Token.TryParse(JSON, out var Token2, out var errorResponse));
-            Assert.IsNull(errorResponse);
+            ClassicAssert.IsTrue(Token.TryParse(JSON, out var Token2, out var errorResponse));
+            ClassicAssert.IsNull(errorResponse);
 
-            Assert.AreEqual(Token1.CountryCode,              Token2.CountryCode);
-            Assert.AreEqual(Token1.PartyId,                  Token2.PartyId);
-            Assert.AreEqual(Token1.Id,                       Token2.Id);
-            Assert.AreEqual(Token1.Type,                     Token2.Type);
-            Assert.AreEqual(Token1.ContractId,               Token2.ContractId);
-            Assert.AreEqual(Token1.Issuer,                   Token2.Issuer);
-            Assert.AreEqual(Token1.IsValid,                  Token2.IsValid);
-            Assert.AreEqual(Token1.WhitelistType,            Token2.WhitelistType);
-            Assert.AreEqual(Token1.VisualNumber,             Token2.VisualNumber);
-            Assert.AreEqual(Token1.GroupId,                  Token2.GroupId);
-            Assert.AreEqual(Token1.UILanguage,               Token2.UILanguage);
-            Assert.AreEqual(Token1.DefaultProfile,           Token2.DefaultProfile);
-            Assert.AreEqual(Token1.EnergyContract,           Token2.EnergyContract);
-            Assert.AreEqual(Token1.LastUpdated.ToIso8601(),  Token2.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(Token1.CountryCode,              Token2.CountryCode);
+            ClassicAssert.AreEqual(Token1.PartyId,                  Token2.PartyId);
+            ClassicAssert.AreEqual(Token1.Id,                       Token2.Id);
+            ClassicAssert.AreEqual(Token1.Type,                     Token2.Type);
+            ClassicAssert.AreEqual(Token1.ContractId,               Token2.ContractId);
+            ClassicAssert.AreEqual(Token1.Issuer,                   Token2.Issuer);
+            ClassicAssert.AreEqual(Token1.IsValid,                  Token2.IsValid);
+            ClassicAssert.AreEqual(Token1.WhitelistType,            Token2.WhitelistType);
+            ClassicAssert.AreEqual(Token1.VisualNumber,             Token2.VisualNumber);
+            ClassicAssert.AreEqual(Token1.GroupId,                  Token2.GroupId);
+            ClassicAssert.AreEqual(Token1.UILanguage,               Token2.UILanguage);
+            ClassicAssert.AreEqual(Token1.DefaultProfile,           Token2.DefaultProfile);
+            ClassicAssert.AreEqual(Token1.EnergyContract,           Token2.EnergyContract);
+            ClassicAssert.AreEqual(Token1.LastUpdated.ToIso8601(),  Token2.LastUpdated.ToIso8601());
 
         }
 
@@ -136,21 +138,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             #endregion
 
             var result = Token.TryParse(JObject.Parse(JSON), out var parsedToken, out var errorResponse);
-            Assert.IsTrue   (result, errorResponse);
-            Assert.IsNotNull(parsedToken);
-            Assert.IsNull   (errorResponse);
+            ClassicAssert.IsTrue   (result, errorResponse);
+            ClassicAssert.IsNotNull(parsedToken);
+            ClassicAssert.IsNull   (errorResponse);
 
-            Assert.AreEqual(CountryCode.Parse("NL"),                             parsedToken.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("TNM"),                            parsedToken.PartyId);
-            Assert.AreEqual(Token_Id.   Parse("012345678"),                      parsedToken.Id);
-            Assert.AreEqual(TokenType.  RFID,                                    parsedToken.Type);
-            Assert.AreEqual(Contract_Id.Parse("NL8ACC12E46L89"),                 parsedToken.ContractId);
-            Assert.AreEqual("DF000-2001-8999-1",                                 parsedToken.VisualNumber);
-            Assert.AreEqual("TheNewMotion",                                      parsedToken.Issuer);
-            Assert.AreEqual(Group_Id.   Parse("DF000-2001-8999"),                parsedToken.GroupId);
-            Assert.AreEqual(true,                                                parsedToken.IsValid);
-            Assert.AreEqual(WhitelistTypes.ALWAYS,                               parsedToken.WhitelistType);
-            Assert.AreEqual(DateTime.Parse("2015-06-29T22:39:09Z").ToIso8601(),  parsedToken.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                             parsedToken.CountryCode);
+            ClassicAssert.AreEqual(Party_Id.   Parse("TNM"),                            parsedToken.PartyId);
+            ClassicAssert.AreEqual(Token_Id.   Parse("012345678"),                      parsedToken.Id);
+            ClassicAssert.AreEqual(TokenType.  RFID,                                    parsedToken.Type);
+            ClassicAssert.AreEqual(Contract_Id.Parse("NL8ACC12E46L89"),                 parsedToken.ContractId);
+            ClassicAssert.AreEqual("DF000-2001-8999-1",                                 parsedToken.VisualNumber);
+            ClassicAssert.AreEqual("TheNewMotion",                                      parsedToken.Issuer);
+            ClassicAssert.AreEqual(Group_Id.   Parse("DF000-2001-8999"),                parsedToken.GroupId);
+            ClassicAssert.AreEqual(true,                                                parsedToken.IsValid);
+            ClassicAssert.AreEqual(WhitelistTypes.ALWAYS,                               parsedToken.WhitelistType);
+            ClassicAssert.AreEqual(DateTime.Parse("2015-06-29T22:39:09Z").ToIso8601(),  parsedToken.LastUpdated.ToIso8601());
 
         }
 
@@ -191,25 +193,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             #endregion
 
             var result = Token.TryParse(JObject.Parse(JSON), out var parsedToken, out var errorResponse);
-            Assert.IsTrue   (result, errorResponse);
-            Assert.IsNotNull(parsedToken);
-            Assert.IsNull   (errorResponse);
+            ClassicAssert.IsTrue   (result, errorResponse);
+            ClassicAssert.IsNotNull(parsedToken);
+            ClassicAssert.IsNull   (errorResponse);
 
-            Assert.AreEqual(CountryCode.Parse("NL"),                             parsedToken.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("TNM"),                            parsedToken.PartyId);
-            Assert.AreEqual(Token_Id.   Parse("012345678"),                      parsedToken.Id);
-            Assert.AreEqual(TokenType.  RFID,                                    parsedToken.Type);
-            Assert.AreEqual(Contract_Id.Parse("NL8ACC12E46L89"),                 parsedToken.ContractId);
-            Assert.AreEqual("DF000-2001-8999-1",                                 parsedToken.VisualNumber);
-            Assert.AreEqual("TheNewMotion",                                      parsedToken.Issuer);
-            Assert.AreEqual(Group_Id.   Parse("DF000-2001-8999"),                parsedToken.GroupId);
-            Assert.AreEqual(true,                                                parsedToken.IsValid);
-            Assert.AreEqual(WhitelistTypes.ALWAYS,                               parsedToken.WhitelistType);
-            //Assert.AreEqual(Languages.it,                                        parsedToken.UILanguage);
-            //Assert.AreEqual(ProfileTypes.GREEN,                                  parsedToken.DefaultProfile);
-            //Assert.AreEqual("Greenpeace Energy eG",                              parsedToken.EnergyContract.Value.SupplierName);
-            //Assert.AreEqual(EnergyContract_Id.Parse("0123456789"),               parsedToken.EnergyContract.Value.ContractId);
-            Assert.AreEqual(DateTime.Parse("2018-12-10T17:25:10Z").ToIso8601(),  parsedToken.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(CountryCode.Parse("NL"),                             parsedToken.CountryCode);
+            ClassicAssert.AreEqual(Party_Id.   Parse("TNM"),                            parsedToken.PartyId);
+            ClassicAssert.AreEqual(Token_Id.   Parse("012345678"),                      parsedToken.Id);
+            ClassicAssert.AreEqual(TokenType.  RFID,                                    parsedToken.Type);
+            ClassicAssert.AreEqual(Contract_Id.Parse("NL8ACC12E46L89"),                 parsedToken.ContractId);
+            ClassicAssert.AreEqual("DF000-2001-8999-1",                                 parsedToken.VisualNumber);
+            ClassicAssert.AreEqual("TheNewMotion",                                      parsedToken.Issuer);
+            ClassicAssert.AreEqual(Group_Id.   Parse("DF000-2001-8999"),                parsedToken.GroupId);
+            ClassicAssert.AreEqual(true,                                                parsedToken.IsValid);
+            ClassicAssert.AreEqual(WhitelistTypes.ALWAYS,                               parsedToken.WhitelistType);
+            //ClassicAssert.AreEqual(Languages.it,                                        parsedToken.UILanguage);
+            //ClassicAssert.AreEqual(ProfileTypes.GREEN,                                  parsedToken.DefaultProfile);
+            //ClassicAssert.AreEqual("Greenpeace Energy eG",                              parsedToken.EnergyContract.Value.SupplierName);
+            //ClassicAssert.AreEqual(EnergyContract_Id.Parse("0123456789"),               parsedToken.EnergyContract.Value.ContractId);
+            ClassicAssert.AreEqual(DateTime.Parse("2018-12-10T17:25:10Z").ToIso8601(),  parsedToken.LastUpdated.ToIso8601());
 
         }
 
@@ -242,19 +244,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             #endregion
 
             var result = Token.TryParse(JObject.Parse(JSON), out var parsedToken, out var errorResponse);
-            Assert.IsTrue   (result, errorResponse);
-            Assert.IsNotNull(parsedToken);
-            Assert.IsNull   (errorResponse);
+            ClassicAssert.IsTrue   (result, errorResponse);
+            ClassicAssert.IsNotNull(parsedToken);
+            ClassicAssert.IsNull   (errorResponse);
 
-            Assert.AreEqual(CountryCode.Parse("DE"),                                    parsedToken.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("TNM"),                                   parsedToken.PartyId);
-            Assert.AreEqual(Token_Id.   Parse("bdf21bce-fc97-11e8-8eb2-f2801f1b9fd1"),  parsedToken.Id);
-            Assert.AreEqual(TokenType.  APP_USER,                                       parsedToken.Type);
-            Assert.AreEqual(Contract_Id.Parse("DE8ACC12E46L89"),                        parsedToken.ContractId);
-            Assert.AreEqual("TheNewMotion",                                             parsedToken.Issuer);
-            Assert.AreEqual(true,                                                       parsedToken.IsValid);
-            Assert.AreEqual(WhitelistTypes.ALLOWED,                                     parsedToken.WhitelistType);
-            Assert.AreEqual(DateTime.Parse("2018-12-10T17:16:15Z").ToIso8601(),         parsedToken.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(CountryCode.Parse("DE"),                                    parsedToken.CountryCode);
+            ClassicAssert.AreEqual(Party_Id.   Parse("TNM"),                                   parsedToken.PartyId);
+            ClassicAssert.AreEqual(Token_Id.   Parse("bdf21bce-fc97-11e8-8eb2-f2801f1b9fd1"),  parsedToken.Id);
+            ClassicAssert.AreEqual(TokenType.  APP_USER,                                       parsedToken.Type);
+            ClassicAssert.AreEqual(Contract_Id.Parse("DE8ACC12E46L89"),                        parsedToken.ContractId);
+            ClassicAssert.AreEqual("TheNewMotion",                                             parsedToken.Issuer);
+            ClassicAssert.AreEqual(true,                                                       parsedToken.IsValid);
+            ClassicAssert.AreEqual(WhitelistTypes.ALLOWED,                                     parsedToken.WhitelistType);
+            ClassicAssert.AreEqual(DateTime.Parse("2018-12-10T17:16:15Z").ToIso8601(),         parsedToken.LastUpdated.ToIso8601());
 
         }
 

@@ -20,6 +20,7 @@
 using Newtonsoft.Json.Linq;
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
@@ -42,13 +43,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
         public async Task WebAPI_Root_Test()
         {
 
-            Assert.IsNotNull(cpoWebAPI);
-            Assert.IsNotNull(emsp1WebAPI);
-            Assert.IsNotNull(emsp2WebAPI);
+            ClassicAssert.IsNotNull(cpoWebAPI);
+            ClassicAssert.IsNotNull(emsp1WebAPI);
+            ClassicAssert.IsNotNull(emsp2WebAPI);
 
-            Assert.IsNotNull(cpoVersionsAPIURL);
-            Assert.IsNotNull(emsp1VersionsAPIURL);
-            Assert.IsNotNull(emsp2VersionsAPIURL);
+            ClassicAssert.IsNotNull(cpoVersionsAPIURL);
+            ClassicAssert.IsNotNull(emsp1VersionsAPIURL);
+            ClassicAssert.IsNotNull(emsp2VersionsAPIURL);
 
             if (cpoWebAPI is not null &&
                 cpoVersionsAPIURL.HasValue)
@@ -57,13 +58,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 var baseURL   = cpoVersionsAPIURL.Value.ToString().Replace(cpoVersionsAPIURL.Value.Path.ToString(), cpoWebAPI.URLPathPrefix.ToString());
                 var response  = await TestHelpers.GetHTMLRequest(URL.Parse(baseURL) + "clients");
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,            response.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json      = JArray.Parse(response.HTTPBodyAsUTF8String!);
-                Assert.IsNotNull(json);
-                Assert.AreEqual (0, json.Count);
+                ClassicAssert.IsNotNull(json);
+                ClassicAssert.AreEqual (0, json.Count);
 
             }
 

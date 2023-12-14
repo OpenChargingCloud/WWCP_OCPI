@@ -18,6 +18,7 @@
 #region Usings
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
@@ -48,7 +49,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
 
-            Assert.IsNotNull(graphDefinedEMSP);
+            ClassicAssert.IsNotNull(graphDefinedEMSP);
 
             if (graphDefinedEMSP is not null)
             {
@@ -315,13 +316,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2022-12-28T22:54:40.784Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (201,            response3.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,           response3.StatusCode);
-                Assert.AreEqual ("Hello world!", response3.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (201,            response3.HTTPResponse?.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (1000,           response3.StatusCode);
+                ClassicAssert.AreEqual ("Hello world!", response3.StatusMessage);
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
-                //Assert.IsNotNull(response.Request);
+                //ClassicAssert.IsNotNull(response.Request);
 
             }
 
@@ -343,7 +344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                        PartyId:     Party_Id.   Parse("GDF")
                                    );
 
-            Assert.IsNotNull(graphDefinedEMSP);
+            ClassicAssert.IsNotNull(graphDefinedEMSP);
 
             if (graphDefinedEMSP is not null)
             {
@@ -729,13 +730,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2022-12-28T22:54:40.784Z"
                 // }
 
-                Assert.IsNotNull(response4);
-                Assert.AreEqual (201,             response4.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,            response4.StatusCode);
-                Assert.AreEqual ("Hello world!",  response4.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now -  response4.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response4);
+                ClassicAssert.AreEqual (201,             response4.HTTPResponse?.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (1000,            response4.StatusCode);
+                ClassicAssert.AreEqual ("Hello world!",  response4.StatusMessage);
+                ClassicAssert.IsTrue   (Timestamp.Now -  response4.Timestamp < TimeSpan.FromSeconds(10));
 
-                //Assert.IsNotNull(response.Request);
+                //ClassicAssert.IsNotNull(response.Request);
 
             }
 
