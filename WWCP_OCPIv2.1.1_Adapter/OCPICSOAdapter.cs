@@ -2435,15 +2435,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        async Task<WWCP.SendCDRsResult>
+        public async Task<WWCP.SendCDRsResult>
 
-            WWCP.ISendChargeDetailRecords.SendChargeDetailRecords(IEnumerable<WWCP.ChargeDetailRecord>  ChargeDetailRecords,
-                                                                  WWCP.TransmissionTypes                TransmissionType,
+            SendChargeDetailRecords(IEnumerable<WWCP.ChargeDetailRecord>  ChargeDetailRecords,
+                                    WWCP.TransmissionTypes                TransmissionType    = WWCP.TransmissionTypes.Enqueue,
 
-                                                                  DateTime?                             Timestamp,
-                                                                  EventTracking_Id?                     EventTrackingId,
-                                                                  TimeSpan?                             RequestTimeout,
-                                                                  CancellationToken                     CancellationToken)
+                                    DateTime?                             Timestamp           = null,
+                                    EventTracking_Id?                     EventTrackingId     = null,
+                                    TimeSpan?                             RequestTimeout      = null,
+                                    CancellationToken                     CancellationToken   = default)
 
         {
 
@@ -2578,7 +2578,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             null, // HTTPLogger
 
                                             DisableLogging,
-                                            ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
+                                            ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
                                             ClientsLoggingContext ?? DefaultLoggingContext,
                                             ClientsLogfileCreator,
                                             DNSClient
@@ -2595,7 +2595,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         var cpoClientLogger = new CPO.HTTP.CPOClient.Logger(
                                                   cpoClient,
-                                                  ClientsLoggingPath ?? DefaultHTTPAPI_LoggingPath,
+                                                  ClientsLoggingPath    ?? DefaultHTTPAPI_LoggingPath,
                                                   ClientsLoggingContext ?? DefaultLoggingContext,
                                                   ClientsLogfileCreator
                                               );
@@ -2629,14 +2629,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         else
                         {
 
-                            var addOrUpdateResult  = await CommonAPI.AddOrUpdateCDR(CDR:                cdr,
-                                                                                    AllowDowngrades:    false,
-                                                                                    SkipNotifications:  false,
-                                                                                    EventTrackingId:    EventTrackingId);
+                            var addOrUpdateResult  = await CommonAPI.AddOrUpdateCDR(
+                                                               CDR:                cdr,
+                                                               AllowDowngrades:    false,
+                                                               SkipNotifications:  false,
+                                                               EventTrackingId:    EventTrackingId
+                                                           );
 
                             var response           = await cpoClient.PostCDR(
-                                                               CDR: cdr,
-                                                               EMSPId: emspId
+                                                               CDR:                cdr,
+                                                               EMSPId:             emspId,
+                                                               CancellationToken:  CancellationToken
                                                            );
 
                             if (response is not null)
