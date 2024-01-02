@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -802,7 +802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             //                                 URLPrefix + "/index.html",
             //                                 URLPrefix + "/"
             //                             },
-            //                             HTTPContentType.HTML_UTF8,
+            //                             HTTPContentType.Text.HTML_UTF8,
             //                             HTTPDelegate: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
@@ -811,7 +811,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             //                                 return new HTTPResponse.Builder(Request) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,
-            //                                     ContentType     = HTTPContentType.HTML_UTF8,
+            //                                     ContentType     = HTTPContentType.Text.HTML_UTF8,
             //                                     Content         = _MemoryStream.ToArray(),
             //                                     Connection      = "close"
             //                                 };
@@ -824,7 +824,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                          HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix,
-                                         HTTPContentType.TEXT_UTF8,
+                                         HTTPContentType.Text.PLAIN,
                                          HTTPDelegate: Request => {
 
                                              return Task.FromResult(
@@ -835,7 +835,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
                                                      AccessControlAllowHeaders  = new[] { "Authorization" },
-                                                     ContentType                = HTTPContentType.TEXT_UTF8,
+                                                     ContentType                = HTTPContentType.Text.PLAIN,
                                                      Content                    = "This is an Open Charge Point Interface HTTP service!\r\nPlease check ~/versions!".ToUTF8Bytes(),
                                                      Connection                 = "close"
                                                  }.AsImmutable);
@@ -883,7 +883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.GET,
                                URLPathPrefix + "versions",
-                               HTTPContentType.JSON_UTF8,
+                               HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   GetVersionsRequest,
                                OCPIResponseLogger:  GetVersionsResponse,
                                OCPIRequestHandler:  Request => {
@@ -978,7 +978,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.GET,
                                URLPathPrefix + "versions/{versionId}",
-                               HTTPContentType.JSON_UTF8,
+                               HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   GetVersionRequest,
                                OCPIResponseLogger:  GetVersionResponse,
                                OCPIRequestHandler:  Request => {
@@ -1285,7 +1285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.GET,
                                URLPathPrefix + "{versionId}/credentials",
-                               HTTPContentType.JSON_UTF8,
+                               HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   GetCredentialsRequest,
                                OCPIResponseLogger:  GetCredentialsResponse,
                                OCPIRequestHandler:  Request => {
@@ -1341,7 +1341,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.POST,
                                URLPathPrefix + "{versionId}/credentials",
-                               HTTPContentType.JSON_UTF8,
+                               HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   PostCredentialsRequest,
                                OCPIResponseLogger:  PostCredentialsResponse,
                                OCPIRequestHandler:  async Request => {
@@ -1388,7 +1388,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.PUT,
                                URLPathPrefix + "{versionId}/credentials",
-                               HTTPContentType.JSON_UTF8,
+                               HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   PutCredentialsRequest,
                                OCPIResponseLogger:  PutCredentialsResponse,
                                OCPIRequestHandler:  async Request => {
@@ -1464,7 +1464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.DELETE,
                                URLPathPrefix + "{versionId}/credentials",
-                               HTTPContentType.JSON_UTF8,
+                               HTTPContentType.Application.JSON_UTF8,
                                OCPIRequestLogger:   DeleteCredentialsRequest,
                                OCPIResponseLogger:  DeleteCredentialsResponse,
                                OCPIRequestHandler:  async Request => {

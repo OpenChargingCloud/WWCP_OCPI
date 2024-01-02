@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,7 @@
 using Newtonsoft.Json.Linq;
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Aegir;
@@ -93,10 +94,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                              );
 
-                Assert.IsNotNull(addChargingPoolResult1);
+                ClassicAssert.IsNotNull(addChargingPoolResult1);
 
                 var chargingPool1  = addChargingPoolResult1.ChargingPool;
-                Assert.IsNotNull(chargingPool1);
+                ClassicAssert.IsNotNull(chargingPool1);
 
                 #endregion
 
@@ -137,10 +138,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                              );
 
-                Assert.IsNotNull(addChargingPoolResult2);
+                ClassicAssert.IsNotNull(addChargingPoolResult2);
 
                 var chargingPool2  = addChargingPoolResult2.ChargingPool;
-                Assert.IsNotNull(chargingPool2);
+                ClassicAssert.IsNotNull(chargingPool2);
 
                 #endregion
 
@@ -165,10 +166,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.IsNotNull(addChargingStationResult1);
+                ClassicAssert.IsNotNull(addChargingStationResult1);
 
                 var chargingStation1  = addChargingStationResult1.ChargingStation;
-                Assert.IsNotNull(chargingStation1);
+                ClassicAssert.IsNotNull(chargingStation1);
 
                 #endregion
 
@@ -190,10 +191,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.IsNotNull(addChargingStationResult2);
+                ClassicAssert.IsNotNull(addChargingStationResult2);
 
                 var chargingStation2  = addChargingStationResult2.ChargingStation;
-                Assert.IsNotNull(chargingStation2);
+                ClassicAssert.IsNotNull(chargingStation2);
 
                 #endregion
 
@@ -215,10 +216,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.IsNotNull(addChargingStationResult3);
+                ClassicAssert.IsNotNull(addChargingStationResult3);
 
                 var chargingStation3  = addChargingStationResult3.ChargingStation;
-                Assert.IsNotNull(chargingStation3);
+                ClassicAssert.IsNotNull(chargingStation3);
 
                 #endregion
 
@@ -239,10 +240,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result1);
+                ClassicAssert.IsNotNull(addEVSE1Result1);
 
                 var evse1     = addEVSE1Result1.EVSE;
-                Assert.IsNotNull(evse1);
+                ClassicAssert.IsNotNull(evse1);
 
                 #endregion
 
@@ -262,10 +263,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result2);
+                ClassicAssert.IsNotNull(addEVSE1Result2);
 
                 var evse2     = addEVSE1Result2.EVSE;
-                Assert.IsNotNull(evse2);
+                ClassicAssert.IsNotNull(evse2);
 
                 #endregion
 
@@ -285,10 +286,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result3);
+                ClassicAssert.IsNotNull(addEVSE1Result3);
 
                 var evse3     = addEVSE1Result3.EVSE;
-                Assert.IsNotNull(evse2);
+                ClassicAssert.IsNotNull(evse2);
 
                 #endregion
 
@@ -308,10 +309,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result4);
+                ClassicAssert.IsNotNull(addEVSE1Result4);
 
                 var evse4     = addEVSE1Result4.EVSE;
-                Assert.IsNotNull(evse4);
+                ClassicAssert.IsNotNull(evse4);
 
                 #endregion
 
@@ -319,16 +320,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate, that locations had been sent to the OCPI module
 
                 var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
-                Assert.IsNotNull(allLocations);
-                Assert.AreEqual (2, allLocations.Length);
+                ClassicAssert.IsNotNull(allLocations);
+                ClassicAssert.AreEqual (2, allLocations.Length);
 
                 #endregion
 
                 #region Validate, that EVSEs had been sent to the OCPI module
 
                 var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
-                Assert.IsNotNull(allEVSEs);
-                Assert.AreEqual (4, allEVSEs.Length);
+                ClassicAssert.IsNotNull(allEVSEs);
+                ClassicAssert.AreEqual (4, allEVSEs.Length);
 
                 #endregion
 
@@ -344,37 +345,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          remoteURL.Path,
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
+                    ClassicAssert.IsNotNull(httpResponse);
+                    ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
 
                     var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
 
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
+                    ClassicAssert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
+                    ClassicAssert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
+                    ClassicAssert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
 
                     var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
+                    ClassicAssert.IsNotNull(jsonLocations);
+                    ClassicAssert.AreEqual(2, jsonLocations!.Count);
 
                     var jsonLocation1 = jsonLocations[0] as JObject;
                     var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
+                    ClassicAssert.IsNotNull(jsonLocation1);
+                    ClassicAssert.IsNotNull(jsonLocation2);
 
                     var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
                     var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
+                    ClassicAssert.IsNotNull(jsonEVSEs1);
+                    ClassicAssert.IsNotNull(jsonEVSEs2);
 
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
+                    ClassicAssert.AreEqual(3, jsonEVSEs1!.Count);
+                    ClassicAssert.AreEqual(1, jsonEVSEs2!.Count);
 
                 }
 
@@ -402,37 +403,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
                                                                                              requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
+                    ClassicAssert.IsNotNull(httpResponse);
+                    ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
 
                     var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
 
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
+                    ClassicAssert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
+                    ClassicAssert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
+                    ClassicAssert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
 
                     var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
+                    ClassicAssert.IsNotNull(jsonLocations);
+                    ClassicAssert.AreEqual(2, jsonLocations!.Count);
 
                     var jsonLocation1 = jsonLocations[0] as JObject;
                     var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
+                    ClassicAssert.IsNotNull(jsonLocation1);
+                    ClassicAssert.IsNotNull(jsonLocation2);
 
                     var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
                     var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
+                    ClassicAssert.IsNotNull(jsonEVSEs1);
+                    ClassicAssert.IsNotNull(jsonEVSEs2);
 
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
+                    ClassicAssert.AreEqual(3, jsonEVSEs1!.Count);
+                    ClassicAssert.AreEqual(1, jsonEVSEs2!.Count);
 
                 }
 
@@ -497,10 +498,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                              );
 
-                Assert.IsNotNull(addChargingPoolResult1);
+                ClassicAssert.IsNotNull(addChargingPoolResult1);
 
                 var chargingPool1  = addChargingPoolResult1.ChargingPool;
-                Assert.IsNotNull(chargingPool1);
+                ClassicAssert.IsNotNull(chargingPool1);
 
                 #endregion
 
@@ -541,10 +542,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                              );
 
-                Assert.IsNotNull(addChargingPoolResult2);
+                ClassicAssert.IsNotNull(addChargingPoolResult2);
 
                 var chargingPool2  = addChargingPoolResult2.ChargingPool;
-                Assert.IsNotNull(chargingPool2);
+                ClassicAssert.IsNotNull(chargingPool2);
 
                 #endregion
 
@@ -569,10 +570,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.IsNotNull(addChargingStationResult1);
+                ClassicAssert.IsNotNull(addChargingStationResult1);
 
                 var chargingStation1  = addChargingStationResult1.ChargingStation;
-                Assert.IsNotNull(chargingStation1);
+                ClassicAssert.IsNotNull(chargingStation1);
 
                 #endregion
 
@@ -594,10 +595,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.IsNotNull(addChargingStationResult2);
+                ClassicAssert.IsNotNull(addChargingStationResult2);
 
                 var chargingStation2  = addChargingStationResult2.ChargingStation;
-                Assert.IsNotNull(chargingStation2);
+                ClassicAssert.IsNotNull(chargingStation2);
 
                 #endregion
 
@@ -619,10 +620,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.IsNotNull(addChargingStationResult3);
+                ClassicAssert.IsNotNull(addChargingStationResult3);
 
                 var chargingStation3  = addChargingStationResult3.ChargingStation;
-                Assert.IsNotNull(chargingStation3);
+                ClassicAssert.IsNotNull(chargingStation3);
 
                 #endregion
 
@@ -643,10 +644,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result1);
+                ClassicAssert.IsNotNull(addEVSE1Result1);
 
                 var evse1     = addEVSE1Result1.EVSE;
-                Assert.IsNotNull(evse1);
+                ClassicAssert.IsNotNull(evse1);
 
                 #endregion
 
@@ -666,10 +667,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result2);
+                ClassicAssert.IsNotNull(addEVSE1Result2);
 
                 var evse2     = addEVSE1Result2.EVSE;
-                Assert.IsNotNull(evse2);
+                ClassicAssert.IsNotNull(evse2);
 
                 #endregion
 
@@ -689,10 +690,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result3);
+                ClassicAssert.IsNotNull(addEVSE1Result3);
 
                 var evse3     = addEVSE1Result3.EVSE;
-                Assert.IsNotNull(evse2);
+                ClassicAssert.IsNotNull(evse2);
 
                 #endregion
 
@@ -712,10 +713,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result4);
+                ClassicAssert.IsNotNull(addEVSE1Result4);
 
                 var evse4     = addEVSE1Result4.EVSE;
-                Assert.IsNotNull(evse4);
+                ClassicAssert.IsNotNull(evse4);
 
                 #endregion
 
@@ -724,16 +725,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate, that locations had been sent to the OCPI module
 
                 var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
-                Assert.IsNotNull(allLocations);
-                Assert.AreEqual (2, allLocations.Length);
+                ClassicAssert.IsNotNull(allLocations);
+                ClassicAssert.AreEqual (2, allLocations.Length);
 
                 #endregion
 
                 #region Validate, that EVSEs had been sent to the OCPI module
 
                 var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
-                Assert.IsNotNull(allEVSEs);
-                Assert.AreEqual (4, allEVSEs.Length);
+                ClassicAssert.IsNotNull(allEVSEs);
+                ClassicAssert.AreEqual (4, allEVSEs.Length);
 
                 #endregion
 
@@ -742,7 +743,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1.Id.Suffix), out var location1) && location1 is not null)
                 {
 
-                    Assert.AreEqual(3, location1.EVSEs.Count());
+                    ClassicAssert.AreEqual(3, location1.EVSEs.Count());
 
                 }
                 else
@@ -752,7 +753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool2.Id.Suffix), out var location2) && location2 is not null)
                 {
 
-                    Assert.AreEqual(1, location2.EVSEs.Count());
+                    ClassicAssert.AreEqual(1, location2.EVSEs.Count());
 
                 }
                 else
@@ -943,13 +944,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 chargingPool1!.Name.       Set(Languages.en, "Test pool #1 (updated)");
                 chargingPool1!.Description.Set(Languages.en, "GraphDefined charging pool for tests #1 (updated)");
 
-                Assert.AreEqual(8, updatedPoolProperties.Count);
-                Assert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
-                Assert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
+                ClassicAssert.AreEqual(8, updatedPoolProperties.Count);
+                ClassicAssert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
+                ClassicAssert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
 
                 csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location);
-                Assert.AreEqual("Test pool #1 (updated)",                             location!.Name);
-                //Assert.AreEqual("GraphDefined Charging Pool für Tests #1",            location!.Name); // Not mapped to OCPI!
+                ClassicAssert.AreEqual("Test pool #1 (updated)",                             location!.Name);
+                //ClassicAssert.AreEqual("GraphDefined Charging Pool für Tests #1",            location!.Name); // Not mapped to OCPI!
 
 
                 evse1.Name.Set(Languages.en, "Test EVSE #1A1 (updated)");
@@ -991,10 +992,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 //                                                              );
 
-                //Assert.IsNotNull(addChargingPoolResult2);
+                //ClassicAssert.IsNotNull(addChargingPoolResult2);
 
                 //var chargingPool2  = addChargingPoolResult2.ChargingPool;
-                //Assert.IsNotNull(chargingPool2);
+                //ClassicAssert.IsNotNull(chargingPool2);
 
                 #endregion
 
@@ -1011,37 +1012,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          remoteURL.Path,
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
+                    ClassicAssert.IsNotNull(httpResponse);
+                    ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
 
                     var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
 
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
+                    ClassicAssert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
+                    ClassicAssert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
+                    ClassicAssert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
 
                     var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
+                    ClassicAssert.IsNotNull(jsonLocations);
+                    ClassicAssert.AreEqual(2, jsonLocations!.Count);
 
                     var jsonLocation1 = jsonLocations[0] as JObject;
                     var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
+                    ClassicAssert.IsNotNull(jsonLocation1);
+                    ClassicAssert.IsNotNull(jsonLocation2);
 
                     var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
                     var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
+                    ClassicAssert.IsNotNull(jsonEVSEs1);
+                    ClassicAssert.IsNotNull(jsonEVSEs2);
 
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
+                    ClassicAssert.AreEqual(3, jsonEVSEs1!.Count);
+                    ClassicAssert.AreEqual(1, jsonEVSEs2!.Count);
 
                 }
 
@@ -1069,37 +1070,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
                                                                                              requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
+                    ClassicAssert.IsNotNull(httpResponse);
+                    ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
 
                     var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
 
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
+                    ClassicAssert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
+                    ClassicAssert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
+                    ClassicAssert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
 
                     var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
+                    ClassicAssert.IsNotNull(jsonLocations);
+                    ClassicAssert.AreEqual(2, jsonLocations!.Count);
 
                     var jsonLocation1 = jsonLocations[0] as JObject;
                     var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
+                    ClassicAssert.IsNotNull(jsonLocation1);
+                    ClassicAssert.IsNotNull(jsonLocation2);
 
                     var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
                     var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
+                    ClassicAssert.IsNotNull(jsonEVSEs1);
+                    ClassicAssert.IsNotNull(jsonEVSEs2);
 
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
+                    ClassicAssert.AreEqual(3, jsonEVSEs1!.Count);
+                    ClassicAssert.AreEqual(1, jsonEVSEs2!.Count);
 
                 }
 
@@ -1164,10 +1165,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                              );
 
-                Assert.IsNotNull(addChargingPoolResult1);
+                ClassicAssert.IsNotNull(addChargingPoolResult1);
 
                 var chargingPool1  = addChargingPoolResult1.ChargingPool;
-                Assert.IsNotNull(chargingPool1);
+                ClassicAssert.IsNotNull(chargingPool1);
 
                 #endregion
 
@@ -1208,10 +1209,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                              );
 
-                Assert.IsNotNull(addChargingPoolResult2);
+                ClassicAssert.IsNotNull(addChargingPoolResult2);
 
                 var chargingPool2  = addChargingPoolResult2.ChargingPool;
-                Assert.IsNotNull(chargingPool2);
+                ClassicAssert.IsNotNull(chargingPool2);
 
                 #endregion
 
@@ -1236,10 +1237,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.IsNotNull(addChargingStationResult1);
+                ClassicAssert.IsNotNull(addChargingStationResult1);
 
                 var chargingStation1  = addChargingStationResult1.ChargingStation;
-                Assert.IsNotNull(chargingStation1);
+                ClassicAssert.IsNotNull(chargingStation1);
 
                 #endregion
 
@@ -1261,10 +1262,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.IsNotNull(addChargingStationResult2);
+                ClassicAssert.IsNotNull(addChargingStationResult2);
 
                 var chargingStation2  = addChargingStationResult2.ChargingStation;
-                Assert.IsNotNull(chargingStation2);
+                ClassicAssert.IsNotNull(chargingStation2);
 
                 #endregion
 
@@ -1286,10 +1287,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.IsNotNull(addChargingStationResult3);
+                ClassicAssert.IsNotNull(addChargingStationResult3);
 
                 var chargingStation3  = addChargingStationResult3.ChargingStation;
-                Assert.IsNotNull(chargingStation3);
+                ClassicAssert.IsNotNull(chargingStation3);
 
                 #endregion
 
@@ -1310,10 +1311,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result1);
+                ClassicAssert.IsNotNull(addEVSE1Result1);
 
                 var evse1     = addEVSE1Result1.EVSE;
-                Assert.IsNotNull(evse1);
+                ClassicAssert.IsNotNull(evse1);
 
                 #endregion
 
@@ -1333,10 +1334,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result2);
+                ClassicAssert.IsNotNull(addEVSE1Result2);
 
                 var evse2     = addEVSE1Result2.EVSE;
-                Assert.IsNotNull(evse2);
+                ClassicAssert.IsNotNull(evse2);
 
                 #endregion
 
@@ -1356,10 +1357,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result3);
+                ClassicAssert.IsNotNull(addEVSE1Result3);
 
                 var evse3     = addEVSE1Result3.EVSE;
-                Assert.IsNotNull(evse2);
+                ClassicAssert.IsNotNull(evse2);
 
                 #endregion
 
@@ -1379,31 +1380,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.IsNotNull(addEVSE1Result4);
+                ClassicAssert.IsNotNull(addEVSE1Result4);
 
                 var evse4     = addEVSE1Result4.EVSE;
-                Assert.IsNotNull(evse4);
+                ClassicAssert.IsNotNull(evse4);
 
                 #endregion
 
 
                 var evse1_UId = evse1!.Id.ToOCPI_EVSEUId();
-                Assert.IsTrue(evse1_UId.HasValue);
+                ClassicAssert.IsTrue(evse1_UId.HasValue);
 
 
                 #region Validate, that locations had been sent to the OCPI module
 
                 var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
-                Assert.IsNotNull(allLocations);
-                Assert.AreEqual (2, allLocations.Length);
+                ClassicAssert.IsNotNull(allLocations);
+                ClassicAssert.AreEqual (2, allLocations.Length);
 
                 #endregion
 
                 #region Validate, that EVSEs had been sent to the OCPI module
 
                 var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
-                Assert.IsNotNull(allEVSEs);
-                Assert.AreEqual (4, allEVSEs.Length);
+                ClassicAssert.IsNotNull(allEVSEs);
+                ClassicAssert.AreEqual (4, allEVSEs.Length);
 
                 #endregion
 
@@ -1412,7 +1413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1.Id.Suffix), out var location1) && location1 is not null)
                 {
 
-                    Assert.AreEqual(3, location1.EVSEs.Count());
+                    ClassicAssert.AreEqual(3, location1.EVSEs.Count());
 
                 }
                 else
@@ -1422,7 +1423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool2.Id.Suffix), out var location2) && location2 is not null)
                 {
 
-                    Assert.AreEqual(1, location2.EVSEs.Count());
+                    ClassicAssert.AreEqual(1, location2.EVSEs.Count());
 
                 }
                 else
@@ -1504,7 +1505,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                         csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location) && location is not null &&
                         location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
                     {
-                        Assert.AreEqual(StatusType.AVAILABLE, ocpiEVSE.Status);
+                        ClassicAssert.AreEqual(StatusType.AVAILABLE, ocpiEVSE.Status);
                     }
                 }
 
@@ -1514,17 +1515,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
 
 
-                Assert.AreEqual(3, updatedEVSEStatus.    Count);
-                Assert.AreEqual(2, updatedOCPIEVSEStatus.Count);
+                ClassicAssert.AreEqual(3, updatedEVSEStatus.    Count);
+                ClassicAssert.AreEqual(2, updatedOCPIEVSEStatus.Count);
 
-                Assert.AreEqual(EVSEStatusTypes.Charging,  graphDefinedCSO.GetEVSEById(evse1!.Id).Status.Value);
+                ClassicAssert.AreEqual(EVSEStatusTypes.Charging,  graphDefinedCSO.GetEVSEById(evse1!.Id).Status.Value);
 
                 {
                     if (evse1_UId.HasValue &&
                         csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location) && location is not null &&
                         location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
                     {
-                        Assert.AreEqual(StatusType.CHARGING, ocpiEVSE.Status);
+                        ClassicAssert.AreEqual(StatusType.CHARGING, ocpiEVSE.Status);
                     }
                 }
 
@@ -1543,43 +1544,43 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          remoteURL.Path,
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
+                    ClassicAssert.IsNotNull(httpResponse);
+                    ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
 
                     var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
 
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
+                    ClassicAssert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
+                    ClassicAssert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
+                    ClassicAssert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
 
                     var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
+                    ClassicAssert.IsNotNull(jsonLocations);
+                    ClassicAssert.AreEqual(2, jsonLocations!.Count);
 
                     var jsonLocation1 = jsonLocations[0] as JObject;
                     var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
+                    ClassicAssert.IsNotNull(jsonLocation1);
+                    ClassicAssert.IsNotNull(jsonLocation2);
 
                     var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
                     var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
+                    ClassicAssert.IsNotNull(jsonEVSEs1);
+                    ClassicAssert.IsNotNull(jsonEVSEs2);
 
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
+                    ClassicAssert.AreEqual(3, jsonEVSEs1!.Count);
+                    ClassicAssert.AreEqual(1, jsonEVSEs2!.Count);
 
                     foreach (var jsonEVSE in jsonEVSEs1!)
                     {
                         if (jsonEVSE is JObject jobjectEVSE && jobjectEVSE["evse_id"]?.Value<String>() == evse1_UId!.ToString())
                         {
-                            Assert.AreEqual("CHARGING", jobjectEVSE["status"]?.Value<String>());
+                            ClassicAssert.AreEqual("CHARGING", jobjectEVSE["status"]?.Value<String>());
                         }
                     }
 
@@ -1609,43 +1610,43 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                                          requestbuilder => {
                                                                                              requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
                                                                                              requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                              requestbuilder.Set("X-Request-ID",      "123");
                                                                                              requestbuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 
-                    Assert.IsNotNull(httpResponse);
-                    Assert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
+                    ClassicAssert.IsNotNull(httpResponse);
+                    ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
 
                     var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
 
-                    Assert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    Assert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    Assert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
+                    ClassicAssert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
+                    ClassicAssert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
+                    ClassicAssert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
 
                     var jsonLocations = ocpiResponse!["data"] as JArray;
-                    Assert.IsNotNull(jsonLocations);
-                    Assert.AreEqual(2, jsonLocations!.Count);
+                    ClassicAssert.IsNotNull(jsonLocations);
+                    ClassicAssert.AreEqual(2, jsonLocations!.Count);
 
                     var jsonLocation1 = jsonLocations[0] as JObject;
                     var jsonLocation2 = jsonLocations[1] as JObject;
-                    Assert.IsNotNull(jsonLocation1);
-                    Assert.IsNotNull(jsonLocation2);
+                    ClassicAssert.IsNotNull(jsonLocation1);
+                    ClassicAssert.IsNotNull(jsonLocation2);
 
                     var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
                     var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    Assert.IsNotNull(jsonEVSEs1);
-                    Assert.IsNotNull(jsonEVSEs2);
+                    ClassicAssert.IsNotNull(jsonEVSEs1);
+                    ClassicAssert.IsNotNull(jsonEVSEs2);
 
-                    Assert.AreEqual(3, jsonEVSEs1!.Count);
-                    Assert.AreEqual(1, jsonEVSEs2!.Count);
+                    ClassicAssert.AreEqual(3, jsonEVSEs1!.Count);
+                    ClassicAssert.AreEqual(1, jsonEVSEs2!.Count);
 
                     foreach (var jsonEVSE in jsonEVSEs1!)
                     {
                         if (jsonEVSE is JObject jobjectEVSE && jobjectEVSE["evse_id"]?.Value<String>() == evse1_UId!.ToString())
                         {
-                            Assert.AreEqual("CHARGING", jobjectEVSE["status"]?.Value<String>());
+                            ClassicAssert.AreEqual("CHARGING", jobjectEVSE["status"]?.Value<String>());
                         }
                     }
 

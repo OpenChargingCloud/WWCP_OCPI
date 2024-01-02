@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 #region Usings
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 using Newtonsoft.Json.Linq;
 
@@ -101,50 +102,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                           CountryCode.Parse("NL"),
                                           Party_Id.   Parse("STK"));
 
-            Assert.IsTrue   (result, errorResponse);
-            Assert.IsNotNull(parsedSession);
-            Assert.IsNull   (errorResponse);
+            ClassicAssert.IsTrue   (result, errorResponse);
+            ClassicAssert.IsNotNull(parsedSession);
+            ClassicAssert.IsNull   (errorResponse);
 
             if (parsedSession is not null)
             {
 
-                Assert.AreEqual (Session_Id.Parse("101"),              parsedSession.Id);
-                Assert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Start.ToIso8601());
-                Assert.AreEqual (0.0M,                                 parsedSession.kWh);
-                Assert.AreEqual (Auth_Id.Parse("DE8ACC12E46L89"),      parsedSession.AuthId);
-                Assert.AreEqual (AuthMethods.WHITELIST,                parsedSession.AuthMethod);
-                Assert.AreEqual (OCPI.Currency.EUR,                    parsedSession.Currency);
-                Assert.AreEqual (2.50M,                                parsedSession.TotalCost);
-                Assert.AreEqual (SessionStatusTypes.PENDING,           parsedSession.Status);
-                Assert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.LastUpdated.ToIso8601());
+                ClassicAssert.AreEqual (Session_Id.Parse("101"),              parsedSession.Id);
+                ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Start.ToIso8601());
+                ClassicAssert.AreEqual (0.0M,                                 parsedSession.kWh);
+                ClassicAssert.AreEqual (Auth_Id.Parse("DE8ACC12E46L89"),      parsedSession.AuthId);
+                ClassicAssert.AreEqual (AuthMethods.WHITELIST,                parsedSession.AuthMethod);
+                ClassicAssert.AreEqual (OCPI.Currency.EUR,                    parsedSession.Currency);
+                ClassicAssert.AreEqual (2.50M,                                parsedSession.TotalCost);
+                ClassicAssert.AreEqual (SessionStatusTypes.PENDING,           parsedSession.Status);
+                ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.LastUpdated.ToIso8601());
 
-                Assert.IsNotNull(                                      parsedSession.Location);
-                Assert.AreEqual (Location_Id.Parse("LOC1"),            parsedSession.Location.Id);
-                Assert.AreEqual (LocationType.ON_STREET,               parsedSession.Location.LocationType);
-                Assert.AreEqual ("Gent Zuid",                          parsedSession.Location.Name);
-                Assert.AreEqual ("F.Rooseveltlaan 3A",                 parsedSession.Location.Address);
-                Assert.AreEqual ("Gent",                               parsedSession.Location.City);
-                Assert.AreEqual ("9000",                               parsedSession.Location.PostalCode);
-                Assert.AreEqual (Country.Belgium,                      parsedSession.Location.Country);
-                Assert.AreEqual (3.729944,                             parsedSession.Location.Coordinates.Latitude. Value);
-                Assert.AreEqual (51.047599,                            parsedSession.Location.Coordinates.Longitude.Value);
-                Assert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Location.LastUpdated.ToIso8601());
+                ClassicAssert.IsNotNull(                                      parsedSession.Location);
+                ClassicAssert.AreEqual (Location_Id.Parse("LOC1"),            parsedSession.Location.Id);
+                ClassicAssert.AreEqual (LocationType.ON_STREET,               parsedSession.Location.LocationType);
+                ClassicAssert.AreEqual ("Gent Zuid",                          parsedSession.Location.Name);
+                ClassicAssert.AreEqual ("F.Rooseveltlaan 3A",                 parsedSession.Location.Address);
+                ClassicAssert.AreEqual ("Gent",                               parsedSession.Location.City);
+                ClassicAssert.AreEqual ("9000",                               parsedSession.Location.PostalCode);
+                ClassicAssert.AreEqual (Country.Belgium,                      parsedSession.Location.Country);
+                ClassicAssert.AreEqual (3.729944,                             parsedSession.Location.Coordinates.Latitude. Value);
+                ClassicAssert.AreEqual (51.047599,                            parsedSession.Location.Coordinates.Longitude.Value);
+                ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Location.LastUpdated.ToIso8601());
 
-                Assert.IsNotNull(                                      parsedSession.Location.EVSEs);
-                Assert.AreEqual (EVSE_UId.Parse("3256"),               parsedSession.Location.EVSEs.First().UId);
-                Assert.AreEqual (EVSE_Id.Parse("BE-BEC-E041503003"),   parsedSession.Location.EVSEs.First().EVSEId);
-                Assert.AreEqual (StatusType.AVAILABLE,                 parsedSession.Location.EVSEs.First().Status);
-                Assert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Location.EVSEs.First().LastUpdated.ToIso8601());
+                ClassicAssert.IsNotNull(                                      parsedSession.Location.EVSEs);
+                ClassicAssert.AreEqual (EVSE_UId.Parse("3256"),               parsedSession.Location.EVSEs.First().UId);
+                ClassicAssert.AreEqual (EVSE_Id.Parse("BE-BEC-E041503003"),   parsedSession.Location.EVSEs.First().EVSEId);
+                ClassicAssert.AreEqual (StatusType.AVAILABLE,                 parsedSession.Location.EVSEs.First().Status);
+                ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Location.EVSEs.First().LastUpdated.ToIso8601());
 
-                Assert.IsNotNull(                                      parsedSession.Location.EVSEs.First().Connectors);
-                Assert.AreEqual (Connector_Id.    Parse("1"),          parsedSession.Location.EVSEs.First().Connectors.First().Id);
-                Assert.AreEqual (ConnectorType.   IEC_62196_T2,        parsedSession.Location.EVSEs.First().Connectors.First().Standard);
-                Assert.AreEqual (ConnectorFormats.SOCKET,              parsedSession.Location.EVSEs.First().Connectors.First().Format);
-                Assert.AreEqual (PowerTypes.      AC_1_PHASE,          parsedSession.Location.EVSEs.First().Connectors.First().PowerType);
-                Assert.AreEqual (230,                                  parsedSession.Location.EVSEs.First().Connectors.First().Voltage);
-                Assert.AreEqual (64,                                   parsedSession.Location.EVSEs.First().Connectors.First().Amperage);
-                Assert.AreEqual (Tariff_Id.       Parse("11"),         parsedSession.Location.EVSEs.First().Connectors.First().TariffId);
-                Assert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Location.EVSEs.First().Connectors.First().LastUpdated.ToIso8601());
+                ClassicAssert.IsNotNull(                                      parsedSession.Location.EVSEs.First().Connectors);
+                ClassicAssert.AreEqual (Connector_Id.    Parse("1"),          parsedSession.Location.EVSEs.First().Connectors.First().Id);
+                ClassicAssert.AreEqual (ConnectorType.   IEC_62196_T2,        parsedSession.Location.EVSEs.First().Connectors.First().Standard);
+                ClassicAssert.AreEqual (ConnectorFormats.SOCKET,              parsedSession.Location.EVSEs.First().Connectors.First().Format);
+                ClassicAssert.AreEqual (PowerTypes.      AC_1_PHASE,          parsedSession.Location.EVSEs.First().Connectors.First().PowerType);
+                ClassicAssert.AreEqual (230,                                  parsedSession.Location.EVSEs.First().Connectors.First().Voltage);
+                ClassicAssert.AreEqual (64,                                   parsedSession.Location.EVSEs.First().Connectors.First().Amperage);
+                ClassicAssert.AreEqual (Tariff_Id.       Parse("11"),         parsedSession.Location.EVSEs.First().Connectors.First().TariffId);
+                ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Location.EVSEs.First().Connectors.First().LastUpdated.ToIso8601());
 
             }
 
@@ -240,68 +241,68 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                           CountryCode.Parse("NL"),
                                           Party_Id.   Parse("STK"));
 
-            Assert.IsTrue   (result, errorResponse);
-            Assert.IsNotNull(parsedSession);
-            Assert.IsNull   (errorResponse);
+            ClassicAssert.IsTrue   (result, errorResponse);
+            ClassicAssert.IsNotNull(parsedSession);
+            ClassicAssert.IsNull   (errorResponse);
 
             if (parsedSession is not null)
             {
 
-                Assert.AreEqual (Session_Id.Parse("101"),              parsedSession.Id);
-                Assert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Start.ToIso8601());
-                Assert.AreEqual ("2015-06-29T23:50:16.000Z",           parsedSession.End?. ToIso8601());
-                Assert.AreEqual (41.0M,                                parsedSession.kWh);
-                Assert.AreEqual (Auth_Id.Parse("DE8ACC12E46L89"),      parsedSession.AuthId);
-                Assert.AreEqual (AuthMethods.WHITELIST,                parsedSession.AuthMethod);
-                Assert.AreEqual (OCPI.Currency.EUR,                    parsedSession.Currency);
-                Assert.AreEqual (8.50M,                                parsedSession.TotalCost);
-                Assert.AreEqual (SessionStatusTypes.COMPLETED,         parsedSession.Status);
-                Assert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.LastUpdated.ToIso8601());
+                ClassicAssert.AreEqual (Session_Id.Parse("101"),              parsedSession.Id);
+                ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Start.ToIso8601());
+                ClassicAssert.AreEqual ("2015-06-29T23:50:16.000Z",           parsedSession.End?. ToIso8601());
+                ClassicAssert.AreEqual (41.0M,                                parsedSession.kWh);
+                ClassicAssert.AreEqual (Auth_Id.Parse("DE8ACC12E46L89"),      parsedSession.AuthId);
+                ClassicAssert.AreEqual (AuthMethods.WHITELIST,                parsedSession.AuthMethod);
+                ClassicAssert.AreEqual (OCPI.Currency.EUR,                    parsedSession.Currency);
+                ClassicAssert.AreEqual (8.50M,                                parsedSession.TotalCost);
+                ClassicAssert.AreEqual (SessionStatusTypes.COMPLETED,         parsedSession.Status);
+                ClassicAssert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.LastUpdated.ToIso8601());
 
-                Assert.IsNotNull(                                      parsedSession.ChargingPeriods);
-                Assert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.ChargingPeriods.ElementAt(0).StartTimestamp.ToIso8601());
-                Assert.AreEqual (CDRDimensionType.ENERGY,              parsedSession.ChargingPeriods.ElementAt(0).Dimensions.ElementAt(0).Type);
-                Assert.AreEqual (120M,                                 parsedSession.ChargingPeriods.ElementAt(0).Dimensions.ElementAt(0).Volume);
-                Assert.AreEqual (CDRDimensionType.MAX_CURRENT,         parsedSession.ChargingPeriods.ElementAt(0).Dimensions.ElementAt(1).Type);
-                Assert.AreEqual (30M,                                  parsedSession.ChargingPeriods.ElementAt(0).Dimensions.ElementAt(1).Volume);
+                ClassicAssert.IsNotNull(                                      parsedSession.ChargingPeriods);
+                ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.ChargingPeriods.ElementAt(0).StartTimestamp.ToIso8601());
+                ClassicAssert.AreEqual (CDRDimensionType.ENERGY,              parsedSession.ChargingPeriods.ElementAt(0).Dimensions.ElementAt(0).Type);
+                ClassicAssert.AreEqual (120M,                                 parsedSession.ChargingPeriods.ElementAt(0).Dimensions.ElementAt(0).Volume);
+                ClassicAssert.AreEqual (CDRDimensionType.MAX_CURRENT,         parsedSession.ChargingPeriods.ElementAt(0).Dimensions.ElementAt(1).Type);
+                ClassicAssert.AreEqual (30M,                                  parsedSession.ChargingPeriods.ElementAt(0).Dimensions.ElementAt(1).Volume);
 
-                Assert.AreEqual ("2015-06-29T22:40:54.000Z",           parsedSession.ChargingPeriods.ElementAt(1).StartTimestamp.ToIso8601());
-                Assert.AreEqual (CDRDimensionType.ENERGY,              parsedSession.ChargingPeriods.ElementAt(1).Dimensions.ElementAt(0).Type);
-                Assert.AreEqual (41000M,                               parsedSession.ChargingPeriods.ElementAt(1).Dimensions.ElementAt(0).Volume);
-                Assert.AreEqual (CDRDimensionType.MIN_CURRENT,         parsedSession.ChargingPeriods.ElementAt(1).Dimensions.ElementAt(1).Type);
-                Assert.AreEqual (34M,                                  parsedSession.ChargingPeriods.ElementAt(1).Dimensions.ElementAt(1).Volume);
+                ClassicAssert.AreEqual ("2015-06-29T22:40:54.000Z",           parsedSession.ChargingPeriods.ElementAt(1).StartTimestamp.ToIso8601());
+                ClassicAssert.AreEqual (CDRDimensionType.ENERGY,              parsedSession.ChargingPeriods.ElementAt(1).Dimensions.ElementAt(0).Type);
+                ClassicAssert.AreEqual (41000M,                               parsedSession.ChargingPeriods.ElementAt(1).Dimensions.ElementAt(0).Volume);
+                ClassicAssert.AreEqual (CDRDimensionType.MIN_CURRENT,         parsedSession.ChargingPeriods.ElementAt(1).Dimensions.ElementAt(1).Type);
+                ClassicAssert.AreEqual (34M,                                  parsedSession.ChargingPeriods.ElementAt(1).Dimensions.ElementAt(1).Volume);
 
-                Assert.AreEqual ("2015-06-29T23:07:09.000Z",           parsedSession.ChargingPeriods.ElementAt(2).StartTimestamp.ToIso8601());
-                Assert.AreEqual (CDRDimensionType.PARKING_TIME,        parsedSession.ChargingPeriods.ElementAt(2).Dimensions.ElementAt(0).Type);
-                Assert.AreEqual (0.718M,                               parsedSession.ChargingPeriods.ElementAt(2).Dimensions.ElementAt(0).Volume);
+                ClassicAssert.AreEqual ("2015-06-29T23:07:09.000Z",           parsedSession.ChargingPeriods.ElementAt(2).StartTimestamp.ToIso8601());
+                ClassicAssert.AreEqual (CDRDimensionType.PARKING_TIME,        parsedSession.ChargingPeriods.ElementAt(2).Dimensions.ElementAt(0).Type);
+                ClassicAssert.AreEqual (0.718M,                               parsedSession.ChargingPeriods.ElementAt(2).Dimensions.ElementAt(0).Volume);
 
-                Assert.IsNotNull(                                      parsedSession.Location);
-                Assert.AreEqual (Location_Id.Parse("LOC1"),            parsedSession.Location.Id);
-                Assert.AreEqual (LocationType.ON_STREET,               parsedSession.Location.LocationType);
-                Assert.AreEqual ("Gent Zuid",                          parsedSession.Location.Name);
-                Assert.AreEqual ("F.Rooseveltlaan 3A",                 parsedSession.Location.Address);
-                Assert.AreEqual ("Gent",                               parsedSession.Location.City);
-                Assert.AreEqual ("9000",                               parsedSession.Location.PostalCode);
-                Assert.AreEqual (Country.Belgium,                      parsedSession.Location.Country);
-                Assert.AreEqual (3.729944,                             parsedSession.Location.Coordinates.Latitude. Value);
-                Assert.AreEqual (51.047599,                            parsedSession.Location.Coordinates.Longitude.Value);
-                Assert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.Location.LastUpdated.ToIso8601());
+                ClassicAssert.IsNotNull(                                      parsedSession.Location);
+                ClassicAssert.AreEqual (Location_Id.Parse("LOC1"),            parsedSession.Location.Id);
+                ClassicAssert.AreEqual (LocationType.ON_STREET,               parsedSession.Location.LocationType);
+                ClassicAssert.AreEqual ("Gent Zuid",                          parsedSession.Location.Name);
+                ClassicAssert.AreEqual ("F.Rooseveltlaan 3A",                 parsedSession.Location.Address);
+                ClassicAssert.AreEqual ("Gent",                               parsedSession.Location.City);
+                ClassicAssert.AreEqual ("9000",                               parsedSession.Location.PostalCode);
+                ClassicAssert.AreEqual (Country.Belgium,                      parsedSession.Location.Country);
+                ClassicAssert.AreEqual (3.729944,                             parsedSession.Location.Coordinates.Latitude. Value);
+                ClassicAssert.AreEqual (51.047599,                            parsedSession.Location.Coordinates.Longitude.Value);
+                ClassicAssert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.Location.LastUpdated.ToIso8601());
 
-                Assert.IsNotNull(                                      parsedSession.Location.EVSEs);
-                Assert.AreEqual (EVSE_UId.Parse("3256"),               parsedSession.Location.EVSEs.First().UId);
-                Assert.AreEqual (EVSE_Id.Parse("BE-BEC-E041503003"),   parsedSession.Location.EVSEs.First().EVSEId);
-                Assert.AreEqual (StatusType.AVAILABLE,                 parsedSession.Location.EVSEs.First().Status);
-                Assert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.Location.EVSEs.First().LastUpdated.ToIso8601());
+                ClassicAssert.IsNotNull(                                      parsedSession.Location.EVSEs);
+                ClassicAssert.AreEqual (EVSE_UId.Parse("3256"),               parsedSession.Location.EVSEs.First().UId);
+                ClassicAssert.AreEqual (EVSE_Id.Parse("BE-BEC-E041503003"),   parsedSession.Location.EVSEs.First().EVSEId);
+                ClassicAssert.AreEqual (StatusType.AVAILABLE,                 parsedSession.Location.EVSEs.First().Status);
+                ClassicAssert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.Location.EVSEs.First().LastUpdated.ToIso8601());
 
-                Assert.IsNotNull(                                      parsedSession.Location.EVSEs.First().Connectors);
-                Assert.AreEqual (Connector_Id.    Parse("1"),          parsedSession.Location.EVSEs.First().Connectors.First().Id);
-                Assert.AreEqual (ConnectorType.   IEC_62196_T2,        parsedSession.Location.EVSEs.First().Connectors.First().Standard);
-                Assert.AreEqual (ConnectorFormats.SOCKET,              parsedSession.Location.EVSEs.First().Connectors.First().Format);
-                Assert.AreEqual (PowerTypes.      AC_1_PHASE,          parsedSession.Location.EVSEs.First().Connectors.First().PowerType);
-                Assert.AreEqual (230,                                  parsedSession.Location.EVSEs.First().Connectors.First().Voltage);
-                Assert.AreEqual (64,                                   parsedSession.Location.EVSEs.First().Connectors.First().Amperage);
-                Assert.AreEqual (Tariff_Id.       Parse("11"),         parsedSession.Location.EVSEs.First().Connectors.First().TariffId);
-                Assert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.Location.EVSEs.First().Connectors.First().LastUpdated.ToIso8601());
+                ClassicAssert.IsNotNull(                                      parsedSession.Location.EVSEs.First().Connectors);
+                ClassicAssert.AreEqual (Connector_Id.    Parse("1"),          parsedSession.Location.EVSEs.First().Connectors.First().Id);
+                ClassicAssert.AreEqual (ConnectorType.   IEC_62196_T2,        parsedSession.Location.EVSEs.First().Connectors.First().Standard);
+                ClassicAssert.AreEqual (ConnectorFormats.SOCKET,              parsedSession.Location.EVSEs.First().Connectors.First().Format);
+                ClassicAssert.AreEqual (PowerTypes.      AC_1_PHASE,          parsedSession.Location.EVSEs.First().Connectors.First().PowerType);
+                ClassicAssert.AreEqual (230,                                  parsedSession.Location.EVSEs.First().Connectors.First().Voltage);
+                ClassicAssert.AreEqual (64,                                   parsedSession.Location.EVSEs.First().Connectors.First().Amperage);
+                ClassicAssert.AreEqual (Tariff_Id.       Parse("11"),         parsedSession.Location.EVSEs.First().Connectors.First().TariffId);
+                ClassicAssert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.Location.EVSEs.First().Connectors.First().LastUpdated.ToIso8601());
 
             }
 
@@ -378,21 +379,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var json = session1.ToJSON();
 
-            Assert.AreEqual("Session0001",                     json["id"]?.                              Value<String>());
-            Assert.AreEqual("2020-08-21T00:00:00.000Z",        json["start_datetime"]?.                  Value<String>());
-            Assert.AreEqual("2020-08-22T00:00:00.000Z",        json["end_datetime"]?.                    Value<String>());
-            Assert.AreEqual(1.11,                              json["kwh"]?.                             Value<Decimal>());
-            Assert.AreEqual("1234",                            json["auth_id"]?.                         Value<String>());
-            Assert.AreEqual("AUTH_REQUEST",                    json["auth_method"]?.                     Value<String>());
-            Assert.AreEqual("Meter0001",                       json["meter_id"]?.                        Value<String>());
-            Assert.AreEqual("EUR",                             json["currency"]?.                        Value<String>());
+            ClassicAssert.AreEqual("Session0001",                     json["id"]?.                              Value<String>());
+            ClassicAssert.AreEqual("2020-08-21T00:00:00.000Z",        json["start_datetime"]?.                  Value<String>());
+            ClassicAssert.AreEqual("2020-08-22T00:00:00.000Z",        json["end_datetime"]?.                    Value<String>());
+            ClassicAssert.AreEqual(1.11,                              json["kwh"]?.                             Value<Decimal>());
+            ClassicAssert.AreEqual("1234",                            json["auth_id"]?.                         Value<String>());
+            ClassicAssert.AreEqual("AUTH_REQUEST",                    json["auth_method"]?.                     Value<String>());
+            ClassicAssert.AreEqual("Meter0001",                       json["meter_id"]?.                        Value<String>());
+            ClassicAssert.AreEqual("EUR",                             json["currency"]?.                        Value<String>());
 
-            //Assert.AreEqual("LOC0001",                         json["location_id"]?.                     Value<String>());
+            //ClassicAssert.AreEqual("LOC0001",                         json["location_id"]?.                     Value<String>());
             // charging_periods
 
-            Assert.AreEqual(1.12,                              json["total_cost"]?.                      Value<Decimal>());
-            Assert.AreEqual("ACTIVE",                          json["status"]?.                          Value<String>());
-            Assert.AreEqual("2020-09-21T00:00:00.000Z",        json["last_updated"]?.                    Value<String>());
+            ClassicAssert.AreEqual(1.12,                              json["total_cost"]?.                      Value<Decimal>());
+            ClassicAssert.AreEqual("ACTIVE",                          json["status"]?.                          Value<String>());
+            ClassicAssert.AreEqual("2020-09-21T00:00:00.000Z",        json["last_updated"]?.                    Value<String>());
 
 
             var result = Session.TryParse(json,
@@ -401,28 +402,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                           session1.CountryCode,
                                           session1.PartyId);
 
-            Assert.IsTrue   (result, errorResponse);
-            Assert.IsNotNull(session2);
-            Assert.IsNull   (errorResponse);
+            ClassicAssert.IsTrue   (result, errorResponse);
+            ClassicAssert.IsNotNull(session2);
+            ClassicAssert.IsNull   (errorResponse);
 
             if (session2 is not null)
             {
 
-                Assert.AreEqual(session1.CountryCode,               session2.CountryCode);
-                Assert.AreEqual(session1.PartyId,                   session2.PartyId);
-                Assert.AreEqual(session1.Id,                        session2.Id);
-                Assert.AreEqual(session1.Start.ToIso8601(),         session2.Start.ToIso8601());
-                Assert.AreEqual(session1.End?. ToIso8601(),         session2.End?. ToIso8601());
-                Assert.AreEqual(session1.kWh,                       session2.kWh);
-                Assert.AreEqual(session1.AuthId,                    session2.AuthId);
-                Assert.AreEqual(session1.AuthMethod,                session2.AuthMethod);
-                Assert.AreEqual(session1.Location,                  session2.Location);
-                Assert.AreEqual(session1.MeterId,                   session2.MeterId);
-                Assert.AreEqual(session1.Currency,                  session2.Currency);
-                Assert.AreEqual(session1.ChargingPeriods,           session2.ChargingPeriods);
-                Assert.AreEqual(session1.TotalCost,                 session2.TotalCost);
-                Assert.AreEqual(session1.Status,                    session2.Status);
-                Assert.AreEqual(session1.LastUpdated.ToIso8601(),   session2.LastUpdated.ToIso8601());
+                ClassicAssert.AreEqual(session1.CountryCode,               session2.CountryCode);
+                ClassicAssert.AreEqual(session1.PartyId,                   session2.PartyId);
+                ClassicAssert.AreEqual(session1.Id,                        session2.Id);
+                ClassicAssert.AreEqual(session1.Start.ToIso8601(),         session2.Start.ToIso8601());
+                ClassicAssert.AreEqual(session1.End?. ToIso8601(),         session2.End?. ToIso8601());
+                ClassicAssert.AreEqual(session1.kWh,                       session2.kWh);
+                ClassicAssert.AreEqual(session1.AuthId,                    session2.AuthId);
+                ClassicAssert.AreEqual(session1.AuthMethod,                session2.AuthMethod);
+                ClassicAssert.AreEqual(session1.Location,                  session2.Location);
+                ClassicAssert.AreEqual(session1.MeterId,                   session2.MeterId);
+                ClassicAssert.AreEqual(session1.Currency,                  session2.Currency);
+                ClassicAssert.AreEqual(session1.ChargingPeriods,           session2.ChargingPeriods);
+                ClassicAssert.AreEqual(session1.TotalCost,                 session2.TotalCost);
+                ClassicAssert.AreEqual(session1.Status,                    session2.Status);
+                ClassicAssert.AreEqual(session1.LastUpdated.ToIso8601(),   session2.LastUpdated.ToIso8601());
 
             }
 

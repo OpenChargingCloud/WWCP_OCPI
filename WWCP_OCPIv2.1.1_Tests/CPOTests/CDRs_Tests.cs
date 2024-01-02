@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 #region Usings
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
@@ -48,7 +49,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                         PartyId:      Party_Id.   Parse("GDF")
                                     );
 
-            Assert.IsNotNull(graphDefinedEMSP1);
+            ClassicAssert.IsNotNull(graphDefinedEMSP1);
 
             if (graphDefinedEMSP1 is not null)
             {
@@ -270,18 +271,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // X-Correlation-ID:              2284ht8G82pE4Sxpn4KUj2t5tAS13j
                 // Location:                      https://127.0.0.1/ocpi/emsp/2.1.1/cdrs/e5295528-6286-4d02-a2b4-39d82b3b6ab6
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (201,             response.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,            response.StatusCode);
-                Assert.AreEqual ("Hello world!",  response.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (201,             response.HTTPResponse?.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (1000,            response.StatusCode);
+                ClassicAssert.AreEqual ("Hello world!",  response.StatusMessage);
+                ClassicAssert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
 
-                Assert.IsNotNull(response.RequestId);
-                Assert.IsNotNull(response.CorrelationId);
-                Assert.IsNotNull(response.HTTPLocation);
-                //Assert.IsTrue(response.Location == URL.Parse("https://127.0.0.1/ocpi/emsp/2.1.1/cdrs/e5295528-6286-4d02-a2b4-39d82b3b6ab6"));
+                ClassicAssert.IsNotNull(response.RequestId);
+                ClassicAssert.IsNotNull(response.CorrelationId);
+                ClassicAssert.IsNotNull(response.HTTPLocation);
+                //ClassicAssert.IsTrue(response.Location == URL.Parse("https://127.0.0.1/ocpi/emsp/2.1.1/cdrs/e5295528-6286-4d02-a2b4-39d82b3b6ab6"));
 
-                //Assert.IsNotNull(response.Request);
+                //ClassicAssert.IsNotNull(response.Request);
 
             }
 

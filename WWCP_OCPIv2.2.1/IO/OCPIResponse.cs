@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -404,7 +404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     if (Request.HTTPRequest.HTTPMethod != HTTPMethod.OPTIONS)
                     {
 
-                        HTTPResponseBuilder.ContentType = HTTPContentType.JSON_UTF8;
+                        HTTPResponseBuilder.ContentType = HTTPContentType.Application.JSON_UTF8;
 
                         if (HTTPResponseBuilder.Content is null)
                             HTTPResponseBuilder.Content = JSONObject.Create(

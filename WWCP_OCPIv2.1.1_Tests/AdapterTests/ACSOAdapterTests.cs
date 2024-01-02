@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,7 @@
 #region Usings
 
 using NUnit.Framework;
-
-using Newtonsoft.Json.Linq;
+using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
@@ -103,7 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                             //    port:                 IPPort.Parse(4001),
                                                                             //    transport:            TransportTypes.TCP,
                                                                             //    URLPrefix:            "",
-                                                                            //    contentType:          HTTPContentType.JSONLD_UTF8,
+                                                                            //    contentType:          HTTPContentType.Application.JSONLD_UTF8,
                                                                             //    protocolType:         ProtocolTypes.WWCP,
                                                                             //    PublicKeys:           null)
 
@@ -121,14 +120,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                             //    port:                 IPPort.Parse(4002),
                                                                             //    transport:            TransportTypes.TCP,
                                                                             //    URLPrefix:            "",
-                                                                            //    contentType:          HTTPContentType.JSONLD_UTF8,
+                                                                            //    contentType:          HTTPContentType.Application.JSONLD_UTF8,
                                                                             //    protocolType:         ProtocolTypes.WWCP,
                                                                             //    PublicKeys:           null)
 
                                                                         }
                                );
 
-            Assert.IsNotNull(roamingNetwork);
+            ClassicAssert.IsNotNull(roamingNetwork);
 
 
             httpAPI          = new HTTPAPI(
@@ -136,7 +135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    AutoStart:                           true
                                );
 
-            Assert.IsNotNull(httpAPI);
+            ClassicAssert.IsNotNull(httpAPI);
 
 
             commonAPI        = new CommonAPI(
@@ -185,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                );
 
-            Assert.IsNotNull(commonAPI);
+            ClassicAssert.IsNotNull(commonAPI);
 
 
             cpoAPI           = new CPOAPI(
@@ -221,7 +220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                );
 
-            Assert.IsNotNull(cpoAPI);
+            ClassicAssert.IsNotNull(cpoAPI);
 
 
             csoAdapter       = roamingNetwork.CreateOCPIv2_1_1_CSOAdapter(
@@ -256,7 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                );
 
-            Assert.IsNotNull(csoAdapter);
+            ClassicAssert.IsNotNull(csoAdapter);
 
 
             graphDefinedCSO  = roamingNetwork.CreateChargingStationOperator(
@@ -267,7 +266,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    InitialStatus:       ChargingStationOperatorStatusTypes.Available
                                ).Result.ChargingStationOperator;
 
-            Assert.IsNotNull(graphDefinedCSO);
+            ClassicAssert.IsNotNull(graphDefinedCSO);
 
         }
 

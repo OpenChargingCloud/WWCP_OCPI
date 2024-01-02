@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -121,7 +121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                 return new HTTPResponse.Builder() {
                                                            HTTPStatusCode  = HTTPStatusCode.InternalServerError,
-                                                           ContentType     = HTTPContentType.JSON_UTF8,
+                                                           ContentType     = HTTPContentType.Application.JSON_UTF8,
                                                            Content         = new OCPIResponse<JObject>(
                                                                                  JSONObject.Create(
                                                                                      new JProperty("description",  e.Message),

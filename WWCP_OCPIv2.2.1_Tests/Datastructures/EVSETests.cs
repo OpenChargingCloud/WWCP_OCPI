@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,8 @@
 #region Usings
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
@@ -188,56 +190,56 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var JSON = EVSE1.ToJSON();
 
-            Assert.AreEqual("DE*GEF*E*LOC0001*1",                     JSON["uid"].                                    Value<String>());
-            Assert.AreEqual("AVAILABLE",                              JSON["status"].                                 Value<String>());
-            Assert.AreEqual("1",                                      JSON["connectors"]          [0]["id"].          Value<String>());
-            Assert.AreEqual("2",                                      JSON["connectors"]          [1]["id"].          Value<String>());
-            Assert.AreEqual("DE*GEF*E*LOC0001*1",                     JSON["evse_id"].                                Value<String>());
-            Assert.AreEqual("INOPERATIVE",                            JSON["status_schedule"]     [0]["status"].      Value<String>());
-            Assert.AreEqual("2020-09-22T00:00:00.000Z",               JSON["status_schedule"]     [0]["period_begin"].Value<String>());
-            Assert.AreEqual("2020-09-23T00:00:00.000Z",               JSON["status_schedule"]     [0]["period_end"].  Value<String>());
-            Assert.AreEqual("OUTOFORDER",                             JSON["status_schedule"]     [1]["status"].      Value<String>());
-            Assert.AreEqual("2020-12-30T00:00:00.000Z",               JSON["status_schedule"]     [1]["period_begin"].Value<String>());
-            Assert.AreEqual("2020-12-31T00:00:00.000Z",               JSON["status_schedule"]     [1]["period_end"].  Value<String>());
-            Assert.AreEqual("RFID_READER",                            JSON["capabilities"]        [0].                Value<String>());
-            Assert.AreEqual("RESERVABLE",                             JSON["capabilities"]        [1].                Value<String>());
-            Assert.AreEqual("1. Stock",                               JSON["floor_level"].                            Value<String>());
-            Assert.AreEqual("10.10000",                               JSON["coordinates"]            ["latitude"].    Value<String>());
-            Assert.AreEqual("20.20000",                               JSON["coordinates"]            ["longitude"].   Value<String>());
-            Assert.AreEqual("Ladestation #1",                         JSON["physical_reference"].                     Value<String>());
-            Assert.AreEqual("de",                                     JSON["directions"]          [0]["language"].    Value<String>());
-            Assert.AreEqual("Bitte klingeln!",                        JSON["directions"]          [0]["text"].        Value<String>());
-            Assert.AreEqual("en",                                     JSON["directions"]          [1]["language"].    Value<String>());
-            Assert.AreEqual("Ken sent me!",                           JSON["directions"]          [1]["text"].        Value<String>());
-            Assert.AreEqual("EV_ONLY",                                JSON["parking_restrictions"][0].                Value<String>());
-            Assert.AreEqual("PLUGGED",                                JSON["parking_restrictions"][1].                Value<String>());
-            Assert.AreEqual("http://example.com/pinguine.jpg",        JSON["images"]              [0]["url"].         Value<String>());
-            Assert.AreEqual("http://example.com/kleine_pinguine.jpg", JSON["images"]              [0]["thumbnail"].   Value<String>());
-            Assert.AreEqual("OPERATOR",                               JSON["images"]              [0]["category"].    Value<String>());
-            Assert.AreEqual("jpeg",                                   JSON["images"]              [0]["type"].        Value<String>());
-            Assert.AreEqual(100,                                      JSON["images"]              [0]["width"].       Value<UInt16>());
-            Assert.AreEqual(150,                                      JSON["images"]              [0]["height"].      Value<UInt16>());
-            Assert.AreEqual("http://example.com/wellensittiche.jpg",  JSON["images"]              [1]["url"].         Value<String>());
-            Assert.AreEqual("2020-09-18T00:00:00.000Z",               JSON["last_updated"].                           Value<String>());
+            ClassicAssert.AreEqual("DE*GEF*E*LOC0001*1",                     JSON["uid"].                                    Value<String>());
+            ClassicAssert.AreEqual("AVAILABLE",                              JSON["status"].                                 Value<String>());
+            ClassicAssert.AreEqual("1",                                      JSON["connectors"]          [0]["id"].          Value<String>());
+            ClassicAssert.AreEqual("2",                                      JSON["connectors"]          [1]["id"].          Value<String>());
+            ClassicAssert.AreEqual("DE*GEF*E*LOC0001*1",                     JSON["evse_id"].                                Value<String>());
+            ClassicAssert.AreEqual("INOPERATIVE",                            JSON["status_schedule"]     [0]["status"].      Value<String>());
+            ClassicAssert.AreEqual("2020-09-22T00:00:00.000Z",               JSON["status_schedule"]     [0]["period_begin"].Value<String>());
+            ClassicAssert.AreEqual("2020-09-23T00:00:00.000Z",               JSON["status_schedule"]     [0]["period_end"].  Value<String>());
+            ClassicAssert.AreEqual("OUTOFORDER",                             JSON["status_schedule"]     [1]["status"].      Value<String>());
+            ClassicAssert.AreEqual("2020-12-30T00:00:00.000Z",               JSON["status_schedule"]     [1]["period_begin"].Value<String>());
+            ClassicAssert.AreEqual("2020-12-31T00:00:00.000Z",               JSON["status_schedule"]     [1]["period_end"].  Value<String>());
+            ClassicAssert.AreEqual("RFID_READER",                            JSON["capabilities"]        [0].                Value<String>());
+            ClassicAssert.AreEqual("RESERVABLE",                             JSON["capabilities"]        [1].                Value<String>());
+            ClassicAssert.AreEqual("1. Stock",                               JSON["floor_level"].                            Value<String>());
+            ClassicAssert.AreEqual("10.10000",                               JSON["coordinates"]            ["latitude"].    Value<String>());
+            ClassicAssert.AreEqual("20.20000",                               JSON["coordinates"]            ["longitude"].   Value<String>());
+            ClassicAssert.AreEqual("Ladestation #1",                         JSON["physical_reference"].                     Value<String>());
+            ClassicAssert.AreEqual("de",                                     JSON["directions"]          [0]["language"].    Value<String>());
+            ClassicAssert.AreEqual("Bitte klingeln!",                        JSON["directions"]          [0]["text"].        Value<String>());
+            ClassicAssert.AreEqual("en",                                     JSON["directions"]          [1]["language"].    Value<String>());
+            ClassicAssert.AreEqual("Ken sent me!",                           JSON["directions"]          [1]["text"].        Value<String>());
+            ClassicAssert.AreEqual("EV_ONLY",                                JSON["parking_restrictions"][0].                Value<String>());
+            ClassicAssert.AreEqual("PLUGGED",                                JSON["parking_restrictions"][1].                Value<String>());
+            ClassicAssert.AreEqual("http://example.com/pinguine.jpg",        JSON["images"]              [0]["url"].         Value<String>());
+            ClassicAssert.AreEqual("http://example.com/kleine_pinguine.jpg", JSON["images"]              [0]["thumbnail"].   Value<String>());
+            ClassicAssert.AreEqual("OPERATOR",                               JSON["images"]              [0]["category"].    Value<String>());
+            ClassicAssert.AreEqual("jpeg",                                   JSON["images"]              [0]["type"].        Value<String>());
+            ClassicAssert.AreEqual(100,                                      JSON["images"]              [0]["width"].       Value<UInt16>());
+            ClassicAssert.AreEqual(150,                                      JSON["images"]              [0]["height"].      Value<UInt16>());
+            ClassicAssert.AreEqual("http://example.com/wellensittiche.jpg",  JSON["images"]              [1]["url"].         Value<String>());
+            ClassicAssert.AreEqual("2020-09-18T00:00:00.000Z",               JSON["last_updated"].                           Value<String>());
 
-            Assert.IsTrue(EVSE.TryParse(JSON, out var evse2, out var errorResponse));
-            Assert.IsNull(errorResponse);
+            ClassicAssert.IsTrue(EVSE.TryParse(JSON, out var evse2, out var errorResponse));
+            ClassicAssert.IsNull(errorResponse);
 
-            Assert.AreEqual(EVSE1.UId,                                evse2.UId);
-            Assert.AreEqual(EVSE1.Status,                             evse2.Status);
-            Assert.AreEqual(EVSE1.Connectors,                         evse2.Connectors);
-            Assert.IsTrue  (EVSE1.Connectors.        First().Equals(evse2.Connectors.        First()));
-            Assert.IsTrue  (EVSE1.Connectors.Skip(1).First().Equals(evse2.Connectors.Skip(1).First()));
-            Assert.AreEqual(EVSE1.EVSEId,                             evse2.EVSEId);
-            Assert.AreEqual(EVSE1.StatusSchedule,                     evse2.StatusSchedule);
-            Assert.AreEqual(EVSE1.Capabilities,                       evse2.Capabilities);
-            Assert.AreEqual(EVSE1.FloorLevel,                         evse2.FloorLevel);
-            Assert.AreEqual(EVSE1.Coordinates,                        evse2.Coordinates);
-            Assert.AreEqual(EVSE1.PhysicalReference,                  evse2.PhysicalReference);
-            Assert.AreEqual(EVSE1.Directions,                         evse2.Directions);
-            Assert.AreEqual(EVSE1.ParkingRestrictions,                evse2.ParkingRestrictions);
-            Assert.AreEqual(EVSE1.Images,                             evse2.Images);
-            Assert.AreEqual(EVSE1.LastUpdated.ToIso8601(),            evse2.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(EVSE1.UId,                                evse2.UId);
+            ClassicAssert.AreEqual(EVSE1.Status,                             evse2.Status);
+            ClassicAssert.AreEqual(EVSE1.Connectors,                         evse2.Connectors);
+            ClassicAssert.IsTrue  (EVSE1.Connectors.        First().Equals(evse2.Connectors.        First()));
+            ClassicAssert.IsTrue  (EVSE1.Connectors.Skip(1).First().Equals(evse2.Connectors.Skip(1).First()));
+            ClassicAssert.AreEqual(EVSE1.EVSEId,                             evse2.EVSEId);
+            ClassicAssert.AreEqual(EVSE1.StatusSchedule,                     evse2.StatusSchedule);
+            ClassicAssert.AreEqual(EVSE1.Capabilities,                       evse2.Capabilities);
+            ClassicAssert.AreEqual(EVSE1.FloorLevel,                         evse2.FloorLevel);
+            ClassicAssert.AreEqual(EVSE1.Coordinates,                        evse2.Coordinates);
+            ClassicAssert.AreEqual(EVSE1.PhysicalReference,                  evse2.PhysicalReference);
+            ClassicAssert.AreEqual(EVSE1.Directions,                         evse2.Directions);
+            ClassicAssert.AreEqual(EVSE1.ParkingRestrictions,                evse2.ParkingRestrictions);
+            ClassicAssert.AreEqual(EVSE1.Images,                             evse2.Images);
+            ClassicAssert.AreEqual(EVSE1.LastUpdated.ToIso8601(),            evse2.LastUpdated.ToIso8601());
 
         }
 

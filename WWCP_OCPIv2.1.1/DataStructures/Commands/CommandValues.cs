@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -95,9 +95,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                      Execute(client => client.CreateRequest(HTTPMethod.POST,
                                                                                             UpstreamCommand.ResponseURL.Path,
                                                                                             requestbuilder => {
-                                                                                                requestbuilder.ContentType  = HTTPContentType.JSON_UTF8;
+                                                                                                requestbuilder.ContentType  = HTTPContentType.Application.JSON_UTF8;
                                                                                                 requestbuilder.Content      = result?.ToJSON().ToUTF8Bytes(Newtonsoft.Json.Formatting.None);
-                                                                                                requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                                requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                                 requestbuilder.Set("X-Request-ID",      UpstreamCommand.RequestId);
                                                                                                 requestbuilder.Set("X-Correlation-ID",  UpstreamCommand.CorrelationId);
                                                                                             })

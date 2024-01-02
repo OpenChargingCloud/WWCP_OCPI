@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 #region Usings
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 using Newtonsoft.Json.Linq;
 
@@ -319,48 +320,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
 
             var JSON = cdr1.ToJSON();
 
-            Assert.AreEqual("DE",                          JSON["country_code"].Value<String>());
-            Assert.AreEqual("GEF",                         JSON["party_id"].    Value<String>());
-            Assert.AreEqual("CDR0001",                     JSON["id"].          Value<String>());
+            ClassicAssert.AreEqual("DE",                          JSON["country_code"].Value<String>());
+            ClassicAssert.AreEqual("GEF",                         JSON["party_id"].    Value<String>());
+            ClassicAssert.AreEqual("CDR0001",                     JSON["id"].          Value<String>());
 
 
-            Assert.IsTrue(CDR.TryParse(JSON, out var cdr2, out var errorResponse));
-            Assert.IsNull(errorResponse);
+            ClassicAssert.IsTrue(CDR.TryParse(JSON, out var cdr2, out var errorResponse));
+            ClassicAssert.IsNull(errorResponse);
 
-            Assert.AreEqual(cdr1.CountryCode,              cdr2.CountryCode);
-            Assert.AreEqual(cdr1.PartyId,                  cdr2.PartyId);
-            Assert.AreEqual(cdr1.Id,                       cdr2.Id);
+            ClassicAssert.AreEqual(cdr1.CountryCode,              cdr2.CountryCode);
+            ClassicAssert.AreEqual(cdr1.PartyId,                  cdr2.PartyId);
+            ClassicAssert.AreEqual(cdr1.Id,                       cdr2.Id);
 
-            Assert.AreEqual(cdr1.Start.ToIso8601(),        cdr2.Start.ToIso8601());
-            Assert.AreEqual(cdr1.End.  ToIso8601(),        cdr2.End.  ToIso8601());
-            Assert.AreEqual(cdr1.CDRToken,                 cdr2.CDRToken);
-            Assert.AreEqual(cdr1.AuthMethod,               cdr2.AuthMethod);
-            Assert.AreEqual(cdr1.Location,                 cdr2.Location);
-            Assert.AreEqual(cdr1.Currency,                 cdr2.Currency);
-            Assert.AreEqual(cdr1.ChargingPeriods,          cdr2.ChargingPeriods);
-            Assert.AreEqual(cdr1.TotalCosts,               cdr2.TotalCosts);
-            Assert.AreEqual(cdr1.TotalEnergy,              cdr2.TotalEnergy);
-            Assert.AreEqual(cdr1.TotalTime,                cdr2.TotalTime);
+            ClassicAssert.AreEqual(cdr1.Start.ToIso8601(),        cdr2.Start.ToIso8601());
+            ClassicAssert.AreEqual(cdr1.End.  ToIso8601(),        cdr2.End.  ToIso8601());
+            ClassicAssert.AreEqual(cdr1.CDRToken,                 cdr2.CDRToken);
+            ClassicAssert.AreEqual(cdr1.AuthMethod,               cdr2.AuthMethod);
+            ClassicAssert.AreEqual(cdr1.Location,                 cdr2.Location);
+            ClassicAssert.AreEqual(cdr1.Currency,                 cdr2.Currency);
+            ClassicAssert.AreEqual(cdr1.ChargingPeriods,          cdr2.ChargingPeriods);
+            ClassicAssert.AreEqual(cdr1.TotalCosts,               cdr2.TotalCosts);
+            ClassicAssert.AreEqual(cdr1.TotalEnergy,              cdr2.TotalEnergy);
+            ClassicAssert.AreEqual(cdr1.TotalTime,                cdr2.TotalTime);
 
-            Assert.AreEqual(cdr1.SessionId,                cdr2.SessionId);
-            Assert.AreEqual(cdr1.AuthorizationReference,   cdr2.AuthorizationReference);
-            Assert.AreEqual(cdr1.MeterId,                  cdr2.MeterId);
-            Assert.AreEqual(cdr1.EnergyMeter,              cdr2.EnergyMeter);
-            Assert.AreEqual(cdr1.TransparencySoftwares,    cdr2.TransparencySoftwares);
-            Assert.AreEqual(cdr1.Tariffs,                  cdr2.Tariffs);
-            Assert.AreEqual(cdr1.SignedData,               cdr2.SignedData);
-            Assert.AreEqual(cdr1.TotalFixedCosts,          cdr2.TotalFixedCosts);
-            Assert.AreEqual(cdr1.TotalEnergyCost,          cdr2.TotalEnergyCost);
-            Assert.AreEqual(cdr1.TotalTimeCost,            cdr2.TotalTimeCost);
-            Assert.AreEqual(cdr1.TotalParkingTime,         cdr2.TotalParkingTime);
-            Assert.AreEqual(cdr1.TotalParkingCost,         cdr2.TotalParkingCost);
-            Assert.AreEqual(cdr1.TotalReservationCost,     cdr2.TotalReservationCost);
-            Assert.AreEqual(cdr1.Remark,                   cdr2.Remark);
-            Assert.AreEqual(cdr1.InvoiceReferenceId,       cdr2.InvoiceReferenceId);
-            Assert.AreEqual(cdr1.Credit,                   cdr2.Credit);
-            Assert.AreEqual(cdr1.CreditReferenceId,        cdr2.CreditReferenceId);
+            ClassicAssert.AreEqual(cdr1.SessionId,                cdr2.SessionId);
+            ClassicAssert.AreEqual(cdr1.AuthorizationReference,   cdr2.AuthorizationReference);
+            ClassicAssert.AreEqual(cdr1.MeterId,                  cdr2.MeterId);
+            ClassicAssert.AreEqual(cdr1.EnergyMeter,              cdr2.EnergyMeter);
+            ClassicAssert.AreEqual(cdr1.TransparencySoftwares,    cdr2.TransparencySoftwares);
+            ClassicAssert.AreEqual(cdr1.Tariffs,                  cdr2.Tariffs);
+            ClassicAssert.AreEqual(cdr1.SignedData,               cdr2.SignedData);
+            ClassicAssert.AreEqual(cdr1.TotalFixedCosts,          cdr2.TotalFixedCosts);
+            ClassicAssert.AreEqual(cdr1.TotalEnergyCost,          cdr2.TotalEnergyCost);
+            ClassicAssert.AreEqual(cdr1.TotalTimeCost,            cdr2.TotalTimeCost);
+            ClassicAssert.AreEqual(cdr1.TotalParkingTime,         cdr2.TotalParkingTime);
+            ClassicAssert.AreEqual(cdr1.TotalParkingCost,         cdr2.TotalParkingCost);
+            ClassicAssert.AreEqual(cdr1.TotalReservationCost,     cdr2.TotalReservationCost);
+            ClassicAssert.AreEqual(cdr1.Remark,                   cdr2.Remark);
+            ClassicAssert.AreEqual(cdr1.InvoiceReferenceId,       cdr2.InvoiceReferenceId);
+            ClassicAssert.AreEqual(cdr1.Credit,                   cdr2.Credit);
+            ClassicAssert.AreEqual(cdr1.CreditReferenceId,        cdr2.CreditReferenceId);
 
-            Assert.AreEqual(cdr1.LastUpdated.ToIso8601(),  cdr2.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(cdr1.LastUpdated.ToIso8601(),  cdr2.LastUpdated.ToIso8601());
 
         }
 
@@ -451,31 +452,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
             #endregion
 
             var result = CDR.TryParse(JObject.Parse(JSON), out var parsedCDR, out var errorResponse);
-            Assert.IsTrue   (result, errorResponse);
-            Assert.IsNotNull(parsedCDR);
-            Assert.IsNull   (errorResponse);
+            ClassicAssert.IsTrue   (result, errorResponse);
+            ClassicAssert.IsNotNull(parsedCDR);
+            ClassicAssert.IsNull   (errorResponse);
 
-            Assert.AreEqual(CountryCode.Parse("BE"),                               parsedCDR.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("BEC"),                              parsedCDR.PartyId);
-            Assert.AreEqual(CDR_Id.Parse("12345"),                                 parsedCDR.Id);
-            //Assert.AreEqual(true,                                                  parsedCDR.Publish);
-            //Assert.AreEqual(CDR1.Start.    ToIso8601(),                            parsedCDR.Start.    ToIso8601());
-            //Assert.AreEqual(CDR1.End.Value.ToIso8601(),                            parsedCDR.End.Value.ToIso8601());
-            //Assert.AreEqual(CDR1.kWh,                                              parsedCDR.kWh);
-            //Assert.AreEqual(CDR1.CDRToken,                                         parsedCDR.CDRToken);
-            //Assert.AreEqual(CDR1.AuthMethod,                                       parsedCDR.AuthMethod);
-            //Assert.AreEqual(CDR1.AuthorizationReference,                           parsedCDR.AuthorizationReference);
-            //Assert.AreEqual(CDR1.CDRId,                                            parsedCDR.CDRId);
-            //Assert.AreEqual(CDR1.EVSEUId,                                          parsedCDR.EVSEUId);
-            //Assert.AreEqual(CDR1.ConnectorId,                                      parsedCDR.ConnectorId);
-            //Assert.AreEqual(CDR1.MeterId,                                          parsedCDR.MeterId);
-            //Assert.AreEqual(CDR1.EnergyMeter,                                      parsedCDR.EnergyMeter);
-            //Assert.AreEqual(CDR1.TransparencySoftwares,                            parsedCDR.TransparencySoftwares);
-            //Assert.AreEqual(CDR1.Currency,                                         parsedCDR.Currency);
-            //Assert.AreEqual(CDR1.ChargingPeriods,                                  parsedCDR.ChargingPeriods);
-            //Assert.AreEqual(CDR1.TotalCosts,                                       parsedCDR.TotalCosts);
-            //Assert.AreEqual(CDR1.Status,                                           parsedCDR.Status);
-            //Assert.AreEqual(CDR1.LastUpdated.ToIso8601(),                          parsedCDR.LastUpdated.ToIso8601());
+            ClassicAssert.AreEqual(CountryCode.Parse("BE"),                               parsedCDR.CountryCode);
+            ClassicAssert.AreEqual(Party_Id.   Parse("BEC"),                              parsedCDR.PartyId);
+            ClassicAssert.AreEqual(CDR_Id.Parse("12345"),                                 parsedCDR.Id);
+            //ClassicAssert.AreEqual(true,                                                  parsedCDR.Publish);
+            //ClassicAssert.AreEqual(CDR1.Start.    ToIso8601(),                            parsedCDR.Start.    ToIso8601());
+            //ClassicAssert.AreEqual(CDR1.End.Value.ToIso8601(),                            parsedCDR.End.Value.ToIso8601());
+            //ClassicAssert.AreEqual(CDR1.kWh,                                              parsedCDR.kWh);
+            //ClassicAssert.AreEqual(CDR1.CDRToken,                                         parsedCDR.CDRToken);
+            //ClassicAssert.AreEqual(CDR1.AuthMethod,                                       parsedCDR.AuthMethod);
+            //ClassicAssert.AreEqual(CDR1.AuthorizationReference,                           parsedCDR.AuthorizationReference);
+            //ClassicAssert.AreEqual(CDR1.CDRId,                                            parsedCDR.CDRId);
+            //ClassicAssert.AreEqual(CDR1.EVSEUId,                                          parsedCDR.EVSEUId);
+            //ClassicAssert.AreEqual(CDR1.ConnectorId,                                      parsedCDR.ConnectorId);
+            //ClassicAssert.AreEqual(CDR1.MeterId,                                          parsedCDR.MeterId);
+            //ClassicAssert.AreEqual(CDR1.EnergyMeter,                                      parsedCDR.EnergyMeter);
+            //ClassicAssert.AreEqual(CDR1.TransparencySoftwares,                            parsedCDR.TransparencySoftwares);
+            //ClassicAssert.AreEqual(CDR1.Currency,                                         parsedCDR.Currency);
+            //ClassicAssert.AreEqual(CDR1.ChargingPeriods,                                  parsedCDR.ChargingPeriods);
+            //ClassicAssert.AreEqual(CDR1.TotalCosts,                                       parsedCDR.TotalCosts);
+            //ClassicAssert.AreEqual(CDR1.Status,                                           parsedCDR.Status);
+            //ClassicAssert.AreEqual(CDR1.LastUpdated.ToIso8601(),                          parsedCDR.LastUpdated.ToIso8601());
 
         }
 

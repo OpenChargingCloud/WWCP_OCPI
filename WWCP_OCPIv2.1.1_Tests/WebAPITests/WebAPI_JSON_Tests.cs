@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +17,8 @@
 
 #region Usings
 
-using Newtonsoft.Json.Linq;
-
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
@@ -42,13 +41,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
         public async Task WebAPI_GetRemoteParties_Test()
         {
 
-            Assert.IsNotNull(cpoWebAPI);
-            Assert.IsNotNull(emsp1WebAPI);
-            Assert.IsNotNull(emsp2WebAPI);
+            ClassicAssert.IsNotNull(cpoWebAPI);
+            ClassicAssert.IsNotNull(emsp1WebAPI);
+            ClassicAssert.IsNotNull(emsp2WebAPI);
 
-            Assert.IsNotNull(cpoVersionsAPIURL);
-            Assert.IsNotNull(emsp1VersionsAPIURL);
-            Assert.IsNotNull(emsp2VersionsAPIURL);
+            ClassicAssert.IsNotNull(cpoVersionsAPIURL);
+            ClassicAssert.IsNotNull(emsp1VersionsAPIURL);
+            ClassicAssert.IsNotNull(emsp2VersionsAPIURL);
 
             if (cpoWebAPI is not null &&
                 cpoVersionsAPIURL.HasValue)
@@ -123,13 +122,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
 
                 #endregion
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,            response.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json      = response.Content;
-                Assert.IsNotNull(json);
-                Assert.AreEqual (3, json.Count);
+                ClassicAssert.IsNotNull(json);
+                ClassicAssert.AreEqual (3, json.Count);
 
             }
 
@@ -140,13 +139,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 var baseURL   = emsp1VersionsAPIURL.Value.ToString().Replace(emsp1VersionsAPIURL.Value.Path.ToString(), emsp1WebAPI.URLPathPrefix.ToString());
                 var response  = await TestHelpers.GetJSONArrayRequest(URL.Parse(baseURL) + "remoteParties");
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,            response.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json      = response.Content;
-                Assert.IsNotNull(json);
-                Assert.AreEqual (2, json.Count);
+                ClassicAssert.IsNotNull(json);
+                ClassicAssert.AreEqual (2, json.Count);
 
             }
 
@@ -157,13 +156,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 var baseURL   = emsp2VersionsAPIURL.Value.ToString().Replace(emsp2VersionsAPIURL.Value.Path.ToString(), emsp2WebAPI.URLPathPrefix.ToString());
                 var response  = await TestHelpers.GetJSONArrayRequest(URL.Parse(baseURL) + "remoteParties");
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,            response.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json      = response.Content;
-                Assert.IsNotNull(json);
-                Assert.AreEqual (2, json.Count);
+                ClassicAssert.IsNotNull(json);
+                ClassicAssert.AreEqual (2, json.Count);
 
             }
 
@@ -180,13 +179,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
         public async Task WebAPI_GetClients_Test()
         {
 
-            Assert.IsNotNull(cpoWebAPI);
-            Assert.IsNotNull(emsp1WebAPI);
-            Assert.IsNotNull(emsp2WebAPI);
+            ClassicAssert.IsNotNull(cpoWebAPI);
+            ClassicAssert.IsNotNull(emsp1WebAPI);
+            ClassicAssert.IsNotNull(emsp2WebAPI);
 
-            Assert.IsNotNull(cpoVersionsAPIURL);
-            Assert.IsNotNull(emsp1VersionsAPIURL);
-            Assert.IsNotNull(emsp2VersionsAPIURL);
+            ClassicAssert.IsNotNull(cpoVersionsAPIURL);
+            ClassicAssert.IsNotNull(emsp1VersionsAPIURL);
+            ClassicAssert.IsNotNull(emsp2VersionsAPIURL);
 
             if (cpoWebAPI is not null &&
                 cpoVersionsAPIURL.HasValue)
@@ -195,13 +194,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 var baseURL   = cpoVersionsAPIURL.Value.ToString().Replace(cpoVersionsAPIURL.Value.Path.ToString(), cpoWebAPI.URLPathPrefix.ToString());
                 var response  = await TestHelpers.GetJSONArrayRequest(URL.Parse(baseURL) + "clients");
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,            response.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json      = response.Content;
-                Assert.IsNotNull(json);
-                Assert.AreEqual (0, json.Count);
+                ClassicAssert.IsNotNull(json);
+                ClassicAssert.AreEqual (0, json.Count);
 
             }
 
@@ -212,13 +211,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 var baseURL   = emsp1VersionsAPIURL.Value.ToString().Replace(emsp1VersionsAPIURL.Value.Path.ToString(), emsp1WebAPI.URLPathPrefix.ToString());
                 var response  = await TestHelpers.GetJSONArrayRequest(URL.Parse(baseURL) + "clients");
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,            response.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json      = response.Content;
-                Assert.IsNotNull(json);
-                Assert.AreEqual (0, json.Count);
+                ClassicAssert.IsNotNull(json);
+                ClassicAssert.AreEqual (0, json.Count);
 
             }
 
@@ -229,13 +228,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.WebAPI
                 var baseURL   = emsp2VersionsAPIURL.Value.ToString().Replace(emsp2VersionsAPIURL.Value.Path.ToString(), emsp2WebAPI.URLPathPrefix.ToString());
                 var response  = await TestHelpers.GetJSONArrayRequest(URL.Parse(baseURL) + "clients");
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,            response.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,            response.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json      = response.Content;
-                Assert.IsNotNull(json);
-                Assert.AreEqual (0, json.Count);
+                ClassicAssert.IsNotNull(json);
+                ClassicAssert.AreEqual (0, json.Count);
 
             }
 

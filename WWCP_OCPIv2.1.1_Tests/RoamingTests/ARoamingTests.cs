@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 #region Usings
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
@@ -102,9 +103,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        InitialStatus:       RoamingNetworkStatusTypes.Available
                                    );
 
-            Assert.IsNotNull(csoRoamingNetwork);
-            Assert.IsNotNull(emp1RoamingNetwork);
-            Assert.IsNotNull(emp2RoamingNetwork);
+            ClassicAssert.IsNotNull(csoRoamingNetwork);
+            ClassicAssert.IsNotNull(emp1RoamingNetwork);
+            ClassicAssert.IsNotNull(emp2RoamingNetwork);
 
             #endregion
 
@@ -118,8 +119,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                  InitialStatus:        ChargingStationOperatorStatusTypes.Available
                                                              );
 
-            Assert.IsTrue   (csoResult.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
-            Assert.IsNotNull(csoResult.ChargingStationOperator);
+            ClassicAssert.IsTrue   (csoResult.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
+            ClassicAssert.IsNotNull(csoResult.ChargingStationOperator);
 
             graphDefinedCSO        = csoResult.ChargingStationOperator;
 
@@ -140,8 +141,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                                               );
 
-            Assert.IsTrue   (emp1result.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
-            Assert.IsNotNull(emp1result.EMobilityProvider);
+            ClassicAssert.IsTrue   (emp1result.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
+            ClassicAssert.IsNotNull(emp1result.EMobilityProvider);
 
             graphDefinedEMP1       = emp1result.EMobilityProvider;
             graphDefinedEMP1Local  = graphDefinedEMP1?.RemoteEMobilityProvider as VirtualEMobilityProvider;
@@ -162,8 +163,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                                               );
 
-            Assert.IsTrue   (emp2result.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
-            Assert.IsNotNull(emp2result.EMobilityProvider);
+            ClassicAssert.IsTrue   (emp2result.Result == org.GraphDefined.Vanaheimr.Illias.CommandResult.Success);
+            ClassicAssert.IsNotNull(emp2result.EMobilityProvider);
 
             graphDefinedEMP2       = emp2result.EMobilityProvider;
             graphDefinedEMP2Local  = graphDefinedEMP2?.RemoteEMobilityProvider as VirtualEMobilityProvider;
@@ -173,9 +174,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Create cpo/emsp1/emsp2 adapter
 
-            Assert.IsNotNull(cpoCPOAPI);
-            Assert.IsNotNull(emsp1EMSPAPI);
-            Assert.IsNotNull(emsp2EMSPAPI);
+            ClassicAssert.IsNotNull(cpoCPOAPI);
+            ClassicAssert.IsNotNull(emsp1EMSPAPI);
+            ClassicAssert.IsNotNull(emsp2EMSPAPI);
 
             if (cpoCPOAPI    is not null &&
                 emsp1EMSPAPI is not null &&
@@ -272,9 +273,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                        );
 
-                Assert.IsNotNull(cpoAdapter);
-                Assert.IsNotNull(emsp1Adapter);
-                Assert.IsNotNull(emsp2Adapter);
+                ClassicAssert.IsNotNull(cpoAdapter);
+                ClassicAssert.IsNotNull(emsp1Adapter);
+                ClassicAssert.IsNotNull(emsp2Adapter);
 
             }
 

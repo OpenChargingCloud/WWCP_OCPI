@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,7 @@
 using Newtonsoft.Json.Linq;
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
@@ -52,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                         PartyId:     Party_Id.   Parse("GDF")
                                     );
 
-            Assert.IsNotNull(graphDefinedEMSP1);
+            ClassicAssert.IsNotNull(graphDefinedEMSP1);
 
             if (graphDefinedEMSP1 is not null)
             {
@@ -96,37 +97,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":         "2023-04-30T08:03:44.581Z"
                 // }
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,           response.StatusCode);
-                Assert.AreEqual ("Hello world!", response.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (1000,           response.StatusCode);
+                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
-                Assert.IsNotNull(response.RequestId);
-                Assert.IsNotNull(response.CorrelationId);
+                ClassicAssert.IsNotNull(response.RequestId);
+                ClassicAssert.IsNotNull(response.CorrelationId);
 
                 var credentials = response.Data;
-                Assert.IsNotNull(credentials);
+                ClassicAssert.IsNotNull(credentials);
 
                 if (credentials is not null)
                 {
 
-                    Assert.AreEqual (cpo_accessing_emsp1__token,                   credentials.    Token.      ToString());
-                    Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   credentials.    URL.        ToString());
-                    Assert.AreEqual ("DE",                                         credentials.    CountryCode.ToString());
-                    Assert.AreEqual ("GDF",                                        credentials.    PartyId.    ToString());
+                    ClassicAssert.AreEqual (cpo_accessing_emsp1__token,                   credentials.    Token.      ToString());
+                    ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   credentials.    URL.        ToString());
+                    ClassicAssert.AreEqual ("DE",                                         credentials.    CountryCode.ToString());
+                    ClassicAssert.AreEqual ("GDF",                                        credentials.    PartyId.    ToString());
 
                     var businessDetails = credentials.BusinessDetails;
-                    Assert.IsNotNull(businessDetails);
-                    Assert.AreEqual ("GraphDefined EMSP #1 Services",              businessDetails.Name);
-                    Assert.AreEqual ("https://www.graphdefined.com/emsp1",         businessDetails.Website.    ToString());
+                    ClassicAssert.IsNotNull(businessDetails);
+                    ClassicAssert.AreEqual ("GraphDefined EMSP #1 Services",              businessDetails.Name);
+                    ClassicAssert.AreEqual ("https://www.graphdefined.com/emsp1",         businessDetails.Website.    ToString());
 
                 }
 
 
                 // GET ~/versions, GET ~/version/2.1.1, GET ~/v2.1.1/credentials
-                Assert.AreEqual(3,  emsp1APIRequestLogs. Count);
-                Assert.AreEqual(3,  emsp1APIResponseLogs.Count);
+                ClassicAssert.AreEqual(3,  emsp1APIRequestLogs. Count);
+                ClassicAssert.AreEqual(3,  emsp1APIResponseLogs.Count);
 
             }
 
@@ -148,7 +149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                         PartyId:     Party_Id.   Parse("GD2")
                                     );
 
-            Assert.IsNotNull(graphDefinedEMSP2);
+            ClassicAssert.IsNotNull(graphDefinedEMSP2);
 
             if (graphDefinedEMSP2 is not null)
             {
@@ -192,30 +193,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":         "2023-04-30T08:07:42.354Z"
                 // }
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,           response.StatusCode);
-                Assert.AreEqual ("Hello world!", response.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (1000,           response.StatusCode);
+                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
-                Assert.IsNotNull(response.RequestId);
-                Assert.IsNotNull(response.CorrelationId);
+                ClassicAssert.IsNotNull(response.RequestId);
+                ClassicAssert.IsNotNull(response.CorrelationId);
 
                 var credentials = response.Data;
-                Assert.IsNotNull(credentials);
+                ClassicAssert.IsNotNull(credentials);
 
                 if (credentials is not null)
                 {
 
-                    Assert.AreEqual (cpo_accessing_emsp2__token,                   credentials.    Token.      ToString());
-                    Assert.AreEqual ("http://127.0.0.1:3402/ocpi/v2.1/versions",   credentials.    URL.        ToString());
-                    Assert.AreEqual ("DE",                                         credentials.    CountryCode.ToString());
-                    Assert.AreEqual ("GD2",                                        credentials.    PartyId.    ToString());
+                    ClassicAssert.AreEqual (cpo_accessing_emsp2__token,                   credentials.    Token.      ToString());
+                    ClassicAssert.AreEqual ("http://127.0.0.1:3402/ocpi/v2.1/versions",   credentials.    URL.        ToString());
+                    ClassicAssert.AreEqual ("DE",                                         credentials.    CountryCode.ToString());
+                    ClassicAssert.AreEqual ("GD2",                                        credentials.    PartyId.    ToString());
 
                     var businessDetails = credentials.BusinessDetails;
-                    Assert.IsNotNull(businessDetails);
-                    Assert.AreEqual ("GraphDefined EMSP #2 Services",              businessDetails.Name);
-                    Assert.AreEqual ("https://www.graphdefined.com/emsp2",         businessDetails.Website.    ToString());
+                    ClassicAssert.IsNotNull(businessDetails);
+                    ClassicAssert.AreEqual ("GraphDefined EMSP #2 Services",              businessDetails.Name);
+                    ClassicAssert.AreEqual ("https://www.graphdefined.com/emsp2",         businessDetails.Website.    ToString());
 
                 }
 
@@ -240,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                         PartyId:     Party_Id.   Parse("GDF")
                                     );
 
-            Assert.IsNotNull(graphDefinedEMSP1);
+            ClassicAssert.IsNotNull(graphDefinedEMSP1);
 
             if (graphDefinedEMSP1 is not null &&
                 cpoVersionsAPIURL.HasValue &&
@@ -318,66 +319,66 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-05-06T02:41:08.016Z"
                 // }
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,           response.StatusCode);
-                Assert.AreEqual ("Hello world!", response.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,            response.HTTPResponse?.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (1000,           response.StatusCode);
+                ClassicAssert.AreEqual ("Hello world!", response.StatusMessage);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
-                Assert.IsNotNull(response.RequestId);
-                Assert.IsNotNull(response.CorrelationId);
+                ClassicAssert.IsNotNull(response.RequestId);
+                ClassicAssert.IsNotNull(response.CorrelationId);
 
                 var credentials = response.Data;
-                Assert.IsNotNull(credentials);
+                ClassicAssert.IsNotNull(credentials);
 
                 if (credentials is not null)
                 {
 
                     #region Validate Credentials
 
-                    Assert.IsNotNull  (credentials.Token);
-                    Assert.AreNotEqual(cpo_accessing_emsp1__token,                   credentials.    Token.      ToString());
-                    Assert.AreEqual   ("http://127.0.0.1:3401/ocpi/v2.1/versions",   credentials.    URL.        ToString());
-                    Assert.AreEqual   ("DE",                                         credentials.    CountryCode.ToString());
-                    Assert.AreEqual   ("GDF",                                        credentials.    PartyId.    ToString());
+                    ClassicAssert.IsNotNull  (credentials.Token);
+                    ClassicAssert.AreNotEqual(cpo_accessing_emsp1__token,                   credentials.    Token.      ToString());
+                    ClassicAssert.AreEqual   ("http://127.0.0.1:3401/ocpi/v2.1/versions",   credentials.    URL.        ToString());
+                    ClassicAssert.AreEqual   ("DE",                                         credentials.    CountryCode.ToString());
+                    ClassicAssert.AreEqual   ("GDF",                                        credentials.    PartyId.    ToString());
 
                     var businessDetails = credentials.BusinessDetails;
-                    Assert.IsNotNull  (businessDetails);
-                    Assert.AreEqual   ("GraphDefined EMSP #1 Services",              businessDetails.Name);
-                    Assert.AreEqual   ("https://www.graphdefined.com/emsp1",         businessDetails.Website.    ToString());
+                    ClassicAssert.IsNotNull  (businessDetails);
+                    ClassicAssert.AreEqual   ("GraphDefined EMSP #1 Services",              businessDetails.Name);
+                    ClassicAssert.AreEqual   ("https://www.graphdefined.com/emsp1",         businessDetails.Website.    ToString());
 
                     #endregion
 
                     #region Cross-Validate CPO and EMSP1 access tokens
 
                     // Validate CPO
-                    Assert.AreEqual(1,           cpoCommonAPI.  RemoteParties.    Count());
+                    ClassicAssert.AreEqual(1,           cpoCommonAPI.  RemoteParties.    Count());
                     var emsp1                  = cpoCommonAPI.  RemoteParties.    First();
-                    Assert.IsNotNull(emsp1);
+                    ClassicAssert.IsNotNull(emsp1);
 
-                    Assert.AreEqual(1,           emsp1.         LocalAccessInfos. Count());
-                    Assert.AreEqual(1,           emsp1.         RemoteAccessInfos.Count());
+                    ClassicAssert.AreEqual(1,           emsp1.         LocalAccessInfos. Count());
+                    ClassicAssert.AreEqual(1,           emsp1.         RemoteAccessInfos.Count());
 
                     var cpoLocalAccessInfo     = emsp1.         LocalAccessInfos. First();
                     var cpoRemoteAccessInfo    = emsp1.         RemoteAccessInfos.First();
 
 
                     // Validate EMSP1
-                    Assert.AreEqual(1,           emsp1CommonAPI.RemoteParties.    Count());
+                    ClassicAssert.AreEqual(1,           emsp1CommonAPI.RemoteParties.    Count());
                     var cpo                    = emsp1CommonAPI.RemoteParties.    First();
-                    Assert.IsNotNull(cpo);
+                    ClassicAssert.IsNotNull(cpo);
 
-                    Assert.AreEqual(1,           cpo.           LocalAccessInfos. Count());
-                    Assert.AreEqual(1,           cpo.           RemoteAccessInfos.Count());
+                    ClassicAssert.AreEqual(1,           cpo.           LocalAccessInfos. Count());
+                    ClassicAssert.AreEqual(1,           cpo.           RemoteAccessInfos.Count());
 
                     var emsp1LocalAccessInfo   = cpo.           LocalAccessInfos. First();
                     var emsp1RemoteAccessInfo  = cpo.           RemoteAccessInfos.First();
 
 
                     // Cross-Validate CPO and EMSP1 access tokens
-                    Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   credentials.          Token.      ToString());
-                    Assert.AreEqual(cpoLocalAccessInfo.  AccessToken.ToString(),   emsp1RemoteAccessInfo.AccessToken.ToString());
-                    Assert.AreEqual(cpoRemoteAccessInfo. AccessToken.ToString(),   emsp1LocalAccessInfo. AccessToken.ToString());
+                    ClassicAssert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   credentials.          Token.      ToString());
+                    ClassicAssert.AreEqual(cpoLocalAccessInfo.  AccessToken.ToString(),   emsp1RemoteAccessInfo.AccessToken.ToString());
+                    ClassicAssert.AreEqual(cpoRemoteAccessInfo. AccessToken.ToString(),   emsp1LocalAccessInfo. AccessToken.ToString());
 
                     #endregion
 
@@ -391,9 +392,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                     var cpoAccessTokenReallyUsed        = (response2.HTTPResponse?.HTTPRequest?.Authorization as HTTPTokenAuthentication)?.Token;
 
                     // Cross-Validate CPO and EMSP1 access tokens
-                    Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1_AccessToken);
-                    Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1_TokenAuth);
-                    Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   cpoAccessTokenReallyUsed);
+                    ClassicAssert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1_AccessToken);
+                    ClassicAssert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1_TokenAuth);
+                    ClassicAssert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   cpoAccessTokenReallyUsed);
 
                     #endregion
 
@@ -405,7 +406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                  AllowCachedClients:   false
                                              );
 
-                    Assert.IsNotNull(graphDefinedEMSP1b);
+                    ClassicAssert.IsNotNull(graphDefinedEMSP1b);
 
                     if (graphDefinedEMSP1b is not null)
                     {
@@ -419,9 +420,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
 
                         // Cross-Validate CPO and EMSP1 access tokens
-                        Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1b_AccessToken);
-                        Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1b_TokenAuth);
-                        Assert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   cpoAccessTokenReallyUsed2);
+                        ClassicAssert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1b_AccessToken);
+                        ClassicAssert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   graphDefinedEMSP1b_TokenAuth);
+                        ClassicAssert.AreEqual(emsp1LocalAccessInfo.AccessToken.ToString(),   cpoAccessTokenReallyUsed2);
 
                     }
 
@@ -450,7 +451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                       PartyId:     Party_Id.   Parse("GDF")
                                   );
 
-            Assert.IsNotNull(graphDefinedEMSP1);
+            ClassicAssert.IsNotNull(graphDefinedEMSP1);
 
             if (graphDefinedEMSP1 is not null &&
                 emsp1CommonAPI is not null)
@@ -459,7 +460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 RemoteParty? remotePartyAtEMSP1() => emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == cpo_accessing_emsp1__token));
 
                 var remotePartyAtEMSP1_before  = remotePartyAtEMSP1();
-                Assert.IsNotNull(remotePartyAtEMSP1_before);
+                ClassicAssert.IsNotNull(remotePartyAtEMSP1_before);
 
                 var response                 = await graphDefinedEMSP1.DeleteCredentials();
 
@@ -490,19 +491,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-05-05T12:31:07.181Z"
                 // }
 
-                Assert.IsNotNull(response);
-                Assert.AreEqual (200,                                                                  response.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual (1000,                                                                 response.StatusCode);
-                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1++token' was deleted!",   response.StatusMessage);
-                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response);
+                ClassicAssert.AreEqual (200,                                                                  response.HTTPResponse?.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (1000,                                                                 response.StatusCode);
+                ClassicAssert.AreEqual ("The given access token 'cpo_accessing_emsp1++token' was deleted!",   response.StatusMessage);
+                ClassicAssert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
-                Assert.IsNotNull(response.RequestId);
-                Assert.IsNotNull(response.CorrelationId);
+                ClassicAssert.IsNotNull(response.RequestId);
+                ClassicAssert.IsNotNull(response.CorrelationId);
 
 
                 // Validate, that the remote party was deleted!
                 var remotePartyAtEMSP1_after  = remotePartyAtEMSP1();
-                Assert.IsNull(remotePartyAtEMSP1_after);
+                ClassicAssert.IsNull(remotePartyAtEMSP1_after);
 
             }
 
@@ -560,28 +561,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":         "2023-04-30T10:02:02.264Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (200,            response3.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (200,            response3.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json        = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual ("<any>",                                      json["data"]?["token"]?.                       Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   json["data"]?["url"]?.                         Value<String>());
+                ClassicAssert.AreEqual ("<any>",                                      json["data"]?["token"]?.                       Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   json["data"]?["url"]?.                         Value<String>());
 
-                Assert.AreEqual ("GraphDefined EMSP #1 Services",              json["data"]?["business_details"]?["name"]?.   Value<String>());
-                Assert.AreEqual ("https://www.graphdefined.com/emsp1",         json["data"]?["business_details"]?["website"]?.Value<String>());
+                ClassicAssert.AreEqual ("GraphDefined EMSP #1 Services",              json["data"]?["business_details"]?["name"]?.   Value<String>());
+                ClassicAssert.AreEqual ("https://www.graphdefined.com/emsp1",         json["data"]?["business_details"]?["website"]?.Value<String>());
 
-                Assert.AreEqual ("DE",                                         json["data"]?["country_code"]?.                Value<String>());
-                Assert.AreEqual ("GDF",                                        json["data"]?["party_id"]?.                    Value<String>());
+                ClassicAssert.AreEqual ("DE",                                         json["data"]?["country_code"]?.                Value<String>());
+                ClassicAssert.AreEqual ("GDF",                                        json["data"]?["party_id"]?.                    Value<String>());
 
-                Assert.AreEqual (1000,                                         json["status_code"]?.                          Value<UInt32>());
-                Assert.AreEqual ("Hello world!",                               json["status_message"]?.                       Value<String>());
+                ClassicAssert.AreEqual (1000,                                         json["status_code"]?.                          Value<UInt32>());
+                ClassicAssert.AreEqual ("Hello world!",                               json["status_message"]?.                       Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -638,28 +639,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":         "2023-04-30T10:02:02.264Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (200,            response3.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (200,            response3.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json        = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual ("<any>",                                      json["data"]?["token"]?.                       Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   json["data"]?["url"]?.                         Value<String>());
+                ClassicAssert.AreEqual ("<any>",                                      json["data"]?["token"]?.                       Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   json["data"]?["url"]?.                         Value<String>());
 
-                Assert.AreEqual ("GraphDefined EMSP #1 Services",              json["data"]?["business_details"]?["name"]?.   Value<String>());
-                Assert.AreEqual ("https://www.graphdefined.com/emsp1",         json["data"]?["business_details"]?["website"]?.Value<String>());
+                ClassicAssert.AreEqual ("GraphDefined EMSP #1 Services",              json["data"]?["business_details"]?["name"]?.   Value<String>());
+                ClassicAssert.AreEqual ("https://www.graphdefined.com/emsp1",         json["data"]?["business_details"]?["website"]?.Value<String>());
 
-                Assert.AreEqual ("DE",                                         json["data"]?["country_code"]?.                Value<String>());
-                Assert.AreEqual ("GDF",                                        json["data"]?["party_id"]?.                    Value<String>());
+                ClassicAssert.AreEqual ("DE",                                         json["data"]?["country_code"]?.                Value<String>());
+                ClassicAssert.AreEqual ("GDF",                                        json["data"]?["party_id"]?.                    Value<String>());
 
-                Assert.AreEqual (1000,                                         json["status_code"]?.                          Value<UInt32>());
-                Assert.AreEqual ("Hello world!",                               json["status_message"]?.                       Value<String>());
+                ClassicAssert.AreEqual (1000,                                         json["status_code"]?.                          Value<UInt32>());
+                ClassicAssert.AreEqual ("Hello world!",                               json["status_message"]?.                       Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -706,19 +707,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-04-30T10:14:01.041Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (403,            response3.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (403,            response3.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json        = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual (2000,                                 json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("Invalid or blocked access token!",   json["status_message"]?.Value<String>());
+                ClassicAssert.AreEqual (2000,                                 json["status_code"]?.   Value<UInt32>());
+                ClassicAssert.AreEqual ("Invalid or blocked access token!",   json["status_message"]?.Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue   (Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue   (Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -775,28 +776,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":         "2023-04-30T10:24:16.022Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (200,            response3.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (200,            response3.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json        = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual (cpo_accessing_emsp1__token,                   json["data"]?["token"]?.                       Value<String>());
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   json["data"]?["url"]?.                         Value<String>());
+                ClassicAssert.AreEqual (cpo_accessing_emsp1__token,                   json["data"]?["token"]?.                       Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",   json["data"]?["url"]?.                         Value<String>());
 
-                Assert.AreEqual ("GraphDefined EMSP #1 Services",              json["data"]?["business_details"]?["name"]?.   Value<String>());
-                Assert.AreEqual ("https://www.graphdefined.com/emsp1",         json["data"]?["business_details"]?["website"]?.Value<String>());
+                ClassicAssert.AreEqual ("GraphDefined EMSP #1 Services",              json["data"]?["business_details"]?["name"]?.   Value<String>());
+                ClassicAssert.AreEqual ("https://www.graphdefined.com/emsp1",         json["data"]?["business_details"]?["website"]?.Value<String>());
 
-                Assert.AreEqual ("DE",                                         json["data"]?["country_code"]?.                Value<String>());
-                Assert.AreEqual ("GDF",                                        json["data"]?["party_id"]?.                    Value<String>());
+                ClassicAssert.AreEqual ("DE",                                         json["data"]?["country_code"]?.                Value<String>());
+                ClassicAssert.AreEqual ("GDF",                                        json["data"]?["party_id"]?.                    Value<String>());
 
-                Assert.AreEqual (1000,                                         json["status_code"]?.                          Value<UInt32>());
-                Assert.AreEqual ("Hello world!",                               json["status_message"]?.                       Value<String>());
+                ClassicAssert.AreEqual (1000,                                         json["status_code"]?.                          Value<UInt32>());
+                ClassicAssert.AreEqual ("Hello world!",                               json["status_message"]?.                       Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -842,25 +843,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // X-Request-ID:                    1234
                 // X-Correlation-ID:                5678
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (200,                      response3.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now -           response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (200,                      response3.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now -           response3.Timestamp < TimeSpan.FromSeconds(10));
 
-                Assert.IsNotNull(response3.AccessControlAllowMethods);
+                ClassicAssert.IsNotNull(response3.AccessControlAllowMethods);
                 if (response3.AccessControlAllowMethods is not null)
                 {
-                    Assert.AreEqual(2,                    response3.AccessControlAllowMethods.Count());
-                    Assert.IsTrue  (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                    Assert.IsTrue  (response3.AccessControlAllowMethods?.Contains("GET"));
+                    ClassicAssert.AreEqual(2,                    response3.AccessControlAllowMethods.Count());
+                    ClassicAssert.IsTrue  (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                    ClassicAssert.IsTrue  (response3.AccessControlAllowMethods?.Contains("GET"));
                 }
 
-                Assert.IsNotNull(response3.Allow);
+                ClassicAssert.IsNotNull(response3.Allow);
                 if (response3.Allow is not null)
                 {
                     var allowSet = new HashSet<HTTPMethod>(response3.Allow);
-                    Assert.AreEqual(2, allowSet.Count);
-                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.OPTIONS));
-                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.GET));
+                    ClassicAssert.AreEqual(2, allowSet.Count);
+                    ClassicAssert.IsTrue  (allowSet.Contains(HTTPMethod.OPTIONS));
+                    ClassicAssert.IsTrue  (allowSet.Contains(HTTPMethod.GET));
                 }
 
             }
@@ -908,25 +909,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // X-Request-ID:                    1234
                 // X-Correlation-ID:                5678
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (200,                      response3.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now -           response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (200,                      response3.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now -           response3.Timestamp < TimeSpan.FromSeconds(10));
 
-                Assert.IsNotNull(response3.AccessControlAllowMethods);
+                ClassicAssert.IsNotNull(response3.AccessControlAllowMethods);
                 if (response3.AccessControlAllowMethods is not null)
                 {
-                    Assert.AreEqual(2,                    response3.AccessControlAllowMethods.Count());
-                    Assert.IsTrue  (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                    Assert.IsTrue  (response3.AccessControlAllowMethods?.Contains("GET"));
+                    ClassicAssert.AreEqual(2,                    response3.AccessControlAllowMethods.Count());
+                    ClassicAssert.IsTrue  (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                    ClassicAssert.IsTrue  (response3.AccessControlAllowMethods?.Contains("GET"));
                 }
 
-                Assert.IsNotNull(response3.Allow);
+                ClassicAssert.IsNotNull(response3.Allow);
                 if (response3.Allow is not null)
                 {
                     var allowSet = new HashSet<HTTPMethod>(response3.Allow);
-                    Assert.AreEqual(2, allowSet.Count);
-                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.OPTIONS));
-                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.GET));
+                    ClassicAssert.AreEqual(2, allowSet.Count);
+                    ClassicAssert.IsTrue  (allowSet.Contains(HTTPMethod.OPTIONS));
+                    ClassicAssert.IsTrue  (allowSet.Contains(HTTPMethod.GET));
                 }
 
             }
@@ -974,24 +975,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // X-Request-ID:                    1234
                 // X-Correlation-ID:                5678
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (200,            response3.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (200,            response3.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
-                Assert.IsNotNull(response3.AccessControlAllowMethods);
+                ClassicAssert.IsNotNull(response3.AccessControlAllowMethods);
                 if (response3.AccessControlAllowMethods is not null)
                 {
-                    Assert.AreEqual(2,           response3.AccessControlAllowMethods.Count());
-                    Assert.IsTrue  (response3.AccessControlAllowMethods.Contains("OPTIONS"));
-                    Assert.IsTrue  (response3.AccessControlAllowMethods.Contains("GET"));
+                    ClassicAssert.AreEqual(2,           response3.AccessControlAllowMethods.Count());
+                    ClassicAssert.IsTrue  (response3.AccessControlAllowMethods.Contains("OPTIONS"));
+                    ClassicAssert.IsTrue  (response3.AccessControlAllowMethods.Contains("GET"));
                 }
 
-                Assert.IsNotNull(response3.Allow);
+                ClassicAssert.IsNotNull(response3.Allow);
                 if (response3.Allow is not null)
                 {
-                    Assert.AreEqual(2,           response3.Allow.Count());
-                    Assert.IsTrue  (response3.Allow.Contains(HTTPMethod.OPTIONS));
-                    Assert.IsTrue  (response3.Allow.Contains(HTTPMethod.GET));
+                    ClassicAssert.AreEqual(2,           response3.Allow.Count());
+                    ClassicAssert.IsTrue  (response3.Allow.Contains(HTTPMethod.OPTIONS));
+                    ClassicAssert.IsTrue  (response3.Allow.Contains(HTTPMethod.GET));
                 }
 
             }
@@ -1039,36 +1040,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 // X-Request-ID:                    1234
                 // X-Correlation-ID:                5678
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (200,                      response3.HTTPStatusCode.Code);
-                Assert.IsTrue   (Timestamp.Now -           response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (200,                      response3.HTTPStatusCode.Code);
+                ClassicAssert.IsTrue   (Timestamp.Now -           response3.Timestamp < TimeSpan.FromSeconds(10));
 
-                Assert.IsNotNull(response3.AccessControlAllowMethods);
+                ClassicAssert.IsNotNull(response3.AccessControlAllowMethods);
                 if (response3.AccessControlAllowMethods is not null)
                 {
-                    Assert.AreEqual (5,                    response3.AccessControlAllowMethods.Count());
-                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("GET"));
-                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("POST"));
-                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("PUT"));
-                    Assert.IsTrue   (response3.AccessControlAllowMethods?.Contains("DELETE"));
+                    ClassicAssert.AreEqual (5,                    response3.AccessControlAllowMethods.Count());
+                    ClassicAssert.IsTrue   (response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                    ClassicAssert.IsTrue   (response3.AccessControlAllowMethods?.Contains("GET"));
+                    ClassicAssert.IsTrue   (response3.AccessControlAllowMethods?.Contains("POST"));
+                    ClassicAssert.IsTrue   (response3.AccessControlAllowMethods?.Contains("PUT"));
+                    ClassicAssert.IsTrue   (response3.AccessControlAllowMethods?.Contains("DELETE"));
                 }
 
-                Assert.IsNotNull(response3.Allow);
+                ClassicAssert.IsNotNull(response3.Allow);
                 if (response3.Allow is not null)
                 {
                     var allowSet = new HashSet<HTTPMethod>(response3.Allow);
-                    Assert.AreEqual(5, allowSet.Count);
-                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.OPTIONS));
-                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.GET));
-                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.POST));
-                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.PUT));
-                    Assert.IsTrue  (allowSet.Contains(HTTPMethod.DELETE));
+                    ClassicAssert.AreEqual(5, allowSet.Count);
+                    ClassicAssert.IsTrue  (allowSet.Contains(HTTPMethod.OPTIONS));
+                    ClassicAssert.IsTrue  (allowSet.Contains(HTTPMethod.GET));
+                    ClassicAssert.IsTrue  (allowSet.Contains(HTTPMethod.POST));
+                    ClassicAssert.IsTrue  (allowSet.Contains(HTTPMethod.PUT));
+                    ClassicAssert.IsTrue  (allowSet.Contains(HTTPMethod.DELETE));
                 }
 
                 // GET ~/versions, GET ~/version/2.1.1
-                Assert.AreEqual(2,  emsp1APIRequestLogs. Count);
-                Assert.AreEqual(2,  emsp1APIResponseLogs.Count);
+                ClassicAssert.AreEqual(2,  emsp1APIRequestLogs. Count);
+                ClassicAssert.AreEqual(2,  emsp1APIResponseLogs.Count);
 
             }
 
@@ -1146,22 +1147,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-05-01T04:04:02.642Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (405, response3.HTTPStatusCode.Code);
-                Assert.AreEqual (2,   response3.AccessControlAllowMethods?.Count());
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (405, response3.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (2,   response3.AccessControlAllowMethods?.Count());
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json        = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual (2000,                                                                         json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("You need to be registered before trying to invoke this protected method!",   json["status_message"]?.Value<String>());
+                ClassicAssert.AreEqual (2000,                                                                         json["status_code"]?.   Value<UInt32>());
+                ClassicAssert.AreEqual ("You need to be registered before trying to invoke this protected method!",   json["status_message"]?.Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -1240,22 +1241,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-05-03T21:29:12.612Z"}
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (405, response3.HTTPStatusCode.Code);
-                Assert.AreEqual (2,   response3.AccessControlAllowMethods?.Count());
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (405, response3.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (2,   response3.AccessControlAllowMethods?.Count());
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json        = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual (2000,                                                                         json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("You need to be registered before trying to invoke this protected method!",   json["status_message"]?.Value<String>());
+                ClassicAssert.AreEqual (2000,                                                                         json["status_code"]?.   Value<UInt32>());
+                ClassicAssert.AreEqual ("You need to be registered before trying to invoke this protected method!",   json["status_message"]?.Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -1334,22 +1335,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-04-30T10:14:01.041Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (403, response3.HTTPStatusCode.Code);
-                Assert.AreEqual (2,   response3.AccessControlAllowMethods?.Count());
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (403, response3.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (2,   response3.AccessControlAllowMethods?.Count());
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json        = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual (2000,                                                 json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("The given access token 'blocked-cpo' is blocked!",   json["status_message"]?.Value<String>());
+                ClassicAssert.AreEqual (2000,                                                 json["status_code"]?.   Value<UInt32>());
+                ClassicAssert.AreEqual ("The given access token 'blocked-cpo' is blocked!",   json["status_message"]?.Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
             }
 
@@ -1443,50 +1444,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-05-04T04:35:16.712Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (200, response3.HTTPStatusCode.Code);
-                Assert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (200, response3.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json        = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
                 var token       = json["data"]?["token"]?.Value<String>();
-                Assert.IsNotNull(token);
+                ClassicAssert.IsNotNull(token);
                 var accessToken = AccessToken.Parse(token!);
 
-                Assert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",    json["data"]?["url"]?.                         Value<String>());
+                ClassicAssert.AreEqual ("http://127.0.0.1:3401/ocpi/v2.1/versions",    json["data"]?["url"]?.                         Value<String>());
 
-                Assert.AreEqual ("GraphDefined EMSP #1 Services",               json["data"]?["business_details"]?["name"]?.   Value<String>());
-                Assert.AreEqual ("https://www.graphdefined.com/emsp1",          json["data"]?["business_details"]?["website"]?.Value<String>());
+                ClassicAssert.AreEqual ("GraphDefined EMSP #1 Services",               json["data"]?["business_details"]?["name"]?.   Value<String>());
+                ClassicAssert.AreEqual ("https://www.graphdefined.com/emsp1",          json["data"]?["business_details"]?["website"]?.Value<String>());
 
-                Assert.AreEqual ("DE",                                          json["data"]?["country_code"]?.                Value<String>());
-                Assert.AreEqual ("GDF",                                         json["data"]?["party_id"]?.                    Value<String>());
+                ClassicAssert.AreEqual ("DE",                                          json["data"]?["country_code"]?.                Value<String>());
+                ClassicAssert.AreEqual ("GDF",                                         json["data"]?["party_id"]?.                    Value<String>());
 
-                Assert.AreEqual (1000,                                          json["status_code"]?.                          Value<UInt32>());
-                Assert.AreEqual ("Hello world!",                                json["status_message"]?.                       Value<String>());
+                ClassicAssert.AreEqual (1000,                                          json["status_code"]?.                          Value<UInt32>());
+                ClassicAssert.AreEqual ("Hello world!",                                json["status_message"]?.                       Value<String>());
 
                 var timestamp   = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
 
                 // Validate, that the remote party was updated!
                 var remotePartyAtEMSP1  = emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.RemoteAccessInfos.Any(remoteAccessInfo => remoteAccessInfo.AccessToken == newAccessToken));
-                Assert.IsNotNull(remotePartyAtEMSP1);
+                ClassicAssert.IsNotNull(remotePartyAtEMSP1);
 
                 if (remotePartyAtEMSP1 is not null)
                 {
-                    Assert.AreEqual ("GraphDefined CSO (NEW)",                  remotePartyAtEMSP1.BusinessDetails.Name);
-                    Assert.AreEqual ("https://www.graphdefined.com/cso/new",    remotePartyAtEMSP1.BusinessDetails.Website.ToString());
-                    Assert.AreEqual ("DE",                                      remotePartyAtEMSP1.CountryCode.            ToString());
-                    Assert.AreEqual ("GEF",                                     remotePartyAtEMSP1.PartyId.                ToString());
-                    Assert.AreEqual (accessToken,                               remotePartyAtEMSP1.LocalAccessInfos.FirstOrDefault().AccessToken);
+                    ClassicAssert.AreEqual ("GraphDefined CSO (NEW)",                  remotePartyAtEMSP1.BusinessDetails.Name);
+                    ClassicAssert.AreEqual ("https://www.graphdefined.com/cso/new",    remotePartyAtEMSP1.BusinessDetails.Website.ToString());
+                    ClassicAssert.AreEqual ("DE",                                      remotePartyAtEMSP1.CountryCode.            ToString());
+                    ClassicAssert.AreEqual ("GEF",                                     remotePartyAtEMSP1.PartyId.                ToString());
+                    ClassicAssert.AreEqual (accessToken,                               remotePartyAtEMSP1.LocalAccessInfos.FirstOrDefault().AccessToken);
                 }
 
             }
@@ -1572,37 +1573,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-05-04T05:04:32.071Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (400, response3.HTTPStatusCode.Code);
-                Assert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (400, response3.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json              = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual (2000,                                                            json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("Updating the country code from 'DE' to 'FR' is not allowed!",   json["status_message"]?.Value<String>());
+                ClassicAssert.AreEqual (2000,                                                            json["status_code"]?.   Value<UInt32>());
+                ClassicAssert.AreEqual ("Updating the country code from 'DE' to 'FR' is not allowed!",   json["status_message"]?.Value<String>());
 
                 var timestamp         = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
 
                 // Validate, that the remote party was not updated!
                 var remotePartyAtEMSP1  = emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == cpo_accessing_emsp1__token));
-                Assert.IsNotNull(remotePartyAtEMSP1);
+                ClassicAssert.IsNotNull(remotePartyAtEMSP1);
 
                 if (remotePartyAtEMSP1 is not null)
                 {
-                    Assert.AreEqual ("GraphDefined CSO Services",                                 remotePartyAtEMSP1.BusinessDetails.Name);
-                    Assert.AreEqual ("https://www.graphdefined.com/cso",                          remotePartyAtEMSP1.BusinessDetails.Website.ToString());
-                    Assert.AreEqual ("DE",                                                        remotePartyAtEMSP1.CountryCode.            ToString());
-                    Assert.AreEqual ("GEF",                                                       remotePartyAtEMSP1.PartyId.                ToString());
+                    ClassicAssert.AreEqual ("GraphDefined CSO Services",                                 remotePartyAtEMSP1.BusinessDetails.Name);
+                    ClassicAssert.AreEqual ("https://www.graphdefined.com/cso",                          remotePartyAtEMSP1.BusinessDetails.Website.ToString());
+                    ClassicAssert.AreEqual ("DE",                                                        remotePartyAtEMSP1.CountryCode.            ToString());
+                    ClassicAssert.AreEqual ("GEF",                                                       remotePartyAtEMSP1.PartyId.                ToString());
                 }
 
             }
@@ -1688,37 +1689,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-05-04T05:04:32.071Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (400, response3.HTTPStatusCode.Code);
-                Assert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (400, response3.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json              = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual (2000,                                                                      json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("Updating the party identification from 'GEF' to 'GXF' is not allowed!",   json["status_message"]?.Value<String>());
+                ClassicAssert.AreEqual (2000,                                                                      json["status_code"]?.   Value<UInt32>());
+                ClassicAssert.AreEqual ("Updating the party identification from 'GEF' to 'GXF' is not allowed!",   json["status_message"]?.Value<String>());
 
                 var timestamp         = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
 
                 // Validate, that the remote party was not updated!
                 var remotePartyAtEMSP1  = emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == cpo_accessing_emsp1__token));
-                Assert.IsNotNull(remotePartyAtEMSP1);
+                ClassicAssert.IsNotNull(remotePartyAtEMSP1);
 
                 if (remotePartyAtEMSP1 is not null)
                 {
-                    Assert.AreEqual ("GraphDefined CSO Services",                                 remotePartyAtEMSP1.BusinessDetails.Name);
-                    Assert.AreEqual ("https://www.graphdefined.com/cso",                          remotePartyAtEMSP1.BusinessDetails.Website.ToString());
-                    Assert.AreEqual ("DE",                                                        remotePartyAtEMSP1.CountryCode.            ToString());
-                    Assert.AreEqual ("GEF",                                                       remotePartyAtEMSP1.PartyId.                ToString());
+                    ClassicAssert.AreEqual ("GraphDefined CSO Services",                                 remotePartyAtEMSP1.BusinessDetails.Name);
+                    ClassicAssert.AreEqual ("https://www.graphdefined.com/cso",                          remotePartyAtEMSP1.BusinessDetails.Website.ToString());
+                    ClassicAssert.AreEqual ("DE",                                                        remotePartyAtEMSP1.CountryCode.            ToString());
+                    ClassicAssert.AreEqual ("GEF",                                                       remotePartyAtEMSP1.PartyId.                ToString());
                 }
 
             }
@@ -1823,35 +1824,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-05-05T10:19:29.735Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (405, response3.HTTPStatusCode.Code);
-                Assert.AreEqual (3,   response3.AccessControlAllowMethods?.Count());
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (405, response3.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (3,   response3.AccessControlAllowMethods?.Count());
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json              = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual (2000,                                                                           json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1++token' is not yet registered!",   json["status_message"]?.Value<String>());
+                ClassicAssert.AreEqual (2000,                                                                           json["status_code"]?.   Value<UInt32>());
+                ClassicAssert.AreEqual ("The given access token 'cpo_accessing_emsp1++token' is not yet registered!",   json["status_message"]?.Value<String>());
 
                 var timestamp         = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
 
                 // Validate, that the remote party was not updated!
                 var remotePartyAtEMSP1  = emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == cpo_accessing_emsp1__token));
-                Assert.IsNotNull(remotePartyAtEMSP1);
+                ClassicAssert.IsNotNull(remotePartyAtEMSP1);
 
                 if (remotePartyAtEMSP1 is not null)
                 {
-                    Assert.AreEqual ("GraphDefined CSO Services",                                               remotePartyAtEMSP1.BusinessDetails.Name);
-                    Assert.AreEqual ("https://www.graphdefined.com/cso",                                        remotePartyAtEMSP1.BusinessDetails.Website.ToString());
-                    Assert.AreEqual ("DE",                                                                      remotePartyAtEMSP1.CountryCode.            ToString());
-                    Assert.AreEqual ("GEF",                                                                     remotePartyAtEMSP1.PartyId.                ToString());
+                    ClassicAssert.AreEqual ("GraphDefined CSO Services",                                               remotePartyAtEMSP1.BusinessDetails.Name);
+                    ClassicAssert.AreEqual ("https://www.graphdefined.com/cso",                                        remotePartyAtEMSP1.BusinessDetails.Website.ToString());
+                    ClassicAssert.AreEqual ("DE",                                                                      remotePartyAtEMSP1.CountryCode.            ToString());
+                    ClassicAssert.AreEqual ("GEF",                                                                     remotePartyAtEMSP1.PartyId.                ToString());
                 }
 
             }
@@ -1879,7 +1880,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 RemoteParty? remotePartyAtEMSP1() => emsp1CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.LocalAccessInfos.Any(localAccessInfo => localAccessInfo.AccessToken.ToString() == cpo_accessing_emsp1__token));
 
                 var remotePartyAtEMSP1_before  = remotePartyAtEMSP1();
-                Assert.IsNotNull(remotePartyAtEMSP1_before);
+                ClassicAssert.IsNotNull(remotePartyAtEMSP1_before);
 
                 var response1                = await TestHelpers.GetJSONRequest(emsp1VersionsAPIURL.Value);
                 var versionURL               = URL.Parse(response1.Content["data"]?[0]?["url"]?.Value<String>()!);
@@ -1917,30 +1918,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                 //     "timestamp":       "2023-05-05T12:31:07.181Z"
                 // }
 
-                Assert.IsNotNull(response3);
-                Assert.AreEqual (200, response3.HTTPStatusCode.Code);
-                Assert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
-                Assert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
-                Assert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(response3);
+                ClassicAssert.AreEqual (200, response3.HTTPStatusCode.Code);
+                ClassicAssert.AreEqual (5,   response3.AccessControlAllowMethods?.Count());
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("OPTIONS"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("GET"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("POST"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("PUT"));
+                ClassicAssert.IsTrue   (     response3.AccessControlAllowMethods?.Contains("DELETE"));
+                ClassicAssert.IsTrue   (Timestamp.Now - response3.Timestamp < TimeSpan.FromSeconds(10));
 
                 var json                     = response3.Content;
-                Assert.IsNotNull(json);
+                ClassicAssert.IsNotNull(json);
 
-                Assert.AreEqual (1000,                                                                 json["status_code"]?.   Value<UInt32>());
-                Assert.AreEqual ("The given access token 'cpo_accessing_emsp1++token' was deleted!",   json["status_message"]?.Value<String>());
+                ClassicAssert.AreEqual (1000,                                                                 json["status_code"]?.   Value<UInt32>());
+                ClassicAssert.AreEqual ("The given access token 'cpo_accessing_emsp1++token' was deleted!",   json["status_message"]?.Value<String>());
 
                 var timestamp                = json["timestamp"]?.Value<DateTime>();
-                Assert.IsNotNull(timestamp);
-                Assert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
+                ClassicAssert.IsNotNull(timestamp);
+                ClassicAssert.IsTrue(Timestamp.Now - timestamp < TimeSpan.FromSeconds(10));
 
 
                 // Validate, that the remote party was deleted!
                 var remotePartyAtEMSP1_after   = remotePartyAtEMSP1();
-                Assert.IsNull(remotePartyAtEMSP1_after);
+                ClassicAssert.IsNull(remotePartyAtEMSP1_after);
 
             }
 

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 #region Usings
 
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 using Newtonsoft.Json.Linq;
 
@@ -260,7 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var json = tariff1.ToJSON();
 
-            Assert.AreEqual("TARIFF0001",                     json["id"]?.          Value<String>());
+            ClassicAssert.AreEqual("TARIFF0001",                     json["id"]?.          Value<String>());
 
 
             var result = Tariff.TryParse(json,
@@ -269,21 +270,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                          tariff1.CountryCode,
                                          tariff1.PartyId);
 
-            Assert.IsTrue   (result, errorResponse);
-            Assert.IsNotNull(tariff2);
-            Assert.IsNull   (errorResponse);
+            ClassicAssert.IsTrue   (result, errorResponse);
+            ClassicAssert.IsNotNull(tariff2);
+            ClassicAssert.IsNull   (errorResponse);
 
             if (tariff2 is not null)
             {
 
-                Assert.AreEqual(tariff1.Id,                        tariff2.Id);
-                Assert.AreEqual(tariff1.Currency,                  tariff2.Currency);
-                Assert.AreEqual(tariff1.TariffElements,            tariff2.TariffElements);
-                Assert.AreEqual(tariff1.TariffAltText,             tariff2.TariffAltText);
-                Assert.AreEqual(tariff1.TariffAltURL,              tariff2.TariffAltURL);
-                Assert.AreEqual(tariff1.EnergyMix,                 tariff2.EnergyMix);
+                ClassicAssert.AreEqual(tariff1.Id,                        tariff2.Id);
+                ClassicAssert.AreEqual(tariff1.Currency,                  tariff2.Currency);
+                ClassicAssert.AreEqual(tariff1.TariffElements,            tariff2.TariffElements);
+                ClassicAssert.AreEqual(tariff1.TariffAltText,             tariff2.TariffAltText);
+                ClassicAssert.AreEqual(tariff1.TariffAltURL,              tariff2.TariffAltURL);
+                ClassicAssert.AreEqual(tariff1.EnergyMix,                 tariff2.EnergyMix);
 
-                Assert.AreEqual(tariff1.LastUpdated.ToIso8601(),   tariff2.LastUpdated.ToIso8601());
+                ClassicAssert.AreEqual(tariff1.LastUpdated.ToIso8601(),   tariff2.LastUpdated.ToIso8601());
 
             }
 

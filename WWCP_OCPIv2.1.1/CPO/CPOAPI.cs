@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2023 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -2665,7 +2665,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             //                                 URLPathPrefix + "/cpo/index.html",
             //                                 URLPathPrefix + "/cpo/"
             //                             },
-            //                             HTTPContentType.HTML_UTF8,
+            //                             HTTPContentType.Text.HTML_UTF8,
             //                             OCPIRequest: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
@@ -2676,7 +2676,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,
             //                                     Server          = DefaultHTTPServerName,
             //                                     Date            = Timestamp.Now,
-            //                                     ContentType     = HTTPContentType.HTML_UTF8,
+            //                                     ContentType     = HTTPContentType.Text.HTML_UTF8,
             //                                     Content         = _MemoryStream.ToArray(),
             //                                     Connection      = "close"
             //                                 };
@@ -2719,7 +2719,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "locations",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetLocationsRequest,
                                     OCPIResponseLogger:  GetLocationsResponse,
                                     OCPIRequestHandler:  Request => {
@@ -2870,7 +2870,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "locations/{locationId}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetLocationRequest,
                                     OCPIResponseLogger:  GetLocationResponse,
                                     OCPIRequestHandler:  Request => {
@@ -2982,7 +2982,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "locations/{locationId}/{evseId}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetEVSERequest,
                                     OCPIResponseLogger:  GetEVSEResponse,
                                     OCPIRequestHandler:  Request => {
@@ -3085,7 +3085,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetConnectorRequest,
                                     OCPIResponseLogger:  GetConnectorResponse,
                                     OCPIRequestHandler:  Request => {
@@ -3187,7 +3187,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "tariffs",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetTariffsRequest,
                                     OCPIResponseLogger:  GetTariffsResponse,
                                     OCPIRequestHandler:  Request => {
@@ -3332,7 +3332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "tariffs/{tariffId}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetTariffRequest,
                                     OCPIResponseLogger:  GetTariffResponse,
                                     OCPIRequestHandler:  Request => {
@@ -3437,7 +3437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "sessions",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetSessionsRequest,
                                     OCPIResponseLogger:  GetSessionsResponse,
                                     OCPIRequestHandler:  Request => {
@@ -3589,7 +3589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "sessions/{sessionId}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetSessionRequest,
                                     OCPIResponseLogger:  GetSessionResponse,
                                     OCPIRequestHandler:  Request => {
@@ -3715,7 +3715,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "cdrs",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetCDRsRequest,
                                     OCPIResponseLogger:  GetCDRsResponse,
                                     OCPIRequestHandler:  Request => {
@@ -3849,7 +3849,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "cdrs/{CDRId}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -3874,7 +3874,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "cdrs/{CDRId}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetCDRRequest,
                                     OCPIResponseLogger:  GetCDRResponse,
                                     OCPIRequestHandler:  Request => {
@@ -3995,7 +3995,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "tokens/{country_code}/{party_id}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetTokensRequest,
                                     OCPIResponseLogger:  GetTokensResponse,
                                     OCPIRequestHandler:  Request => {
@@ -4117,7 +4117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
                                     URLPathPrefix + "tokens/{country_code}/{party_id}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteTokensRequest,
                                     OCPIResponseLogger:  DeleteTokensResponse,
                                     OCPIRequestHandler:  async Request => {
@@ -4199,7 +4199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                             HTTPMethod.DELETE
                                                                                         },
                                                            AcceptPatch                = new List<HTTPContentType> {
-                                                                                            HTTPContentType.JSONMergePatch_UTF8
+                                                                                            HTTPContentType.Application.JSONMergePatch_UTF8
                                                                                         },
                                                            AccessControlAllowHeaders  = new[] { "Authorization" }
                                                        }
@@ -4214,7 +4214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
                                     URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   GetTokenRequest,
                                     OCPIResponseLogger:  GetTokenResponse,
                                     OCPIRequestHandler:  Request => {
@@ -4284,7 +4284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PUT,
                                     URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   PutTokenRequest,
                                     OCPIResponseLogger:  PutTokenResponse,
                                     OCPIRequestHandler:  async Request => {
@@ -4407,7 +4407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PATCH,
                                     URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   PatchTokenRequest,
                                     OCPIResponseLogger:  PatchTokenResponse,
                                     OCPIRequestHandler:  async Request => {
@@ -4503,7 +4503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
                                     URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteTokenRequest,
                                     OCPIResponseLogger:  DeleteTokenResponse,
                                     OCPIRequestHandler:  async Request => {
@@ -4594,7 +4594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/RESERVE_NOW",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestHandler: Request =>
 
                                         Task.FromResult(
@@ -4615,7 +4615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.POST,
                                     URLPathPrefix + "commands/RESERVE_NOW",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   ReserveNowRequest,
                                     OCPIResponseLogger:  ReserveNowResponse,
                                     OCPIRequestHandler:  async Request => {
@@ -4706,7 +4706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/CANCEL_RESERVATION",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestHandler: Request =>
 
                                         Task.FromResult(
@@ -4727,7 +4727,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.POST,
                                     URLPathPrefix + "commands/CANCEL_RESERVATION",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   CancelReservationRequest,
                                     OCPIResponseLogger:  CancelReservationResponse,
                                     OCPIRequestHandler:  async Request => {
@@ -4818,7 +4818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/START_SESSION",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestHandler: Request =>
 
                                         Task.FromResult(
@@ -4839,7 +4839,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.POST,
                                     URLPathPrefix + "commands/START_SESSION",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   StartSessionRequest,
                                     OCPIResponseLogger:  StartSessionResponse,
                                     OCPIRequestHandler:  async Request => {
@@ -4932,7 +4932,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/STOP_SESSION",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestHandler: Request =>
 
                                         Task.FromResult(
@@ -4953,7 +4953,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.POST,
                                     URLPathPrefix + "commands/STOP_SESSION",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   StopSessionRequest,
                                     OCPIResponseLogger:  StopSessionResponse,
                                     OCPIRequestHandler:  async Request => {
@@ -5044,7 +5044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestHandler: Request =>
 
                                         Task.FromResult(
@@ -5065,7 +5065,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.POST,
                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR",
-                                    HTTPContentType.JSON_UTF8,
+                                    HTTPContentType.Application.JSON_UTF8,
                                     OCPIRequestLogger:   UnlockConnectorRequest,
                                     OCPIResponseLogger:  UnlockConnectorResponse,
                                     OCPIRequestHandler:  async Request => {
