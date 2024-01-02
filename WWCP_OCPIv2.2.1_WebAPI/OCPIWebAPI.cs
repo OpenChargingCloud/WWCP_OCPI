@@ -630,7 +630,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.WebAPI
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
 
-                                             });
+                                             },
+                                             AllowReplacement: URLReplacement.Allow);
 
             if (OverlayURLPathPrefix.HasValue)
                 HTTPServer.AddMethodCallback(this,
