@@ -26,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using org.GraphDefined.Vanaheimr.Aegir;
 
 #endregion
 
@@ -287,6 +288,49 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual(tariff1.LastUpdated.ToIso8601(),   tariff2.LastUpdated.ToIso8601());
 
             }
+
+        }
+
+        #endregion
+
+
+        #region AugmentCDRWithTariff_Test01()
+
+        /// <summary>
+        /// Tariff serialize, deserialize and compare test.
+        /// </summary>
+        [Test]
+        public static void AugmentCDRWithTariff_Test01()
+        {
+
+            var startTime  = DateTime.Parse("2022-01-01T14:00:00Z");
+            var stopTime   = DateTime.Parse("2022-01-01T18:00:00Z");
+
+            var cdr        = new CDR(
+                                 CountryCode:       CountryCode.Parse("DE"),
+                                 PartyId:           Party_Id.Parse("GEF"),
+                                 Id:                CDR_Id.Parse("1234"),
+                                 Start:             startTime,
+                                 Stop:              stopTime,
+                                 AuthId:            Auth_Id.Parse("1234"),
+                                 AuthMethod:        AuthMethods.AUTH_REQUEST,
+                                 Location:          new Location(
+                                                        CountryCode:   CountryCode.Parse("DE"),
+                                                        PartyId:       Party_Id.Parse("GEF"),
+                                                        LocationType:  LocationType.ON_STREET,
+                                                        Id:            Location_Id.Parse("1234"),
+                                                        Address:       "Biberweg 18",
+                                                        City:          "Jena",
+                                                        PostalCode:    "07749",
+                                                        Country:       Country.Germany,
+                                                        Coordinates:   GeoCoordinate.Parse(50, 10)
+                                                    ),
+                                 Currency:          OCPI.Currency.EUR,
+                                 ChargingPeriods:   Array.Empty<ChargingPeriod>(),
+                                 TotalCost:         0,
+                                 TotalEnergy:       12,
+                                 TotalTime:         stopTime - startTime
+                             );
 
         }
 

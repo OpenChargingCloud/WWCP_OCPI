@@ -1048,10 +1048,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                     },
                            PowerType:               powerType.Value,
                            Voltage:                 (UInt16) (EVSE.AverageVoltage.HasValue && EVSE.AverageVoltage.Value != 0
-                                                        ? ((Double) EVSE.AverageVoltage.Value / Math.Sqrt(3))   // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
+                                                        ? powerType.Value switch {
+                                                              PowerTypes.AC_1_PHASE or  // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
+                                                              PowerTypes.AC_3_PHASE  => (Double) EVSE.AverageVoltage.Value / Math.Sqrt(3),
+                                                              _                      => (Double) EVSE.AverageVoltage.Value
+                                                          }
                                                         : powerType.Value switch {
                                                               PowerTypes.AC_1_PHASE  => 230,
-                                                              PowerTypes.AC_3_PHASE  => 230,                    // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
+                                                              PowerTypes.AC_3_PHASE  => 230,  // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
                                                               PowerTypes.DC          => 400,
                                                               _                      => 0
                                                           }),
