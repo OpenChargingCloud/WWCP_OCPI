@@ -4884,6 +4884,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
+                                        var withExtensions   = Request.QueryString.GetBoolean("withExtensions") ?? false;
+
                                         var filters          = Request.GetDateAndPaginationFilters();
 
                                         var allTariffs       = CommonAPI.GetTariffs(Request.LocalAccessInfo.CountryCode,
@@ -4904,6 +4906,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
                                                                                   Select(tariff => tariff.ToJSON(false,
+                                                                                                                 withExtensions,
                                                                                                                  CustomTariffSerializer,
                                                                                                                  CustomDisplayTextSerializer,
                                                                                                                  CustomTariffElementSerializer,
@@ -5056,12 +5059,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #endregion
 
+                                        var withExtensions = Request.QueryString.GetBoolean("withExtensions") ?? false;
+
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = tariff.ToJSON(false,
+                                                                                        withExtensions,
                                                                                         CustomTariffSerializer,
                                                                                         CustomDisplayTextSerializer,
                                                                                         CustomTariffElementSerializer,
@@ -5182,6 +5188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    StatusCode           = 2000,
                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
                                                    Data                 = newOrUpdatedTariff.ToJSON(false,
+                                                                                                    false,
                                                                                                     CustomTariffSerializer,
                                                                                                     CustomDisplayTextSerializer,
                                                                                                     CustomTariffElementSerializer,
@@ -5356,6 +5363,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
                                                        Data                 = existingTariff.ToJSON(false,
+                                                                                                    false,
                                                                                                     CustomTariffSerializer,
                                                                                                     CustomDisplayTextSerializer,
                                                                                                     CustomTariffElementSerializer,

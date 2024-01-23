@@ -1072,6 +1072,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            Tariffs.Any()
                                ? new JProperty("tariffs",                  new JArray(Tariffs.              Select(tariff               => tariff.              ToJSON(false,
+                                                                                                                                                                       false,
                                                                                                                                                                        CustomTariffSerializer,
                                                                                                                                                                        CustomDisplayTextSerializer,
                                                                                                                                                                        CustomTariffElementSerializer,

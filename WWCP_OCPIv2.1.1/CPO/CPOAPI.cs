@@ -3217,6 +3217,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
+                                        var withExtensions   = Request.QueryString.GetBoolean("withExtensions") ?? false;
+
                                         var filters          = Request.GetDateAndPaginationFilters();
 
                                         //ToDo: Maybe not all EMSP should see all charging tariffs!
@@ -3283,6 +3285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
                                                                                   Select        (tariff => tariff.ToJSON(false,
+                                                                                                                         withExtensions,
                                                                                                                          CustomTariffSerializer,
                                                                                                                          CustomDisplayTextSerializer,
                                                                                                                          CustomTariffElementSerializer,
@@ -3374,12 +3377,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #endregion
 
+                                        var withExtensions = Request.QueryString.GetBoolean("withExtensions") ?? false;
+
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = tariff.ToJSON(false,
+                                                                                        withExtensions,
                                                                                         CustomTariffSerializer,
                                                                                         CustomDisplayTextSerializer,
                                                                                         CustomTariffElementSerializer,

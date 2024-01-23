@@ -6384,6 +6384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addTariff,
                                Tariff.ToJSON(true,
+                                             true,
                                              CustomTariffSerializer,
                                              CustomDisplayTextSerializer,
                                              CustomTariffElementSerializer,
@@ -6441,6 +6442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addTariffIfNotExists,
                                Tariff.ToJSON(true,
+                                             true,
                                              CustomTariffSerializer,
                                              CustomDisplayTextSerializer,
                                              CustomTariffElementSerializer,
@@ -6508,6 +6510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addOrUpdateTariff,
                                Tariff.ToJSON(true,
+                                             true,
                                              CustomTariffSerializer,
                                              CustomDisplayTextSerializer,
                                              CustomTariffElementSerializer,
@@ -6555,6 +6558,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addOrUpdateTariff,
                                Tariff.ToJSON(true,
+                                             true,
                                              CustomTariffSerializer,
                                              CustomDisplayTextSerializer,
                                              CustomTariffElementSerializer,
@@ -6638,6 +6642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(updateTariff,
                                Tariff.ToJSON(true,
+                                             true,
                                              CustomTariffSerializer,
                                              CustomDisplayTextSerializer,
                                              CustomTariffElementSerializer,
@@ -6709,6 +6714,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     await LogAsset(updateTariff,
                                    Tariff.ToJSON(true,
+                                                 true,
                                                  CustomTariffSerializer,
                                                  CustomDisplayTextSerializer,
                                                  CustomTariffElementSerializer,
@@ -6868,6 +6874,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(removeTariff,
                                tariff.ToJSON(true,
+                                             true,
                                              CustomTariffSerializer,
                                              CustomDisplayTextSerializer,
                                              CustomTariffElementSerializer,
