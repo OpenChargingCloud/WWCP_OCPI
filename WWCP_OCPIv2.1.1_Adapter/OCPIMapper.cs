@@ -1668,13 +1668,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this ChargeDetailRecord, out Warnings)
 
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
-                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
-                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                  GetTariffIds2_Delegate?         GetTariffIdsDelegate,
-                                  EMSP_Id?                        EMSPId,
-                                  Func<Tariff_Id, Tariff?>?       TariffGetter,
-                                  out IEnumerable<Warning>        Warnings)
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord                     ChargeDetailRecord,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?                   CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?                    CustomEVSEIdConverter,
+                                  GetTariffIds2_Delegate?                          GetTariffIdsDelegate,
+                                  EMSP_Id?                                         EMSPId,
+                                  Func<Tariff_Id, DateTime?, TimeSpan?, Tariff?>?  TariffGetter,
+                                  out IEnumerable<Warning>                         Warnings)
         {
 
             var warnings  = new List<Warning>();
@@ -1695,13 +1695,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this ChargeDetailRecord, ref Warnings)
 
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
-                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
-                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
-                                  GetTariffIds2_Delegate?         GetTariffIdsDelegate,
-                                  EMSP_Id?                        EMSPId,
-                                  Func<Tariff_Id, Tariff?>?       TariffGetter,
-                                  ref List<Warning>               Warnings)
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord                     ChargeDetailRecord,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?                   CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?                    CustomEVSEIdConverter,
+                                  GetTariffIds2_Delegate?                          GetTariffIdsDelegate,
+                                  EMSP_Id?                                         EMSPId,
+                                  Func<Tariff_Id, DateTime?, TimeSpan?, Tariff?>?  TariffGetter,
+                                  ref List<Warning>                                Warnings)
         {
 
             try
@@ -1862,7 +1862,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                     filteredLocation.EVSEs.First().Connectors.First().Id,
                                                                     EMSPId);
 
-                var tariffs          = tariffIds?.Select(tariffId => TariffGetter?.Invoke(tariffId))?.
+                var tariffs          = tariffIds?.Select(tariffId => TariffGetter?.Invoke(tariffId, Timestamp.Now, null))?.
                                                   Where (tariff   => tariff is not null)?.
                                                   Cast<Tariff>()
                                        ?? Array.Empty<Tariff>();

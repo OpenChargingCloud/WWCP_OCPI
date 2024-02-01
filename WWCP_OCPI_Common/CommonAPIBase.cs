@@ -1112,16 +1112,31 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (protected) LogAsset       (Command, JSON,        ...)
+        #region (protected) LogAsset       (Command, JSONObject,  ...)
 
         protected Task LogAsset(String            Command,
-                                JObject           JSON,
+                                JObject           JSONObject,
                                 EventTracking_Id  EventTrackingId,
                                 User_Id?          CurrentUserId   = null)
 
             => WriteToDatabase(AssetsDBFileName,
                                Command,
-                               JSON,
+                               JSONObject,
+                               EventTrackingId,
+                               CurrentUserId);
+
+        #endregion
+
+        #region (protected) LogAsset       (Command, JSONArray,   ...)
+
+        protected Task LogAsset(String            Command,
+                                JArray            JSONArray,
+                                EventTracking_Id  EventTrackingId,
+                                User_Id?          CurrentUserId   = null)
+
+            => WriteToDatabase(AssetsDBFileName,
+                               Command,
+                               JSONArray,
                                EventTrackingId,
                                CurrentUserId);
 

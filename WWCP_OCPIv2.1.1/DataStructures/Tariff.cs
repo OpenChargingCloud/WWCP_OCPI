@@ -42,7 +42,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     public class Tariff : IHasId<Tariff_Id>,
                           IEquatable<Tariff>,
                           IComparable<Tariff>,
-                          IComparable
+                          IComparable,
+                          INotBeforeNotAfter
     {
 
         #region Data

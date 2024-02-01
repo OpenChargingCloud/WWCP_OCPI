@@ -17,7 +17,6 @@
 
 #region Usings
 
-using System.Net.Security;
 using System.Collections.Concurrent;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
@@ -29,7 +28,6 @@ using org.GraphDefined.Vanaheimr.Styx.Arrows;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Logging;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
@@ -60,6 +58,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    EVSE_UId?      EVSEUId       = null,
                                                                    Connector_Id?  ConnectorId   = null,
                                                                    EMSP_Id?       EMSPId        = null);
+
+
+
 
 
     /// <summary>
@@ -1222,7 +1223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             {
 
                                 if (tariffs.ContainsKey(tariff.Id))
-                                    tariffs.Remove(tariff.Id, out _);
+                                    tariffs.Remove(tariff.Id);
 
                                 tariffs.TryAdd(tariff.Id, tariff);
 
@@ -1249,7 +1250,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 out errorResponse) &&
                                 tariff is not null)
                             {
-                                tariffs.Remove(tariff.Id, out _);
+                                tariffs.Remove(tariff.Id);
                                 tariffs.TryAdd(tariff.Id, tariff);
                             }
                         }
@@ -1274,7 +1275,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 out errorResponse) &&
                                 tariff is not null)
                             {
-                                tariffs.Remove(tariff.Id, out _);
+                                tariffs.Remove(tariff.Id);
                             }
                         }
                         catch (Exception e)
@@ -6350,12 +6351,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Data
 
-        private readonly ConcurrentDictionary<Tariff_Id , Tariff> tariffs = new();
+        private readonly TimeRangeDictionary<Tariff_Id , Tariff> tariffs = new();
 
 
-        public delegate Task OnTariffAddedDelegate  (Tariff Tariff);
-        public delegate Task OnTariffChangedDelegate(Tariff Tariff);
-        public delegate Task OnTariffRemovedDelegate(Tariff Tariff);
+        public delegate Task OnTariffAddedDelegate  (Tariff               Tariff);
+        public delegate Task OnTariffChangedDelegate(Tariff               Tariff);
+        public delegate Task OnTariffRemovedDelegate(IEnumerable<Tariff>  Tariff);
 
         public event OnTariffAddedDelegate?    OnTariffAdded;
         public event OnTariffChangedDelegate?  OnTariffChanged;
@@ -6495,7 +6496,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Update an existing tariff
 
-            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff))
+            if (tariffs.TryGetValue(Tariff.Id,
+                                    out var existingTariff,
+                                    Tariff.NotBefore ?? DateTime.MinValue))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -6505,7 +6508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                             "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
                 }
 
-                tariffs[Tariff.Id] = Tariff;
+                tariffs.AddOrUpdate(Tariff.Id, Tariff);
                 Tariff.CommonAPI = this;
 
                 await LogAsset(addOrUpdateTariff,
@@ -6615,7 +6618,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Validate AllowDowngrades
 
-            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff))
+            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff, Timestamp.Now))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -6700,7 +6703,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 return PatchResult<Tariff>.Failed(Tariff,
                                                   "The given charging tariff patch must not be null or empty!");
 
-            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff))
+            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff, Timestamp.Now))
             {
 
                 var patchResult = existingTariff.TryPatch(TariffPatch,
@@ -6710,7 +6713,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     patchResult.PatchedData is not null)
                 {
 
-                    tariffs[Tariff.Id] = patchResult.PatchedData;
+                    tariffs.TryUpdate(Tariff.Id, Tariff, patchResult.PatchedData);
 
                     await LogAsset(updateTariff,
                                    Tariff.ToJSON(true,
@@ -6761,22 +6764,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region TariffExists(TariffId)
+        #region TariffExists(TariffId, Timestamp = null, Tolerance = null)
 
-        public Boolean TariffExists(Tariff_Id TariffId)
+        public Boolean TariffExists(Tariff_Id  TariffId,
+                                    DateTime?  Timestamp   = null,
+                                    TimeSpan?  Tolerance   = null)
 
-            => tariffs.ContainsKey(TariffId);
+            => tariffs.ContainsKey(TariffId,
+                                   Timestamp,
+                                   Tolerance);
 
         #endregion
 
-        #region TryGetTariff(TariffId, out Tariff)
+        #region TryGetTariff(TariffId, out Tariff, Timestamp = null, Tolerance = null)
 
         public Boolean TryGetTariff(Tariff_Id    TariffId,
-                                    out Tariff?  Tariff)
+                                    out Tariff?  Tariff,
+                                    DateTime?    Timestamp   = null,
+                                    TimeSpan?    Tolerance   = null)
         {
 
-            if (tariffs.TryGetValue(TariffId, out Tariff))
+            if (tariffs.TryGetValue(TariffId,
+                                    out Tariff,
+                                    Timestamp,
+                                    Tolerance))
+            {
                 return true;
+            }
 
             Tariff = null;
             return false;
@@ -6785,13 +6799,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetTariff   (TariffId)
+        #region GetTariff   (TariffId, Timestamp = null, Tolerance = null)
 
-        public Tariff? GetTariff(Tariff_Id TariffId)
+        public Tariff? GetTariff(Tariff_Id  TariffId,
+                                 DateTime?  Timestamp   = null,
+                                 TimeSpan?  Tolerance   = null)
         {
 
-            if (tariffs.TryGetValue(TariffId, out var tariff))
+            if (tariffs.TryGetValue(TariffId,
+                                    out var tariff,
+                                    Timestamp,
+                                    Tolerance))
+            {
                 return tariff;
+            }
 
             return null;
 
@@ -6799,23 +6820,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetTariffs  (IncludeTariff = null)
+        #region GetTariffs  (IncludeTariff = null, Timestamp = null, Tolerance = null)
 
-        public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean>? IncludeTariff = null)
+        public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean>?  IncludeTariff   = null,
+                                              DateTime?               Timestamp       = null,
+                                              TimeSpan?               Tolerance       = null)
 
             => IncludeTariff is null
-                   ? tariffs.Values
-                   : tariffs.Values.Where(IncludeTariff);
+                   ? tariffs.Values(Timestamp, Tolerance)
+                   : tariffs.Values(Timestamp, Tolerance).Where(IncludeTariff);
 
         #endregion
 
-        #region GetTariffs  (CountryCode, PartyId)
+        #region GetTariffs  (CountryCode, PartyId, Timestamp = null, Tolerance = null)
 
         public IEnumerable<Tariff> GetTariffs(CountryCode  CountryCode,
-                                              Party_Id     PartyId)
+                                              Party_Id     PartyId,
+                                              DateTime?    Timestamp   = null,
+                                              TimeSpan?    Tolerance   = null)
 
-            => tariffs.Values.Where(tariff => tariff.CountryCode == CountryCode &&
-                                              tariff.PartyId     == PartyId);
+            => tariffs.Values(Timestamp, Tolerance).
+                       Where (tariff => tariff.CountryCode == CountryCode &&
+                                        tariff.PartyId     == PartyId);
 
         #endregion
 
@@ -6846,13 +6872,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="Tariff">A charging tariff.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public Task<RemoveResult<Tariff>> RemoveTariff(Tariff             Tariff,
-                                                       Boolean            SkipNotifications   = false,
-                                                       EventTracking_Id?  EventTrackingId     = null,
-                                                       User_Id?           CurrentUserId       = null)
+        public Task<RemoveResult<IEnumerable<Tariff>>> RemoveTariff(Tariff             Tariff,
+                                                                    Boolean            SkipNotifications   = false,
+                                                                    EventTracking_Id?  EventTrackingId     = null,
+                                                                    User_Id?           CurrentUserId       = null)
 
             => RemoveTariff(Tariff.Id,
-                            SkipNotifications);
+                            SkipNotifications,
+                            EventTrackingId,
+                            CurrentUserId);
 
         #endregion
 
@@ -6863,26 +6891,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="TariffId">An unique charging tariff identification.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<Tariff>> RemoveTariff(Tariff_Id          TariffId,
-                                                             Boolean            SkipNotifications   = false,
-                                                             EventTracking_Id?  EventTrackingId     = null,
-                                                             User_Id?           CurrentUserId       = null)
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveTariff(Tariff_Id          TariffId,
+                                                                          Boolean            SkipNotifications   = false,
+                                                                          EventTracking_Id?  EventTrackingId     = null,
+                                                                          User_Id?           CurrentUserId       = null)
         {
 
-            if (tariffs.Remove(TariffId, out var tariff))
+            if (tariffs.TryRemove(TariffId, out var removedTariffs))
             {
 
                 await LogAsset(removeTariff,
-                               tariff.ToJSON(true,
-                                             true,
-                                             CustomTariffSerializer,
-                                             CustomDisplayTextSerializer,
-                                             CustomTariffElementSerializer,
-                                             CustomPriceComponentSerializer,
-                                             CustomTariffRestrictionsSerializer,
-                                             CustomEnergyMixSerializer,
-                                             CustomEnergySourceSerializer,
-                                             CustomEnvironmentalImpactSerializer),
+                               new JArray(removedTariffs.Select(removedTariff => removedTariff.ToJSON(true,
+                                                                                                      true,
+                                                                                                      CustomTariffSerializer,
+                                                                                                      CustomDisplayTextSerializer,
+                                                                                                      CustomTariffElementSerializer,
+                                                                                                      CustomPriceComponentSerializer,
+                                                                                                      CustomTariffRestrictionsSerializer,
+                                                                                                      CustomEnergyMixSerializer,
+                                                                                                      CustomEnergySourceSerializer,
+                                                                                                      CustomEnvironmentalImpactSerializer))),
                                EventTrackingId ?? EventTracking_Id.New,
                                CurrentUserId);
 
@@ -6894,7 +6922,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     {
                         try
                         {
-                            await OnTariffRemovedLocal(tariff);
+                            await OnTariffRemovedLocal(removedTariffs);
                         }
                         catch (Exception e)
                         {
@@ -6906,12 +6934,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return RemoveResult<Tariff>.Success(tariff);
+                return RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs);
 
             }
 
-            return RemoveResult<Tariff>.Failed(null,
-                                               "RemoveTariff(TariffId, ...) failed!");
+            return RemoveResult<IEnumerable<Tariff>>.Failed(null,
+                                                            "RemoveTariff(TariffId, ...) failed!");
 
         }
 
@@ -6928,7 +6956,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               User_Id?           CurrentUserId       = null)
         {
 
-            var existingTariffs = tariffs.Values.ToArray();
+            var existingTariffs = tariffs.Values().ToArray();
 
             tariffs.Clear();
 
@@ -6944,8 +6972,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
                     try
                     {
-                        foreach (var location in existingTariffs)
-                            await OnTariffRemovedLocal(location);
+                        foreach (var existingTariff in existingTariffs)
+                            await OnTariffRemovedLocal([ existingTariff ]);
                     }
                     catch (Exception e)
                     {
@@ -6977,9 +7005,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         {
 
             var removedTariffs  = new List<Tariff>();
-            var failedTariffs   = new List<RemoveResult<Tariff>>();
+            var failedTariffs   = new List<RemoveResult<IEnumerable<Tariff>>>();
 
-            foreach (var tariff in tariffs.Values.Where(IncludeTariffs).ToArray())
+            foreach (var tariff in tariffs.Values().Where(IncludeTariffs).ToArray())
             {
 
                 var result = await RemoveTariff(tariff.Id,
@@ -6997,8 +7025,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                        : !removedTariffs.Any() && !failedTariffs.Any()
                              ? RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>())
-                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.Select(tariff => tariff.Data)!,
-                                                                             failedTariffs.Select(tariff => tariff.ErrorResponse).AggregateWith(", "));
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
+                                                                             failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
 
         }
 
@@ -7018,18 +7046,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         {
 
             var removedTariffs  = new List<Tariff>();
-            var failedTariffs   = new List<RemoveResult<Tariff>>();
+            var failedTariffs   = new List<RemoveResult<IEnumerable<Tariff>>>();
 
-            foreach (var tariff in tariffs.Where  (kvp => IncludeTariffIds(kvp.Key)).
-                                           Select (kvp => kvp.Value).
-                                           ToArray())
+            foreach (var tariffsToRemove in tariffs.Where  (kvp => IncludeTariffIds(kvp.Key)).
+                                                    Select (kvp => kvp.Value).
+                                                    ToArray())
             {
 
-                var result = await RemoveTariff(tariff.Id,
+                var result = await RemoveTariff(tariffsToRemove.First().Id,
                                                 SkipNotifications);
 
                 if (result.IsSuccess)
-                    removedTariffs.Add(tariff);
+                    removedTariffs.AddRange(tariffsToRemove);
                 else
                     failedTariffs. Add(result);
 
@@ -7040,8 +7068,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                        : !removedTariffs.Any() && !failedTariffs.Any()
                              ? RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>())
-                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.Select(tariff => tariff.Data)!,
-                                                                             failedTariffs.Select(tariff => tariff.ErrorResponse).AggregateWith(", "));
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
+                                                                             failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
 
         }
 
@@ -7067,11 +7095,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                   CurrentUserId);
 
             var removedTariffs  = new List<Tariff>();
-            var failedTariffs   = new List<RemoveResult<Tariff>>();
+            var failedTariffs   = new List<RemoveResult<IEnumerable<Tariff>>>();
 
-            foreach (var tariff in tariffs.Values.Where  (tariff => CountryCode == tariff.CountryCode &&
-                                                                    PartyId     == tariff.PartyId).
-                                                  ToArray())
+            foreach (var tariff in tariffs.Values().Where  (tariff => CountryCode == tariff.CountryCode &&
+                                                                      PartyId     == tariff.PartyId).
+                                                    ToArray())
             {
 
                 var result = await RemoveTariff(tariff.Id,
@@ -7089,8 +7117,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                        : !removedTariffs.Any() && !failedTariffs.Any()
                              ? RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>())
-                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.Select(tariff => tariff.Data)!,
-                                                                             failedTariffs.Select(tariff => tariff.ErrorResponse).AggregateWith(", "));
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
+                                                                             failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
 
         }
 
