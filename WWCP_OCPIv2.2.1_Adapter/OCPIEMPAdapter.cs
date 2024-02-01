@@ -596,7 +596,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                              TimeSpan?                RequestTimeout,
                                                              CancellationToken        CancellationToken)
         {
-            return Task.FromResult(RemoteStartResult.NoOperation());
+            return Task.FromResult(RemoteStartResult.NoOperation(System_Id.Local));
         }
 
         Task<RemoteStopResult> IRemoteStartStop.RemoteStop(ChargingSession_Id     SessionId,
@@ -610,7 +610,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                            TimeSpan?              RequestTimeout,
                                                            CancellationToken      CancellationToken)
         {
-            return Task.FromResult(RemoteStopResult.NoOperation(SessionId));
+            return Task.FromResult(RemoteStopResult.NoOperation(SessionId, System_Id.Local));
         }
 
         #endregion
