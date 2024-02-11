@@ -1490,6 +1490,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <summary>
         /// Get all tariffs from the remote API.
         /// </summary>
+        /// <param name="Timestamp">An optional timestamp for time-traveled requests.</param>
+        /// <param name="Tolerance">An optional timestamp tolerance for time-traveled requests.</param>
         /// 
         /// <param name="VersionId">An optional OCPI version identification.</param>
         /// <param name="RequestId">An optional request identification.</param>
@@ -1500,7 +1502,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<Tariff>>>
 
-            GetTariffs(Version_Id?         VersionId           = null,
+            GetTariffs(DateTime?           Timestamp           = null,
+                       TimeSpan?           Tolerance           = null,
+
+                       Version_Id?         VersionId           = null,
                        Request_Id?         RequestId           = null,
                        Correlation_Id?     CorrelationId       = null,
 
@@ -1512,7 +1517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
+            var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1587,12 +1592,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                      HTTPMethod.GET,
                                                                      remoteURL.Value.Path,
                                                                      requestbuilder => {
+
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
                                                                          requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
+
+                                                                         if (Timestamp.HasValue)
+                                                                             requestbuilder.QueryString.Add("timestamp", Timestamp.Value.ToIso8601());
+
+                                                                         if (Tolerance.HasValue)
+                                                                             requestbuilder.QueryString.Add("tolerance", Tolerance.Value.TotalSeconds);
+
                                                                      }
                                                                  ),
 
@@ -1634,7 +1647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
             #region Send OnGetTariffsResponse event
 
-            var endtime = Timestamp.Now;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1675,6 +1688,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         /// Get the tariff specified by the given tariff identification from the remote API.
         /// </summary>
         /// <param name="TariffId">The identification of the requested tariff.</param>
+        /// <param name="Timestamp">An optional timestamp for time-traveled requests.</param>
+        /// <param name="Tolerance">An optional timestamp tolerance for time-traveled requests.</param>
         /// 
         /// <param name="VersionId">An optional OCPI version identification.</param>
         /// <param name="RequestId">An optional request identification.</param>
@@ -1686,6 +1701,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         public async Task<OCPIResponse<Tariff>>
 
             GetTariff(Tariff_Id           TariffId,
+                      DateTime?           Timestamp           = null,
+                      TimeSpan?           Tolerance           = null,
 
                       Version_Id?         VersionId           = null,
                       Request_Id?         RequestId           = null,
@@ -1699,7 +1716,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
             #region Init
 
-            var startTime        = Timestamp.Now;
+            var startTime        = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
             var requestId        = RequestId       ?? Request_Id.    NewRandom();
             var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
             var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
@@ -1776,12 +1793,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
                                                                      HTTPMethod.GET,
                                                                      remoteURL.Value.Path + TariffId.ToString(),
                                                                      requestbuilder => {
+
                                                                          requestbuilder.Authorization  = TokenAuth;
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
                                                                          requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
+
+                                                                         if (Timestamp.HasValue)
+                                                                             requestbuilder.QueryString.Add("timestamp", Timestamp.Value.ToIso8601());
+
+                                                                         if (Tolerance.HasValue)
+                                                                             requestbuilder.QueryString.Add("tolerance", Tolerance.Value.TotalSeconds);
+
                                                                      }
                                                                  ),
 
@@ -1823,7 +1848,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 
             #region Send OnGetTariffResponse event
 
-            var endtime = Timestamp.Now;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {

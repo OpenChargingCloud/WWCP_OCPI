@@ -41,7 +41,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     public class Tariff : IHasId<Tariff_Id>,
                           IEquatable<Tariff>,
                           IComparable<Tariff>,
-                          IComparable
+                          IComparable,
+                          INotBeforeNotAfter
     {
 
         #region Data
@@ -151,6 +152,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         [Mandatory, NonStandard("Pagination")]
         public   DateTime                    Created              { get; }
+
+        /// <summary>
+        /// The optional timestamp when this tariff becomes relevant.
+        /// </summary>
+        [Optional, NonStandard("TimeTraveling")]
+        public   DateTime?                   NotBefore
+            => Start;
+
+        /// <summary>
+        /// The optional timestamp when this tariff is no longer relevant.
+        /// </summary>
+        [Optional, NonStandard("TimeTraveling")]
+        public   DateTime?                   NotAfter
+            => End;
 
         /// <summary>
         /// The timestamp when this tariff was last updated (or created).

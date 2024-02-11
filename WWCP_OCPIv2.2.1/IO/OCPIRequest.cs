@@ -330,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                               CommonAPI    CommonAPI)
         {
 
-            this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(HTTPRequest), "The given HTTP request must not be null!");
+            this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(Request), "The given HTTP request must not be null!");
             this.CommonAPI        = CommonAPI;
 
             this.RequestId        = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",           Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);

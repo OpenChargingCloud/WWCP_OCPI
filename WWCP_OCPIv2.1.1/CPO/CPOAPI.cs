@@ -646,10 +646,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
+            var timestamp = Request.QueryString.GetDateTime("timestamp");
+            var tolerance = Request.QueryString.GetTimeSpan("tolerance");
+
             if (!CPOAPI.CommonAPI.TryGetTariff(TariffId.Value,
-                                               out Tariff) ||
-                 Tariff is null                            ||
-                 Tariff.CountryCode != CountryCode         ||
+                                               out Tariff,
+                                               timestamp,
+                                               tolerance) ||
+                 Tariff is null                           ||
+                 Tariff.CountryCode != CountryCode        ||
                  Tariff.PartyId     != PartyId)
             {
 
@@ -3217,14 +3222,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        var withExtensions   = Request.QueryString.GetBoolean("withExtensions") ?? false;
+                                        var timestamp        = Request.QueryString.GetDateTime("timestamp");
+                                        var tolerance        = Request.QueryString.GetTimeSpan("tolerance");
+                                        var withExtensions   = Request.QueryString.GetBoolean ("withExtensions") ?? false;
 
                                         var filters          = Request.GetDateAndPaginationFilters();
 
                                         //ToDo: Maybe not all EMSP should see all charging tariffs!
                                         var allTariffs       = CommonAPI.GetTariffs(//CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
                                                                                     //CommonAPI.OurPartyId       //Request.AccessInfo.Value.PartyId
-                                                                                   ).ToArray();
+                                                                                    Timestamp: timestamp,
+                                                                                    Tolerance: tolerance).ToArray();
 
                                         var filteredTariffs  = allTariffs.Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
                                                                           Where(tariff => !filters.To.  HasValue || tariff.LastUpdated <= filters.To.  Value).
@@ -3361,7 +3369,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #endregion
 
-                                        #region Check tariff
+                                        var withExtensions = Request.QueryString.GetBoolean ("withExtensions") ?? false;
+
+
+                                        #region Check tariff (will respect timestamp & tolerance QueryParameters!)
 
                                         if (!Request.ParseTariff(this,
                                                                  CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
@@ -3376,8 +3387,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         }
 
                                         #endregion
-
-                                        var withExtensions = Request.QueryString.GetBoolean("withExtensions") ?? false;
 
 
                                         return Task.FromResult(
