@@ -20,6 +20,7 @@
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
+using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
 
 #endregion
@@ -66,15 +67,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
             /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public Logger(CPOClient                CPOClient,
-                          String?                  LoggingPath,
-                          String?                  Context          = DefaultContext,
-                          LogfileCreatorDelegate?  LogfileCreator   = null)
+            public Logger(CPOClient                    CPOClient,
+                          String?                      LoggingPath,
+                          String?                      Context          = DefaultContext,
+                          OCPILogfileCreatorDelegate?  LogfileCreator   = null)
 
                 : base(CPOClient,
                        LoggingPath,
                        Context ?? DefaultContext,
-                       LogfileCreator)
+                       LogfileCreator is not null
+                           ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                           : null)
 
             {
 

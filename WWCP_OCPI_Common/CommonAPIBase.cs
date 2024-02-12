@@ -35,7 +35,8 @@ using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 namespace cloud.charging.open.protocols.OCPI
 {
 
-    public delegate String OCPILogfileCreatorDelegate(String LoggingPath, IRemoteParty? RemoteParty, String Context, String LogfileName);
+    public delegate String                 OCPILogfileCreatorDelegate(String LoggingPath, IRemoteParty? RemoteParty, String Context, String LogfileName);
+    //public delegate LogfileCreatorDelegate OCPILogfileCreatorMapper  (RemoteParty_Id RemotePartyId);
 
 
     /// <summary>
@@ -55,27 +56,27 @@ namespace cloud.charging.open.protocols.OCPI
             /// <summary>
             /// The description of the OCPI client.
             /// </summary>
-            public Func<RemoteParty_Id, String>?                  Description       { get; set; }
+            public Func<RemoteParty_Id, String>?   Description       { get; set; }
 
             /// <summary>
             /// Whether logging is disabled for this OCPI client.
             /// </summary>
-            public Func<RemoteParty_Id, Boolean>?                 DisableLogging    { get; set; }
+            public Func<RemoteParty_Id, Boolean>?  DisableLogging    { get; set; }
 
             /// <summary>
             /// The logging path for this OCPI client.
             /// </summary>
-            public Func<RemoteParty_Id, String>?                  LoggingPath       { get; set; }
+            public Func<RemoteParty_Id, String>?   LoggingPath       { get; set; }
 
             /// <summary>
             /// The logging context for this OCPI client.
             /// </summary>
-            public Func<RemoteParty_Id, String>?                  LoggingContext    { get; set; }
+            public Func<RemoteParty_Id, String>?   LoggingContext    { get; set; }
 
             /// <summary>
             /// The logfile creator for this OCPI client.
             /// </summary>
-            public Func<RemoteParty_Id, LogfileCreatorDelegate>?  LogfileCreator    { get; set; }
+            public OCPILogfileCreatorDelegate?     LogfileCreator    { get; set; }
 
         }
 

@@ -24,6 +24,8 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.WWCP
@@ -109,11 +111,11 @@ namespace cloud.charging.open.protocols.WWCP
                                         String?                                                  LoggingPath                          = null,
                                         String?                                                  LoggingContext                       = null,
                                         String?                                                  LogfileName                          = null,
-                                        OCPIv2_1_1.HTTP.OCPILogfileCreatorDelegate?              LogfileCreator                       = null,
+                                        OCPILogfileCreatorDelegate?                              LogfileCreator                       = null,
 
                                         String?                                                  ClientsLoggingPath                   = null,
                                         String?                                                  ClientsLoggingContext                = null,
-                                        OCPIv2_1_1.HTTP.OCPILogfileCreatorDelegate?              ClientsLogfileCreator                = null,
+                                        OCPILogfileCreatorDelegate?                              ClientsLogfileCreator                = null,
                                         DNSClient?                                               DNSClient                            = null)
 
         {
@@ -274,7 +276,7 @@ namespace cloud.charging.open.protocols.WWCP
 
                                         String?                                                  ClientsLoggingPath                   = null,
                                         String?                                                  ClientsLoggingContext                = null,
-                                        LogfileCreatorDelegate?                                  ClientsLogfileCreator                = null,
+                                        OCPILogfileCreatorDelegate?                              ClientsLogfileCreator                = null,
                                         DNSClient?                                               DNSClient                            = null)
 
         {

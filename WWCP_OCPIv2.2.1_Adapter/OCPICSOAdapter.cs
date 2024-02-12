@@ -25,6 +25,7 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
@@ -90,6 +91,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public WWCPEVSE_2_EVSE_Delegate?                    CustomEVSEConverter                  { get; }
         public WWCPEVSEStatusUpdate_2_StatusType_Delegate?  CustomEVSEStatusUpdateConverter      { get; }
         public WWCPChargeDetailRecord_2_CDR_Delegate?       CustomChargeDetailRecordConverter    { get; }
+
+        public new OCPILogfileCreatorDelegate? ClientsLogfileCreator { get; }
 
         #endregion
 
@@ -233,11 +236,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                               String?                                         LoggingPath                         = DefaultHTTPAPI_LoggingPath,
                               String?                                         LoggingContext                      = DefaultLoggingContext,
                               String?                                         LogfileName                         = DefaultHTTPAPI_LogfileName,
-                              HTTP.OCPILogfileCreatorDelegate?                LogfileCreator                      = null,
+                              OCPILogfileCreatorDelegate?                     LogfileCreator                      = null,
 
                               String?                                         ClientsLoggingPath                  = DefaultHTTPAPI_LoggingPath,
                               String?                                         ClientsLoggingContext               = DefaultLoggingContext,
-                              HTTP.OCPILogfileCreatorDelegate?                ClientsLogfileCreator               = null,
+                              OCPILogfileCreatorDelegate?                     ClientsLogfileCreator               = null,
                               DNSClient?                                      DNSClient                           = null)
 
             : base(Id,
@@ -319,6 +322,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.CustomEVSEConverter                = CustomEVSEConverter;
             this.CustomEVSEStatusUpdateConverter    = CustomEVSEStatusUpdateConverter;
             this.CustomChargeDetailRecordConverter  = CustomChargeDetailRecordConverter;
+
+            this.ClientsLogfileCreator              = ClientsLogfileCreator;
 
             this.CPOAPI                             = new HTTP.CPOAPI(
 

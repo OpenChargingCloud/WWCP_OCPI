@@ -645,9 +645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    LoggingContext,
                    LoggingPath,
                    LogfileName,
-                   LogfileCreator is not null
-                       ? (loggingPath, remotePartyId, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
-                       : null,
+                   LogfileCreator,
                    DatabaseFilePath,
                    RemotePartyDBFileName,
                    AssetsDBFileName,
@@ -4524,7 +4522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
                                     ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
                                     ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
-                                    ClientConfigurations.LogfileCreator?.Invoke(remotePartyId),
+                                    ClientConfigurations.LogfileCreator,
                                     DNSClient
                                 );
 
@@ -4573,7 +4571,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
                                     ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
                                     ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
-                                    ClientConfigurations.LogfileCreator?.Invoke(RemoteParty.Id),
+                                    ClientConfigurations.LogfileCreator,
                                     DNSClient
                                 );
 
@@ -4623,7 +4621,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
                                     ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
                                     ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
-                                    ClientConfigurations.LogfileCreator?.Invoke(RemotePartyId),
+                                    ClientConfigurations.LogfileCreator,
                                     DNSClient
                                 );
 
@@ -4689,7 +4687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      ClientConfigurations.DisableLogging?.Invoke(remotePartyId),
                                      ClientConfigurations.LoggingPath?.   Invoke(remotePartyId),
                                      ClientConfigurations.LoggingContext?.Invoke(remotePartyId),
-                                     ClientConfigurations.LogfileCreator?.Invoke(remotePartyId),
+                                     ClientConfigurations.LogfileCreator,
                                      DNSClient
                                  );
 
@@ -4738,7 +4736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      ClientConfigurations.DisableLogging?.Invoke(RemoteParty.Id),
                                      ClientConfigurations.LoggingPath?.   Invoke(RemoteParty.Id),
                                      ClientConfigurations.LoggingContext?.Invoke(RemoteParty.Id),
-                                     ClientConfigurations.LogfileCreator?.Invoke(RemoteParty.Id),
+                                     ClientConfigurations.LogfileCreator,
                                      DNSClient
                                  );
 
@@ -4788,7 +4786,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      ClientConfigurations.DisableLogging?.Invoke(RemotePartyId),
                                      ClientConfigurations.LoggingPath?.   Invoke(RemotePartyId),
                                      ClientConfigurations.LoggingContext?.Invoke(RemotePartyId),
-                                     ClientConfigurations.LogfileCreator?.Invoke(RemotePartyId),
+                                     ClientConfigurations.LogfileCreator,
                                      DNSClient
                                  );
 

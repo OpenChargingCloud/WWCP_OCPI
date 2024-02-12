@@ -1862,7 +1862,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                     filteredLocation.EVSEs.First().Connectors.First().Id,
                                                                     EMSPId);
 
-                var tariffs          = tariffIds?.Select(tariffId => TariffGetter?.Invoke(tariffId, Timestamp.Now, null))?.
+                                       // Request the charging tariff from back at the session start time!
+                var tariffs          = tariffIds?.Select(tariffId => TariffGetter?.Invoke(
+                                                                         tariffId,
+                                                                         ChargeDetailRecord.SessionTime.StartTime,
+                                                                         null
+                                                                     ))?.
                                                   Where (tariff   => tariff is not null)?.
                                                   Cast<Tariff>()
                                        ?? Array.Empty<Tariff>();

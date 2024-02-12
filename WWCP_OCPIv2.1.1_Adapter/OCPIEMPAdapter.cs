@@ -86,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public String                                     ClientsLoggingPath       { get; }
         public String?                                    ClientsLoggingContext    { get; }
-        public LogfileCreatorDelegate?                    ClientsLogfileCreator    { get; }
+        public OCPILogfileCreatorDelegate?                ClientsLogfileCreator    { get; }
 
         #endregion
 

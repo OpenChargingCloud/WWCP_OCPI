@@ -22,7 +22,6 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.HTTP;
@@ -805,17 +804,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPOClient(CommonAPI                CommonAPI,
-                         RemoteParty              RemoteParty,
-                         HTTPHostname?            VirtualHostname   = null,
-                         String?                  Description       = null,
-                         HTTPClientLogger?        HTTPLogger        = null,
+        public CPOClient(CommonAPI                    CommonAPI,
+                         RemoteParty                  RemoteParty,
+                         HTTPHostname?                VirtualHostname   = null,
+                         String?                      Description       = null,
+                         HTTPClientLogger?            HTTPLogger        = null,
 
-                         Boolean?                 DisableLogging    = false,
-                         String?                  LoggingPath       = null,
-                         String?                  LoggingContext    = null,
-                         LogfileCreatorDelegate?  LogfileCreator    = null,
-                         DNSClient?               DNSClient         = null)
+                         Boolean?                     DisableLogging    = false,
+                         String?                      LoggingPath       = null,
+                         String?                      LoggingContext    = null,
+                         OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                         DNSClient?                   DNSClient         = null)
 
             : base(CommonAPI,
                    RemoteParty,

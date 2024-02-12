@@ -1139,18 +1139,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        : "",
 
                    NotBefore is not null
-                       ? $"not before: {NotBefore}, "
+                       ? $"not before: {NotBefore.Value.ToLocalTime()}, "
                        : "",
 
                    NotAfter is not null
-                       ? $"not after: {NotAfter}, "
+                       ? $"not after: {NotAfter.Value.ToLocalTime()}, "
                        : "",
 
                    EnergyMix is not null
                        ? $"energy mix: {EnergyMix}, "
                        : "",
 
-                   $"last updated: {LastUpdated}"
+                   $"last updated: {LastUpdated.ToLocalTime()}"
 
                );
 

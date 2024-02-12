@@ -378,17 +378,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CommonClient(CommonAPI                MyCommonAPI,
-                            RemoteParty              RemoteParty,
-                            HTTPHostname?            VirtualHostname   = null,
-                            String?                  Description       = null,
-                            HTTPClientLogger?        HTTPLogger        = null,
+        public CommonClient(CommonAPI                    MyCommonAPI,
+                            RemoteParty                  RemoteParty,
+                            HTTPHostname?                VirtualHostname   = null,
+                            String?                      Description       = null,
+                            HTTPClientLogger?            HTTPLogger        = null,
 
-                            Boolean?                 DisableLogging    = false,
-                            String?                  LoggingPath       = null,
-                            String?                  LoggingContext    = null,
-                            LogfileCreatorDelegate?  LogfileCreator    = null,
-                            DNSClient?               DNSClient         = null)
+                            Boolean?                     DisableLogging    = false,
+                            String?                      LoggingPath       = null,
+                            String?                      LoggingContext    = null,
+                            OCPILogfileCreatorDelegate?  LogfileCreator    = null,
+                            DNSClient?                   DNSClient         = null)
 
             : base(RemoteParty.RemoteAccessInfos.First().VersionsURL,
                    VirtualHostname,
@@ -426,7 +426,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 this,
                                                 LoggingPath,
                                                 LoggingContext ?? DefaultLoggingContext,
-                                                LogfileCreator
+                                                LogfileCreator is not null
+                                                    ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                                                    : null
                                             )
                                           : null;
 
@@ -478,7 +480,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             Boolean?                             DisableLogging               = false,
                             String?                              LoggingPath                  = null,
                             String?                              LoggingContext               = null,
-                            LogfileCreatorDelegate?              LogfileCreator               = null,
+                            OCPILogfileCreatorDelegate?          LogfileCreator               = null,
                             DNSClient?                           DNSClient                    = null)
 
             : base(RemoteVersionsURL,
@@ -526,10 +528,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.Counters           = new CommonAPICounters();
 
             base.HTTPLogger         = this.DisableLogging == false
-                                          ? new Logger(this,
-                                                       LoggingPath,
-                                                       LoggingContext,
-                                                       LogfileCreator)
+                                          ? new Logger(
+                                                this,
+                                                LoggingPath,
+                                                LoggingContext,
+                                                LogfileCreator is not null
+                                                    ? (loggingPath, context, logfileName) => LogfileCreator(loggingPath, null, context, logfileName)
+                                                    : null
+                                            )
                                           : null;
 
         }
