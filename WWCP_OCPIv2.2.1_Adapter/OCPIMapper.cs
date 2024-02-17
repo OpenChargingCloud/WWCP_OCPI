@@ -1018,14 +1018,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                         _     => ConnectorFormats.SOCKET
                                                     },
                            PowerType:               powerType.Value,
-                           MaxVoltage:              (UInt16) (EVSE.AverageVoltage.HasValue
-                                                        ? ((Double) EVSE.AverageVoltage.Value / Math.Sqrt(3))   // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
+
+                           //MaxVoltage:              (UInt16) (EVSE.AverageVoltage.HasValue
+                           //                             ? ((Double) EVSE.AverageVoltage.Value / Math.Sqrt(3))   // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
+                           //                             : powerType.Value switch {
+                           //                                   PowerTypes.AC_1_PHASE  => 230,
+                           //                                   PowerTypes.AC_3_PHASE  => 230,                    // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
+                           //                                   PowerTypes.DC          => 400,
+                           //                                   _                      => 0
+                           //                               }),
+
+                           MaxVoltage:              (UInt16) (EVSE.AverageVoltage.HasValue && EVSE.AverageVoltage.Value != 0
+                                                        ? powerType.Value switch {
+                                                              PowerTypes.AC_1_PHASE  => (Double) EVSE.AverageVoltage.Value,
+                                                                                      // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
+                                                              PowerTypes.AC_3_PHASE  => (Double) EVSE.AverageVoltage.Value / Math.Sqrt(3),
+                                                              _                      => (Double) EVSE.AverageVoltage.Value
+                                                          }
                                                         : powerType.Value switch {
                                                               PowerTypes.AC_1_PHASE  => 230,
-                                                              PowerTypes.AC_3_PHASE  => 230,                    // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
+                                                              PowerTypes.AC_3_PHASE  => 230,  // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
                                                               PowerTypes.DC          => 400,
                                                               _                      => 0
                                                           }),
+
                            MaxAmperage:             (UInt16) (EVSE.MaxCurrent     ?? powerType.Value switch {
                                                         PowerTypes.AC_1_PHASE  => 16,
                                                         PowerTypes.AC_3_PHASE  => 16,

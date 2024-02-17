@@ -1036,7 +1036,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 }
 
 
-                Warnings = Array.Empty<Warning>();
+                Warnings = [];
 
                 return new Connector(
 
@@ -1049,7 +1049,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            PowerType:               powerType.Value,
                            Voltage:                 (UInt16) (EVSE.AverageVoltage.HasValue && EVSE.AverageVoltage.Value != 0
                                                         ? powerType.Value switch {
-                                                              PowerTypes.AC_1_PHASE or  // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
+                                                              PowerTypes.AC_1_PHASE  => (Double) EVSE.AverageVoltage.Value,
+                                                                                      // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
                                                               PowerTypes.AC_3_PHASE  => (Double) EVSE.AverageVoltage.Value / Math.Sqrt(3),
                                                               _                      => (Double) EVSE.AverageVoltage.Value
                                                           }
