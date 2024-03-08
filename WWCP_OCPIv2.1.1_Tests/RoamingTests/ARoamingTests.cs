@@ -81,24 +81,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             csoRoamingNetwork    = new RoamingNetwork(
                                        Id:                  RoamingNetwork_Id.Parse("test_cso"),
-                                       Name:                I18NString.Create(Languages.en, "CSO EV Roaming Test Network"),
-                                       Description:         I18NString.Create(Languages.en, "The EV roaming test network at the charging station operator"),
+                                       Name:                I18NString.Create("CSO EV Roaming Test Network"),
+                                       Description:         I18NString.Create("The EV roaming test network at the charging station operator"),
                                        InitialAdminStatus:  RoamingNetworkAdminStatusTypes.Operational,
                                        InitialStatus:       RoamingNetworkStatusTypes.Available
                                    );
 
             emp1RoamingNetwork   = new RoamingNetwork(
                                        Id:                  RoamingNetwork_Id.Parse("test_emp1"),
-                                       Name:                I18NString.Create(Languages.en, "EV Roaming Test Network EMP1"),
-                                       Description:         I18NString.Create(Languages.en, "The EV roaming test network at the 1st e-mobility provider"),
+                                       Name:                I18NString.Create("EV Roaming Test Network EMP1"),
+                                       Description:         I18NString.Create("The EV roaming test network at the 1st e-mobility provider"),
                                        InitialAdminStatus:  RoamingNetworkAdminStatusTypes.Operational,
                                        InitialStatus:       RoamingNetworkStatusTypes.Available
                                    );
 
             emp2RoamingNetwork   = new RoamingNetwork(
                                        Id:                  RoamingNetwork_Id.Parse("test_emp2"),
-                                       Name:                I18NString.Create(Languages.en, "EV Roaming Test Network EMP2"),
-                                       Description:         I18NString.Create(Languages.en, "The EV roaming test network at the 2nd e-mobility provider"),
+                                       Name:                I18NString.Create("EV Roaming Test Network EMP2"),
+                                       Description:         I18NString.Create("The EV roaming test network at the 2nd e-mobility provider"),
                                        InitialAdminStatus:  RoamingNetworkAdminStatusTypes.Operational,
                                        InitialStatus:       RoamingNetworkStatusTypes.Available
                                    );
@@ -113,8 +113,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var csoResult          = await csoRoamingNetwork.CreateChargingStationOperator(
                                                                  Id:                   ChargingStationOperator_Id.Parse("DE*GEF"),
-                                                                 Name:                 I18NString.Create(Languages.en, "GraphDefined CSO"),
-                                                                 Description:          I18NString.Create(Languages.en, "GraphDefined CSO Services"),
+                                                                 Name:                 I18NString.Create("GraphDefined CSO"),
+                                                                 Description:          I18NString.Create("GraphDefined CSO Services"),
                                                                  InitialAdminStatus:   ChargingStationOperatorAdminStatusTypes.Operational,
                                                                  InitialStatus:        ChargingStationOperatorStatusTypes.Available
                                                              );
@@ -129,8 +129,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             var emp1result         = await emp1RoamingNetwork.CreateEMobilityProvider(
 
                                                                   Id:                               EMobilityProvider_Id.Parse("DE-GDF"),
-                                                                  Name:                             I18NString.Create(Languages.en, "GraphDefined EMP #1"),
-                                                                  Description:                      I18NString.Create(Languages.en, "GraphDefined EMP #1 Services"),
+                                                                  Name:                             I18NString.Create("GraphDefined EMP #1"),
+                                                                  Description:                      I18NString.Create("GraphDefined EMP #1 Services"),
                                                                   InitialAdminStatus:               EMobilityProviderAdminStatusTypes.Operational,
                                                                   InitialStatus:                    EMobilityProviderStatusTypes.Available,
 
@@ -151,8 +151,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             var emp2result         = await emp2RoamingNetwork.CreateEMobilityProvider(
 
                                                                   Id:                               EMobilityProvider_Id.Parse("DE-GD2"),
-                                                                  Name:                             I18NString.Create(Languages.en, "GraphDefined EMP #2"),
-                                                                  Description:                      I18NString.Create(Languages.en, "GraphDefined EMP #2 Services"),
+                                                                  Name:                             I18NString.Create("GraphDefined EMP #2"),
+                                                                  Description:                      I18NString.Create("GraphDefined EMP #2 Services"),
                                                                   InitialAdminStatus:               EMobilityProviderAdminStatusTypes.Operational,
                                                                   InitialStatus:                    EMobilityProviderStatusTypes.Available,
 

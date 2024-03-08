@@ -1394,7 +1394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                            Content                    = I18NString.Create(Languages.en,
+                                                            Content                    = I18NString.Create(
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -2186,7 +2186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             AccessControlAllowMethods  = new[] { "GET", "SET" },
                                                             AccessControlAllowHeaders  = new[] { "Content-Type", "Accept", "Authorization" },
                                                             ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                            Content                    = I18NString.Create(Languages.en,
+                                                            Content                    = I18NString.Create(
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),

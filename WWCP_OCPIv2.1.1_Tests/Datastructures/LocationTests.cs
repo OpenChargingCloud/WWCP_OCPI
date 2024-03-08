@@ -1954,7 +1954,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual   ("Location 0001a",                         patchResult.PatchedData.Name);
                 ClassicAssert.AreNotEqual(DateTime.Parse("2020-09-21T00:00:00Z"),   patchResult.PatchedData.LastUpdated);
 
-                ClassicAssert.IsTrue     (DateTime.UtcNow - patchResult.PatchedData.LastUpdated < TimeSpan.FromSeconds(5));
+                ClassicAssert.IsTrue     (org.GraphDefined.Vanaheimr.Illias.Timestamp.Now - patchResult.PatchedData.LastUpdated < TimeSpan.FromSeconds(5));
 
             }
 

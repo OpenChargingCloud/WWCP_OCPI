@@ -82,8 +82,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             roamingNetwork   = new RoamingNetwork(
                                    Id:                                  RoamingNetwork_Id.Parse("test"),
-                                   Name:                                I18NString.Create(Languages.en, "EV Roaming Test Network"),
-                                   Description:                         I18NString.Create(Languages.en, "An EV roaming test network"),
+                                   Name:                                I18NString.Create("EV Roaming Test Network"),
+                                   Description:                         I18NString.Create("An EV roaming test network"),
                                    InitialAdminStatus:                  RoamingNetworkAdminStatusTypes.Operational,
                                    InitialStatus:                       RoamingNetworkStatusTypes.     Available,
                                    RoamingNetworkInfos:                 new RoamingNetworkInfo[] {
@@ -260,8 +260,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             graphDefinedCSO  = roamingNetwork.CreateChargingStationOperator(
                                    Id:                  ChargingStationOperator_Id.Parse("DE*GEF"),
-                                   Name:                I18NString.Create(Languages.en, "GraphDefined CSO"),
-                                   Description:         I18NString.Create(Languages.en, "GraphDefined CSO Services"),
+                                   Name:                I18NString.Create("GraphDefined CSO"),
+                                   Description:         I18NString.Create("GraphDefined CSO Services"),
                                    InitialAdminStatus:  ChargingStationOperatorAdminStatusTypes.Operational,
                                    InitialStatus:       ChargingStationOperatorStatusTypes.Available
                                ).Result.ChargingStationOperator;

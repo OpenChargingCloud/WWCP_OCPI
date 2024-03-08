@@ -1883,7 +1883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       AuthorizatorId:           Id,
                                       ISendAuthorizeStartStop:  this,
                                       SessionId:                SessionId,
-                                      Description:              I18NString.Create(Languages.en, "Authentication is disabled!"),
+                                      Description:              I18NString.Create("Authentication is disabled!"),
                                       Runtime:                  TimeSpan.Zero
                                   );
 
@@ -2201,7 +2201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      AuthorizatorId:           Id,
                                      ISendAuthorizeStartStop:  this,
                                      SessionId:                SessionId,
-                                     Description:              I18NString.Create(Languages.en, "Authentication is disabled!"),
+                                     Description:              I18NString.Create("Authentication is disabled!"),
                                      Runtime:                  TimeSpan.Zero
                                  );
 
@@ -2458,9 +2458,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     forwardedCDRs.Add(cdr);
 
                 else
-                    filteredCDRs.Add(WWCP.SendCDRResult.Filtered(org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
-                                                                 cdr,
-                                                                 Warning.Create(I18NString.Create(Languages.en, "This charge detail record was filtered!"))));
+                    filteredCDRs.Add(WWCP.SendCDRResult.Filtered(
+                                              org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                                              Id,
+                                              cdr,
+                                              Warning.Create("This charge detail record was filtered!")
+                                          ));
 
             }
 
@@ -2507,7 +2510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       Id,
                                       this,
                                       ChargeDetailRecords,
-                                      I18NString.Create(Languages.en, "Sending charge detail records is disabled!"),
+                                      I18NString.Create("Sending charge detail records is disabled!"),
                                       Runtime: runtime
                                   );
 
@@ -2610,11 +2613,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
                             runtime = endtime - startTime;
-                            sendCDRResults.Add(WWCP.SendCDRResult.Error(endtime.Value,
-                                                                        chargeDetailRecord,
-                                                                        warnings,
-                                                                        I18NString.Create(Languages.en, $"Converting the charge detail record to OCPI {Version.String} failed!"),
-                                                                        runtime));
+                            sendCDRResults.Add(WWCP.SendCDRResult.Error(
+                                                        endtime.Value,
+                                                        Id,
+                                                        chargeDetailRecord,
+                                                        warnings,
+                                                        I18NString.Create($"Converting the charge detail record to OCPI {Version.String} failed!"),
+                                                        runtime
+                                                    ));
 
                         }
                         else
@@ -2641,6 +2647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 if (response.StatusCode == 1000)
                                     sendCDRResults.Add(WWCP.SendCDRResult.Success(endtime.Value,
+                                                                                  Id,
                                                                                   chargeDetailRecord,
                                                                                   warnings,
                                                                                   Location:  response.HTTPLocation,
@@ -2648,9 +2655,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 else
                                     sendCDRResults.Add(WWCP.SendCDRResult.Error(endtime.Value,
+                                                                                Id,
                                                                                 chargeDetailRecord,
                                                                                 warnings,
-                                                                                I18NString.Create(Languages.en, "Sending the charge detail record failed: " + response.StatusMessage + " (" + response.StatusCode + ")!"),
+                                                                                I18NString.Create("Sending the charge detail record failed: " + response.StatusMessage + " (" + response.StatusCode + ")!"),
                                                                                 runtime));
 
                             }
@@ -2660,9 +2668,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
                                 runtime = endtime - startTime;
                                 sendCDRResults.Add(WWCP.SendCDRResult.Error(endtime.Value,
+                                                                            Id,
                                                                             chargeDetailRecord,
                                                                             warnings,
-                                                                            I18NString.Create(Languages.en, "Sending the charge detail record failed!"),
+                                                                            I18NString.Create("Sending the charge detail record failed!"),
                                                                             runtime));
 
                             }
@@ -2677,10 +2686,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
                         runtime = endtime - startTime;
-                        sendCDRResults.Add(WWCP.SendCDRResult.Error(endtime.Value,
-                                                                    chargeDetailRecord,
-                                                                    I18NString.Create(Languages.en, "No ProviderIdStart defined!"),
-                                                                    runtime));
+                        sendCDRResults.Add(WWCP.SendCDRResult.Error(
+                                                    endtime.Value,
+                                                    Id,
+                                                    chargeDetailRecord,
+                                                    I18NString.Create("No ProviderIdStart defined!"),
+                                                    runtime
+                                                ));
 
                     }
 
@@ -2702,7 +2714,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                           Id,
                                                           this,
                                                           ChargeDetailRecords,
-                                                          I18NString.Create(Languages.en, "Unknown error!"));
+                                                          I18NString.Create("Unknown error!"));
 
 
             #region Send OnSendCDRsRequest event
