@@ -1756,7 +1756,40 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region SendChargeDetailRecords
+
+        #region SendChargeDetailRecord (ChargeDetailRecord,  TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Send a charge detail record to an OCHP server.
+        /// </summary>
+        /// <param name="ChargeDetailRecord">A charge detail record.</param>
+        /// <param name="TransmissionType">Whether to send the CDR directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        async Task<WWCP.SendCDRResult>
+
+            WWCP.ISendChargeDetailRecords.SendChargeDetailRecord(WWCP.ChargeDetailRecord  ChargeDetailRecord,
+                                                                 WWCP.TransmissionTypes   TransmissionType,
+
+                                                                 DateTime?                Timestamp,
+                                                                 EventTracking_Id?        EventTrackingId,
+                                                                 TimeSpan?                RequestTimeout,
+                                                                 CancellationToken        CancellationToken)
+
+            => (await (this as WWCP.ISendChargeDetailRecords).SendChargeDetailRecords(
+                      [ ChargeDetailRecord ],
+                      TransmissionType,
+                      Timestamp,
+                      EventTrackingId,
+                      RequestTimeout,
+                      CancellationToken)).First();
+
+        #endregion
+
+        #region SendChargeDetailRecords(ChargeDetailRecords, TransmissionType = Enqueue, ...)
 
         /// <summary>
         /// Send charge detail records to an OICP server.
@@ -1805,7 +1838,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                             org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
                             Id,
                             cdr,
-                            Warning.Create("This charge detail record was filtered!")
+                            Warnings: Warnings.Create("This charge detail record was filtered!")
                         )
                     );
 

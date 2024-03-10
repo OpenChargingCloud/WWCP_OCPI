@@ -1378,7 +1378,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region AddOrUpdateEVSE (EVSE, TransmissionType = Enqueue, ...)
 
         /// <summary>
-        /// Set the given EVSE as new static EVSE data at the OICP server.
+        /// Set the given EVSE as new static EVSE data at the OCPI server.
         /// </summary>
         /// <param name="EVSE">An EVSE to upload.</param>
         /// <param name="TransmissionType">Whether to send the EVSE directly or enqueue it for a while.</param>
@@ -1512,7 +1512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region UpdateEVSE      (EVSE, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
 
         /// <summary>
-        /// Update the EVSE data of the given charging pool within the static EVSE data at the OICP server.
+        /// Update the EVSE data of the given charging pool within the static EVSE data at the OCPI server.
         /// </summary>
         /// <param name="EVSE">An EVSE to upload.</param>
         /// <param name="PropertyName">The name of the charging pool property to update.</param>
@@ -1643,7 +1643,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region DeleteEVSE      (EVSE, TransmissionType = Enqueue, ...)
 
         /// <summary>
-        /// Delete the EVSE data of the given EVSE from the static EVSE data at the OICP server.
+        /// Delete the EVSE data of the given EVSE from the static EVSE data at the OCPI server.
         /// </summary>
         /// <param name="EVSE">An EVSE.</param>
         /// <param name="TransmissionType">Whether to send the charging station update directly or enqueue it for a while.</param>
@@ -2414,13 +2414,48 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+
+        #region SendChargeDetailRecord (ChargeDetailRecord,  TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Send a charge detail record to an OCPI server.
+        /// </summary>
+        /// <param name="ChargeDetailRecord">A charge detail record.</param>
+        /// <param name="TransmissionType">Whether to send the CDR directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        public async Task<WWCP.SendCDRResult>
+
+            SendChargeDetailRecord(WWCP.ChargeDetailRecord  ChargeDetailRecord,
+                                   WWCP.TransmissionTypes   TransmissionType,
+
+                                   DateTime?                Timestamp,
+                                   EventTracking_Id?        EventTrackingId,
+                                   TimeSpan?                RequestTimeout,
+                                   CancellationToken        CancellationToken)
+
+            => (await SendChargeDetailRecords(
+                   [ ChargeDetailRecord ],
+                   TransmissionType,
+
+                   Timestamp,
+                   EventTrackingId,
+                   RequestTimeout,
+                   CancellationToken
+               )).First();
+
+        #endregion
+
         #region SendChargeDetailRecords(ChargeDetailRecords, TransmissionType, ...)
 
         /// <summary>
-        /// Send charge detail records to an OICP server.
+        /// Send charge detail records to an OCPI server.
         /// </summary>
         /// <param name="ChargeDetailRecords">An enumeration of charge detail records.</param>
-        /// <param name="TransmissionType">Whether to send the CDR directly or enqueue it for a while.</param>
+        /// <param name="TransmissionType">Whether to send the CDRs directly or enqueue them for a while.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -2462,7 +2497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
                                               Id,
                                               cdr,
-                                              Warning.Create("This charge detail record was filtered!")
+                                              Warnings: Warnings.Create("This charge detail record was filtered!")
                                           ));
 
             }
@@ -2617,8 +2652,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         endtime.Value,
                                                         Id,
                                                         chargeDetailRecord,
-                                                        warnings,
                                                         I18NString.Create($"Converting the charge detail record to OCPI {Version.String} failed!"),
+                                                        warnings,
                                                         runtime
                                                     ));
 
@@ -2646,20 +2681,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 runtime = endtime - startTime;
 
                                 if (response.StatusCode == 1000)
-                                    sendCDRResults.Add(WWCP.SendCDRResult.Success(endtime.Value,
-                                                                                  Id,
-                                                                                  chargeDetailRecord,
-                                                                                  warnings,
-                                                                                  Location:  response.HTTPLocation,
-                                                                                  Runtime:   runtime));
+                                    sendCDRResults.Add(
+                                        WWCP.SendCDRResult.Success(
+                                            endtime.Value,
+                                            Id,
+                                            chargeDetailRecord,
+                                            null,
+                                            warnings,
+                                            response.HTTPLocation,
+                                            runtime
+                                        )
+                                    );
 
                                 else
-                                    sendCDRResults.Add(WWCP.SendCDRResult.Error(endtime.Value,
-                                                                                Id,
-                                                                                chargeDetailRecord,
-                                                                                warnings,
-                                                                                I18NString.Create("Sending the charge detail record failed: " + response.StatusMessage + " (" + response.StatusCode + ")!"),
-                                                                                runtime));
+                                    sendCDRResults.Add(
+                                        WWCP.SendCDRResult.Error(
+                                            endtime.Value,
+                                            Id,
+                                            chargeDetailRecord,
+                                            I18NString.Create($"Sending the charge detail record failed: {response.StatusMessage} ({response.StatusCode})!"),
+                                            warnings,
+                                            runtime
+                                        )
+                                    );
 
                             }
                             else
@@ -2667,12 +2711,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                 endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
                                 runtime = endtime - startTime;
-                                sendCDRResults.Add(WWCP.SendCDRResult.Error(endtime.Value,
-                                                                            Id,
-                                                                            chargeDetailRecord,
-                                                                            warnings,
-                                                                            I18NString.Create("Sending the charge detail record failed!"),
-                                                                            runtime));
+                                sendCDRResults.Add(
+                                    WWCP.SendCDRResult.Error(
+                                        endtime.Value,
+                                        Id,
+                                        chargeDetailRecord,
+                                        I18NString.Create("Sending the charge detail record failed!"),
+                                        warnings,
+                                        runtime
+                                    )
+                                );
 
                             }
 
@@ -2686,13 +2734,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
                         runtime = endtime - startTime;
-                        sendCDRResults.Add(WWCP.SendCDRResult.Error(
-                                                    endtime.Value,
-                                                    Id,
-                                                    chargeDetailRecord,
-                                                    I18NString.Create("No ProviderIdStart defined!"),
-                                                    runtime
-                                                ));
+                        sendCDRResults.Add(
+                            WWCP.SendCDRResult.UnknownProviderIdStart(
+                                endtime.Value,
+                                Id,
+                                chargeDetailRecord,
+                                Runtime: runtime
+                            )
+                        );
 
                     }
 
@@ -2700,21 +2749,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 endtime         = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
                 runtime         = endtime - startTime;
-                sendCDRsResult  = WWCP.SendCDRResultTypesExtensions.Combine(sendCDRResults,
-                                                                            Id,
-                                                                            this,
-                                                                            Warnings: warnings);
+                sendCDRsResult  = WWCP.SendCDRResultTypesExtensions.Combine(
+                                      sendCDRResults,
+                                      Id,
+                                      this,
+                                      Warnings: warnings
+                                  );
 
             }
 
 
             endtime         ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
             runtime         ??= endtime - startTime;
-            sendCDRsResult  ??= WWCP.SendCDRsResult.Error(endtime.Value,
-                                                          Id,
-                                                          this,
-                                                          ChargeDetailRecords,
-                                                          I18NString.Create("Unknown error!"));
+            sendCDRsResult  ??= WWCP.SendCDRsResult.Error(
+                                    endtime.Value,
+                                    Id,
+                                    this,
+                                    ChargeDetailRecords,
+                                    I18NString.Create("Unknown error!")
+                                );
 
 
             #region Send OnSendCDRsRequest event

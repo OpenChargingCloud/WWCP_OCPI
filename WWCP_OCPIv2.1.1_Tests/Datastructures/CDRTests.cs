@@ -610,13 +610,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                               EnergyMeter:                    new WWCP.EnergyMeter(
                                                                   EnergyMeter_Id.Parse("12345678")
                                                               ),
-                              EnergyMeteringValues:           new[] {
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(1),    5),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(31),  10),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(61),  15),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(91),  20),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(119), 22),
-                                                              }
+                              EnergyMeteringValues:           [
+                                                                  new EnergyMeteringValue(startTime,                              0, EnergyMeteringValueTypes.Start),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(1),    5, EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(31),  10, EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(61),  15, EnergyMeteringValueTypes.TariffChange),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(91),  20, EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(119), 22, EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(120), 23, EnergyMeteringValueTypes.Stop)
+                                                              ]
                               //ConsumedEnergy                // automagic!
                               //ConsumedEnergyFee
 

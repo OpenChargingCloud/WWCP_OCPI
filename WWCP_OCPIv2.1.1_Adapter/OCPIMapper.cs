@@ -47,29 +47,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// A delegate which allows you to modify the convertion from WWCP EVSE status updates to OCPI EVSE status types.
     /// </summary>
     /// <param name="WWCPEVSEStatusUpdate">A WWCP EVSE status update.</param>
-    /// <param name="OCPIStatusType">An OICP status type.</param>
+    /// <param name="OCPIStatusType">An OCPI status type.</param>
     public delegate StatusType               WWCPEVSEStatusUpdate_2_StatusType_Delegate (WWCP.EVSEStatusUpdate    WWCPEVSEStatusUpdate,
                                                                                          StatusType               OCPIStatusType);
 
     /// <summary>
     /// A delegate which allows you to modify the convertion from WWCP EVSE status updates to OCPI EVSE status types.
     /// </summary>
-    /// <param name="OCPIStatusType">An OICP status type.</param>
+    /// <param name="OCPIStatusType">An OCPI status type.</param>
     public delegate WWCP.EVSEStatusUpdate    StatusType_2_WWCPEVSEStatusUpdate_Delegate (StatusType               OCPIStatusType);
 
 
     /// <summary>
-    /// A delegate which allows you to modify the convertion from WWCP charge detail records to OICP charge detail records.
+    /// A delegate which allows you to modify the convertion from WWCP charge detail records to OCPI charge detail records.
     /// </summary>
     /// <param name="WWCPChargeDetailRecord">A WWCP charge detail record.</param>
-    /// <param name="OCIPCDR">An OICP charge detail record.</param>
+    /// <param name="OCIPCDR">An OCPI charge detail record.</param>
     public delegate CDR                      WWCPChargeDetailRecord_2_CDR_Delegate      (WWCP.ChargeDetailRecord  WWCPChargeDetailRecord,
                                                                                          CDR                      OCIPCDR);
 
     /// <summary>
     /// A delegate which allows you to modify the convertion from OCPI charge detail records to WWCP charge detail records.
     /// </summary>
-    /// <param name="OCIPCDR">An OICP charge detail record.</param>
+    /// <param name="OCIPCDR">An OCPI charge detail record.</param>
     public delegate WWCP.ChargeDetailRecord  CDR_2_WWCPChargeDetailRecord_Delegate      (CDR                      OCIPCDR);
 
 
