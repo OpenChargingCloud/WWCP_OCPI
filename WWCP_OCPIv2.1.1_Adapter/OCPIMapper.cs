@@ -22,6 +22,8 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using System.Linq;
 
 #endregion
 
@@ -1871,7 +1873,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                      ))?.
                                                   Where (tariff   => tariff is not null)?.
                                                   Cast<Tariff>()
-                                       ?? Array.Empty<Tariff>();
+                                       ?? [];
 
                 var chargingPeriods  = new List<ChargingPeriod>();
                 var cdrDimensions    = new List<CDRDimension>();
@@ -1895,6 +1897,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     )
                 );
 
+                SignedData? signedData = null;
+
+                if (ChargeDetailRecord.EnergyMeteringValues.Any(energyMeteringValue => energyMeteringValue.SignedData is not null))
+                {
+
+                    signedData = new SignedData(
+                                     SignedValues:            ChargeDetailRecord.EnergyMeteringValues.Select(
+                                                                  energyMeteringValue => new SignedValue(
+                                                                                             energyMeteringValue.Type switch {
+                                                                                                 WWCP.EnergyMeteringValueTypes.Start         => SignedValueNature.START,
+                                                                                                 WWCP.EnergyMeteringValueTypes.Intermediate  => SignedValueNature.INTERMEDIATE,
+                                                                                                 WWCP.EnergyMeteringValueTypes.TariffChange  => SignedValueNature.INTERMEDIATE,
+                                                                                                 _                                           => SignedValueNature.END
+                                                                                             },
+                                                                                             energyMeteringValue.Value.ToString(),
+                                                                                             energyMeteringValue.SignedData ?? ""
+                                                                                         )
+                                                              ),
+                                     EncodingMethod:          EncodingMethod.Unknown,
+                                     EncodingMethodVersion:   null,
+                                     PublicKey:               ChargeDetailRecord.EnergyMeter?.PublicKeys.Any() == true
+                                                                  ? PublicKey.Parse(ChargeDetailRecord.EnergyMeter.PublicKeys.First().ToString())
+                                                                  : null,
+                                     URL:                     null
+                                 );
+
+                }
+
 
                 return new CDR(
 
@@ -1905,7 +1935,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Stop:                    ChargeDetailRecord.SessionTime.EndTime.Value,
                            AuthId:                  authId.    Value,
                            AuthMethod:              authMethod.Value,
-                           Location:                filteredLocation,   //ToDo: Might still have not required connectors!
+                           Location:                filteredLocation,            //ToDo: Might still have not required connectors!
+                                                                                 //      Might have out EnergyMeter vendor extension!
                            Currency:                OCPI.Currency.Parse(ChargeDetailRecord.ChargingPrice.Value.Currency.ISOCode),
                            ChargingPeriods:         chargingPeriods,
                            TotalCost:               ChargeDetailRecord.ChargingPrice.       Value.Total,
@@ -1913,14 +1944,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            TotalTime:               ChargeDetailRecord.SessionTime.Duration.Value,
 
                            MeterId:                 ChargeDetailRecord.EnergyMeterId.ToOCPI(),
-                           EnergyMeter:             null,
-                           TransparencySoftwares:   null,
+                           EnergyMeter:             null,                        // Our vendor extension!
+                           TransparencySoftwares:   null,                        // Our vendor extension!
                            Tariffs:                 tariffs,
-                           SignedData:              null,
+                           SignedData:              signedData,                  // Our backport from OCPI v2.2.1!
                            TotalParkingTime:        null,
                            Remark:                  null,
 
-                           Created:                 ChargeDetailRecord.Created,
+                           Created:                 ChargeDetailRecord.Created,  // Our vendor extension!
                            LastUpdated:             ChargeDetailRecord.LastChangeDate
 
                        );

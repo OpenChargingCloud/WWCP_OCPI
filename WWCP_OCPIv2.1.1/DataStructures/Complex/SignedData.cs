@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -45,32 +47,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// This is the name given to the encoding by a company or group of companies.
         /// </summary>
         [Mandatory]
-        public EncodingMethod            EncodingMethod             { get; }
+        public EncodingMethod            EncodingMethod           { get; }
 
         /// <summary>
         /// The enumeration of signed values.
         /// </summary>
         [Mandatory]
-        public IEnumerable<SignedValue>  SignedValues               { get; }
+        public IEnumerable<SignedValue>  SignedValues             { get; }
 
         /// <summary>
         /// Version of the encoding method (when applicable).
         /// </summary>
         [Optional]
-        public Int32?                    EncodingMethodVersion      { get; }
+        public Int32?                    EncodingMethodVersion    { get; }
 
         /// <summary>
         /// The public key used to sign the data, base64 encoded.
         /// </summary>
         [Optional]
-        public PublicKey?                PublicKey                  { get; }
+        public PublicKey?                PublicKey                { get; }
 
         /// <summary>
         /// URL that can be shown to an electric vehicle driver.
         /// This URL gives the EV driver the possibility to verify the signed data of a charging session.
         /// </summary>
         [Optional]
-        public URL?                      URL                        { get; }
+        public URL?                      URL                      { get; }
 
         #endregion
 
@@ -100,6 +102,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.PublicKey               = PublicKey;
             this.URL                     = URL;
 
+            unchecked
+            {
+
+                hashCode = this.EncodingMethod.        GetHashCode()       * 11 ^
+                           this.SignedValues.          CalcHashCode()      *  7 ^
+                          (this.EncodingMethodVersion?.GetHashCode() ?? 0) *  5 ^
+                          (this.PublicKey?.            GetHashCode() ?? 0) *  3 ^
+                           this.URL?.                  GetHashCode() ?? 0;
+
+            }
+
         }
 
         #endregion
@@ -121,7 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var errorResponse,
                          CustomSignedDataParser))
             {
-                return signedData!;
+                return signedData;
             }
 
             throw new ArgumentException("The given JSON representation of signed data is invalid: " + errorResponse,
@@ -141,9 +154,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="SignedData">The parsed signed data.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject          JSON,
-                                       out SignedData?  SignedData,
-                                       out String?      ErrorResponse)
+        public static Boolean TryParse(JObject                               JSON,
+                                       [NotNullWhen(true)]  out SignedData?  SignedData,
+                                       [NotNullWhen(false)] out String?      ErrorResponse)
 
             => TryParse(JSON,
                         out SignedData,
@@ -159,8 +172,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomSignedDataParser">A delegate to parse custom signed data JSON objects.</param>
         public static Boolean TryParse(JObject                                   JSON,
-                                       out SignedData?                           SignedData,
-                                       out String?                               ErrorResponse,
+                                       [NotNullWhen(true)]  out SignedData?      SignedData,
+                                       [NotNullWhen(false)] out String?          ErrorResponse,
                                        CustomJObjectParserDelegate<SignedData>?  CustomSignedDataParser   = null)
         {
 
@@ -242,11 +255,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                SignedData = new SignedData(EncodingMethod,
-                                            SignedValues,
-                                            EncodingMethodVersion,
-                                            PublicKey,
-                                            URL);
+                SignedData = new SignedData(
+                                 EncodingMethod,
+                                 SignedValues,
+                                 EncodingMethodVersion,
+                                 PublicKey,
+                                 URL
+                             );
 
 
                 if (CustomSignedDataParser is not null)
@@ -412,23 +427,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return EncodingMethod.        GetHashCode()       * 11 ^
-                       SignedValues.          CalcHashCode()      *  7 ^
-                      (EncodingMethodVersion?.GetHashCode() ?? 0) *  5 ^
-                      (PublicKey?.            GetHashCode() ?? 0) *  3 ^
-                       URL?.                  GetHashCode() ?? 0;
-
-            }
-        }
+            => hashCode;
 
         #endregion
 
@@ -454,7 +460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        : "",
 
                    URL.      HasValue
-                       ? ", URL: "        + URL.            ToString().SubstringMax(20)
+                       ? ", URL: "        + URL.      Value.ToString().SubstringMax(20)
                        : ""
 
                );

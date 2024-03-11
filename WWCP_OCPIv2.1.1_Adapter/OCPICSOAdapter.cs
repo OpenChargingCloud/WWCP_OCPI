@@ -518,36 +518,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.CPOAPI.OnStartSessionCommand += async (emspId, startSessionCommand) => {
 
                 if (!CommonAPI.TryGetLocation(startSessionCommand.LocationId, out var location) || location is null)
-                    return new CommandResponse(startSessionCommand,
-                                               CommandResponseTypes.REJECTED,
-                                               TimeSpan.FromMinutes(1),
-                                               new[] {
-                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
-                                               });
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                           );
 
                 if (!startSessionCommand.EVSEUId.HasValue)
-                    return new CommandResponse(startSessionCommand,
-                                               CommandResponseTypes.REJECTED,
-                                               TimeSpan.FromMinutes(1),
-                                               new[] {
-                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
-                                               });
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                           );
 
                 if (!location.TryGetEVSE(startSessionCommand.EVSEUId.Value, out var evse) || evse is null)
-                    return new CommandResponse(startSessionCommand,
-                                               CommandResponseTypes.REJECTED,
-                                               TimeSpan.FromMinutes(1),
-                                               new[] {
-                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
-                                               });
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                           );
 
                 if (!evse.EVSEId.HasValue)
-                    return new CommandResponse(startSessionCommand,
-                                               CommandResponseTypes.REJECTED,
-                                               TimeSpan.FromMinutes(1),
-                                               new[] {
-                                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
-                                               });
+                    return new CommandResponse(
+                               startSessionCommand,
+                               CommandResponseTypes.REJECTED,
+                               TimeSpan.FromMinutes(1),
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
+                           );
 
                 var wwcpEVSEId = evse.EVSEId.Value.ToWWCP();
 
@@ -556,12 +556,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                startSessionCommand,
                                CommandResponseTypes.REJECTED,
                                TimeSpan.FromMinutes(1),
-                               new[] {
-                                   OCPI.DisplayText.Create(
+                               [
+                                   DisplayText.Create(
                                        Languages.en,
                                        "StartSessionCommand rejected!"
                                    )
-                               }
+                               ]
                            );
 
 
@@ -587,9 +587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                startSessionCommand,
                                CommandResponseTypes.ACCEPTED,
                                TimeSpan.FromMinutes(1),
-                               new[] {
-                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand accepted!")
-                               }
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand accepted!") ]
                            );
 
                 }
@@ -599,9 +597,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                startSessionCommand,
                                CommandResponseTypes.REJECTED,
                                TimeSpan.FromMinutes(1),
-                               new[] {
-                                   OCPI.DisplayText.Create(Languages.en, "StartSessionCommand rejected!")
-                               }
+                               [ DisplayText.Create(Languages.en, "StartSessionCommand rejected!") ]
                            );
 
             };
@@ -628,9 +624,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                stopSessionCommand,
                                CommandResponseTypes.ACCEPTED,
                                TimeSpan.FromMinutes(1),
-                               new[] {
-                                   OCPI.DisplayText.Create(Languages.en, "StopSessionCommand accepted!")
-                               }
+                               [ DisplayText.Create(Languages.en, "StopSessionCommand accepted!") ]
                            );
 
                 }
@@ -640,9 +634,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                stopSessionCommand,
                                CommandResponseTypes.REJECTED,
                                TimeSpan.FromMinutes(1),
-                               new[] {
-                                   OCPI.DisplayText.Create(Languages.en, "StopSessionCommand rejected!")
-                               }
+                               [ DisplayText.Create(Languages.en, "StopSessionCommand rejected!") ]
                            );
 
             };

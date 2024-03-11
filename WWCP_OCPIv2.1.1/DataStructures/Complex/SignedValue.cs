@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -75,6 +77,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.PlainData   = PlainData;
             this.SignedData  = SignedData;
 
+            unchecked
+            {
+
+                hashCode = this.Nature.    GetHashCode() * 5 ^
+                           this.PlainData. GetHashCode() * 3 ^
+                           this.SignedData.GetHashCode();
+
+            }
+
         }
 
         #endregion
@@ -96,7 +107,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var errorResponse,
                          CustomSignedValueParser))
             {
-                return signedValue!;
+                return signedValue;
             }
 
             throw new ArgumentException("The given JSON representation of a signed value is invalid: " + errorResponse,
@@ -116,9 +127,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="SignedValue">The parsed signed value.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject           JSON,
-                                       out SignedValue?  SignedValue,
-                                       out String?       ErrorResponse)
+        public static Boolean TryParse(JObject                                JSON,
+                                       [NotNullWhen(true)]  out SignedValue?  SignedValue,
+                                       [NotNullWhen(false)] out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out SignedValue,
@@ -134,8 +145,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomSignedValueParser">A delegate to parse custom signed value JSON objects.</param>
         public static Boolean TryParse(JObject                                    JSON,
-                                       out SignedValue?                           SignedValue,
-                                       out String?                                ErrorResponse,
+                                       [NotNullWhen(true)]  out SignedValue?      SignedValue,
+                                       [NotNullWhen(false)] out String?           ErrorResponse,
                                        CustomJObjectParserDelegate<SignedValue>?  CustomSignedValueParser   = null)
         {
 
@@ -188,10 +199,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                SignedValue = new SignedValue(Nature,
-                                              PlainData,
-                                              SignedData);
-
+                SignedValue = new SignedValue(
+                                  Nature,
+                                  PlainData,
+                                  SignedData
+                              );
 
                 if (CustomSignedValueParser is not null)
                     SignedValue = CustomSignedValueParser(JSON,
@@ -243,9 +255,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public SignedValue Clone()
 
-            => new (Nature.Clone,
-                    new String(PlainData.ToCharArray()),
-                    new String(SignedData.ToCharArray()));
+            => new (
+                   Nature.Clone,
+                   new String(PlainData. ToCharArray()),
+                   new String(SignedData.ToCharArray())
+               );
 
         #endregion
 
@@ -328,21 +342,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return Nature.    GetHashCode() * 5 ^
-                       PlainData. GetHashCode() * 3 ^
-                       SignedData.GetHashCode();
-
-            }
-        }
+            => hashCode;
 
         #endregion
 
@@ -353,14 +360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(
-
-                   Nature,
-                   " -> ",
-                   PlainData. SubstringMax(10),
-                   SignedData.SubstringMax(10)
-
-               );
+            => $"{Nature} -> '{PlainData.SubstringMax(10)}' / '{SignedData.SubstringMax(10)}'";
 
         #endregion
 
