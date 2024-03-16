@@ -823,7 +823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                         remoteParty,
                                                         context,
                                                         logfilename) => String.Concat(
-                                                                            loggingPath,
+                                                                            loggingPath + Path.DirectorySeparatorChar,
                                                                             remoteParty is not null
                                                                                 ? remoteParty.Id.ToString() + Path.DirectorySeparatorChar
                                                                                 : null,
