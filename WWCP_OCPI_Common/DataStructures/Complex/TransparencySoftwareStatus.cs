@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -144,9 +146,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="TransparencySoftware">The parsed transparency software.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                          JSON,
-                                       out TransparencySoftwareStatus?  TransparencySoftware,
-                                       out String?                      ErrorResponse)
+        public static Boolean TryParse(JObject                                               JSON,
+                                       [NotNullWhen(true)]  out TransparencySoftwareStatus?  TransparencySoftware,
+                                       [NotNullWhen(false)] out String?                      ErrorResponse)
 
             => TryParse(JSON,
                         out TransparencySoftware,
@@ -162,15 +164,15 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomTransparencySoftwareStatusParser">A delegate to parse custom transparency software status JSON objects.</param>
         public static Boolean TryParse(JObject                                                   JSON,
-                                       out TransparencySoftwareStatus?                           TransparencySoftwareStatus,
-                                       out String?                                               ErrorResponse,
+                                       [NotNullWhen(true)]  out TransparencySoftwareStatus?      TransparencySoftwareStatus,
+                                       [NotNullWhen(false)] out String?                          ErrorResponse,
                                        CustomJObjectParserDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusParser   = null)
         {
 
             try
             {
 
-                TransparencySoftwareStatus = default;
+                TransparencySoftwareStatus = null;
 
                 if (JSON?.HasValues != true)
                 {
@@ -188,9 +190,6 @@ namespace cloud.charging.open.protocols.OCPI
                 {
                     return false;
                 }
-
-                if (TransparencySoftware is null)
-                    return false;
 
                 #endregion
 
@@ -246,12 +245,14 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                TransparencySoftwareStatus = new TransparencySoftwareStatus(TransparencySoftware,
-                                                                            LegalStatus,
-                                                                            Certificate,
-                                                                            CertificateIssuer,
-                                                                            NotBefore,
-                                                                            NotAfter);
+                TransparencySoftwareStatus = new TransparencySoftwareStatus(
+                                                 TransparencySoftware,
+                                                 LegalStatus,
+                                                 Certificate,
+                                                 CertificateIssuer,
+                                                 NotBefore,
+                                                 NotAfter
+                                             );
 
                 if (CustomTransparencySoftwareStatusParser is not null)
                     TransparencySoftwareStatus = CustomTransparencySoftwareStatusParser(JSON,
@@ -460,11 +461,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// Compares two transparency software status for equality.
         /// </summary>
         /// <param name="TransparencySoftwareStatus">A transparency software status to compare with.</param>
-        public Int32 CompareTo(TransparencySoftwareStatus TransparencySoftwareStatus)
+        public Int32 CompareTo(TransparencySoftwareStatus? TransparencySoftwareStatus)
         {
 
-            if (TransparencySoftware is null)
-                throw new ArgumentNullException(nameof(TransparencySoftware), "The give transparency software must not be null!");
+            if (TransparencySoftwareStatus is null)
+                throw new ArgumentNullException(nameof(TransparencySoftwareStatus), "The give transparency software status must not be null!");
 
             var c = TransparencySoftware.Name.CompareTo(TransparencySoftwareStatus.TransparencySoftware.Name);
 

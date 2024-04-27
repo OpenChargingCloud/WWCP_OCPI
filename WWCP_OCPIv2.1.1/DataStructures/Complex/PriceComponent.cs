@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -182,8 +184,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
-        public static PriceComponent? TryParse(JObject                                          JSON,
-                                                  CustomJObjectParserDelegate<PriceComponent>?  CustomPriceComponentParser   = null)
+        public static PriceComponent? TryParse(JObject                                       JSON,
+                                               CustomJObjectParserDelegate<PriceComponent>?  CustomPriceComponentParser   = null)
         {
 
             if (TryParse(JSON,
@@ -210,9 +212,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="PriceComponent">The parsed price component.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject             JSON,
-                                       out PriceComponent  PriceComponent,
-                                       out String?         ErrorResponse)
+        public static Boolean TryParse(JObject                                  JSON,
+                                       [NotNullWhen(true)]  out PriceComponent  PriceComponent,
+                                       [NotNullWhen(false)] out String?         ErrorResponse)
 
             => TryParse(JSON,
                         out PriceComponent,
@@ -228,8 +230,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
         public static Boolean TryParse(JObject                                       JSON,
-                                       out PriceComponent                            PriceComponent,
-                                       out String?                                   ErrorResponse,
+                                       [NotNullWhen(true)]  out PriceComponent       PriceComponent,
+                                       [NotNullWhen(false)] out String?              ErrorResponse,
                                        CustomJObjectParserDelegate<PriceComponent>?  CustomPriceComponentParser   = null)
         {
 
@@ -282,9 +284,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                PriceComponent = new PriceComponent(Type,
-                                                    Price,
-                                                    StepSize);
+                PriceComponent = new PriceComponent(
+                                     Type,
+                                     Price,
+                                     StepSize
+                                 );
 
 
                 if (CustomPriceComponentParser is not null)

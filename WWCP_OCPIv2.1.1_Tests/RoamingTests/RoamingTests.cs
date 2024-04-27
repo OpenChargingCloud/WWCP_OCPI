@@ -2129,8 +2129,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                       ProviderIdStart:              EMobilityProvider_Id.Parse("DE-GDF"),
                                                       ProviderIdStop:               EMobilityProvider_Id.Parse("DE-GD2"),
 
-                                                      CSORoamingProviderStart:           null,
-                                                      CSORoamingProviderIdStart:         null,
+                                                      CSORoamingProviderStart:      null,
+                                                      CSORoamingProviderIdStart:    null,
 
                                                       Reservation:                  null,
                                                       ReservationId:                null,

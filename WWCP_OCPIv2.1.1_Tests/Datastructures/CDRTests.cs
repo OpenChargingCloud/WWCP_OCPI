@@ -776,7 +776,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                           Coordinates:    GeoCoordinate.FromLatLng(50.928365, 11.589986)
                                                       ),
                                  Currency:            OCPI.Currency.EUR,
-                                 ChargingPeriods:     Array.Empty<ChargingPeriod>(),
+                                 ChargingPeriods:     [],
                                  TotalCost:           0,
                                  TotalEnergy:         0,
                                  TotalTime:           TimeSpan.Zero
@@ -787,7 +787,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                  PartyId:             Party_Id.   Parse("GEF"),
                                  Id:                  Tariff_Id.  NewRandom(),
                                  Currency:            OCPI.Currency.EUR,
-                                 TariffElements:      new[] {
+                                 TariffElements:      [
                                                           new TariffElement(
                                                               PriceComponent.Energy(
                                                                   Price:     0.5m,
@@ -798,11 +798,205 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                   Duration:  TimeSpan.FromMinutes(1)
                                                               )
                                                           )
-                                                  } 
+                                                      ]
                              );
 
 
             var cdrOut     = cdrIn.AugemntCDRWithTariff(tariff);
+
+
+        }
+
+        #endregion
+
+
+        #region SplittCDRIntoChargingPeriods_Test01()
+
+        /// <summary>
+        /// Augment an OCPI charge detail record with charging tariff information.
+        /// </summary>
+        [Test]
+        public static void SplittCDRIntoChargingPeriods_Test01()
+        {
+
+            var now = Timestamp.Now;
+
+            #region CDR 1
+
+            var start1           = now    - TimeSpan.FromHours(9);
+            var stop1            = start1 + TimeSpan.FromHours(7);
+
+            var meteringValues1  = new[] {
+                                       new Timestamped<Decimal>(start1, 1000),
+                                       new Timestamped<Decimal>(stop1,  3000)
+                                   };
+
+            var cdr1In           = new CDR(
+                                       CountryCode:         CountryCode.Parse("DE"),
+                                       PartyId:             Party_Id.   Parse("GEF"),
+                                       Id:                  CDR_Id.     NewRandom(),
+                                       Start:               start1,
+                                       Stop:                stop1,
+                                       AuthId:              Auth_Id.    NewRandom(),
+                                       AuthMethod:          AuthMethods.AUTH_REQUEST,
+                                       Location:            new Location(
+                                                                CountryCode:    CountryCode.Parse("DE"),
+                                                                PartyId:        Party_Id.   Parse("GEF"),
+                                                                Id:             Location_Id.NewRandom(),
+                                                                LocationType:   LocationType.ON_STREET,
+                                                                Address:        "Biberweg 18",
+                                                                City:           "Jena",
+                                                                PostalCode:     "07749",
+                                                                Country:        Country.Germany,
+                                                                Coordinates:    GeoCoordinate.FromLatLng(50.928365, 11.589986)
+                                                            ),
+                                       Currency:            OCPI.Currency.EUR,
+                                       ChargingPeriods:     [
+                                                                ChargingPeriod.Create(
+                                                                    start1,
+                                                                    [ CDRDimension.ENERGY(1) ]
+                                                                )
+                                                            ],
+                                       TotalCost:           0,
+                                       TotalEnergy:         0,
+                                       TotalTime:           TimeSpan.Zero,
+                                       MeterId:             null,
+                                       Tariffs:             null
+                                       //SignedData:          new SignedData(
+                                       //                         EncodingMethod:          EncodingMethod.GraphDefined,
+                                       //                         SignedValues:            [
+                                       //                                                      new SignedValue(
+                                       //                                                          Nature:       SignedValueNature.START,
+                                       //                                                          PlainData:    "1000",
+                                       //                                                          SignedData:   ""
+                                       //                                                      ),
+                                       //                                                      new SignedValue(
+                                       //                                                          Nature:       SignedValueNature.END,
+                                       //                                                          PlainData:    "3000",
+                                       //                                                          SignedData:   ""
+                                       //                                                      )
+                                       //                                                  ],
+                                       //                         EncodingMethodVersion:   1,
+                                       //                         PublicKey:               null,
+                                       //                         URL:                     null
+                                       //                     )
+                                   );
+
+            #endregion
+
+            #region CDR 2
+
+            var start2           = now    - TimeSpan.FromHours(3);
+            var stop2            = start2 + TimeSpan.FromHours(1);
+
+            var meteringValues2  = new[] {
+                                       new Timestamped<Decimal>(start2, 2000),
+                                       new Timestamped<Decimal>(stop2,  5000)
+                                   };
+
+            var cdr2In           = new CDR(
+                                       CountryCode:         CountryCode.Parse("DE"),
+                                       PartyId:             Party_Id.   Parse("GEF"),
+                                       Id:                  CDR_Id.     NewRandom(),
+                                       Start:               start2,
+                                       Stop:                stop2,
+                                       AuthId:              Auth_Id.    NewRandom(),
+                                       AuthMethod:          AuthMethods.AUTH_REQUEST,
+                                       Location:            new Location(
+                                                                CountryCode:    CountryCode.Parse("DE"),
+                                                                PartyId:        Party_Id.   Parse("GEF"),
+                                                                Id:             Location_Id.NewRandom(),
+                                                                LocationType:   LocationType.ON_STREET,
+                                                                Address:        "Biberweg 18",
+                                                                City:           "Jena",
+                                                                PostalCode:     "07749",
+                                                                Country:        Country.Germany,
+                                                                Coordinates:    GeoCoordinate.FromLatLng(50.928365, 11.589986)
+                                                            ),
+                                       Currency:            OCPI.Currency.EUR,
+                                       ChargingPeriods:     [
+                                                                ChargingPeriod.Create(
+                                                                    start2,
+                                                                    [ CDRDimension.ENERGY(2) ]
+                                                                )
+                                                            ],
+                                       TotalCost:           0,
+                                       TotalEnergy:         0,
+                                       TotalTime:           TimeSpan.Zero
+                                   );
+
+            #endregion
+
+            #region Tariff 1
+
+            var tariff1    = new Tariff(
+                                 CountryCode:         CountryCode.Parse("DE"),
+                                 PartyId:             Party_Id.   Parse("GEF"),
+                                 Id:                  Tariff_Id.  NewRandom(),
+                                 Currency:            OCPI.Currency.EUR,
+                                 TariffElements:      [
+                                                          new TariffElement(
+                                                              PriceComponent.Energy(
+                                                                  Price:     0.44m,
+                                                                  StepSize:  1000
+                                                              ),
+                                                              PriceComponent.ChargingTime(
+                                                                  Price:     5.04m,
+                                                                  Duration:  TimeSpan.FromMinutes(1)
+                                                              )
+                                                          )
+                                                      ]
+                             );
+
+            #endregion
+
+            #region Tariff 2
+
+            var tariff2    = new Tariff(
+                                 CountryCode:         CountryCode.Parse("DE"),
+                                 PartyId:             Party_Id.   Parse("GEF"),
+                                 Id:                  Tariff_Id.  NewRandom(),
+                                 Currency:            OCPI.Currency.EUR,
+                                 TariffElements:      [
+                                                          new TariffElement(
+                                                              [
+                                                                  PriceComponent.Energy(
+                                                                      Price:     0.44m,
+                                                                      StepSize:  1000
+                                                                  ),
+                                                                  PriceComponent.ChargingTime(
+                                                                      Price:     0m,
+                                                                      Duration:  TimeSpan.FromMinutes(1)
+                                                                  ),
+                                                                  PriceComponent.FlatRate(
+                                                                      Price:     0.3m
+                                                                  )
+                                                              ],
+                                                              new TariffRestrictions(
+                                                                  MaxDuration:   TimeSpan.FromHours(3)
+                                                              )
+                                                          ),
+                                                          new TariffElement(
+                                                              PriceComponent.Energy(
+                                                                  Price:     0.44m,
+                                                                  StepSize:  1000
+                                                              ),
+                                                              PriceComponent.ChargingTime(
+                                                                  Price:     5.04m,
+                                                                  Duration:  TimeSpan.FromMinutes(1)
+                                                              )
+                                                          )
+                                                      ]
+                             );
+
+            #endregion
+
+
+            var cdr1_tariff1out  = cdr1In.SplittIntoChargingPeriods(meteringValues1, tariff1);
+            var cdr1_tariff2out  = cdr1In.SplittIntoChargingPeriods(meteringValues1, tariff2);
+
+            var cdr2_tariff1out  = cdr2In.SplittIntoChargingPeriods(meteringValues2, tariff1);
+            var cdr2_tariff2out  = cdr2In.SplittIntoChargingPeriods(meteringValues2, tariff2);
 
 
         }

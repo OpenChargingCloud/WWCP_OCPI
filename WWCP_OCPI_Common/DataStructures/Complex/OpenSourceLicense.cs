@@ -21,6 +21,7 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -49,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             => OpenSourceLicense is null || !OpenSourceLicense.Any()
 
-                   ? new JArray()
+                   ? []
 
                    : new JArray(OpenSourceLicense.
                                     Where         (openSourceLicense => openSourceLicense is not null).
@@ -112,8 +113,8 @@ namespace cloud.charging.open.protocols.OCPI
         {
 
             this.Id           = Id;
-            this.Description  = Array.Empty<DisplayText>();
-            this.URLs         = URLs?.Distinct().ToArray() ?? Array.Empty<URL>();
+            this.Description  = [];
+            this.URLs         = URLs?.Distinct().ToArray() ?? [];
 
         }
 
@@ -133,8 +134,8 @@ namespace cloud.charging.open.protocols.OCPI
         {
 
             this.Id           = Id;
-            this.Description  = Description?.Distinct().ToArray() ?? Array.Empty<DisplayText>();
-            this.URLs         = URLs?.       Distinct().ToArray() ?? Array.Empty<URL>();
+            this.Description  = Description?.Distinct().ToArray() ?? [];
+            this.URLs         = URLs?.       Distinct().ToArray() ?? [];
 
         }
 
@@ -179,9 +180,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="OpenSourceLicense">The parsed Open Source license.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                 JSON,
-                                       out OpenSourceLicense?  OpenSourceLicense,
-                                       out String?             ErrorResponse)
+        public static Boolean TryParse(JObject                                      JSON,
+                                       [NotNullWhen(true)]  out OpenSourceLicense?  OpenSourceLicense,
+                                       [NotNullWhen(false)] out String?             ErrorResponse)
 
             => TryParse(JSON,
                         out OpenSourceLicense,
@@ -197,8 +198,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomOpenSourceLicenseParser">A delegate to parse custom Open Source license JSON objects.</param>
         public static Boolean TryParse(JObject                                          JSON,
-                                       out OpenSourceLicense?                           OpenSourceLicense,
-                                       out String?                                      ErrorResponse,
+                                       [NotNullWhen(true)]  out OpenSourceLicense?      OpenSourceLicense,
+                                       [NotNullWhen(false)] out String?                 ErrorResponse,
                                        CustomJObjectParserDelegate<OpenSourceLicense>?  CustomOpenSourceLicenseParser   = null)
         {
 
@@ -256,9 +257,11 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                OpenSourceLicense = new OpenSourceLicense(Id,
-                                                          Description,
-                                                          URLs.ToArray());
+                OpenSourceLicense = new OpenSourceLicense(
+                                        Id,
+                                        Description,
+                                        [.. URLs]
+                                    );
 
                 if (CustomOpenSourceLicenseParser is not null)
                     OpenSourceLicense = CustomOpenSourceLicenseParser(JSON,

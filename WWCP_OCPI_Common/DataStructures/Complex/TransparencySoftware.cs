@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -165,9 +167,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="TransparencySoftware">The parsed transparency software.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                    JSON,
-                                       out TransparencySoftware?  TransparencySoftware,
-                                       out String?                ErrorResponse)
+        public static Boolean TryParse(JObject                                         JSON,
+                                       [NotNullWhen(true)]  out TransparencySoftware?  TransparencySoftware,
+                                       [NotNullWhen(false)] out String?                ErrorResponse)
 
             => TryParse(JSON,
                         out TransparencySoftware,
@@ -183,8 +185,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomTransparencySoftwareParser">A delegate to parse custom transparency software JSON objects.</param>
         public static Boolean TryParse(JObject                                             JSON,
-                                       out TransparencySoftware?                           TransparencySoftware,
-                                       out String?                                         ErrorResponse,
+                                       [NotNullWhen(true)]  out TransparencySoftware?      TransparencySoftware,
+                                       [NotNullWhen(false)] out String?                    ErrorResponse,
                                        CustomJObjectParserDelegate<TransparencySoftware>?  CustomTransparencySoftwareParser   = null)
         {
 
@@ -203,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (!JSON.ParseMandatoryText("name",
                                              "name",
-                                             out String Name,
+                                             out String? Name,
                                              out ErrorResponse))
                 {
                     return false;
@@ -215,7 +217,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (!JSON.ParseMandatoryText("version",
                                              "version",
-                                             out String Version,
+                                             out String? Version,
                                              out ErrorResponse))
                 {
                     return false;
@@ -229,8 +231,7 @@ namespace cloud.charging.open.protocols.OCPI
                                              "Open Source License",
                                              OCPI.OpenSourceLicense.TryParse,
                                              out OpenSourceLicense? OpenSourceLicense,
-                                             out ErrorResponse) ||
-                    OpenSourceLicense is null)
+                                             out ErrorResponse))
                 {
                     return false;
                 }
@@ -306,14 +307,16 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                TransparencySoftware = new TransparencySoftware(Name,
-                                                                Version,
-                                                                OpenSourceLicense,
-                                                                Vendor,
-                                                                Logo,
-                                                                HowToUse,
-                                                                MoreInformation,
-                                                                SourceCodeRepository);
+                TransparencySoftware = new TransparencySoftware(
+                                           Name,
+                                           Version,
+                                           OpenSourceLicense,
+                                           Vendor,
+                                           Logo,
+                                           HowToUse,
+                                           MoreInformation,
+                                           SourceCodeRepository
+                                       );
 
                 if (CustomTransparencySoftwareParser is not null)
                     TransparencySoftware = CustomTransparencySoftwareParser(JSON,

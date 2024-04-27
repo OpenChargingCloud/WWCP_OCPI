@@ -1805,23 +1805,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 // The location where the charging session took place,
                 // including only the relevant EVSE, connector and tariffId.
-                var filteredLocation = ChargeDetailRecord.ChargingPool.ToOCPI(CustomEVSEUIdConverter,
-                                                                              CustomEVSEIdConverter,
-                                                                              evseId      => evseId      == ChargeDetailRecord.EVSE.Id,
-                                                                              connectorId => connectorId == ChargeDetailRecord.ChargingConnector.Id,
-                                                                              (countryCode,
-                                                                               partyId,
-                                                                               locationId,
-                                                                               evseUId,
-                                                                               connectorId) => GetTariffIdsDelegate is not null
-                                                                                                   ? GetTariffIdsDelegate(countryCode,
-                                                                                                                          partyId,
-                                                                                                                          locationId,
-                                                                                                                          evseUId,
-                                                                                                                          connectorId,
-                                                                                                                          EMSPId).FirstOrDefault()
-                                                                                                   : null,
-                                                                              ref Warnings);
+                var filteredLocation = ChargeDetailRecord.ChargingPool.ToOCPI(
+                                           CustomEVSEUIdConverter,
+                                           CustomEVSEIdConverter,
+                                           evseId      => evseId      == ChargeDetailRecord.EVSE.Id,
+                                           connectorId => connectorId == ChargeDetailRecord.ChargingConnector.Id,
+                                           (countryCode,
+                                            partyId,
+                                            locationId,
+                                            evseUId,
+                                            connectorId) => GetTariffIdsDelegate is not null
+                                                                ? GetTariffIdsDelegate(countryCode,
+                                                                                       partyId,
+                                                                                       locationId,
+                                                                                       evseUId,
+                                                                                       connectorId,
+                                                                                       EMSPId).FirstOrDefault()
+                                                                : null,
+                                           ref Warnings
+                                       );
 
                 if (filteredLocation is null)
                 {
@@ -1829,17 +1831,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return null;
                 }
 
-                if (!ChargeDetailRecord.ChargingPrice.HasValue)
-                {
-                    Warnings.Add("The charging price of the given charge detail record must not be null!".ToWarning());
-                    return null;
-                }
+                //if (!ChargeDetailRecord.ChargingPrice.HasValue)
+                //{
+                //    Warnings.Add("The charging price of the given charge detail record must not be null!".ToWarning());
+                //    return null;
+                //}
 
-                if (ChargeDetailRecord.ChargingPrice.Value.Currency is null)
-                {
-                    Warnings.Add("The currency of the charging price of the given charge detail record must not be null!".ToWarning());
-                    return null;
-                }
+                //if (ChargeDetailRecord.ChargingPrice.Value.Currency is null)
+                //{
+                //    Warnings.Add("The currency of the charging price of the given charge detail record must not be null!".ToWarning());
+                //    return null;
+                //}
 
                 if (!ChargeDetailRecord.ConsumedEnergy.HasValue)
                 {
@@ -1858,6 +1860,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 var partyId          = Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix);
 
                 // Within CDRs multiple tariffs are possible??!
+                //
+                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                // !!! ToDo: Request the charging tariff ids from back at the session start time! !!!
+                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 var tariffIds        = GetTariffIdsDelegate?.Invoke(countryCode,
                                                                     partyId,
                                                                     filteredLocation.Id,
@@ -1865,7 +1871,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                     filteredLocation.EVSEs.First().Connectors.First().Id,
                                                                     EMSPId);
 
-                                       // Request the charging tariff from back at the session start time!
+                if (tariffIds is null || !tariffIds.Any())
+                {
+                    Warnings.Add("Could not find any charging tariff identifications for the given charge detail record!".ToWarning());
+                    return null;
+                }
+
+
+                // Request the charging tariff from back at the session start time!
                 var tariffs          = tariffIds?.Select(tariffId => TariffGetter?.Invoke(
                                                                          tariffId,
                                                                          ChargeDetailRecord.SessionTime.StartTime,
@@ -1875,27 +1888,104 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                   Cast<Tariff>()
                                        ?? [];
 
-                var chargingPeriods  = new List<ChargingPeriod>();
-                var cdrDimensions    = new List<CDRDimension>();
 
-                if (tariffs.First().TariffElements.First().PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.ENERGY))
-                    cdrDimensions.Add(CDRDimension.Create(
-                                          CDRDimensionType.ENERGY,
-                                          ChargeDetailRecord.EnergyMeteringValues.Last().Value - ChargeDetailRecord.EnergyMeteringValues.First().Value
-                                      ));
+                if (!tariffs.Any())
+                {
+                    Warnings.Add("Could not find any charging tariff for the given charge detail record!".ToWarning());
+                    return null;
+                }
 
-                if (tariffs.First().TariffElements.First().PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.TIME))
-                    cdrDimensions.Add(CDRDimension.Create(
-                                          CDRDimensionType.TIME,
-                                          Convert.ToDecimal((ChargeDetailRecord.SessionTime.EndTime! - ChargeDetailRecord.SessionTime.StartTime).Value.TotalHours)
-                                      ));
 
-                chargingPeriods.Add(
-                    ChargingPeriod.Create(
-                        ChargeDetailRecord.SessionTime.StartTime,
-                        cdrDimensions
-                    )
-                );
+                // "Free of Charge" Tariff in OCPI, a tariff has to be provided that has a type = FLAT and price = 0.00.
+
+                var tariff                  = tariffs.First();
+                //var numberOfTariffElements  = tariff.TariffElements.Count();
+                var chargingPeriods         = new List<ChargingPeriod>();
+                var cdrDimensions           = new List<CDRDimension>();
+                var totalCost               = 0M;
+
+                foreach (var tariffElement in tariff.TariffElements)
+                {
+
+                    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.ENERGY))
+                    {
+
+                        var energyPriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.ENERGY);
+
+                        if (energyPriceComponent.Price > 0)
+                        {
+
+                            var totalEnergy = ChargeDetailRecord.EnergyMeteringValues.Last().Value - ChargeDetailRecord.EnergyMeteringValues.First().Value;
+
+                            cdrDimensions.Add(CDRDimension.Create(
+                                                  CDRDimensionType.ENERGY,
+                                                  totalEnergy
+                                              ));
+
+                            var aa = totalEnergy / energyPriceComponent.StepSize;
+                            var bb = totalEnergy % energyPriceComponent.StepSize;
+
+                            if (aa > 0)
+                                bb++;
+
+                            var totalEnergyPrice = energyPriceComponent.Price * bb;
+
+                            totalCost += totalEnergyPrice;
+
+                        }
+
+                    }
+
+                    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.TIME))
+                    {
+
+                        var timePriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.ENERGY);
+
+                        if (timePriceComponent.Price > 0)
+                        {
+
+                            var totalTime = ChargeDetailRecord.SessionTime.EndTime.Value - ChargeDetailRecord.SessionTime.StartTime;
+
+                            cdrDimensions.Add(CDRDimension.Create(
+                                                  CDRDimensionType.TIME,
+                                                  Convert.ToDecimal(totalTime.TotalHours)
+                                              ));
+
+
+
+                            var aa = Convert.ToDecimal(totalTime.TotalSeconds) / timePriceComponent.StepSize;
+                            var bb = Convert.ToDecimal(totalTime.TotalSeconds) % timePriceComponent.StepSize;
+
+                            if (aa > 0)
+                                bb++;
+
+                            var totalEnergyPrice = timePriceComponent.Price * bb;
+
+                            totalCost += totalEnergyPrice;
+
+                        }
+
+                    }
+
+                    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.FLAT))
+                    {
+
+                        var timePriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.FLAT);
+
+                        totalCost += timePriceComponent.Price;
+
+                    }
+
+                    chargingPeriods.Add(
+                        ChargingPeriod.Create(
+                            ChargeDetailRecord.SessionTime.StartTime,
+                            cdrDimensions
+                        )
+                    );
+
+                }
+
+                #region SignedData
 
                 SignedData? signedData = null;
 
@@ -1925,6 +2015,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 }
 
+                #endregion
+
 
                 return new CDR(
 
@@ -1937,9 +2029,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            AuthMethod:              authMethod.Value,
                            Location:                filteredLocation,            //ToDo: Might still have not required connectors!
                                                                                  //      Might have out EnergyMeter vendor extension!
-                           Currency:                OCPI.Currency.Parse(ChargeDetailRecord.ChargingPrice.Value.Currency.ISOCode),
+                           Currency:                tariff.Currency,
                            ChargingPeriods:         chargingPeriods,
-                           TotalCost:               ChargeDetailRecord.ChargingPrice.       Value.Total,
+                           TotalCost:               totalCost,
                            TotalEnergy:             ChargeDetailRecord.ConsumedEnergy.      Value,
                            TotalTime:               ChargeDetailRecord.SessionTime.Duration.Value,
 

@@ -2485,12 +2485,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     forwardedCDRs.Add(cdr);
 
                 else
-                    filteredCDRs.Add(WWCP.SendCDRResult.Filtered(
-                                              org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
-                                              Id,
-                                              cdr,
-                                              Warnings: Warnings.Create("This charge detail record was filtered!")
-                                          ));
+                    filteredCDRs.Add(
+                        WWCP.SendCDRResult.Filtered(
+                            org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                            Id,
+                            cdr,
+                            Warnings: Warnings.Create("This charge detail record was filtered!")
+                        )
+                    );
 
             }
 
@@ -2628,12 +2630,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         #region Convert and send charge detail record
 
-                        var cdr = chargeDetailRecord.ToOCPI(CustomEVSEUIdConverter,
-                                                            CustomEVSEIdConverter,
-                                                            CommonAPI.GetTariffIds,
-                                                            OCPI.EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
-                                                            CommonAPI.GetTariff,
-                                                            ref warnings);
+                        var cdr = chargeDetailRecord.ToOCPI(
+                                      CustomEVSEUIdConverter,
+                                      CustomEVSEIdConverter,
+                                      CommonAPI.GetTariffIds,
+                                      EMSP_Id.Parse(chargeDetailRecord.ProviderIdStart.Value.ToString()),
+                                      CommonAPI.GetTariff,
+                                      ref warnings
+                                  );
 
                         if (cdr is null)
                         {

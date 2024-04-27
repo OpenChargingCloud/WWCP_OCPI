@@ -20,11 +20,22 @@
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
+using System.Linq;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
+
+    public static class TariffElementExtensions
+    {
+
+        public static Boolean HasRestrictions(this TariffElement TariffElement)
+            => TariffElement.TariffRestrictions is not null &&
+               TariffElement.TariffRestrictions.HasRestrictions();
+
+    }
+
 
     /// <summary>
     /// A charging tariff element.
@@ -41,7 +52,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public IEnumerable<PriceComponent>  PriceComponents       { get; }
 
         /// <summary>
-        /// Enumeration of tariff restrictions.
+        /// Optional charging tariff restrictions.
         /// </summary>
         [Optional]
         public TariffRestrictions?          TariffRestrictions    { get;  }
@@ -71,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Create a new charging tariff element.
         /// </summary>
         /// <param name="PriceComponents">An enumeration of price components that make up the pricing of this tariff.</param>
-        /// <param name="TariffRestrictions">Optional tariff restrictions.</param>
+        /// <param name="TariffRestrictions">Optional charging tariff restrictions.</param>
         public TariffElement(IEnumerable<PriceComponent>  PriceComponents,
                              TariffRestrictions?          TariffRestrictions   = null)
         {
@@ -92,12 +103,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Create a new charging tariff element.
         /// </summary>
         /// <param name="PriceComponent">A price component that makes up the pricing of this tariff.</param>
-        /// <param name="TariffRestriction">A charging tariff restriction.</param>
+        /// <param name="TariffRestriction">Charging charging tariff restrictions.</param>
         public TariffElement(PriceComponent      PriceComponent,
                              TariffRestrictions  TariffRestriction)
         {
 
-            this.PriceComponents     = new[] { PriceComponent };
+            this.PriceComponents     = [ PriceComponent ];
             this.TariffRestrictions  = TariffRestriction;
 
         }
@@ -296,6 +307,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        public Boolean IsActive(ChargingPeriodRW ChargingPeriod)
+        {
+
+            return TariffRestrictions?.IsActive(ChargingPeriod) ?? true;
+
+            //return TariffRestrictions.All(restriction => restriction.IsValid(period.StartInstant)) &&
+            //       TariffRestrictions.All(restriction => restriction.IsValid(period.PeriodData));
+
+        }
+
+
         #region Operator overloading
 
         #region Operator == (TariffElement1, TariffElement2)
@@ -387,9 +409,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Return a text representation of this object.
         /// </summary>
-        public override String ToString()
+        public override String ToString() 
 
-            => $"{PriceComponents.Count()} price component(s){(TariffRestrictions is not null ? " with tariff restrictions" : "")}!";
+            => $"{PriceComponents.Count()} price component(s): '{PriceComponents.AggregateWith(", ")}'{(TariffRestrictions is not null ? $", with tariff restrictions: {TariffRestrictions}" : "")}!";
 
         #endregion
 

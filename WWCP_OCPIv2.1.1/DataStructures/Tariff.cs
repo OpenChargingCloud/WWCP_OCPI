@@ -27,6 +27,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using System.Linq;
 
 #endregion
 
@@ -882,6 +883,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
         #endregion
+
+
+        public Boolean IsActive(ChargingPeriodRW ChargingPeriod)
+
+            => TariffElements.Any(tariffElement => tariffElement.IsActive(ChargingPeriod));
+
 
 
         #region Operator overloading

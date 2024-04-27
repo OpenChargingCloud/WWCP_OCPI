@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -145,10 +147,12 @@ namespace cloud.charging.open.protocols.OCPI
                                                      String     Text)
 
             => new (
-                   new[] {
-                       new DisplayText(Language,
-                                       Text)
-                   }
+                   [
+                       new DisplayText(
+                               Language,
+                               Text
+                           )
+                   ]
                );
 
         #endregion
@@ -189,9 +193,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="DisplayText">The parsed multi-language text.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject          JSON,
-                                       out DisplayText  DisplayText,
-                                       out String?      ErrorResponse)
+        public static Boolean TryParse(JObject                               JSON,
+                                       [NotNullWhen(true)]  out DisplayText  DisplayText,
+                                       [NotNullWhen(false)] out String?      ErrorResponse)
 
             => TryParse(JSON,
                         out DisplayText,
@@ -207,8 +211,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomDisplayTextParser">A delegate to parse custom multi-language text JSON objects.</param>
         public static Boolean TryParse(JObject                                    JSON,
-                                       out DisplayText                            DisplayText,
-                                       out String?                                ErrorResponse,
+                                       [NotNullWhen(true)]  out DisplayText       DisplayText,
+                                       [NotNullWhen(false)] out String?           ErrorResponse,
                                        CustomJObjectParserDelegate<DisplayText>?  CustomDisplayTextParser)
         {
 
@@ -239,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (!JSON.ParseMandatoryText("text",
                                              "text",
-                                             out String Text,
+                                             out String? Text,
                                              out ErrorResponse))
                 {
                     return false;
@@ -248,8 +252,10 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                DisplayText = new DisplayText(Language,
-                                              Text);
+                DisplayText = new DisplayText(
+                                  Language,
+                                  Text
+                              );
 
 
                 if (CustomDisplayTextParser is not null)
