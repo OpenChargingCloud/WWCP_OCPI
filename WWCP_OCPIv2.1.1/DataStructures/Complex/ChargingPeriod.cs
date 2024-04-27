@@ -513,6 +513,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     }
 
 
+    public static class ChargingPeriodRWExtensions
+    {
+
+        public static IEnumerable<ChargingPeriod> AsChargingPeriods(this IEnumerable<ChargingPeriodRW> ChargingPeriods)
+
+            => ChargingPeriods.Select(chargingPeriod => chargingPeriod.AsChargingPeriod());
+
+    }
+
+
     public class ChargingPeriodRW
     {
 
@@ -533,6 +543,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         [Mandatory]
         public  HashSet<CDRDimension>                        Dimensions            { get; } = [];
+
+
+
+        public  Decimal   Energy            { get; set; }
+        //public  Decimal   BilledEnergy      { get; set; }
+        public  Decimal   EnergyPrice       { get; set; }
+        public  UInt32    EnergyStepSize    { get; set; }
+
+
+        public  TimeSpan  Time              { get; set; }
+        //public  TimeSpan  BilledTime        { get; set; }
+        public  Decimal   TimePrice         { get; set; }
+        public  UInt32    TimeStepSize      { get; set; }
 
 
         public  Dictionary<TariffDimension, PriceComponent>  PriceComponents       { get; } = [];
@@ -919,6 +942,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     Dimensions.Select(cdrDimension => cdrDimension.Clone()).ToArray());
 
         #endregion
+
+
+        public ChargingPeriod AsChargingPeriod()
+
+            => ChargingPeriod.Create(
+                   StartTimestamp,
+                   Dimensions
+               );
+
 
 
         #region Operator overloading

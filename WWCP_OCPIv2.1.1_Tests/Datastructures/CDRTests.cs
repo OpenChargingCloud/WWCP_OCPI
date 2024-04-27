@@ -1004,6 +1004,129 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
         #endregion
 
 
+
+        #region SplittCDRIntoChargingPeriods_Test02()
+
+        /// <summary>
+        /// Augment an OCPI charge detail record with charging tariff information.
+        /// </summary>
+        [Test]
+        public static void SplittCDRIntoChargingPeriods_Test02()
+        {
+
+            var now = Timestamp.Now;
+
+            #region CDR
+
+            var start1           = DateTime.Parse("2024-04-14T19:26:20.000Z");
+            var stop1            = DateTime.Parse("2024-04-15T06:36:36.000Z");
+
+            var meteringValues1  = new[] {
+                                       new Timestamped<Decimal>(start1,     0m),
+                                       new Timestamped<Decimal>(stop1,  59.51m)
+                                   };
+
+            var cdr1In           = new CDR(
+                                       CountryCode:         CountryCode.Parse("DE"),
+                                       PartyId:             Party_Id.   Parse("GEF"),
+                                       Id:                  CDR_Id.     NewRandom(),
+                                       Start:               start1,
+                                       Stop:                stop1,
+                                       AuthId:              Auth_Id.    NewRandom(),
+                                       AuthMethod:          AuthMethods.AUTH_REQUEST,
+                                       Location:            new Location(
+                                                                CountryCode:    CountryCode.Parse("DE"),
+                                                                PartyId:        Party_Id.   Parse("GEF"),
+                                                                Id:             Location_Id.NewRandom(),
+                                                                LocationType:   LocationType.ON_STREET,
+                                                                Address:        "Biberweg 18",
+                                                                City:           "Jena",
+                                                                PostalCode:     "07749",
+                                                                Country:        Country.Germany,
+                                                                Coordinates:    GeoCoordinate.FromLatLng(50.928365, 11.589986),
+                                                                EVSEs:          [
+                                                                                    new EVSE(
+                                                                                        UId:          EVSE_UId.Parse("DE*GEF*E1234*1"),
+                                                                                        Status:       StatusType.CHARGING,
+                                                                                        Connectors:   [
+                                                                                                          new Connector(
+                                                                                                              Id:         Connector_Id.Parse("1"),
+                                                                                                              Standard:   ConnectorType.IEC_62196_T2,
+                                                                                                              Format:     ConnectorFormats.SOCKET,
+                                                                                                              PowerType:  PowerTypes.AC_3_PHASE,
+                                                                                                              Voltage:    230,
+                                                                                                              Amperage:   32
+                                                                                                          )
+                                                                                                      ]
+                                                                                    )
+                                                                                ]
+                                                            ),
+                                       Currency:            OCPI.Currency.EUR,
+                                       ChargingPeriods:     [
+                                                                ChargingPeriod.Create(
+                                                                    start1,
+                                                                    [ CDRDimension.ENERGY(1) ]
+                                                                )
+                                                            ],
+                                       TotalCost:           0,
+                                       TotalEnergy:         0,
+                                       TotalTime:           TimeSpan.Zero,
+                                       MeterId:             null,
+                                       Tariffs:             null
+                                   );
+
+            #endregion
+
+            #region Tariff
+
+            var tariff1    = new Tariff(
+                                 CountryCode:         CountryCode.Parse("DE"),
+                                 PartyId:             Party_Id.   Parse("GEF"),
+                                 Id:                  Tariff_Id.  NewRandom(),
+                                 Currency:            OCPI.Currency.EUR,
+                                 TariffElements:      [
+                                                          new TariffElement(
+                                                              [
+                                                                  PriceComponent.Energy(
+                                                                      Price:     0.44m,
+                                                                      StepSize:  1000
+                                                                  ),
+                                                                  PriceComponent.ChargingTime(
+                                                                      Price:     0m,
+                                                                      Duration:  TimeSpan.FromMinutes(1)
+                                                                  ),
+                                                                  PriceComponent.FlatRate(
+                                                                      Price:     0.3m
+                                                                  )
+                                                              ],
+                                                              new TariffRestrictions(
+                                                                  MaxDuration:   TimeSpan.FromHours(3)
+                                                              )
+                                                          ),
+                                                          new TariffElement(
+                                                              PriceComponent.Energy(
+                                                                  Price:     0.44m,
+                                                                  StepSize:  1000
+                                                              ),
+                                                              PriceComponent.ChargingTime(
+                                                                  Price:     5.04m,
+                                                                  Duration:  TimeSpan.FromMinutes(1)
+                                                              )
+                                                          )
+                                                      ]
+                             );
+
+            #endregion
+
+
+            var cdr1_tariff1out  = cdr1In.SplittIntoChargingPeriods(meteringValues1, tariff1);
+
+
+        }
+
+        #endregion
+
+
     }
 
 }
