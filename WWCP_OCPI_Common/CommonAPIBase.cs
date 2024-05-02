@@ -511,7 +511,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// 
         /// <param name="ServerCertificateSelector">An optional delegate to select a TLS server certificate.</param>
         /// <param name="ClientCertificateValidator">An optional delegate to verify the TLS client certificate used for authentication.</param>
-        /// <param name="ClientCertificateSelector">An optional delegate to select the TLS client certificate used for authentication.</param>
+        /// <param name="LocalCertificateSelector">An optional delegate to select the TLS client certificate used for authentication.</param>
         /// <param name="AllowedTLSProtocols">The TLS protocol(s) allowed for this connection.</param>
         /// 
         /// <param name="ServerThreadName">The optional name of the TCP server thread.</param>
@@ -537,59 +537,59 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="DNSClient">The DNS client of the API.</param>
         /// <param name="AutoStart">Whether to start the API automatically.</param>
-        public CommonAPIBase(Version_Id                           OCPIVersion,
-                             URL                                  OurBaseURL,
-                             URL                                  OurVersionsURL,
+        public CommonAPIBase(Version_Id                                                 OCPIVersion,
+                             URL                                                        OurBaseURL,
+                             URL                                                        OurVersionsURL,
 
-                             HTTPPath?                            AdditionalURLPathPrefix       = null,
-                             Boolean                              LocationsAsOpenData           = true,
-                             Boolean?                             AllowDowngrades               = null,
-                             Boolean                              Disable_RootServices          = true,
+                             HTTPPath?                                                  AdditionalURLPathPrefix       = null,
+                             Boolean                                                    LocationsAsOpenData           = true,
+                             Boolean?                                                   AllowDowngrades               = null,
+                             Boolean                                                    Disable_RootServices          = true,
 
-                             HTTPHostname?                        HTTPHostname                  = null,
-                             String?                              ExternalDNSName               = null,
-                             IPPort?                              HTTPServerPort                = null,
-                             HTTPPath?                            BasePath                      = null,
-                             String?                              HTTPServerName                = DefaultHTTPServerName,
+                             HTTPHostname?                                              HTTPHostname                  = null,
+                             String?                                                    ExternalDNSName               = null,
+                             IPPort?                                                    HTTPServerPort                = null,
+                             HTTPPath?                                                  BasePath                      = null,
+                             String?                                                    HTTPServerName                = DefaultHTTPServerName,
 
-                             HTTPPath?                            URLPathPrefix                 = null,
-                             String?                              HTTPServiceName               = DefaultHTTPServiceName,
-                             JObject?                             APIVersionHashes              = null,
+                             HTTPPath?                                                  URLPathPrefix                 = null,
+                             String?                                                    HTTPServiceName               = DefaultHTTPServiceName,
+                             JObject?                                                   APIVersionHashes              = null,
 
-                             ServerCertificateSelectorDelegate?   ServerCertificateSelector     = null,
-                             RemoteCertificateValidationHandler?  ClientCertificateValidator    = null,
-                             LocalCertificateSelectionHandler?    ClientCertificateSelector     = null,
-                             SslProtocols?                        AllowedTLSProtocols           = null,
-                             Boolean?                             ClientCertificateRequired     = null,
-                             Boolean?                             CheckCertificateRevocation    = null,
+                             ServerCertificateSelectorDelegate?                         ServerCertificateSelector     = null,
+                             RemoteTLSClientCertificateValidationHandler<IHTTPServer>?  ClientCertificateValidator    = null,
+                             LocalCertificateSelectionHandler?                          LocalCertificateSelector      = null,
+                             SslProtocols?                                              AllowedTLSProtocols           = null,
+                             Boolean?                                                   ClientCertificateRequired     = null,
+                             Boolean?                                                   CheckCertificateRevocation    = null,
 
-                             ServerThreadNameCreatorDelegate?     ServerThreadNameCreator       = null,
-                             ServerThreadPriorityDelegate?        ServerThreadPrioritySetter    = null,
-                             Boolean?                             ServerThreadIsBackground      = null,
-                             ConnectionIdBuilder?                 ConnectionIdBuilder           = null,
-                             TimeSpan?                            ConnectionTimeout             = null,
-                             UInt32?                              MaxClientConnections          = null,
+                             ServerThreadNameCreatorDelegate?                           ServerThreadNameCreator       = null,
+                             ServerThreadPriorityDelegate?                              ServerThreadPrioritySetter    = null,
+                             Boolean?                                                   ServerThreadIsBackground      = null,
+                             ConnectionIdBuilder?                                       ConnectionIdBuilder           = null,
+                             TimeSpan?                                                  ConnectionTimeout             = null,
+                             UInt32?                                                    MaxClientConnections          = null,
 
-                             Boolean?                             DisableMaintenanceTasks       = null,
-                             TimeSpan?                            MaintenanceInitialDelay       = null,
-                             TimeSpan?                            MaintenanceEvery              = null,
+                             Boolean?                                                   DisableMaintenanceTasks       = null,
+                             TimeSpan?                                                  MaintenanceInitialDelay       = null,
+                             TimeSpan?                                                  MaintenanceEvery              = null,
 
-                             Boolean?                             DisableWardenTasks            = null,
-                             TimeSpan?                            WardenInitialDelay            = null,
-                             TimeSpan?                            WardenCheckEvery              = null,
+                             Boolean?                                                   DisableWardenTasks            = null,
+                             TimeSpan?                                                  WardenInitialDelay            = null,
+                             TimeSpan?                                                  WardenCheckEvery              = null,
 
-                             Boolean?                             IsDevelopment                 = null,
-                             IEnumerable<String>?                 DevelopmentServers            = null,
-                             Boolean?                             DisableLogging                = null,
-                             String?                              LoggingContext                = null,
-                             String?                              LoggingPath                   = null,
-                             String?                              LogfileName                   = null,
-                             OCPILogfileCreatorDelegate?          LogfileCreator                = null,
-                             String?                              DatabaseFilePath              = null,
-                             String?                              RemotePartyDBFileName         = null,
-                             String?                              AssetsDBFileName              = null,
-                             DNSClient?                           DNSClient                     = null,
-                             Boolean                              AutoStart                     = false)
+                             Boolean?                                                   IsDevelopment                 = null,
+                             IEnumerable<String>?                                       DevelopmentServers            = null,
+                             Boolean?                                                   DisableLogging                = null,
+                             String?                                                    LoggingContext                = null,
+                             String?                                                    LoggingPath                   = null,
+                             String?                                                    LogfileName                   = null,
+                             OCPILogfileCreatorDelegate?                                LogfileCreator                = null,
+                             String?                                                    DatabaseFilePath              = null,
+                             String?                                                    RemotePartyDBFileName         = null,
+                             String?                                                    AssetsDBFileName              = null,
+                             DNSClient?                                                 DNSClient                     = null,
+                             Boolean                                                    AutoStart                     = false)
 
             : base(HTTPHostname,
                    ExternalDNSName,
@@ -604,7 +604,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                    ServerCertificateSelector,
                    ClientCertificateValidator,
-                   ClientCertificateSelector,
+                   LocalCertificateSelector,
                    AllowedTLSProtocols,
                    ClientCertificateRequired,
                    CheckCertificateRevocation,
