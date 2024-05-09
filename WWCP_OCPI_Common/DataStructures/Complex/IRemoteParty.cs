@@ -71,12 +71,12 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// A delegate to select a TLS client certificate.
         /// </summary>
-        RemoteCertificateValidationHandler?  RemoteCertificateValidator    { get; }
+        RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator    { get; }
 
         /// <summary>
         /// A delegate to select a TLS client certificate.
         /// </summary>
-        LocalCertificateSelectionHandler?    ClientCertificateSelector     { get; }
+        LocalCertificateSelectionHandler?    LocalCertificateSelector     { get; }
 
         /// <summary>
         /// The TLS client certificate to use of HTTP authentication.
