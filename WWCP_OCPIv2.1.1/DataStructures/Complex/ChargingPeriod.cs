@@ -614,28 +614,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             set
             {
-                next               = value;
-                FinalEndTimestamp  = null;
+                next          = value;
+                EndTimestamp  = null;
             }
 
         }
 
 
-        public  DateTime?                                    FinalEndTimestamp    { get; set; }
+        /// <summary>
+        /// The final stop timestamp when the session ends.
+        /// </summary>
+        public  DateTime?                                    EndTimestamp    { get; set; }
 
         /// <summary>
-        /// Start timestamp of the charging period.
+        /// Stop timestamp of the charging period.
         /// This period ends when a next period starts,
         /// the last period ends when the session ends.
         /// </summary>
         [Optional]
-        public  DateTime?                                    EndTimestamp
+        public  DateTime?                                    StopTimestamp
             => Next is not null
                    ? Next.StartTimestamp
-                   : FinalEndTimestamp;
+                   : EndTimestamp;
 
         public  TimeSpan?                                    Duration
-            => EndTimestamp - StartTimestamp;
+            => StopTimestamp - StartTimestamp;
 
 
         public  TimeSpan                                     TotalDuration
@@ -744,7 +747,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.StartTimestamp     = StartTimestamp;
-            this.FinalEndTimestamp  = EndTimestamp;
+            this.EndTimestamp  = EndTimestamp;
             this.Dimensions         = Dimensions is not null
                                           ? new HashSet<CDRDimension>(Dimensions)
                                           : [];

@@ -198,7 +198,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     chargingPeriods[i].Next     = chargingPeriods[i+1];
 
                 if (i == chargingPeriods.Count - 1)
-                    chargingPeriods[i].FinalEndTimestamp = CDR.Stop;
+                    chargingPeriods[i].EndTimestamp = CDR.Stop;
 
                 var _meteringValues = meteringValues.Where(meteringValue => meteringValue.Timestamp == chargingPeriods[i].StartTimestamp);
                 if (_meteringValues.Any())

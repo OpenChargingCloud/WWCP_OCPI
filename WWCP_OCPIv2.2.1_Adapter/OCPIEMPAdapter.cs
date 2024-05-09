@@ -625,7 +625,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// Whether the given charging session identification is known within the roaming network.
         /// </summary>
         /// <param name="ChargingSessionId">The charging session identification.</param>
-        public Boolean Contains(ChargingSession_Id ChargingSessionId)
+        public Boolean ContainsChargingSessionId(ChargingSession_Id ChargingSessionId)
             => false;
 
         /// <summary>

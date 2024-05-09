@@ -546,7 +546,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
             var firstChargingPeriod  = ChargingPeriod.First;
-            var duration             = ChargingPeriod.EndTimestamp - firstChargingPeriod.StartTimestamp;
+            var duration             = ChargingPeriod.StopTimestamp - firstChargingPeriod.StartTimestamp;
 
             if (duration                      > MaxDuration)
                 return false;

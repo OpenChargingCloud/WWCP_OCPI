@@ -2627,8 +2627,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                     ClassicAssert.AreEqual(RemoteStartResultTypes.AsyncOperation, remoteStartResult.Result);
 
 
-                    var ss1 = emp1RoamingNetwork.SessionsStore.ContainsKey(smartPhoneSessionId);
-                    var ss2 = emp1RoamingNetwork.ChargingStationOperators.First().Contains(smartPhoneSessionId);
+                    var ss1 = emp1RoamingNetwork.ContainsChargingSessionId(smartPhoneSessionId);
+                    var ss2 = emp1RoamingNetwork.ChargingStationOperators.First().ContainsChargingSessionId(smartPhoneSessionId);
 
 
 
