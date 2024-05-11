@@ -2766,6 +2766,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 );
 
 
+            await RoamingNetwork.ReceiveSendChargeDetailRecordResults(sendCDRsResult);
+
+
             #region Send OnSendCDRsRequest event
 
             try
