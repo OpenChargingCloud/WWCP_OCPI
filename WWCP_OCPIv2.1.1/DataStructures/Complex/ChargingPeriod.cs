@@ -64,8 +64,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
         /// <param name="Dimensions">List of relevant values for this charging period.</param>
-        protected ChargingPeriod(DateTime                   StartTimestamp,
-                                 IEnumerable<CDRDimension>  Dimensions)
+        public ChargingPeriod(DateTime                   StartTimestamp,
+                              IEnumerable<CDRDimension>  Dimensions)
         {
 
             if (!Dimensions.Any())
@@ -79,21 +79,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region (static) Create  (StartTimestamp, Dimensions)
+        //#region (static) Create  (StartTimestamp, Dimensions)
 
-        /// <summary>
-        /// A charging period consists of a start timestamp and a
-        /// list of possible values that influence this period.
-        /// </summary>
-        /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
-        /// <param name="Dimensions">List of relevant values for this charging period.</param>
-        public static ChargingPeriod Create(DateTime                   StartTimestamp,
-                                            IEnumerable<CDRDimension>  Dimensions)
+        ///// <summary>
+        ///// A charging period consists of a start timestamp and a
+        ///// list of possible values that influence this period.
+        ///// </summary>
+        ///// <param name="StartTimestamp">Start timestamp of the charging period.</param>
+        ///// <param name="Dimensions">List of relevant values for this charging period.</param>
+        //public static ChargingPeriod Create(DateTime                   StartTimestamp,
+        //                                    IEnumerable<CDRDimension>  Dimensions)
 
-            => new (StartTimestamp,
-                    Dimensions);
+        //    => new (StartTimestamp,
+        //            Dimensions);
 
-        #endregion
+        //#endregion
 
         #region (static) Parse   (JSON, CustomChargingPeriodParser = null)
 
@@ -949,7 +949,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public ChargingPeriod AsChargingPeriod()
 
-            => ChargingPeriod.Create(
+            => new ChargingPeriod(
                    StartTimestamp,
                    Dimensions
                );

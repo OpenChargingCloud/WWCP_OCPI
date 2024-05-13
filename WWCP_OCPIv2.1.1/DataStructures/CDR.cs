@@ -26,9 +26,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
-using Telegram.Bot.Requests;
-using System.Linq;
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
 
 #endregion
 
@@ -390,7 +387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (chargingPeriods.Count == 0)
             {
 
-                chargingPeriods.Add(ChargingPeriod.Create(
+                chargingPeriods.Add(new ChargingPeriod(
                                         CDR.Start,
                                         [
                                             CDRDimension.TIME  (Convert.ToDecimal((CDR.Stop - CDR.Start).TotalHours)),
@@ -1235,10 +1232,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Created                   [optional, NonStandard]
 
-                if (!JSON.ParseOptional("created",
-                                        "created",
-                                        out DateTime? Created,
-                                        out ErrorResponse))
+                if (JSON.ParseOptional("created",
+                                       "created",
+                                       out DateTime? Created,
+                                       out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

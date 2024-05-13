@@ -852,8 +852,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     // The OCPI response is just a "command accepted" information!
                     return RemoteStartResult.AsyncOperation(new ChargingSession(
                                                                 ChargingSession_Id.NewRandom(),
-                                                                RoamingNetwork,
-                                                                eventTrackingId
+                                                                eventTrackingId,
+                                                                RoamingNetwork
                                                             ),
                                                             System_Id.Local);
 

@@ -184,11 +184,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #region Parse Id              [optional]
 
-                if (!JSON.ParseOptional("uid",
-                                        "uid",
-                                        Token_Id.TryParse,
-                                        out Token_Id? Id,
-                                        out ErrorResponse))
+                if (JSON.ParseOptional("uid",
+                                       "uid",
+                                       Token_Id.TryParse,
+                                       out Token_Id? Id,
+                                       out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

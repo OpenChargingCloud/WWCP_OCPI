@@ -1895,11 +1895,53 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return null;
                 }
 
+                var tariff   = tariffs.First();
+
+
+                var tempCDR  = new CDR(
+
+                                   CountryCode:             countryCode,
+                                   PartyId:                 partyId,
+                                   Id:                      CDR_Id.       Parse(ChargeDetailRecord.Id.ToString()),
+                                   Start:                   ChargeDetailRecord.SessionTime.StartTime,
+                                   Stop:                    ChargeDetailRecord.SessionTime.EndTime.Value,
+                                   AuthId:                  authId.    Value,
+                                   AuthMethod:              authMethod.Value,
+                                   Location:                filteredLocation,
+                                   Currency:                OCPI.Currency.EUR,
+                                   ChargingPeriods:         [
+                                                                new ChargingPeriod(
+                                                                    ChargeDetailRecord.SessionTime.StartTime,
+                                                                    [
+                                                                        CDRDimension.ENERGY(0)
+                                                                    ]
+                                                                )
+                                                            ],
+                                   TotalCost:               0m,
+                                   TotalEnergy:             ChargeDetailRecord.ConsumedEnergy.      Value,
+                                   TotalTime:               ChargeDetailRecord.SessionTime.Duration.Value
+
+                                   //MeterId:                 null,
+                                   //EnergyMeter:             null,                        // Our vendor extension!
+                                   //TransparencySoftwares:   null,                        // Our vendor extension!
+                                   //Tariffs:                 tariffs,
+                                   //SignedData:              null,
+                                   //TotalParkingTime:        null,
+                                   //Remark:                  null,
+
+                                   //Created:                 ChargeDetailRecord.Created,  // Our vendor extension!
+                                   //LastUpdated:             ChargeDetailRecord.LastChangeDate
+
+                               );
+
+
+                var newCDR = tempCDR.SplittIntoChargingPeriods(
+                                 ChargeDetailRecord.EnergyMeteringValues.Select(mv => new Timestamped<Decimal>(mv.Timestamp, mv.Value)),
+                                 tariff
+                             );
+
 
                 // "Free of Charge" Tariff in OCPI, a tariff has to be provided that has a type = FLAT and price = 0.00.
-
-                var tariff                  = tariffs.First();
-                //var numberOfTariffElements  = tariff.TariffElements.Count();
                 var chargingPeriods         = new List<ChargingPeriod>();
                 var cdrDimensions           = new List<CDRDimension>();
                 var totalCost               = 0M;
@@ -1977,7 +2019,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     }
 
                     chargingPeriods.Add(
-                        ChargingPeriod.Create(
+                        new ChargingPeriod(
                             ChargeDetailRecord.SessionTime.StartTime,
                             cdrDimensions
                         )
@@ -2028,7 +2070,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            AuthId:                  authId.    Value,
                            AuthMethod:              authMethod.Value,
                            Location:                filteredLocation,            //ToDo: Might still have not required connectors!
-                                                                                 //      Might have out EnergyMeter vendor extension!
+                                                                                 //      Might have our EnergyMeter vendor extension!
                            Currency:                tariff.Currency,
                            ChargingPeriods:         chargingPeriods,
                            TotalCost:               totalCost,

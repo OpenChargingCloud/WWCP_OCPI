@@ -695,10 +695,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #region Parse Created           [optional, NonStandard]
 
-                if (!JSON.ParseOptional("created",
-                                        "created",
-                                        out DateTime? Created,
-                                        out ErrorResponse))
+                if (JSON.ParseOptional("created",
+                                       "created",
+                                       out DateTime? Created,
+                                       out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
