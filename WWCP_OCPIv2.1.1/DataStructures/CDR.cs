@@ -230,7 +230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (chargingPeriods[i].StartMeteringValue is null)
                 {
 
-                    var previousMV    = chargingPeriods[i].Previous!.StartMeteringValue;
+                    var previousMV    = chargingPeriods[i].Previous!.StartMeteringValue!;
                     var nextCP        = chargingPeriods[i].Next;
 
                     // Skip consecutive null values!
@@ -240,9 +240,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     var nextMV        = (nextCP?.StartMeteringValue ?? chargingPeriods[i].StopMeteringValue)
                                             ?? throw new Exception($"Could not calculate '{i}.' imputed value!");
 
-                    var imputedValue  = (nextMV.Value - previousMV!.Value) /
-                                            Convert.ToDecimal((nextMV.            Timestamp      - previousMV.Timestamp).TotalSeconds) *
-                                            Convert.ToDecimal((chargingPeriods[i].StartTimestamp - previousMV.Timestamp).TotalSeconds);
+                    var imputedValue  = ((nextMV.Value - previousMV.Value) /
+                                             Convert.ToDecimal((nextMV.            Timestamp      - previousMV.Timestamp).TotalSeconds) *
+                                             Convert.ToDecimal((chargingPeriods[i].StartTimestamp - previousMV.Timestamp).TotalSeconds)) + previousMV.Value;
 
                     chargingPeriods[i].StartMeteringValue = MeteringValue.Imputed(
                                                                 chargingPeriods[i].StartTimestamp,
@@ -267,39 +267,51 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         periodStopMeteringValue  is not null)
                     {
 
-                        if      (priceComponent.Type == TariffDimension.ENERGY && priceComponent.Price > 0)
+                        if      (priceComponent.Type == TariffDimension.ENERGY)
                         {
 
-                            chargingPeriod.Dimensions.Add(
-                                CDRDimension.ENERGY(
-                                    periodStopMeteringValue.Value - periodStartMeteringValue.Value
-                                )
-                            );
+                            chargingPeriod.Energy  = periodStopMeteringValue.Value - periodStartMeteringValue.Value;
+                            cdrReport.TotalEnergy += chargingPeriod.Energy;
 
-                            chargingPeriod.Energy          = periodStopMeteringValue.Value - periodStartMeteringValue.Value;
-                            chargingPeriod.EnergyPrice     = priceComponent.Price;
-                            chargingPeriod.EnergyStepSize  = priceComponent.StepSize;
-                            cdrReport.     TotalEnergy    += chargingPeriod.Energy;
+                            if (priceComponent.Price > 0)
+                            {
+
+                                chargingPeriod.Dimensions.Add(
+                                    CDRDimension.ENERGY(
+                                        periodStopMeteringValue.Value - periodStartMeteringValue.Value
+                                    )
+                                );
+
+                                chargingPeriod.EnergyPrice     = priceComponent.Price;
+                                chargingPeriod.EnergyStepSize  = priceComponent.StepSize;
+
+                            }
 
                             cdrReport.BillEnergy(priceComponent.StepSize, chargingPeriod.Energy, chargingPeriod.EnergyPrice);
 
                         }
 
-                        else if (priceComponent.Type == TariffDimension.TIME   && priceComponent.Price > 0)
+                        else if (priceComponent.Type == TariffDimension.TIME)
                         {
 
-                            chargingPeriod.Dimensions.Add(
-                                CDRDimension.TIME(
-                                    Convert.ToDecimal((periodStopMeteringValue.Timestamp - periodStartMeteringValue.Timestamp).TotalHours)
-                                )
-                            );
+                            chargingPeriod.Time  = periodStopMeteringValue.Timestamp - periodStartMeteringValue.Timestamp;
+                            cdrReport.TotalTime += chargingPeriod.Time;
 
-                            chargingPeriod.Time          = periodStopMeteringValue.Timestamp - periodStartMeteringValue.Timestamp;
-                            chargingPeriod.TimePrice     = priceComponent.Price;
-                            chargingPeriod.TimeStepSize  = priceComponent.StepSize;
-                            cdrReport.     TotalTime    += chargingPeriod.Time;
+                            if (priceComponent.Price > 0)
+                            {
 
-                            cdrReport.BillTime(priceComponent.StepSize, chargingPeriod.Time, chargingPeriod.TimePrice);
+                                chargingPeriod.Dimensions.Add(
+                                    CDRDimension.TIME(
+                                        Convert.ToDecimal((periodStopMeteringValue.Timestamp - periodStartMeteringValue.Timestamp).TotalHours)
+                                    )
+                                );
+
+                                chargingPeriod.TimePrice     = priceComponent.Price;
+                                chargingPeriod.TimeStepSize  = priceComponent.StepSize;
+
+                                cdrReport.BillTime(priceComponent.StepSize, chargingPeriod.Time, chargingPeriod.TimePrice);
+
+                            }
 
                         }
 
@@ -320,7 +332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             foreach (var energySums in cdrReport.BilledEnergy)
             {
 
-                energySums.Value.BilledEnergy = Math.Ceiling(1000 * energySums.Value.Energy / energySums.Value.StepSize) * energySums.Value.StepSize / 1000;
+                energySums.Value.BilledEnergy = Math.Ceiling(energySums.Value.Energy / energySums.Value.StepSize) * energySums.Value.StepSize / 1000;
                 energySums.Value.EnergyCost   = energySums.Value.BilledEnergy * energySums.Value.Price;
 
                 cdrReport.TotalEnergyCost    += energySums.Value.EnergyCost;

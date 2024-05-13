@@ -546,6 +546,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
 
+
+        #region Our extensions!!!
+
         public  Decimal   Energy            { get; set; }
         //public  Decimal   BilledEnergy      { get; set; }
         public  Decimal   EnergyPrice       { get; set; }
@@ -685,6 +688,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             }
         }
+
+        #endregion
 
         #endregion
 
