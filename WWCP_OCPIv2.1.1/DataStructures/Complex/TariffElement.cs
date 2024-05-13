@@ -307,7 +307,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        public Boolean IsActive(ChargingPeriodRW ChargingPeriod)
+        public Boolean IsActive(ChargingPeriod ChargingPeriod)
         {
 
             return TariffRestrictions?.IsActive(ChargingPeriod) ?? true;

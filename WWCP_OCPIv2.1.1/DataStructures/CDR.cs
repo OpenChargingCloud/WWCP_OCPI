@@ -181,7 +181,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
 
 
-            var chargingPeriods = timeMarkers.Order().Select(tm => new ChargingPeriodRW(tm)).ToList();
+            var chargingPeriods = timeMarkers.Where(timeMarker => timeMarker >= CDR.Start && timeMarker <= CDR.Stop).
+                                              Order().Select(tm => new ChargingPeriod(tm)).ToList();
 
             for (var i=0; i<chargingPeriods.Count; i++)
             {
@@ -355,7 +356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CDR.AuthMethod,
                               CDR.Location,
                               Tariff.Currency,
-                              chargingPeriods.AsChargingPeriods(),
+                              chargingPeriods,
                               cdrReport.TotalCost,
                               cdrReport.TotalEnergy,
                               cdrReport.TotalTime,
