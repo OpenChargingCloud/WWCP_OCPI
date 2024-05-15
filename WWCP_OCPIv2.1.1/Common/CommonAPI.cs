@@ -4845,6 +4845,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addLocation,
                                Location.ToJSON(true,
+                                               true,
                                                null,
                                                CustomLocationSerializer,
                                                CustomAdditionalGeoLocationSerializer,
@@ -4926,6 +4927,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addLocationIfNotExists,
                                Location.ToJSON(true,
+                                               true,
                                                null,
                                                CustomLocationSerializer,
                                                CustomAdditionalGeoLocationSerializer,
@@ -5025,6 +5027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     await LogAsset(addOrUpdateLocation,
                                    Location.ToJSON(true,
+                                                   true,
                                                    null,
                                                    CustomLocationSerializer,
                                                    CustomAdditionalGeoLocationSerializer,
@@ -5144,6 +5147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addOrUpdateLocation,
                                Location.ToJSON(true,
+                                               true,
                                                null,
                                                CustomLocationSerializer,
                                                CustomAdditionalGeoLocationSerializer,
@@ -5253,6 +5257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(updateLocation,
                                Location.ToJSON(true,
+                                               true,
                                                null,
                                                CustomLocationSerializer,
                                                CustomAdditionalGeoLocationSerializer,
@@ -6092,6 +6097,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(removeLocation,
                                location.ToJSON(true,
+                                               true,
                                                null,
                                                CustomLocationSerializer,
                                                CustomAdditionalGeoLocationSerializer,
@@ -7157,6 +7163,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addSession,
                                Session.ToJSON(true,
+                                              true,
                                               null,
                                               CustomSessionSerializer,
                                               CustomLocationSerializer,
@@ -7225,6 +7232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addSessionIfNotExists,
                                Session.ToJSON(true,
+                                              true,
                                               null,
                                               CustomSessionSerializer,
                                               CustomLocationSerializer,
@@ -7303,6 +7311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addOrUpdateSession,
                                Session.ToJSON(true,
+                                              true,
                                               null,
                                               CustomSessionSerializer,
                                               CustomLocationSerializer,
@@ -7361,6 +7370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addOrUpdateSession,
                                Session.ToJSON(true,
+                                              true,
                                               null,
                                               CustomSessionSerializer,
                                               CustomLocationSerializer,
@@ -7455,6 +7465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(updateSession,
                                Session.ToJSON(true,
+                                              true,
                                               null,
                                               CustomSessionSerializer,
                                               CustomLocationSerializer,
@@ -7537,6 +7548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     await LogAsset(updateSession,
                                    Session.ToJSON(true,
+                                                  true,
                                                   null,
                                                   CustomSessionSerializer,
                                                   CustomLocationSerializer,
@@ -7674,6 +7686,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(removeTariff,
                                session.ToJSON(true,
+                                              true,
                                               null,
                                               CustomSessionSerializer,
                                               CustomLocationSerializer,
@@ -8639,7 +8652,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addChargeDetailRecord,
                                CDR.ToJSON(true,
-                                          //null,
+                                          true,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -8713,7 +8726,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addChargeDetailRecord,
                                CDR.ToJSON(true,
-                                          //null,
+                                          true,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -8797,7 +8810,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(addOrUpdateChargeDetailRecord,
                                CDR.ToJSON(true,
-                                          //null,
+                                          true,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -8931,7 +8944,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(updateChargeDetailRecord,
                                CDR.ToJSON(true,
-                                          //null,
+                                          true,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -9019,7 +9032,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     await LogAsset(updateChargeDetailRecord,
                                    CDR.ToJSON(true,
-                                              //null,
+                                              true,
                                               CustomCDRSerializer,
                                               CustomLocationSerializer,
                                               CustomAdditionalGeoLocationSerializer,
@@ -9171,7 +9184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 await LogAsset(removeChargeDetailRecord,
                                cdr.ToJSON(true,
-                                          //null,
+                                          true,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,

@@ -18,6 +18,7 @@
 #region Usings
 
 using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -265,9 +266,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Token">The parsed token.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject      JSON,
-                                       out Token?   Token,
-                                       out String?  ErrorResponse)
+        public static Boolean TryParse(JObject                           JSON,
+                                       [NotNullWhen(true)]  out Token?   Token,
+                                       [NotNullWhen(false)] out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out Token,
@@ -287,8 +288,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="TokenIdURL">An optional token identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomTokenParser">A delegate to parse custom token JSON objects.</param>
         public static Boolean TryParse(JObject                              JSON,
-                                       out Token?                           Token,
-                                       out String?                          ErrorResponse,
+                                       [NotNullWhen(true)]  out Token?      Token,
+                                       [NotNullWhen(false)] out String?     ErrorResponse,
                                        CountryCode?                         CountryCodeURL      = null,
                                        Party_Id?                            PartyIdURL          = null,
                                        Token_Id?                            TokenIdURL          = null,

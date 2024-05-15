@@ -19,6 +19,7 @@
 
 using System.Text;
 using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -38,16 +39,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     public static class CDRExtensions
     {
 
-        #region SplittIntoChargingPeriods(this CDR, Tariffs, ExtrapolateEnergy = false)
+        #region SplittIntoChargingPeriods(this CDR, MeteringValues = null, AlternativeTariffs = null, ExtrapolateEnergy = false)
 
-        public static CDR SplittIntoChargingPeriods(this CDR                           CDR,
-                                                    IEnumerable<Timestamped<Decimal>>  MeteringValues,
-                                                    IEnumerable<Tariff>                Tariffs,
-                                                    Boolean                            ExtrapolateEnergy = false)
+        public static CDR SplittIntoChargingPeriods(this CDR                            CDR,
+                                                    IEnumerable<Timestamped<Decimal>>?  MeteringValues       = null,
+                                                    IEnumerable<Tariff>?                AlternativeTariffs   = null,
+                                                    Boolean                             ExtrapolateEnergy    = false)
         {
 
             try
             {
+
+                if (MeteringValues is null &&
+                    CDR.SignedData?.SignedValues?.Count() >= 2)
+                {
+
+                    MeteringValues = [
+                                         new Timestamped<Decimal>(CDR.Start, Decimal.Parse(CDR.SignedData.SignedValues.ElementAt(0).PlainData)),
+                                         new Timestamped<Decimal>(CDR.Stop,  Decimal.Parse(CDR.SignedData.SignedValues.ElementAt(1).PlainData))
+                                     ];
+
+                }
+
+                if (MeteringValues is null)
+                    throw new Exception("No metering values given!");
+
+                if (MeteringValues.Count() < 2)
+                    throw new Exception("The given enumeration of metering values must contain at least two values!");
 
                 if (MeteringValues.First().Timestamp != CDR.Start)
                     throw new Exception("The first metering value must be equal to the start timestamp of the charge detail record!");
@@ -56,21 +74,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (MeteringValues.Last(). Timestamp != CDR.Stop)
                     throw new Exception("The last metering value must be equal to the stop timestamp of the charge detail record!");
 
-                if (!Tariffs.Any())
+
+                AlternativeTariffs ??= CDR.Tariffs;
+
+                if (!AlternativeTariffs.Any())
                     throw new Exception("No tariffs given!");
 
                 var timeMarkers     = new HashSet<DateTime>() { CDR.Start };
                 var meteringValues  = MeteringValues.ToArray();
-                var Tariff          = Tariffs.First();
+                var tariff          = AlternativeTariffs.First();
 
                 for (var i = 0; i < meteringValues.Length - 1; i++)
                 {
                     timeMarkers.Add(meteringValues[i].Timestamp);
                 }
 
-                if (Tariff.TariffElements.Any(tariffElement => tariffElement.HasRestrictions()))
+                if (tariff.TariffElements.Any(tariffElement => tariffElement.HasRestrictions()))
                 {
-                    foreach (var tariffElement in Tariff.TariffElements)
+                    foreach (var tariffElement in tariff.TariffElements)
                     {
                         if (tariffElement.TariffRestrictions.HasRestrictions())
                         {
@@ -140,10 +161,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                     _meteringValues.First().Value
                                                                 );
 
-                    if (Tariff.IsActive(chargingPeriods[i]))
+                    if (tariff.IsActive(chargingPeriods[i]))
                     {
 
-                        var activeTariffElement = Tariff.TariffElements.FirstOrDefault(te => te.IsActive(chargingPeriods[i]));
+                        var activeTariffElement = tariff.TariffElements.FirstOrDefault(te => te.IsActive(chargingPeriods[i]));
 
                         foreach (var priceComponent in activeTariffElement.PriceComponents)
                         {
@@ -264,23 +285,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 }
 
-                foreach (var energySums in cdrCosts.BilledEnergy)
+                foreach (var energySums in cdrCosts.BilledEnergyElements)
                 {
 
                     energySums.Value.BilledEnergy  = Math.Ceiling(energySums.Value.Energy / energySums.Value.StepSize) * energySums.Value.StepSize / 1000;
                     energySums.Value.EnergyCost    = energySums.Value.BilledEnergy * energySums.Value.Price;
 
+                    cdrCosts.BilledEnergy         += energySums.Value.BilledEnergy;
                     cdrCosts.TotalEnergyCost      += energySums.Value.EnergyCost;
                     cdrCosts.TotalCost            += energySums.Value.EnergyCost;
 
                 }
 
-                foreach (var timeSums in cdrCosts.BilledTime)
+                foreach (var timeSums in cdrCosts.BilledTimeElements)
                 {
 
                     timeSums.Value.BilledTime  = TimeSpan.FromSeconds(Math.Ceiling(timeSums.Value.Time.TotalSeconds / timeSums.Value.StepSize) * timeSums.Value.StepSize);
                     timeSums.Value.TimeCost    = Convert.ToDecimal(timeSums.Value.BilledTime.TotalHours) * timeSums.Value.Price;
 
+                    cdrCosts.BilledTime        = cdrCosts.BilledTime.Add(timeSums.Value.BilledTime);
                     cdrCosts.TotalTimeCost    += timeSums.Value.TimeCost;
                     cdrCosts.TotalCost        += timeSums.Value.TimeCost;
 
@@ -301,16 +324,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            CDR.AuthId,
                            CDR.AuthMethod,
                            CDR.Location,
-                           Tariff.Currency,
+                           tariff.Currency,
                            chargingPeriods,
-                           cdrCosts.TotalCost,
+                           Math.Round(cdrCosts.TotalCost, 3),
                            cdrCosts.TotalEnergy,
                            cdrCosts.TotalTime,
                            cdrCosts,            // Our extension!
                            CDR.MeterId,
                            CDR.EnergyMeter,
                            CDR.TransparencySoftwares,
-                           [ Tariff ],
+                           [ tariff ],
                            CDR.SignedData,
                            totalParkingTime,
                            CDR.Remark,
@@ -662,6 +685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.LastUpdated              = LastUpdated           ?? Created     ?? Timestamp.Now;
 
             this.ETag                     = SHA256.HashData(ToJSON(true,
+                                                                   true,
                                                                    CustomCDRSerializer,
                                                                    CustomLocationSerializer,
                                                                    CustomAdditionalGeoLocationSerializer,
@@ -765,9 +789,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDR">The parsed CDR.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject      JSON,
-                                       out CDR?     CDR,
-                                       out String?  ErrorResponse)
+        public static Boolean TryParse(JObject                           JSON,
+                                       [NotNullWhen(true)]  out CDR?     CDR,
+                                       [NotNullWhen(false)] out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out CDR,
@@ -789,8 +813,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CDRIdURL">An optional CDR identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomCDRParser">A delegate to parse custom CDR JSON objects.</param>
         public static Boolean TryParse(JObject                            JSON,
-                                       out CDR?                           CDR,
-                                       out String?                        ErrorResponse,
+                                       [NotNullWhen(true)]  out CDR?      CDR,
+                                       [NotNullWhen(false)] out String?   ErrorResponse,
                                        CountryCode?                       CountryCodeURL    = null,
                                        Party_Id?                          PartyIdURL        = null,
                                        CDR_Id?                            CDRIdURL          = null,
@@ -1212,6 +1236,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
+        /// <param name="IncludeOwnerInformation">Include optional owner information.</param>
+        /// <param name="IncludeEnergyMeter">Whether to include the energy meter.</param>
         /// <param name="CustomCDRSerializer">A delegate to serialize custom charge detail record JSON objects.</param>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
@@ -1237,6 +1263,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
+                              Boolean                                                       IncludeEnergyMeter                           = false,
                               CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -1278,7 +1305,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  new JProperty("stop_date_time",           Stop.                        ToIso8601()),
                                  new JProperty("auth_id",                  AuthId.                      ToString()),
                                  new JProperty("auth_method",              AuthMethod.                  ToString()),
-                                 new JProperty("location",                 Location.                    ToJSON(false,
+                                 new JProperty("location",                 Location.                    ToJSON(IncludeOwnerInformation,
+                                                                                                               IncludeEnergyMeter,
                                                                                                                null,
                                                                                                                CustomLocationSerializer,
                                                                                                                CustomAdditionalGeoLocationSerializer,
@@ -1316,7 +1344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  new JProperty("currency",                 Currency.                    ToString()),
 
                            Tariffs.Any()
-                               ? new JProperty("tariffs",                  new JArray(Tariffs.              Select(tariff               => tariff.              ToJSON(false,
+                               ? new JProperty("tariffs",                  new JArray(Tariffs.              Select(tariff               => tariff.              ToJSON(IncludeOwnerInformation,
                                                                                                                                                                        false,
                                                                                                                                                                        CustomTariffSerializer,
                                                                                                                                                                        CustomDisplayTextSerializer,

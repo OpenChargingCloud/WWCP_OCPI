@@ -19,6 +19,8 @@
 
 using System.Text;
 using System.Security.Cryptography;
+using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -28,8 +30,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
-using System.Diagnostics.CodeAnalysis;
-using System.Collections.Concurrent;
 
 #endregion
 
@@ -625,9 +625,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Location">The parsed location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject        JSON,
-                                       out Location?  Location,
-                                       out String?    ErrorResponse)
+        public static Boolean TryParse(JObject                             JSON,
+                                       [NotNullWhen(true)]  out Location?  Location,
+                                       [NotNullWhen(false)] out String?    ErrorResponse)
 
             => TryParse(JSON,
                         out Location,
@@ -647,8 +647,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Boolean TryParse(JObject                                 JSON,
-                                       out Location?                           Location,
-                                       out String?                             ErrorResponse,
+                                       [NotNullWhen(true)]  out Location?      Location,
+                                       [NotNullWhen(false)] out String?        ErrorResponse,
                                        CountryCode?                            CountryCodeURL         = null,
                                        Party_Id?                               PartyIdURL             = null,
                                        Location_Id?                            LocationIdURL          = null,
@@ -1075,12 +1075,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToJSON(IncludeOwnerInformation = null, CustomLocationSerializer = null, ...)
+        #region ToJSON(IncludeOwnerInformation = false, IncludeEnergyMeter = false, EMSPId = null, CustomLocationSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="IncludeOwnerInformation">Include optional owner information.</param>
+        /// <param name="IncludeEnergyMeter">Whether to include the energy meter.</param>
+        /// <param name="EMSPId">The optional EMSP identification, e.g. for including the right charging tariff.</param>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
@@ -1097,6 +1099,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
+                              Boolean                                                       IncludeEnergyMeter                           = false,
                               EMSP_Id?                                                      EMSPId                                       = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -1145,12 +1148,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            RelatedLocations.Any()
                                ? new JProperty("related_locations",      new JArray(RelatedLocations.Select (additionalGeoLocation => additionalGeoLocation.ToJSON(CustomAdditionalGeoLocationSerializer,
-                                                                                                                                                                  CustomDisplayTextSerializer))))
+                                                                                                                                                                   CustomDisplayTextSerializer))))
                                : null,
 
                            EVSEs.Any()
                                ? new JProperty("evses",                  new JArray(EVSEs.           OrderBy(evse                  => evse.UId).
                                                                                                      Select (evse                  => evse.                 ToJSON(EMSPId,
+                                                                                                                                                                   IncludeEnergyMeter,
                                                                                                                                                                    CustomEVSESerializer,
                                                                                                                                                                    CustomStatusScheduleSerializer,
                                                                                                                                                                    CustomConnectorSerializer,
@@ -1627,6 +1631,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.ETag = SHA256.HashData(ToJSON(true,
+                                               true,
                                                EMSPId,
                                                CustomLocationSerializer,
                                                CustomAdditionalGeoLocationSerializer,

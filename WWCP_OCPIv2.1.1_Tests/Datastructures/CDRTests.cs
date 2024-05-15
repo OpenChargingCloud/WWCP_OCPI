@@ -1525,8 +1525,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 Assert.That(cdr3WithTariff2.Currency,                                   Is.EqualTo( OCPI.Currency.EUR));
                 Assert.That(cdr3WithTariff2.TotalCost,                                  Is.EqualTo( 29.26m)); // €
 
-                Assert.That(cdr3WithTariff2.ChargingPeriods.Count(),                    Is.EqualTo(2));
+                Assert.That(cdr3WithTariff2.CDRCosts?.BilledEnergy,                     Is.EqualTo( 20m));
+                Assert.That(cdr3WithTariff2.CDRCosts?.BilledTime,                       Is.EqualTo( new TimeSpan(4, 00, 00)));
+                Assert.That(cdr3WithTariff2.CDRCosts?.TotalEnergyCost,                  Is.EqualTo(  8.80m).Within(0.001m));
+                Assert.That(cdr3WithTariff2.CDRCosts?.TotalTimeCost,                    Is.EqualTo( 20.16m).Within(0.001m));
 
+
+                Assert.That(cdr3WithTariff2.ChargingPeriods.Count(),                    Is.EqualTo(2));
 
                 // 1st charging period
                 var chargingPeriod1 = cdr3WithTariff2.ChargingPeriods.ElementAt(0);

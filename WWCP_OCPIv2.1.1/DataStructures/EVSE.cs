@@ -19,6 +19,7 @@
 
 using System.Text;
 using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -381,9 +382,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EVSE">The parsed EVSE.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject      JSON,
-                                       out EVSE?    EVSE,
-                                       out String?  ErrorResponse)
+        public static Boolean TryParse(JObject                           JSON,
+                                       [NotNullWhen(true)]  out EVSE?    EVSE,
+                                       [NotNullWhen(false)] out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out EVSE,
@@ -400,8 +401,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
         public static Boolean TryParse(JObject                             JSON,
-                                       out EVSE?                           EVSE,
-                                       out String?                         ErrorResponse,
+                                       [NotNullWhen(true)]  out EVSE?      EVSE,
+                                       [NotNullWhen(false)] out String?    ErrorResponse,
                                        EVSE_UId?                           EVSEUIdURL,
                                        CustomJObjectParserDelegate<EVSE>?  CustomEVSEParser   = null)
         {
@@ -643,11 +644,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToJSON(CustomEVSESerializer = null, CustomStatusScheduleSerializer = null, ...)
+        #region ToJSON(EMSPId = null, IncludeEnergyMeter = false, CustomEVSESerializer = null, CustomStatusScheduleSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
+        /// <param name="EMSPId">The optional EMSP identification, e.g. for including the right charging tariff.</param>
+        /// <param name="IncludeEnergyMeter">Whether to include the energy meter.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
@@ -657,6 +660,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         public JObject ToJSON(EMSP_Id?                                                      EMSPId                                       = null,
+                              Boolean                                                       IncludeEnergyMeter                           = false,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -669,13 +673,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var json = JSONObject.Create(
 
-                           new JProperty("uid",                         UId.        ToString()),
+                                 new JProperty("uid",                   UId.        ToString()),
 
                            EVSEId.HasValue
                                ? new JProperty("evse_id",               EVSEId.     ToString())
                                : null,
 
-                           new JProperty("status",                      Status.     ToString()),
+                                 new JProperty("status",                Status.     ToString()),
 
                            StatusSchedule.Any()
                                ? new JProperty("status_schedule",       new JArray(StatusSchedule.     Select (statusSchedule     => statusSchedule.    ToJSON(CustomStatusScheduleSerializer))))
@@ -688,10 +692,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Connectors.Any()
                                ? new JProperty("connectors",            new JArray(Connectors.         OrderBy(connector          => connector.Id).
                                                                                                        Select (connector          => connector.         ToJSON(EMSPId,
-                                                                                                                                                                CustomConnectorSerializer))))
+                                                                                                                                                               CustomConnectorSerializer))))
                                : null,
 
-                           EnergyMeter is not null
+                           EnergyMeter is not null && IncludeEnergyMeter
                                ? new JProperty("energy_meter",          EnergyMeter.ToJSON(CustomEnergyMeterSerializer,
                                                                                            CustomTransparencySoftwareStatusSerializer,
                                                                                            CustomTransparencySoftwareSerializer))
@@ -1002,6 +1006,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.ETag = SHA256.HashData(ToJSON(EMSPId,
+                                               true,
                                                CustomEVSESerializer,
                                                CustomStatusScheduleSerializer,
                                                CustomConnectorSerializer,

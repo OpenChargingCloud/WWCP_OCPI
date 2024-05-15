@@ -18,6 +18,7 @@
 #region Usings
 
 using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -25,7 +26,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -486,6 +486,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
+        /// <param name="EMSPId">The optional EMSP identification, e.g. for including the right charging tariff.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         public JObject ToJSON(EMSP_Id?                                     EMSPId                      = null,
                               CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)

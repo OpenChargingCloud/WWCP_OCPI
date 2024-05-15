@@ -29,15 +29,15 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 namespace cloud.charging.open.protocols.OCPI
 {
 
-    public class CDRCosts(Decimal                                    TotalEnergy       = 0,
-                          TimeSpan?                                  TotalTime         = null,
+    public class CDRCosts(Decimal                                    TotalEnergy            = 0,
+                          TimeSpan?                                  TotalTime              = null,
 
-                          Decimal                                    TotalCost         = 0,
-                          Decimal                                    TotalEnergyCost   = 0,
-                          Decimal                                    TotalTimeCost     = 0,
+                          Decimal                                    TotalCost              = 0,
+                          Decimal                                    TotalEnergyCost        = 0,
+                          Decimal                                    TotalTimeCost          = 0,
 
-                          Dictionary<String, CDRCosts.EnergyCosts>?  BilledEnergy      = null,
-                          Dictionary<String, CDRCosts.TimeCosts>?    BilledTime        = null)
+                          Dictionary<String, CDRCosts.EnergyCosts>?  BilledEnergyElements   = null,
+                          Dictionary<String, CDRCosts.TimeCosts>?    BilledTimeElements     = null)
 
     {
 
@@ -64,25 +64,28 @@ namespace cloud.charging.open.protocols.OCPI
         public Decimal   TotalEnergy        { get; set; }  = TotalEnergy;
         public TimeSpan  TotalTime          { get; set; }  = TotalTime ?? TimeSpan.Zero;
 
+        public Decimal   BilledEnergy       { get; set; }
+        public TimeSpan  BilledTime         { get; set; }
+
         public Decimal   TotalCost          { get; set; }  = TotalCost;
         public Decimal   TotalEnergyCost    { get; set; }  = TotalEnergyCost;
         public Decimal   TotalTimeCost      { get; set; }  = TotalTimeCost;
 
-        public Dictionary<String, EnergyCosts>  BilledEnergy    { get; } = BilledEnergy ?? [];
+        public Dictionary<String, EnergyCosts>  BilledEnergyElements    { get; } = BilledEnergyElements ?? [];
 
-        public Dictionary<String, TimeCosts>    BilledTime      { get; } = BilledTime   ?? [];
+        public Dictionary<String, TimeCosts>    BilledTimeElements      { get; } = BilledTimeElements   ?? [];
 
 
         public void BillEnergy(UInt32 StepSize, Decimal  Energy, Decimal Price)
         {
 
-            if (!BilledEnergy.TryGetValue($"{StepSize}-{Price}", out var energy))
+            if (!BilledEnergyElements.TryGetValue($"{StepSize}-{Price}", out var energy))
             {
                 energy = new EnergyCosts {
                              StepSize  = StepSize,
                              Price     = Price
                          };
-                BilledEnergy.Add($"{StepSize}-{Price}", energy);
+                BilledEnergyElements.Add($"{StepSize}-{Price}", energy);
             }
 
             energy.Energy += Energy;
@@ -92,13 +95,13 @@ namespace cloud.charging.open.protocols.OCPI
         public void BillTime  (UInt32 StepSize, TimeSpan Time,   Decimal Price)
         {
 
-            if (!BilledTime.TryGetValue($"{StepSize}-{Price}", out var time))
+            if (!BilledTimeElements.TryGetValue($"{StepSize}-{Price}", out var time))
             {
                 time = new TimeCosts {
                            StepSize  = StepSize,
                            Price     = Price
                        };
-                BilledTime.Add($"{StepSize}-{Price}", time);
+                BilledTimeElements.Add($"{StepSize}-{Price}", time);
             }
 
             time.Time += Time;
@@ -120,8 +123,8 @@ namespace cloud.charging.open.protocols.OCPI
                    TotalCost,
                    TotalEnergyCost,
                    TotalTimeCost,
-                   BilledEnergy.ToDictionary(),
-                   BilledTime.  ToDictionary()
+                   BilledEnergyElements.ToDictionary(),
+                   BilledTimeElements.  ToDictionary()
                );
 
         #endregion

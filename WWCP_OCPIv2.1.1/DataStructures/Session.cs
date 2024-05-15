@@ -18,6 +18,7 @@
 #region Usings
 
 using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -351,9 +352,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Session">The parsed charging session.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject       JSON,
-                                       out Session?  Session,
-                                       out String?   ErrorResponse)
+        public static Boolean TryParse(JObject                            JSON,
+                                       [NotNullWhen(true)]  out Session?  Session,
+                                       [NotNullWhen(false)] out String?   ErrorResponse)
 
             => TryParse(JSON,
                         out Session,
@@ -373,8 +374,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="SessionIdURL">An optional charging session identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomSessionParser">A delegate to parse custom session JSON objects.</param>
         public static Boolean TryParse(JObject                                JSON,
-                                       out Session?                           Session,
-                                       out String?                            ErrorResponse,
+                                       [NotNullWhen(true)]  out Session?      Session,
+                                       [NotNullWhen(false)] out String?       ErrorResponse,
                                        CountryCode?                           CountryCodeURL        = null,
                                        Party_Id?                              PartyIdURL            = null,
                                        Session_Id?                            SessionIdURL          = null,
@@ -699,6 +700,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="IncludeOwnerInformation">Include optional owner information.</param>
+        /// <param name="IncludeEnergyMeter">Whether to include the energy meter.</param>
+        /// <param name="EMSPId">The optional EMSP identification, e.g. for including the right charging tariff.</param>
         /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
@@ -715,6 +718,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
+                              Boolean                                                       IncludeEnergyMeter                           = false,
                               EMSP_Id?                                                      EMSPId                                       = null,
                               CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                      = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
@@ -760,6 +764,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  new JProperty("auth_method",                    AuthMethod.            ToString()),
 
                                  new JProperty("location",                       Location.              ToJSON(false,
+                                                                                                               IncludeEnergyMeter,
                                                                                                                EMSPId,
                                                                                                                CustomLocationSerializer,
                                                                                                                CustomAdditionalGeoLocationSerializer,
@@ -1004,6 +1009,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.ETag = SHA256.HashData(ToJSON(true,
+                                               true,
                                                EMSPId,
                                                CustomSessionSerializer,
                                                CustomLocationSerializer,

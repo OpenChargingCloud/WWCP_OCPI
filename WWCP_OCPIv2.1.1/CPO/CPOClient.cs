@@ -1163,6 +1163,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                          requestbuilder.Connection     = "close";
                                                                          requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                          requestbuilder.Content        = Location.ToJSON(false,
+                                                                                                                         false,
                                                                                                                          EMSPId,
                                                                                                                          CustomLocationSerializer,
                                                                                                                          CustomAdditionalGeoLocationSerializer,
@@ -1805,15 +1806,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                          requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
                                                                          requestbuilder.Connection     = "close";
                                                                          requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                         requestbuilder.Content        = EVSE.ToJSON(EMSPId,
-                                                                                                                     CustomEVSESerializer,
-                                                                                                                     CustomStatusScheduleSerializer,
-                                                                                                                     CustomConnectorSerializer,
-                                                                                                                     CustomEnergyMeterSerializer,
-                                                                                                                     CustomTransparencySoftwareStatusSerializer,
-                                                                                                                     CustomTransparencySoftwareSerializer,
-                                                                                                                     CustomDisplayTextSerializer,
-                                                                                                                     CustomImageSerializer).ToUTF8Bytes(JSONFormat);
+                                                                         requestbuilder.Content        = EVSE.ToJSON(
+                                                                                                             EMSPId,
+                                                                                                             false,
+                                                                                                             CustomEVSESerializer,
+                                                                                                             CustomStatusScheduleSerializer,
+                                                                                                             CustomConnectorSerializer,
+                                                                                                             CustomEnergyMeterSerializer,
+                                                                                                             CustomTransparencySoftwareStatusSerializer,
+                                                                                                             CustomTransparencySoftwareSerializer,
+                                                                                                             CustomDisplayTextSerializer,
+                                                                                                             CustomImageSerializer
+                                                                                                         ).ToUTF8Bytes(JSONFormat);
                                                                          requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4365,6 +4369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                          requestbuilder.Connection     = "close";
                                                                          requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                          requestbuilder.Content        = CDR.ToJSON(false,
+                                                                                                                    false,
                                                                                                                     CustomCDRSerializer,
                                                                                                                     CustomLocationSerializer,
                                                                                                                     CustomAdditionalGeoLocationSerializer,
