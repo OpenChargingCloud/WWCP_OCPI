@@ -38,11 +38,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     public static class CDRExtensions
     {
 
-        #region SplittIntoChargingPeriods(this CDR, Tariff, ExtrapolateEnergy = false)
+        #region SplittIntoChargingPeriods(this CDR, Tariffs, ExtrapolateEnergy = false)
 
         public static CDR SplittIntoChargingPeriods(this CDR                           CDR,
                                                     IEnumerable<Timestamped<Decimal>>  MeteringValues,
-                                                    Tariff                             Tariff,
+                                                    IEnumerable<Tariff>                Tariffs,
                                                     Boolean                            ExtrapolateEnergy = false)
         {
 
@@ -50,14 +50,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (MeteringValues.First().Timestamp != CDR.Start)
-                    throw new Exception("!");
+                    throw new Exception("The first metering value must be equal to the start timestamp of the charge detail record!");
 
                 // Can a CDR be longer than the last metering value, e.g. because of parking?
                 if (MeteringValues.Last(). Timestamp != CDR.Stop)
-                    throw new Exception("!");
+                    throw new Exception("The last metering value must be equal to the stop timestamp of the charge detail record!");
+
+                if (!Tariffs.Any())
+                    throw new Exception("No tariffs given!");
 
                 var timeMarkers     = new HashSet<DateTime>() { CDR.Start };
                 var meteringValues  = MeteringValues.ToArray();
+                var Tariff          = Tariffs.First();
 
                 for (var i = 0; i < meteringValues.Length - 1; i++)
                 {

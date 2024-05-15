@@ -1895,7 +1895,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return null;
                 }
 
-                var tariff   = tariffs.First();
+        //        var tariff   = tariffs.First();
 
 
                 var tempCDR  = new CDR(
@@ -1937,95 +1937,95 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 var newCDR = tempCDR.SplittIntoChargingPeriods(
                                  ChargeDetailRecord.EnergyMeteringValues.Select(mv => new Timestamped<Decimal>(mv.Timestamp, mv.Value)),
-                                 tariff
+                                 tariffs
                              );
 
 
-                // "Free of Charge" Tariff in OCPI, a tariff has to be provided that has a type = FLAT and price = 0.00.
-                var chargingPeriods         = new List<ChargingPeriod>();
-                var cdrDimensions           = new List<CDRDimension>();
-                var totalCost               = 0M;
+                //// "Free of Charge" Tariff in OCPI, a tariff has to be provided that has a type = FLAT and price = 0.00.
+                //var chargingPeriods         = new List<ChargingPeriod>();
+                //var cdrDimensions           = new List<CDRDimension>();
+                //var totalCost               = 0M;
 
-                foreach (var tariffElement in tariff.TariffElements)
-                {
+                //foreach (var tariffElement in tariff.TariffElements)
+                //{
 
-                    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.ENERGY))
-                    {
+                //    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.ENERGY))
+                //    {
 
-                        var energyPriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.ENERGY);
+                //        var energyPriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.ENERGY);
 
-                        if (energyPriceComponent.Price > 0)
-                        {
+                //        if (energyPriceComponent.Price > 0)
+                //        {
 
-                            var totalEnergy = ChargeDetailRecord.EnergyMeteringValues.Last().Value - ChargeDetailRecord.EnergyMeteringValues.First().Value;
+                //            var totalEnergy = ChargeDetailRecord.EnergyMeteringValues.Last().Value - ChargeDetailRecord.EnergyMeteringValues.First().Value;
 
-                            cdrDimensions.Add(CDRDimension.Create(
-                                                  CDRDimensionType.ENERGY,
-                                                  totalEnergy
-                                              ));
+                //            cdrDimensions.Add(CDRDimension.Create(
+                //                                  CDRDimensionType.ENERGY,
+                //                                  totalEnergy
+                //                              ));
 
-                            var aa = totalEnergy / energyPriceComponent.StepSize;
-                            var bb = totalEnergy % energyPriceComponent.StepSize;
+                //            var aa = totalEnergy / energyPriceComponent.StepSize;
+                //            var bb = totalEnergy % energyPriceComponent.StepSize;
 
-                            if (aa > 0)
-                                bb++;
+                //            if (aa > 0)
+                //                bb++;
 
-                            var totalEnergyPrice = energyPriceComponent.Price * bb;
+                //            var totalEnergyPrice = energyPriceComponent.Price * bb;
 
-                            totalCost += totalEnergyPrice;
+                //            totalCost += totalEnergyPrice;
 
-                        }
+                //        }
 
-                    }
+                //    }
 
-                    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.TIME))
-                    {
+                //    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.TIME))
+                //    {
 
-                        var timePriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.ENERGY);
+                //        var timePriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.ENERGY);
 
-                        if (timePriceComponent.Price > 0)
-                        {
+                //        if (timePriceComponent.Price > 0)
+                //        {
 
-                            var totalTime = ChargeDetailRecord.SessionTime.EndTime.Value - ChargeDetailRecord.SessionTime.StartTime;
+                //            var totalTime = ChargeDetailRecord.SessionTime.EndTime.Value - ChargeDetailRecord.SessionTime.StartTime;
 
-                            cdrDimensions.Add(CDRDimension.Create(
-                                                  CDRDimensionType.TIME,
-                                                  Convert.ToDecimal(totalTime.TotalHours)
-                                              ));
+                //            cdrDimensions.Add(CDRDimension.Create(
+                //                                  CDRDimensionType.TIME,
+                //                                  Convert.ToDecimal(totalTime.TotalHours)
+                //                              ));
 
 
 
-                            var aa = Convert.ToDecimal(totalTime.TotalSeconds) / timePriceComponent.StepSize;
-                            var bb = Convert.ToDecimal(totalTime.TotalSeconds) % timePriceComponent.StepSize;
+                //            var aa = Convert.ToDecimal(totalTime.TotalSeconds) / timePriceComponent.StepSize;
+                //            var bb = Convert.ToDecimal(totalTime.TotalSeconds) % timePriceComponent.StepSize;
 
-                            if (aa > 0)
-                                bb++;
+                //            if (aa > 0)
+                //                bb++;
 
-                            var totalEnergyPrice = timePriceComponent.Price * bb;
+                //            var totalEnergyPrice = timePriceComponent.Price * bb;
 
-                            totalCost += totalEnergyPrice;
+                //            totalCost += totalEnergyPrice;
 
-                        }
+                //        }
 
-                    }
+                //    }
 
-                    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.FLAT))
-                    {
+                //    if (tariffElement.PriceComponents.Any(priceComponent => priceComponent.Type == TariffDimension.FLAT))
+                //    {
 
-                        var timePriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.FLAT);
+                //        var timePriceComponent = tariffElement.PriceComponents.FirstOrDefault(priceComponent => priceComponent.Type == TariffDimension.FLAT);
 
-                        totalCost += timePriceComponent.Price;
+                //        totalCost += timePriceComponent.Price;
 
-                    }
+                //    }
 
-                    chargingPeriods.Add(
-                        new ChargingPeriod(
-                            ChargeDetailRecord.SessionTime.StartTime,
-                            cdrDimensions
-                        )
-                    );
+                //    chargingPeriods.Add(
+                //        new ChargingPeriod(
+                //            ChargeDetailRecord.SessionTime.StartTime,
+                //            cdrDimensions
+                //        )
+                //    );
 
-                }
+                //}
 
                 #region SignedData
 
@@ -2071,9 +2071,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            AuthMethod:              authMethod.Value,
                            Location:                filteredLocation,            //ToDo: Might still have not required connectors!
                                                                                  //      Might have our EnergyMeter vendor extension!
-                           Currency:                tariff.Currency,
-                           ChargingPeriods:         chargingPeriods,
-                           TotalCost:               totalCost,
+                           Currency:                newCDR.Currency,
+                           ChargingPeriods:         newCDR.ChargingPeriods,
+                           TotalCost:               newCDR.TotalCost,
                            TotalEnergy:             ChargeDetailRecord.ConsumedEnergy.      Value,
                            TotalTime:               ChargeDetailRecord.SessionTime.Duration.Value,
 

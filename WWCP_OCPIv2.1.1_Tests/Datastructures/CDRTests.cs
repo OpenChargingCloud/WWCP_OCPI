@@ -1001,7 +1001,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region Validate cdr1 with tariff1  (2h,   1 tariff element!)
 
-            var cdr1WithTariff1 = cdr1.SplittIntoChargingPeriods(meteringValues1, tariff1);
+            var cdr1WithTariff1 = cdr1.SplittIntoChargingPeriods(meteringValues1, [tariff1]);
 
             Assert.Multiple(() => {
 
@@ -1048,7 +1048,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region Validate cdr2 with tariff1  (3h,   1 tariff element!)
 
-            var cdr2WithTariff1 = cdr2.SplittIntoChargingPeriods(meteringValues2, tariff1);
+            var cdr2WithTariff1 = cdr2.SplittIntoChargingPeriods(meteringValues2, [tariff1]);
 
             Assert.Multiple(() => {
 
@@ -1095,7 +1095,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region Validate cdr3 with tariff1  (7h,   1 tariff element!)
 
-            var cdr3WithTariff1 = cdr3.SplittIntoChargingPeriods(meteringValues3, tariff1);
+            var cdr3WithTariff1 = cdr3.SplittIntoChargingPeriods(meteringValues3, [tariff1]);
 
             Assert.Multiple(() => {
 
@@ -1143,7 +1143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region Validate cdr1 with tariff2  (2h, 2-1 tariff elements!)
 
-            var cdr1WithTariff2 = cdr1.SplittIntoChargingPeriods(meteringValues1, tariff2);
+            var cdr1WithTariff2 = cdr1.SplittIntoChargingPeriods(meteringValues1, [tariff2]);
 
             // {
             //   "id": "cdr1",
@@ -1277,7 +1277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region Validate cdr2 with tariff2  (3h, 2-1 tariff elements!)
 
-            var cdr2WithTariff2 = cdr2.SplittIntoChargingPeriods(meteringValues2, tariff2);
+            var cdr2WithTariff2 = cdr2.SplittIntoChargingPeriods(meteringValues2, [tariff2]);
 
             // {
             //   "id": "cdr2",
@@ -1411,7 +1411,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region Validate cdr3 with tariff2  (7h,   2 tariff elements!)
 
-            var cdr3WithTariff2 = cdr3.SplittIntoChargingPeriods(meteringValues3, tariff2);
+            var cdr3WithTariff2 = cdr3.SplittIntoChargingPeriods(meteringValues3, [tariff2]);
 
             // {
             //   "id":                  "cdr2",
@@ -1699,7 +1699,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
             #endregion
 
 
-            var cdrWithTariff   = cdr.SplittIntoChargingPeriods(meteringValues, tariff);
+            var cdrWithTariff   = cdr.SplittIntoChargingPeriods(meteringValues, [tariff]);
 
 
         }
