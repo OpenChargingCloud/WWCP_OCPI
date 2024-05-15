@@ -32,232 +32,161 @@ using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
-    public class CDRReport(Decimal    TotalEnergy      = 0,
-                           TimeSpan?  TotalTime        = null,
-
-                           Decimal    TotalCost        = 0,
-                           Decimal    TotalEnergyCost  = 0,
-                           Decimal    TotalTimeCost    = 0)
-    {
-
-
-        public class EnergyData
-        {
-            public Decimal Energy { get; set; }
-            public UInt32  StepSize { get; set; }
-            public Decimal Price  { get; set; }
-            public Decimal BilledEnergy { get; set; }
-            public Decimal EnergyCost { get; set; }
-        }
-
-        public class TimeData
-        {
-            public TimeSpan Time   { get; set; }
-            public UInt32   StepSize { get; set; }
-            public Decimal  Price  { get; set; }
-            public TimeSpan BilledTime { get; set; }
-            public Decimal TimeCost { get; set; }
-        }
-
-
-        public Decimal   TotalEnergy        { get; set; }  = TotalEnergy;
-        public TimeSpan  TotalTime          { get; set; }  = TotalTime ?? TimeSpan.Zero;
-
-        public Decimal   TotalCost          { get; set; }  = TotalCost;
-        public Decimal   TotalEnergyCost    { get; set; }  = TotalEnergyCost;
-        public Decimal   TotalTimeCost      { get; set; }  = TotalTimeCost;
-
-
-        public Dictionary<String, EnergyData>  BilledEnergy { get; } = [];
-
-        public Dictionary<String, TimeData>    BilledTime   { get; } = [];
-
-
-        public void BillEnergy(UInt32 StepSize, Decimal Energy, Decimal Price)
-        {
-
-            if (!BilledEnergy.TryGetValue($"{StepSize}-{Price}", out var energy))
-            {
-                energy = new EnergyData {
-                             StepSize  = StepSize,
-                             Price     = Price
-                         };
-                BilledEnergy.Add($"{StepSize}-{Price}", energy);
-            }
-
-            energy.Energy += Energy;
-
-        }
-
-        public void BillTime(UInt32 StepSize, TimeSpan Time, Decimal Price)
-        {
-
-            if (!BilledTime.TryGetValue($"{StepSize}-{Price}", out var time))
-            {
-                time = new TimeData {
-                           StepSize  = StepSize,
-                           Price     = Price
-                       };
-                BilledTime.Add($"{StepSize}-{Price}", time);
-            }
-
-            time.Time += Time;
-
-        }
-
-    }
-
-
     /// <summary>
     /// Extensions method for charge detail records.
     /// </summary>
     public static class CDRExtensions
     {
 
-        #region SplittIntoChargingPeriods(this CDR, Tariff)
+        #region SplittIntoChargingPeriods(this CDR, Tariff, ExtrapolateEnergy = false)
 
         public static CDR SplittIntoChargingPeriods(this CDR                           CDR,
                                                     IEnumerable<Timestamped<Decimal>>  MeteringValues,
-                                                    Tariff                             Tariff)
+                                                    Tariff                             Tariff,
+                                                    Boolean                            ExtrapolateEnergy = false)
         {
 
-            if (MeteringValues.First().Timestamp != CDR.Start)
-                throw new Exception("!");
-
-            // Can a CDR be longer than the last metering value, e.g. because of parking?
-            if (MeteringValues.Last(). Timestamp != CDR.Stop)
-                throw new Exception("!");
-
-            var timeMarkers     = new HashSet<DateTime>() { CDR.Start };
-            var meteringValues  = MeteringValues.ToArray();
-
-            for (var i = 0; i < meteringValues.Length - 1; i++)
+            try
             {
-                timeMarkers.Add(meteringValues[i].Timestamp);
-            }
 
-            if (Tariff.TariffElements.Any(tariffElement => tariffElement.HasRestrictions()))
-            {
-                foreach (var tariffElement in Tariff.TariffElements)
+                if (MeteringValues.First().Timestamp != CDR.Start)
+                    throw new Exception("!");
+
+                // Can a CDR be longer than the last metering value, e.g. because of parking?
+                if (MeteringValues.Last(). Timestamp != CDR.Stop)
+                    throw new Exception("!");
+
+                var timeMarkers     = new HashSet<DateTime>() { CDR.Start };
+                var meteringValues  = MeteringValues.ToArray();
+
+                for (var i = 0; i < meteringValues.Length - 1; i++)
                 {
-                    if (tariffElement.TariffRestrictions.HasRestrictions())
+                    timeMarkers.Add(meteringValues[i].Timestamp);
+                }
+
+                if (Tariff.TariffElements.Any(tariffElement => tariffElement.HasRestrictions()))
+                {
+                    foreach (var tariffElement in Tariff.TariffElements)
+                    {
+                        if (tariffElement.TariffRestrictions.HasRestrictions())
+                        {
+
+                            if (tariffElement.TariffRestrictions.StartTime.  HasValue)
+                            { }
+
+                            if (tariffElement.TariffRestrictions.EndTime.    HasValue)
+                            { }
+
+                            if (tariffElement.TariffRestrictions.StartDate.  HasValue)
+                            { }
+
+                            if (tariffElement.TariffRestrictions.EndDate.    HasValue)
+                            { }
+
+                            if (tariffElement.TariffRestrictions.MinkWh.     HasValue)
+                            { }
+
+                            if (tariffElement.TariffRestrictions.MaxkWh.     HasValue)
+                            { }
+
+                            if (tariffElement.TariffRestrictions.MinPower.   HasValue)
+                            { }
+
+                            if (tariffElement.TariffRestrictions.MaxPower.   HasValue)
+                            { }
+
+                            if (tariffElement.TariffRestrictions.MinDuration.HasValue)
+                                timeMarkers.Add(CDR.Start + tariffElement.TariffRestrictions.MinDuration.Value);
+
+                            if (tariffElement.TariffRestrictions.MaxDuration.HasValue)
+                                timeMarkers.Add(CDR.Start + tariffElement.TariffRestrictions.MaxDuration.Value);
+
+                            if (tariffElement.TariffRestrictions.DayOfWeek.  Any())
+                            { }
+
+                        }
+                    }
+                }
+
+                if (timeMarkers.Last() == CDR.Stop)
+                    timeMarkers.Remove(CDR.Stop);
+
+
+                var chargingPeriods = timeMarkers.Where(timeMarker => timeMarker >= CDR.Start && timeMarker <= CDR.Stop).
+                                                  Order().Select(tm => new ChargingPeriod(tm)).ToList();
+
+                for (var i=0; i<chargingPeriods.Count; i++)
+                {
+
+                    chargingPeriods[i].Id = (UInt32) (i + 1);
+
+                    if (i  > 0)
+                        chargingPeriods[i].Previous = chargingPeriods[i-1];
+
+                    if (i  < chargingPeriods.Count - 1)
+                        chargingPeriods[i].Next     = chargingPeriods[i+1];
+
+                    if (i == chargingPeriods.Count - 1)
+                        chargingPeriods[i].SetEndTimestamp(CDR.Stop);
+
+                    var _meteringValues = meteringValues.Where(meteringValue => meteringValue.Timestamp == chargingPeriods[i].StartTimestamp);
+                    if (_meteringValues.Any())
+                        chargingPeriods[i].StartMeteringValue = MeteringValue.Measured(
+                                                                    chargingPeriods[i].StartTimestamp,
+                                                                    _meteringValues.First().Value
+                                                                );
+
+                    if (Tariff.IsActive(chargingPeriods[i]))
                     {
 
-                        if (tariffElement.TariffRestrictions.StartTime.  HasValue)
-                        { }
+                        var activeTariffElement = Tariff.TariffElements.FirstOrDefault(te => te.IsActive(chargingPeriods[i]));
 
-                        if (tariffElement.TariffRestrictions.EndTime.    HasValue)
-                        { }
+                        foreach (var priceComponent in activeTariffElement.PriceComponents)
+                        {
+                            chargingPeriods[i].PriceComponents.Add(priceComponent.Type, priceComponent);
+                        }
 
-                        if (tariffElement.TariffRestrictions.StartDate.  HasValue)
-                        { }
+                    }
 
-                        if (tariffElement.TariffRestrictions.EndDate.    HasValue)
-                        { }
+                }
 
-                        if (tariffElement.TariffRestrictions.MinkWh.     HasValue)
-                        { }
+                chargingPeriods[^1].StopMeteringValue = MeteringValue.Measured(
+                                                            MeteringValues.Last().Timestamp,
+                                                            MeteringValues.Last().Value
+                                                        );
 
-                        if (tariffElement.TariffRestrictions.MaxkWh.     HasValue)
-                        { }
 
-                        if (tariffElement.TariffRestrictions.MinPower.   HasValue)
-                        { }
+                for (var i = 1; i < chargingPeriods.Count; i++)
+                {
+                    if (chargingPeriods[i].StartMeteringValue is null)
+                    {
 
-                        if (tariffElement.TariffRestrictions.MaxPower.   HasValue)
-                        { }
+                        var previousMV    = chargingPeriods[i].Previous!.StartMeteringValue!;
+                        var nextCP        = chargingPeriods[i].Next;
 
-                        if (tariffElement.TariffRestrictions.MinDuration.HasValue)
-                            timeMarkers.Add(CDR.Start + tariffElement.TariffRestrictions.MinDuration.Value);
+                        // Skip consecutive null values!
+                        while (nextCP is not null && nextCP.StartMeteringValue is null)
+                            nextCP = nextCP.Next;
 
-                        if (tariffElement.TariffRestrictions.MaxDuration.HasValue)
-                            timeMarkers.Add(CDR.Start + tariffElement.TariffRestrictions.MaxDuration.Value);
+                        var nextMV        = (nextCP?.StartMeteringValue ?? chargingPeriods[i].StopMeteringValue)
+                                                ?? throw new Exception($"Could not calculate '{i}.' imputed value!");
 
-                        if (tariffElement.TariffRestrictions.DayOfWeek.  Any())
-                        { }
+                        var imputedValue  = ((nextMV.Value - previousMV.Value) /
+                                                 Convert.ToDecimal((nextMV.            Timestamp      - previousMV.Timestamp).TotalSeconds) *
+                                                 Convert.ToDecimal((chargingPeriods[i].StartTimestamp - previousMV.Timestamp).TotalSeconds)) + previousMV.Value;
+
+                        chargingPeriods[i].StartMeteringValue = MeteringValue.Imputed(
+                                                                    chargingPeriods[i].StartTimestamp,
+                                                                    imputedValue
+                                                                );
 
                     }
                 }
-            }
 
 
-            var chargingPeriods = timeMarkers.Where(timeMarker => timeMarker >= CDR.Start && timeMarker <= CDR.Stop).
-                                              Order().Select(tm => new ChargingPeriod(tm)).ToList();
+                var cdrCosts = new CDRCosts();
 
-            for (var i=0; i<chargingPeriods.Count; i++)
-            {
-
-                chargingPeriods[i].Id = (UInt32) (i + 1);
-
-                if (i  > 0)
-                    chargingPeriods[i].Previous = chargingPeriods[i-1];
-
-                if (i  < chargingPeriods.Count - 1)
-                    chargingPeriods[i].Next     = chargingPeriods[i+1];
-
-                if (i == chargingPeriods.Count - 1)
-                    chargingPeriods[i].EndTimestamp = CDR.Stop;
-
-                var _meteringValues = meteringValues.Where(meteringValue => meteringValue.Timestamp == chargingPeriods[i].StartTimestamp);
-                if (_meteringValues.Any())
-                    chargingPeriods[i].StartMeteringValue = MeteringValue.Measured(
-                                                                chargingPeriods[i].StartTimestamp,
-                                                                _meteringValues.First().Value
-                                                            );
-
-                if (Tariff.IsActive(chargingPeriods[i]))
-                {
-
-                    var activeTariffElement = Tariff.TariffElements.FirstOrDefault(te => te.IsActive(chargingPeriods[i]));
-
-                    foreach (var priceComponent in activeTariffElement.PriceComponents)
-                    {
-                        chargingPeriods[i].PriceComponents.Add(priceComponent.Type, priceComponent);
-                    }
-
-                }
-
-            }
-
-            chargingPeriods[^1].StopMeteringValue = MeteringValue.Measured(
-                                                        MeteringValues.Last().Timestamp,
-                                                        MeteringValues.Last().Value
-                                                    );
-
-
-            for (var i = 1; i < chargingPeriods.Count; i++)
-            {
-                if (chargingPeriods[i].StartMeteringValue is null)
-                {
-
-                    var previousMV    = chargingPeriods[i].Previous!.StartMeteringValue!;
-                    var nextCP        = chargingPeriods[i].Next;
-
-                    // Skip consecutive null values!
-                    while (nextCP is not null && nextCP.StartMeteringValue is null)
-                        nextCP = nextCP.Next;
-
-                    var nextMV        = (nextCP?.StartMeteringValue ?? chargingPeriods[i].StopMeteringValue)
-                                            ?? throw new Exception($"Could not calculate '{i}.' imputed value!");
-
-                    var imputedValue  = ((nextMV.Value - previousMV.Value) /
-                                             Convert.ToDecimal((nextMV.            Timestamp      - previousMV.Timestamp).TotalSeconds) *
-                                             Convert.ToDecimal((chargingPeriods[i].StartTimestamp - previousMV.Timestamp).TotalSeconds)) + previousMV.Value;
-
-                    chargingPeriods[i].StartMeteringValue = MeteringValue.Imputed(
-                                                                chargingPeriods[i].StartTimestamp,
-                                                                imputedValue
-                                                            );
-
-                }
-            }
-
-
-            var cdrReport = new CDRReport();
-
-            foreach (var chargingPeriod in chargingPeriods)
-            {
-                foreach (var priceComponent in chargingPeriod.PriceComponents.Values)
+                foreach (var chargingPeriod in chargingPeriods)
                 {
 
                     var periodStartMeteringValue  = chargingPeriod.StartMeteringValue;
@@ -267,37 +196,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         periodStopMeteringValue  is not null)
                     {
 
-                        if      (priceComponent.Type == TariffDimension.ENERGY)
+                        chargingPeriod.Energy        = (periodStopMeteringValue.Value     - periodStartMeteringValue.Value) / 1000;
+                        chargingPeriod.PowerAverage  = chargingPeriod.Energy / Convert.ToDecimal(chargingPeriod.Duration.TotalHours);
+
+                        cdrCosts.TotalEnergy        += chargingPeriod.Energy;
+                        cdrCosts.TotalTime          += chargingPeriod.Duration;
+
+                        foreach (var priceComponent in chargingPeriod.PriceComponents.Values)
                         {
 
-                            chargingPeriod.Energy  = periodStopMeteringValue.Value - periodStartMeteringValue.Value;
-                            cdrReport.TotalEnergy += chargingPeriod.Energy;
-
-                            if (priceComponent.Price > 0)
+                            if      (priceComponent.Type == TariffDimension.ENERGY && priceComponent.Price > 0)
                             {
 
-                                chargingPeriod.Dimensions.Add(
-                                    CDRDimension.ENERGY(
-                                        periodStopMeteringValue.Value - periodStartMeteringValue.Value
-                                    )
-                                );
+                               chargingPeriod.Dimensions.Add(
+                                   CDRDimension.ENERGY(
+                                       (periodStopMeteringValue.Value - periodStartMeteringValue.Value) / 1000
+                                   )
+                               );
 
-                                chargingPeriod.EnergyPrice     = priceComponent.Price;
-                                chargingPeriod.EnergyStepSize  = priceComponent.StepSize;
+                               chargingPeriod.EnergyPrice     = priceComponent.Price;
+                               chargingPeriod.EnergyStepSize  = priceComponent.StepSize;
+
+                               cdrCosts.BillEnergy(priceComponent.StepSize, 1000 * chargingPeriod.Energy, chargingPeriod.EnergyPrice);
 
                             }
 
-                            cdrReport.BillEnergy(priceComponent.StepSize, chargingPeriod.Energy, chargingPeriod.EnergyPrice);
-
-                        }
-
-                        else if (priceComponent.Type == TariffDimension.TIME)
-                        {
-
-                            chargingPeriod.Time  = periodStopMeteringValue.Timestamp - periodStartMeteringValue.Timestamp;
-                            cdrReport.TotalTime += chargingPeriod.Time;
-
-                            if (priceComponent.Price > 0)
+                            else if (priceComponent.Type == TariffDimension.TIME   && priceComponent.Price > 0)
                             {
 
                                 chargingPeriod.Dimensions.Add(
@@ -309,143 +233,95 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 chargingPeriod.TimePrice     = priceComponent.Price;
                                 chargingPeriod.TimeStepSize  = priceComponent.StepSize;
 
-                                cdrReport.BillTime(priceComponent.StepSize, chargingPeriod.Time, chargingPeriod.TimePrice);
+                                cdrCosts.BillTime(priceComponent.StepSize, chargingPeriod.Duration, chargingPeriod.TimePrice);
 
                             }
 
-                        }
+                            else if (priceComponent.Type == TariffDimension.FLAT   && priceComponent.Price > 0)
+                            {
+                                cdrCosts.TotalCost += priceComponent.Price;
+                            }
 
-                        else if (priceComponent.Type == TariffDimension.FLAT   && priceComponent.Price > 0)
-                        {
-                            cdrReport.TotalCost += priceComponent.Price;
-                        }
+                            //else if (priceComponent.Type == TariffDimension.PARKING_TIME)
+                            //{
+                            //    chargingPeriods[i].Dimensions.Add(CDRDimension.ENERGY(0));
+                            //}
 
-                        //else if (priceComponent.Type == TariffDimension.PARKING_TIME)
-                        //{
-                        //    chargingPeriods[i].Dimensions.Add(CDRDimension.ENERGY(0));
-                        //}
+                        }
 
                     }
+
+                    else if (periodStartMeteringValue is not null &&
+                             periodStopMeteringValue  is     null &&
+                             ExtrapolateEnergy)
+                    {
+                        //ToDo: Extrapolate an ongoing charging period!
+                    }
+
                 }
-            }
 
-            foreach (var energySums in cdrReport.BilledEnergy)
+                foreach (var energySums in cdrCosts.BilledEnergy)
+                {
+
+                    energySums.Value.BilledEnergy  = Math.Ceiling(energySums.Value.Energy / energySums.Value.StepSize) * energySums.Value.StepSize / 1000;
+                    energySums.Value.EnergyCost    = energySums.Value.BilledEnergy * energySums.Value.Price;
+
+                    cdrCosts.TotalEnergyCost      += energySums.Value.EnergyCost;
+                    cdrCosts.TotalCost            += energySums.Value.EnergyCost;
+
+                }
+
+                foreach (var timeSums in cdrCosts.BilledTime)
+                {
+
+                    timeSums.Value.BilledTime  = TimeSpan.FromSeconds(Math.Ceiling(timeSums.Value.Time.TotalSeconds / timeSums.Value.StepSize) * timeSums.Value.StepSize);
+                    timeSums.Value.TimeCost    = Convert.ToDecimal(timeSums.Value.BilledTime.TotalHours) * timeSums.Value.Price;
+
+                    cdrCosts.TotalTimeCost    += timeSums.Value.TimeCost;
+                    cdrCosts.TotalCost        += timeSums.Value.TimeCost;
+
+                }
+
+
+                var startMeteringValue  = chargingPeriods[0]. StartMeteringValue ?? throw new Exception("");
+                var stopMeteringValue   = chargingPeriods[^1].StopMeteringValue  ?? throw new Exception("");
+
+                var totalParkingTime    = TimeSpan.Zero;
+
+                return new CDR(
+                           CDR.CountryCode,
+                           CDR.PartyId,
+                           CDR.Id,
+                           CDR.Start,
+                           CDR.Stop,
+                           CDR.AuthId,
+                           CDR.AuthMethod,
+                           CDR.Location,
+                           Tariff.Currency,
+                           chargingPeriods,
+                           cdrCosts.TotalCost,
+                           cdrCosts.TotalEnergy,
+                           cdrCosts.TotalTime,
+                           cdrCosts,            // Our extension!
+                           CDR.MeterId,
+                           CDR.EnergyMeter,
+                           CDR.TransparencySoftwares,
+                           [ Tariff ],
+                           CDR.SignedData,
+                           totalParkingTime,
+                           CDR.Remark,
+                           CDR.Created,
+                           CDR.LastUpdated
+                       );
+
+            }
+            catch (Exception e)
             {
-
-                energySums.Value.BilledEnergy = Math.Ceiling(energySums.Value.Energy / energySums.Value.StepSize) * energySums.Value.StepSize / 1000;
-                energySums.Value.EnergyCost   = energySums.Value.BilledEnergy * energySums.Value.Price;
-
-                cdrReport.TotalEnergyCost    += energySums.Value.EnergyCost;
-                cdrReport.TotalCost          += energySums.Value.EnergyCost;
-
+                var a = 23;
+          //      throw new Exception("Could not split the given charge detail record into charging periods!", e);
             }
 
-            foreach (var timeSums in cdrReport.BilledTime)
-            {
-
-                timeSums.Value.BilledTime     = TimeSpan.FromSeconds(Math.Ceiling(timeSums.Value.Time.TotalSeconds / timeSums.Value.StepSize) * timeSums.Value.StepSize);
-                timeSums.Value.TimeCost       = Convert.ToDecimal(timeSums.Value.BilledTime.TotalHours) * timeSums.Value.Price;
-
-                cdrReport.TotalTimeCost      += timeSums.Value.TimeCost;
-                cdrReport.TotalCost          += timeSums.Value.TimeCost;
-
-            }
-
-
-            var startMeteringValue  = chargingPeriods[0]. StartMeteringValue ?? throw new Exception("");
-            var stopMeteringValue   = chargingPeriods[^1].StopMeteringValue  ?? throw new Exception("");
-
-            var totalParkingTime    = TimeSpan.Zero;
-
-
-            var newCDR  = new CDR(
-                              CDR.CountryCode,
-                              CDR.PartyId,
-                              CDR.Id,
-                              CDR.Start,
-                              CDR.Stop,
-                              CDR.AuthId,
-                              CDR.AuthMethod,
-                              CDR.Location,
-                              Tariff.Currency,
-                              chargingPeriods,
-                              cdrReport.TotalCost,
-                              cdrReport.TotalEnergy,
-                              cdrReport.TotalTime,
-                              CDR.MeterId,
-                              CDR.EnergyMeter,
-                              CDR.TransparencySoftwares,
-                              [ Tariff ],
-                              CDR.SignedData,
-                              totalParkingTime,
-                              CDR.Remark,
-                              CDR.Created,
-                              CDR.LastUpdated
-                          );
-
-            return newCDR;
-
-        }
-
-        #endregion
-
-        #region AugemntCDRWithTariff(this CDR, Tariff)
-
-        public static CDR AugemntCDRWithTariff(this CDR  CDR,
-                                               Tariff    Tariff)
-        {
-
-            var chargingPeriods = CDR.ChargingPeriods.ToList();
-
-            if (chargingPeriods.Count == 0)
-            {
-
-                chargingPeriods.Add(new ChargingPeriod(
-                                        CDR.Start,
-                                        [
-                                            CDRDimension.TIME  (Convert.ToDecimal((CDR.Stop - CDR.Start).TotalHours)),
-                                            CDRDimension.ENERGY(0)
-                                        ]
-                                    ));
-
-            }
-
-            foreach (var chargingPeriod in chargingPeriods)
-            {
-
-                var energyInfos = chargingPeriod.Dimensions.Any(dimension => dimension.Type == CDRDimensionType.ENERGY);
-
-            }
-
-
-
-
-            var augmentedCDR  = new CDR(
-                                    CDR.CountryCode,
-                                    CDR.PartyId,
-                                    CDR.Id,
-                                    CDR.Start,
-                                    CDR.Stop,
-                                    CDR.AuthId,
-                                    CDR.AuthMethod,
-                                    CDR.Location,
-                                    Tariff.Currency,
-                                    CDR.ChargingPeriods,
-                                    CDR.TotalCost,
-                                    CDR.TotalEnergy,
-                                    CDR.TotalTime,
-                                    CDR.MeterId,
-                                    CDR.EnergyMeter,
-                                    CDR.TransparencySoftwares,
-                                    [ Tariff ],
-                                    CDR.SignedData,
-                                    CDR.TotalParkingTime,
-                                    CDR.Remark,
-                                    CDR.Created,
-                                    CDR.LastUpdated
-                                );
-
-            return augmentedCDR;
+            return null;
 
         }
 
@@ -531,6 +407,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         [Mandatory]
         public   Location                                 Location                    { get; }
+
+        /// <summary>
+        /// The optional costs calculation details of this charge detail record.
+        /// </summary>
+        [Optional, NonStandard]
+        public   CDRCosts?                                CDRCosts                    { get; }
 
         /// <summary>
         /// The optional identification of the energy meter.
@@ -657,7 +539,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="TotalEnergy">The total energy charged in kWh.</param>
         /// <param name="TotalTime">The total duration of the charging session, including the duration of charging and not charging.</param>
         /// 
-        /// <param name="MeterId">The optional identification of the energy meter.</param>
+        /// <param name="CDRCosts">Optional costs calculation details for this charge detail record.</param>
+        /// <param name="MeterId">An optional identification of the energy meter.</param>
         /// <param name="EnergyMeter">An optional energy meter.</param>
         /// <param name="TransparencySoftwares">The enumeration of valid transparency softwares which can be used to validate the singed charging session and metering data.</param>
         /// <param name="Tariffs">The enumeration of relevant charging tariffs.</param>
@@ -706,6 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Decimal                                                       TotalEnergy,
                    TimeSpan                                                      TotalTime,
 
+                   CDRCosts?                                                     CDRCosts                                     = null,
                    Meter_Id?                                                     MeterId                                      = null,
                    EnergyMeter?                                                  EnergyMeter                                  = null,
                    IEnumerable<TransparencySoftwareStatus>?                      TransparencySoftwares                        = null,
@@ -761,6 +645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.TotalEnergy              = TotalEnergy;
             this.TotalTime                = TotalTime;
 
+            this.CDRCosts                 = CDRCosts;
             this.MeterId                  = MeterId;
             this.EnergyMeter              = EnergyMeter;
             this.TransparencySoftwares    = TransparencySoftwares ?? [];
@@ -1269,30 +1154,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                CDR = new CDR(CountryCodeBody ?? CountryCodeURL!.Value,
-                              PartyIdBody     ?? PartyIdURL!.    Value,
-                              CDRIdBody       ?? CDRIdURL!.      Value,
-                              Start,
-                              Stop,
-                              AuthId,
-                              AuthMethod,
-                              Location,
-                              Currency,
-                              ChargingPeriods,
-                              TotalCosts,
-                              TotalEnergy,
-                              TotalTime,
+                CDR = new CDR(
 
-                              MeterId,
-                              EnergyMeter,
-                              TransparencySoftwares,
-                              Tariffs,
-                              SignedData,
-                              TotalParkingTime,
-                              Remark,
+                          CountryCodeBody ?? CountryCodeURL!.Value,
+                          PartyIdBody     ?? PartyIdURL!.    Value,
+                          CDRIdBody       ?? CDRIdURL!.      Value,
+                          Start,
+                          Stop,
+                          AuthId,
+                          AuthMethod,
+                          Location,
+                          Currency,
+                          ChargingPeriods,
+                          TotalCosts,
+                          TotalEnergy,
+                          TotalTime,
 
-                              Created,
-                              LastUpdated);
+                          null,
+                          MeterId,
+                          EnergyMeter,
+                          TransparencySoftwares,
+                          Tariffs,
+                          SignedData,
+                          TotalParkingTime,
+                          Remark,
+
+                          Created,
+                          LastUpdated
+
+                      );
 
 
                 if (CustomCDRParser is not null)
@@ -1485,6 +1375,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     TotalEnergy,
                     TotalTime,
 
+                    CDRCosts?.            Clone(),
                     MeterId?.             Clone,
                     EnergyMeter?.         Clone(),
                     TransparencySoftwares.Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),

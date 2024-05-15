@@ -538,59 +538,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             var json = JSONObject.Create(
 
                            StartTime.  HasValue
-                               ? new JProperty("start_time",    StartTime.  Value.ToString())
+                               ? new JProperty("start_time",     StartTime.  Value.ToString())
                                : null,
 
                            EndTime.    HasValue
-                               ? new JProperty("end_time",      EndTime.    Value.ToString())
+                               ? new JProperty("end_time",       EndTime.    Value.ToString())
                                : null,
 
                            StartDate.  HasValue
-                               ? new JProperty("start_date",    StartDate.  Value.ToString("yyyy-MM-dd"))
+                               ? new JProperty("start_date",     StartDate.  Value.ToString("yyyy-MM-dd"))
                                : null,
 
                            EndDate.    HasValue
-                               ? new JProperty("end_date",      EndDate.    Value.ToString("yyyy-MM-dd"))
+                               ? new JProperty("end_date",       EndDate.    Value.ToString("yyyy-MM-dd"))
                                : null,
 
                            MinkWh.     HasValue
-                               ? new JProperty("min_kwh",       MinkWh.     Value)
+                               ? new JProperty("min_kwh",        MinkWh.     Value)
                                : null,
 
                            MaxkWh.     HasValue
-                               ? new JProperty("max_kwh",       MaxkWh.     Value)
+                               ? new JProperty("max_kwh",        MaxkWh.     Value)
                                : null,
 
                            MinCurrent. HasValue
-                               ? new JProperty("min_current",   MinCurrent. Value)
+                               ? new JProperty("min_current",    MinCurrent. Value)
                                : null,
 
                            MaxCurrent. HasValue
-                               ? new JProperty("max_current",   MaxCurrent. Value)
+                               ? new JProperty("max_current",    MaxCurrent. Value)
                                : null,
 
                            MinPower.   HasValue
-                               ? new JProperty("min_power",     MinPower.   Value)
+                               ? new JProperty("min_power",      MinPower.   Value)
                                : null,
 
                            MaxPower.   HasValue
-                               ? new JProperty("max_power",     MaxPower.   Value)
+                               ? new JProperty("max_power",      MaxPower.   Value)
                                : null,
 
                            MinDuration.HasValue
-                               ? new JProperty("min_duration",  MinDuration.Value.TotalSeconds)
+                               ? new JProperty("min_duration",   (UInt64) MinDuration.Value.TotalSeconds)
                                : null,
 
                            MaxDuration.HasValue
-                               ? new JProperty("max_duration",  MaxDuration.Value.TotalSeconds)
+                               ? new JProperty("max_duration",   (UInt64) MaxDuration.Value.TotalSeconds)
                                : null,
 
                            DayOfWeek.SafeAny()
-                               ? new JProperty("day_of_week",   new JArray(DayOfWeek.Select(day => day.ToString().ToUpper())))
+                               ? new JProperty("day_of_week",    new JArray(DayOfWeek.Select(day => day.ToString().ToUpper())))
                                : null,
 
                            Reservation.HasValue
-                               ? new JProperty("reservation",   Reservation.Value.AsText())
+                               ? new JProperty("reservation",    Reservation.Value.AsText())
                                : null
 
                        );

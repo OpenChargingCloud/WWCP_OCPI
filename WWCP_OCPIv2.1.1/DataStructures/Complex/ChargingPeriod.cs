@@ -549,19 +549,72 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Our extensions!!!
 
+        /// <summary>
+        /// The final stop timestamp when this charging period and
+        /// with it the entire charging session ends.
+        /// Thus there is no 'next' charging period having a start
+        /// timestamp.
+        /// </summary>
+        private  DateTime?                                   endTimestamp;
+
+        public DateTime? SetEndTimestamp(DateTime? Timestamp)
+        {
+            endTimestamp = Timestamp;
+            return endTimestamp;
+        }
+
+        /// <summary>
+        /// Stop timestamp of the charging period.
+        /// This period ends when a next period starts,
+        /// the last period ends when the session ends.
+        /// </summary>
+        [Optional]
+        public  DateTime?                                    StopTimestamp
+            => Next is not null
+                   ? Next.StartTimestamp
+                   : endTimestamp;
+
+
+
+
         public  Decimal   Energy            { get; set; }
-        //public  Decimal   BilledEnergy      { get; set; }
         public  Decimal   EnergyPrice       { get; set; }
         public  UInt32    EnergyStepSize    { get; set; }
 
 
-        public  TimeSpan  Time              { get; set; }
-        //public  TimeSpan  BilledTime        { get; set; }
+        public  TimeSpan  Duration
+             => StopTimestamp.HasValue
+                    ? StopTimestamp.Value - StartTimestamp
+                    : Timestamp.Now       - StartTimestamp;
+
         public  Decimal   TimePrice         { get; set; }
         public  UInt32    TimeStepSize      { get; set; }
 
 
+   //     public  TimeSpan?                                    Duration
+   //         => StopTimestamp - StartTimestamp;
+
+
+        public  TimeSpan                                     TotalDuration
+            => TimeSpan.FromSeconds(GetThisAndAllPrevious.Sum(chargingPeriods => chargingPeriods.Duration.TotalSeconds));
+
+
+
+
+
+
+
+        public  Decimal PowerAverage        { get; set; }
+
+
+
+
+
+
         public  Dictionary<TariffDimension, PriceComponent>  PriceComponents       { get; } = [];
+
+
+
 
 
         public  MeteringValue?                               StartMeteringValue    { get; set; }
@@ -588,9 +641,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
 
-        public  ChargingPeriod?                            Previous              { get; set; }
+        
 
-        public  ChargingPeriod                             First
+
+
+        public  ChargingPeriod                               First
         {
             get
             {
@@ -604,11 +659,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             }
         }
-
-
+        public  ChargingPeriod?                              Previous              { get; set; }
 
         private ChargingPeriod? next;
-        public  ChargingPeriod?                            Next                 {
+        public ChargingPeriod?                               Next {
 
             get
             {
@@ -618,37 +672,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             set
             {
                 next          = value;
-                EndTimestamp  = null;
+                endTimestamp  = null;
             }
 
         }
 
-
-        /// <summary>
-        /// The final stop timestamp when the session ends.
-        /// </summary>
-        public  DateTime?                                    EndTimestamp    { get; set; }
-
-        /// <summary>
-        /// Stop timestamp of the charging period.
-        /// This period ends when a next period starts,
-        /// the last period ends when the session ends.
-        /// </summary>
-        [Optional]
-        public  DateTime?                                    StopTimestamp
-            => Next is not null
-                   ? Next.StartTimestamp
-                   : EndTimestamp;
-
-        public  TimeSpan?                                    Duration
-            => StopTimestamp - StartTimestamp;
-
-
-        public  TimeSpan                                     TotalDuration
-            => TimeSpan.FromSeconds(GetThisAndAllPrevious.Sum(chargingPeriods => chargingPeriods.Duration?.TotalSeconds ?? 0));
-
-
-        public  IEnumerable<ChargingPeriod>                GetAllPrevious
+        public  IEnumerable<ChargingPeriod>                  GetAllPrevious
         {
             get
             {
@@ -668,8 +697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
         }
 
-
-        public  IEnumerable<ChargingPeriod>                GetThisAndAllPrevious
+        public  IEnumerable<ChargingPeriod>                  GetThisAndAllPrevious
         {
             get
             {
@@ -752,7 +780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.StartTimestamp     = StartTimestamp;
-            this.EndTimestamp       = EndTimestamp;
+            this.endTimestamp       = EndTimestamp;
             this.Dimensions         = Dimensions is not null
                                           ? new HashSet<CDRDimension>(Dimensions)
                                           : [];

@@ -77,26 +77,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                    ),
                                                                    OCPI.Currency.EUR,
 
-                                                                   new[] {
+                                                                   [
                                                                        new ChargingPeriod(
                                                                            DateTime.Parse("2020-04-12T18:21:49Z"),
-                                                                           new[] {
+                                                                           [
                                                                                CDRDimension.Create(
                                                                                    CDRDimensionType.ENERGY,
                                                                                    1.33M
                                                                                )
-                                                                           }
+                                                                           ]
                                                                        ),
                                                                        new ChargingPeriod(
                                                                            DateTime.Parse("2020-04-12T18:21:50Z"),
-                                                                           new[] {
+                                                                           [
                                                                                CDRDimension.Create(
                                                                                    CDRDimensionType.TIME,
                                                                                    5.12M
                                                                                )
-                                                                           }
+                                                                           ]
                                                                        )
-                                                                   },
+                                                                   ],
 
                                                                    // Total cost
                                                                    10.00M,
@@ -106,6 +106,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
 
                                                                    // Total time
                                                                    TimeSpan.FromMinutes(30),
+
+                                                                   null,   // Costs
                                                                    Meter_Id.Parse("Meter0815"),
 
                                                                    // OCPI Computer Science Extensions
@@ -119,7 +121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                        null,
                                                                        null,
                                                                        null,
-                                                                       new[] {
+                                                                       [
                                                                            new TransparencySoftwareStatus(
                                                                                new TransparencySoftware(
                                                                                    "Chargy Transparency Software Desktop Application",
@@ -154,24 +156,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
                                                                                NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
                                                                            )
-                                                                       }
+                                                                       ]
                                                                    ),
                                                                    null,
 
-                                                                   new[] {
+                                                                   [
                                                                        new Tariff(
                                                                            CountryCode.Parse("DE"),
                                                                            Party_Id.   Parse("GEF"),
                                                                            Tariff_Id.  Parse("TARIFF0001"),
                                                                            OCPI.Currency.EUR,
-                                                                           new[] {
+                                                                           [
                                                                                new TariffElement(
-                                                                                   new[] {
+                                                                                   [
                                                                                        PriceComponent.ChargingTime(
                                                                                            2.00M,
                                                                                            TimeSpan.FromSeconds(300)
                                                                                        )
-                                                                                   },
+                                                                                   ],
                                                                                    new TariffRestrictions(
                                                                                        Time.FromHourMin(08,00),       // Start time
                                                                                        Time.FromHourMin(18,00),       // End time
@@ -183,21 +185,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                        9.91M,                         // MaxPower
                                                                                        TimeSpan.FromMinutes(10),      // MinDuration
                                                                                        TimeSpan.FromMinutes(30),      // MaxDuration
-                                                                                       new[] {
+                                                                                       [
                                                                                            DayOfWeek.Monday,
                                                                                            DayOfWeek.Tuesday
-                                                                                       }
+                                                                                       ]
                                                                                    )
                                                                                )
-                                                                           },
-                                                                           new[] {
+                                                                           ],
+                                                                           [
                                                                                new DisplayText(Languages.de, "Hallo Welt!"),
-                                                                               new DisplayText(Languages.en, "Hello world!"),
-                                                                           },
+                                                                               new DisplayText(Languages.en, "Hello world!")
+                                                                           ],
                                                                            URL.Parse("https://open.charging.cloud"),
                                                                            new EnergyMix(
                                                                                true,
-                                                                               new[] {
+                                                                               [
                                                                                    new EnergySource(
                                                                                        EnergySourceCategory.SOLAR,
                                                                                        80
@@ -206,23 +208,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                        EnergySourceCategory.WIND,
                                                                                        20
                                                                                    )
-                                                                               },
-                                                                               new[] {
+                                                                               ],
+                                                                               [
                                                                                    new EnvironmentalImpact(
                                                                                        EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                                                                        0.1
                                                                                    )
-                                                                               },
+                                                                               ],
                                                                                "Stadtwerke Jena-Ost",
                                                                                "New Green Deal"
                                                                            ),
                                                                            DateTime.Parse("2020-09-22").ToUniversalTime()
                                                                        )
-                                                                   },
+                                                                   ],
 
                                                                    new SignedData(
                                                                        EncodingMethod.GraphDefined,
-                                                                       new[] {
+                                                                       [
                                                                            new SignedValue(
                                                                                SignedValueNature.START,
                                                                                "PlainStartValue",
@@ -238,7 +240,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                "PlainEndValue",
                                                                                "SignedEndValue"
                                                                            )
-                                                                       },
+                                                                       ],
                                                                        1,     // Encoding method version
                                                                        null,  // Public key
                                                                        URL.Parse("https://open.charging.cloud/pools/1/stations/1/evse/1/publicKey")
