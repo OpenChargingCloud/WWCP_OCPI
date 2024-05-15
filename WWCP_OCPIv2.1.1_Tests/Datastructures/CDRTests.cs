@@ -799,7 +799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #endregion
 
-            #region CDR 2     (3 hours duration, 18 kWh!)   [EdgeCase!]
+            #region CDR 2     (3 hours duration, 18 kWh!)   [EdgeCase for tariff 2!]
 
             var start2           = now    - TimeSpan.FromHours(6);
             var stop2            = start2 + TimeSpan.FromHours(3);
@@ -912,7 +912,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #endregion
 
-            #region Tariff 2  (two tariff elements changing after 3 hours!)
+            #region Tariff 2  (two tariff elements, switching after 3 hours!)
 
             var tariff2          = new Tariff(
                                        CountryCode:         CountryCode.Parse("DE"),
