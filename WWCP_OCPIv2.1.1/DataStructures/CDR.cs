@@ -50,14 +50,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             try
             {
 
-                if (MeteringValues is null &&
-                    CDR.SignedData?.SignedValues?.Count() >= 2)
+                if (MeteringValues is null)
                 {
 
-                    MeteringValues = [
-                                         new Timestamped<Decimal>(CDR.Start, Decimal.Parse(CDR.SignedData.SignedValues.ElementAt(0).PlainData)),
-                                         new Timestamped<Decimal>(CDR.Stop,  Decimal.Parse(CDR.SignedData.SignedValues.ElementAt(1).PlainData))
-                                     ];
+                    if (CDR.SignedData?.SignedValues?.Count() >= 2)
+                    {
+
+                        MeteringValues = [
+                                             new Timestamped<Decimal>(CDR.Start, Decimal.Parse(CDR.SignedData.SignedValues.ElementAt(0).PlainData)),
+                                             new Timestamped<Decimal>(CDR.Stop,  Decimal.Parse(CDR.SignedData.SignedValues.ElementAt(1).PlainData))
+                                         ];
+
+                    }
+
+                    else if (CDR.ChargingPeriods.Any())
+                    {
+
+                        MeteringValues = [
+                                             new Timestamped<Decimal>(CDR.Start, 0),
+                                             new Timestamped<Decimal>(CDR.Stop,  1000 * CDR.ChargingPeriods.Last().Dimensions.First(dimension => dimension.Type == CDRDimensionType.ENERGY).Volume)
+                                         ];
+
+                    }
 
                 }
 
@@ -209,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 }
 
 
-                var cdrCosts = new CDRCosts();
+                var cdrCosts = new CDRCostDetails();
 
                 foreach (var chargingPeriod in chargingPeriods)
                 {
@@ -264,7 +278,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             else if (priceComponent.Type == TariffDimension.FLAT   && priceComponent.Price > 0)
                             {
-                                cdrCosts.TotalCost += priceComponent.Price;
+
+                                chargingPeriod.FlatPrice          = priceComponent.Price;
+
+                                cdrCosts.BillFlat(chargingPeriod.FlatPrice);
+
                             }
 
                             //else if (priceComponent.Type == TariffDimension.PARKING_TIME)
@@ -306,6 +324,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     cdrCosts.BilledTime        = cdrCosts.BilledTime.Add(timeSums.Value.BilledTime);
                     cdrCosts.TotalTimeCost    += timeSums.Value.TimeCost;
                     cdrCosts.TotalCost        += timeSums.Value.TimeCost;
+
+                }
+
+                foreach (var flatSums in cdrCosts.BilledFlatElements)
+                {
+
+                    cdrCosts.TotalFlatCost    += flatSums.Value.Price;
+                    cdrCosts.TotalCost        += flatSums.Value.Price;
 
                 }
 
@@ -439,7 +465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The optional costs calculation details of this charge detail record.
         /// </summary>
         [Optional, NonStandard]
-        public   CDRCosts?                                CDRCosts                    { get; }
+        public   CDRCostDetails?                          CostDetails                 { get; }
 
         /// <summary>
         /// The optional identification of the energy meter.
@@ -566,7 +592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="TotalEnergy">The total energy charged in kWh.</param>
         /// <param name="TotalTime">The total duration of the charging session, including the duration of charging and not charging.</param>
         /// 
-        /// <param name="CDRCosts">Optional costs calculation details for this charge detail record.</param>
+        /// <param name="CostDetails">Optional costs calculation details for this charge detail record.</param>
         /// <param name="MeterId">An optional identification of the energy meter.</param>
         /// <param name="EnergyMeter">An optional energy meter.</param>
         /// <param name="TransparencySoftwares">The enumeration of valid transparency softwares which can be used to validate the singed charging session and metering data.</param>
@@ -616,7 +642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    Decimal                                                       TotalEnergy,
                    TimeSpan                                                      TotalTime,
 
-                   CDRCosts?                                                     CDRCosts                                     = null,
+                   CDRCostDetails?                                               CostDetails                                  = null,
                    Meter_Id?                                                     MeterId                                      = null,
                    EnergyMeter?                                                  EnergyMeter                                  = null,
                    IEnumerable<TransparencySoftwareStatus>?                      TransparencySoftwares                        = null,
@@ -650,6 +676,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer           = null,
                    CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer               = null,
                    CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                 = null,
+                   CustomJObjectSerializerDelegate<CDRCostDetails>?              CustomCDRCostDetailsSerializer               = null,
                    CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                   = null,
                    CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                  = null)
 
@@ -672,7 +699,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.TotalEnergy              = TotalEnergy;
             this.TotalTime                = TotalTime;
 
-            this.CDRCosts                 = CDRCosts;
+            this.CostDetails              = CostDetails;
             this.MeterId                  = MeterId;
             this.EnergyMeter              = EnergyMeter;
             this.TransparencySoftwares    = TransparencySoftwares ?? [];
@@ -685,6 +712,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.LastUpdated              = LastUpdated           ?? Created     ?? Timestamp.Now;
 
             this.ETag                     = SHA256.HashData(ToJSON(true,
+                                                                   true,
                                                                    true,
                                                                    CustomCDRSerializer,
                                                                    CustomLocationSerializer,
@@ -708,29 +736,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                    CustomTariffRestrictionsSerializer,
                                                                    CustomChargingPeriodSerializer,
                                                                    CustomCDRDimensionSerializer,
+                                                                   CustomCDRCostDetailsSerializer,
                                                                    CustomSignedDataSerializer,
                                                                    CustomSignedValueSerializer).ToUTF8Bytes()).ToBase64();
 
             unchecked
             {
 
-                hashCode = this.CountryCode.          GetHashCode()        * 79 ^
-                           this.PartyId.              GetHashCode()        * 73 ^
-                           this.Id.                   GetHashCode()        * 71 ^
-                           this.Start.                GetHashCode()        * 67 ^
-                           this.Stop.                 GetHashCode()        * 61 ^
-                           this.AuthId.               GetHashCode()        * 59 ^
-                           this.AuthMethod.           GetHashCode()        * 53 ^
-                           this.Location.             GetHashCode()        * 47 ^
-                           this.Currency.             GetHashCode()        * 43 ^
-                           this.ChargingPeriods.      CalcHashCode()       * 41 ^
-                           this.Tariffs.              CalcHashCode()       * 37 ^
-                           this.TotalCost.            GetHashCode()        * 31 ^
-                           this.TotalEnergy.          GetHashCode()        * 29 ^
-                           this.TotalTime.            GetHashCode()        * 23 ^
-                           this.Created.              GetHashCode()        * 19 ^
-                           this.LastUpdated.          GetHashCode()        * 17 ^
+                hashCode = this.CountryCode.          GetHashCode()        * 83 ^
+                           this.PartyId.              GetHashCode()        * 79 ^
+                           this.Id.                   GetHashCode()        * 73 ^
+                           this.Start.                GetHashCode()        * 71 ^
+                           this.Stop.                 GetHashCode()        * 67 ^
+                           this.AuthId.               GetHashCode()        * 61 ^
+                           this.AuthMethod.           GetHashCode()        * 59 ^
+                           this.Location.             GetHashCode()        * 53 ^
+                           this.Currency.             GetHashCode()        * 47 ^
+                           this.ChargingPeriods.      CalcHashCode()       * 43 ^
+                           this.Tariffs.              CalcHashCode()       * 41 ^
+                           this.TotalCost.            GetHashCode()        * 37 ^
+                           this.TotalEnergy.          GetHashCode()        * 31 ^
+                           this.TotalTime.            GetHashCode()        * 29 ^
+                           this.Created.              GetHashCode()        * 23 ^
+                           this.LastUpdated.          GetHashCode()        * 19 ^
 
+                          (this.CostDetails?.         GetHashCode()  ?? 0) * 17 ^
                           (this.MeterId?.             GetHashCode()  ?? 0) * 13 ^
                           (this.EnergyMeter?.         GetHashCode()  ?? 0) * 11 ^
                            this.TransparencySoftwares.CalcHashCode()       *  7 ^
@@ -1238,6 +1268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="IncludeOwnerInformation">Include optional owner information.</param>
         /// <param name="IncludeEnergyMeter">Whether to include the energy meter.</param>
+        /// <param name="IncludeCostDetails">Whether to include the cost details.</param>
         /// <param name="CustomCDRSerializer">A delegate to serialize custom charge detail record JSON objects.</param>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
@@ -1260,10 +1291,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomCDRCostDetailsSerializer">A delegate to serialize custom CDRCostDetails JSON objects.</param>
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
                               Boolean                                                       IncludeEnergyMeter                           = false,
+                              Boolean                                                       IncludeCostDetails                           = false,
                               CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -1286,6 +1319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer           = null,
                               CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer               = null,
                               CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                 = null,
+                              CustomJObjectSerializerDelegate<CDRCostDetails>?              CustomCDRCostDetailsSerializer               = null,
                               CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                   = null,
                               CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                  = null)
         {
@@ -1361,6 +1395,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                                                                                                    CustomCDRDimensionSerializer))))
                                : null,
 
+                           CostDetails is not null && IncludeCostDetails
+                               ? new JProperty("cost_details",             CostDetails.                 ToJSON(CustomCDRCostDetailsSerializer))
+                               : null,
+
                                  new JProperty("total_cost",               TotalCost),
                                  new JProperty("total_energy",             TotalEnergy),
                                  new JProperty("total_time",               TotalTime.                   TotalHours),
@@ -1407,7 +1445,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     TotalEnergy,
                     TotalTime,
 
-                    CDRCosts?.            Clone(),
+                    CostDetails?.            Clone(),
                     MeterId?.             Clone,
                     EnergyMeter?.         Clone(),
                     TransparencySoftwares.Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),

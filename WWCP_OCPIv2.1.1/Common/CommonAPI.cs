@@ -471,6 +471,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public CustomJObjectSerializerDelegate<Image>?                        CustomImageSerializer                         { get; }
         public CustomJObjectSerializerDelegate<ChargingPeriod>?               CustomChargingPeriodSerializer                { get; }
         public CustomJObjectSerializerDelegate<CDRDimension>?                 CustomCDRDimensionSerializer                  { get; }
+        public CustomJObjectSerializerDelegate<CDRCostDetails>?               CustomCDRCostDetailsSerializer                { get; }
 
 
         public CustomJObjectSerializerDelegate<Token>?                        CustomTokenSerializer                         { get; }
@@ -8653,6 +8654,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogAsset(addChargeDetailRecord,
                                CDR.ToJSON(true,
                                           true,
+                                          true,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -8675,6 +8677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           CustomTariffRestrictionsSerializer,
                                           CustomChargingPeriodSerializer,
                                           CustomCDRDimensionSerializer,
+                                          CustomCDRCostDetailsSerializer,
                                           CustomSignedDataSerializer,
                                           CustomSignedValueSerializer),
                                EventTrackingId ?? EventTracking_Id.New,
@@ -8727,6 +8730,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogAsset(addChargeDetailRecord,
                                CDR.ToJSON(true,
                                           true,
+                                          true,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -8749,6 +8753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           CustomTariffRestrictionsSerializer,
                                           CustomChargingPeriodSerializer,
                                           CustomCDRDimensionSerializer,
+                                          CustomCDRCostDetailsSerializer,
                                           CustomSignedDataSerializer,
                                           CustomSignedValueSerializer),
                                EventTrackingId ?? EventTracking_Id.New,
@@ -8811,6 +8816,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogAsset(addOrUpdateChargeDetailRecord,
                                CDR.ToJSON(true,
                                           true,
+                                          true,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -8833,6 +8839,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           CustomTariffRestrictionsSerializer,
                                           CustomChargingPeriodSerializer,
                                           CustomCDRDimensionSerializer,
+                                          CustomCDRCostDetailsSerializer,
                                           CustomSignedDataSerializer,
                                           CustomSignedValueSerializer),
                                EventTrackingId ?? EventTracking_Id.New,
@@ -8945,6 +8952,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogAsset(updateChargeDetailRecord,
                                CDR.ToJSON(true,
                                           true,
+                                          true,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -8967,6 +8975,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           CustomTariffRestrictionsSerializer,
                                           CustomChargingPeriodSerializer,
                                           CustomCDRDimensionSerializer,
+                                          CustomCDRCostDetailsSerializer,
                                           CustomSignedDataSerializer,
                                           CustomSignedValueSerializer),
                                EventTrackingId ?? EventTracking_Id.New,
@@ -9033,6 +9042,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     await LogAsset(updateChargeDetailRecord,
                                    CDR.ToJSON(true,
                                               true,
+                                              true,
                                               CustomCDRSerializer,
                                               CustomLocationSerializer,
                                               CustomAdditionalGeoLocationSerializer,
@@ -9055,6 +9065,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               CustomTariffRestrictionsSerializer,
                                               CustomChargingPeriodSerializer,
                                               CustomCDRDimensionSerializer,
+                                              CustomCDRCostDetailsSerializer,
                                               CustomSignedDataSerializer,
                                               CustomSignedValueSerializer),
                                    EventTrackingId ?? EventTracking_Id.New,
@@ -9185,6 +9196,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 await LogAsset(removeChargeDetailRecord,
                                cdr.ToJSON(true,
                                           true,
+                                          true,
                                           CustomCDRSerializer,
                                           CustomLocationSerializer,
                                           CustomAdditionalGeoLocationSerializer,
@@ -9207,6 +9219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                           CustomTariffRestrictionsSerializer,
                                           CustomChargingPeriodSerializer,
                                           CustomCDRDimensionSerializer,
+                                          CustomCDRCostDetailsSerializer,
                                           CustomSignedDataSerializer,
                                           CustomSignedValueSerializer),
                                EventTrackingId ?? EventTracking_Id.New,

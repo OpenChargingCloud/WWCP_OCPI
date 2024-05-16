@@ -260,6 +260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
         public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer           { get; set; }
         public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<CDRCostDetails>?              CustomCDRCostDetailsSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                  { get; set; }
 
@@ -4370,6 +4371,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                          requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
                                                                          requestbuilder.Content        = CDR.ToJSON(false,
                                                                                                                     false,
+                                                                                                                    false,
                                                                                                                     CustomCDRSerializer,
                                                                                                                     CustomLocationSerializer,
                                                                                                                     CustomAdditionalGeoLocationSerializer,
@@ -4392,6 +4394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                                                                     CustomTariffRestrictionsSerializer,
                                                                                                                     CustomChargingPeriodSerializer,
                                                                                                                     CustomCDRDimensionSerializer,
+                                                                                                                    CustomCDRCostDetailsSerializer,
                                                                                                                     CustomSignedDataSerializer,
                                                                                                                     CustomSignedValueSerializer).ToUTF8Bytes(JSONFormat);
                                                                          requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
