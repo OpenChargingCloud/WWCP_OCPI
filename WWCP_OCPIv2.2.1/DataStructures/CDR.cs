@@ -187,10 +187,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public   Price?                              TotalFixedCosts             { get; }
 
         /// <summary>
-        /// The total energy charged in kWh.
+        /// The total energy charged (in kWh).
         /// </summary>
         [Mandatory]
-        public   Decimal                             TotalEnergy                 { get; }
+        public   WattHour                            TotalEnergy                 { get; }
 
         /// <summary>
         /// The optional total sum of all the cost of all the energy used, in the specified currency.
@@ -312,7 +312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Currency">The ISO 4217 code of the currency used for this charge detail record.</param>
         /// <param name="ChargingPeriods">The enumeration of charging periods that make up this charging session. A session consist of 1 or more periodes with, each period has a different relevant charging tariff.</param>
         /// <param name="TotalCosts">The total sum of all the costs of this transaction in the specified currency.</param>
-        /// <param name="TotalEnergy">The total energy charged in kWh.</param>
+        /// <param name="TotalEnergy">The total energy charged (in kWh).</param>
         /// <param name="TotalTime">The total duration of the charging session, including the duration of charging and not charging.</param>
         /// 
         /// <param name="SessionId">The optional unique identification of the charging session. Is only allowed to be omitted when the CPO has not implemented the sessions module or this charge detail record is the result of a reservation that never became a charging session.</param>
@@ -366,7 +366,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                    OCPI.Currency                                           Currency,
                    IEnumerable<ChargingPeriod>                             ChargingPeriods,
                    Price                                                   TotalCosts,
-                   Decimal                                                 TotalEnergy,
+                   WattHour                                                TotalEnergy,
                    TimeSpan                                                TotalTime,
 
                    Session_Id?                                             SessionId                              = null,
@@ -899,7 +899,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("total_energy",
                                          "total energy",
-                                         out Decimal TotalEnergy,
+                                         WattHour.TryParseKWh,
+                                         out WattHour TotalEnergy,
                                          out ErrorResponse))
                 {
                     return false;

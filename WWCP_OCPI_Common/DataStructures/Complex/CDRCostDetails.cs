@@ -40,7 +40,7 @@ namespace cloud.charging.open.protocols.OCPI
     /// <param name="BilledFlatElements">The billed flat elements.</param>
     /// <param name="BilledEnergyElements">The billed energy elements.</param>
     /// <param name="BilledTimeElements">The billed time elements.</param>
-    public class CDRCostDetails(Decimal                                          TotalEnergy            = 0,
+    public class CDRCostDetails(WattHour?                                        TotalEnergy            = null,
                                 TimeSpan?                                        TotalTime              = null,
 
                                 Decimal                                          TotalFlatCost          = 0,
@@ -84,10 +84,10 @@ namespace cloud.charging.open.protocols.OCPI
         public class EnergyCosts
         {
 
-            public Decimal   Energy          { get; set; }
+            public WattHour  Energy          { get; set; }
             public UInt32    StepSize        { get; set; }
             public Decimal   Price           { get; set; }
-            public Decimal   BilledEnergy    { get; set; }
+            public WattHour  BilledEnergy    { get; set; }
             public Decimal   EnergyCost      { get; set; }
 
 
@@ -99,10 +99,10 @@ namespace cloud.charging.open.protocols.OCPI
             public JObject ToJSON()
 
                 => JSONObject.Create(
-                       new JProperty("energy",          Energy),
+                       new JProperty("energy",          Energy.      kWh),
                        new JProperty("step_size",       StepSize),
                        new JProperty("price",           Price),
-                       new JProperty("billed_energy",   BilledEnergy),
+                       new JProperty("billed_energy",   BilledEnergy.kWh),
                        new JProperty("energy_cost",     EnergyCost)
                    );
 
@@ -148,10 +148,10 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region Properties
 
-        public Decimal   TotalEnergy        { get; set; }  = TotalEnergy;
-        public TimeSpan  TotalTime          { get; set; }  = TotalTime ?? TimeSpan.Zero;
+        public WattHour  TotalEnergy        { get; set; }  = TotalEnergy ?? WattHour.Zero;
+        public TimeSpan  TotalTime          { get; set; }  = TotalTime   ?? TimeSpan.Zero;
 
-        public Decimal   BilledEnergy       { get; set; }
+        public WattHour  BilledEnergy       { get; set; }
         public TimeSpan  BilledTime         { get; set; }
 
         public Decimal   TotalCost          { get; set; }  = TotalCost;
@@ -171,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region BillEnergy (StepSize, Energy, Price)
 
-        public void BillEnergy(UInt32 StepSize, Decimal  Energy, Decimal Price)
+        public void BillEnergy(UInt32 StepSize, WattHour Energy, Decimal Price)
         {
 
             if (!BilledEnergyElements.TryGetValue($"{StepSize}-{Price}", out var energy))
@@ -183,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPI
                 BilledEnergyElements.Add($"{StepSize}-{Price}", energy);
             }
 
-            energy.Energy += Energy;
+            energy.Energy = energy.Energy.Add(Energy);
 
         }
 
@@ -241,8 +241,8 @@ namespace cloud.charging.open.protocols.OCPI
 
             var json = JSONObject.Create(
 
-                                 new JProperty("total_energy",             TotalEnergy),
-                                 new JProperty("total_time",               TotalTime.TotalHours),
+                                 new JProperty("total_energy",             TotalEnergy.kWh),
+                                 new JProperty("total_time",               TotalTime.  TotalHours),
 
                                  new JProperty("total_flat_cost",          TotalFlatCost),
                                  new JProperty("total_energy_cost",        TotalEnergyCost),

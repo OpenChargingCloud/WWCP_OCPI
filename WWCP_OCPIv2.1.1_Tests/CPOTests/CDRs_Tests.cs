@@ -102,7 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                    10.00M,
 
                                                                    // Total Energy
-                                                                   50.00M,
+                                                                   WattHour.ParseKWh(50.00M),
 
                                                                    // Total time
                                                                    TimeSpan.FromMinutes(30),

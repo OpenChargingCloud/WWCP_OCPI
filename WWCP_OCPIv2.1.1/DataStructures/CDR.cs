@@ -235,11 +235,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         periodStopMeteringValue  is not null)
                     {
 
-                        chargingPeriod.Energy        = (periodStopMeteringValue.Value     - periodStartMeteringValue.Value) / 1000;
-                        chargingPeriod.PowerAverage  = chargingPeriod.Energy / Convert.ToDecimal(chargingPeriod.Duration.TotalHours);
+                        chargingPeriod.Energy        = WattHour.Parse(periodStopMeteringValue.Value - periodStartMeteringValue.Value);
+                        chargingPeriod.PowerAverage  = Watt.    Parse(chargingPeriod.Energy.Value / Convert.ToDecimal(chargingPeriod.Duration.TotalHours));
 
-                        cdrCosts.TotalEnergy        += chargingPeriod.Energy;
-                        cdrCosts.TotalTime          += chargingPeriod.Duration;
+                        cdrCosts.      TotalEnergy   = cdrCosts.TotalEnergy.Add(chargingPeriod.Energy);
+                        cdrCosts.      TotalTime    += chargingPeriod.Duration;
 
                         foreach (var priceComponent in chargingPeriod.PriceComponents.Values)
                         {
@@ -256,7 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                chargingPeriod.EnergyPrice     = priceComponent.Price;
                                chargingPeriod.EnergyStepSize  = priceComponent.StepSize;
 
-                               cdrCosts.BillEnergy(priceComponent.StepSize, 1000 * chargingPeriod.Energy, chargingPeriod.EnergyPrice);
+                               cdrCosts.BillEnergy(priceComponent.StepSize, chargingPeriod.Energy, chargingPeriod.EnergyPrice);
 
                             }
 
@@ -306,8 +306,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 foreach (var energySums in cdrCosts.BilledEnergyElements)
                 {
 
-                    energySums.Value.BilledEnergy  = Math.Ceiling(energySums.Value.Energy / energySums.Value.StepSize) * energySums.Value.StepSize / 1000;
-                    energySums.Value.EnergyCost    = energySums.Value.BilledEnergy * energySums.Value.Price;
+                    energySums.Value.BilledEnergy  = WattHour.Parse(Math.Ceiling(energySums.Value.Energy.Value / energySums.Value.StepSize) * energySums.Value.StepSize);
+                    energySums.Value.EnergyCost    = energySums.Value.BilledEnergy.kWh * energySums.Value.Price;
 
                     cdrCosts.BilledEnergy         += energySums.Value.BilledEnergy;
                     cdrCosts.TotalEnergyCost      += energySums.Value.EnergyCost;
@@ -520,10 +520,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public   Decimal                                  TotalCost                  { get; }
 
         /// <summary>
-        /// The total energy charged in kWh.
+        /// The total energy charged (in kWh).
         /// </summary>
         [Mandatory]
-        public   Decimal                                  TotalEnergy                 { get; }
+        public   WattHour                                 TotalEnergy                 { get; }
 
         /// <summary>
         /// The total duration of the charging session, including the duration of charging and not charging.
@@ -589,7 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Currency">The ISO 4217 code of the currency used for this charge detail record.</param>
         /// <param name="ChargingPeriods">The enumeration of charging periods that make up this charging session. A session consist of 1 or more periodes with, each period has a different relevant charging tariff.</param>
         /// <param name="TotalCost">The total cost (excluding VAT) of this transaction.</param>
-        /// <param name="TotalEnergy">The total energy charged in kWh.</param>
+        /// <param name="TotalEnergy">The total energy charged (in kWh).</param>
         /// <param name="TotalTime">The total duration of the charging session, including the duration of charging and not charging.</param>
         /// 
         /// <param name="CostDetails">Optional costs calculation details for this charge detail record.</param>
@@ -639,7 +639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    OCPI.Currency                                                 Currency,
                    IEnumerable<ChargingPeriod>                                   ChargingPeriods,
                    Decimal                                                       TotalCost,
-                   Decimal                                                       TotalEnergy,
+                   WattHour                                                      TotalEnergy,
                    TimeSpan                                                      TotalTime,
 
                    CDRCostDetails?                                               CostDetails                                  = null,
@@ -1140,7 +1140,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("total_energy",
                                          "total energy",
-                                         out Decimal TotalEnergy,
+                                         WattHour.TryParseKWh,
+                                         out WattHour TotalEnergy,
                                          out ErrorResponse))
                 {
                     return false;
@@ -1400,7 +1401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null,
 
                                  new JProperty("total_cost",               TotalCost),
-                                 new JProperty("total_energy",             TotalEnergy),
+                                 new JProperty("total_energy",             TotalEnergy.                 kWh),
                                  new JProperty("total_time",               TotalTime.                   TotalHours),
 
                            TotalParkingTime.HasValue

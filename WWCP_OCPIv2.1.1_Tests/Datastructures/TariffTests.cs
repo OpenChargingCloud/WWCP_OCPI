@@ -326,9 +326,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                         Coordinates:   GeoCoordinate.Parse(50, 10)
                                                     ),
                                  Currency:          OCPI.Currency.EUR,
-                                 ChargingPeriods:   Array.Empty<ChargingPeriod>(),
+                                 ChargingPeriods:   [],
                                  TotalCost:         0,
-                                 TotalEnergy:       12,
+                                 TotalEnergy:       WattHour.ParseKWh(12),
                                  TotalTime:         stopTime - startTime
                              );
 

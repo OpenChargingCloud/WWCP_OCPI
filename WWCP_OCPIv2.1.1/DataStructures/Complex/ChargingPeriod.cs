@@ -118,7 +118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
 
-        public  Decimal   Energy            { get; set; }
+        public  WattHour  Energy            { get; set; }
         public  Decimal   EnergyPrice       { get; set; }
         public  UInt32    EnergyStepSize    { get; set; }
 
@@ -138,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
 
-        public  Decimal PowerAverage        { get; set; }
+        public  Watt       PowerAverage        { get; set; }
 
 
 
@@ -171,9 +171,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
 
         }
-
-
-        
 
 
 
