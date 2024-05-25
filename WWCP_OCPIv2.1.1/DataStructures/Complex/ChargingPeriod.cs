@@ -35,20 +35,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     }
 
     public class MeteringValue(DateTime             Timestamp,
-                               Decimal              Value,
+                               WattHour             WattHours,
                                MeteringValueSource  Source = MeteringValueSource.Measured)
     {
 
         public DateTime             Timestamp    { get; }  = Timestamp;
-        public Decimal              Value        { get; }  = Value;
+        public WattHour             WattHours    { get; }  = WattHours;
         public MeteringValueSource  Source       { get; }  = Source;
 
 
-        public static MeteringValue Measured(DateTime Timestamp, Decimal Value)
-            => new (Timestamp, Value, MeteringValueSource.Measured);
+        public static MeteringValue Measured(DateTime Timestamp, WattHour WattHours)
+            => new (Timestamp, WattHours, MeteringValueSource.Measured);
 
-        public static MeteringValue Imputed(DateTime Timestamp, Decimal Value)
-            => new (Timestamp, Value, MeteringValueSource.Imputed);
+        public static MeteringValue Imputed (DateTime Timestamp, WattHour WattHours)
+            => new (Timestamp, WattHours, MeteringValueSource.Imputed);
 
     }
 

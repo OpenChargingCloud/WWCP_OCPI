@@ -1936,7 +1936,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
                 var newCDR = tempCDR.SplittIntoChargingPeriods(
-                                 ChargeDetailRecord.EnergyMeteringValues.Select(mv => new Timestamped<Decimal>(mv.Timestamp, mv.Value)),
+                                 ChargeDetailRecord.EnergyMeteringValues.Select(mv => new Timestamped<WattHour>(mv.Timestamp, mv.WattHours)),
                                  tariffs
                              );
 
@@ -2043,7 +2043,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                  WWCP.EnergyMeteringValueTypes.TariffChange  => SignedValueNature.INTERMEDIATE,
                                                                                                  _                                           => SignedValueNature.END
                                                                                              },
-                                                                                             energyMeteringValue.Value.ToString(),
+                                                                                             energyMeteringValue.WattHours.ToString(),
                                                                                              energyMeteringValue.SignedData ?? ""
                                                                                          )
                                                               ),

@@ -2403,8 +2403,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                              ProviderIdStart:             authStartResult.ProviderId,
                                                              ProviderIdStop:              authStopResult. ProviderId,
 
-                                                             CSORoamingProviderStart:          null,
-                                                             CSORoamingProviderIdStart:        null,
+                                                             CSORoamingProviderStart:     null,
+                                                             CSORoamingProviderIdStart:   null,
 
                                                              Reservation:                 null,
                                                              ReservationId:               null,
@@ -2423,14 +2423,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                              EnergyMeteringValues:        [
                                                                                               new EnergyMeteringValue(
                                                                                                   startTS,
-                                                                                                  1334.034M,
+                                                                                                  WattHour.ParseKWh(1334.034M),
                                                                                                   EnergyMeteringValueTypes.Start,
                                                                                                   "1334.034",
                                                                                                   "..."
                                                                                               ),
                                                                                               new EnergyMeteringValue(
                                                                                                   stopTS,
-                                                                                                  1451.241M,
+                                                                                                  WattHour.ParseKWh(1451.241M),
                                                                                                   EnergyMeteringValueTypes.Stop,
                                                                                                   "1451.241",
                                                                                                   "..."
@@ -2689,8 +2689,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                              ProviderIdStart:             graphDefinedEMP1Local.Id,
                                                              ProviderIdStop:              providerIdStop,
 
-                                                             CSORoamingProviderStart:          null,
-                                                             CSORoamingProviderIdStart:        null,
+                                                             CSORoamingProviderStart:     null,
+                                                             CSORoamingProviderIdStart:   null,
 
                                                              Reservation:                 null,
                                                              ReservationId:               null,
@@ -2709,14 +2709,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
                                                              EnergyMeteringValues:        [
                                                                                               new EnergyMeteringValue(
                                                                                                   startTS,
-                                                                                                  1334.034M,
+                                                                                                  WattHour.ParseKWh(1334.034M),
                                                                                                   EnergyMeteringValueTypes.Start,
                                                                                                   "1334.034",
                                                                                                   "..."
                                                                                               ),
                                                                                               new EnergyMeteringValue(
                                                                                                   stopTS,
-                                                                                                  1451.241M,
+                                                                                                  WattHour.ParseKWh(1451.241M),
                                                                                                   EnergyMeteringValueTypes.Stop,
                                                                                                   "1451.241",
                                                                                                   "..."

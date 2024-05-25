@@ -41,10 +41,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region SplittIntoChargingPeriods(this CDR, MeteringValues = null, AlternativeTariffs = null, ExtrapolateEnergy = false)
 
-        public static CDR SplittIntoChargingPeriods(this CDR                            CDR,
-                                                    IEnumerable<Timestamped<Decimal>>?  MeteringValues       = null,
-                                                    IEnumerable<Tariff>?                AlternativeTariffs   = null,
-                                                    Boolean                             ExtrapolateEnergy    = false)
+        public static CDR SplittIntoChargingPeriods(this CDR                             CDR,
+                                                    IEnumerable<Timestamped<WattHour>>?  MeteringValues       = null,
+                                                    IEnumerable<Tariff>?                 AlternativeTariffs   = null,
+                                                    Boolean                              ExtrapolateEnergy    = false)
         {
 
             try
@@ -57,8 +57,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     {
 
                         MeteringValues = [
-                                             new Timestamped<Decimal>(CDR.Start, Decimal.Parse(CDR.SignedData.SignedValues.ElementAt(0).PlainData)),
-                                             new Timestamped<Decimal>(CDR.Stop,  Decimal.Parse(CDR.SignedData.SignedValues.ElementAt(1).PlainData))
+                                             new Timestamped<WattHour>(CDR.Start, WattHour.Parse(CDR.SignedData.SignedValues.ElementAt(0).PlainData)),
+                                             new Timestamped<WattHour>(CDR.Stop,  WattHour.Parse(CDR.SignedData.SignedValues.ElementAt(1).PlainData))
                                          ];
 
                     }
@@ -67,8 +67,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     {
 
                         MeteringValues = [
-                                             new Timestamped<Decimal>(CDR.Start, 0),
-                                             new Timestamped<Decimal>(CDR.Stop,  1000 * CDR.ChargingPeriods.Last().Dimensions.First(dimension => dimension.Type == CDRDimensionType.ENERGY).Volume)
+                                             new Timestamped<WattHour>(CDR.Start, WattHour.Zero),
+                                             new Timestamped<WattHour>(CDR.Stop,  WattHour.Parse(CDR.ChargingPeriods.Last().Dimensions.First(dimension => dimension.Type == CDRDimensionType.ENERGY).Volume))
                                          ];
 
                     }
@@ -210,9 +210,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         var nextMV        = (nextCP?.StartMeteringValue ?? chargingPeriods[i].StopMeteringValue)
                                                 ?? throw new Exception($"Could not calculate '{i}.' imputed value!");
 
-                        var imputedValue  = ((nextMV.Value - previousMV.Value) /
-                                                 Convert.ToDecimal((nextMV.            Timestamp      - previousMV.Timestamp).TotalSeconds) *
-                                                 Convert.ToDecimal((chargingPeriods[i].StartTimestamp - previousMV.Timestamp).TotalSeconds)) + previousMV.Value;
+                        var imputedValue  = WattHour.Parse((nextMV.WattHours - previousMV.WattHours).Value /
+                                                           Convert.ToDecimal((nextMV.            Timestamp      - previousMV.Timestamp).TotalSeconds) *
+                                                           Convert.ToDecimal((chargingPeriods[i].StartTimestamp - previousMV.Timestamp).TotalSeconds)) + previousMV.WattHours;
 
                         chargingPeriods[i].StartMeteringValue = MeteringValue.Imputed(
                                                                     chargingPeriods[i].StartTimestamp,
@@ -235,11 +235,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         periodStopMeteringValue  is not null)
                     {
 
-                        chargingPeriod.Energy        = WattHour.Parse(periodStopMeteringValue.Value - periodStartMeteringValue.Value);
-                        chargingPeriod.PowerAverage  = Watt.    Parse(chargingPeriod.Energy.Value / Convert.ToDecimal(chargingPeriod.Duration.TotalHours));
+                        chargingPeriod.Energy        = periodStopMeteringValue.WattHours - periodStartMeteringValue.WattHours;
+                        chargingPeriod.PowerAverage  = Watt.Parse(chargingPeriod.Energy.Value / Convert.ToDecimal(chargingPeriod.Duration.TotalHours));
 
-                        cdrCosts.      TotalEnergy   = cdrCosts.TotalEnergy.Add(chargingPeriod.Energy);
-                        cdrCosts.      TotalTime    += chargingPeriod.Duration;
+                        cdrCosts.      TotalEnergy   = cdrCosts.TotalEnergy + chargingPeriod.Energy;
+                        cdrCosts.      TotalTime     = cdrCosts.TotalTime   + chargingPeriod.Duration;
 
                         foreach (var priceComponent in chargingPeriod.PriceComponents.Values)
                         {
@@ -249,7 +249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                chargingPeriod.Dimensions.Add(
                                    CDRDimension.ENERGY(
-                                       (periodStopMeteringValue.Value - periodStartMeteringValue.Value) / 1000
+                                       (periodStopMeteringValue.WattHours - periodStartMeteringValue.WattHours).kWh
                                    )
                                );
 
@@ -339,7 +339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 var startMeteringValue  = chargingPeriods[0]. StartMeteringValue ?? throw new Exception("");
                 var stopMeteringValue   = chargingPeriods[^1].StopMeteringValue  ?? throw new Exception("");
 
-                var totalParkingTime    = TimeSpan.Zero;
+                var totalParkingTime    = new TimeSpan?(TimeSpan.Zero);
 
                 return new CDR(
                            CDR.CountryCode,

@@ -183,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPI
                 BilledEnergyElements.Add($"{StepSize}-{Price}", energy);
             }
 
-            energy.Energy = energy.Energy.Add(Energy);
+            energy.Energy = energy.Energy + Energy;
 
         }
 

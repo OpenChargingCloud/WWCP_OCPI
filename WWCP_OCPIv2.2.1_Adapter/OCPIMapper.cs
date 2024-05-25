@@ -1262,12 +1262,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     chargingPeriods.Add(
                         ChargingPeriod.Create(
                             energyMeteringValue.Timestamp,
-                            new[] {
+                            [
                                 CDRDimension.Create(
                                     CDRDimensionType.ENERGY,
-                                    energyMeteringValue.Value
+                                    energyMeteringValue.WattHours.kWh
                                 )
-                            }
+                            ]
                         )
                     );
                 }
