@@ -4372,6 +4372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                                          requestbuilder.Content        = CDR.ToJSON(false,
                                                                                                                     false,
                                                                                                                     false,
+                                                                                                                    null,
                                                                                                                     CustomCDRSerializer,
                                                                                                                     CustomLocationSerializer,
                                                                                                                     CustomAdditionalGeoLocationSerializer,

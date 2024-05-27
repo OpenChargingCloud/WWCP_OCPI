@@ -352,7 +352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            CDR.Location,
                            tariff.Currency,
                            chargingPeriods,
-                           Math.Round(cdrCosts.TotalCost, 3),
+                           cdrCosts.TotalCost,
                            cdrCosts.TotalEnergy,
                            cdrCosts.TotalTime,
                            cdrCosts,            // Our extension!
@@ -714,6 +714,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.ETag                     = SHA256.HashData(ToJSON(true,
                                                                    true,
                                                                    true,
+                                                                   null,
                                                                    CustomCDRSerializer,
                                                                    CustomLocationSerializer,
                                                                    CustomAdditionalGeoLocationSerializer,
@@ -1270,6 +1271,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="IncludeOwnerInformation">Include optional owner information.</param>
         /// <param name="IncludeEnergyMeter">Whether to include the energy meter.</param>
         /// <param name="IncludeCostDetails">Whether to include the cost details.</param>
+        /// <param name="CostDigits">The number of digits after the comma.</param>
         /// <param name="CustomCDRSerializer">A delegate to serialize custom charge detail record JSON objects.</param>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
@@ -1298,6 +1300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
                               Boolean                                                       IncludeEnergyMeter                           = false,
                               Boolean                                                       IncludeCostDetails                           = false,
+                              Byte?                                                         CostDigits                                   = null,
                               CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
@@ -1397,10 +1400,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null,
 
                            CostDetails is not null && IncludeCostDetails
-                               ? new JProperty("cost_details",             CostDetails.                 ToJSON(CustomCDRCostDetailsSerializer))
+                               ? new JProperty("cost_details",             CostDetails.                 ToJSON(CostDigits ?? 3,
+                                                                                                               CustomCDRCostDetailsSerializer))
                                : null,
 
-                                 new JProperty("total_cost",               TotalCost),
+                                 new JProperty("total_cost",               Math.Round(TotalCost, CostDigits ?? 3)),
                                  new JProperty("total_energy",             TotalEnergy.                 kWh),
                                  new JProperty("total_time",               TotalTime.                   TotalHours),
 

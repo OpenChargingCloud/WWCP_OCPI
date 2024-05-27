@@ -62,15 +62,16 @@ namespace cloud.charging.open.protocols.OCPI
             public Decimal   Price           { get; set; }
 
 
-            #region ToJSON()
+            #region ToJSON(CostDigits = 3)
 
             /// <summary>
             /// Return a JSON representation of this object.
             /// </summary>
-            public JObject ToJSON()
+            /// <param name="CostDigits">The number of digits after the comma.</param>
+            public JObject ToJSON(Byte CostDigits = 3)
 
                 => JSONObject.Create(
-                       new JProperty("price",   Price)
+                       new JProperty("price",   Math.Round(Price, CostDigits))
                    );
 
             #endregion
@@ -91,19 +92,20 @@ namespace cloud.charging.open.protocols.OCPI
             public Decimal   EnergyCost      { get; set; }
 
 
-            #region ToJSON()
+            #region ToJSON(CostDigits = 3)
 
             /// <summary>
             /// Return a JSON representation of this object.
             /// </summary>
-            public JObject ToJSON()
+            /// <param name="CostDigits">The number of digits after the comma.</param>
+            public JObject ToJSON(Byte CostDigits = 3)
 
                 => JSONObject.Create(
                        new JProperty("energy",          Energy.      kWh),
                        new JProperty("step_size",       StepSize),
                        new JProperty("price",           Price),
                        new JProperty("billed_energy",   BilledEnergy.kWh),
-                       new JProperty("energy_cost",     EnergyCost)
+                       new JProperty("energy_cost",     Math.Round(EnergyCost, CostDigits))
                    );
 
             #endregion
@@ -124,19 +126,20 @@ namespace cloud.charging.open.protocols.OCPI
             public Decimal   TimeCost        { get; set; }
 
 
-            #region ToJSON()
+            #region ToJSON(CostDigits = 3)
 
             /// <summary>
             /// Return a JSON representation of this object.
             /// </summary>
-            public JObject ToJSON()
+            /// <param name="CostDigits">The number of digits after the comma.</param>
+            public JObject ToJSON(Byte CostDigits = 3)
 
                 => JSONObject.Create(
                        new JProperty("time",          Time),
                        new JProperty("step_size",     StepSize),
                        new JProperty("price",         Price),
                        new JProperty("billed_time",   BilledTime),
-                       new JProperty("time_cost",     TimeCost)
+                       new JProperty("time_cost",     Math.Round(TimeCost, CostDigits))
                    );
 
             #endregion
@@ -230,13 +233,15 @@ namespace cloud.charging.open.protocols.OCPI
         #endregion
 
 
-        #region ToJSON(CustomCDRCostDetailsSerializer = null, ...)
+        #region ToJSON(CustomCDRCostDetailsSerializer = null, CostDigits = 3, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomCDRCostDetailsSerializer">A delegate to serialize custom CDRCostDetails JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<CDRCostDetails>?  CustomCDRCostDetailsSerializer   = null)
+        /// <param name="CostDigits">The number of digits after the comma.</param>
+        public JObject ToJSON(Byte                                              CostDigits                       = 3,
+                              CustomJObjectSerializerDelegate<CDRCostDetails>?  CustomCDRCostDetailsSerializer   = null)
         {
 
             var json = JSONObject.Create(
@@ -244,21 +249,21 @@ namespace cloud.charging.open.protocols.OCPI
                                  new JProperty("total_energy",             TotalEnergy.kWh),
                                  new JProperty("total_time",               TotalTime.  TotalHours),
 
-                                 new JProperty("total_flat_cost",          TotalFlatCost),
-                                 new JProperty("total_energy_cost",        TotalEnergyCost),
-                                 new JProperty("total_time_cost",          TotalTimeCost),
-                                 new JProperty("total_cost",               TotalCost),
+                                 new JProperty("total_flat_cost",          Math.Round(TotalFlatCost,   CostDigits)),
+                                 new JProperty("total_energy_cost",        Math.Round(TotalEnergyCost, CostDigits)),
+                                 new JProperty("total_time_cost",          Math.Round(TotalTimeCost,   CostDigits)),
+                                 new JProperty("total_cost",               Math.Round(TotalCost,       CostDigits)),
 
                            BilledFlatElements.  Count != 0
-                               ? new JProperty("billed_flat_elements",     new JArray(BilledFlatElements.  Select(billedFlatElement   => billedFlatElement.  Value.ToJSON())))
+                               ? new JProperty("billed_flat_elements",     new JArray(BilledFlatElements.  Select(billedFlatElement   => billedFlatElement.  Value.ToJSON(CostDigits))))
                                : null,
 
                            BilledEnergyElements.Count != 0
-                               ? new JProperty("billed_energy_elements",   new JArray(BilledEnergyElements.Select(billedEnergyElement => billedEnergyElement.Value.ToJSON())))
+                               ? new JProperty("billed_energy_elements",   new JArray(BilledEnergyElements.Select(billedEnergyElement => billedEnergyElement.Value.ToJSON(CostDigits))))
                                : null,
 
                            BilledTimeElements.Count   != 0
-                               ? new JProperty("billed_time_elements",     new JArray(BilledTimeElements.  Select(billedTimeElement   => billedTimeElement.  Value.ToJSON())))
+                               ? new JProperty("billed_time_elements",     new JArray(BilledTimeElements.  Select(billedTimeElement   => billedTimeElement.  Value.ToJSON(CostDigits))))
                                : null
 
                        );
