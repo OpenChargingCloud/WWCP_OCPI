@@ -1007,7 +1007,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 }
 
                 if (Location is null)
+                {
+                    ErrorResponse = "The location of the charge detail record must not be null!";
                     return false;
+                }
 
                 #endregion
 
@@ -1090,17 +1093,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     {
                         if (tariffJSON is JObject tariffJSON2)
                         {
-                            if (Tariff.TryParse(tariffJSON2,
-                                                out var tariff,
-                                                out ErrorResponse,
-                                                CountryCodeURL,
-                                                PartyIdURL) &&
-                                tariff is not null)
+
+                            if (!Tariff.TryParse(tariffJSON2,
+                                                 out var tariff,
+                                                 out ErrorResponse,
+                                                 CountryCodeURL,
+                                                 PartyIdURL))
                             {
-                                Tariffs.Add(tariff);
-                            }
-                            else
                                 return false;
+                            }
+
+                            Tariffs.Add(tariff);
+
                         }
                         else
                         {
