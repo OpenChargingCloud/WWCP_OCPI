@@ -25,6 +25,7 @@ using Hermod = org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -218,6 +219,94 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         String.Empty);
 
             return result;
+
+        }
+
+        public static Boolean TryParse(HTTPResponse                           HTTPResponse,
+                                       Request_Id                             RequestId,
+                                       Correlation_Id                         CorrelationId,
+                                       [NotNullWhen(true)] out OCPIResponse?  OCPIResponse)
+        {
+
+            OCPIResponse = default;
+
+            try
+            {
+
+                var remoteRequestId      = HTTPResponse.TryParseHeaderField<Request_Id>     ("X-Request-ID",     Request_Id.     TryParse) ?? RequestId;
+                var remoteCorrelationId  = HTTPResponse.TryParseHeaderField<Correlation_Id> ("X-Correlation-ID", Correlation_Id. TryParse) ?? CorrelationId;
+                var location             = HTTPResponse.TryParseHeaderField<Hermod.Location>("Location",         Hermod.Location.TryParse);
+
+                var httpBody             = HTTPResponse.HTTPBodyAsUTF8String;
+
+                if (httpBody?.Length > 0)
+                {
+
+                    #region Documentation
+
+                    // {
+                    //     "status_code":      1000,
+                    //     "status_message":  "hello world!",
+                    //     "timestamp":       "2020-10-05T21:15:30.134Z"
+                    // }
+
+                    #endregion
+
+                    var json       = JObject.Parse(httpBody ?? "");
+
+                    var timestamp  = json["timestamp"]?.Value<DateTime>();
+                    if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
+                        timestamp  = timestamp.Value.ToUniversalTime();
+
+                    OCPIResponse = new OCPIResponse(
+                                       json["status_code"]?.   Value<Int32>()  ?? -1,
+                                       json["status_message"]?.Value<String>() ?? String.Empty,
+                                       json["data"]?.ToString(),
+                                       timestamp,
+                                       HTTPResponse,
+                                       remoteRequestId,
+                                       remoteCorrelationId,
+                                       location
+                                   );
+
+                    return true;
+
+                }
+
+                else
+                    OCPIResponse = new OCPIResponse(
+                                       -1,
+                                       $"{HTTPResponse.HTTPStatusCode.Code} - {HTTPResponse.HTTPStatusCode.Description}",
+                                       HTTPResponse.EntirePDU,
+                                       HTTPResponse.Timestamp,
+
+                                       HTTPResponse,
+                                       remoteRequestId,
+                                       remoteCorrelationId
+                                   );
+
+            }
+            catch (Exception e)
+            {
+
+                OCPIResponse = new OCPIResponse(
+                                   -1,
+                                   e.Message,
+                                   e.StackTrace,
+                                   org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                                   HTTPResponse,
+                                   RequestId,
+                                   CorrelationId
+                               );
+
+            }
+
+            OCPIResponse ??= new OCPIResponse(
+                                 -1,
+                                 String.Empty
+                             );
+
+            return true;
 
         }
 

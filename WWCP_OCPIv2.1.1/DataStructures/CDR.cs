@@ -68,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         MeteringValues = [
                                              new Timestamped<WattHour>(CDR.Start, WattHour.Zero),
-                                             new Timestamped<WattHour>(CDR.Stop,  WattHour.Parse(CDR.ChargingPeriods.Last().Dimensions.First(dimension => dimension.Type == CDRDimensionType.ENERGY).Volume))
+                                             new Timestamped<WattHour>(CDR.Stop,  WattHour.ParseWh(CDR.ChargingPeriods.Last().Dimensions.First(dimension => dimension.Type == CDRDimensionType.ENERGY).Volume))
                                          ];
 
                     }
@@ -210,9 +210,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         var nextMV        = (nextCP?.StartMeteringValue ?? chargingPeriods[i].StopMeteringValue)
                                                 ?? throw new Exception($"Could not calculate '{i}.' imputed value!");
 
-                        var imputedValue  = WattHour.Parse((nextMV.WattHours - previousMV.WattHours).Value /
-                                                           Convert.ToDecimal((nextMV.            Timestamp      - previousMV.Timestamp).TotalSeconds) *
-                                                           Convert.ToDecimal((chargingPeriods[i].StartTimestamp - previousMV.Timestamp).TotalSeconds)) + previousMV.WattHours;
+                        var imputedValue  = WattHour.ParseWh((nextMV.WattHours - previousMV.WattHours).Value /
+                                                             Convert.ToDecimal((nextMV.            Timestamp      - previousMV.Timestamp).TotalSeconds) *
+                                                             Convert.ToDecimal((chargingPeriods[i].StartTimestamp - previousMV.Timestamp).TotalSeconds)) + previousMV.WattHours;
 
                         chargingPeriods[i].StartMeteringValue = MeteringValue.Imputed(
                                                                     chargingPeriods[i].StartTimestamp,
@@ -236,7 +236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     {
 
                         chargingPeriod.Energy        = periodStopMeteringValue.WattHours - periodStartMeteringValue.WattHours;
-                        chargingPeriod.PowerAverage  = Watt.Parse(chargingPeriod.Energy.Value / Convert.ToDecimal(chargingPeriod.Duration.TotalHours));
+                        chargingPeriod.PowerAverage  = Watt.ParseW(chargingPeriod.Energy.Value / Convert.ToDecimal(chargingPeriod.Duration.TotalHours));
 
                         cdrCosts.      TotalEnergy   = cdrCosts.TotalEnergy + chargingPeriod.Energy;
                         cdrCosts.      TotalTime     = cdrCosts.TotalTime   + chargingPeriod.Duration;
@@ -306,7 +306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 foreach (var energySums in cdrCosts.BilledEnergyElements)
                 {
 
-                    energySums.Value.BilledEnergy  = WattHour.Parse(Math.Ceiling(energySums.Value.Energy.Value / energySums.Value.StepSize) * energySums.Value.StepSize);
+                    energySums.Value.BilledEnergy  = WattHour.ParseWh(Math.Ceiling(energySums.Value.Energy.Value / energySums.Value.StepSize) * energySums.Value.StepSize);
                     energySums.Value.EnergyCost    = energySums.Value.BilledEnergy.kWh * energySums.Value.Price;
 
                     cdrCosts.BilledEnergy         += energySums.Value.BilledEnergy;
@@ -318,20 +318,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 foreach (var timeSums in cdrCosts.BilledTimeElements)
                 {
 
-                    timeSums.Value.BilledTime  = TimeSpan.FromSeconds(Math.Ceiling(timeSums.Value.Time.TotalSeconds / timeSums.Value.StepSize) * timeSums.Value.StepSize);
-                    timeSums.Value.TimeCost    = Convert.ToDecimal(timeSums.Value.BilledTime.TotalHours) * timeSums.Value.Price;
+                    timeSums.Value.BilledTime      = TimeSpan.FromSeconds(Math.Ceiling(timeSums.Value.Time.TotalSeconds / timeSums.Value.StepSize) * timeSums.Value.StepSize);
+                    timeSums.Value.TimeCost        = Convert.ToDecimal(timeSums.Value.BilledTime.TotalHours) * timeSums.Value.Price;
 
-                    cdrCosts.BilledTime        = cdrCosts.BilledTime.Add(timeSums.Value.BilledTime);
-                    cdrCosts.TotalTimeCost    += timeSums.Value.TimeCost;
-                    cdrCosts.TotalCost        += timeSums.Value.TimeCost;
+                    cdrCosts.BilledTime            = cdrCosts.BilledTime.Add(timeSums.Value.BilledTime);
+                    cdrCosts.TotalTimeCost        += timeSums.Value.TimeCost;
+                    cdrCosts.TotalCost            += timeSums.Value.TimeCost;
 
                 }
 
                 foreach (var flatSums in cdrCosts.BilledFlatElements)
                 {
 
-                    cdrCosts.TotalFlatCost    += flatSums.Value.Price;
-                    cdrCosts.TotalCost        += flatSums.Value.Price;
+                    cdrCosts.TotalFlatCost        += flatSums.Value.Price;
+                    cdrCosts.TotalCost            += flatSums.Value.Price;
 
                 }
 

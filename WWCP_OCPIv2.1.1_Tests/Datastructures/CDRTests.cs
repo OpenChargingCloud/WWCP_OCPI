@@ -514,7 +514,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                     Plug:            ChargingPlugTypes.Type2Outlet,
                                                                     Lockable:        true,
                                                                     CableAttached:   true,
-                                                                    CableLength:     Meter.Parse(4)
+                                                                    CableLength:     Meter.ParseM(4)
                                                                 )
                                                             }
 
@@ -610,13 +610,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                   EnergyMeter_Id.Parse("12345678")
                                                               ),
                               EnergyMeteringValues:           [
-                                                                  new EnergyMeteringValue(startTime,                             WattHour.Parse( 0), EnergyMeteringValueTypes.Start),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(1),   WattHour.Parse( 5), EnergyMeteringValueTypes.Intermediate),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(31),  WattHour.Parse(10), EnergyMeteringValueTypes.Intermediate),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(61),  WattHour.Parse(15), EnergyMeteringValueTypes.TariffChange),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(91),  WattHour.Parse(20), EnergyMeteringValueTypes.Intermediate),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(119), WattHour.Parse(22), EnergyMeteringValueTypes.Intermediate),
-                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(120), WattHour.Parse(23), EnergyMeteringValueTypes.Stop)
+                                                                  new EnergyMeteringValue(startTime,                             WattHour.ParseKWh( 0), EnergyMeteringValueTypes.Start),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(1),   WattHour.ParseKWh( 5), EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(31),  WattHour.ParseKWh(10), EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(61),  WattHour.ParseKWh(15), EnergyMeteringValueTypes.TariffChange),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(91),  WattHour.ParseKWh(20), EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(119), WattHour.ParseKWh(22), EnergyMeteringValueTypes.Intermediate),
+                                                                  new EnergyMeteringValue(startTime + TimeSpan.FromMinutes(120), WattHour.ParseKWh(23), EnergyMeteringValueTypes.Stop)
                                                               ]
                               //ConsumedEnergy                // automagic!
                               //ConsumedEnergyFee

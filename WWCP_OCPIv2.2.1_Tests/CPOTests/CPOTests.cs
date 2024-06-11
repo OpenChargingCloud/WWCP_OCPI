@@ -1986,7 +1986,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                               ),
 
                                                                               // Total Energy
-                                                                              WattHour.Parse(50.00M),
+                                                                              WattHour.ParseKWh(50.00M),
 
                                                                               // Total time
                                                                               TimeSpan.              FromMinutes(30),
