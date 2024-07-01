@@ -34,9 +34,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         Imputed
     }
 
-    public class MeteringValue(DateTime             Timestamp,
-                               WattHour             WattHours,
-                               MeteringValueSource  Source = MeteringValueSource.Measured)
+    public readonly struct MeteringValue(DateTime             Timestamp,
+                                         WattHour             WattHours,
+                                         MeteringValueSource  Source = MeteringValueSource.Measured) : IEquatable<MeteringValue>
     {
 
         public DateTime             Timestamp    { get; }  = Timestamp;
@@ -50,6 +50,105 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static MeteringValue Imputed (DateTime Timestamp, WattHour WattHours)
             => new (Timestamp, WattHours, MeteringValueSource.Imputed);
 
+
+        #region Operator overloading
+
+        #region Operator == (MeteringValue1, MeteringValue2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="MeteringValue1">A metering value.</param>
+        /// <param name="MeteringValue2">Another metering value.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (MeteringValue MeteringValue1,
+                                           MeteringValue MeteringValue2)
+
+            => MeteringValue1.Equals(MeteringValue2);
+
+        #endregion
+
+        #region Operator != (MeteringValue1, MeteringValue2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="MeteringValue1">A metering value.</param>
+        /// <param name="MeteringValue2">Another metering value.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (MeteringValue MeteringValue1,
+                                           MeteringValue MeteringValue2)
+
+            => !MeteringValue1.Equals(MeteringValue2);
+
+        #endregion
+
+        #endregion
+
+        #region IEquatable<MeteringValue> Members
+
+        #region Equals(Object)
+
+        /// <summary>
+        /// Compares two metering valuess for equality.
+        /// </summary>
+        /// <param name="Object">A metering value to compare with.</param>
+        public override Boolean Equals(Object? Object)
+
+            => Object is MeteringValue chargingPeriod &&
+                   Equals(chargingPeriod);
+
+        #endregion
+
+        #region Equals(MeteringValue)
+
+        /// <summary>
+        /// Compares two metering valuess for equality.
+        /// </summary>
+        /// <param name="ChargingPeriod">A metering value to compare with.</param>
+        public Boolean Equals(MeteringValue MeteringValue)
+
+            => Timestamp.ToIso8601().Equals(MeteringValue.Timestamp.ToIso8601()) &&
+               WattHours.            Equals(MeteringValue.WattHours)             &&
+               Source.               Equals(MeteringValue.Source);
+
+        #endregion
+
+        #endregion
+
+        #region (override) GetHashCode()
+
+        /// <summary>
+        /// Return the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code of this object.</returns>
+        public override Int32 GetHashCode()
+        {
+            unchecked
+            {
+
+                return Timestamp.GetHashCode() * 5 ^
+                       WattHours.GetHashCode() * 3 ^
+                       Source.   GetHashCode();
+
+            }
+        }
+
+        #endregion
+
+        #region (override) ToString()
+
+        /// <summary>
+        /// Return a text representation of this object.
+        /// </summary>
+        public override String ToString()
+
+            => Source == MeteringValueSource.Measured
+                   ? $"{Timestamp} => {WattHours.kWh} kWh (measured)"
+                   : $"{Timestamp} => {WattHours.kWh} kWh (imputed)";
+
+        #endregion
+
     }
 
 
@@ -61,7 +160,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// This implementation has many extensions to simplify the calculation
     /// of charging costs in combination with charging tariffs.
     /// </summary>
-    public class ChargingPeriod
+    public class ChargingPeriod : IEquatable<ChargingPeriod>
     {
 
         #region Properties
@@ -670,9 +769,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two charging periods for equality.
         /// </summary>
         /// <param name="ChargingPeriod">A charging period to compare with.</param>
-        public Boolean Equals(ChargingPeriod ChargingPeriod)
+        public Boolean Equals(ChargingPeriod? ChargingPeriod)
 
-            => StartTimestamp.ToIso8601().Equals(ChargingPeriod.StartTimestamp.ToIso8601()) &&
+            => ChargingPeriod is not null &&
+               StartTimestamp.ToIso8601().Equals(ChargingPeriod.StartTimestamp.ToIso8601()) &&
 
                Dimensions.Count.          Equals(ChargingPeriod.Dimensions.    Count) &&
                Dimensions.All(ChargingPeriod.Dimensions.Contains);

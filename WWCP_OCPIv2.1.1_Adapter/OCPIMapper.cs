@@ -1671,13 +1671,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this ChargeDetailRecord, out Warnings)
 
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord                     ChargeDetailRecord,
-                                  WWCPEVSEId_2_EVSEUId_Delegate?                   CustomEVSEUIdConverter,
-                                  WWCPEVSEId_2_EVSEId_Delegate?                    CustomEVSEIdConverter,
-                                  GetTariffIds2_Delegate?                          GetTariffIdsDelegate,
-                                  EMSP_Id?                                         EMSPId,
-                                  Func<Tariff_Id, DateTime?, TimeSpan?, Tariff?>?  TariffGetter,
-                                  out IEnumerable<Warning>                         Warnings)
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                  GetTariffIds2_Delegate?         GetTariffIdsDelegate,
+                                  EMSP_Id?                        EMSPId,
+                                  GetTariff2_Delegate?            TariffGetter,
+                                  out IEnumerable<Warning>        Warnings)
         {
 
             var warnings  = new List<Warning>();
@@ -1698,13 +1698,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region ToOCPI(this ChargeDetailRecord, ref Warnings)
 
-        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord                     ChargeDetailRecord,
-                                  WWCPEVSEId_2_EVSEUId_Delegate?                   CustomEVSEUIdConverter,
-                                  WWCPEVSEId_2_EVSEId_Delegate?                    CustomEVSEIdConverter,
-                                  GetTariffIds2_Delegate?                          GetTariffIdsDelegate,
-                                  EMSP_Id?                                         EMSPId,
-                                  Func<Tariff_Id, DateTime?, TimeSpan?, Tariff?>?  TariffGetter,
-                                  ref List<Warning>                                Warnings)
+        public static CDR? ToOCPI(this WWCP.ChargeDetailRecord    ChargeDetailRecord,
+                                  WWCPEVSEId_2_EVSEUId_Delegate?  CustomEVSEUIdConverter,
+                                  WWCPEVSEId_2_EVSEId_Delegate?   CustomEVSEIdConverter,
+                                  GetTariffIds2_Delegate?         GetTariffIdsDelegate,
+                                  EMSP_Id?                        EMSPId,
+                                  GetTariff2_Delegate?            TariffGetter,
+                                  ref List<Warning>               Warnings)
         {
 
             try
@@ -2093,7 +2093,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
             catch (Exception e)
             {
-                Warnings.Add($"Could not convert the given charge detail record to OCPI: {e.Message}".ToWarning());
+
+                Warnings.Add($"Could not convert the given charge detail record to OCPI".ToWarning());
+
+                var currentException = e;
+                while (currentException is not null)
+                {
+                    Warnings.Add(currentException.Message.ToWarning());
+                    currentException = currentException.InnerException;
+                }
+
             }
 
             return null;

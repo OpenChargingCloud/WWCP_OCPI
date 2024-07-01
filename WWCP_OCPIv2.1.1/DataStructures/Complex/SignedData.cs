@@ -249,7 +249,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out URL? URL,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion

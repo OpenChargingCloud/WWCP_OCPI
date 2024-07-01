@@ -47,20 +47,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
     public delegate IEnumerable<Tariff>     GetTariffs2_Delegate  (CountryCode    CPOCountryCode,
                                                                    Party_Id       CPOPartyId,
-                                                                   Location_Id?   LocationId    = null,
-                                                                   EVSE_UId?      EVSEUId       = null,
-                                                                   Connector_Id?  ConnectorId   = null,
-                                                                   EMSP_Id?       EMSPId        = null);
+                                                                   Location_Id?   LocationId       = null,
+                                                                   EVSE_UId?      EVSEUId          = null,
+                                                                   Connector_Id?  ConnectorId      = null,
+                                                                   EMSP_Id?       EMSPId           = null);
+
 
     public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
                                                                    Party_Id       CPOPartyId,
-                                                                   Location_Id?   LocationId    = null,
-                                                                   EVSE_UId?      EVSEUId       = null,
-                                                                   Connector_Id?  ConnectorId   = null,
-                                                                   EMSP_Id?       EMSPId        = null);
+                                                                   Location_Id?   LocationId       = null,
+                                                                   EVSE_UId?      EVSEUId          = null,
+                                                                   Connector_Id?  ConnectorId      = null,
+                                                                   EMSP_Id?       EMSPId           = null);
 
-
-
+    public delegate Tariff?                 GetTariff2_Delegate   (Tariff_Id      TariffId,
+                                                                   DateTime?      StartTimestamp   = null,
+                                                                   TimeSpan?      EVSEUId          = null);
 
 
     /// <summary>
