@@ -767,6 +767,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                    ChargingSession_Id?      SessionId,
                                                                    EMobilityProvider_Id?    ProviderId,
                                                                    RemoteAuthentication?    RemoteAuthentication,
+                                                                   JObject?                 AdditionalSessionInfos,
                                                                    Auth_Path?               AuthenticationPath,
 
                                                                    DateTime?                Timestamp,
@@ -816,46 +817,53 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        );
 
 
-                var evseId    = ChargingLocation.EVSEId.Value.ToOCPI_EVSEId()!;
-                var location  = CommonAPI.GetLocations(location => location.EVSEs.FirstOrDefault(evse => evse.EVSEId.Value == evseId) is not null).FirstOrDefault();
-                var evse      = location.EVSEs.FirstOrDefault(evse => evse.EVSEId.Value == evseId);
+                var remoteAuthentication  = RemoteAuthentication?.RemoteIdentification?.ToString()!;
+                var evseId                = ChargingLocation.EVSEId?.ToOCPI_EVSEId()!;
+                var location              = CommonAPI.GetLocations(location => location.EVSEs.FirstOrDefault(evse => evse.EVSEId.Value == evseId) is not null).FirstOrDefault();
+                var evse                  = location.EVSEs.FirstOrDefault(evse => evse.EVSEId.Value == evseId);
 
-                var response  = await emspClient.StartSession(Token:               new Token(
-                                                                                       CountryCode.Parse(operatorId.Value.CountryCode.Alpha2Code),
-                                                                                       Party_Id.   Parse(operatorId.Value.Suffix),
-                                                                                       Token_Id.   Parse(RemoteAuthentication.RemoteIdentification.ToString()),
-                                                                                       TokenType.OTHER,
-                                                                                       Auth_Id.    Parse(RemoteAuthentication.RemoteIdentification.ToString()),
-                                                                                       "Issuer",
-                                                                                       true,
+                var response              = await emspClient.StartSession(
+                                                      Token:               new Token(
+                                                                               CountryCode.Parse(operatorId.Value.CountryCode.Alpha2Code),
+                                                                               Party_Id.   Parse(operatorId.Value.Suffix),
+                                                                               Token_Id.   Parse(remoteAuthentication),
+                                                                               TokenType.OTHER,
+                                                                               Auth_Id.    Parse(remoteAuthentication),
+                                                                               "Issuer",
+                                                                               true,
 
-                                                                                       WhitelistType:   WhitelistTypes.NEVER,
-                                                                                       VisualNumber:    RemoteAuthentication.RemoteIdentification.ToString(),
-                                                                                       UILanguage:      null,
+                                                                               WhitelistType:   WhitelistTypes.NEVER,
+                                                                               VisualNumber:    remoteAuthentication,
+                                                                               UILanguage:      null,
 
-                                                                                       Created:         null,
-                                                                                       LastUpdated:     null
-                                                                                   ),
-                                                              LocationId:          location.Id,
-                                                              EVSEUId:             evse.UId,
+                                                                               Created:         null,
+                                                                               LastUpdated:     null
+                                                                           ),
+                                                      LocationId:          location.Id,
+                                                      EVSEUId:             evse.UId,
 
-                                                              CommandId:           null,
-                                                              RequestId:           null,
-                                                              CorrelationId:       null,
-                                                              VersionId:           null,
+                                                      CommandId:           null,
+                                                      RequestId:           null,
+                                                      CorrelationId:       null,
+                                                      VersionId:           null,
 
-                                                              CancellationToken:   CancellationToken,
-                                                              EventTrackingId:     EventTrackingId,
-                                                              RequestTimeout:      RequestTimeout);
+                                                      CancellationToken:   CancellationToken,
+                                                      EventTrackingId:     EventTrackingId,
+                                                      RequestTimeout:      RequestTimeout
+                                                  );
 
                 if (response.StatusCode == 1000)
                     // The OCPI response is just a "command accepted" information!
-                    return RemoteStartResult.AsyncOperation(new ChargingSession(
-                                                                ChargingSession_Id.NewRandom(),
-                                                                eventTrackingId,
-                                                                RoamingNetwork
-                                                            ),
-                                                            System_Id.Local);
+                    // Yet we already create a charging session and merge it later with the CPO's session data!
+                    return RemoteStartResult.AsyncOperation(
+                                                 new ChargingSession(
+                                                     Id:                ChargingSession_Id.NewRandom(),
+                                                     EventTrackingId:   eventTrackingId,
+                                                     RoamingNetwork:    RoamingNetwork,
+                                                     CustomData:        AdditionalSessionInfos
+                                                 ),
+                                                 System_Id.Local
+                                             );
 
                 return RemoteStartResult.Error(System_Id.Local);
 
@@ -905,6 +913,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ChargingSessionId">The charging session identification.</param>
         public Boolean ContainsChargingSessionId(ChargingSession_Id ChargingSessionId)
             => false;
+
+        /// <summary>
+        /// Return the charging session specified by the given charging session identification.
+        /// </summary>
+        /// <param name="ChargingSessionId">The charging session identification.</param>
+        ChargingSession? IChargingSessions.GetChargingSessionById(ChargingSession_Id ChargingSessionId)
+        {
+            return null;
+        }
 
         /// <summary>
         /// Return the charging session specified by the given charging session identification.

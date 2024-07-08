@@ -589,6 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                              ChargingSession_Id?      SessionId,
                                                              EMobilityProvider_Id?    ProviderId,
                                                              RemoteAuthentication?    RemoteAuthentication,
+                                                             JObject?                 AdditionalSessionInfos,
                                                              Auth_Path?               AuthenticationPath,
 
                                                              DateTime?                Timestamp,
@@ -627,6 +628,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ChargingSessionId">The charging session identification.</param>
         public Boolean ContainsChargingSessionId(ChargingSession_Id ChargingSessionId)
             => false;
+
+        /// <summary>
+        /// Return the charging session specified by the given charging session identification.
+        /// </summary>
+        /// <param name="ChargingSessionId">The charging session identification.</param>
+        ChargingSession? IChargingSessions.GetChargingSessionById(ChargingSession_Id ChargingSessionId)
+        {
+            return null;
+        }
 
         /// <summary>
         /// Return the charging session specified by the given charging session identification.

@@ -576,6 +576,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                 : WWCP.ChargingSession_Id.NewRandom(),
                                             providerId,
                                             WWCP.RemoteAuthentication.FromRemoteIdentification(WWCP.EMobilityAccount_Id.Parse(startSessionCommand.Token.Id.ToString())),
+                                            null,
                                             WWCP.Auth_Path.Parse(Id.ToString())     // Authentication path == CSO Roaming Provider identification!
                                         );
 
