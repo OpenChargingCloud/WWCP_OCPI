@@ -894,7 +894,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Charging Sessions
 
         IEnumerable<ChargingSession> IChargingSessions.ChargingSessions
-            => Array.Empty<ChargingSession>();
+            => [];
 
         public IEnumerable<KeyValuePair<LocalAuthentication, TokenAuthorizationResultType>> AllTokens => throw new NotImplementedException();
 
