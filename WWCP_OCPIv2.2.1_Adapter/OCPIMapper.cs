@@ -1028,25 +1028,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            //                                   _                      => 0
                            //                               }),
 
-                           MaxVoltage:              (UInt16) (EVSE.AverageVoltage.HasValue && EVSE.AverageVoltage.Value != 0
+                           MaxVoltage:              (EVSE.AverageVoltage.HasValue && EVSE.AverageVoltage.Value.Value != 0
                                                         ? powerType.Value switch {
-                                                              PowerTypes.AC_1_PHASE  => (Double) EVSE.AverageVoltage.Value,
+                                                              PowerTypes.AC_1_PHASE  => EVSE.AverageVoltage.Value,
                                                                                       // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
-                                                              PowerTypes.AC_3_PHASE  => (Double) EVSE.AverageVoltage.Value / Math.Sqrt(3),
-                                                              _                      => (Double) EVSE.AverageVoltage.Value
+                                                              PowerTypes.AC_3_PHASE  => Volt.ParseV(EVSE.AverageVoltage.Value.Value / ((Decimal) Math.Sqrt(3))),
+                                                              _                      => EVSE.AverageVoltage.Value
                                                           }
                                                         : powerType.Value switch {
-                                                              PowerTypes.AC_1_PHASE  => 230,
-                                                              PowerTypes.AC_3_PHASE  => 230,  // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
-                                                              PowerTypes.DC          => 400,
-                                                              _                      => 0
+                                                              PowerTypes.AC_1_PHASE  => Volt.ParseV(230),
+                                                              PowerTypes.AC_3_PHASE  => Volt.ParseV(230),  // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
+                                                              PowerTypes.DC          => Volt.ParseV(400),
+                                                              _                      => Volt.ParseV(0)
                                                           }),
 
-                           MaxAmperage:             (UInt16) (EVSE.MaxCurrent     ?? powerType.Value switch {
-                                                        PowerTypes.AC_1_PHASE  => 16,
-                                                        PowerTypes.AC_3_PHASE  => 16,
-                                                        PowerTypes.DC          => 50,
-                                                        _                      => 0
+                           MaxAmperage:             (EVSE.MaxCurrent     ?? powerType.Value switch {
+                                                        PowerTypes.AC_1_PHASE  => Ampere.ParseA(16),
+                                                        PowerTypes.AC_3_PHASE  => Ampere.ParseA(16),
+                                                        PowerTypes.DC          => Ampere.ParseA(50),
+                                                        _                      => Ampere.ParseA(0)
                                                     }),
                            MaxElectricPower:        null,
 

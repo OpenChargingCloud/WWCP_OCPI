@@ -80,24 +80,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public PowerTypes              PowerType                { get; }
 
         /// <summary>
-        /// The maximum voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].
+        /// The maximum voltage of the connector (line to neutral for AC_3_PHASE).
         /// </summary>
         [Mandatory]
-        public UInt16                  MaxVoltage               { get; }
+        public Volt                    MaxVoltage               { get; }
 
         /// <summary>
-        /// The maximum amperage of the connector, in ampere [A].
+        /// The maximum amperage of the connector.
         /// </summary>
         [Mandatory]
-        public UInt16                  MaxAmperage              { get; }
+        public Ampere                  MaxAmperage              { get; }
 
         /// <summary>
-        /// The maximum electric power that can be delivered by this connector, in Watts (W).
+        /// The maximum electric power that can be delivered by this connector.
         /// When the maximum electric power is lower than the calculated value from voltage
         /// and amperage, this value should be set.
         /// </summary>
         [Optional]
-        public UInt32?                 MaxElectricPower         { get; }
+        public Watt?                   MaxElectricPower         { get; }
 
         public EMSP_Id?                EMSPId                   { get; }
 
@@ -155,9 +155,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Standard">The standard of the installed connector.</param>
         /// <param name="Format">The format (socket/cable) of the installed connector.</param>
         /// <param name="PowerType">The type of power at the connector.</param>
-        /// <param name="MaxVoltage">The maximum voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].</param>
-        /// <param name="MaxAmperage">The maximum amperage of the connector, in ampere [A].</param>
-        /// <param name="MaxElectricPower">The maximum electric power that can be delivered by this connector, in Watts (W).</param>
+        /// <param name="MaxVoltage">The maximum voltage of the connector (line to neutral for AC_3_PHASE).</param>
+        /// <param name="MaxAmperage">The maximum amperage of the connector.</param>
+        /// <param name="MaxElectricPower">The maximum electric power that can be delivered by this connector.</param>
         /// <param name="TariffIds">An enumeration of currently valid charging tariffs identifiers.</param>
         /// <param name="TermsAndConditionsURL">An optional URL to the operator's terms and conditions.</param>
         /// 
@@ -169,9 +169,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            ConnectorType                                Standard,
                            ConnectorFormats                             Format,
                            PowerTypes                                   PowerType,
-                           UInt16                                       MaxVoltage,
-                           UInt16                                       MaxAmperage,
-                           UInt32?                                      MaxElectricPower            = null,
+                           Volt                                         MaxVoltage,
+                           Ampere                                       MaxAmperage,
+                           Watt?                                        MaxElectricPower            = null,
                            IEnumerable<Tariff_Id>?                      TariffIds                   = null,
                            URL?                                         TermsAndConditionsURL       = null,
 
@@ -226,9 +226,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Standard">The standard of the installed connector.</param>
         /// <param name="Format">The format (socket/cable) of the installed connector.</param>
         /// <param name="PowerType">The type of power at the connector.</param>
-        /// <param name="MaxVoltage">The maximum voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].</param>
-        /// <param name="MaxAmperage">The maximum amperage of the connector, in ampere [A].</param>
-        /// <param name="MaxElectricPower">The maximum electric power that can be delivered by this connector, in Watts (W).</param>
+        /// <param name="MaxVoltage">The maximum voltage of the connector (line to neutral for AC_3_PHASE).</param>
+        /// <param name="MaxAmperage">The maximum amperage of the connector.</param>
+        /// <param name="MaxElectricPower">The maximum electric power that can be delivered by this connector.</param>
         /// <param name="TariffIds">An enumeration of currently valid charging tariffs identifiers.</param>
         /// <param name="TermsAndConditionsURL">An optional URL to the operator's terms and conditions.</param>
         /// 
@@ -238,9 +238,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          ConnectorType                                Standard,
                          ConnectorFormats                             Format,
                          PowerTypes                                   PowerType,
-                         UInt16                                       MaxVoltage,
-                         UInt16                                       MaxAmperage,
-                         UInt32?                                      MaxElectricPower            = null,
+                         Volt                                         MaxVoltage,
+                         Ampere                                       MaxAmperage,
+                         Watt?                                        MaxElectricPower            = null,
                          IEnumerable<Tariff_Id>?                      TariffIds                   = null,
                          URL?                                         TermsAndConditionsURL       = null,
 
@@ -399,7 +399,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("max_voltage",
                                          "max voltage",
-                                         out UInt16 MaxVoltage,
+                                         Volt.TryParse,
+                                         out Volt MaxVoltage,
                                          out ErrorResponse))
                 {
                     return false;
@@ -411,7 +412,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatory("max_amperage",
                                          "max amperage",
-                                         out UInt16 MaxAmperage,
+                                         Ampere.TryParse,
+                                         out Ampere MaxAmperage,
                                          out ErrorResponse))
                 {
                     return false;
@@ -423,7 +425,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (JSON.ParseOptional("max_electric_power",
                                        "max electric power",
-                                       out UInt32? MaxElectricPower,
+                                       Watt.TryParse,
+                                       out Watt? MaxElectricPower,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -473,18 +476,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                Connector = new Connector(ConnectorIdBody ?? ConnectorIdURL!.Value,
-                                          Standard,
-                                          Format,
-                                          PowerType,
-                                          MaxVoltage,
-                                          MaxAmperage,
+                Connector = new Connector(
+                                ConnectorIdBody ?? ConnectorIdURL!.Value,
+                                Standard,
+                                Format,
+                                PowerType,
+                                MaxVoltage,
+                                MaxAmperage,
 
-                                          MaxElectricPower,
-                                          TariffIds,
-                                          TermsAndConditionsURL,
+                                MaxElectricPower,
+                                TariffIds,
+                                TermsAndConditionsURL,
 
-                                          LastUpdated);
+                                LastUpdated
+                            );
 
 
                 if (CustomConnectorParser is not null)

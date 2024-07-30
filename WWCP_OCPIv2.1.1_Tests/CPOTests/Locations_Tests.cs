@@ -67,25 +67,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                        Country.Germany,
                                                                        GeoCoordinate.Parse(10, 20),
                                                                        "Location 0001",
-                                                                       new[] {
+                                                                       [
                                                                            new AdditionalGeoLocation(
                                                                                Latitude. Parse(11),
                                                                                Longitude.Parse(22),
                                                                                Name: DisplayText.Create(Languages.de, "Postkasten")
                                                                            )
-                                                                       },
+                                                                       ],
                                                                        new[] {
                                                                            new EVSE(
                                                                                EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                                                                StatusType.AVAILABLE,
-                                                                               new[] {
+                                                                               [
                                                                                    new Connector(
                                                                                        Connector_Id.Parse("1"),
                                                                                        ConnectorType.IEC_62196_T2,
                                                                                        ConnectorFormats.SOCKET,
                                                                                        PowerTypes.AC_3_PHASE,
-                                                                                       400,
-                                                                                       30,
+                                                                                       Volt.  ParseV(400),
+                                                                                       Ampere.ParseA(30),
                                                                                        Tariff_Id.Parse("DE*GEF*T0001"),
                                                                                        URL.Parse("https://open.charging.cloud/terms"),
                                                                                        DateTime.Parse("2020-09-21")
@@ -95,15 +95,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                        ConnectorType.IEC_62196_T2_COMBO,
                                                                                        ConnectorFormats.CABLE,
                                                                                        PowerTypes.AC_3_PHASE,
-                                                                                       400,
-                                                                                       20,
+                                                                                       Volt.  ParseV(400),
+                                                                                       Ampere.ParseA(20),
                                                                                        Tariff_Id.Parse("DE*GEF*T0003"),
                                                                                        URL.Parse("https://open.charging.cloud/terms"),
                                                                                        DateTime.Parse("2020-09-22")
                                                                                    )
-                                                                               },
+                                                                               ],
                                                                                EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                                                               new[] {
+                                                                               [
                                                                                    new StatusSchedule(
                                                                                        StatusType.INOPERATIVE,
                                                                                        DateTime.Parse("2020-09-23"),
@@ -114,11 +114,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                        DateTime.Parse("2020-12-30"),
                                                                                        DateTime.Parse("2020-12-31")
                                                                                    )
-                                                                               },
-                                                                               new[] {
+                                                                               ],
+                                                                               [
                                                                                    Capability.RFID_READER,
                                                                                    Capability.RESERVABLE
-                                                                               },
+                                                                               ],
 
                                                                                // OCPI Computer Science Extensions
                                                                                new EnergyMeter(
@@ -379,8 +379,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                                   ConnectorType.IEC_62196_T2,
                                                                                                   ConnectorFormats.SOCKET,
                                                                                                   PowerTypes.AC_3_PHASE,
-                                                                                                  400,
-                                                                                                  30,
+                                                                                                  Volt.  ParseV(400),
+                                                                                                  Ampere.ParseA(30),
                                                                                                   Tariff_Id.Parse("DE*GEF*T0001"),
                                                                                                   URL.Parse("https://open.charging.cloud/terms"),
                                                                                                   DateTime.Parse("2020-09-21")
@@ -390,8 +390,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                                   ConnectorType.IEC_62196_T2_COMBO,
                                                                                                   ConnectorFormats.CABLE,
                                                                                                   PowerTypes.AC_3_PHASE,
-                                                                                                  400,
-                                                                                                  20,
+                                                                                                  Volt.  ParseV(400),
+                                                                                                  Ampere.ParseA(20),
                                                                                                   Tariff_Id.Parse("DE*GEF*T0003"),
                                                                                                   URL.Parse("https://open.charging.cloud/terms"),
                                                                                                   DateTime.Parse("2020-09-22")
@@ -597,8 +597,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                       ConnectorType.CHADEMO,
                                                                                       ConnectorFormats.SOCKET,
                                                                                       PowerTypes.DC,
-                                                                                      400,
-                                                                                      30,
+                                                                                      Volt.  ParseV(400),
+                                                                                      Ampere.ParseA(30),
                                                                                       Tariff_Id.Parse("DE*GEF*T0003"),
                                                                                       URL.Parse("https://open.charging.cloud/terms"),
                                                                                       DateTime.Parse("2020-09-21")
@@ -608,8 +608,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                       ConnectorType.CHADEMO,
                                                                                       ConnectorFormats.CABLE,
                                                                                       PowerTypes.DC,
-                                                                                      400,
-                                                                                      20,
+                                                                                      Volt.  ParseV(400),
+                                                                                      Ampere.ParseA(20),
                                                                                       Tariff_Id.Parse("DE*GEF*T0004"),
                                                                                       URL.Parse("https://open.charging.cloud/terms"),
                                                                                       DateTime.Parse("2021-11-13")

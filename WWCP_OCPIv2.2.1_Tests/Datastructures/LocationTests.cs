@@ -84,9 +84,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -99,9 +99,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")
@@ -353,9 +353,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -368,9 +368,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")
@@ -594,9 +594,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -609,9 +609,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")
@@ -835,9 +835,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -850,9 +850,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")
@@ -1076,9 +1076,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -1091,9 +1091,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")
@@ -1319,9 +1319,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -1334,9 +1334,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")
@@ -1560,9 +1560,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -1575,9 +1575,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")
@@ -1804,9 +1804,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -1819,9 +1819,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")
@@ -2046,9 +2046,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -2061,9 +2061,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")
@@ -2287,9 +2287,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -2302,9 +2302,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")
@@ -2528,9 +2528,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -2543,9 +2543,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")
@@ -2769,9 +2769,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                30,
-                                                12,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(30),
+                                                Watt.  ParseW(12),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                                     Tariff_Id.Parse("DE*GEF*T0002")
@@ -2784,9 +2784,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.Datastructures
                                                 ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
-                                                400,
-                                                20,
-                                                8,
+                                                Volt.  ParseV(400),
+                                                Ampere.ParseA(20),
+                                                Watt.  ParseW(8),
                                                 new[] {
                                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                                     Tariff_Id.Parse("DE*GEF*T0004")

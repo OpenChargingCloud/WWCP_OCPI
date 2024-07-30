@@ -1682,8 +1682,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                                                              Standard:   ConnectorType.IEC_62196_T2,
                                                                                                              Format:     ConnectorFormats.SOCKET,
                                                                                                              PowerType:  PowerTypes.AC_3_PHASE,
-                                                                                                             Voltage:    230,
-                                                                                                             Amperage:   32
+                                                                                                             Voltage:    Volt.  ParseV(230),
+                                                                                                             Amperage:   Ampere.ParseA(32)
                                                                                                          )
                                                                                                      ]
                                                                                    )
@@ -1805,8 +1805,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                                                                              Standard:   ConnectorType.IEC_62196_T2,
                                                                                                              Format:     ConnectorFormats.SOCKET,
                                                                                                              PowerType:  PowerTypes.AC_3_PHASE,
-                                                                                                             Voltage:    230,
-                                                                                                             Amperage:   32
+                                                                                                             Voltage:    Volt.  ParseV(230),
+                                                                                                             Amperage:   Ampere.ParseA(32)
                                                                                                          )
                                                                                                      ]
                                                                                    )

@@ -26,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using org.GraphDefined.Vanaheimr.Illias.Votes;
 
 #endregion
 
@@ -84,16 +85,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public PowerTypes        PowerType                { get; }
 
         /// <summary>
-        /// The voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].
+        /// The voltage of the connector (line to neutral for AC_3_PHASE).
         /// </summary>
         [Mandatory]
-        public UInt16            Voltage                  { get; }
+        public Volt              Voltage                  { get; }
 
         /// <summary>
-        /// The maximum amperage of the connector, in ampere [A].
+        /// The maximum amperage of the connector.
         /// </summary>
         [Mandatory]
-        public UInt16            Amperage                 { get; }
+        public Ampere            Amperage                 { get; }
 
         public EMSP_Id?          EMSPId                   { get; }
 
@@ -165,8 +166,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            ConnectorType                                Standard,
                            ConnectorFormats                             Format,
                            PowerTypes                                   PowerType,
-                           UInt16                                       Voltage,
-                           UInt16                                       Amperage,
+                           Volt                                         Voltage,
+                           Ampere                                       Amperage,
                            Tariff_Id?                                   TariffId                    = null,
                            URL?                                         TermsAndConditionsURL       = null,
 
@@ -232,8 +233,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          ConnectorType                                Standard,
                          ConnectorFormats                             Format,
                          PowerTypes                                   PowerType,
-                         UInt16                                       Voltage,
-                         UInt16                                       Amperage,
+                         Volt                                         Voltage,
+                         Ampere                                       Amperage,
                          Tariff_Id?                                   TariffId                    = null,
                          URL?                                         TermsAndConditionsURL       = null,
 
@@ -391,7 +392,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("voltage",
                                          "voltage",
-                                         out UInt16 Voltage,
+                                         Volt.TryParse,
+                                         out Volt Voltage,
                                          out ErrorResponse))
                 {
                     return false;
@@ -403,7 +405,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("amperage",
                                          "amperage",
-                                         out UInt16 Amperage,
+                                         Ampere.TryParse,
+                                         out Ampere Amperage,
                                          out ErrorResponse))
                 {
                     return false;
@@ -452,15 +455,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                Connector = new Connector(ConnectorIdBody ?? ConnectorIdURL.Value,
-                                          Standard,
-                                          Format,
-                                          PowerType,
-                                          Voltage,
-                                          Amperage,
-                                          TariffId,
-                                          TermsAndConditionsURL,
-                                          LastUpdated);
+                Connector = new Connector(
+                                ConnectorIdBody ?? ConnectorIdURL.Value,
+                                Standard,
+                                Format,
+                                PowerType,
+                                Voltage,
+                                Amperage,
+                                TariffId,
+                                TermsAndConditionsURL,
+                                LastUpdated
+                            );
 
 
                 if (CustomConnectorParser is not null)
@@ -503,8 +508,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         new JProperty("standard",               Standard.             ToString()),
                                         new JProperty("format",                 Format.               AsText()),
                                         new JProperty("power_type",             PowerType.            AsText()),
-                                        new JProperty("voltage",                Voltage),
-                                        new JProperty("amperage",               Amperage),
+                                        new JProperty("voltage",                (UInt16) Voltage. Value),
+                                        new JProperty("amperage",               (UInt16) Amperage.Value),
 
                                   tariffId is not null
                                       ? new JProperty("tariff_id",              tariffId.       Value.ToString())

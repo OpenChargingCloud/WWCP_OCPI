@@ -61,8 +61,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     ConnectorType.IEC_62196_T2,
                                     ConnectorFormats.SOCKET,
                                     PowerTypes.AC_3_PHASE,
-                                    400,
-                                    30,
+                                    Volt.  ParseV(400),
+                                    Ampere.ParseA(30),
                                     Tariff_Id.Parse("DE*GEF*T0001"),
                                     URL.Parse("https://open.charging.cloud/terms"),
                                     DateTime.Parse("2020-09-21T00:00:00Z")
@@ -72,8 +72,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                     ConnectorType.IEC_62196_T2_COMBO,
                                     ConnectorFormats.CABLE,
                                     PowerTypes.AC_3_PHASE,
-                                    400,
-                                    20,
+                                    Volt.  ParseV(400),
+                                    Ampere.ParseA(20),
                                     Tariff_Id.Parse("DE*GEF*T0003"),
                                     URL.Parse("https://open.charging.cloud/terms"),
                                     DateTime.Parse("2020-09-21T00:00:00Z")
