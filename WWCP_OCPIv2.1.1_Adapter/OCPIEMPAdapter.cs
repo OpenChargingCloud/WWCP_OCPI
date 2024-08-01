@@ -791,7 +791,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 var remoteAccessInfo  = remoteParty?.RemoteAccessInfos.FirstOrDefault(remoteAccessInfo => remoteAccessInfo.Status == OCPI.RemoteAccessStatus.ONLINE);
 
                 if (remoteAccessInfo is null)
-                    return RemoteStartResult.Error(System_Id.Local);
+                    return RemoteStartResult.Error(
+                               System_Id.Local,
+                               "Unknown error!"
+                           );
 
                 var emspClient = new EMSP.HTTP.EMSPClient(
 
@@ -865,7 +868,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                  System_Id.Local
                                              );
 
-                return RemoteStartResult.Error(System_Id.Local);
+                return RemoteStartResult.Error(
+                           System_Id.Local,
+                           "Unknown error!"
+                       );
 
             }
 
