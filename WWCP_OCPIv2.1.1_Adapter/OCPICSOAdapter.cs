@@ -1871,7 +1871,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             WWCP.AuthStartResult? authStartResult = null;
 
 
-            if (DisableAuthentication)
+            if (DisableAuthorization)
                 authStartResult = WWCP.AuthStartResult.AdminDown(
                                       AuthorizatorId:           Id,
                                       ISendAuthorizeStartStop:  this,
@@ -2189,7 +2189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             TimeSpan             runtime;
             WWCP.AuthStopResult? authStopResult = null;
 
-            if (DisableAuthentication)
+            if (DisableAuthorization)
                 authStopResult = WWCP.AuthStopResult.AdminDown(
                                      AuthorizatorId:           Id,
                                      ISendAuthorizeStartStop:  this,
