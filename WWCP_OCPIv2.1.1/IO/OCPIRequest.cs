@@ -82,6 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         HTTPMethod,
                                         URLTemplate,
                                         HTTPContentType,
+                                        false,
                                         URLAuthentication,
                                         HTTPMethodAuthentication,
                                         ContentTypeAuthentication,
