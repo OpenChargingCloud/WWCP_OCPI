@@ -381,7 +381,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public CommonClient(CommonAPI                    MyCommonAPI,
                             RemoteParty                  RemoteParty,
                             HTTPHostname?                VirtualHostname   = null,
-                            String?                      Description       = null,
+                            I18NString?                  Description       = null,
                             HTTPClientLogger?            HTTPLogger        = null,
 
                             Boolean?                     DisableLogging    = false,
@@ -461,7 +461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             URL                                                        RemoteVersionsURL,
                             AccessToken                                                AccessToken,
                             HTTPHostname?                                              VirtualHostname              = null,
-                            String?                                                    Description                  = null,
+                            I18NString?                                                Description                  = null,
                             Boolean?                                                   PreferIPv4                   = null,
                             RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                             LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,

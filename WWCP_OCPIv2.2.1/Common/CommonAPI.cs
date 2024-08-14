@@ -3508,7 +3508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
         public CPOClient? GetCPOClient(CountryCode  CountryCode,
                                        Party_Id     PartyId,
-                                       String?      Description          = null,
+                                       I18NString?  Description          = null,
                                        Boolean      AllowCachedClients   = true)
         {
 
@@ -3559,7 +3559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
         public CPOClient? GetCPOClient(RemoteParty  RemoteParty,
-                                       String?      Description          = null,
+                                       I18NString?  Description          = null,
                                        Boolean      AllowCachedClients   = true)
         {
 
@@ -3608,7 +3608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached CPO clients.</param>
         public CPOClient? GetCPOClient(RemoteParty_Id  RemotePartyId,
-                                       String?         Description          = null,
+                                       I18NString?     Description          = null,
                                        Boolean         AllowCachedClients   = true)
         {
 
@@ -3673,7 +3673,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
         public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
                                          Party_Id     PartyId,
-                                         String?      Description          = null,
+                                         I18NString?  Description          = null,
                                          Boolean      AllowCachedClients   = true)
         {
 
@@ -3724,7 +3724,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
         public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty,
-                                         String?      Description          = null,
+                                         I18NString?  Description          = null,
                                          Boolean      AllowCachedClients   = true)
         {
 
@@ -3773,7 +3773,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="Description">A description for the OCPI client.</param>
         /// <param name="AllowCachedClients">Whether to allow to return cached EMSP clients.</param>
         public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId,
-                                         String?         Description          = null,
+                                         I18NString?     Description          = null,
                                          Boolean         AllowCachedClients   = true)
         {
 

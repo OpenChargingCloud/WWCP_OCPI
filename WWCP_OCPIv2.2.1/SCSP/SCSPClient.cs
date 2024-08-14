@@ -391,7 +391,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.SCSP.HTTP
                           URL                                                        RemoteVersionsURL,
                           AccessToken                                                AccessToken,
                           HTTPHostname?                                              VirtualHostname              = null,
-                          String?                                                    Description                  = null,
+                          I18NString?                                                Description                  = null,
                           Boolean?                                                   PreferIPv4                   = null,
                           RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
                           LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,

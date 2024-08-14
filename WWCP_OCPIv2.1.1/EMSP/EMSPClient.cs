@@ -677,7 +677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
         public EMSPClient(CommonAPI                    CommonAPI,
                           RemoteParty                  RemoteParty,
                           HTTPHostname?                VirtualHostname   = null,
-                          String?                      Description       = null,
+                          I18NString?                  Description       = null,
                           HTTPClientLogger?            HTTPLogger        = null,
 
                           Boolean?                     DisableLogging    = false,
