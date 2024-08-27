@@ -450,7 +450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<TariffRestrictions>? CustomTariffRestrictionsSerializer = null)
+        public JObject? ToJSON(CustomJObjectSerializerDelegate<TariffRestrictions>? CustomTariffRestrictionsSerializer = null)
         {
 
             var json = JSONObject.Create(
