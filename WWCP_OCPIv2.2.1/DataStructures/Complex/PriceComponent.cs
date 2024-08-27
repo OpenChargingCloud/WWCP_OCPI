@@ -20,6 +20,7 @@
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -228,9 +229,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="PriceComponent">The parsed price component.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject             JSON,
-                                       out PriceComponent  PriceComponent,
-                                       out String?         ErrorResponse)
+        public static Boolean TryParse(JObject                                  JSON,
+                                       [NotNullWhen(true)]  out PriceComponent  PriceComponent,
+                                       [NotNullWhen(false)] out String?         ErrorResponse)
 
             => TryParse(JSON,
                         out PriceComponent,
@@ -246,8 +247,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
         public static Boolean TryParse(JObject                                       JSON,
-                                       out PriceComponent                            PriceComponent,
-                                       out String?                                   ErrorResponse,
+                                       [NotNullWhen(true)]  out PriceComponent       PriceComponent,
+                                       [NotNullWhen(false)] out String?              ErrorResponse,
                                        CustomJObjectParserDelegate<PriceComponent>?  CustomPriceComponentParser   = null)
         {
 

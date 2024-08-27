@@ -1754,7 +1754,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     else if (ChargeDetailRecord.AuthenticationStart.PIN.                        HasValue)
                         authId = Auth_Id.Parse(ChargeDetailRecord.AuthenticationStart.PIN.                        Value.ToString());
 
-                    else if (ChargeDetailRecord.AuthenticationStart.PublicKey.                  HasValue)
+                    else if (ChargeDetailRecord.AuthenticationStart.PublicKey is not null)
                         authId = Auth_Id.Parse(ChargeDetailRecord.AuthenticationStart.PublicKey.                  Value.ToString());
 
                 }
