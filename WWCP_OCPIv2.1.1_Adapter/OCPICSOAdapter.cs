@@ -759,7 +759,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (lockTaken)
                 {
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     if (IncludeChargingPools is null ||
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))

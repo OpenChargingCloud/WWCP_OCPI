@@ -869,8 +869,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addRemoteParty:
                         try
                         {
-                            if (command.JSON is not null &&
-                                RemoteParty.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                RemoteParty.TryParse(command.JSONObject,
                                                      out remoteParty,
                                                      out errorResponse) &&
                                 remoteParty is not null)
@@ -893,8 +893,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addRemotePartyIfNotExists:
                         try
                         {
-                            if (command.JSON is not null &&
-                                RemoteParty.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                RemoteParty.TryParse(command.JSONObject,
                                                      out remoteParty,
                                                      out errorResponse) &&
                                 remoteParty is not null)
@@ -917,8 +917,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addOrUpdateRemoteParty:
                         try
                         {
-                            if (command.JSON is not null &&
-                                RemoteParty.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                RemoteParty.TryParse(command.JSONObject,
                                                      out remoteParty,
                                                      out errorResponse) &&
                                 remoteParty is not null)
@@ -946,8 +946,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case updateRemoteParty:
                         try
                         {
-                            if (command.JSON is not null &&
-                                RemoteParty.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                RemoteParty.TryParse(command.JSONObject,
                                                      out remoteParty,
                                                      out errorResponse) &&
                                 remoteParty is not null)
@@ -971,8 +971,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case removeRemoteParty:
                         try
                         {
-                            if (command.JSON is not null &&
-                                RemoteParty.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                RemoteParty.TryParse(command.JSONObject,
                                                      out remoteParty,
                                                      out errorResponse) &&
                                 remoteParty is not null)
@@ -1033,8 +1033,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addLocation:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Location.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Location.TryParse(command.JSONObject,
                                                   out location,
                                                   out errorResponse) &&
                                 location is not null)
@@ -1057,8 +1057,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addLocationIfNotExists:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Location.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Location.TryParse(command.JSONObject,
                                                   out location,
                                                   out errorResponse) &&
                                 location is not null)
@@ -1081,8 +1081,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addOrUpdateLocation:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Location.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Location.TryParse(command.JSONObject,
                                                   out location,
                                                   out errorResponse) &&
                                 location is not null)
@@ -1110,8 +1110,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case updateLocation:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Location.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Location.TryParse(command.JSONObject,
                                                   out location,
                                                   out errorResponse) &&
                                 location is not null)
@@ -1135,8 +1135,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case removeLocation:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Location.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Location.TryParse(command.JSONObject,
                                                   out location,
                                                   out errorResponse) &&
                                 location is not null)
@@ -1168,8 +1168,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addTariff:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Tariff.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Tariff.TryParse(command.JSONObject,
                                                 out tariff,
                                                 out errorResponse) &&
                                 tariff is not null)
@@ -1192,8 +1192,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addTariffIfNotExists:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Tariff.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Tariff.TryParse(command.JSONObject,
                                                 out tariff,
                                                 out errorResponse) &&
                                 tariff is not null)
@@ -1216,8 +1216,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addOrUpdateTariff:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Tariff.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Tariff.TryParse(command.JSONObject,
                                                 out tariff,
                                                 out errorResponse) &&
                                 tariff is not null)
@@ -1245,8 +1245,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case updateTariff:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Tariff.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Tariff.TryParse(command.JSONObject,
                                                 out tariff,
                                                 out errorResponse) &&
                                 tariff is not null)
@@ -1270,8 +1270,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case removeTariff:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Tariff.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Tariff.TryParse(command.JSONObject,
                                                 out tariff,
                                                 out errorResponse) &&
                                 tariff is not null)
@@ -1303,8 +1303,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addSession:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Session.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Session.TryParse(command.JSONObject,
                                                  out session,
                                                  out errorResponse) &&
                                 session is not null)
@@ -1327,8 +1327,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addSessionIfNotExists:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Session.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Session.TryParse(command.JSONObject,
                                                  out session,
                                                  out errorResponse) &&
                                 session is not null)
@@ -1351,8 +1351,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addOrUpdateSession:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Session.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Session.TryParse(command.JSONObject,
                                                  out session,
                                                  out errorResponse) &&
                                 session is not null)
@@ -1380,8 +1380,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case updateSession:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Session.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Session.TryParse(command.JSONObject,
                                                  out session,
                                                  out errorResponse) &&
                                 session is not null)
@@ -1405,8 +1405,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case removeSession:
                         try
                         {
-                            if (command.JSON is not null &&
-                                Session.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                Session.TryParse(command.JSONObject,
                                                  out session,
                                                  out errorResponse) &&
                                 session is not null)
@@ -1438,8 +1438,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addTokenStatus:
                         try
                         {
-                            if (command.JSON is not null &&
-                                TokenStatus.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                TokenStatus.TryParse(command.JSONObject,
                                                      out _tokenStatus,
                                                      out errorResponse))
                             {
@@ -1461,8 +1461,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addTokenStatusIfNotExists:
                         try
                         {
-                            if (command.JSON is not null &&
-                                TokenStatus.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                TokenStatus.TryParse(command.JSONObject,
                                                      out _tokenStatus,
                                                      out errorResponse))
                             {
@@ -1484,8 +1484,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addOrUpdateTokenStatus:
                         try
                         {
-                            if (command.JSON is not null &&
-                                TokenStatus.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                TokenStatus.TryParse(command.JSONObject,
                                                      out _tokenStatus,
                                                      out errorResponse))
                             {
@@ -1512,8 +1512,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case updateTokenStatus:
                         try
                         {
-                            if (command.JSON is not null &&
-                                TokenStatus.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                TokenStatus.TryParse(command.JSONObject,
                                                      out _tokenStatus,
                                                      out errorResponse))
                             {
@@ -1536,8 +1536,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case removeTokenStatus:
                         try
                         {
-                            if (command.JSON is not null &&
-                                TokenStatus.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                TokenStatus.TryParse(command.JSONObject,
                                                      out _tokenStatus,
                                                      out errorResponse))
                             {
@@ -1568,8 +1568,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addChargeDetailRecord:
                         try
                         {
-                            if (command.JSON is not null &&
-                                CDR.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                CDR.TryParse(command.JSONObject,
                                              out cdr,
                                              out errorResponse) &&
                                 cdr is not null)
@@ -1592,8 +1592,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addChargeDetailRecordIfNotExists:
                         try
                         {
-                            if (command.JSON is not null &&
-                                CDR.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                CDR.TryParse(command.JSONObject,
                                              out cdr,
                                              out errorResponse) &&
                                 cdr is not null)
@@ -1616,8 +1616,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case addOrUpdateChargeDetailRecord:
                         try
                         {
-                            if (command.JSON is not null &&
-                                CDR.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                CDR.TryParse(command.JSONObject,
                                              out cdr,
                                              out errorResponse) &&
                                 cdr is not null)
@@ -1645,8 +1645,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case updateChargeDetailRecord:
                         try
                         {
-                            if (command.JSON is not null &&
-                                CDR.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                CDR.TryParse(command.JSONObject,
                                                 out cdr,
                                                 out errorResponse) &&
                                 cdr is not null)
@@ -1670,8 +1670,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     case removeChargeDetailRecord:
                         try
                         {
-                            if (command.JSON is not null &&
-                                CDR.TryParse(command.JSON,
+                            if (command.JSONObject is not null &&
+                                CDR.TryParse(command.JSONObject,
                                              out cdr,
                                              out errorResponse) &&
                                 cdr is not null)
@@ -4844,6 +4844,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (locations.TryAdd(Location.Id, Location))
             {
 
+                DebugX.Log($"OCPI v2.1.1 Location '{Location.Id}': '{Location}' added...");
+
                 Location.CommonAPI = this;
 
                 await LogAsset(addLocation,
@@ -4907,6 +4909,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 return AddResult<Location>.Success(Location);
 
             }
+
+            //DebugX.Log($"OCPI v2.1.1 Adding Location '{Location.Id}': '{Location}' failed!");
 
             return AddResult<Location>.Failed(Location,
                                               "TryAdd(Location.Id, Location) failed!");
@@ -5515,6 +5519,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 return AddResult<EVSE>.Failed(EVSE,
                                               $"The given EVSE '{EVSE.UId}' already exists!");
 
+            DebugX.Log($"OCPI v2.1.1 EVSE '{EVSE.UId}'/'{EVSE.EVSEId}': '{EVSE}' added...");
 
             var newLocation = Location.Update(locationBuilder => {
                                                   locationBuilder.SetEVSE(EVSE);
@@ -5523,20 +5528,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               out var warnings);
 
             if (newLocation is null)
-                return AddResult<EVSE>.Failed(EVSE,
-                                              warnings.First().Text.FirstText());
+                return AddResult<EVSE>.Failed(
+                           EVSE,
+                           warnings.First().Text.FirstText()
+                       );
 
 
-            var updateLocationResult = await UpdateLocation(newLocation,
-                                                            AllowDowngrades,
-                                                            SkipNotifications,
-                                                            EventTrackingId,
-                                                            CurrentUserId);
+            var updateLocationResult = await UpdateLocation(
+                                                 newLocation,
+                                                 AllowDowngrades,
+                                                 SkipNotifications,
+                                                 EventTrackingId,
+                                                 CurrentUserId
+                                             );
+
 
             return updateLocationResult.IsSuccess
-                       ? AddResult<EVSE>.Success(EVSE)
-                       : AddResult<EVSE>.Failed (EVSE,
-                                                 updateLocationResult.ErrorResponse ?? "Unknown error!");
+
+                       ? AddResult<EVSE>.Success(
+                             EVSE
+                         )
+
+                       : AddResult<EVSE>.Failed (
+                             EVSE,
+                             updateLocationResult.ErrorResponse ?? "Unknown error!"
+                         );
 
         }
 

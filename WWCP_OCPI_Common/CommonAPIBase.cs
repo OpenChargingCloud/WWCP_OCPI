@@ -26,7 +26,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Logging;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
@@ -98,19 +97,34 @@ namespace cloud.charging.open.protocols.OCPI
             public String    CommandName    { get; }
 
             /// <summary>
+            /// An optional command JSON object parameter.
+            /// </summary>
+            public JObject?  JSONObject     { get; }
+
+            /// <summary>
+            /// An optional command JSON array parameter.
+            /// </summary>
+            public JArray?   JSONArray      { get; }
+
+            /// <summary>
             /// An optional command message parameter.
             /// </summary>
             public String?   Message        { get; }
 
             /// <summary>
-            /// An optional command JSON object parameter.
+            /// An optional command Integer parameter.
             /// </summary>
-            public JObject?  JSON           { get; }
+            public Int64?    Integer        { get; }
 
             /// <summary>
-            /// An optional command number parameter.
+            /// An optional command Single/Float parameter.
             /// </summary>
-            public Int64?    Number         { get; }
+            public Single?   Single         { get; }
+
+            /// <summary>
+            /// An optional command Boolean parameter.
+            /// </summary>
+            public Boolean?  Boolean        { get; }
 
             #endregion
 
@@ -134,37 +148,91 @@ namespace cloud.charging.open.protocols.OCPI
 
             #endregion
 
-            #region Command(CommandName, JSON)
+            #region Command(CommandName, JSONObject)
 
             /// <summary>
             /// Create a new command using the given command name and message.
             /// </summary>
             /// <param name="CommandName">The name of the command.</param>
-            /// <param name="JSON">A command JSON object parameter.</param>
+            /// <param name="JSONObject">A command JSON object parameter.</param>
             public Command(String    CommandName,
-                           JObject?  JSON)
+                           JObject?  JSONObject)
             {
 
                 this.CommandName  = CommandName;
-                this.JSON         = JSON;
+                this.JSONObject   = JSONObject;
 
             }
 
             #endregion
 
-            #region Command(CommandName, Number)
+            #region Command(CommandName, JSONArray)
 
             /// <summary>
             /// Create a new command using the given command name and message.
             /// </summary>
             /// <param name="CommandName">The name of the command.</param>
-            /// <param name="Number">A command number parameter.</param>
-            public Command(String    CommandName,
-                           Int64?    Number)
+            /// <param name="JSONArray">A command JSON array parameter.</param>
+            public Command(String   CommandName,
+                           JArray?  JSONArray)
             {
 
                 this.CommandName  = CommandName;
-                this.Number       = Number;
+                this.JSONArray    = JSONArray;
+
+            }
+
+            #endregion
+
+            #region Command(CommandName, Integer)
+
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="Integer">A command Integer parameter.</param>
+            public Command(String    CommandName,
+                           Int64?    Integer)
+            {
+
+                this.CommandName  = CommandName;
+                this.Integer       = Integer;
+
+            }
+
+            #endregion
+
+            #region Command(CommandName, Single)
+
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="Single">A command single/float parameter.</param>
+            public Command(String    CommandName,
+                           Single?   Single)
+            {
+
+                this.CommandName  = CommandName;
+                this.Single       = Single;
+
+            }
+
+            #endregion
+
+            #region Command(CommandName, Boolean)
+
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="Boolean">A command Boolean parameter.</param>
+            public Command(String    CommandName,
+                           Boolean?  Boolean)
+            {
+
+                this.CommandName  = CommandName;
+                this.Boolean      = Boolean;
 
             }
 
@@ -179,9 +247,10 @@ namespace cloud.charging.open.protocols.OCPI
             /// </summary>
             public override String ToString()
 
-                => $"'{CommandName}' => {Message                                                              ??
-                                         JSON?.  ToString(Newtonsoft.Json.Formatting.None)?.SubstringMax(100) ??
-                                         Number?.ToString()                                                   ??
+                => $"'{CommandName}' => {Message                                                               ??
+                                         JSONObject?.   ToString(Newtonsoft.Json.Formatting.None)?.SubstringMax(100) ??
+                                         Integer?.ToString()                                                   ??
+                                         Single?. ToString()                                                   ??
                                          String.Empty}";
 
             #endregion
@@ -206,20 +275,34 @@ namespace cloud.charging.open.protocols.OCPI
             public String            CommandName        { get; }
 
             /// <summary>
+            /// An optional command JSON object parameter.
+            /// </summary>
+            public JObject?          JSONObject         { get; }
+
+            /// <summary>
+            /// An optional command JSON array parameter.
+            /// </summary>
+            public JArray?           JSONArray          { get; }
+
+            /// <summary>
             /// An optional command message parameter.
             /// </summary>
             public String?           Message            { get; }
 
             /// <summary>
-            /// An optional command JSON object parameter.
+            /// An optional command Integer parameter.
             /// </summary>
-            public JObject?          JSON               { get; }
+            public Int64?            Integer            { get; }
 
             /// <summary>
-            /// An optional command number parameter.
+            /// An optional command Single/Float parameter.
             /// </summary>
-            public Int64?            Number             { get; }
+            public Single?           Single             { get; }
 
+            /// <summary>
+            /// An optional command Boolean parameter.
+            /// </summary>
+            public Boolean?          Boolean            { get; }
 
             /// <summary>
             /// The timestamp of the command.
@@ -240,7 +323,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             #region Constructor(s)
 
-            #region CommandWithMetadata(CommandName, Message, Timestamp, UserId = null)
+            #region CommandWithMetadata(CommandName, Message,    Timestamp, UserId = null)
 
             /// <summary>
             /// Create a new command using the given command name and message.
@@ -267,25 +350,25 @@ namespace cloud.charging.open.protocols.OCPI
 
             #endregion
 
-            #region CommandWithMetadata(CommandName, JSON,    Timestamp, UserId = null)
+            #region CommandWithMetadata(CommandName, JSONObject, Timestamp, UserId = null)
 
             /// <summary>
             /// Create a new command using the given command name and message.
             /// </summary>
             /// <param name="CommandName">The name of the command.</param>
-            /// <param name="JSON">A command JSON object parameter.</param>
+            /// <param name="JSONObject">A command JSON object parameter.</param>
             /// <param name="Timestamp">The timestamp of the command.</param>
             /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
             /// <param name="UserId">An optional user identification initiating this command/request.</param>
             public CommandWithMetadata(String            CommandName,
-                                       JObject?          JSON,
+                                       JObject?          JSONObject,
                                        DateTime          Timestamp,
                                        EventTracking_Id  EventTrackingId,
                                        User_Id?          UserId   = null)
             {
 
                 this.CommandName      = CommandName;
-                this.JSON             = JSON;
+                this.JSONObject       = JSONObject;
                 this.Timestamp        = Timestamp;
                 this.EventTrackingId  = EventTrackingId;
                 this.UserId           = UserId;
@@ -294,25 +377,106 @@ namespace cloud.charging.open.protocols.OCPI
 
             #endregion
 
-            #region CommandWithMetadata(CommandName, Number,  Timestamp, UserId = null)
+            #region CommandWithMetadata(CommandName, JSONArray,  Timestamp, UserId = null)
 
             /// <summary>
             /// Create a new command using the given command name and message.
             /// </summary>
             /// <param name="CommandName">The name of the command.</param>
-            /// <param name="Number">A command number parameter.</param>
+            /// <param name="JSONArray">A command JSON array parameter.</param>
             /// <param name="Timestamp">The timestamp of the command.</param>
             /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
             /// <param name="UserId">An optional user identification initiating this command/request.</param>
             public CommandWithMetadata(String            CommandName,
-                                       Int64?            Number,
+                                       JArray?           JSONArray,
                                        DateTime          Timestamp,
                                        EventTracking_Id  EventTrackingId,
                                        User_Id?          UserId   = null)
             {
 
                 this.CommandName      = CommandName;
-                this.Number           = Number;
+                this.JSONArray        = JSONArray;
+                this.Timestamp        = Timestamp;
+                this.EventTrackingId  = EventTrackingId;
+                this.UserId           = UserId;
+
+            }
+
+            #endregion
+
+            #region CommandWithMetadata(CommandName, Integer,    Timestamp, UserId = null)
+
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="Boolean">A command Integer parameter.</param>
+            /// <param name="Timestamp">The timestamp of the command.</param>
+            /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+            /// <param name="UserId">An optional user identification initiating this command/request.</param>
+            public CommandWithMetadata(String            CommandName,
+                                       Int64?            Boolean,
+                                       DateTime          Timestamp,
+                                       EventTracking_Id  EventTrackingId,
+                                       User_Id?          UserId   = null)
+            {
+
+                this.CommandName      = CommandName;
+                this.Integer          = Boolean;
+                this.Timestamp        = Timestamp;
+                this.EventTrackingId  = EventTrackingId;
+                this.UserId           = UserId;
+
+            }
+
+            #endregion
+
+            #region CommandWithMetadata(CommandName, Single,     Timestamp, UserId = null)
+
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="Single">A command Single parameter.</param>
+            /// <param name="Timestamp">The timestamp of the command.</param>
+            /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+            /// <param name="UserId">An optional user identification initiating this command/request.</param>
+            public CommandWithMetadata(String            CommandName,
+                                       Single?           Single,
+                                       DateTime          Timestamp,
+                                       EventTracking_Id  EventTrackingId,
+                                       User_Id?          UserId   = null)
+            {
+
+                this.CommandName      = CommandName;
+                this.Single           = Single;
+                this.Timestamp        = Timestamp;
+                this.EventTrackingId  = EventTrackingId;
+                this.UserId           = UserId;
+
+            }
+
+            #endregion
+
+            #region CommandWithMetadata(CommandName, Boolean,    Timestamp, UserId = null)
+
+            /// <summary>
+            /// Create a new command using the given command name and message.
+            /// </summary>
+            /// <param name="CommandName">The name of the command.</param>
+            /// <param name="Boolean">A command Boolean parameter.</param>
+            /// <param name="Timestamp">The timestamp of the command.</param>
+            /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+            /// <param name="UserId">An optional user identification initiating this command/request.</param>
+            public CommandWithMetadata(String            CommandName,
+                                       Boolean?          Boolean,
+                                       DateTime          Timestamp,
+                                       EventTracking_Id  EventTrackingId,
+                                       User_Id?          UserId   = null)
+            {
+
+                this.CommandName      = CommandName;
+                this.Boolean          = Boolean;
                 this.Timestamp        = Timestamp;
                 this.EventTrackingId  = EventTrackingId;
                 this.UserId           = UserId;
@@ -333,8 +497,8 @@ namespace cloud.charging.open.protocols.OCPI
                 => $"'{CommandName}' {(UserId is not null
                                            ? $"({UserId})"
                                            : String.Empty)} => {Message                                                              ??
-                                                                JSON?.  ToString(Newtonsoft.Json.Formatting.None)?.SubstringMax(100) ??
-                                                                Number?.ToString()                                                   ??
+                                                                JSONObject?.  ToString(Newtonsoft.Json.Formatting.None)?.SubstringMax(100) ??
+                                                                Integer?.ToString()                                                   ??
                                                                 String.Empty}";
 
             #endregion
@@ -881,20 +1045,32 @@ namespace cloud.charging.open.protocols.OCPI
                         if (line.StartsWith("//"))
                             continue;
 
-                        var json = JObject.Parse(line);
+                        var json    = JObject.Parse(line);
                         var command = json.Properties().First();
 
-                        if (command.Value.Type == JTokenType.String)
-                            list.Add(new Command(command.Name,
-                                                 command.Value<String>()));
-
-                        else if (command.Value.Type == JTokenType.Object)
+                        if (     command.Value.Type == JTokenType.Object)
                             list.Add(new Command(command.Name,
                                                  command.Value as JObject));
+
+                        else if (command.Value.Type == JTokenType.Array)
+                            list.Add(new Command(command.Name,
+                                                 command.Value as JArray));
+
+                        else if (command.Value.Type == JTokenType.String)
+                            list.Add(new Command(command.Name,
+                                                 command.Value<String>()));
 
                         else if (command.Value.Type == JTokenType.Integer)
                             list.Add(new Command(command.Name,
                                                  command.Value<Int64>()));
+
+                        else if (command.Value.Type == JTokenType.Float)
+                            list.Add(new Command(command.Name,
+                                                 command.Value<Single>()));
+
+                        else if (command.Value.Type == JTokenType.Boolean)
+                            list.Add(new Command(command.Name,
+                                                 command.Value<Boolean>()));
 
                     }
                     catch (Exception e)
@@ -909,7 +1085,7 @@ namespace cloud.charging.open.protocols.OCPI
             }
             catch
             {
-                return Array.Empty<Command>();
+                return [];
             }
 
         }
@@ -949,25 +1125,87 @@ namespace cloud.charging.open.protocols.OCPI
                         {
 
                             if (command.Value.Type == JTokenType.String)
-                                list.Add(new CommandWithMetadata(command.Name,
-                                                                 command.Value<String>(),
-                                                                 timestamp.Value,
-                                                                 eventTrackingId,
-                                                                 userId));
+                                list.Add(new CommandWithMetadata(
+                                             command.Name,
+                                             command.Value<String>(),
+                                             timestamp.Value,
+                                             eventTrackingId,
+                                             userId
+                                         ));
 
                             else if (command.Value.Type == JTokenType.Object)
-                                list.Add(new CommandWithMetadata(command.Name,
-                                                                 command.Value as JObject,
-                                                                 timestamp.Value,
-                                                                 eventTrackingId,
-                                                                 userId));
+                                list.Add(new CommandWithMetadata(
+                                             command.Name,
+                                             command.Value as JObject,
+                                             timestamp.Value,
+                                             eventTrackingId,
+                                             userId
+                                         ));
 
                             else if (command.Value.Type == JTokenType.Integer)
-                                list.Add(new CommandWithMetadata(command.Name,
-                                                                 command.Value<Int64>(),
-                                                                 timestamp.Value,
-                                                                 eventTrackingId,
-                                                                 userId));
+                                list.Add(new CommandWithMetadata(
+                                             command.Name,
+                                             command.Value<Int64>(),
+                                             timestamp.Value,
+                                             eventTrackingId,
+                                             userId
+                                         ));
+
+
+                            if (     command.Value.Type == JTokenType.Object)
+                                list.Add(new CommandWithMetadata(
+                                             command.Name,
+                                             command.Value as JObject,
+                                             timestamp.Value,
+                                             eventTrackingId,
+                                             userId
+                                         ));
+
+                            else if (command.Value.Type == JTokenType.Array)
+                                list.Add(new CommandWithMetadata(
+                                             command.Name,
+                                             command.Value as JArray,
+                                             timestamp.Value,
+                                             eventTrackingId,
+                                             userId
+                                         ));
+
+                            else if (command.Value.Type == JTokenType.String)
+                                list.Add(new CommandWithMetadata(
+                                             command.Name,
+                                             command.Value<String>(),
+                                             timestamp.Value,
+                                             eventTrackingId,
+                                             userId
+                                         ));
+
+                            else if (command.Value.Type == JTokenType.Integer)
+                                list.Add(new CommandWithMetadata(
+                                             command.Name,
+                                             command.Value<Int64>(),
+                                             timestamp.Value,
+                                             eventTrackingId,
+                                             userId
+                                         ));
+
+                            else if (command.Value.Type == JTokenType.Float)
+                                list.Add(new CommandWithMetadata(
+                                             command.Name,
+                                             command.Value<Single>(),
+                                             timestamp.Value,
+                                             eventTrackingId,
+                                             userId
+                                         ));
+
+                            else if (command.Value.Type == JTokenType.Boolean)
+                                list.Add(new CommandWithMetadata(
+                                             command.Name,
+                                             command.Value<Boolean>(),
+                                             timestamp.Value,
+                                             eventTrackingId,
+                                             userId
+                                         ));
+
 
                             else
                                 DebugX.Log($"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName}, IncludeMetaData): Invalid command: '{line}'!");

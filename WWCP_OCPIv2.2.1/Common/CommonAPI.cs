@@ -17,7 +17,6 @@
 
 #region Usings
 
-using System.Net.Security;
 using System.Collections.Concurrent;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
@@ -28,7 +27,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Logging;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
@@ -3852,13 +3850,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 if (!this.locations.TryGetValue(Location.CountryCode, out var parties))
                 {
-                    parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
+                    parties = [];
                     this.locations.Add(Location.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Location.PartyId, out var locations))
                 {
-                    locations = new Dictionary<Location_Id, Location>();
+                    locations = [];
                     parties.Add(Location.PartyId, locations);
                 }
 
@@ -3892,6 +3890,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 }
 
+                return null;
                 throw new ArgumentException("The given location already exists!");
 
             }

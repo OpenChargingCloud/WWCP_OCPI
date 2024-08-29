@@ -531,8 +531,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                        new JProperty("standard",               Standard.             ToString()),
                                        new JProperty("format",                 Format.               AsText()),
                                        new JProperty("power_type",             PowerType.            AsText()),
-                                       new JProperty("max_voltage",            MaxVoltage),
-                                       new JProperty("max_amperage",           MaxAmperage),
+                                       new JProperty("max_voltage",            MaxVoltage. Value),
+                                       new JProperty("max_amperage",           MaxAmperage.Value),
 
                                  MaxElectricPower.HasValue
                                      ? new JProperty("max_electric_power",     MaxElectricPower.Value)
@@ -701,8 +701,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         internal IEnumerable<Tariff_Id> GetTariffIds(EMSP_Id? EMSPId = null)
 
-            => ParentEVSE?.GetTariffIds(Id,
-                                        EMSPId) ?? Array.Empty<Tariff_Id>();
+            => ParentEVSE?.GetTariffIds(Id, EMSPId) ?? [];
 
 
         #region Operator overloading
