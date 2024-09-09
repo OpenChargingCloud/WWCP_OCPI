@@ -641,7 +641,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             this.MapResourceAssemblyFolder(HTTPHostname.Any,
                                            URLPathPrefix,
-                                           "cloud.charging.open.protocols.OCPIv2_1_1.WebAPI.HTTPRoot",
+                                           HTTPRoot,
                                            DefaultFilename: "index.html");
 
 

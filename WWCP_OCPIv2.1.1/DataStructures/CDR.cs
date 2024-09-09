@@ -252,7 +252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     foreach (var priceComponent in chargingPeriod.PriceComponents.Values)
                     {
 
-                        if      (priceComponent.Type == TariffDimension.ENERGY && priceComponent.Price > 0 && chargingPeriod.Energy.Value > 0)
+                        if      (priceComponent.Type == TariffDimension.ENERGY && priceComponent.Price > 0)// && chargingPeriod.Energy.Value > 0) !!!AS we want to be abl to invoice 0 kWhs!
                         {
 
                             chargingPeriod.Dimensions.Add(
@@ -268,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                         }
 
-                        else if (priceComponent.Type == TariffDimension.TIME   && priceComponent.Price > 0 && chargingPeriod.Duration.TotalSeconds > 0)
+                        else if (priceComponent.Type == TariffDimension.TIME   && priceComponent.Price > 0)// && chargingPeriod.Duration.TotalSeconds > 0)!!!AS we want to be abl to invoice 0 sec!
                         {
 
                             chargingPeriod.Dimensions.Add(
