@@ -343,8 +343,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
 
             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
-                TokenAuth.Token.TryBase64Decode_UTF8(out String DecodedToken)   &&
-                OCPI.AccessToken.TryParse(DecodedToken, out var accessToken))
+                TokenAuth.Token.TryParseBASE64_UTF8(out var decodedToken, out var errorResponse) &&
+                OCPI.AccessToken.TryParse(decodedToken, out var accessToken))
             {
                 this.AccessToken = accessToken;
             }
