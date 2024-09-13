@@ -231,7 +231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -254,7 +254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -277,7 +277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -300,7 +300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -533,7 +533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -556,7 +556,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -579,7 +579,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -602,7 +602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -1111,7 +1111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -1134,7 +1134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -1157,7 +1157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -1180,7 +1180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -1330,14 +1330,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
 
 
-                evse1.SetStatus(EVSEStatusTypes.Charging);
+                evse1.SetStatus(EVSEStatusType.Charging);
 
 
 
                 ClassicAssert.AreEqual(3, updatedEVSEStatus.    Count);
                 ClassicAssert.AreEqual(2, updatedOCPIEVSEStatus.Count);
 
-                ClassicAssert.AreEqual(EVSEStatusTypes.Charging,  graphDefinedCSO.GetEVSEById(evse1!.Id)?.Status.Value);
+                ClassicAssert.AreEqual(EVSEStatusType.Charging,  graphDefinedCSO.GetEVSEById(evse1!.Id)?.Status.Value);
 
                 {
                     if (evse1_UId.HasValue &&
@@ -1562,7 +1562,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -1585,7 +1585,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -1608,7 +1608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
@@ -1631,7 +1631,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusTypes.Available,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }

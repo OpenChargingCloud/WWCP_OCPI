@@ -512,7 +512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
                                       InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                      InitialStatus:        EVSEStatusTypes.Available,
+                                      InitialStatus:        EVSEStatusType.Available,
 
                                       ChargingConnectors:   new[] {
                                                                 new ChargingConnector(
@@ -542,7 +542,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                       Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
                                       InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                      InitialStatus:        EVSEStatusTypes.Available,
+                                      InitialStatus:        EVSEStatusType.Available,
 
                                       ChargingConnectors:   new[] {
                                                                 new ChargingConnector(

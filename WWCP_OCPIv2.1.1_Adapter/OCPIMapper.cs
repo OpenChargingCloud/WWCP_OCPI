@@ -89,23 +89,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Convert the given OCPI EVSE/connector status into a corresponding WWCP EVSE status.
         /// </summary>
         /// <param name="EVSEStatus">An OCPI EVSE/connector status.</param>
-        public static WWCP.EVSEStatusTypes AsWWCPEVSEStatus(this StatusType EVSEStatus)
+        public static WWCP.EVSEStatusType AsWWCPEVSEStatus(this StatusType EVSEStatus)
         {
 
             if (EVSEStatus == StatusType.AVAILABLE)
-                return WWCP.EVSEStatusTypes.Available;
+                return WWCP.EVSEStatusType.Available;
 
             if (EVSEStatus == StatusType.BLOCKED)
-                return WWCP.EVSEStatusTypes.OutOfService;
+                return WWCP.EVSEStatusType.OutOfService;
 
             if (EVSEStatus == StatusType.CHARGING)
-                return WWCP.EVSEStatusTypes.Charging;
+                return WWCP.EVSEStatusType.Charging;
 
             if (EVSEStatus == StatusType.INOPERATIVE)
-                return WWCP.EVSEStatusTypes.OutOfService;
+                return WWCP.EVSEStatusType.OutOfService;
 
             if (EVSEStatus == StatusType.OUTOFORDER)
-                return WWCP.EVSEStatusTypes.Error;
+                return WWCP.EVSEStatusType.Error;
 
             //if (EVSEStatus == StatusType.PLANNED)
             //    return WWCP.EVSEStatusTypes.Planned;
@@ -114,9 +114,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             //    return WWCP.EVSEStatusTypes.Removed;
 
             if (EVSEStatus == StatusType.RESERVED)
-                return WWCP.EVSEStatusTypes.Reserved;
+                return WWCP.EVSEStatusType.Reserved;
 
-            return WWCP.EVSEStatusTypes.Unspecified;
+            return WWCP.EVSEStatusType.Unspecified;
 
         }
 
@@ -128,34 +128,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Convert a WWCP EVSE status into OCPI EVSE status.
         /// </summary>
         /// <param name="EVSEStatus">A WWCP EVSE status.</param>
-        public static StatusType ToOCPI(this WWCP.EVSEStatusTypes EVSEStatus)
+        public static StatusType ToOCPI(this WWCP.EVSEStatusType EVSEStatus)
         {
 
-            if      (EVSEStatus == WWCP.EVSEStatusTypes.Available)
+            if      (EVSEStatus == WWCP.EVSEStatusType.Available)
                 return StatusType.AVAILABLE;
 
-            else if (EVSEStatus == WWCP.EVSEStatusTypes.Blocked)
+            else if (EVSEStatus == WWCP.EVSEStatusType.Blocked)
                 return StatusType.BLOCKED;
 
-            else if (EVSEStatus == WWCP.EVSEStatusTypes.Charging)
+            else if (EVSEStatus == WWCP.EVSEStatusType.Charging)
                 return StatusType.CHARGING;
 
-            else if (EVSEStatus == WWCP.EVSEStatusTypes.OutOfService)
+            else if (EVSEStatus == WWCP.EVSEStatusType.OutOfService)
                 return StatusType.INOPERATIVE;
 
-            else if (EVSEStatus == WWCP.EVSEStatusTypes.Offline)
+            else if (EVSEStatus == WWCP.EVSEStatusType.Offline)
                 return StatusType.INOPERATIVE;
 
-            else if (EVSEStatus == WWCP.EVSEStatusTypes.Error)
+            else if (EVSEStatus == WWCP.EVSEStatusType.Error)
                 return StatusType.OUTOFORDER;
 
-            else if (EVSEStatus == WWCP.EVSEStatusTypes.InDeployment)
+            else if (EVSEStatus == WWCP.EVSEStatusType.InDeployment)
                 return StatusType.PLANNED;
 
-            else if (EVSEStatus == WWCP.EVSEStatusTypes.Removed)
+            else if (EVSEStatus == WWCP.EVSEStatusType.Removed)
                 return StatusType.REMOVED;
 
-            else if (EVSEStatus == WWCP.EVSEStatusTypes.Reserved)
+            else if (EVSEStatus == WWCP.EVSEStatusType.Reserved)
                 return StatusType.RESERVED;
 
             else

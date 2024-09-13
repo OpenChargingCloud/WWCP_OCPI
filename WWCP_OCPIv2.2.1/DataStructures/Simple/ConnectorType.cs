@@ -17,7 +17,6 @@
 
 #region Usings
 
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -68,19 +67,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// Indicates whether this connector type is null or empty.
         /// </summary>
-        public Boolean IsNullOrEmpty
+        public Boolean  IsNullOrEmpty
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
         /// Indicates whether this connector type is NOT null or empty.
         /// </summary>
-        public Boolean IsNotNullOrEmpty
+        public Boolean  IsNotNullOrEmpty
             => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the connector type.
         /// </summary>
-        public UInt64 Length
+        public UInt64   Length
             => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
@@ -185,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The connector type is CHAdeMO, DC.
         /// </summary>
-        public static ConnectorType CHADEMO { get; }
+        public static ConnectorType CHADEMO                 { get; }
             = new ("CHADEMO");
 
         /// <summary>
@@ -193,235 +192,235 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The new generation charging connector, harmonized between CHAdeMO and GB/T.
         /// DC.
         /// </summary>
-        public static ConnectorType CHAOJI { get; }
+        public static ConnectorType CHAOJI                  { get; }
             = new ("CHAOJI");
 
         /// <summary>
         /// Standard/Domestic household, type "A", NEMA 1-15, 2 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_A { get; }
+        public static ConnectorType DOMESTIC_A              { get; }
             = new ("DOMESTIC_A");
 
         /// <summary>
         /// Standard/Domestic household, type "B", NEMA 5-15, 3 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_B { get; }
+        public static ConnectorType DOMESTIC_B              { get; }
             = new ("DOMESTIC_B");
 
         /// <summary>
         /// Standard/Domestic household, type "C", CEE 7/17, 2 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_C { get; }
+        public static ConnectorType DOMESTIC_C              { get; }
             = new ("DOMESTIC_C");
 
         /// <summary>
         /// Standard/Domestic household, type "D", 3 pin
         /// </summary>
-        public static ConnectorType DOMESTIC_D { get; }
+        public static ConnectorType DOMESTIC_D              { get; }
             = new ("DOMESTIC_D");
 
         /// <summary>
         /// Standard/Domestic household, type "E", CEE 7/5 3 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_E { get; }
+        public static ConnectorType DOMESTIC_E              { get; }
             = new ("DOMESTIC_E");
 
         /// <summary>
         /// Standard/Domestic household, type "F", CEE 7/4, Schuko, 3 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_F { get; }
+        public static ConnectorType DOMESTIC_F              { get; }
             = new ("DOMESTIC_F");
 
         /// <summary>
         /// Standard/Domestic household, type "G", BS 1363, Commonwealth, 3
         /// </summary>
-        public static ConnectorType DOMESTIC_G { get; }
+        public static ConnectorType DOMESTIC_G              { get; }
             = new ("DOMESTIC_G");
 
         /// <summary>
         /// Standard/Domestic household, type "H", SI-32, 3 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_H { get; }
+        public static ConnectorType DOMESTIC_H              { get; }
             = new ("DOMESTIC_H");
 
         /// <summary>
         /// Standard/Domestic household, type "I", AS 3112, 3 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_I { get; }
+        public static ConnectorType DOMESTIC_I              { get; }
             = new ("DOMESTIC_I");
 
         /// <summary>
         /// Standard/Domestic household, type "J", SEV 1011, 3 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_J { get; }
+        public static ConnectorType DOMESTIC_J              { get; }
             = new ("DOMESTIC_J");
 
         /// <summary>
         /// Standard/Domestic household, type "K", DS 60884-2-D1, 3 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_K { get; }
+        public static ConnectorType DOMESTIC_K              { get; }
             = new ("DOMESTIC_K");
 
         /// <summary>
         /// Standard/Domestic household, type "L", CEI 23-16-VII, 3 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_L { get; }
+        public static ConnectorType DOMESTIC_L              { get; }
             = new ("DOMESTIC_L");
 
         /// <summary>
         /// Standard/Domestic household, type "M", BS 546, 3 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_M { get; }
+        public static ConnectorType DOMESTIC_M              { get; }
             = new ("DOMESTIC_M");
 
         /// <summary>
         /// Standard/Domestic household, type "N", NBR 14136, 3 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_N { get; }
+        public static ConnectorType DOMESTIC_N              { get; }
             = new ("DOMESTIC_N");
 
         /// <summary>
         /// Standard/Domestic household, type "O", TIS 166-2549, 3 pins
         /// </summary>
-        public static ConnectorType DOMESTIC_O { get; }
+        public static ConnectorType DOMESTIC_O              { get; }
             = new ("DOMESTIC_O");
 
         /// <summary>
         /// Guobiao GB/T 20234.2 AC socket/connector
         /// </summary>
-        public static ConnectorType GBT_AC { get; }
+        public static ConnectorType GBT_AC                  { get; }
             = new ("GBT_AC");
 
         /// <summary>
         /// Guobiao GB/T 20234.3 DC connector
         /// </summary>
-        public static ConnectorType GBT_DC { get; }
+        public static ConnectorType GBT_DC                  { get; }
             = new ("GBT_DC");
 
         /// <summary>
         /// IEC 60309-2 Industrial Connector single phase 16 Amperes (usually blue)
         /// </summary>
-        public static ConnectorType IEC_60309_2_single_16 { get; }
+        public static ConnectorType IEC_60309_2_single_16   { get; }
             = new ("IEC_60309_2_single_16");
 
         /// <summary>
         /// IEC 60309-2 Industrial Connector three phase 16 Amperes (usually red)
         /// </summary>
-        public static ConnectorType IEC_60309_2_three_16 { get; }
+        public static ConnectorType IEC_60309_2_three_16    { get; }
             = new ("IEC_60309_2_three_16");
 
         /// <summary>
         /// IEC 60309-2 Industrial Connector three phase 32 Amperes (usually red)
         /// </summary>
-        public static ConnectorType IEC_60309_2_three_32 { get; }
+        public static ConnectorType IEC_60309_2_three_32    { get; }
             = new ("IEC_60309_2_three_32");
 
         /// <summary>
         /// IEC 60309-2 Industrial Connector three phase 64 Amperes (usually red)
         /// </summary>
-        public static ConnectorType IEC_60309_2_three_64 { get; }
+        public static ConnectorType IEC_60309_2_three_64    { get; }
             = new ("IEC_60309_2_three_64");
 
         /// <summary>
         /// IEC 62196 Type 1 "SAE J1772".
         /// </summary>
-        public static ConnectorType IEC_62196_T1 { get; }
+        public static ConnectorType IEC_62196_T1            { get; }
             = new ("IEC_62196_T1");
 
         /// <summary>
         /// Combo Type 1 based, DC
         /// </summary>
-        public static ConnectorType IEC_62196_T1_COMBO { get; }
+        public static ConnectorType IEC_62196_T1_COMBO      { get; }
             = new ("IEC_62196_T1_COMBO");
 
         /// <summary>
         /// IEC 62196 Type 2 "Mennekes"
         /// </summary>
-        public static ConnectorType IEC_62196_T2 { get; }
+        public static ConnectorType IEC_62196_T2            { get; }
             = new ("IEC_62196_T2");
 
         /// <summary>
         /// Combo Type 2 based, DC
         /// </summary>
-        public static ConnectorType IEC_62196_T2_COMBO { get; }
+        public static ConnectorType IEC_62196_T2_COMBO      { get; }
             = new ("IEC_62196_T2_COMBO");
 
         /// <summary>
         /// IEC 62196 Type 3A
         /// </summary>
-        public static ConnectorType IEC_62196_T3A { get; }
+        public static ConnectorType IEC_62196_T3A           { get; }
             = new ("IEC_62196_T3A");
 
         /// <summary>
         /// IEC 62196 Type 3C "Scame"
         /// </summary>
-        public static ConnectorType IEC_62196_T3C { get; }
+        public static ConnectorType IEC_62196_T3C           { get; }
             = new ("IEC_62196_T3C");
 
         /// <summary>
         /// NEMA 5-20, 3 pins
         /// </summary>
-        public static ConnectorType NEMA_5_20 { get; }
+        public static ConnectorType NEMA_5_20               { get; }
             = new ("NEMA_5_20");
 
         /// <summary>
         /// NEMA 6-30, 3 pins
         /// </summary>
-        public static ConnectorType NEMA_6_30 { get; }
+        public static ConnectorType NEMA_6_30               { get; }
             = new ("NEMA_6_30");
 
         /// <summary>
         /// NEMA 6-50, 3 pins
         /// </summary>
-        public static ConnectorType NEMA_6_50 { get; }
+        public static ConnectorType NEMA_6_50               { get; }
             = new ("NEMA_6_50");
 
         /// <summary>
         /// NEMA 10-30, 3 pins
         /// </summary>
-        public static ConnectorType NEMA_10_30 { get; }
+        public static ConnectorType NEMA_10_30              { get; }
             = new ("NEMA_10_30");
 
         /// <summary>
         /// NEMA 10-50, 3 pins
         /// </summary>
-        public static ConnectorType NEMA_10_50 { get; }
+        public static ConnectorType NEMA_10_50              { get; }
             = new ("NEMA_10_50");
 
         /// <summary>
         /// NEMA 14-30, 3 pins, rating of 30 A
         /// </summary>
-        public static ConnectorType NEMA_14_30 { get; }
+        public static ConnectorType NEMA_14_30              { get; }
             = new ("NEMA_14_30");
 
         /// <summary>
         /// NEMA 14-50, 3 pins, rating of 50 A
         /// </summary>
-        public static ConnectorType NEMA_14_50 { get; }
+        public static ConnectorType NEMA_14_50              { get; }
             = new ("NEMA_14_50");
 
         /// <summary>
         /// On-board Bottom-up-Pantograph typically for bus charging.
         /// </summary>
-        public static ConnectorType PANTOGRAPH_BOTTOM_UP { get; }
+        public static ConnectorType PANTOGRAPH_BOTTOM_UP    { get; }
             = new ("PANTOGRAPH_BOTTOM_UP");
 
         /// <summary>
         /// Off-board Top-down-Pantograph typically for bus charging.
         /// </summary>
-        public static ConnectorType PANTOGRAPH_TOP_DOWN { get; }
+        public static ConnectorType PANTOGRAPH_TOP_DOWN     { get; }
             = new ("PANTOGRAPH_TOP_DOWN");
 
         /// <summary>
         /// Tesla Connector "Roadster"-type (round, 4 pin)
         /// </summary>
-        public static ConnectorType TESLA_R { get; }
+        public static ConnectorType TESLA_R                 { get; }
             = new ("TESLA_R");
 
         /// <summary>
         /// Tesla Connector "Model-S"-type (oval, 5 pin)
         /// </summary>
-        public static ConnectorType TESLA_S { get; }
+        public static ConnectorType TESLA_S                 { get; }
             = new ("TESLA_S");
 
         #endregion
