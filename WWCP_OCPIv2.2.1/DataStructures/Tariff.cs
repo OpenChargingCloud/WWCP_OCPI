@@ -18,6 +18,7 @@
 #region Usings
 
 using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -435,9 +436,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Tariff">The parsed tariff.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject      JSON,
-                                       out Tariff?  Tariff,
-                                       out String?  ErrorResponse)
+        public static Boolean TryParse(JObject                           JSON,
+                                       [NotNullWhen(true)]  out Tariff?  Tariff,
+                                       [NotNullWhen(false)] out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out Tariff,
@@ -446,6 +447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                         null,
                         null,
                         null);
+
 
         /// <summary>
         /// Try to parse the given JSON representation of a tariff.
@@ -458,8 +460,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="TariffIdURL">An optional tariff identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomTariffParser">A delegate to parse custom tariff JSON objects.</param>
         public static Boolean TryParse(JObject                               JSON,
-                                       out Tariff?                           Tariff,
-                                       out String?                           ErrorResponse,
+                                       [NotNullWhen(true)]  out Tariff?      Tariff,
+                                       [NotNullWhen(false)] out String?      ErrorResponse,
                                        CountryCode?                          CountryCodeURL       = null,
                                        Party_Id?                             PartyIdURL           = null,
                                        Tariff_Id?                            TariffIdURL          = null,

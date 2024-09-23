@@ -425,7 +425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 HTTPResponseBuilder.AccessControlAllowOrigin   ??= "*";
                 HTTPResponseBuilder.AccessControlAllowHeaders  ??= new[] { "Authorization" };
                 HTTPResponseBuilder.Vary                       ??= "Accept";
-                HTTPResponseBuilder.Connection                 ??= "close";
+                HTTPResponseBuilder.Connection                 ??= ConnectionType.Close;
 
                 if (Request is not null)
                 {

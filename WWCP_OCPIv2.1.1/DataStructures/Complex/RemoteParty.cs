@@ -198,14 +198,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Boolean?                              PreferIPv4                    { get; }
 
         /// <summary>
-        /// The HTTP user agent identification.
+        /// The optional HTTP accept header.
         /// </summary>
-        public String?                               HTTPUserAgent                 { get; }
+        public AcceptTypes?                          Accept                        { get; }
 
         /// <summary>
         /// The optional HTTP authentication to use.
         /// </summary>
         public IHTTPAuthentication?                  HTTPAuthentication            { get; }
+
+        /// <summary>
+        /// The HTTP user agent identification.
+        /// </summary>
+        public String?                               HTTPUserAgent                 { get; }
 
         /// <summary>
         /// The timeout for upstream requests.

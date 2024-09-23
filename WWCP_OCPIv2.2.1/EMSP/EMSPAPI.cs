@@ -3598,7 +3598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             //                                     Date            = Timestamp.Now,
             //                                     ContentType     = HTTPContentType.Text.HTML_UTF8,
             //                                     Content         = _MemoryStream.ToArray(),
-            //                                     Connection      = "close"
+            //                                     Connection      = ConnectionType.Close
             //                                 };
 
             //                             });

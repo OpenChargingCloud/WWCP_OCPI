@@ -343,11 +343,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                     var httpResponse = await new HTTPSClient(remoteURL).
                                                   Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                          remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
+                                                                                         RequestBuilder: requestBuilder => {
+                                                                                             requestBuilder.Connection = ConnectionType.Close;
+                                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                             requestBuilder.Set("X-Request-ID",      "123");
+                                                                                             requestBuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 
@@ -400,12 +400,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                     var httpResponse = await new HTTPSClient(remoteURL).
                                                   Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                          remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
-                                                                                             requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
+                                                                                         RequestBuilder: requestBuilder => {
+                                                                                             requestBuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
+                                                                                             requestBuilder.Connection     = ConnectionType.Close;
+                                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                             requestBuilder.Set("X-Request-ID",      "123");
+                                                                                             requestBuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 
@@ -1010,11 +1010,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                     var httpResponse = await new HTTPSClient(remoteURL).
                                                   Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                          remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
+                                                                                         RequestBuilder: requestBuilder => {
+                                                                                             requestBuilder.Connection = ConnectionType.Close;
+                                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                             requestBuilder.Set("X-Request-ID",      "123");
+                                                                                             requestBuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 
@@ -1067,12 +1067,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                     var httpResponse = await new HTTPSClient(remoteURL).
                                                   Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                          remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
-                                                                                             requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
+                                                                                         RequestBuilder: requestBuilder => {
+                                                                                             requestBuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
+                                                                                             requestBuilder.Connection     = ConnectionType.Close;
+                                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                             requestBuilder.Set("X-Request-ID",      "123");
+                                                                                             requestBuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 
@@ -1542,11 +1542,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                     var httpResponse = await new HTTPSClient(remoteURL).
                                                   Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                          remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Connection = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
+                                                                                         RequestBuilder: requestBuilder => {
+                                                                                             requestBuilder.Connection = ConnectionType.Close;
+                                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                             requestBuilder.Set("X-Request-ID",      "123");
+                                                                                             requestBuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 
@@ -1607,12 +1607,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                     var httpResponse = await new HTTPSClient(remoteURL).
                                                   Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                          remoteURL.Path,
-                                                                                         requestbuilder => {
-                                                                                             requestbuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
-                                                                                             requestbuilder.Connection     = "close";
-                                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestbuilder.Set("X-Request-ID",      "123");
-                                                                                             requestbuilder.Set("X-Correlation-ID",  "123");
+                                                                                         RequestBuilder: requestBuilder => {
+                                                                                             requestBuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
+                                                                                             requestBuilder.Connection     = ConnectionType.Close;
+                                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                             requestBuilder.Set("X-Request-ID",      "123");
+                                                                                             requestBuilder.Set("X-Correlation-ID",  "123");
                                                                                          })).
                                                   ConfigureAwait(false);
 

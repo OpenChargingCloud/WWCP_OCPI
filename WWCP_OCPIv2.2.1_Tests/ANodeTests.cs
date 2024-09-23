@@ -44,11 +44,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             var httpResponse  = await new HTTPClient(RemoteURL).
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      RemoteURL.Path,
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      "1234");
-                                                                                         requestbuilder.Set("X-Correlation-ID",  "5678");
+                                                                                     RequestBuilder: requestBuilder => {
+                                                                                         requestBuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
+                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                         requestBuilder.Set("X-Request-ID",      "1234");
+                                                                                         requestBuilder.Set("X-Correlation-ID",  "5678");
                                                                                      })).
                                               ConfigureAwait(false);
 
@@ -66,13 +66,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             var httpResponse  = await new HTTPClient(RemoteURL).
                                               Execute(client => client.CreateRequest(Method,
                                                                                      RemoteURL.Path,
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
-                                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestbuilder.Content        = JSON.ToUTF8Bytes();
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      "1234");
-                                                                                         requestbuilder.Set("X-Correlation-ID",  "5678");
+                                                                                     RequestBuilder: requestBuilder => {
+                                                                                         requestBuilder.Authorization  = HTTPTokenAuthentication.ParseHTTPHeader(Token);
+                                                                                         requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
+                                                                                         requestBuilder.Content        = JSON.ToUTF8Bytes();
+                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                         requestBuilder.Set("X-Request-ID",      "1234");
+                                                                                         requestBuilder.Set("X-Correlation-ID",  "5678");
                                                                                      })).
                                               ConfigureAwait(false);
 

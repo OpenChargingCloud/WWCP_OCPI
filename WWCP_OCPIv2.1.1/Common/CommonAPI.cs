@@ -1752,7 +1752,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                       HTTPMethod.GET
                                                                                   },
                                                      AccessControlAllowHeaders  = new[] { "Authorization" },
-                                                     Connection                 = "close"
+                                                     Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
                                          });
@@ -1782,7 +1782,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,
             //                                     ContentType     = HTTPContentType.Text.HTML_UTF8,
             //                                     Content         = _MemoryStream.ToArray(),
-            //                                     Connection      = "close"
+            //                                     Connection      = ConnectionType.Close
             //                                 };
 
             //                             });
@@ -1806,7 +1806,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      AccessControlAllowHeaders  = new[] { "Authorization" },
                                                      ContentType                = HTTPContentType.Text.PLAIN,
                                                      Content                    = "This is an Open Charge Point Interface HTTP service!\r\nPlease check ~/versions!".ToUTF8Bytes(),
-                                                     Connection                 = "close"
+                                                     Connection                 = ConnectionType.Close
                                                  }.AsImmutable);
 
                                          });

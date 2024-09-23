@@ -138,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                  (httpRequest.SubprotocolRequest as OCPIRequest)?.RequestId,
                                                                                  (httpRequest.SubprotocolRequest as OCPIRequest)?.CorrelationId
                                                                              ).ToJSON(json => json).ToUTF8Bytes(),
-                                                           Connection      = "close"
+                                                           Connection      = ConnectionType.Close
                                                        };
 
                                             }

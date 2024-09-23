@@ -811,8 +811,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                                           LocalCertificateSelector,
                                                                           ClientCert,
                                                                           TLSProtocol,
+                                                                          ContentType,
+                                                                          Accept,
+                                                                          Authentication,
                                                                           HTTPUserAgent,
-                                                                          HTTPAuthentication,
+                                                                          Connection,
                                                                           RequestTimeout,
                                                                           TransmissionRetryDelay,
                                                                           MaxNumberOfRetries,
@@ -824,12 +827,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                            Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                                   remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
-                                                                                                  requestbuilder => {
-                                                                                                      requestbuilder.Authorization  = TokenAuth;
-                                                                                                      requestbuilder.Connection     = "close";
-                                                                                                      requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                                      requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                                      requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                                  RequestBuilder: requestBuilder => {
+                                                                                                      requestBuilder.Authorization  = TokenAuth;
+                                                                                                      requestBuilder.Connection     = ConnectionType.Close;
+                                                                                                      requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                                      requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                                      requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                                   }),
 
                                                                    RequestLogDelegate:   OnGetLocationsHTTPRequest,
@@ -998,8 +1001,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -1011,12 +1017,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                    remoteURL.Value.Path + LocationId.ToString(),
-                                                                                   requestbuilder => {
-                                                                                       requestbuilder.Authorization  = TokenAuth;
-                                                                                       requestbuilder.Connection     = "close";
-                                                                                       requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                       requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                       requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                   RequestBuilder: requestBuilder => {
+                                                                                       requestBuilder.Authorization  = TokenAuth;
+                                                                                       requestBuilder.Connection     = ConnectionType.Close;
+                                                                                       requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                       requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                       requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                    }),
 
                                                   RequestLogDelegate:   OnGetLocationHTTPRequest,
@@ -1190,8 +1196,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -1203,12 +1212,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                    remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString(),
-                                                                                   requestbuilder => {
-                                                                                       requestbuilder.Authorization  = TokenAuth;
-                                                                                       requestbuilder.Connection     = "close";
-                                                                                       requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                       requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                       requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                   RequestBuilder: requestBuilder => {
+                                                                                       requestBuilder.Authorization  = TokenAuth;
+                                                                                       requestBuilder.Connection     = ConnectionType.Close;
+                                                                                       requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                       requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                       requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                    }),
 
                                                   RequestLogDelegate:   OnGetEVSEHTTPRequest,
@@ -1386,8 +1395,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -1399,12 +1411,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                    remoteURL.Value.Path + LocationId.ToString() + EVSEUId.ToString() + ConnectorId.ToString(),
-                                                                                   requestbuilder => {
-                                                                                       requestbuilder.Authorization  = TokenAuth;
-                                                                                       requestbuilder.Connection     = "close";
-                                                                                       requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                       requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                       requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                   RequestBuilder: requestBuilder => {
+                                                                                       requestBuilder.Authorization  = TokenAuth;
+                                                                                       requestBuilder.Connection     = ConnectionType.Close;
+                                                                                       requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                       requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                       requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                    }),
 
                                                   RequestLogDelegate:   OnGetConnectorHTTPRequest,
@@ -1584,8 +1596,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                                           LocalCertificateSelector,
                                                                           ClientCert,
                                                                           TLSProtocol,
+                                                                          ContentType,
+                                                                          Accept,
+                                                                          Authentication,
                                                                           HTTPUserAgent,
-                                                                          HTTPAuthentication,
+                                                                          Connection,
                                                                           RequestTimeout,
                                                                           TransmissionRetryDelay,
                                                                           MaxNumberOfRetries,
@@ -1597,12 +1612,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                          Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                                 remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
-                                                                                                requestbuilder => {
-                                                                                                    requestbuilder.Authorization  = TokenAuth;
-                                                                                                    requestbuilder.Connection     = "close";
-                                                                                                    requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                                RequestBuilder: requestBuilder => {
+                                                                                                    requestBuilder.Authorization  = TokenAuth;
+                                                                                                    requestBuilder.Connection     = ConnectionType.Close;
+                                                                                                    requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                                    requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                                    requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                                 }),
 
                                                                RequestLogDelegate:   OnGetTariffsHTTPRequest,
@@ -1771,8 +1786,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -1784,12 +1802,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                    remoteURL.Value.Path + TariffId.ToString(),
-                                                                                   requestbuilder => {
-                                                                                       requestbuilder.Authorization  = TokenAuth;
-                                                                                       requestbuilder.Connection     = "close";
-                                                                                       requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                       requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                       requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                   RequestBuilder: requestBuilder => {
+                                                                                       requestBuilder.Authorization  = TokenAuth;
+                                                                                       requestBuilder.Connection     = ConnectionType.Close;
+                                                                                       requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                       requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                       requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                    }),
 
                                                   RequestLogDelegate:   OnGetTariffHTTPRequest,
@@ -1967,8 +1985,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                                           LocalCertificateSelector,
                                                                           ClientCert,
                                                                           TLSProtocol,
+                                                                          ContentType,
+                                                                          Accept,
+                                                                          Authentication,
                                                                           HTTPUserAgent,
-                                                                          HTTPAuthentication,
+                                                                          Connection,
                                                                           RequestTimeout,
                                                                           TransmissionRetryDelay,
                                                                           MaxNumberOfRetries,
@@ -1980,12 +2001,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                          Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                                 remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
-                                                                                                requestbuilder => {
-                                                                                                    requestbuilder.Authorization  = TokenAuth;
-                                                                                                    requestbuilder.Connection     = "close";
-                                                                                                    requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                                RequestBuilder: requestBuilder => {
+                                                                                                    requestBuilder.Authorization  = TokenAuth;
+                                                                                                    requestBuilder.Connection     = ConnectionType.Close;
+                                                                                                    requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                                    requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                                    requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                                 }),
 
                                                                RequestLogDelegate:   OnGetSessionsHTTPRequest,
@@ -2170,8 +2191,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -2183,12 +2207,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                    remoteURL.Value.Path + SessionId.ToString(),
-                                                                                   requestbuilder => {
-                                                                                       requestbuilder.Authorization  = TokenAuth;
-                                                                                       requestbuilder.Connection     = "close";
-                                                                                       requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                       requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                       requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                   RequestBuilder: requestBuilder => {
+                                                                                       requestBuilder.Authorization  = TokenAuth;
+                                                                                       requestBuilder.Connection     = ConnectionType.Close;
+                                                                                       requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                       requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                       requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                    }),
 
                                                   RequestLogDelegate:   OnGetSessionHTTPRequest,
@@ -2346,12 +2370,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.CDRs,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.CDRs,
+                                          InterfaceRoles.SENDER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -2368,8 +2392,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                                           LocalCertificateSelector,
                                                                           ClientCert,
                                                                           TLSProtocol,
+                                                                          ContentType,
+                                                                          Accept,
+                                                                          Authentication,
                                                                           HTTPUserAgent,
-                                                                          HTTPAuthentication,
+                                                                          Connection,
                                                                           RequestTimeout,
                                                                           TransmissionRetryDelay,
                                                                           MaxNumberOfRetries,
@@ -2381,12 +2408,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                                          Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                                 remoteURL.Value.Path + dateAndPaginationFilters.ToHTTPQueryString(),
-                                                                                                requestbuilder => {
-                                                                                                    requestbuilder.Authorization  = TokenAuth;
-                                                                                                    requestbuilder.Connection     = "close";
-                                                                                                    requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                                RequestBuilder: requestBuilder => {
+                                                                                                    requestBuilder.Authorization  = TokenAuth;
+                                                                                                    requestBuilder.Connection     = ConnectionType.Close;
+                                                                                                    requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                                    requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                                    requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                                 }),
 
                                                                RequestLogDelegate:   OnGetCDRsHTTPRequest,
@@ -2535,12 +2562,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.CDRs,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.CDRs,
+                                          InterfaceRoles.SENDER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -2555,8 +2582,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -2568,12 +2598,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                             Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                    remoteURL.Value.Path + CDRId.ToString(),
-                                                                                   requestbuilder => {
-                                                                                       requestbuilder.Authorization  = TokenAuth;
-                                                                                       requestbuilder.Connection     = "close";
-                                                                                       requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                       requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                       requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                   RequestBuilder: requestBuilder => {
+                                                                                       requestBuilder.Authorization  = TokenAuth;
+                                                                                       requestBuilder.Connection     = ConnectionType.Close;
+                                                                                       requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                       requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                       requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                    }),
 
                                                   RequestLogDelegate:   OnGetCDRHTTPRequest,
@@ -2723,12 +2753,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Tokens,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Tokens,
+                                          InterfaceRoles.SENDER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -2743,8 +2773,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -2758,12 +2791,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
                                                                                                             PartyId.    ToString() +
                                                                                                             TokenId.    ToString(),
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization  = TokenAuth;
-                                                                                         requestbuilder.Connection     = "close";
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     RequestBuilder: requestBuilder => {
+                                                                                         requestBuilder.Authorization  = TokenAuth;
+                                                                                         requestBuilder.Connection     = ConnectionType.Close;
+                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                      }),
 
                                                       RequestLogDelegate:   OnGetTokenHTTPRequest,
@@ -2912,12 +2945,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Tokens,
-                                    InterfaceRoles.SENDER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Tokens,
+                                          InterfaceRoles.SENDER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -2932,8 +2965,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -2947,14 +2983,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                                                      remoteURL.Value.Path + Token.CountryCode.ToString() +
                                                                                                             Token.PartyId.    ToString() +
                                                                                                             Token.Id.         ToString(),
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization  = TokenAuth;
-                                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestbuilder.Content        = Token.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Connection     = "close";
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     RequestBuilder: requestBuilder => {
+                                                                                         requestBuilder.Authorization  = TokenAuth;
+                                                                                         requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
+                                                                                         requestBuilder.Content        = Token.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestBuilder.Connection     = ConnectionType.Close;
+                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                      }),
 
                                                       RequestLogDelegate:   OnPutTokenHTTPRequest,
@@ -3112,12 +3148,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             {
 
                 var remoteURL = await GetRemoteURL(
-                                    Module_Id.Tokens,
-                                    InterfaceRoles.RECEIVER,
-                                    VersionId,
-                                    eventTrackingId,
-                                    CancellationToken
-                                );
+                                          Module_Id.Tokens,
+                                          InterfaceRoles.RECEIVER,
+                                          VersionId,
+                                          eventTrackingId,
+                                          CancellationToken
+                                      );
 
                 if (remoteURL.HasValue)
                 {
@@ -3132,8 +3168,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -3147,14 +3186,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
                                                                                                             PartyId.    ToString() +
                                                                                                             TokenId.    ToString(),
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization  = TokenAuth;
-                                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestbuilder.Content        = TokenPatch.ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Connection     = "close";
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     RequestBuilder: requestBuilder => {
+                                                                                         requestBuilder.Authorization  = TokenAuth;
+                                                                                         requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
+                                                                                         requestBuilder.Content        = TokenPatch.ToUTF8Bytes(JSONFormat);
+                                                                                         requestBuilder.Connection     = ConnectionType.Close;
+                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                      }),
 
                                                       RequestLogDelegate:   OnPatchTokenHTTPRequest,
@@ -3317,19 +3356,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             {
 
                 var remoteURL  = await GetRemoteURL(
-                                     Module_Id.Commands,
-                                     InterfaceRoles.RECEIVER,
-                                     VersionId,
-                                     eventTrackingId,
-                                     CancellationToken
-                                 );
+                                           Module_Id.Commands,
+                                           InterfaceRoles.RECEIVER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
                 var command    = new ReserveNowCommand(Token,
                                                        ExpirationTimestamp,
                                                        ReservationId,
                                                        LocationId,
                                                        CommonAPI.GetModuleURL(Module_Id.Commands,
-                                                                                SelectedOCPIVersionId.ToString() + "/emsp") + "RESERVE_NOW" + commandId.ToString(),
+                                                                              SelectedOCPIVersionId.ToString() + "/emsp") + "RESERVE_NOW" + commandId.ToString(),
                                                        EVSEUId,
                                                        AuthorizationReference,
                                                        commandId,
@@ -3354,8 +3393,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -3367,14 +3409,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
                                                                                      remoteURL.Value.Path + "RESERVE_NOW",
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization  = TokenAuth;
-                                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestbuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Connection     = "close";
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     RequestBuilder: requestBuilder => {
+                                                                                         requestBuilder.Authorization  = TokenAuth;
+                                                                                         requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
+                                                                                         requestBuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestBuilder.Connection     = ConnectionType.Close;
+                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                      }),
 
                                                       RequestLogDelegate:   OnReserveNowHTTPRequest,
@@ -3528,16 +3570,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             {
 
                 var remoteURL  = await GetRemoteURL(
-                                     Module_Id.Commands,
-                                     InterfaceRoles.RECEIVER,
-                                     VersionId,
-                                     eventTrackingId,
-                                     CancellationToken
-                                 );
+                                           Module_Id.Commands,
+                                           InterfaceRoles.RECEIVER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
                 var command    = new CancelReservationCommand(ReservationId,
                                                               CommonAPI.GetModuleURL(Module_Id.Commands,
-                                                                                       SelectedOCPIVersionId.ToString() + "/emsp") + "CANCEL_RESERVATION" + commandId.ToString(),
+                                                                                     SelectedOCPIVersionId.ToString() + "/emsp") + "CANCEL_RESERVATION" + commandId.ToString(),
                                                               commandId,
                                                               requestId,
                                                               correlationId);
@@ -3560,8 +3602,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -3573,14 +3618,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
                                                                                      remoteURL.Value.Path + "CANCEL_RESERVATION",
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization  = TokenAuth;
-                                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestbuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Connection     = "close";
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     RequestBuilder: requestBuilder => {
+                                                                                         requestBuilder.Authorization  = TokenAuth;
+                                                                                         requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
+                                                                                         requestBuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestBuilder.Connection     = ConnectionType.Close;
+                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                      }),
 
                                                       RequestLogDelegate:   OnCancelReservationHTTPRequest,
@@ -3738,17 +3783,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             {
 
                 var remoteURL  = await GetRemoteURL(
-                                     Module_Id.Commands,
-                                     InterfaceRoles.RECEIVER,
-                                     VersionId,
-                                     eventTrackingId,
-                                     CancellationToken
-                                 );
+                                           Module_Id.Commands,
+                                           InterfaceRoles.RECEIVER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
                 var command    = new StartSessionCommand(Token,
                                                          LocationId,
                                                          CommonAPI.GetModuleURL(Module_Id.Commands,
-                                                                                  SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + commandId.ToString(),
+                                                                                SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + commandId.ToString(),
                                                          EVSEUId,
                                                          ConnectorId,
                                                          AuthorizationReference,
@@ -3774,8 +3819,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -3787,14 +3835,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
                                                                                      remoteURL.Value.Path + "START_SESSION",
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization = TokenAuth;
-                                                                                         requestbuilder.ContentType   = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Connection    = "close";
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     RequestBuilder: requestBuilder => {
+                                                                                         requestBuilder.Authorization = TokenAuth;
+                                                                                         requestBuilder.ContentType   = HTTPContentType.Application.JSON_UTF8;
+                                                                                         requestBuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestBuilder.Connection    = ConnectionType.Close;
+                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                      }),
 
                                                       RequestLogDelegate:   OnStartSessionHTTPRequest,
@@ -3948,16 +3996,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             {
 
                 var remoteURL  = await GetRemoteURL(
-                                     Module_Id.Commands,
-                                     InterfaceRoles.RECEIVER,
-                                     VersionId,
-                                     eventTrackingId,
-                                     CancellationToken
-                                 );
+                                           Module_Id.Commands,
+                                           InterfaceRoles.RECEIVER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
                 var command    = new StopSessionCommand(SessionId,
                                                         CommonAPI.GetModuleURL(Module_Id.Commands,
-                                                                                 SelectedOCPIVersionId.ToString() + "/emsp") + "STOP_SESSION" + commandId.ToString(),
+                                                                               SelectedOCPIVersionId.ToString() + "/emsp") + "STOP_SESSION" + commandId.ToString(),
                                                         commandId,
                                                         requestId,
                                                         correlationId);
@@ -3980,8 +4028,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -3993,14 +4044,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
                                                                                      remoteURL.Value.Path + "STOP_SESSION",
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization = TokenAuth;
-                                                                                         requestbuilder.ContentType   = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Connection    = "close";
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     RequestBuilder: requestBuilder => {
+                                                                                         requestBuilder.Authorization = TokenAuth;
+                                                                                         requestBuilder.ContentType   = HTTPContentType.Application.JSON_UTF8;
+                                                                                         requestBuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestBuilder.Connection    = ConnectionType.Close;
+                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                      }),
 
                                                       RequestLogDelegate:   OnStopSessionHTTPRequest,
@@ -4154,18 +4205,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
             {
 
                 var remoteURL  = await GetRemoteURL(
-                                     Module_Id.Commands,
-                                     InterfaceRoles.RECEIVER,
-                                     VersionId,
-                                     eventTrackingId,
-                                     CancellationToken
-                                 );
+                                           Module_Id.Commands,
+                                           InterfaceRoles.RECEIVER,
+                                           VersionId,
+                                           eventTrackingId,
+                                           CancellationToken
+                                       );
 
                 var command    = new UnlockConnectorCommand(LocationId,
                                                             EVSEUId,
                                                             ConnectorId,
                                                             CommonAPI.GetModuleURL(Module_Id.Commands,
-                                                                                     SelectedOCPIVersionId.ToString() + "/emsp") + "UNLOCK_CONNECTOR" + commandId.ToString(),
+                                                                                   SelectedOCPIVersionId.ToString() + "/emsp") + "UNLOCK_CONNECTOR" + commandId.ToString(),
                                                             commandId,
                                                             requestId,
                                                             correlationId);
@@ -4188,8 +4239,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
                                                              LocalCertificateSelector,
                                                              ClientCert,
                                                              TLSProtocol,
+                                                             ContentType,
+                                                             Accept,
+                                                             Authentication,
                                                              HTTPUserAgent,
-                                                             HTTPAuthentication,
+                                                             Connection,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
                                                              MaxNumberOfRetries,
@@ -4201,14 +4255,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP
 
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
                                                                                      remoteURL.Value.Path + "UNLOCK_CONNECTOR",
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization  = TokenAuth;
-                                                                                         requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestbuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Connection     = "close";
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     RequestBuilder: requestBuilder => {
+                                                                                         requestBuilder.Authorization  = TokenAuth;
+                                                                                         requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
+                                                                                         requestBuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestBuilder.Connection     = ConnectionType.Close;
+                                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                         requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                                      }),
 
                                                       RequestLogDelegate:   OnUnlockConnectorHTTPRequest,

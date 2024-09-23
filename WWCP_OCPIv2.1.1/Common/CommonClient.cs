@@ -28,7 +28,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.OCPI;
 
@@ -398,8 +397,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    RemoteParty.LocalCertificateSelector,
                    RemoteParty.ClientCert,
                    RemoteParty.TLSProtocol,
-                   RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent,
+                   HTTPContentType.Application.JSON_UTF8,
+                   RemoteParty.Accept,
                    RemoteParty.HTTPAuthentication,
+                   RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent,
+                   ConnectionType.Close,
                    RemoteParty.RequestTimeout,
                    RemoteParty.TransmissionRetryDelay,
                    RemoteParty.MaxNumberOfRetries,
@@ -448,8 +450,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="Description">An optional description of this CPO client.</param>
         /// <param name="RemoteCertificateValidator">The remote TLS certificate validator.</param>
         /// <param name="ClientCert">The TLS client certificate to use of HTTP authentication.</param>
+        /// <param name="Accept">The optional HTTP accept header.</param>
+        /// <param name="Authentication">The optional HTTP authentication to use, e.g. HTTP Basic Auth.</param>
         /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
-        /// <param name="HTTPAuthentication">The optional HTTP authentication to use.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries for HTTP request.</param>
@@ -467,8 +470,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
                             X509Certificate?                                           ClientCert                   = null,
                             SslProtocols?                                              TLSProtocol                  = null,
+                            AcceptTypes?                                               Accept                       = null,
+                            IHTTPAuthentication?                                       Authentication               = null,
                             String?                                                    HTTPUserAgent                = null,
-                            IHTTPAuthentication?                                       HTTPAuthentication           = null,
                             TimeSpan?                                                  RequestTimeout               = null,
                             TransmissionRetryDelayDelegate?                            TransmissionRetryDelay       = null,
                             UInt16?                                                    MaxNumberOfRetries           = null,
@@ -491,8 +495,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    LocalCertificateSelector,
                    ClientCert,
                    TLSProtocol,
+                   HTTPContentType.Application.JSON_UTF8,
+                   Accept,
+                   Authentication,
                    HTTPUserAgent ?? DefaultHTTPUserAgent,
-                   HTTPAuthentication,
+                   ConnectionType.Close,
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
@@ -603,13 +610,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         public async Task<OCPIResponse<IEnumerable<VersionInformation>>>
 
-            GetVersions(Request_Id?         RequestId           = null,
-                        Correlation_Id?     CorrelationId       = null,
+            GetVersions(Request_Id?        RequestId           = null,
+                        Correlation_Id?    CorrelationId       = null,
 
-                        DateTime?           Timestamp           = null,
-                        EventTracking_Id?   EventTrackingId     = null,
-                        TimeSpan?           RequestTimeout      = null,
-                        CancellationToken   CancellationToken   = default)
+                        DateTime?          Timestamp           = null,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        TimeSpan?          RequestTimeout      = null,
+                        CancellationToken  CancellationToken   = default)
 
         {
 
@@ -677,8 +684,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  LocalCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
+                                                 ContentType,
+                                                 Accept,
+                                                 Authentication,
                                                  HTTPUserAgent,
-                                                 HTTPAuthentication,
+                                                 Connection,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
@@ -690,13 +700,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              ).Execute(client => client.CreateRequest(
                                                                      HTTPMethod.GET,
                                                                      RemoteVersionsURL.Path,
-                                                                     requestbuilder => {
-                                                                         requestbuilder.Authorization  = TokenAuth;
-                                                                         requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                         requestbuilder.Connection     = "close";
-                                                                         requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                         requestbuilder.Set("X-Request-ID",      requestId);
-                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                     RequestBuilder: requestBuilder => {
+                                                                         requestBuilder.Authorization  = TokenAuth;
+                                                                         requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                         requestBuilder.Connection     = ConnectionType.Close;
+                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                         requestBuilder.Set("X-Request-ID",      requestId);
+                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                      }
                                                                  ),
 
@@ -921,8 +931,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                          LocalCertificateSelector,
                                                          ClientCert,
                                                          TLSProtocol,
+                                                         ContentType,
+                                                         Accept,
+                                                         Authentication,
                                                          HTTPUserAgent,
-                                                         HTTPAuthentication,
+                                                         Connection,
                                                          RequestTimeout,
                                                          TransmissionRetryDelay,
                                                          MaxNumberOfRetries,
@@ -934,14 +947,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      ).Execute(client => client.CreateRequest(
                                                                              HTTPMethod.GET,
                                                                              versions[versionId.Value].Path,
-                                                                             requestbuilder => {
-                                                                                 //requestbuilder.Host           = HTTPHostname.Parse(Versions[VersionId].Hostname + (Versions[VersionId].Port.HasValue ? Versions[VersionId].Port.Value.ToString() : ""));
-                                                                                 requestbuilder.Authorization  = TokenAuth;
-                                                                                 requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                                 requestbuilder.Connection     = "close";
-                                                                                 requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                 requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                 requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                             RequestBuilder: requestBuilder => {
+                                                                                 //requestBuilder.Host           = HTTPHostname.Parse(Versions[VersionId].Hostname + (Versions[VersionId].Port.HasValue ? Versions[VersionId].Port.Value.ToString() : ""));
+                                                                                 requestBuilder.Authorization  = TokenAuth;
+                                                                                 requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                                 requestBuilder.Connection     = ConnectionType.Close;
+                                                                                 requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                                 requestBuilder.Set("X-Request-ID",      requestId);
+                                                                                 requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                              }
                                                                          ),
 
@@ -1270,8 +1283,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      LocalCertificateSelector,
                                                      ClientCert,
                                                      TLSProtocol,
+                                                     ContentType,
+                                                     Accept,
+                                                     Authentication,
                                                      HTTPUserAgent,
-                                                     HTTPAuthentication,
+                                                     Connection,
                                                      RequestTimeout,
                                                      TransmissionRetryDelay,
                                                      MaxNumberOfRetries,
@@ -1283,13 +1299,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  ).Execute(client => client.CreateRequest(
                                                                          HTTPMethod.GET,
                                                                          remoteURL.Value.Path,
-                                                                         requestbuilder => {
-                                                                             requestbuilder.Authorization  = TokenAuth;
-                                                                             requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                             requestbuilder.Connection     = "close";
-                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                             requestbuilder.Set("X-Request-ID",      requestId);
-                                                                             requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                         RequestBuilder: requestBuilder => {
+                                                                             requestBuilder.Authorization  = TokenAuth;
+                                                                             requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                             requestBuilder.Connection     = ConnectionType.Close;
+                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                             requestBuilder.Set("X-Request-ID",      requestId);
+                                                                             requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                          }
                                                                      ),
 
@@ -1486,8 +1502,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      LocalCertificateSelector,
                                                      ClientCert,
                                                      TLSProtocol,
+                                                     ContentType,
+                                                     Accept,
+                                                     Authentication,
                                                      HTTPUserAgent,
-                                                     HTTPAuthentication,
+                                                     Connection,
                                                      RequestTimeout,
                                                      TransmissionRetryDelay,
                                                      MaxNumberOfRetries,
@@ -1499,15 +1518,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  ).Execute(client => client.CreateRequest(
                                                                          HTTPMethod.POST,
                                                                          remoteURL.Value.Path,
-                                                                         requestbuilder => {
-                                                                             requestbuilder.Authorization  = TokenAuth;
-                                                                             requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                             requestbuilder.Connection     = "close";
-                                                                             requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                             requestbuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                             requestbuilder.Set("X-Request-ID",      requestId);
-                                                                             requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                         RequestBuilder: requestBuilder => {
+                                                                             requestBuilder.Authorization  = TokenAuth;
+                                                                             requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                             requestBuilder.Connection     = ConnectionType.Close;
+                                                                             requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
+                                                                             requestBuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                             requestBuilder.Set("X-Request-ID",      requestId);
+                                                                             requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                          }
                                                                      ),
 
@@ -1707,8 +1726,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      LocalCertificateSelector,
                                                      ClientCert,
                                                      TLSProtocol,
+                                                     ContentType,
+                                                     Accept,
+                                                     Authentication,
                                                      HTTPUserAgent,
-                                                     HTTPAuthentication,
+                                                     Connection,
                                                      RequestTimeout,
                                                      TransmissionRetryDelay,
                                                      MaxNumberOfRetries,
@@ -1720,15 +1742,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  ).Execute(client => client.CreateRequest(
                                                                          HTTPMethod.PUT,
                                                                          remoteURL.Value.Path,
-                                                                         requestbuilder => {
-                                                                             requestbuilder.Authorization  = TokenAuth;
-                                                                             requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                             requestbuilder.Connection     = "close";
-                                                                             requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                             requestbuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                             requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                             requestbuilder.Set("X-Request-ID",      requestId);
-                                                                             requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                         RequestBuilder: requestBuilder => {
+                                                                             requestBuilder.Authorization  = TokenAuth;
+                                                                             requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                             requestBuilder.Connection     = ConnectionType.Close;
+                                                                             requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
+                                                                             requestBuilder.Content        = Credentials.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                             requestBuilder.Set("X-Request-ID",      requestId);
+                                                                             requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                          }
                                                                      ),
 
@@ -1958,8 +1980,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      LocalCertificateSelector,
                                                      ClientCert,
                                                      TLSProtocol,
+                                                     ContentType,
+                                                     Accept,
+                                                     Authentication,
                                                      HTTPUserAgent,
-                                                     HTTPAuthentication,
+                                                     Connection,
                                                      RequestTimeout,
                                                      TransmissionRetryDelay,
                                                      MaxNumberOfRetries,
@@ -1971,12 +1996,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  ).Execute(client => client.CreateRequest(
                                                                          HTTPMethod.DELETE,
                                                                          remoteURL.Value.Path,
-                                                                         requestbuilder => {
-                                                                             requestbuilder.Authorization  = TokenAuth;
-                                                                             requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                             requestbuilder.Connection     = "close";
-                                                                             requestbuilder.Set("X-Request-ID",      requestId);
-                                                                             requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                         RequestBuilder: requestBuilder => {
+                                                                             requestBuilder.Authorization  = TokenAuth;
+                                                                             requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                             requestBuilder.Connection     = ConnectionType.Close;
+                                                                             requestBuilder.Set("X-Request-ID",      requestId);
+                                                                             requestBuilder.Set("X-Correlation-ID",  correlationId);
                                                                          }
                                                                      ),
 
@@ -2201,8 +2226,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  LocalCertificateSelector,
                                                  ClientCert,
                                                  TLSProtocol,
+                                                 ContentType,
+                                                 Accept,
+                                                 Authentication,
                                                  HTTPUserAgent,
-                                                 HTTPAuthentication,
+                                                 Connection,
                                                  RequestTimeout,
                                                  TransmissionRetryDelay,
                                                  MaxNumberOfRetries,
@@ -2210,28 +2238,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  UseHTTPPipelining,
                                                  DisableLogging,
                                                  HTTPLogger,
-                                                 DNSClient).Execute(client => client.CreateRequest(
-                                                                                  HTTPMethod.POST,
-                                                                                  remoteURL.Value.Path,
-                                                                                  requestbuilder => {
-                                                                                      requestbuilder.Authorization  = TokenAuth;
-                                                                                      requestbuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
-                                                                                      requestbuilder.Connection     = "close";
-                                                                                      requestbuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                      requestbuilder.Content        = credentials.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                      requestbuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                      requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                      requestbuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                  }
-                                                                              ),
+                                                 DNSClient
+                                             ).Execute(client => client.CreateRequest(
+                                                                     HTTPMethod.POST,
+                                                                     remoteURL.Value.Path,
+                                                                     RequestBuilder: requestBuilder => {
+                                                                         requestBuilder.Authorization  = TokenAuth;
+                                                                         requestBuilder.UserAgent      = RemoteParty.HTTPUserAgent ?? DefaultHTTPUserAgent;
+                                                                         requestBuilder.Connection     = ConnectionType.Close;
+                                                                         requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
+                                                                         requestBuilder.Content        = credentials.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                         requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
+                                                                         requestBuilder.Set("X-Request-ID",      requestId);
+                                                                         requestBuilder.Set("X-Correlation-ID",  correlationId);
+                                                                     }
+                                                                 ),
 
-                                                                    RequestLogDelegate:   OnRegisterHTTPRequest,
-                                                                    ResponseLogDelegate:  OnRegisterHTTPResponse,
-                                                                    CancellationToken:    CancellationToken,
-                                                                    EventTrackingId:      eventTrackingId,
-                                                                    RequestTimeout:       TimeSpan.FromMinutes(5)).// RequestTimeout ?? this.RequestTimeout).
+                                                       RequestLogDelegate:   OnRegisterHTTPRequest,
+                                                       ResponseLogDelegate:  OnRegisterHTTPResponse,
+                                                       CancellationToken:    CancellationToken,
+                                                       EventTrackingId:      eventTrackingId,
+                                                       RequestTimeout:       TimeSpan.FromMinutes(5)).// RequestTimeout ?? this.RequestTimeout).
 
-                                                            ConfigureAwait(false);
+                                               ConfigureAwait(false);
 
 
                     // HTTP/1.1 500 Internal Server Error
