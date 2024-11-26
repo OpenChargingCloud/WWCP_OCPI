@@ -1,25 +1,34 @@
 ﻿
 <link href="{{BasePath}}/webapi/css/locations/locations.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="/shared/UsersAPI/js/date.format.js"></script>
+<script type="text/javascript" src="{{BasePath}}/webapi/libs/js/date.format.js"></script>
 <script type="text/javascript" src="{{BasePath}}/webapi/locations/locations.js"></script>
 
 <div id="locationInfos" class="entity">
 
     <div id="locationInfos2">
 
-        <div id="description">
+        <div class="description">
             Locations
         </div>
 
-        <div id="locationStatistics">
+        <div id="locationStatistics" class="statistics">
             <div class="row"><div class="key">Number of locations</div><div id="numberOfLocations">-</div></div>
             <div class="row"><div class="key">Number of EVSEs</div><div id="numberOfEVSEs">-</div></div>
-            <div class="row"><div class="key">EVSEs Available</div><div id="numberOfEVSEsAvailable">-</div></div>
-            <div class="row"><div class="key">EVSEs Charging</div><div id="numberOfEVSEsCharging">-</div></div>
-            <div class="row"><div class="key">EVSEs Out Of Order</div><div id="numberOfEVSEsOutOfOrder">-</div></div>
-            <div class="row"><div class="key">EVSEs Inoperative</div><div id="numberOfEVSEsInoperative">-</div></div>
-            <div class="row"><div class="key">EVSEs Unkown</div><div id="numberOfEVSEsUnkown">-</div></div>
+        </div>
+
+        <div class="description">
+            EVSE Status
+        </div>
+
+        <div id="evseStatusStatistics" class="statistics">
+            <div class="row"><div class="key">Available</div><div id="numberOfEVSEsAvailable">-</div></div>
+            <div class="row"><div class="key">Charging</div><div id="numberOfEVSEsCharging">-</div></div>
+            <div class="row"><div class="key">Out Of Order</div><div id="numberOfEVSEsOutOfOrder">-</div></div>
+            <div class="row"><div class="key">Inoperative</div><div id="numberOfEVSEsInoperative">-</div></div>
+            <div class="row"><div class="key">Unkown</div><div id="numberOfEVSEsUnkown">-</div></div>
+            <div class="row"><div class="key">Removed</div><div id="numberOfEVSEsRemoved">-</div></div>
+            <div class="row"><div class="key">?</div><div id="numberOfEVSEsX">-</div></div>
         </div>
 
         <div id="locations">

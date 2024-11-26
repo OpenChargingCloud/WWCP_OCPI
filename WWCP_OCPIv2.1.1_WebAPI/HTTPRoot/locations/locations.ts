@@ -29,6 +29,11 @@ function StartLocations()
     }
 
 
+    const common                       = GetDefaults();
+    common.topLeft.innerHTML           = "/Locations"
+    common.menuVersions.classList.add("activated");
+
+
     const locationInfosDiv             = document.getElementById("locationInfos")                     as HTMLDivElement;
     const locationsDiv                 = locationInfosDiv.querySelector("#locations")                 as HTMLDivElement;
 
@@ -39,6 +44,8 @@ function StartLocations()
     const numberOfEVSEsOutOfOrderDiv   = locationInfosDiv.querySelector("#numberOfEVSEsOutOfOrder")   as HTMLDivElement;
     const numberOfEVSEsInoperativeDiv  = locationInfosDiv.querySelector("#numberOfEVSEsInoperative")  as HTMLDivElement;
     const numberOfEVSEsUnkownDiv       = locationInfosDiv.querySelector("#numberOfEVSEsUnkown")       as HTMLDivElement;
+    const numberOfEVSEsRemovedDiv      = locationInfosDiv.querySelector("#numberOfEVSEsRemoved")      as HTMLDivElement;
+    const numberOfEVSEsXDiv            = locationInfosDiv.querySelector("#numberOfEVSEsX")            as HTMLDivElement;
 
     let   totalNumberOfEVSEs           = 0;
     let   evsesAvailable               = 0;
@@ -46,6 +53,7 @@ function StartLocations()
     let   evsesOutOfOrder              = 0;
     let   evsesInoperative             = 0;
     let   evsesUnkown                  = 0;
+    let   evsesRemoved                 = 0;
     let   evsesX                       = 0;
 
     OCPIGet(window.location.href,
@@ -55,19 +63,19 @@ function StartLocations()
                 try
                 {
 
-                    const OCPIResponse = ParseJSON_LD<IOCPIResponse>(response);
+                    const ocpiResponse = JSON.parse(response) as IOCPIResponse;
 
-                    if (OCPIResponse?.data != undefined  &&
-                        OCPIResponse?.data != null       &&
-                        Array.isArray(OCPIResponse.data) &&
-                        OCPIResponse.data.length > 0)
+                    if (ocpiResponse?.data != undefined  &&
+                        ocpiResponse?.data != null       &&
+                        Array.isArray(ocpiResponse.data) &&
+                        ocpiResponse.data.length > 0)
                     {
 
-                        numberOfLocationsDiv.innerHTML = OCPIResponse.data.length.toString();
+                        numberOfLocationsDiv.innerHTML = ocpiResponse.data.length.toString();
 
                         let numberOfLocation = 1;
 
-                        for (const location of (OCPIResponse.data as ILocation[])) {
+                        for (const location of (ocpiResponse.data as ILocation[])) {
 
                             if (location.evses)
                                 totalNumberOfEVSEs += location.evses.length;
@@ -90,7 +98,7 @@ function StartLocations()
                                 propertiesDiv,
                                 "details",
                                 "Type",
-                                location.location_type
+                                location.type
                             )
 
                             // address
@@ -219,6 +227,10 @@ function StartLocations()
                                             evsesUnkown++;
                                             break;
 
+                                        case "REMOVED":
+                                            evsesRemoved++;
+                                            break;
+
                                         default:
                                             evsesX++;
                                             break;
@@ -237,6 +249,8 @@ function StartLocations()
                         numberOfEVSEsOutOfOrderDiv.innerHTML  = evsesOutOfOrder.toString();
                         numberOfEVSEsInoperativeDiv.innerHTML = evsesInoperative.toString();
                         numberOfEVSEsUnkownDiv.innerHTML      = evsesUnkown.toString();
+                        numberOfEVSEsRemovedDiv.innerHTML     = evsesRemoved.toString();
+                        numberOfEVSEsXDiv.innerHTML           = evsesX.toString();
 
                     }
 

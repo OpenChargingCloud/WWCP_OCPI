@@ -26,7 +26,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using org.GraphDefined.Vanaheimr.Illias.Votes;
 
 #endregion
 
@@ -679,7 +678,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         internal IEnumerable<Tariff_Id> GetTariffIds(EMSP_Id? EMSPId = null)
 
             => ParentEVSE?.GetTariffIds(Id,
-                                        EMSPId) ?? Array.Empty<Tariff_Id>();
+                                        EMSPId) ?? [];
 
 
         #region Operator overloading

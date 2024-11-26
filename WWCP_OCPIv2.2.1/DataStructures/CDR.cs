@@ -1216,7 +1216,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                  new JProperty("currency",                     Currency.                      ToString()),
 
                            Tariffs.Any()
-                               ? new JProperty("tariffs",                      new JArray(Tariffs.                Select(tariff               => tariff.              ToJSON(CustomTariffSerializer,
+                               ? new JProperty("tariffs",                      new JArray(Tariffs.                Select(tariff               => tariff.              ToJSON(true,
+                                                                                                                                                                             true,
+                                                                                                                                                                             CustomTariffSerializer,
                                                                                                                                                                              CustomDisplayTextSerializer,
                                                                                                                                                                              CustomPriceSerializer,
                                                                                                                                                                              CustomTariffElementSerializer,

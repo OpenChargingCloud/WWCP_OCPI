@@ -16,6 +16,9 @@ function StartLocations() {
             valueDiv.appendChild(innerHTML);
         return rowDiv;
     }
+    const common = GetDefaults();
+    common.topLeft.innerHTML = "/Locations";
+    common.menuVersions.classList.add("activated");
     const locationInfosDiv = document.getElementById("locationInfos");
     const locationsDiv = locationInfosDiv.querySelector("#locations");
     const numberOfLocationsDiv = locationInfosDiv.querySelector("#numberOfLocations");
@@ -25,24 +28,27 @@ function StartLocations() {
     const numberOfEVSEsOutOfOrderDiv = locationInfosDiv.querySelector("#numberOfEVSEsOutOfOrder");
     const numberOfEVSEsInoperativeDiv = locationInfosDiv.querySelector("#numberOfEVSEsInoperative");
     const numberOfEVSEsUnkownDiv = locationInfosDiv.querySelector("#numberOfEVSEsUnkown");
+    const numberOfEVSEsRemovedDiv = locationInfosDiv.querySelector("#numberOfEVSEsRemoved");
+    const numberOfEVSEsXDiv = locationInfosDiv.querySelector("#numberOfEVSEsX");
     let totalNumberOfEVSEs = 0;
     let evsesAvailable = 0;
     let evsesCharging = 0;
     let evsesOutOfOrder = 0;
     let evsesInoperative = 0;
     let evsesUnkown = 0;
+    let evsesRemoved = 0;
     let evsesX = 0;
     OCPIGet(window.location.href, (status, response) => {
         var _a, _b;
         try {
-            const OCPIResponse = ParseJSON_LD(response);
-            if ((OCPIResponse === null || OCPIResponse === void 0 ? void 0 : OCPIResponse.data) != undefined &&
-                (OCPIResponse === null || OCPIResponse === void 0 ? void 0 : OCPIResponse.data) != null &&
-                Array.isArray(OCPIResponse.data) &&
-                OCPIResponse.data.length > 0) {
-                numberOfLocationsDiv.innerHTML = OCPIResponse.data.length.toString();
+            const ocpiResponse = JSON.parse(response);
+            if ((ocpiResponse === null || ocpiResponse === void 0 ? void 0 : ocpiResponse.data) != undefined &&
+                (ocpiResponse === null || ocpiResponse === void 0 ? void 0 : ocpiResponse.data) != null &&
+                Array.isArray(ocpiResponse.data) &&
+                ocpiResponse.data.length > 0) {
+                numberOfLocationsDiv.innerHTML = ocpiResponse.data.length.toString();
                 let numberOfLocation = 1;
-                for (const location of OCPIResponse.data) {
+                for (const location of ocpiResponse.data) {
                     if (location.evses)
                         totalNumberOfEVSEs += location.evses.length;
                     const locationDiv = locationsDiv.appendChild(document.createElement('div'));
@@ -56,7 +62,7 @@ function StartLocations() {
                     // party_id
                     const propertiesDiv = locationDiv.appendChild(document.createElement('div'));
                     propertiesDiv.className = "properties";
-                    CreateLine(propertiesDiv, "details", "Type", location.location_type);
+                    CreateLine(propertiesDiv, "details", "Type", location.type);
                     // address
                     // city
                     // postal_code
@@ -144,6 +150,9 @@ function StartLocations() {
                                 case "UNKNOWN":
                                     evsesUnkown++;
                                     break;
+                                case "REMOVED":
+                                    evsesRemoved++;
+                                    break;
                                 default:
                                     evsesX++;
                                     break;
@@ -157,6 +166,8 @@ function StartLocations() {
                 numberOfEVSEsOutOfOrderDiv.innerHTML = evsesOutOfOrder.toString();
                 numberOfEVSEsInoperativeDiv.innerHTML = evsesInoperative.toString();
                 numberOfEVSEsUnkownDiv.innerHTML = evsesUnkown.toString();
+                numberOfEVSEsRemovedDiv.innerHTML = evsesRemoved.toString();
+                numberOfEVSEsXDiv.innerHTML = evsesX.toString();
             }
         }
         catch (exception) {

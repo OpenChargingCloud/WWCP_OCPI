@@ -1,15 +1,20 @@
 ﻿///<reference path="../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
+///<reference path="../defaults/defaults.ts" />
 
 function StartVersionDetails(versionId: string) {
 
-    const versionDetailInfosDiv  = document.getElementById("versionDetailInfos")              as HTMLDivElement;
+    const common                               = GetDefaults();
+    common.topLeft.innerHTML                   = "/version/details"
+    common.menuVersions.style.backgroundColor  = "#CCCCCC";
 
-    const accessTokenInput       = versionDetailInfosDiv.querySelector("#accessToken")        as HTMLInputElement;
-    const accessTokenButton      = versionDetailInfosDiv.querySelector("#accessTokenButton")  as HTMLButtonElement;
+    const versionDetailInfosDiv                = document.getElementById("versionDetailInfos")              as HTMLDivElement;
 
-    const versionDetailsDiv      = versionDetailInfosDiv.querySelector("#versionDetails")     as HTMLDivElement;
-    const versionIdDiv           = versionDetailsDiv.    querySelector("#versionId")          as HTMLDivElement;
-    const endpointsDiv           = versionDetailsDiv.    querySelector("#endpoints")          as HTMLDivElement;
+    const accessTokenInput                     = versionDetailInfosDiv.querySelector("#accessToken")        as HTMLInputElement;
+    const accessTokenButton                    = versionDetailInfosDiv.querySelector("#accessTokenButton")  as HTMLButtonElement;
+
+    const versionDetailsDiv                    = versionDetailInfosDiv.querySelector("#versionDetails")     as HTMLDivElement;
+    const versionIdDiv                         = versionDetailsDiv.    querySelector("#versionId")          as HTMLDivElement;
+    const endpointsDiv                         = versionDetailsDiv.    querySelector("#endpoints")          as HTMLDivElement;
 
     accessTokenButton.onclick = () => {
 
@@ -32,13 +37,13 @@ function StartVersionDetails(versionId: string) {
                 try
                 {
 
-                    const OCPIResponse = ParseJSON_LD<IOCPIResponse>(response);
+                    const ocpiResponse = JSON.parse(response) as IOCPIResponse;
 
-                    if (OCPIResponse?.data != undefined &&
-                        OCPIResponse?.data != null)
+                    if (ocpiResponse?.data != undefined &&
+                        ocpiResponse?.data != null)
                     {
 
-                        const versionDetails = OCPIResponse.data as IVersionDetails;
+                        const versionDetails = ocpiResponse.data as IVersionDetails;
 
                         versionIdDiv.innerHTML = "Version " + versionDetails.version;
 

@@ -4928,7 +4928,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Data
 
-        private readonly ConcurrentDictionary<CountryCode, ConcurrentDictionary<Party_Id, ConcurrentDictionary<Tariff_Id , Tariff>>> tariffs = new();
+        private readonly ConcurrentDictionary<CountryCode, ConcurrentDictionary<Party_Id, TimeRangeDictionary<Tariff_Id , Tariff>>> tariffs = new();
 
 
         public delegate Task OnTariffAddedDelegate(Tariff Tariff);
@@ -4946,163 +4946,202 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public GetTariffIds2_Delegate?        GetTariffIdsDelegate       { get; set; }
 
 
-        #region AddTariff           (Tariff, SkipNotifications = false)
+        #region AddTariff            (Tariff,                                       SkipNotifications = false, ...)
 
-        public Tariff AddTariff(Tariff             Tariff,
-                                Boolean            SkipNotifications   = false,
-                                EventTracking_Id?  EventTrackingId     = null,
-                                User_Id?           CurrentUserId       = null)
+        public async Task<AddResult<Tariff>> AddTariff(Tariff             Tariff,
+                                                       Boolean            SkipNotifications   = false,
+                                                       EventTracking_Id?  EventTrackingId     = null,
+                                                       User_Id?           CurrentUserId       = null)
         {
 
-            lock (tariffs)
+            if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+            {
+                parties = new ConcurrentDictionary<Party_Id, TimeRangeDictionary<Tariff_Id, Tariff>>();
+                this.tariffs.TryAdd(Tariff.CountryCode, parties);
+            }
+
+            if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
+            {
+                tariffs = new TimeRangeDictionary<Tariff_Id, Tariff>();
+                parties.TryAdd(Tariff.PartyId, tariffs);
+            }
+
+            if (tariffs.TryAdd(Tariff.Id, Tariff))
             {
 
-                if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+                Tariff.CommonAPI = this;
+
+                await LogAsset(addTariff,
+                               Tariff.ToJSON(true,
+                                             true,
+                                             CustomTariffSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomPriceSerializer,
+                                             CustomTariffElementSerializer,
+                                             CustomPriceComponentSerializer,
+                                             CustomTariffRestrictionsSerializer,
+                                             CustomEnergyMixSerializer,
+                                             CustomEnergySourceSerializer,
+                                             CustomEnvironmentalImpactSerializer),
+                               EventTrackingId ?? EventTracking_Id.New,
+                               CurrentUserId);
+
+                if (!SkipNotifications)
                 {
-                    parties = new ConcurrentDictionary<Party_Id, ConcurrentDictionary<Tariff_Id, Tariff>>();
-                    this.tariffs.TryAdd(Tariff.CountryCode, parties);
-                }
 
-                if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
-                {
-                    tariffs = new ConcurrentDictionary<Tariff_Id, Tariff>();
-                    parties.TryAdd(Tariff.PartyId, tariffs);
-                }
-
-                if (!tariffs.ContainsKey(Tariff.Id))
-                {
-
-                    tariffs.TryAdd(Tariff.Id, Tariff);
-                    Tariff.CommonAPI = this;
-
-                    if (!SkipNotifications)
+                    var OnTariffAddedLocal = OnTariffAdded;
+                    if (OnTariffAddedLocal is not null)
                     {
-
-                        var OnTariffAddedLocal = OnTariffAdded;
-                        if (OnTariffAddedLocal is not null)
+                        try
                         {
-                            try
-                            {
-                                OnTariffAddedLocal(Tariff).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddTariff), " ", nameof(OnTariffAdded), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
+                            OnTariffAddedLocal(Tariff).Wait();
                         }
-
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddTariff), " ", nameof(OnTariffAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
 
-                    return Tariff;
-
                 }
 
-                throw new ArgumentException("The given tariff already exists!");
+                return AddResult<Tariff>.Success(Tariff);
 
             }
+
+            return AddResult<Tariff>.Failed(Tariff,
+                                            "TryAdd(Tariff.Id, Tariff) failed!");
 
         }
 
         #endregion
 
-        #region AddTariffIfNotExists(Tariff, SkipNotifications = false)
+        #region AddTariffIfNotExists (Tariff,                                       SkipNotifications = false, ...)
 
-        public Tariff AddTariffIfNotExists(Tariff             Tariff,
-                                           Boolean            SkipNotifications   = false,
-                                           EventTracking_Id?  EventTrackingId     = null,
-                                           User_Id?           CurrentUserId       = null)
+        public async Task<AddResult<Tariff>> AddTariffIfNotExists(Tariff             Tariff,
+                                                                  Boolean            SkipNotifications   = false,
+                                                                  EventTracking_Id?  EventTrackingId     = null,
+                                                                  User_Id?           CurrentUserId       = null)
         {
 
-            if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
+            if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+            {
+                parties = new ConcurrentDictionary<Party_Id, TimeRangeDictionary<Tariff_Id, Tariff>>();
+                this.tariffs.TryAdd(Tariff.CountryCode, parties);
+            }
 
-            lock (tariffs)
+            if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
+            {
+                tariffs = new TimeRangeDictionary<Tariff_Id, Tariff>();
+                parties.TryAdd(Tariff.PartyId, tariffs);
+            }
+
+            if (tariffs.TryAdd(Tariff.Id, Tariff))
             {
 
-                if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+                Tariff.CommonAPI = this;
+
+                await LogAsset(addTariffIfNotExists,
+                               Tariff.ToJSON(true,
+                                             true,
+                                             CustomTariffSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomPriceSerializer,
+                                             CustomTariffElementSerializer,
+                                             CustomPriceComponentSerializer,
+                                             CustomTariffRestrictionsSerializer,
+                                             CustomEnergyMixSerializer,
+                                             CustomEnergySourceSerializer,
+                                             CustomEnvironmentalImpactSerializer),
+                               EventTrackingId ?? EventTracking_Id.New,
+                               CurrentUserId);
+
+                if (!SkipNotifications)
                 {
-                    parties = new ConcurrentDictionary<Party_Id, ConcurrentDictionary<Tariff_Id, Tariff>>();
-                    this.tariffs.TryAdd(Tariff.CountryCode, parties);
-                }
 
-                if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
-                {
-                    tariffs = new ConcurrentDictionary<Tariff_Id, Tariff>();
-                    parties.TryAdd(Tariff.PartyId, tariffs);
-                }
-
-                if (!tariffs.ContainsKey(Tariff.Id))
-                {
-
-                    tariffs.TryAdd(Tariff.Id, Tariff);
-                    Tariff.CommonAPI = this;
-
-                    if (!SkipNotifications)
+                    var OnTariffAddedLocal = OnTariffAdded;
+                    if (OnTariffAddedLocal is not null)
                     {
-
-                        var OnTariffAddedLocal = OnTariffAdded;
-                        if (OnTariffAddedLocal is not null)
+                        try
                         {
-                            try
-                            {
-                                OnTariffAddedLocal(Tariff).Wait();
-                            }
-                            catch (Exception e)
-                            {
-                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddTariffIfNotExists), " ", nameof(OnTariffAdded), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace ?? "");
-                            }
+                            OnTariffAddedLocal(Tariff).Wait();
                         }
-
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddTariffIfNotExists), " ", nameof(OnTariffAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
 
                 }
 
-                return Tariff;
+                return AddResult<Tariff>.Success(Tariff);
 
             }
+
+            return AddResult<Tariff>.NoOperation(Tariff);
 
         }
 
         #endregion
 
-        #region AddOrUpdateTariff   (newOrUpdatedTariff, AllowDowngrades = false)
+        #region AddOrUpdateTariff    (Tariff,              AllowDowngrades = false, SkipNotifications = false, ...)
 
         public async Task<AddOrUpdateResult<Tariff>> AddOrUpdateTariff(Tariff             Tariff,
-                                                                       Boolean?           AllowDowngrades   = false,
-                                                                       EventTracking_Id?  EventTrackingId   = null,
-                                                                       User_Id?           CurrentUserId     = null)
+                                                                       Boolean?           AllowDowngrades     = false,
+                                                                       Boolean            SkipNotifications   = false,
+                                                                       EventTracking_Id?  EventTrackingId     = null,
+                                                                       User_Id?           CurrentUserId       = null)
         {
 
-            lock (tariffs)
+            if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+            {
+                parties = new ConcurrentDictionary<Party_Id, TimeRangeDictionary<Tariff_Id, Tariff>>();
+                this.tariffs.TryAdd(Tariff.CountryCode, parties);
+            }
+
+            if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
+            {
+                tariffs = new TimeRangeDictionary<Tariff_Id, Tariff>();
+                parties.TryAdd(Tariff.PartyId, tariffs);
+            }
+
+            #region Update an existing tariff
+
+            if (tariffs.TryGetValue(Tariff.Id,
+                                    out var existingTariff,
+                                    Tariff.NotBefore ?? DateTime.MinValue))
             {
 
-                if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Tariff.LastUpdated <= existingTariff.LastUpdated)
                 {
-                    parties = new ConcurrentDictionary<Party_Id, ConcurrentDictionary<Tariff_Id, Tariff>>();
-                    this.tariffs.TryAdd(Tariff.CountryCode, parties);
+                    return AddOrUpdateResult<Tariff>.Failed(Tariff,
+                                                            "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
                 }
 
-                if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
+                tariffs.AddOrUpdate(Tariff.Id, Tariff);
+                Tariff.CommonAPI = this;
+
+                await LogAsset(addOrUpdateTariff,
+                               Tariff.ToJSON(true,
+                                             true,
+                                             CustomTariffSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomPriceSerializer,
+                                             CustomTariffElementSerializer,
+                                             CustomPriceComponentSerializer,
+                                             CustomTariffRestrictionsSerializer,
+                                             CustomEnergyMixSerializer,
+                                             CustomEnergySourceSerializer,
+                                             CustomEnvironmentalImpactSerializer),
+                               EventTrackingId ?? EventTracking_Id.New,
+                               CurrentUserId);
+
+                if (!SkipNotifications)
                 {
-                    tariffs = new ConcurrentDictionary<Tariff_Id, Tariff>();
-                    parties.TryAdd(Tariff.PartyId, tariffs);
-                }
-
-                if (tariffs.TryGetValue(Tariff.Id, out var existingTariff))
-                {
-
-                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                        Tariff.LastUpdated <= existingTariff.LastUpdated)
-                    {
-                        return AddOrUpdateResult<Tariff>.Failed(Tariff,
-                                                                "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
-                    }
-
-                    tariffs[Tariff.Id] = Tariff;
 
                     var OnTariffChangedLocal = OnTariffChanged;
                     if (OnTariffChangedLocal is not null)
@@ -5119,26 +5158,55 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                     }
 
-                    return AddOrUpdateResult<Tariff>.Success(Tariff,
-                                                             WasCreated: false);
-
                 }
 
-                tariffs.TryAdd(Tariff.Id, Tariff);
+                return AddOrUpdateResult<Tariff>.Success(Tariff,
+                                                         WasCreated: false);
 
-                var OnTariffAddedLocal = OnTariffAdded;
-                if (OnTariffAddedLocal is not null)
+            }
+
+            #endregion
+
+            #region Add a new tariff
+
+            if (tariffs.TryAdd(Tariff.Id, Tariff))
+            {
+
+                Tariff.CommonAPI = this;
+
+                await LogAsset(addOrUpdateTariff,
+                               Tariff.ToJSON(true,
+                                             true,
+                                             CustomTariffSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomPriceSerializer,
+                                             CustomTariffElementSerializer,
+                                             CustomPriceComponentSerializer,
+                                             CustomTariffRestrictionsSerializer,
+                                             CustomEnergyMixSerializer,
+                                             CustomEnergySourceSerializer,
+                                             CustomEnvironmentalImpactSerializer),
+                               EventTrackingId ?? EventTracking_Id.New,
+                               CurrentUserId);
+
+                if (!SkipNotifications)
                 {
-                    try
+
+                    var OnTariffAddedLocal = OnTariffAdded;
+                    if (OnTariffAddedLocal is not null)
                     {
-                        OnTariffAddedLocal(Tariff).Wait();
+                        try
+                        {
+                            OnTariffAddedLocal(Tariff).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffAdded), ": ",
-                                    Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace ?? "");
-                    }
+
                 }
 
                 return AddOrUpdateResult<Tariff>.Success(Tariff,
@@ -5146,29 +5214,79 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             }
 
+            return AddOrUpdateResult<Tariff>.Failed(Tariff,
+                                                    "AddOrUpdateTariff(Tariff.Id, Tariff) failed!");
+
+            #endregion
+
         }
 
         #endregion
 
-        #region UpdateTariff        (Tariff)
+        #region UpdateTariff         (Tariff,              AllowDowngrades = false, SkipNotifications = false, ...)
 
-        public Tariff? UpdateTariff(Tariff             Tariff,
-                                    EventTracking_Id?  EventTrackingId   = null,
-                                    User_Id?           CurrentUserId     = null)
+        public async Task<UpdateResult<Tariff>> UpdateTariff(Tariff             Tariff,
+                                                             Boolean?           AllowDowngrades     = false,
+                                                             Boolean            SkipNotifications   = false,
+                                                             EventTracking_Id?  EventTrackingId     = null,
+                                                             User_Id?           CurrentUserId       = null)
         {
 
-            if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
+            if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+            {
+                parties = new ConcurrentDictionary<Party_Id, TimeRangeDictionary<Tariff_Id, Tariff>>();
+                this.tariffs.TryAdd(Tariff.CountryCode, parties);
+            }
 
-            lock (tariffs)
+            if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
+            {
+                tariffs = new TimeRangeDictionary<Tariff_Id, Tariff>();
+                parties.TryAdd(Tariff.PartyId, tariffs);
+            }
+
+            #region Validate AllowDowngrades
+
+            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff, Timestamp.Now))
             {
 
-                if (tariffs.TryGetValue(Tariff.CountryCode, out var parties) &&
-                    parties.TryGetValue(Tariff.PartyId,     out var _tariffs) &&
-                    _tariffs.ContainsKey(Tariff.Id))
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Tariff.LastUpdated <= existingTariff.LastUpdated)
                 {
 
-                    _tariffs[Tariff.Id] = Tariff;
+                    return UpdateResult<Tariff>.Failed(Tariff,
+                                                       "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
+
+                }
+
+            }
+            else
+                return UpdateResult<Tariff>.Failed(Tariff,
+                                                   $"Unknown tariff identification '{Tariff.Id}'!");
+
+            #endregion
+
+            if (tariffs.TryUpdate(Tariff.Id, Tariff, existingTariff))
+            {
+
+                Tariff.CommonAPI = this;
+
+                await LogAsset(updateTariff,
+                               Tariff.ToJSON(true,
+                                             true,
+                                             CustomTariffSerializer,
+                                             CustomDisplayTextSerializer,
+                                             CustomPriceSerializer,
+                                             CustomTariffElementSerializer,
+                                             CustomPriceComponentSerializer,
+                                             CustomTariffRestrictionsSerializer,
+                                             CustomEnergyMixSerializer,
+                                             CustomEnergySourceSerializer,
+                                             CustomEnvironmentalImpactSerializer),
+                               EventTrackingId ?? EventTracking_Id.New,
+                               CurrentUserId);
+
+                if (!SkipNotifications)
+                {
 
                     var OnTariffChangedLocal = OnTariffChanged;
                     if (OnTariffChangedLocal is not null)
@@ -5185,54 +5303,75 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         }
                     }
 
-                    return Tariff;
-
                 }
 
-                return null;
+                return UpdateResult<Tariff>.Success(Tariff);
 
             }
+
+            return UpdateResult<Tariff>.Failed(Tariff,
+                                               "UpdateTariff(Tariff.Id, Tariff, Tariff) failed!");
 
         }
 
         #endregion
 
-
-        #region TryPatchTariff      (Tariff, TariffPatch, AllowDowngrades = false)
+        #region TryPatchTariff       (Tariff, TariffPatch, AllowDowngrades = false, SkipNotifications = false, ...)
 
         public async Task<PatchResult<Tariff>> TryPatchTariff(Tariff             Tariff,
                                                               JObject            TariffPatch,
-                                                              Boolean?           AllowDowngrades   = false,
-                                                              EventTracking_Id?  EventTrackingId   = null,
-                                                              User_Id?           CurrentUserId     = null)
+                                                              Boolean?           AllowDowngrades     = false,
+                                                              Boolean            SkipNotifications   = false,
+                                                              EventTracking_Id?  EventTrackingId     = null,
+                                                              User_Id?           CurrentUserId       = null)
         {
 
-            if (Tariff is null)
-                return PatchResult<Tariff>.Failed(Tariff,
-                                                  "The given charging tariff must not be null!");
-
-            if (TariffPatch is null || !TariffPatch.HasValues)
+            if (!TariffPatch.HasValues)
                 return PatchResult<Tariff>.Failed(Tariff,
                                                   "The given charging tariff patch must not be null or empty!");
 
-            // ToDo: Remove me and add a proper 'lock' mechanism!
-            await Task.Delay(1);
+            if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+            {
+                parties = new ConcurrentDictionary<Party_Id, TimeRangeDictionary<Tariff_Id, Tariff>>();
+                this.tariffs.TryAdd(Tariff.CountryCode, parties);
+            }
 
-            lock (tariffs)
+            if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
+            {
+                tariffs = new TimeRangeDictionary<Tariff_Id, Tariff>();
+                parties.TryAdd(Tariff.PartyId, tariffs);
+            }
+
+
+            if (tariffs.TryGetValue(Tariff.Id, out var existingTariff, Timestamp.Now))
             {
 
-                if (tariffs. TryGetValue(Tariff.CountryCode, out var parties)  &&
-                    parties. TryGetValue(Tariff.PartyId,     out var _tariffs) &&
-                    _tariffs.TryGetValue(Tariff.Id,          out var tariff))
+                var patchResult = existingTariff.TryPatch(TariffPatch,
+                                                          AllowDowngrades ?? this.AllowDowngrades ?? false);
+
+                if (patchResult.IsSuccess &&
+                    patchResult.PatchedData is not null)
                 {
 
-                    var patchResult = tariff.TryPatch(TariffPatch,
-                                                      AllowDowngrades ?? this.AllowDowngrades ?? false);
+                    tariffs.TryUpdate(Tariff.Id, Tariff, patchResult.PatchedData);
 
-                    if (patchResult.IsSuccess)
+                    await LogAsset(updateTariff,
+                                   Tariff.ToJSON(true,
+                                                 true,
+                                                 CustomTariffSerializer,
+                                                 CustomDisplayTextSerializer,
+                                                 CustomPriceSerializer,
+                                                 CustomTariffElementSerializer,
+                                                 CustomPriceComponentSerializer,
+                                                 CustomTariffRestrictionsSerializer,
+                                                 CustomEnergyMixSerializer,
+                                                 CustomEnergySourceSerializer,
+                                                 CustomEnvironmentalImpactSerializer),
+                                   EventTrackingId ?? EventTracking_Id.New,
+                                   CurrentUserId);
+
+                    if (!SkipNotifications)
                     {
-
-                        _tariffs[Tariff.Id] = patchResult.PatchedData;
 
                         var OnTariffChangedLocal = OnTariffChanged;
                         if (OnTariffChangedLocal is not null)
@@ -5251,16 +5390,406 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                     }
 
+                }
 
-                    return patchResult;
+                return patchResult;
+
+            }
+
+            else
+                return PatchResult<Tariff>.Failed(Tariff,
+                                                  "The given charging tariff does not exist!");
+
+        }
+
+        #endregion
+
+        #region RemoveTariff         (Tariff,                                       SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove the given charging tariff.
+        /// </summary>
+        /// <param name="Tariff">A charging tariff.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveTariff(Tariff             Tariff,
+                                                                          Boolean            SkipNotifications   = false,
+                                                                          EventTracking_Id?  EventTrackingId     = null,
+                                                                          User_Id?           CurrentUserId       = null)
+        {
+
+            IEnumerable<Tariff> removedTariffs = [];
+            var success = false;
+
+            if (this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+            {
+
+                if (parties.TryGetValue(Tariff.PartyId, out var tariffs))
+                {
+
+                    if (tariffs.TryRemove(Tariff.Id, out removedTariffs))
+                    {
+
+                        if (removedTariffs.Any())
+                            await LogAsset(removeTariff,
+                                           new JArray(
+                                               removedTariffs.Select(tariff => tariff.ToJSON(
+                                                                                   true,
+                                                                                   true,
+                                                                                   CustomTariffSerializer,
+                                                                                   CustomDisplayTextSerializer,
+                                                                                   CustomPriceSerializer,
+                                                                                   CustomTariffElementSerializer,
+                                                                                   CustomPriceComponentSerializer,
+                                                                                   CustomTariffRestrictionsSerializer,
+                                                                                   CustomEnergyMixSerializer,
+                                                                                   CustomEnergySourceSerializer,
+                                                                                   CustomEnvironmentalImpactSerializer
+                                                                               )
+                                                                    )
+                                           ),
+                                           EventTrackingId ?? EventTracking_Id.New,
+                                           CurrentUserId);
+
+                        success = true;
+
+                    }
+
+                    if (!tariffs.Any())
+                        parties.Remove(Tariff.PartyId, out _);
 
                 }
 
-                else
-                    return PatchResult<Tariff>.Failed(Tariff,
-                                                      "The given charging tariff does not exist!");
+                if (parties.IsEmpty)
+                    this.tariffs.Remove(Tariff.CountryCode, out _);
 
             }
+
+            return success
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
+                       : RemoveResult<IEnumerable<Tariff>>.Failed (null, "RemoveTariff(TariffId, ...) failed!");
+
+        }
+
+        #endregion
+
+        #region RemoveTariff         (TariffId,                                     SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove the given charging tariff.
+        /// </summary>
+        /// <param name="TariffId">An unique charging tariff identification.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveTariff(Tariff_Id          TariffId,
+                                                                          Boolean            SkipNotifications   = false,
+                                                                          EventTracking_Id?  EventTrackingId     = null,
+                                                                          User_Id?           CurrentUserId       = null)
+        {
+
+            CountryCode? countryCode   = default;
+            Party_Id?    partyId       = default;
+
+            foreach (var parties in tariffs.Values)
+            {
+                foreach (var tariffs in parties.Values)
+                {
+                    if (tariffs.TryGetValue(TariffId, out var tariff))
+                    {
+                        countryCode  = tariff.CountryCode;
+                        partyId      = tariff.PartyId;
+                    }
+                }
+            }
+
+            if (countryCode.HasValue &&
+                partyId.    HasValue)
+            {
+
+                var success = this.tariffs[countryCode.Value][partyId.Value].TryRemove(TariffId, out var removedTariffs);
+
+                if (success)
+                {
+
+                    if (removedTariffs.Any())
+                        await LogAsset(removeTariff,
+                                       new JArray(
+                                           removedTariffs.Select(tariff => tariff.ToJSON(
+                                                                               true,
+                                                                               true,
+                                                                               CustomTariffSerializer,
+                                                                               CustomDisplayTextSerializer,
+                                                                               CustomPriceSerializer,
+                                                                               CustomTariffElementSerializer,
+                                                                               CustomPriceComponentSerializer,
+                                                                               CustomTariffRestrictionsSerializer,
+                                                                               CustomEnergyMixSerializer,
+                                                                               CustomEnergySourceSerializer,
+                                                                               CustomEnvironmentalImpactSerializer
+                                                                           )
+                                                                )
+                                       ),
+                                       EventTrackingId ?? EventTracking_Id.New,
+                                       CurrentUserId);
+
+                    if (!this.tariffs[countryCode.Value][partyId.Value].Any())
+                        this.tariffs[countryCode.Value].Remove(partyId.Value, out _);
+
+                    if (!this.tariffs[countryCode.Value].Any())
+                        this.tariffs.Remove(countryCode.Value, out _);
+
+                }
+
+                return RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs);
+
+            }
+
+            return RemoveResult<IEnumerable<Tariff>>.Failed(null, "RemoveTariff(TariffId, ...) failed!");
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs     (                                              SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove all charging tariffs.
+        /// </summary>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Boolean            SkipNotifications   = false,
+                                                                              EventTracking_Id?  EventTrackingId     = null,
+                                                                              User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var removedTariffs = new List<Tariff>();
+
+            foreach (var parties in tariffs.Values)
+            {
+                foreach (var tariffs in parties.Values)
+                {
+                    removedTariffs.AddRange(tariffs.Values());
+                    tariffs.Clear();
+                }
+                parties.Clear();
+            }
+
+            tariffs.Clear();
+
+            await LogAsset(removeAllTariffs,
+                           new JArray(
+                               removedTariffs.Select(tariff => tariff.ToJSON(
+                                                                   true,
+                                                                   true,
+                                                                   CustomTariffSerializer,
+                                                                   CustomDisplayTextSerializer,
+                                                                   CustomPriceSerializer,
+                                                                   CustomTariffElementSerializer,
+                                                                   CustomPriceComponentSerializer,
+                                                                   CustomTariffRestrictionsSerializer,
+                                                                   CustomEnergyMixSerializer,
+                                                                   CustomEnergySourceSerializer,
+                                                                   CustomEnvironmentalImpactSerializer
+                                                               )
+                                                    )
+                           ),
+                           EventTrackingId,
+                           CurrentUserId);
+
+            return RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs);
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs     (IncludeTariffs,                               SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove all matching charging tariffs.
+        /// </summary>
+        /// <param name="IncludeTariffs">A charging tariff filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff, Boolean>  IncludeTariffs,
+                                                                              Boolean                SkipNotifications   = false,
+                                                                              EventTracking_Id?      EventTrackingId     = null,
+                                                                              User_Id?               CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var removedTariffs = new List<Tariff>();
+
+            foreach (var parties in tariffs.Values)
+            {
+
+                foreach (var tariffs in parties.Values)
+                {
+
+                    foreach (var tariff in tariffs.Values())
+                    {
+                        if (IncludeTariffs(tariff))
+                        {
+                            tariffs.TryRemove(tariff.Id, out _);
+                            removedTariffs.Add(tariff);
+                        }
+                    }
+
+                    if (!tariffs.Any())
+                        tariffs.Clear();
+
+                }
+
+                if (parties.IsEmpty)
+                    tariffs.Clear();
+
+            }
+
+            await LogAsset(removeAllTariffs,
+                           new JArray(
+                               removedTariffs.Select(tariff => tariff.ToJSON(
+                                                                   true,
+                                                                   true,
+                                                                   CustomTariffSerializer,
+                                                                   CustomDisplayTextSerializer,
+                                                                   CustomPriceSerializer,
+                                                                   CustomTariffElementSerializer,
+                                                                   CustomPriceComponentSerializer,
+                                                                   CustomTariffRestrictionsSerializer,
+                                                                   CustomEnergyMixSerializer,
+                                                                   CustomEnergySourceSerializer,
+                                                                   CustomEnvironmentalImpactSerializer
+                                                               )
+                                                    )
+                           ),
+                           EventTrackingId,
+                           CurrentUserId);
+
+            return RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs);
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs     (IncludeTariffIds,                             SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove all matching charging tariffs.
+        /// </summary>
+        /// <param name="IncludeTariffIds">A charging tariff identification filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff_Id, Boolean>  IncludeTariffIds,
+                                                                              Boolean                   SkipNotifications   = false,
+                                                                              EventTracking_Id?         EventTrackingId     = null,
+                                                                              User_Id?                  CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var removedTariffs = new List<Tariff>();
+
+            foreach (var parties in tariffs.Values)
+            {
+
+                foreach (var tariffs in parties.Values)
+                {
+
+                    foreach (var tariff in tariffs.Values())
+                    {
+                        if (IncludeTariffIds(tariff.Id))
+                        {
+                            tariffs.TryRemove(tariff.Id, out _);
+                            removedTariffs.Add(tariff);
+                        }
+                    }
+
+                    if (!tariffs.Any())
+                        tariffs.Clear();
+
+                }
+
+                if (parties.IsEmpty)
+                    tariffs.Clear();
+
+            }
+
+            await LogAsset(removeAllTariffs,
+                           new JArray(
+                               removedTariffs.Select(tariff => tariff.ToJSON(
+                                                                   true,
+                                                                   true,
+                                                                   CustomTariffSerializer,
+                                                                   CustomDisplayTextSerializer,
+                                                                   CustomPriceSerializer,
+                                                                   CustomTariffElementSerializer,
+                                                                   CustomPriceComponentSerializer,
+                                                                   CustomTariffRestrictionsSerializer,
+                                                                   CustomEnergyMixSerializer,
+                                                                   CustomEnergySourceSerializer,
+                                                                   CustomEnvironmentalImpactSerializer
+                                                               )
+                                                    )
+                           ),
+                           EventTrackingId,
+                           CurrentUserId);
+
+            return RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs);
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs     (CountryCode, PartyId,                         SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove all charging tariffs owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(CountryCode        CountryCode,
+                                                                              Party_Id           PartyId,
+                                                                              Boolean            SkipNotifications   = false,
+                                                                              EventTracking_Id?  EventTrackingId     = null,
+                                                                              User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            await LogAssetComment($"{removeAllTariffs}: {CountryCode} {PartyId}",
+                                  EventTrackingId,
+                                  CurrentUserId);
+
+            var removedTariffs = new List<Tariff>();
+
+            if (tariffs.TryGetValue(CountryCode, out var parties))
+            {
+                if (parties.TryGetValue(PartyId, out var tariffs))
+                {
+                    removedTariffs.AddRange(tariffs.Values());
+                    tariffs.Clear();
+                }
+            }
+
+            await LogAsset(removeAllTariffs,
+                           new JArray(
+                               removedTariffs.Select(tariff => tariff.ToJSON(
+                                                                   true,
+                                                                   true,
+                                                                   CustomTariffSerializer,
+                                                                   CustomDisplayTextSerializer,
+                                                                   CustomPriceSerializer,
+                                                                   CustomTariffElementSerializer,
+                                                                   CustomPriceComponentSerializer,
+                                                                   CustomTariffRestrictionsSerializer,
+                                                                   CustomEnergyMixSerializer,
+                                                                   CustomEnergySourceSerializer,
+                                                                   CustomEnvironmentalImpactSerializer
+                                                               )
+                                                    )
+                           ),
+                           EventTrackingId,
+                           CurrentUserId);
+
+            return RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs);
 
         }
 
@@ -5336,7 +5865,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 {
                     foreach (var partyTariffs in party.Values)
                     {
-                        foreach (var tariff in partyTariffs.Values)
+                        foreach (var tariff in partyTariffs.Values())
                         {
                             if (tariff is not null &&
                                 IncludeTariff(tariff))
@@ -5370,7 +5899,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     {
                         if (parties.TryGetValue(PartyId.Value, out var tariffs))
                         {
-                            return tariffs.Values.ToArray();
+                            return tariffs.Values().ToArray();
                         }
                     }
                 }
@@ -5384,7 +5913,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     {
                         if (party.TryGetValue(PartyId.Value, out var tariffs))
                         {
-                            allTariffs.AddRange(tariffs.Values);
+                            allTariffs.AddRange(tariffs.Values());
                         }
                     }
 
@@ -5401,7 +5930,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                         foreach (var tariffs in parties.Values)
                         {
-                            allTariffs.AddRange(tariffs.Values);
+                            allTariffs.AddRange(tariffs.Values());
                         }
 
                         return allTariffs;
@@ -5418,7 +5947,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     {
                         foreach (var tariffs in party.Values)
                         {
-                            allTariffs.AddRange(tariffs.Values);
+                            allTariffs.AddRange(tariffs.Values());
                         }
                     }
 
@@ -5426,7 +5955,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                 }
 
-                return Array.Empty<Tariff>();
+                return [];
 
             }
 
@@ -5448,298 +5977,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                             LocationId,
                                             EVSEUId,
                                             ConnectorId,
-                                            EMSPId) ?? Array.Empty<Tariff_Id>();
-
-        #endregion
-
-
-        #region RemoveTariff    (Tariff)
-
-        /// <summary>
-        /// Remove the given charging tariff.
-        /// </summary>
-        /// <param name="Tariff">A charging tariff.</param>
-        public async Task<Boolean> RemoveTariff(Tariff             Tariff,
-                                                EventTracking_Id?  EventTrackingId   = null,
-                                                User_Id?           CurrentUserId     = null)
-        {
-
-            var success = false;
-
-            if (tariffs.TryGetValue(Tariff.CountryCode, out var parties))
-            {
-
-                if (parties.TryGetValue(Tariff.PartyId, out var tariffsOfParty))
-                {
-
-                    if (tariffsOfParty.Remove(Tariff.Id, out _))
-                    {
-
-                        await LogAsset(removeTariff,
-                                       Tariff.ToJSON(CustomTariffSerializer,
-                                                     CustomDisplayTextSerializer,
-                                                     CustomPriceSerializer,
-                                                     CustomTariffElementSerializer,
-                                                     CustomPriceComponentSerializer,
-                                                     CustomTariffRestrictionsSerializer,
-                                                     CustomEnergyMixSerializer,
-                                                     CustomEnergySourceSerializer,
-                                                     CustomEnvironmentalImpactSerializer),
-                                       EventTrackingId ?? EventTracking_Id.New,
-                                       CurrentUserId);
-
-                        success = true;
-
-                    }
-
-                    if (!tariffsOfParty.Any())
-                        parties.Remove(Tariff.PartyId, out _);
-
-                }
-
-                if (!parties.Any())
-                    tariffs.Remove(Tariff.CountryCode, out _);
-
-            }
-
-            return success;
-
-        }
-
-        #endregion
-
-        #region RemoveTariff    (TariffId)
-
-        /// <summary>
-        /// Remove the given charging tariff.
-        /// </summary>
-        /// <param name="TariffId">An unique charging tariff identification.</param>
-        public async Task<Boolean> RemoveTariff(Tariff_Id          TariffId,
-                                                EventTracking_Id?  EventTrackingId   = null,
-                                                User_Id?           CurrentUserId     = null)
-        {
-
-            CountryCode? countryCode   = default;
-            Party_Id?    partyId       = default;
-
-            foreach (var parties in tariffs.Values)
-            {
-                foreach (var tariffs in parties.Values)
-                {
-                    if (tariffs.TryGetValue(TariffId, out var tariff))
-                    {
-                        countryCode  = tariff.CountryCode;
-                        partyId      = tariff.PartyId;
-                    }
-                }
-            }
-
-            if (countryCode.HasValue &&
-                partyId.    HasValue)
-            {
-
-                var success = tariffs[countryCode.Value][partyId.Value].Remove(TariffId, out var tariff);
-
-                if (success)
-                {
-
-                    if (tariff is not null)
-                        await LogAsset(removeTariff,
-                                       tariff.ToJSON(CustomTariffSerializer,
-                                                     CustomDisplayTextSerializer,
-                                                     CustomPriceSerializer,
-                                                     CustomTariffElementSerializer,
-                                                     CustomPriceComponentSerializer,
-                                                     CustomTariffRestrictionsSerializer,
-                                                     CustomEnergyMixSerializer,
-                                                     CustomEnergySourceSerializer,
-                                                     CustomEnvironmentalImpactSerializer),
-                                       EventTrackingId ?? EventTracking_Id.New,
-                                       CurrentUserId);
-
-                    if (!tariffs[countryCode.Value][partyId.Value].Any())
-                        tariffs[countryCode.Value].Remove(partyId.Value, out _);
-
-                    if (!tariffs[countryCode.Value].Any())
-                        tariffs.Remove(countryCode.Value, out _);
-
-                }
-
-                return success;
-
-            }
-
-            return false;
-
-        }
-
-        #endregion
-
-        #region RemoveAllTariffs(IncludeTariffs = null)
-
-        /// <summary>
-        /// Remove all matching tariffs.
-        /// </summary>
-        /// <param name="IncludeTariffs">An optional charging tariff filter.</param>
-        public async Task RemoveAllTariffs(Func<Tariff, Boolean>?  IncludeTariffs    = null,
-                                           EventTracking_Id?       EventTrackingId   = null,
-                                           User_Id?                CurrentUserId     = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            if (IncludeTariffs is null)
-            {
-                tariffs.Clear();
-                await LogAsset(removeAllTariffs,
-                               EventTrackingId,
-                               CurrentUserId);
-            }
-
-            else
-            {
-
-                foreach (var tariff in tariffs.Values.SelectMany(partyKVP  => partyKVP. Values).
-                                                      SelectMany(tariffKVP => tariffKVP.Values).
-                                                      Where     (IncludeTariffs).
-                                                      ToArray   ())
-                {
-
-                    tariffs[tariff.CountryCode][tariff.PartyId].Remove(tariff.Id, out _);
-
-                    await LogAsset(removeTariff,
-                                   tariff.ToJSON(CustomTariffSerializer,
-                                                 CustomDisplayTextSerializer,
-                                                 CustomPriceSerializer,
-                                                 CustomTariffElementSerializer,
-                                                 CustomPriceComponentSerializer,
-                                                 CustomTariffRestrictionsSerializer,
-                                                 CustomEnergyMixSerializer,
-                                                 CustomEnergySourceSerializer,
-                                                 CustomEnvironmentalImpactSerializer),
-                                   EventTrackingId,
-                                   CurrentUserId);
-
-                }
-
-            }
-
-        }
-
-        #endregion
-
-        #region RemoveAllTariffs(IncludeTariffIds)
-
-        /// <summary>
-        /// Remove all matching tariffs.
-        /// </summary>
-        /// <param name="IncludeTariffIds">An optional charging tariff identification filter.</param>
-        public async Task<Boolean> RemoveAllTariffs(Func<Tariff_Id, Boolean>?  IncludeTariffIds,
-                                                    EventTracking_Id?          EventTrackingId   = null,
-                                                    User_Id?                   CurrentUserId     = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            var success = false;
-
-            if (IncludeTariffIds is null)
-            {
-
-                tariffs.Clear();
-
-                await LogAsset(removeAllTariffs,
-                               EventTrackingId,
-                               CurrentUserId);
-
-                success = true;
-
-            }
-
-            else
-            {
-                foreach (var tariff in tariffs.Values.SelectMany(partyKVP  => partyKVP. Values).
-                                                      SelectMany(tariffKVP => tariffKVP.Values).
-                                                      Where     (tariff    => IncludeTariffIds(tariff.Id)).
-                                                      ToArray   ())
-                {
-
-                    success = true;
-
-                    tariffs[tariff.CountryCode][tariff.PartyId].Remove(tariff.Id, out _);
-
-                    await LogAsset(removeTariff,
-                                   tariff.ToJSON(CustomTariffSerializer,
-                                                 CustomDisplayTextSerializer,
-                                                 CustomPriceSerializer,
-                                                 CustomTariffElementSerializer,
-                                                 CustomPriceComponentSerializer,
-                                                 CustomTariffRestrictionsSerializer,
-                                                 CustomEnergyMixSerializer,
-                                                 CustomEnergySourceSerializer,
-                                                 CustomEnvironmentalImpactSerializer),
-                                   EventTrackingId,
-                                   CurrentUserId);
-
-                }
-            }
-
-            return success;
-
-        }
-
-        #endregion
-
-        #region RemoveAllTariffs(CountryCode, PartyId)
-
-        /// <summary>
-        /// Remove all charging tariffs owned by the given party.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the party.</param>
-        /// <param name="PartyId">The identification of the party.</param>
-        public async Task<Boolean> RemoveAllTariffs(CountryCode        CountryCode,
-                                                    Party_Id           PartyId,
-                                                    EventTracking_Id?  EventTrackingId   = null,
-                                                    User_Id?           CurrentUserId     = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            await LogAssetComment($"{removeAllTariffs}: {CountryCode} {PartyId}",
-                                  EventTrackingId,
-                                  CurrentUserId);
-
-            var success = false;
-
-            if (tariffs.TryGetValue(CountryCode, out var parties))
-            {
-                if (parties.TryGetValue(PartyId, out var tariffs))
-                {
-
-                    tariffs.Clear();
-
-                    success = true;
-
-                    foreach (var tariff in tariffs.Values)
-                        await LogAsset(removeTariff,
-                                       tariff.ToJSON(CustomTariffSerializer,
-                                                     CustomDisplayTextSerializer,
-                                                     CustomPriceSerializer,
-                                                     CustomTariffElementSerializer,
-                                                     CustomPriceComponentSerializer,
-                                                     CustomTariffRestrictionsSerializer,
-                                                     CustomEnergyMixSerializer,
-                                                     CustomEnergySourceSerializer,
-                                                     CustomEnvironmentalImpactSerializer),
-                                       EventTrackingId,
-                                       CurrentUserId);
-
-                }
-            }
-
-            return success;
-
-        }
+                                            EMSPId) ?? [];
 
         #endregion
 

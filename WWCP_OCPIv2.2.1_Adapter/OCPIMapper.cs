@@ -20,6 +20,7 @@
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
+using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -78,6 +79,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     /// </summary>
     public static class OCPIMapper
     {
+
+        public const String OCPI_EVSEUId = "OCPI.EVSEUId";
+
 
         #region AsWWCPEVSEStatus(this EVSEStatus)
 
@@ -409,6 +413,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         #endregion
 
 
+        public static ParkingType ToOICP(this WWCP.ParkingType Parkingtype)
+        {
+
+            if (Parkingtype == WWCP.ParkingType.UNKNOWN)
+                return ParkingType.UNKNOWN;
+
+            if (Parkingtype == WWCP.ParkingType.ALONG_MOTORWAY)
+                return ParkingType.ALONG_MOTORWAY;
+
+            if (Parkingtype == WWCP.ParkingType.PARKING_GARAGE)
+                return ParkingType.PARKING_GARAGE;
+
+            if (Parkingtype == WWCP.ParkingType.PARKING_LOT)
+                return ParkingType.PARKING_LOT;
+
+            if (Parkingtype == WWCP.ParkingType.ON_DRIVEWAY)
+                return ParkingType.ON_DRIVEWAY;
+
+            if (Parkingtype == WWCP.ParkingType.ON_STREET)
+                return ParkingType.ON_STREET;
+
+            if (Parkingtype == WWCP.ParkingType.UNDERGROUND_GARAGE)
+                return ParkingType.UNDERGROUND_GARAGE;
+
+            if (Parkingtype == WWCP.ParkingType.OTHER)
+                return ParkingType.UNKNOWN;
+
+            throw new ArgumentException("Invalid parking type!");
+
+        }
+
+
         #region ToOCPI(this ChargingPool,  ref Warnings, IncludeEVSEIds = null)
 
         public static Location? ToOCPI(this WWCP.IChargingPool         ChargingPool,
@@ -468,7 +504,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             try
             {
 
-                Warnings = Array.Empty<Warning>();
+                Warnings = [];
 
                 var evses = new List<EVSE>();
 
@@ -488,13 +524,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 }
 
+                var subOperators = new List<BusinessDetails>();
+
+                foreach (var brand in ChargingPool.Brands.Concat(ChargingPool.SelectMany(station => station.Brands)).Distinct().OrderBy(brand => brand.Name.FirstText()))
+                {
+                    subOperators.Add(
+                        new BusinessDetails(
+                            brand.Name.FirstText()
+                        )
+                    );
+                }
+
                 return new Location(
 
                            CountryCode:          CountryCode.Parse(ChargingPool.Id.OperatorId.CountryCode.Alpha2Code),
                            PartyId:              Party_Id.   Parse(ChargingPool.Id.OperatorId.Suffix),
                            Id:                   Location_Id.Parse(ChargingPool.Id.Suffix),
                            Publish:              true,
-                     //      LocationType:         LocationType.ON_STREET, // ????
                            Address:              String.Concat(ChargingPool.Address.Street, " ", ChargingPool.Address.HouseNumber),
                            City:                 ChargingPool.Address.City.FirstText(),
                            Country:              ChargingPool.Address.Country,
@@ -505,10 +551,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            Name:                 ChargingPool.Name.FirstText(),
                            PostalCode:           ChargingPool.Address.PostalCode,
                            State:                null,
-                           RelatedLocations:     Array.Empty<AdditionalGeoLocation>(),
-                           ParkingType:          null,
+                           RelatedLocations:     [],
+                           ParkingType:          ChargingPool.ParkingType?.ToOICP(),
                            EVSEs:                evses,
-                           Directions:           Array.Empty<DisplayText>(),
+                           Directions:           [],
                            Operator:             new BusinessDetails(
                                                      ChargingPool.Operator.Name.FirstText(),
                                                      ChargingPool.Operator.Homepage,
@@ -527,12 +573,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                            )
                                                          : null
                                                  ),
-                           SubOperator:          null,
+                           SubOperator:          subOperators.FirstOrDefault(),
                            Owner:                null,
                            Facilities:           ChargingPool.Facilities.  ToOCPI(),
                            OpeningTimes:         ChargingPool.OpeningTimes.ToOCPI(),
                            ChargingWhenClosed:   ChargingPool.ChargingWhenClosed,
-                           Images:               Array.Empty<Image>(),
+                           Images:               null,
                            EnergyMix:            null,
 
                            LastUpdated:          ChargingPool.LastChangeDate
@@ -725,13 +771,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             try
             {
 
-                var evseUId = EVSE.Id.ToOCPI_EVSEUId(CustomEVSEUIdConverter);
+                EVSE_UId? evseUId = null;
 
-                if (!evseUId.HasValue)
+                // Favor the OCPI EVSE Unique identification over the WWCP EVSE identification!
+                if (EVSE_UId.TryParse(EVSE.CustomData?[OCPI_EVSEUId]?.Value<String>() ?? "", out var uid))
                 {
-                    warnings.Add(Warning.Create($"The given EVSE identificaton '{EVSE.Id}' could not be converted to an OCPI EVSE Unique identification!"));
-                    Warnings = warnings;
-                    return null;
+                    evseUId = uid;
+                }
+                else
+                {
+
+                    evseUId = EVSE.Id.ToOCPI_EVSEUId(CustomEVSEUIdConverter);
+
+                    if (!evseUId.HasValue)
+                    {
+                        warnings.Add(Warning.Create($"The given EVSE identificaton '{EVSE.Id}' could not be converted to an OCPI EVSE Unique identification!"));
+                        Warnings = warnings;
+                        return null;
+                    }
+
                 }
 
 
@@ -765,7 +823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         Cast<Connector>().
                                         ToArray();
 
-                if (!connectors.Any())
+                if (connectors.Length == 0)
                 {
                     warnings.Add(Warning.Create($"The given EVSE socket outlets could not be converted to OCPI connectors!"));
                     Warnings = warnings;
@@ -773,7 +831,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 }
 
 
-                Warnings = Array.Empty<Warning>();
+                Warnings = [];
 
                 return new EVSE(
 

@@ -751,13 +751,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
                                                               CancellationToken);
 
-            EventTrackingId ??= EventTracking_Id.New;
-
             try
             {
 
                 if (lockTaken)
                 {
+
+                    EventTrackingId ??= EventTracking_Id.New;
 
                     IEnumerable<Warning> warnings = [];
 
@@ -1282,7 +1282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     OCPI.AddResult<EVSE> result;
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     var locationId  = EVSE.ChargingPool is not null
                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.ToString())

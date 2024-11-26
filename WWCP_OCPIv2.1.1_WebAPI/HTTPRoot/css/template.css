@@ -5,26 +5,105 @@
 }
 body #page {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
-body #page #top {
+body #page #navigation {
+  display: flex;
+  flex-direction: column;
+  background-color: #456ca7;
+  color: #ffb980;
+  font-size: 120%;
+}
+body #page #navigation #logo {
+  display: block;
+  align-self: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  text-align: center;
+  color: #EEEEEE;
+  margin: 16px 10px;
+  font-size: 125%;
+}
+body #page #navigation #logo .small {
+  font-size: 50%;
+  margin-top: -1px;
+}
+body #page #navigation #mainMenu {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+body #page #navigation #mainMenu a {
+  color: #FFFFFF;
+  padding: 0.7vh 0.55em 0.7vh 0.3em;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  text-align: center;
+}
+body #page #navigation #mainMenu a i {
+  display: inline-block;
+  font-size: 100%;
+  width: 44px;
+  font-style: normal;
+}
+body #page #navigation #mainMenu a .iconText {
+  font-size: 50%;
+}
+body #page #navigation #mainMenu a:hover {
+  color: #DDDDFF;
+  background-color: indianred;
+}
+body #page #navigation #mainMenu a.activated {
+  background-color: #698cc3;
+}
+body #page #navigation #bottomMenu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+body #page #navigation #bottomMenu a {
+  color: #DDDDDD;
+  padding: 0.7vh 0.55em 0.7vh 0.3em;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  text-align: center;
+}
+body #page #navigation #bottomMenu a i {
+  display: inline-block;
+  font-size: 100%;
+  width: 44px;
+  font-style: normal;
+}
+body #page #navigation #bottomMenu a .iconText {
+  font-size: 50%;
+}
+body #page #navigation #bottomMenu a:hover {
+  color: #CCCCDD;
+  background-color: mediumvioletred;
+}
+body #page #workarea {
+  width: 100%;
+}
+body #page #workarea #topbar {
   display: flex;
   width: 100%;
   height: 60px;
-  background-color: #456ca7;
   z-index: 100;
-  box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.3);
+  /*box-shadow:             2px 0 16px 0 rgba(0,0,0,.3);*/
 }
-body #page #top #topLeft {
+body #page #workarea #topbar #topLeft {
   min-width: 20vw;
   padding: 0 0 0 2vw;
   line-height: 60px;
-  color: #d8dee3;
+  color: #555555;
   font-weight: bold;
   font-size: 110%;
   user-select: none;
 }
-body #page #top #topRight {
+body #page #workarea #topbar #topRight {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -33,18 +112,18 @@ body #page #top #topRight {
   font-size: 85%;
   padding-right: 20px;
 }
-body #page #top #topRight a {
+body #page #workarea #topbar #topRight a {
   padding: 0px 10px;
   margin: 3px;
   text-decoration: none;
 }
-body #page #top #topRight a i {
+body #page #workarea #topbar #topRight a i {
   color: #ccd5e3;
   font-size: 140%;
   display: inline-block;
   font-style: normal;
 }
-body #page #top #topRight a #mt {
+body #page #workarea #topbar #topRight a #mt {
   position: relative;
   background-color: rgba(170, 0, 0, 0.7);
   color: #ffffff;
@@ -60,65 +139,65 @@ body #page #top #topRight a #mt {
   height: 17px;
   line-height: 17px;
 }
-body #page #top #topRight a:hover i {
+body #page #workarea #topbar #topRight a:hover i {
   color: #e3ecfa;
 }
-body #page #top #topRight #internal {
+body #page #workarea #topbar #topRight #internal {
   display: none;
 }
-body #page #top #topRight #internal #userFrame {
+body #page #workarea #topbar #topRight #internal #userFrame {
   display: inline-block;
   background-color: rgba(255, 255, 255, 0.07);
   padding: 10px 15px;
   border-radius: 6px;
 }
-body #page #top #topRight #internal #userFrame #username {
+body #page #workarea #topbar #topRight #internal #userFrame #username {
   color: #ccd5e3;
   padding-right: 10px;
   display: inline-block;
 }
-body #page #top #topRight #internal #userFrame #userIcon {
+body #page #workarea #topbar #topRight #internal #userFrame #userIcon {
   display: inline-block;
 }
-body #page #top #topRight #internal #userFrame #userIcon i {
+body #page #workarea #topbar #topRight #internal #userFrame #userIcon i {
   font-size: 140%;
 }
-body #page #top #topRight #internal #userFrame:hover {
+body #page #workarea #topbar #topRight #internal #userFrame:hover {
   background-color: rgba(255, 255, 255, 0.21);
 }
-body #page #top #topRight #internal #astronautFrame {
+body #page #workarea #topbar #topRight #internal #astronautFrame {
   display: none;
   background-color: rgba(255, 255, 255, 0.07);
   padding: 10px 15px;
   border-radius: 6px;
 }
-body #page #top #topRight #internal #astronautFrame #astronaut {
+body #page #workarea #topbar #topRight #internal #astronautFrame #astronaut {
   color: #ccd5e3;
   padding-right: 10px;
   display: inline-block;
 }
-body #page #top #topRight #internal #astronautFrame #astronautIcon {
+body #page #workarea #topbar #topRight #internal #astronautFrame #astronautIcon {
   display: inline-block;
 }
-body #page #top #topRight #internal #astronautFrame #astronautIcon i {
+body #page #workarea #topbar #topRight #internal #astronautFrame #astronautIcon i {
   font-size: 140%;
 }
-body #page #top #topRight #internal #astronautFrame:hover {
+body #page #workarea #topbar #topRight #internal #astronautFrame:hover {
   background-color: rgba(255, 255, 255, 0.21);
 }
-body #page #top #topRight #internal #admin {
+body #page #workarea #topbar #topRight #internal #admin {
   display: none;
 }
-body #page #top #topRight #internal #signout {
+body #page #workarea #topbar #topRight #internal #signout {
   padding-right: 1px;
 }
-body #page #top #topRight #signin {
+body #page #workarea #topbar #topRight #signin {
   padding-right: 1px;
 }
-body #page #bottom {
+body #page #workarea #bottom {
   display: flex;
 }
-body #page #bottom #navigation {
+body #page #workarea #bottom #navigation {
   display: flex;
   display: none;
   flex-direction: column;
@@ -128,26 +207,26 @@ body #page #bottom #navigation {
   background-color: #456ca7;
   box-shadow: 2px 16px 16px 0 rgba(0, 0, 0, 0.3);
 }
-body #page #bottom #navigation #topMenu {
+body #page #workarea #bottom #navigation #topMenu {
   margin-top: 3vh;
 }
-body #page #bottom #navigation .menu {
+body #page #workarea #bottom #navigation .menu {
   display: block;
   color: #ffb980;
   padding: 15px 0px 10px 12px;
   font-size: 95%;
 }
-body #page #bottom #navigation .submenu {
+body #page #workarea #bottom #navigation .submenu {
   display: none;
 }
-body #page #bottom #navigation #bottomMenu {
+body #page #workarea #bottom #navigation #bottomMenu {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding-bottom: 3vh;
 }
-body #page #bottom #navigation a.menulink {
+body #page #workarea #bottom #navigation a.menulink {
   display: block;
   position: relative;
   color: #ccd5e3;
@@ -160,20 +239,20 @@ body #page #bottom #navigation a.menulink {
   user-select: none;
   text-align: center;
 }
-body #page #bottom #navigation a.menulink i {
+body #page #workarea #bottom #navigation a.menulink i {
   display: inline-block;
   font-size: 100%;
   width: 44px;
   font-style: normal;
 }
-body #page #bottom #navigation a.menulink .iconText {
+body #page #workarea #bottom #navigation a.menulink .iconText {
   font-size: 50%;
 }
-body #page #bottom #navigation a.menulink:hover {
+body #page #workarea #bottom #navigation a.menulink:hover {
   color: #e8eaef;
   background-color: #6181b2;
 }
-body #page #bottom #navigation .arrow {
+body #page #workarea #bottom #navigation .arrow {
   display: none;
   border-top: 20px solid transparent;
   border-bottom: 20px solid transparent;
@@ -184,17 +263,17 @@ body #page #bottom #navigation .arrow {
   right: -20px;
 }
 @media only screen and (max-width: 512px) {
-  body #page #bottom #navigation {
+  body #page #workarea #bottom #navigation {
     padding-right: 0px;
   }
 }
-body #page #bottom #right {
+body #page #workarea #bottom #right {
   position: relative;
   width: 100%;
   height: calc(100vh - 60px);
   z-index: 9;
 }
-body #page #bottom #right .subnavigation {
+body #page #workarea #bottom #right .subnavigation {
   display: none;
   position: absolute;
   top: 0px;
@@ -204,11 +283,11 @@ body #page #bottom #right .subnavigation {
   box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.3);
   z-index: 8;
 }
-body #page #bottom #right #text {
+body #page #workarea #bottom #right #text {
   position: absolute;
   top: 0px;
   left: 0px;
-  background-color: lightgrey;
+  /*background-color:       lightgrey;*/
   overflow-y: auto;
   z-index: 7;
   /*@media only screen and (max-width: 512px) {
@@ -218,31 +297,31 @@ body #page #bottom #right #text {
   min-height: 100%;
   margin: 0px;
   padding: 0;
-  background-color: #eee;
+  /*background-color:               #eee;*/
 }
-body #page #bottom #right #text .headline #headline {
+body #page #workarea #bottom #right #text .headline #headline {
   display: flex;
   align-items: center;
   padding: 1vh 0px 2vh 0px;
   color: #999;
 }
-body #page #bottom #right #text .headline #headline #logo {
+body #page #workarea #bottom #right #text .headline #headline #logo {
   margin-right: 1vw;
 }
-body #page #bottom #right #text .headline #headline #logo img {
+body #page #workarea #bottom #right #text .headline #headline #logo img {
   width: 100px;
 }
-body #page #bottom #right #text .headline #headline #title {
+body #page #workarea #bottom #right #text .headline #headline #title {
   font-size: 180%;
 }
-body #page #bottom #right #text .headline #headline #title #id {
+body #page #workarea #bottom #right #text .headline #headline #title #id {
   display: inline-block;
 }
-body #page #bottom #right #text .headline #headline #title #name {
+body #page #workarea #bottom #right #text .headline #headline #title #name {
   font-size: 50%;
   display: inline-block;
 }
-body #page #bottom #right #text .headline #headline #title #name #language {
+body #page #workarea #bottom #right #text .headline #headline #title #name #language {
   display: inline-block;
   margin-top: 2px;
   font-size: 60%;
@@ -251,14 +330,14 @@ body #page #bottom #right #text .headline #headline #title #name #language {
   padding: 2px 4px;
   border-radius: 4px;
 }
-body #page #bottom #right #text .headline #headline #title #name #I18NText {
+body #page #workarea #bottom #right #text .headline #headline #title #name #I18NText {
   display: inline-block;
   font-size: 170%;
 }
-body #page #bottom #right #text .headline #headline #title #description {
+body #page #workarea #bottom #right #text .headline #headline #title #description {
   font-size: 30%;
 }
-body #page #bottom #right #text .headline #headline #title #description #language {
+body #page #workarea #bottom #right #text .headline #headline #title #description #language {
   display: inline-block;
   margin-top: 2px;
   font-size: 60%;
@@ -267,20 +346,20 @@ body #page #bottom #right #text .headline #headline #title #description #languag
   padding: 2px 4px;
   border-radius: 4px;
 }
-body #page #bottom #right #text .headline #headline #title #description #I18NText {
+body #page #workarea #bottom #right #text .headline #headline #title #description #I18NText {
   display: inline-block;
   font-size: 170%;
 }
-body #page #bottom #right #text .entity {
+body #page #workarea #bottom #right #text .entity {
   display: flex;
   flex-direction: column;
   padding: 1vh 1vw;
 }
-body #page #bottom #right #text .entity #about {
+body #page #workarea #bottom #right #text .entity #about {
   color: #333;
   padding: 1vh 0vh 2vh 1vh;
 }
-body #page #bottom #right #text .entity .upperButtons {
+body #page #workarea #bottom #right #text .entity .upperButtons {
   display: flex;
   flex-direction: row-reverse;
   margin: 1vh 1vw;
@@ -290,7 +369,7 @@ body #page #bottom #right #text .entity .upperButtons {
                               font-size:          75%;
                           }*/
 }
-body #page #bottom #right #text .entity .upperButtons .button {
+body #page #workarea #bottom #right #text .entity .upperButtons .button {
   background: rgb(214, 214, 214);
   background-image: linear-gradient(to bottom, #ddd, #c8c8c8);
   color: #696969;
@@ -303,51 +382,51 @@ body #page #bottom #right #text .entity .upperButtons .button {
   white-space: nowrap;
   text-decoration: none;
 }
-body #page #bottom #right #text .entity .upperButtons .button .text {
+body #page #workarea #bottom #right #text .entity .upperButtons .button .text {
   display: inline-block;
 }
-body #page #bottom #right #text .entity .upperButtons .button .text .text2 {
+body #page #workarea #bottom #right #text .entity .upperButtons .button .text .text2 {
   display: inline-block;
   padding-left: 8px;
   vertical-align: top;
   padding-top: 7px;
 }
-body #page #bottom #right #text .entity .upperButtons .button:hover {
+body #page #workarea #bottom #right #text .entity .upperButtons .button:hover {
   background-color: rgbgb(224, 224, 224);
   background-image: linear-gradient(to bottom, #eee, #d4d4d4);
   color: #777;
 }
-body #page #bottom #right #text .entity .upperButtons .button:active {
+body #page #workarea #bottom #right #text .entity .upperButtons .button:active {
   box-shadow: 0 1px 2px #999;
   transform: translateY(4px);
 }
-body #page #bottom #right #text .entity .upperButtons .button:focus {
+body #page #workarea #bottom #right #text .entity .upperButtons .button:focus {
   outline: 0px;
 }
-body #page #bottom #right #text .entity .upperButtons .button:disabled {
+body #page #workarea #bottom #right #text .entity .upperButtons .button:disabled {
   background-color: rgba(0, 0, 0, 0.1);
   background-image: none;
   color: #bbb;
   box-shadow: none;
 }
-body #page #bottom #right #text .entity #data {
+body #page #workarea #bottom #right #text .entity #data {
   margin-left: 15px;
   width: calc(100% - 15px);
   display: table;
   border-collapse: collapse;
 }
-body #page #bottom #right #text .entity #data .row {
+body #page #workarea #bottom #right #text .entity #data .row {
   display: table-row;
   width: 100%;
 }
-body #page #bottom #right #text .entity #data .row .key {
+body #page #workarea #bottom #right #text .entity #data .row .key {
   display: table-cell;
   padding: 8px 42px 8px 0;
   white-space: nowrap;
   color: #666;
   vertical-align: top;
 }
-body #page #bottom #right #text .entity #data .row .subkey {
+body #page #workarea #bottom #right #text .entity #data .row .subkey {
   display: table-cell;
   padding: 8px 42px 8px 0;
   white-space: nowrap;
@@ -355,7 +434,7 @@ body #page #bottom #right #text .entity #data .row .subkey {
   vertical-align: top;
   padding-left: 20px;
 }
-body #page #bottom #right #text .entity #data .row .value {
+body #page #workarea #bottom #right #text .entity #data .row .value {
   display: table-cell;
   position: relative;
   width: inherit;
@@ -364,7 +443,7 @@ body #page #bottom #right #text .entity #data .row .value {
   color: #777;
   padding-top: 5px;
 }
-body #page #bottom #right #text .entity #data .row .value input, body #page #bottom #right #text .entity #data .row .value textarea, body #page #bottom #right #text .entity #data .row .value select {
+body #page #workarea #bottom #right #text .entity #data .row .value input, body #page #workarea #bottom #right #text .entity #data .row .value textarea, body #page #workarea #bottom #right #text .entity #data .row .value select {
   background-color: rgba(255, 255, 255, 0.7);
   padding: 6px 8px;
   border-radius: 4px;
@@ -372,10 +451,10 @@ body #page #bottom #right #text .entity #data .row .value input, body #page #bot
   border: 0px;
   width: 100%;
 }
-body #page #bottom #right #text .entity #data .row .value input, body #page #bottom #right #text .entity #data .row .value textarea {
+body #page #workarea #bottom #right #text .entity #data .row .value input, body #page #workarea #bottom #right #text .entity #data .row .value textarea {
   width: calc(100% - 16px);
 }
-body #page #bottom #right #text .entity #data .row .value textarea {
+body #page #workarea #bottom #right #text .entity #data .row .value textarea {
   /*background-color:   rgba(255, 255, 255, 0.7);
   width:              calc(100% - 16px);
   padding:            6px 8px;
@@ -388,10 +467,10 @@ body #page #bottom #right #text .entity #data .row .value textarea {
   min-height: 100px;
   /* display:            block;*/
 }
-body #page #bottom #right #text .entity #data .row .value select {
+body #page #workarea #bottom #right #text .entity #data .row .value select {
   margin-bottom: 1px;
 }
-body #page #bottom #right #text .entity #data .row .value input[type=checkbox] {
+body #page #workarea #bottom #right #text .entity #data .row .value input[type=checkbox] {
   /*width:              30px;
   height:             18px;
   margin-top:         8px;*/
@@ -399,54 +478,54 @@ body #page #bottom #right #text .entity #data .row .value input[type=checkbox] {
   width: auto;
   transform: scale(1.2);
 }
-body #page #bottom #right #text .entity #data .row .value input[type=checkbox]:checked {
+body #page #workarea #bottom #right #text .entity #data .row .value input[type=checkbox]:checked {
   color: #456ca7;
 }
-body #page #bottom #right #text .entity #data .row .value input:focus, body #page #bottom #right #text .entity #data .row .value textarea:focus {
+body #page #workarea #bottom #right #text .entity #data .row .value input:focus, body #page #workarea #bottom #right #text .entity #data .row .value textarea:focus {
   outline-color: #bdcee9;
   border-color: #456ca7;
   box-shadow: 0 0 6px #a3b9db;
   background: #d7e1f0;
 }
-body #page #bottom #right #text .entity #data .row .value input::placeholder {
+body #page #workarea #bottom #right #text .entity #data .row .value input::placeholder {
   font-size: 95%;
   font-style: italic;
   color: rgb(154, 154, 154);
   opacity: 1; /* Firefox fix */
 }
-body #page #bottom #right #text .entity #data .row .value input.error {
+body #page #workarea #bottom #right #text .entity #data .row .value input.error {
   display: inline-block;
   background-color: rgba(200, 0, 0, 0.23) !important;
   color: rgb(200, 0, 0) !important;
 }
-body #page #bottom #right #text .entity #data .row .value .subvalues .subrow {
+body #page #workarea #bottom #right #text .entity #data .row .value .subvalues .subrow {
   display: table-row;
 }
-body #page #bottom #right #text .entity #data .row .value .subvalues .subrow .subkey {
+body #page #workarea #bottom #right #text .entity #data .row .value .subvalues .subrow .subkey {
   display: table-cell;
   white-space: nowrap;
 }
-body #page #bottom #right #text .entity #data .row .value .subvalues .subrow .subvalue {
+body #page #workarea #bottom #right #text .entity #data .row .value .subvalues .subrow .subvalue {
   display: table-cell;
   width: 100%;
   padding: 5px 0px 0px 20px;
 }
-body #page #bottom #right #text .entity #data .row .value #language {
+body #page #workarea #bottom #right #text .entity #data .row .value #language {
   width: 100%;
   margin-bottom: 1px;
 }
-body #page #bottom #right #text .entity #data .row .value a {
+body #page #workarea #bottom #right #text .entity #data .row .value a {
   background-color: rgba(255, 114, 0, 0.25);
   color: #456ca7;
   padding: 2px 6px;
   border-radius: 3px;
   text-decoration: none;
 }
-body #page #bottom #right #text .entity #data .row .value a:hover {
+body #page #workarea #bottom #right #text .entity #data .row .value a:hover {
   background-color: rgba(228, 141, 70, 0.25);
   color: #f59f5a;
 }
-body #page #bottom #right #text .entity #data .row .validationError {
+body #page #workarea #bottom #right #text .entity #data .row .validationError {
   position: absolute;
   right: 12px;
   top: 2px;
@@ -455,16 +534,16 @@ body #page #bottom #right #text .entity #data .row .validationError {
   font-size: 70%;
   color: #c80000;
 }
-body #page #bottom #right #text .entity #data .group {
+body #page #workarea #bottom #right #text .entity #data .group {
   white-space: nowrap;
   color: #666;
   vertical-align: top;
   margin: 15px 0px 1px 0px;
 }
-body #page #bottom #right #text .entity #data .separator {
+body #page #workarea #bottom #right #text .entity #data .separator {
   margin-top: 10px;
 }
-body #page #bottom #right #text .entity .lowerButtons {
+body #page #workarea #bottom #right #text .entity .lowerButtons {
   display: flex;
   flex-direction: row;
   margin: 2vh 0;
@@ -474,7 +553,7 @@ body #page #bottom #right #text .entity .lowerButtons {
                               font-size:          75%;
                           }*/
 }
-body #page #bottom #right #text .entity .lowerButtons button, body #page #bottom #right #text .entity .lowerButtons .button {
+body #page #workarea #bottom #right #text .entity .lowerButtons button, body #page #workarea #bottom #right #text .entity .lowerButtons .button {
   padding: 0.5vh 1.2vh;
   background-color: #456ca7;
   border-radius: 4px;
@@ -485,44 +564,44 @@ body #page #bottom #right #text .entity .lowerButtons button, body #page #bottom
   white-space: nowrap;
   text-decoration: none;
 }
-body #page #bottom #right #text .entity .lowerButtons button .text, body #page #bottom #right #text .entity .lowerButtons .button .text {
+body #page #workarea #bottom #right #text .entity .lowerButtons button .text, body #page #workarea #bottom #right #text .entity .lowerButtons .button .text {
   display: inline-block;
 }
-body #page #bottom #right #text .entity .lowerButtons button .text .text2, body #page #bottom #right #text .entity .lowerButtons .button .text .text2 {
+body #page #workarea #bottom #right #text .entity .lowerButtons button .text .text2, body #page #workarea #bottom #right #text .entity .lowerButtons .button .text .text2 {
   display: inline-block;
   padding-left: 8px;
   vertical-align: top;
   padding-top: 7px;
 }
-body #page #bottom #right #text .entity .lowerButtons button:hover, body #page #bottom #right #text .entity .lowerButtons .button:hover {
+body #page #workarea #bottom #right #text .entity .lowerButtons button:hover, body #page #workarea #bottom #right #text .entity .lowerButtons .button:hover {
   background-color: #668ac1;
   color: #e4eaf3;
 }
-body #page #bottom #right #text .entity .lowerButtons button:active, body #page #bottom #right #text .entity .lowerButtons .button:active {
+body #page #workarea #bottom #right #text .entity .lowerButtons button:active, body #page #workarea #bottom #right #text .entity .lowerButtons .button:active {
   box-shadow: 0 1px 2px #999;
   transform: translateY(4px);
 }
-body #page #bottom #right #text .entity .lowerButtons button:focus, body #page #bottom #right #text .entity .lowerButtons .button:focus {
+body #page #workarea #bottom #right #text .entity .lowerButtons button:focus, body #page #workarea #bottom #right #text .entity .lowerButtons .button:focus {
   outline: 0px;
 }
-body #page #bottom #right #text .entity .lowerButtons button:disabled, body #page #bottom #right #text .entity .lowerButtons .button:disabled {
+body #page #workarea #bottom #right #text .entity .lowerButtons button:disabled, body #page #workarea #bottom #right #text .entity .lowerButtons .button:disabled {
   background-color: #dfdfdf;
   background-image: none;
   color: #bdbdbd;
   box-shadow: none;
 }
-body #page #bottom #right #text .entity #saveButton {
+body #page #workarea #bottom #right #text .entity #saveButton {
   margin-top: 40px;
 }
-body #page #bottom #right #text .tiles {
+body #page #workarea #bottom #right #text .tiles {
   padding: 30px 30px 15px 25px;
   height: calc(100% - 45px);
 }
-body #page #bottom #right #text .tiles #tiles {
+body #page #workarea #bottom #right #text .tiles #tiles {
   display: flex;
   justify-content: space-evenly;
 }
-body #page #bottom #right #text .tiles #tiles .tile {
+body #page #workarea #bottom #right #text .tiles #tiles .tile {
   background-color: #e2e2e2;
   margin: 2vh 0.5vw;
   border-radius: 6px;
@@ -535,7 +614,7 @@ body #page #bottom #right #text .tiles #tiles .tile {
   align-items: center;
   text-decoration: none;
 }
-body #page #bottom #right #text .tiles #tiles .tile .content .icon {
+body #page #workarea #bottom #right #text .tiles #tiles .tile .content .icon {
   display: inline-block;
   font-size: 400%;
   padding: 10px;
@@ -543,7 +622,7 @@ body #page #bottom #right #text .tiles #tiles .tile .content .icon {
   color: #555;
   border-radius: 8px;
 }
-body #page #bottom #right #text .tiles #tiles .tile .content .links {
+body #page #workarea #bottom #right #text .tiles #tiles .tile .content .links {
   display: inline-block;
   text-align: left;
   /*
@@ -551,7 +630,7 @@ body #page #bottom #right #text .tiles #tiles .tile .content .links {
                                           background-color:   #ffe0caa3;
                                       }*/
 }
-body #page #bottom #right #text .tiles #tiles .tile .content .links .main {
+body #page #workarea #bottom #right #text .tiles #tiles .tile .content .links .main {
   display: block;
   font-size: 200%;
   text-decoration: none;
@@ -559,28 +638,28 @@ body #page #bottom #right #text .tiles #tiles .tile .content .links .main {
   padding: 4px 8px;
   border-radius: 6px;
 }
-body #page #bottom #right #text .tiles #tiles .tile .content .links .group {
+body #page #workarea #bottom #right #text .tiles #tiles .tile .content .links .group {
   display: block;
   padding: 4px 6px 4px 10px;
   border-radius: 4px;
 }
-body #page #bottom #right #text .tiles #tiles .tile .content .links .group a {
+body #page #workarea #bottom #right #text .tiles #tiles .tile .content .links .group a {
   color: #555;
   text-decoration: none;
 }
-body #page #bottom #right #text .tiles #tiles .tile .content .links .group a:hover {
+body #page #workarea #bottom #right #text .tiles #tiles .tile .content .links .group a:hover {
   color: #ff7300;
 }
-body #page #bottom #right #text .tiles #tiles .tile:hover {
+body #page #workarea #bottom #right #text .tiles #tiles .tile:hover {
   background-color: #dadada;
 }
-body #page #bottom #right #text .tiles #tiles .tile:hover .content .icon {
+body #page #workarea #bottom #right #text .tiles #tiles .tile:hover .content .icon {
   color: #ff7300;
 }
-body #page #bottom #right #text .tiles #tiles .tile:hover .content .links .main {
+body #page #workarea #bottom #right #text .tiles #tiles .tile:hover .content .links .main {
   color: #ff7300;
 }
-body #page #bottom #right #text .fullScreenDialog {
+body #page #workarea #bottom #right #text .fullScreenDialog {
   display: none;
   position: fixed;
   top: 0;
@@ -591,7 +670,7 @@ body #page #bottom #right #text .fullScreenDialog {
   text-align: center;
   background-color: rgba(0, 0, 0, 0.6);
 }
-body #page #bottom #right #text .fullScreenDialog .box {
+body #page #workarea #bottom #right #text .fullScreenDialog .box {
   position: relative;
   display: inline-table;
   top: 20vh;
@@ -599,45 +678,45 @@ body #page #bottom #right #text .fullScreenDialog .box {
   border-radius: 6px;
   box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.3);
 }
-body #page #bottom #right #text .fullScreenDialog .box #headline {
+body #page #workarea #bottom #right #text .fullScreenDialog .box #headline {
   background-color: #ff7300;
   border-radius: 6px 6px 0px 0px;
   padding: 10px 20px;
   text-align: center;
   font-weight: bold;
 }
-body #page #bottom #right #text .fullScreenDialog .box #body {
+body #page #workarea #bottom #right #text .fullScreenDialog .box #body {
   background-color: #DDDDDD;
   border-radius: 0px 0px 6px 6px;
   padding: 10px 20px;
 }
-body #page #bottom #right #text .fullScreenDialog .box #body #confirmation {
+body #page #workarea #bottom #right #text .fullScreenDialog .box #body #confirmation {
   padding: 10px 10px 15px 10px;
 }
-body #page #bottom #right #text .fullScreenDialog .box #body #description {
+body #page #workarea #bottom #right #text .fullScreenDialog .box #body #description {
   padding: 10px 10px 15px 10px;
 }
-body #page #bottom #right #text .fullScreenDialog .box #body #buttons {
+body #page #workarea #bottom #right #text .fullScreenDialog .box #body #buttons {
   display: flex;
   justify-content: flex-end;
 }
-body #page #bottom #right #text .fullScreenDialog .box #body #buttons button {
+body #page #workarea #bottom #right #text .fullScreenDialog .box #body #buttons button {
   border: 0;
   border-radius: 4px;
   background-color: orangered;
   margin-left: 5px;
   padding: 6px 16px 4px 16px;
 }
-body #page #bottom #right #text .fullScreenDialog .box #body #buttons button:hover {
+body #page #workarea #bottom #right #text .fullScreenDialog .box #body #buttons button:hover {
   background-color: #ffab67;
 }
-body #page #bottom #right #text .fullScreenDialog .withErrors #headline {
+body #page #workarea #bottom #right #text .fullScreenDialog .withErrors #headline {
   background-color: #f92222 !important;
 }
-body #page #bottom #right #text .fullScreenDialog .withErrors #body #buttons button {
+body #page #workarea #bottom #right #text .fullScreenDialog .withErrors #body #buttons button {
   background-color: #f92222 !important;
 }
-body #page #bottom #right #text .fullScreenDialog .withErrors #body #buttons button:hover {
+body #page #workarea #bottom #right #text .fullScreenDialog .withErrors #body #buttons button:hover {
   background-color: #f76a6a !important;
 }
 

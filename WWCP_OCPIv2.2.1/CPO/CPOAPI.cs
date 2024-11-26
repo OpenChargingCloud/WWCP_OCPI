@@ -3265,7 +3265,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                                   OrderBy       (tariff => tariff.Created).
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
-                                                                                  Select        (tariff => tariff.ToJSON(CustomTariffSerializer,
+                                                                                  Select        (tariff => tariff.ToJSON(true,
+                                                                                                                         true,
+                                                                                                                         CustomTariffSerializer,
                                                                                                                          CustomDisplayTextSerializer,
                                                                                                                          CustomPriceSerializer,
                                                                                                                          CustomTariffElementSerializer,

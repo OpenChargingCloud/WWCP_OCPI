@@ -4,25 +4,30 @@
 body #page #bottom #right #text #locationInfos #locationInfos2 {
   padding: 1vh 2vw;
   border-radius: 6px;
-  background-color: #e7e7e7;
 }
-body #page #bottom #right #text #locationInfos #locationInfos2 #description {
+body #page #bottom #right #text #locationInfos #locationInfos2 .description {
   font-weight: bold;
-  padding-bottom: 0.6vh;
+  padding-bottom: 3px;
 }
-body #page #bottom #right #text #locationInfos #locationInfos2 #locationStatistics {
+body #page #bottom #right #text #locationInfos #locationInfos2 .statistics {
   display: table;
-  padding-bottom: 10px;
 }
-body #page #bottom #right #text #locationInfos #locationInfos2 #locationStatistics .row {
+body #page #bottom #right #text #locationInfos #locationInfos2 .statistics .row {
   display: table-row;
 }
-body #page #bottom #right #text #locationInfos #locationInfos2 #locationStatistics .row .key {
+body #page #bottom #right #text #locationInfos #locationInfos2 .statistics .row .key {
   display: table-cell;
-  padding-right: 10px;
+  /*padding-right:      10px;*/
+  width: 15vh;
 }
-body #page #bottom #right #text #locationInfos #locationInfos2 #locationStatistics .row .value {
+body #page #bottom #right #text #locationInfos #locationInfos2 .statistics .row .value {
   display: table-cell;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #locationStatistics {
+  padding-bottom: 10px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #evseStatusStatistics {
+  padding-bottom: 15px;
 }
 body #page #bottom #right #text #locationInfos #locationInfos2 #locations {
   display: flex;
@@ -47,8 +52,8 @@ body #page #bottom #right #text #locationInfos #locationInfos2 #locations .locat
   display: inline-block;
   color: #5272a3;
   font-weight: bold;
-  background-color: #e1e1e1;
-  border-top: 1px solid #ebebeb;
+  background-color: #efefef;
+  border-top: 1px solid #ffffff;
 }
 body #page #bottom #right #text #locationInfos #locationInfos2 #locations .location .title {
   padding-bottom: 3px;

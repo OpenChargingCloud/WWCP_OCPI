@@ -107,6 +107,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\css\all.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.ttf" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.woff2" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-regular-400.ttf" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-regular-400.woff2" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-solid-900.ttf" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-solid-900.woff2" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-v4compatibility.ttf" />
+    <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-v4compatibility.woff2" />
     <EmbeddedResource Include="HTTPRoot\css\index.css" />
     <EmbeddedResource Include="HTTPRoot\css\index.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\locations\locations.css" />

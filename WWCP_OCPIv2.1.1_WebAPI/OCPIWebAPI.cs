@@ -659,8 +659,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          //Server                     = DefaultHTTPServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                         AccessControlAllowHeaders  = new[] { "Authorization" },
+                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                         AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("index.shtml",
                                                                                                           html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
@@ -684,8 +684,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          //Server                     = DefaultHTTPServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                         AccessControlAllowHeaders  = new[] { "Authorization" },
+                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                         AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("index.shtml",
                                                                                                           html => html.Replace("{{versionPath}}", "")).ToUTF8Bytes(),
@@ -695,6 +695,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              });
 
+            #endregion
+
+            #region ~/libs
+
+            this.MapResourceAssemblyFolder(HTTPHostname.Any,
+                                           URLPathPrefix + "libs",
+                                           UsersAPI.HTTPRoot,
+                                           typeof(UsersAPI).Assembly);
+
+            #endregion
+
+
+            #region ~/versions
 
             if (OverlayURLPathPrefix.HasValue)
                 HTTPServer.AddMethodCallback(this,
@@ -710,16 +723,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          //Server                     = DefaultHTTPServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                         AccessControlAllowHeaders  = new[] { "Authorization" },
+                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                         AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("versions.versions.shtml").ToUTF8Bytes(),
+                                                         Content                    = MixWithHTMLTemplate("versions.versions.shtml",
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
 
                                              });
 
+            #endregion
+
+            #region ~/versions/{versionId}
 
             if (OverlayURLPathPrefix.HasValue)
                 HTTPServer.AddMethodCallback(this,
@@ -735,16 +752,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          //Server                     = DefaultHTTPServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                         AccessControlAllowHeaders  = new[] { "Authorization" },
+                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                         AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("versions.versionDetails.shtml").ToUTF8Bytes(),
+                                                         Content                    = MixWithHTMLTemplate("versions.versionDetails.shtml",
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
 
                                              });
 
+            #endregion
+
+            #region ~/v2.1.1/cpo/locations
 
             if (OverlayURLPathPrefix.HasValue)
                 HTTPServer.AddMethodCallback(this,
@@ -760,10 +781,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          //Server                     = DefaultHTTPServerName,
                                                          Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                         AccessControlAllowHeaders  = new[] { "Authorization" },
+                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                         AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("locations.locations.shtml").ToUTF8Bytes(),
+                                                         Content                    = MixWithHTMLTemplate("locations.locations.shtml",
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -771,6 +793,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              });
 
             #endregion
+
+
 
 
             #region ~/remoteParties
@@ -3071,8 +3095,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                      Content                    = new JArray(clients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
-                                                     AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                     AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                     AccessControlAllowHeaders  = [ "Authorization" ]
                                                      //LastModified               = Location.LastUpdated.ToIso8601(),
                                                      //ETag                       = Location.SHA256Hash
                                                  }.AsImmutable);
@@ -3097,8 +3121,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                      Content                    = new JArray(CommonAPI.CPOClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
-                                                     AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                     AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                     AccessControlAllowHeaders  = [ "Authorization" ]
                                                      //LastModified               = Location.LastUpdated.ToIso8601(),
                                                      //ETag                       = Location.SHA256Hash
                                                  }.AsImmutable);
@@ -3122,8 +3146,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      ContentType                = HTTPContentType.Application.JSON_UTF8,
                                                      Content                    = new JArray(CommonAPI.EMSPClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
-                                                     AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                     AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                     AccessControlAllowHeaders  = [ "Authorization" ]
                                                      //LastModified               = Location.LastUpdated.ToIso8601(),
                                                      //ETag                       = Location.SHA256Hash
                                                  }.AsImmutable);

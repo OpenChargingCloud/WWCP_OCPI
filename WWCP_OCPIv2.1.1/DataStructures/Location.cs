@@ -1463,16 +1463,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        internal IEnumerable<Tariff_Id> GetTariffIds(EVSE_UId?      EVSEUId       = null,
+        internal IEnumerable<Tariff_Id> GetTariffIds(EVSE_Id?       EVSEId        = null,
                                                      Connector_Id?  ConnectorId   = null,
                                                      EMSP_Id?       EMSPId        = null)
 
             => CommonAPI?.GetTariffIds(CountryCode,
                                        PartyId,
                                        Id,
-                                       EVSEUId,
+                                       EVSEId,
                                        ConnectorId,
-                                       EMSPId) ?? Array.Empty<Tariff_Id>();
+                                       EMSPId) ?? [];
 
 
 

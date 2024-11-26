@@ -959,9 +959,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         internal IEnumerable<Tariff_Id> GetTariffIds(Connector_Id?  ConnectorId   = null,
                                                      EMSP_Id?       EMSPId        = null)
 
-            => ParentLocation?.GetTariffIds(UId,
+            => ParentLocation?.GetTariffIds(EVSEId,
                                             ConnectorId,
-                                            EMSPId) ?? Array.Empty<Tariff_Id>();
+                                            EMSPId) ?? [];
 
 
         #region Update(EVSEBuilder, out Warnings)

@@ -1,10 +1,15 @@
 ﻿///<reference path="../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
+///<reference path="../defaults/defaults.ts" />
 
 function StartVersions()
 {
 
-    const versionInfosDiv  = document.getElementById("versionInfos")       as HTMLDivElement;
-    const versionsDiv      = versionInfosDiv.querySelector("#versions")    as HTMLDivElement;
+    const common              = GetDefaults();
+    common.topLeft.innerHTML  = "/versions"
+    common.menuVersions.classList.add("activated");
+
+    const versionInfosDiv     = document.getElementById("versionInfos")     as HTMLDivElement;
+    const versionsDiv         = versionInfosDiv.querySelector("#versions")  as HTMLDivElement;
 
     OCPIGet(window.location.href, // == "/versions"
 
@@ -13,15 +18,15 @@ function StartVersions()
                 try
                 {
 
-                    const OCPIResponse = ParseJSON_LD<IOCPIResponse>(response);
+                    const ocpiResponse = JSON.parse(response) as IOCPIResponse;
 
-                    if (OCPIResponse?.data != undefined  &&
-                        OCPIResponse?.data != null       &&
-                        Array.isArray(OCPIResponse.data) &&
-                        OCPIResponse.data.length > 0)
+                    if (ocpiResponse?.data != undefined  &&
+                        ocpiResponse?.data != null       &&
+                        Array.isArray(ocpiResponse.data) &&
+                        ocpiResponse.data.length > 0)
                     {
 
-                        for (const version of (OCPIResponse.data as IVersion[])) {
+                        for (const version of (ocpiResponse.data as IVersion[])) {
 
                             const versionIdDiv      = versionsDiv.appendChild(document.createElement('a')) as HTMLAnchorElement;
                             versionIdDiv.className  = "version";

@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     public delegate IEnumerable<Tariff>     GetTariffs2_Delegate  (CountryCode    CPOCountryCode,
                                                                    Party_Id       CPOPartyId,
                                                                    Location_Id?   LocationId       = null,
-                                                                   EVSE_UId?      EVSEUId          = null,
+                                                                   EVSE_Id?       EVSEId           = null,
                                                                    Connector_Id?  ConnectorId      = null,
                                                                    EMSP_Id?       EMSPId           = null);
 
@@ -56,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
                                                                    Party_Id       CPOPartyId,
                                                                    Location_Id?   LocationId       = null,
-                                                                   EVSE_UId?      EVSEUId          = null,
+                                                                   EVSE_Id?       EVSEId           = null,
                                                                    Connector_Id?  ConnectorId      = null,
                                                                    EMSP_Id?       EMSPId           = null);
 
@@ -6393,7 +6393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public GetTariffIds2_Delegate?  GetTariffIdsDelegate    { get; set; }
 
 
-        #region AddTariff           (Tariff,                          SkipNotifications = false)
+        #region AddTariff            (Tariff,                                       SkipNotifications = false, ...)
 
         public async Task<AddResult<Tariff>> AddTariff(Tariff             Tariff,
                                                        Boolean            SkipNotifications   = false,
@@ -6451,7 +6451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region AddTariffIfNotExists(Tariff,                          SkipNotifications = false)
+        #region AddTariffIfNotExists (Tariff,                                       SkipNotifications = false, ...)
 
         public async Task<AddResult<Tariff>> AddTariffIfNotExists(Tariff             Tariff,
                                                                   Boolean            SkipNotifications   = false,
@@ -6508,7 +6508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region AddOrUpdateTariff   (Tariff, AllowDowngrades = false, SkipNotifications = false)
+        #region AddOrUpdateTariff    (Tariff,              AllowDowngrades = false, SkipNotifications = false, ...)
 
         public async Task<AddOrUpdateResult<Tariff>> AddOrUpdateTariff(Tariff             Tariff,
                                                                        Boolean?           AllowDowngrades     = false,
@@ -6630,7 +6630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region UpdateTariff        (Tariff, AllowDowngrades = false, SkipNotifications = false)
+        #region UpdateTariff         (Tariff,              AllowDowngrades = false, SkipNotifications = false, ...)
 
         public async Task<UpdateResult<Tariff>> UpdateTariff(Tariff             Tariff,
                                                              Boolean?           AllowDowngrades     = false,
@@ -6659,7 +6659,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    $"Unknown tariff identification '{Tariff.Id}'!");
 
             #endregion
-
 
             if (tariffs.TryUpdate(Tariff.Id, Tariff, existingTariff))
             {
@@ -6711,8 +6710,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-
-        #region TryPatchTariff      (Tariff, TariffPatch, AllowDowngrades = false, SkipNotifications = false)
+        #region TryPatchTariff       (Tariff, TariffPatch, AllowDowngrades = false, SkipNotifications = false, ...)
 
         public async Task<PatchResult<Tariff>> TryPatchTariff(Tariff             Tariff,
                                                               JObject            TariffPatch,
@@ -6722,7 +6720,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                               User_Id?           CurrentUserId       = null)
         {
 
-            if (TariffPatch is null || !TariffPatch.HasValues)
+            if (!TariffPatch.HasValues)
                 return PatchResult<Tariff>.Failed(Tariff,
                                                   "The given charging tariff patch must not be null or empty!");
 
@@ -6781,6 +6779,267 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             else
                 return PatchResult<Tariff>.Failed(Tariff,
                                                   "The given charging tariff does not exist!");
+
+        }
+
+        #endregion
+
+        #region RemoveTariff         (Tariff,                                       SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove the given charging tariff.
+        /// </summary>
+        /// <param name="Tariff">A charging tariff.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public Task<RemoveResult<IEnumerable<Tariff>>> RemoveTariff(Tariff             Tariff,
+                                                                    Boolean            SkipNotifications   = false,
+                                                                    EventTracking_Id?  EventTrackingId     = null,
+                                                                    User_Id?           CurrentUserId       = null)
+
+            => RemoveTariff(Tariff.Id,
+                            SkipNotifications,
+                            EventTrackingId,
+                            CurrentUserId);
+
+        #endregion
+
+        #region RemoveTariff         (TariffId,                                     SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove the given charging tariff.
+        /// </summary>
+        /// <param name="TariffId">An unique charging tariff identification.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveTariff(Tariff_Id          TariffId,
+                                                                          Boolean            SkipNotifications   = false,
+                                                                          EventTracking_Id?  EventTrackingId     = null,
+                                                                          User_Id?           CurrentUserId       = null)
+        {
+
+            if (tariffs.TryRemove(TariffId, out var removedTariffs))
+            {
+
+                await LogAsset(removeTariff,
+                               new JArray(removedTariffs.Select(removedTariff => removedTariff.ToJSON(true,
+                                                                                                      true,
+                                                                                                      CustomTariffSerializer,
+                                                                                                      CustomDisplayTextSerializer,
+                                                                                                      CustomTariffElementSerializer,
+                                                                                                      CustomPriceComponentSerializer,
+                                                                                                      CustomTariffRestrictionsSerializer,
+                                                                                                      CustomEnergyMixSerializer,
+                                                                                                      CustomEnergySourceSerializer,
+                                                                                                      CustomEnvironmentalImpactSerializer))),
+                               EventTrackingId ?? EventTracking_Id.New,
+                               CurrentUserId);
+
+                if (!SkipNotifications)
+                {
+
+                    var OnTariffRemovedLocal = OnTariffRemoved;
+                    if (OnTariffRemovedLocal is not null)
+                    {
+                        try
+                        {
+                            await OnTariffRemovedLocal(removedTariffs);
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(RemoveTariff), " ", nameof(OnTariffRemoved), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+
+                }
+
+                return RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs);
+
+            }
+
+            return RemoveResult<IEnumerable<Tariff>>.Failed(null,
+                                                            "RemoveTariff(TariffId, ...) failed!");
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs     (                                              SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove all charging tariffs.
+        /// </summary>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Boolean            SkipNotifications   = false,
+                                                                              EventTracking_Id?  EventTrackingId     = null,
+                                                                              User_Id?           CurrentUserId       = null)
+        {
+
+            var existingTariffs = tariffs.Values().ToArray();
+
+            tariffs.Clear();
+
+            await LogAsset(removeAllTariffs,
+                           EventTrackingId ?? EventTracking_Id.New,
+                           CurrentUserId);
+
+            if (!SkipNotifications)
+            {
+
+                var OnTariffRemovedLocal = OnTariffRemoved;
+                if (OnTariffRemovedLocal is not null)
+                {
+                    try
+                    {
+                        foreach (var existingTariff in existingTariffs)
+                            await OnTariffRemovedLocal([ existingTariff ]);
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(RemoveAllTariffs), " ", nameof(OnTariffRemoved), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace ?? "");
+                    }
+                }
+
+            }
+
+            return RemoveResult<IEnumerable<Tariff>>.Success(existingTariffs);
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs     (IncludeTariffs,                               SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove all matching charging tariffs.
+        /// </summary>
+        /// <param name="IncludeTariffs">A charging tariff filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff, Boolean>  IncludeTariffs,
+                                                                              Boolean                SkipNotifications   = false,
+                                                                              EventTracking_Id?      EventTrackingId     = null,
+                                                                              User_Id?               CurrentUserId       = null)
+        {
+
+            var removedTariffs  = new List<Tariff>();
+            var failedTariffs   = new List<RemoveResult<IEnumerable<Tariff>>>();
+
+            foreach (var tariff in tariffs.Values().Where(IncludeTariffs).ToArray())
+            {
+
+                var result = await RemoveTariff(
+                                       tariff.Id,
+                                       SkipNotifications
+                                   );
+
+                if (result.IsSuccess)
+                    removedTariffs.Add(tariff);
+                else
+                    failedTariffs. Add(result);
+
+            }
+
+            return removedTariffs.Count != 0 && failedTariffs.Count == 0
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
+
+                       : removedTariffs.Count == 0 && failedTariffs.Count == 0
+                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation([])
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
+                                                                             failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs     (IncludeTariffIds,                             SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove all matching charging tariffs.
+        /// </summary>
+        /// <param name="IncludeTariffIds">A charging tariff identification filter.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff_Id, Boolean>  IncludeTariffIds,
+                                                                              Boolean                   SkipNotifications   = false,
+                                                                              EventTracking_Id?         EventTrackingId     = null,
+                                                                              User_Id?                  CurrentUserId       = null)
+        {
+
+            var removedTariffs  = new List<Tariff>();
+            var failedTariffs   = new List<RemoveResult<IEnumerable<Tariff>>>();
+
+            foreach (var tariffsToRemove in tariffs.Where  (kvp => IncludeTariffIds(kvp.Key)).
+                                                    Select (kvp => kvp.Value).
+                                                    ToArray())
+            {
+
+                var result = await RemoveTariff(tariffsToRemove.First().Id,
+                                                SkipNotifications);
+
+                if (result.IsSuccess)
+                    removedTariffs.AddRange(tariffsToRemove);
+                else
+                    failedTariffs. Add(result);
+
+            }
+
+            return removedTariffs.Count != 0 && failedTariffs.Count == 0
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
+
+                       : removedTariffs.Count == 0 && failedTariffs.Count == 0
+                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation([])
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
+                                                                             failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs     (CountryCode, PartyId,                         SkipNotifications = false, ...)
+
+        /// <summary>
+        /// Remove all charging tariffs owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        /// <param name="SkipNotifications">Skip sending notifications.</param>
+        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(CountryCode        CountryCode,
+                                                                              Party_Id           PartyId,
+                                                                              Boolean            SkipNotifications   = false,
+                                                                              EventTracking_Id?  EventTrackingId     = null,
+                                                                              User_Id?           CurrentUserId       = null)
+        {
+
+            await LogAssetComment($"{removeAllTariffs}: {CountryCode} {PartyId}",
+                                  EventTrackingId ?? EventTracking_Id.New,
+                                  CurrentUserId);
+
+            var removedTariffs  = new List<Tariff>();
+            var failedTariffs   = new List<RemoveResult<IEnumerable<Tariff>>>();
+
+            foreach (var tariff in tariffs.Values().Where  (tariff => CountryCode == tariff.CountryCode &&
+                                                                      PartyId     == tariff.PartyId).
+                                                    ToArray())
+            {
+
+                var result = await RemoveTariff(tariff.Id,
+                                                SkipNotifications);
+
+                if (result.IsSuccess)
+                    removedTariffs.Add(tariff);
+                else
+                    failedTariffs. Add(result);
+
+            }
+
+            return removedTariffs.Any() && !failedTariffs.Any()
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
+
+                       : !removedTariffs.Any() && !failedTariffs.Any()
+                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>())
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
+                                                                             failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
 
         }
 
@@ -6874,7 +7133,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public IEnumerable<Tariff_Id> GetTariffIds(CountryCode    CountryCode,
                                                    Party_Id       PartyId,
                                                    Location_Id?   LocationId,
-                                                   EVSE_UId?      EVSEUId,
+                                                   EVSE_Id?       EVSEUId,
                                                    Connector_Id?  ConnectorId,
                                                    EMSP_Id?       EMSPId)
 
@@ -6883,267 +7142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             LocationId,
                                             EVSEUId,
                                             ConnectorId,
-                                            EMSPId) ?? Array.Empty<Tariff_Id>();
-
-        #endregion
-
-
-        #region RemoveTariff    (Tariff,               SkipNotifications = false)
-
-        /// <summary>
-        /// Remove the given charging tariff.
-        /// </summary>
-        /// <param name="Tariff">A charging tariff.</param>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public Task<RemoveResult<IEnumerable<Tariff>>> RemoveTariff(Tariff             Tariff,
-                                                                    Boolean            SkipNotifications   = false,
-                                                                    EventTracking_Id?  EventTrackingId     = null,
-                                                                    User_Id?           CurrentUserId       = null)
-
-            => RemoveTariff(Tariff.Id,
-                            SkipNotifications,
-                            EventTrackingId,
-                            CurrentUserId);
-
-        #endregion
-
-        #region RemoveTariff    (TariffId,             SkipNotifications = false)
-
-        /// <summary>
-        /// Remove the given charging tariff.
-        /// </summary>
-        /// <param name="TariffId">An unique charging tariff identification.</param>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveTariff(Tariff_Id          TariffId,
-                                                                          Boolean            SkipNotifications   = false,
-                                                                          EventTracking_Id?  EventTrackingId     = null,
-                                                                          User_Id?           CurrentUserId       = null)
-        {
-
-            if (tariffs.TryRemove(TariffId, out var removedTariffs))
-            {
-
-                await LogAsset(removeTariff,
-                               new JArray(removedTariffs.Select(removedTariff => removedTariff.ToJSON(true,
-                                                                                                      true,
-                                                                                                      CustomTariffSerializer,
-                                                                                                      CustomDisplayTextSerializer,
-                                                                                                      CustomTariffElementSerializer,
-                                                                                                      CustomPriceComponentSerializer,
-                                                                                                      CustomTariffRestrictionsSerializer,
-                                                                                                      CustomEnergyMixSerializer,
-                                                                                                      CustomEnergySourceSerializer,
-                                                                                                      CustomEnvironmentalImpactSerializer))),
-                               EventTrackingId ?? EventTracking_Id.New,
-                               CurrentUserId);
-
-                if (!SkipNotifications)
-                {
-
-                    var OnTariffRemovedLocal = OnTariffRemoved;
-                    if (OnTariffRemovedLocal is not null)
-                    {
-                        try
-                        {
-                            await OnTariffRemovedLocal(removedTariffs);
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(RemoveTariff), " ", nameof(OnTariffRemoved), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace ?? "");
-                        }
-                    }
-
-                }
-
-                return RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs);
-
-            }
-
-            return RemoveResult<IEnumerable<Tariff>>.Failed(null,
-                                                            "RemoveTariff(TariffId, ...) failed!");
-
-        }
-
-        #endregion
-
-        #region RemoveAllTariffs(                      SkipNotifications = false)
-
-        /// <summary>
-        /// Remove all charging tariffs.
-        /// </summary>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Boolean            SkipNotifications   = false,
-                                                                              EventTracking_Id?  EventTrackingId     = null,
-                                                                              User_Id?           CurrentUserId       = null)
-        {
-
-            var existingTariffs = tariffs.Values().ToArray();
-
-            tariffs.Clear();
-
-            await LogAsset(removeAllTariffs,
-                           EventTrackingId ?? EventTracking_Id.New,
-                           CurrentUserId);
-
-            if (!SkipNotifications)
-            {
-
-                var OnTariffRemovedLocal = OnTariffRemoved;
-                if (OnTariffRemovedLocal is not null)
-                {
-                    try
-                    {
-                        foreach (var existingTariff in existingTariffs)
-                            await OnTariffRemovedLocal([ existingTariff ]);
-                    }
-                    catch (Exception e)
-                    {
-                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(RemoveAllTariffs), " ", nameof(OnTariffRemoved), ": ",
-                                    Environment.NewLine, e.Message,
-                                    Environment.NewLine, e.StackTrace ?? "");
-                    }
-                }
-
-            }
-
-            return RemoveResult<IEnumerable<Tariff>>.Success(existingTariffs);
-
-        }
-
-        #endregion
-
-        #region RemoveAllTariffs(IncludeTariffs,       SkipNotifications = false)
-
-        /// <summary>
-        /// Remove all matching charging tariffs.
-        /// </summary>
-        /// <param name="IncludeTariffs">A charging tariff filter.</param>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff, Boolean>  IncludeTariffs,
-                                                                              Boolean                SkipNotifications   = false,
-                                                                              EventTracking_Id?      EventTrackingId     = null,
-                                                                              User_Id?               CurrentUserId       = null)
-        {
-
-            var removedTariffs  = new List<Tariff>();
-            var failedTariffs   = new List<RemoveResult<IEnumerable<Tariff>>>();
-
-            foreach (var tariff in tariffs.Values().Where(IncludeTariffs).ToArray())
-            {
-
-                var result = await RemoveTariff(tariff.Id,
-                                                SkipNotifications);
-
-                if (result.IsSuccess)
-                    removedTariffs.Add(tariff);
-                else
-                    failedTariffs. Add(result);
-
-            }
-
-            return removedTariffs.Any() && !failedTariffs.Any()
-                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
-
-                       : !removedTariffs.Any() && !failedTariffs.Any()
-                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>())
-                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
-                                                                             failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
-
-        }
-
-        #endregion
-
-        #region RemoveAllTariffs(IncludeTariffIds,     SkipNotifications = false)
-
-        /// <summary>
-        /// Remove all matching charging tariffs.
-        /// </summary>
-        /// <param name="IncludeTariffIds">A charging tariff identification filter.</param>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(Func<Tariff_Id, Boolean>  IncludeTariffIds,
-                                                                              Boolean                   SkipNotifications   = false,
-                                                                              EventTracking_Id?         EventTrackingId     = null,
-                                                                              User_Id?                  CurrentUserId       = null)
-        {
-
-            var removedTariffs  = new List<Tariff>();
-            var failedTariffs   = new List<RemoveResult<IEnumerable<Tariff>>>();
-
-            foreach (var tariffsToRemove in tariffs.Where  (kvp => IncludeTariffIds(kvp.Key)).
-                                                    Select (kvp => kvp.Value).
-                                                    ToArray())
-            {
-
-                var result = await RemoveTariff(tariffsToRemove.First().Id,
-                                                SkipNotifications);
-
-                if (result.IsSuccess)
-                    removedTariffs.AddRange(tariffsToRemove);
-                else
-                    failedTariffs. Add(result);
-
-            }
-
-            return removedTariffs.Any() && !failedTariffs.Any()
-                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
-
-                       : !removedTariffs.Any() && !failedTariffs.Any()
-                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>())
-                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
-                                                                             failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
-
-        }
-
-        #endregion
-
-        #region RemoveAllTariffs(CountryCode, PartyId, SkipNotifications = false)
-
-        /// <summary>
-        /// Remove all charging tariffs owned by the given party.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the party.</param>
-        /// <param name="PartyId">The identification of the party.</param>
-        /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Tariff>>> RemoveAllTariffs(CountryCode        CountryCode,
-                                                                              Party_Id           PartyId,
-                                                                              Boolean            SkipNotifications   = false,
-                                                                              EventTracking_Id?  EventTrackingId     = null,
-                                                                              User_Id?           CurrentUserId       = null)
-        {
-
-            await LogAssetComment($"{removeAllTariffs}: {CountryCode} {PartyId}",
-                                  EventTrackingId ?? EventTracking_Id.New,
-                                  CurrentUserId);
-
-            var removedTariffs  = new List<Tariff>();
-            var failedTariffs   = new List<RemoveResult<IEnumerable<Tariff>>>();
-
-            foreach (var tariff in tariffs.Values().Where  (tariff => CountryCode == tariff.CountryCode &&
-                                                                      PartyId     == tariff.PartyId).
-                                                    ToArray())
-            {
-
-                var result = await RemoveTariff(tariff.Id,
-                                                SkipNotifications);
-
-                if (result.IsSuccess)
-                    removedTariffs.Add(tariff);
-                else
-                    failedTariffs. Add(result);
-
-            }
-
-            return removedTariffs.Any() && !failedTariffs.Any()
-                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
-
-                       : !removedTariffs.Any() && !failedTariffs.Any()
-                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>())
-                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
-                                                                             failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
-
-        }
+                                            EMSPId) ?? [];
 
         #endregion
 

@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -473,37 +475,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
 
 
-        public Boolean TryParseJObjectRequestBody(out JObject               JSON,
-                                                  out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                  Boolean                   AllowEmptyHTTPBody   = false,
-                                                  String?                   JSONLDContext        = null)
+        public Boolean TryParseJObjectRequestBody([NotNullWhen(true)]  out JObject?              JSON,
+                                                  [NotNullWhen(false)] out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                  Boolean                                        AllowEmptyHTTPBody   = false,
+                                                  String?                                        JSONLDContext        = null)
         {
 
             var result = HTTPRequest.TryParseJSONObjectRequestBody(out JSON,
-                                                                   out var HTTPResponseBuilder,
+                                                                   out var httpResponseBuilder,
                                                                    AllowEmptyHTTPBody,
                                                                    JSONLDContext);
 
-            if (HTTPResponseBuilder is not null)
+            if (httpResponseBuilder is not null)
             {
-                HTTPResponseBuilder.Set("X-Request-ID",      RequestId).
+                httpResponseBuilder.Set("X-Request-ID",      RequestId).
                                     Set("X-Correlation-ID",  CorrelationId);
             }
 
             OCPIResponseBuilder = new OCPIResponse.Builder(this) {
                 StatusCode           = result ? 1000 : 2001,
                 StatusMessage        = result ? ""   : "Could not parse JSON object in HTTP request body!",
-                HTTPResponseBuilder  = HTTPResponseBuilder
+                HTTPResponseBuilder  = httpResponseBuilder
             };
 
             return result;
 
         }
 
-        public Boolean TryParseJArrayRequestBody(out JArray                JSON,
-                                                 out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                 Boolean                   AllowEmptyHTTPBody   = false,
-                                                 String?                   JSONLDContext        = null)
+        public Boolean TryParseJArrayRequestBody([NotNullWhen(true)]  out JArray?               JSON,
+                                                 [NotNullWhen(false)] out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                 Boolean                                        AllowEmptyHTTPBody   = false,
+                                                 String?                                        JSONLDContext        = null)
         {
 
             var result = HTTPRequest.TryParseJSONArrayRequestBody(out JSON,

@@ -356,7 +356,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.Created         = Created                   ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated     = LastUpdated               ?? Created     ?? Timestamp.Now;
 
-            this.ETag            = SHA256.HashData(ToJSON(CustomTariffSerializer,
+            this.ETag            = SHA256.HashData(ToJSON(true,
+                                                          true,
+                                                          CustomTariffSerializer,
                                                           CustomDisplayTextSerializer,
                                                           CustomPriceSerializer,
                                                           CustomTariffElementSerializer,
@@ -759,11 +761,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
-        #region ToJSON(CustomTariffSerializer = null, CustomDisplayTextSerializer = null, ...)
+        #region ToJSON(IncludeOwnerInformation = false, IncludeExtensions = false, CustomTariffSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
+        /// <param name="IncludeOwnerInformation">Whether to include optional owner information.</param>
+        /// <param name="IncludeExtensions">Whether to include optional data model extensions.</param>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
@@ -773,7 +777,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
+        public JObject ToJSON(Boolean                                                IncludeOwnerInformation               = true,
+                              Boolean                                                IncludeExtensions                     = true,
+                              CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
                               CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
                               CustomJObjectSerializerDelegate<Price>?                CustomPriceSerializer                 = null,
                               CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer         = null,
@@ -786,11 +792,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var json = JSONObject.Create(
 
-                           new JProperty("country_code",            CountryCode.ToString()),
-                           new JProperty("party_id",                PartyId.    ToString()),
-                           new JProperty("id",                      Id.         ToString()),
+                           IncludeOwnerInformation
+                               ? new JProperty("country_code",      CountryCode.     ToString())
+                               : null,
 
-                           new JProperty("currency",                Currency.   ToString()),
+                           IncludeOwnerInformation
+                               ? new JProperty("party_id",          PartyId.         ToString())
+                               : null,
+
+                                 new JProperty("id",                Id.              ToString()),
+
+                                 new JProperty("currency",          Currency.        ToString()),
 
                            TariffType.HasValue
                                ? new JProperty("type",              TariffType.Value.ToString())
@@ -801,15 +813,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                : null,
 
                            TariffAltURL.HasValue
-                               ? new JProperty("tariff_alt_url",    TariffAltURL.  ToString())
+                               ? new JProperty("tariff_alt_url",    TariffAltURL.    ToString())
                                : null,
 
                            MinPrice.HasValue
-                               ? new JProperty("min_price",         MinPrice.Value.ToJSON(CustomPriceSerializer))
+                               ? new JProperty("min_price",         MinPrice.Value.  ToJSON(CustomPriceSerializer))
                                : null,
 
                            MaxPrice.HasValue
-                               ? new JProperty("max_price",         MaxPrice.Value.ToJSON(CustomPriceSerializer))
+                               ? new JProperty("max_price",         MaxPrice.Value.  ToJSON(CustomPriceSerializer))
                                : null,
 
                            TariffElements.SafeAny()
@@ -819,21 +831,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                : null,
 
                            Start.HasValue
-                               ? new JProperty("start_date_time",   Start.Value.ToIso8601())
+                               ? new JProperty("start_date_time",   Start.Value.     ToIso8601())
                                : null,
 
                            End.HasValue
-                               ? new JProperty("end_date_time",     End.  Value.ToIso8601())
+                               ? new JProperty("end_date_time",     End.  Value.     ToIso8601())
                                : null,
 
                            EnergyMix is not null
-                               ? new JProperty("energy_mix",        EnergyMix.  ToJSON(CustomEnergyMixSerializer,
-                                                                                       CustomEnergySourceSerializer,
-                                                                                       CustomEnvironmentalImpactSerializer))
+                               ? new JProperty("energy_mix",        EnergyMix.       ToJSON(CustomEnergyMixSerializer,
+                                                                                            CustomEnergySourceSerializer,
+                                                                                            CustomEnvironmentalImpactSerializer))
                                : null,
 
-                                 new JProperty("created",           Created.    ToIso8601()),
-                                 new JProperty("last_updated",      LastUpdated.ToIso8601())
+                                 new JProperty("created",           Created.         ToIso8601()),
+                                 new JProperty("last_updated",      LastUpdated.     ToIso8601())
 
                        );
 

@@ -18,6 +18,7 @@
 #region Usings
 
 using org.GraphDefined.Vanaheimr.Illias;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -69,6 +70,18 @@ namespace cloud.charging.open.protocols.OCPI
         }
 
         #endregion
+
+
+        public Boolean IsSuccessAndDataNotNull([NotNullWhen(true)] out T? PatchedData)
+        {
+
+            PatchedData = IsSuccess
+                              ? this.PatchedData
+                              : default;
+
+            return IsSuccess && PatchedData is not null;
+
+        }
 
 
         #region (static) Success    (PatchedData, ErrorResponse = null)
