@@ -263,7 +263,65 @@ interface IConnector {
     last_updated:                    string;
 }
 
+
+interface ITariff {
+    id:                             string,                 // (36) Uniquely identifies the tariff within the CPOs platform(and suboperator platforms).
+    currency:                       string,                 // (3)  Currency of this tariff, ISO 4217 Code
+    tariff_alt_text:                Array<IDisplayText>,    // List of multi language alternative tariff info text
+    tariff_alt_url?:                string,                 // Alternative URL to tariff info
+    elements:                       Array<ITariffElement>,  // List of tariff elements
+    energy_mix:                     IEnergyMix,             // Details on the energy supplied with this tariff.
+    last_updated:                   string                  // Timestamp when this Tariff was last updated(or created).
+}
+
+interface ITariffElement {
+    price_components:               Array<IPriceComponent>, // List of price components that make up the pricing of this tariff
+    restrictions?:                  ITariffRestrictions     // Tariff restrictions object
+}
+
+enum TariffDimension {
+    ENERGY,                                                 // defined in kWh, step_size multiplier: 1 Wh
+    FLAT,                                                   // flat fee, no unit
+    PARKING_TIME,                                           // time not charging: defined in hours, step_size multiplier: 1 second
+    TIME                                                    // time charging: defined in hours, step_size multiplier: 1 second
+}
+
+interface IPriceComponent {
+    type:                           TariffDimension,        // Type of tariff dimension
+    price:                          number,                 // price per unit(excluding VAT) for this tariff dimension
+    step_size:                      number                  // Minimum amount to be billed.This unit will be billed in this step_size blocks.For example: if type is time and step_size is 300, then time will be billed in blocks of 5 minutes, so if 6 minutes is used, 10 minutes(2 blocks of step_size) will be billed.
+}
+
+enum DayOfWeek {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY
+}
+
+interface ITariffRestrictions {
+    start_time?:                     string,                //(5)  Start time of day, for example 13: 30, valid from this time of the day.Must be in 24h format with leading zeros.Hour / Minute separator: ":" Regex: ([0 - 1][0 - 9] | 2[0 - 3]): [0 - 5][0 - 9]
+    end_time?:                       string,                //(5)  ? End time of day, for example 19: 45, valid until this time of the day.Same syntax as start_time
+    start_date?:                     string,                //(10) ? Start date, for example: 2015 - 12 - 24, valid from this day
+    end_date?:                       string,                //(10) ? End date, for example: 2015 - 12 - 27, valid until this day(excluding this day)
+    min_kwh?:                        number,                // Minimum used energy in kWh, for example 20, valid from this amount of energy is used
+    max_kwh?:                        number,                // Maximum used energy in kWh, for example 50, valid until this amount of energy is used
+    min_power?:                      number,                // Minimum power in kW, for example 0, valid from this charging speed
+    max_power?:                      number,                // Maximum power in kW, for example 20, valid up to this charging speed
+    min_duration?:                   number,                // Minimum duration in seconds, valid for a duration from x seconds
+    max_duration?:                   number,                // Maximum duration in seconds, valid for a duration up to x seconds
+    day_of_week?:                    Array<DayOfWeek>       // * Which day(s) of the week this tariff is valid
+}
+
+
+
+
+// ----------------------------------
 // OCPI Computer Science extension!
+// ----------------------------------
 interface IEnergyMeter {
     id:                              string;
     model?:                          string;

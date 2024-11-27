@@ -121,6 +121,23 @@ var Status;
     Status[Status["RESERVED"] = 7] = "RESERVED";
     Status[Status["UNKNOWN"] = 8] = "UNKNOWN"; // No status information available. (Also used when offline)
 })(Status || (Status = {}));
+var TariffDimension;
+(function (TariffDimension) {
+    TariffDimension[TariffDimension["ENERGY"] = 0] = "ENERGY";
+    TariffDimension[TariffDimension["FLAT"] = 1] = "FLAT";
+    TariffDimension[TariffDimension["PARKING_TIME"] = 2] = "PARKING_TIME";
+    TariffDimension[TariffDimension["TIME"] = 3] = "TIME"; // time charging: defined in hours, step_size multiplier: 1 second
+})(TariffDimension || (TariffDimension = {}));
+var DayOfWeek;
+(function (DayOfWeek) {
+    DayOfWeek[DayOfWeek["MONDAY"] = 0] = "MONDAY";
+    DayOfWeek[DayOfWeek["TUESDAY"] = 1] = "TUESDAY";
+    DayOfWeek[DayOfWeek["WEDNESDAY"] = 2] = "WEDNESDAY";
+    DayOfWeek[DayOfWeek["THURSDAY"] = 3] = "THURSDAY";
+    DayOfWeek[DayOfWeek["FRIDAY"] = 4] = "FRIDAY";
+    DayOfWeek[DayOfWeek["SATURDAY"] = 5] = "SATURDAY";
+    DayOfWeek[DayOfWeek["SUNDAY"] = 6] = "SUNDAY";
+})(DayOfWeek || (DayOfWeek = {}));
 let topLeft = null;
 function GetDefaults() {
     return {

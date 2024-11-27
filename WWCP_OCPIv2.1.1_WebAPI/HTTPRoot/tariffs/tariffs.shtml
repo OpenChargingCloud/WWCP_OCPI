@@ -1,0 +1,29 @@
+﻿
+<link href="{{BasePath}}/webapi/css/tariffs/tariffs.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="{{BasePath}}/webapi/libs/js/date.format.js"></script>
+<script type="text/javascript" src="{{BasePath}}/webapi/tariffs/tariffs.js"></script>
+
+<div id="tariffInfos" class="entity">
+
+    <div id="tariffInfos2">
+
+        <div class="description">
+            Tariffs
+        </div>
+
+        <div id="tariffStatistics" class="statistics">
+            <div class="row"><div class="key">Number of tariffs</div><div id="numberOfTariffs">-</div></div>
+        </div>
+
+        <div id="tariffs">
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    StartTariffs();
+</script>

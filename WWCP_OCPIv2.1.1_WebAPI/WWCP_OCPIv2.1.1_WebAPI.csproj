@@ -153,6 +153,9 @@
     <EmbeddedResource Include="HTTPRoot\defaults\_defaults.scss" />
     <EmbeddedResource Include="HTTPRoot\favicon.png" />
     <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />
+    <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.scss" />
+    <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.shtml" />
+    <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.ts" />
     <EmbeddedResource Include="HTTPRoot\locations\locations.js" />
     <EmbeddedResource Include="HTTPRoot\locations\locations.js.map" />
     <EmbeddedResource Include="HTTPRoot\locations\locations.scss" />
