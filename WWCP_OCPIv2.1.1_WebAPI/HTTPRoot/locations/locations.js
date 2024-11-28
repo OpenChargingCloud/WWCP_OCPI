@@ -38,6 +38,9 @@ function StartLocations() {
     let evsesUnkown = 0;
     let evsesRemoved = 0;
     let evsesX = 0;
+    const tariffStatisticsDiv = locationInfosDiv.querySelector("#tariffStatistics");
+    const tariffs = new Map();
+    const errors = new Array();
     OCPIGet(window.location.href, (status, response) => {
         var _a, _b;
         try {
@@ -125,6 +128,10 @@ function StartLocations() {
                                     connectorInfoDiv.className = "connectorInfo";
                                     connectorInfoDiv.innerHTML = connector.id + ". " + connector.standard + ", " + connector.format + ", " + connector.amperage + " A, " + connector.voltage + " V, " + connector.power_type;
                                     if (connector.tariff_id) {
+                                        if (!tariffs.has(connector.tariff_id)) {
+                                            tariffs.set(connector.tariff_id, 0);
+                                        }
+                                        tariffs.set(connector.tariff_id, tariffs.get(connector.tariff_id) + 1);
                                         const tariffInfoDiv = connectorDiv.appendChild(document.createElement('div'));
                                         tariffInfoDiv.className = "tariffInfo";
                                         tariffInfoDiv.innerHTML = "Tariff: " + connector.tariff_id + (connector.terms_and_conditions
@@ -168,9 +175,13 @@ function StartLocations() {
                 numberOfEVSEsUnkownDiv.innerHTML = evsesUnkown.toString();
                 numberOfEVSEsRemovedDiv.innerHTML = evsesRemoved.toString();
                 numberOfEVSEsXDiv.innerHTML = evsesX.toString();
+                for (const [tariffId, count] of tariffs) {
+                    CreateLine(tariffStatisticsDiv, "tariff", tariffId, count.toString());
+                }
             }
         }
         catch (exception) {
+            errors.push(exception);
         }
     }, (status, statusText, response) => {
     });

@@ -8,6 +8,10 @@
 
     <div id="accessTokenDiv">
         <input id="accessToken" name="accessToken">
+        <div id="accessTokenEncodingDiv">
+            <input id="accessTokenEncoding" type="checkbox" name="accessTokenEncoding">
+            Base64 Encoding?
+        </div>
         <button id="accessTokenButton">Set OCPI Access Token</button>
     </div>
 

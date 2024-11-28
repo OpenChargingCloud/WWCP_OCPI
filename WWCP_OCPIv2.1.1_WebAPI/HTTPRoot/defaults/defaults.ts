@@ -382,8 +382,11 @@ function OCPIGet(RessourceURI: string,
     ajax.setRequestHeader("Accept",   "application/json; charset=UTF-8");
     ajax.setRequestHeader("X-Portal", "true");
 
+    const accessToken          = localStorage.getItem("ocpiAccessToken");
+    const accessTokenEncoding  = localStorage.getItem("ocpiAccessTokenEncoding");
+
     if (localStorage.getItem("OCPIAccessToken") != null)
-        ajax.setRequestHeader("Authorization", "Token " + btoa(localStorage.getItem("OCPIAccessToken")));
+        ajax.setRequestHeader("Authorization", "Token " + (accessTokenEncoding === "base64" ? btoa(accessToken) : accessToken));
 
     ajax.onreadystatechange = function () {
 

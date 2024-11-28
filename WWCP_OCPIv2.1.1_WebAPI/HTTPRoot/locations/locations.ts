@@ -56,6 +56,10 @@ function StartLocations()
     let   evsesRemoved                 = 0;
     let   evsesX                       = 0;
 
+    const tariffStatisticsDiv          = locationInfosDiv.querySelector("#tariffStatistics")          as HTMLDivElement;
+    const tariffs                      = new Map<string, number>();
+    const errors                       = new Array<any>();
+
     OCPIGet(window.location.href,
 
             (status, response) => {
@@ -193,11 +197,22 @@ function StartLocations()
                                             connectorInfoDiv.innerHTML = connector.id + ". " + connector.standard + ", " + connector.format + ", " + connector.amperage + " A, " + connector.voltage + " V, " + connector.power_type;
 
                                             if (connector.tariff_id) {
+
+                                                if (!tariffs.has(connector.tariff_id)) {
+                                                    tariffs.set(connector.tariff_id, 0);
+                                                }
+
+                                                tariffs.set(
+                                                    connector.tariff_id,
+                                                    tariffs.get(connector.tariff_id) + 1
+                                                );
+
                                                 const tariffInfoDiv = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
                                                 tariffInfoDiv.className = "tariffInfo";
                                                 tariffInfoDiv.innerHTML = "Tariff: " + connector.tariff_id + (connector.terms_and_conditions
                                                                                                                   ? ", terms: " + connector.terms_and_conditions
                                                                                                                   : "");
+
                                             }
 
                                             // last_updated
@@ -252,10 +267,21 @@ function StartLocations()
                         numberOfEVSEsRemovedDiv.innerHTML     = evsesRemoved.toString();
                         numberOfEVSEsXDiv.innerHTML           = evsesX.toString();
 
+
+                        for (const [tariffId, count] of tariffs) {
+                            CreateLine(
+                                tariffStatisticsDiv,
+                                "tariff",
+                                tariffId,
+                                count.toString()
+                            )
+                        }
+
                     }
 
                 }
                 catch (exception) {
+                    errors.push(exception);
                 }
 
             },

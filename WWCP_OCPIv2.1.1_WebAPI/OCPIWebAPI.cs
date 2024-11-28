@@ -765,6 +765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             #endregion
 
+
             #region ~/v2.1.1/cpo/locations
 
             if (OverlayURLPathPrefix.HasValue)
@@ -794,7 +795,150 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             #endregion
 
+            #region ~/v2.1.1/cpo/sessions
 
+            if (OverlayURLPathPrefix.HasValue)
+                HTTPServer.AddMethodCallback(this,
+                                             HTTPHostname.Any,
+                                             HTTPMethod.GET,
+                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/sessions",
+                                             HTTPContentType.Text.HTML_UTF8,
+                                             HTTPDelegate: Request => {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         //Server                     = DefaultHTTPServerName,
+                                                         Date                       = Timestamp.Now,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                         AccessControlAllowHeaders  = [ "Authorization" ],
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                                         Content                    = MixWithHTMLTemplate("sessions.sessions.shtml",
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                         Connection                 = ConnectionType.Close,
+                                                         Vary                       = "Accept"
+                                                     }.AsImmutable);
+
+                                             });
+
+            #endregion
+
+            #region ~/v2.1.1/cpo/tariffs
+
+            if (OverlayURLPathPrefix.HasValue)
+                HTTPServer.AddMethodCallback(this,
+                                             HTTPHostname.Any,
+                                             HTTPMethod.GET,
+                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/tariffs",
+                                             HTTPContentType.Text.HTML_UTF8,
+                                             HTTPDelegate: Request => {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         //Server                     = DefaultHTTPServerName,
+                                                         Date                       = Timestamp.Now,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                         AccessControlAllowHeaders  = [ "Authorization" ],
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                                         Content                    = MixWithHTMLTemplate("tariffs.tariffs.shtml",
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                         Connection                 = ConnectionType.Close,
+                                                         Vary                       = "Accept"
+                                                     }.AsImmutable);
+
+                                             });
+
+            #endregion
+
+            #region ~/v2.1.1/cpo/cdrs
+
+            if (OverlayURLPathPrefix.HasValue)
+                HTTPServer.AddMethodCallback(this,
+                                             HTTPHostname.Any,
+                                             HTTPMethod.GET,
+                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/cdrs",
+                                             HTTPContentType.Text.HTML_UTF8,
+                                             HTTPDelegate: Request => {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         //Server                     = DefaultHTTPServerName,
+                                                         Date                       = Timestamp.Now,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                         AccessControlAllowHeaders  = [ "Authorization" ],
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                                         Content                    = MixWithHTMLTemplate("cdrs.cdrs.shtml",
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                         Connection                 = ConnectionType.Close,
+                                                         Vary                       = "Accept"
+                                                     }.AsImmutable);
+
+                                             });
+
+            #endregion
+
+            #region ~/v2.1.1/cpo/commands
+
+            if (OverlayURLPathPrefix.HasValue)
+                HTTPServer.AddMethodCallback(this,
+                                             HTTPHostname.Any,
+                                             HTTPMethod.GET,
+                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/commands",
+                                             HTTPContentType.Text.HTML_UTF8,
+                                             HTTPDelegate: Request => {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         //Server                     = DefaultHTTPServerName,
+                                                         Date                       = Timestamp.Now,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                         AccessControlAllowHeaders  = [ "Authorization" ],
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                                         Content                    = MixWithHTMLTemplate("commands.commands.shtml",
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                         Connection                 = ConnectionType.Close,
+                                                         Vary                       = "Accept"
+                                                     }.AsImmutable);
+
+                                             });
+
+            #endregion
+
+            #region ~/v2.1.1/cpo/tokens
+
+            if (OverlayURLPathPrefix.HasValue)
+                HTTPServer.AddMethodCallback(this,
+                                             HTTPHostname.Any,
+                                             HTTPMethod.GET,
+                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/tokens",
+                                             HTTPContentType.Text.HTML_UTF8,
+                                             HTTPDelegate: Request => {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         //Server                     = DefaultHTTPServerName,
+                                                         Date                       = Timestamp.Now,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                         AccessControlAllowHeaders  = [ "Authorization" ],
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                                         Content                    = MixWithHTMLTemplate("tokens.tokens.shtml",
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                         Connection                 = ConnectionType.Close,
+                                                         Vary                       = "Accept"
+                                                     }.AsImmutable);
+
+                                             });
+
+            #endregion
 
 
             #region ~/remoteParties

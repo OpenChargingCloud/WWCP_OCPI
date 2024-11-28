@@ -31,6 +31,14 @@
             <div class="row"><div class="key">?</div><div id="numberOfEVSEsX">-</div></div>
         </div>
 
+        <div class="description">
+            Tariffs
+        </div>
+
+        <div id="tariffStatistics" class="statistics">
+            
+        </div>
+
         <div id="locations">
 
         </div>

@@ -569,12 +569,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         {
 
             //ToDo: Can we have a lock per logfile?
-            var LockTaken = await logHTTPRequest_toDisc_Lock.WaitAsync(MaxWaitingForALock);
+            var lockTaken = await logHTTPRequest_toDisc_Lock.WaitAsync(MaxWaitingForALock);
 
             try
             {
 
-                if (LockTaken)
+                if (lockTaken)
                 {
 
                     var retry = 0;
@@ -585,7 +585,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         try
                         {
 
-                            File.AppendAllText(LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName),
+                            var fullFileName   = LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName);
+                            var directoryPath  = Path.GetDirectoryName(fullFileName);
+
+                            if (directoryPath.IsNotNullOrEmpty())
+                                Directory.CreateDirectory(directoryPath);
+
+
+                            File.AppendAllText(fullFileName,
                                                String.Concat(Request.HTTPRequest.HTTPSource, " -> ", Request.HTTPRequest.LocalSocket,             Environment.NewLine,
                                                              Request.RemoteParty is not null
                                                                  ? $"Remote party: '{Request.RemoteParty.Id}'{Environment.NewLine}"
@@ -638,7 +645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
             finally
             {
-                if (LockTaken)
+                if (lockTaken)
                     logHTTPRequest_toDisc_Lock.Release();
             }
 
@@ -663,12 +670,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         {
 
             //ToDo: Can we have a lock per logfile?
-            var LockTaken = await logHTTPResponse_toDisc_Lock.WaitAsync(MaxWaitingForALock);
+            var lockTaken = await logHTTPResponse_toDisc_Lock.WaitAsync(MaxWaitingForALock);
 
             try
             {
 
-                if (LockTaken)
+                if (lockTaken)
                 {
 
                     var retry = 0;
@@ -679,7 +686,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         try
                         {
 
-                            File.AppendAllText(LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName),
+                            var fullFileName   = LogfileCreator(LoggingPath, Request.RemoteParty, Context, LogEventName);
+                            var directoryPath  = Path.GetDirectoryName(fullFileName);
+
+                            if (directoryPath.IsNotNullOrEmpty())
+                                Directory.CreateDirectory(directoryPath);
+
+
+                            File.AppendAllText(fullFileName,
                                                String.Concat(Request.HTTPRequest.HTTPSource, " -> ", Request.HTTPRequest.LocalSocket,             Environment.NewLine,
                                                              ">>>>>>--Request----->>>>>>------>>>>>>------>>>>>>------>>>>>>------>>>>>>------",  Environment.NewLine,
                                                              Request.RemoteParty is not null
@@ -737,7 +751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
             finally
             {
-                if (LockTaken)
+                if (lockTaken)
                     logHTTPResponse_toDisc_Lock.Release();
             }
 

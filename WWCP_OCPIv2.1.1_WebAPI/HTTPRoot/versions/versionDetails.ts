@@ -7,24 +7,31 @@ function StartVersionDetails(versionId: string) {
     common.topLeft.innerHTML                   = "/version/details"
     common.menuVersions.style.backgroundColor  = "#CCCCCC";
 
-    const versionDetailInfosDiv                = document.getElementById("versionDetailInfos")              as HTMLDivElement;
+    const versionDetailInfosDiv                = document.getElementById("versionDetailInfos")                as HTMLDivElement;
 
-    const accessTokenInput                     = versionDetailInfosDiv.querySelector("#accessToken")        as HTMLInputElement;
-    const accessTokenButton                    = versionDetailInfosDiv.querySelector("#accessTokenButton")  as HTMLButtonElement;
+    const accessTokenEncoding                  = versionDetailInfosDiv.querySelector("#accessTokenEncoding")  as HTMLInputElement;
+    const accessTokenInput                     = versionDetailInfosDiv.querySelector("#accessToken")          as HTMLInputElement;
+    const accessTokenButton                    = versionDetailInfosDiv.querySelector("#accessTokenButton")    as HTMLButtonElement;
 
-    const versionDetailsDiv                    = versionDetailInfosDiv.querySelector("#versionDetails")     as HTMLDivElement;
-    const versionIdDiv                         = versionDetailsDiv.    querySelector("#versionId")          as HTMLDivElement;
-    const endpointsDiv                         = versionDetailsDiv.    querySelector("#endpoints")          as HTMLDivElement;
+    const versionDetailsDiv                    = versionDetailInfosDiv.querySelector("#versionDetails")       as HTMLDivElement;
+    const versionIdDiv                         = versionDetailsDiv.    querySelector("#versionId")            as HTMLDivElement;
+    const endpointsDiv                         = versionDetailsDiv.    querySelector("#endpoints")            as HTMLDivElement;
 
     accessTokenButton.onclick = () => {
+
+        if (accessTokenEncoding.checked)
+            localStorage.setItem("ocpiAccessTokenEncoding", "base64");
+        else
+            localStorage.removeItem("ocpiAccessTokenEncoding");
+
 
         var newAccessToken = accessTokenInput.value;
 
         if (newAccessToken !== "")
-            localStorage.setItem("OCPIAccessToken", newAccessToken);
-
+            localStorage.setItem("ocpiAccessToken", newAccessToken);
         else
-            localStorage.removeItem("OCPIAccessToken");
+            localStorage.removeItem("ocpiAccessToken");
+
 
         location.reload();
 

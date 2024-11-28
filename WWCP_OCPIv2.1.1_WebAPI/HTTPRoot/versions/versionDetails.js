@@ -5,17 +5,22 @@ function StartVersionDetails(versionId) {
     common.topLeft.innerHTML = "/version/details";
     common.menuVersions.style.backgroundColor = "#CCCCCC";
     const versionDetailInfosDiv = document.getElementById("versionDetailInfos");
+    const accessTokenEncoding = versionDetailInfosDiv.querySelector("#accessTokenEncoding");
     const accessTokenInput = versionDetailInfosDiv.querySelector("#accessToken");
     const accessTokenButton = versionDetailInfosDiv.querySelector("#accessTokenButton");
     const versionDetailsDiv = versionDetailInfosDiv.querySelector("#versionDetails");
     const versionIdDiv = versionDetailsDiv.querySelector("#versionId");
     const endpointsDiv = versionDetailsDiv.querySelector("#endpoints");
     accessTokenButton.onclick = () => {
+        if (accessTokenEncoding.checked)
+            localStorage.setItem("ocpiAccessTokenEncoding", "base64");
+        else
+            localStorage.removeItem("ocpiAccessTokenEncoding");
         var newAccessToken = accessTokenInput.value;
         if (newAccessToken !== "")
-            localStorage.setItem("OCPIAccessToken", newAccessToken);
+            localStorage.setItem("ocpiAccessToken", newAccessToken);
         else
-            localStorage.removeItem("OCPIAccessToken");
+            localStorage.removeItem("ocpiAccessToken");
         location.reload();
     };
     OCPIGet(window.location.href, // == "/versions/2.2"

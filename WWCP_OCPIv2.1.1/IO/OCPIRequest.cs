@@ -109,12 +109,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 var OCPIResponseBuilder = await OCPIRequestHandler(httpRequest.SubprotocolRequest as OCPIRequest);
                                                 var httpResponseBuilder = OCPIResponseBuilder.ToHTTPResponseBuilder();
 
-                                                httpResponseBuilder.SubprotocolResponse = new OCPIResponse(OCPIResponseBuilder.Request,
-                                                                                                           OCPIResponseBuilder.StatusCode ?? 3000,
-                                                                                                           OCPIResponseBuilder.StatusMessage,
-                                                                                                           OCPIResponseBuilder.AdditionalInformation,
-                                                                                                           OCPIResponseBuilder.Timestamp  ?? Timestamp.Now,
-                                                                                                           httpResponseBuilder.AsImmutable);
+                                                httpResponseBuilder.SubprotocolResponse = new OCPIResponse(
+                                                                                              OCPIResponseBuilder.Request,
+                                                                                              OCPIResponseBuilder.StatusCode ?? 3000,
+                                                                                              OCPIResponseBuilder.StatusMessage,
+                                                                                              OCPIResponseBuilder.AdditionalInformation,
+                                                                                              OCPIResponseBuilder.Timestamp  ?? Timestamp.Now,
+                                                                                              httpResponseBuilder.AsImmutable
+                                                                                          );
 
                                                 return httpResponseBuilder;
 

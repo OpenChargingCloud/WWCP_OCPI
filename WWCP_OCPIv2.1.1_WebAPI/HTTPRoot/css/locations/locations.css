@@ -27,6 +27,9 @@ body #page #bottom #right #text #locationInfos #locationInfos2 #locationStatisti
   padding-bottom: 10px;
 }
 body #page #bottom #right #text #locationInfos #locationInfos2 #evseStatusStatistics {
+  padding-bottom: 10px;
+}
+body #page #bottom #right #text #locationInfos #locationInfos2 #tariffStatistics {
   padding-bottom: 15px;
 }
 body #page #bottom #right #text #locationInfos #locationInfos2 #locations {
