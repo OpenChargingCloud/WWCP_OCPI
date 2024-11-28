@@ -112,3 +112,8 @@ Backup*/
 UpgradeLog*.XML
 
 *.userprefs
+
+*.js
+*.js.map
+
+

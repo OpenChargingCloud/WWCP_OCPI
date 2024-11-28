@@ -1,0 +1,219 @@
+﻿@import "../defaults/_defaults.scss";
+
+body {
+    #page {
+        #bottom {
+
+            overflow-y: auto;
+
+            #right {
+                #text {
+                    #tariffInfos {
+
+                        #tariffInfos2 {
+
+                            padding:            1vh 2vw;
+                            border-radius:      6px;
+
+                            .description {
+                                font-weight:        bold;
+                                padding-bottom:     3px;
+                            }
+
+                            .statistics {
+
+                                display:            table;
+
+                                .row {
+                                    display:            table-row;
+
+                                    .key {
+                                        display:            table-cell;
+                                        /*padding-right:      10px;*/
+                                        width:              15vh;
+                                    }
+
+                                    .value {
+                                        display:            table-cell;
+                                    }
+
+                                }
+
+                            }
+
+                            #tariffStatistics {
+                                padding-bottom:     10px;
+                            }
+
+                            #evseStatusStatistics {
+                                padding-bottom:     15px;
+                            }
+
+
+                            #tariffs {
+
+                                display:                flex;
+                                flex-direction:         column;
+                                border-top:             none;
+
+                                .properties {
+
+                                    display:                table;
+
+                                    .row {
+
+                                        display:                table-row;
+
+                                        .key {
+                                            display:                table-cell;
+                                            padding-right:          10px;
+                                        }
+
+                                        .value {
+                                            display:                table-cell;
+                                        }
+
+                                    }
+                                }
+
+                                .tariff {
+
+                                    padding:                15px 22px;
+                                    display:                inline-block;
+                                    color:                  #5272a3;
+                                    font-weight:            bold;
+                                    background-color:       #efefef;
+                                    border-top:             1px solid #ffffff;
+
+                                    .id {
+                                        padding-bottom:         1px;
+                                    }
+
+                                    .altURL {
+
+                                        font-size:              75%;
+
+                                        a {
+                                            color:                  rgb(82, 114, 163);
+                                            text-decoration:        none;
+                                        }
+
+                                    }
+
+                                    .altTexts {
+                                        padding:                10px 0px;
+                                        font-size:              80%;
+                                    }
+
+                                    .tariffElements {
+
+                                        padding-left:           10px;
+
+                                        .tariffElement {
+
+                                            background-color:       #e2e2e2;
+                                            padding:                10px 15px;
+                                            margin-top:             4px;
+                                            border-radius:          4px;
+
+                                            .priceComponents {
+
+                                                display:                table;
+                                                font-size:              90%;
+
+                                                .priceComponent {
+
+                                                    display:                table-row;
+
+                                                    .type {
+                                                        display:                table-cell;
+                                                        padding-right:          10px;
+                                                        font-size:              90%;
+                                                        min-width:              3vw;
+                                                    }
+
+                                                    .price {
+                                                        display:                table-cell;
+                                                        padding-right:          10px;
+                                                        font-size:              80%;
+                                                        padding-bottom:         4px;
+                                                        min-width:              3vw;
+                                                    }
+
+                                                    .stepSize {
+                                                        display:                table-cell;
+                                                        padding-right:          10px;
+                                                        font-size:              80%;
+                                                        padding-bottom:         4px;
+                                                    }
+
+                                                }
+
+                                            }
+
+                                            .tariffRestrictions {
+
+                                                font-size:              85%;
+                                                margin-top:             6px;
+
+                                                .restrictions {
+
+                                                    display:                table;
+                                                    padding:                2px 20px;
+
+                                                    .restriction {
+
+                                                        display:                table-row;
+
+                                                        .key {
+                                                            display:                table-cell;
+                                                            font-size:              95%;
+                                                            padding-right:          1vw;
+                                                        }
+
+                                                        .value {
+                                                            display:                table-cell;
+                                                            font-size:              80%;
+                                                        }
+
+                                                    }
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                    .lastUpdated {
+                                        font-size:              70%;
+                                        margin-top:             15px;
+                                    }
+
+                                }
+
+                                .tariff:hover {
+                                    background-color:       rgba(188, 201, 221, 0.5);
+                                }
+
+                            }
+
+                            #tariffs .tariff:first-child {
+                                border-top-left-radius:         6px;
+                                border-top-right-radius:        6px;
+                            }
+
+                            #tariffs .tariff:last-child {
+                                border-bottom-left-radius:      6px;
+                                border-bottom-right-radius:     6px;
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+}

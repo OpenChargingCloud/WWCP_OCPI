@@ -32,7 +32,7 @@ function StartLocations()
     const common                       = GetDefaults();
     common.topLeft.innerHTML           = "/Locations"
     common.menuVersions.classList.add("activated");
-
+    common.menuVersions.href           = "../../versions";
 
     const locationInfosDiv             = document.getElementById("locationInfos")                     as HTMLDivElement;
     const locationsDiv                 = locationInfosDiv.querySelector("#locations")                 as HTMLDivElement;

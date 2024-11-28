@@ -32,6 +32,8 @@
     <None Remove="HTTPRoot\css\remoteParty\remoteParties.min.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteParty.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteParty.min.css" />
+    <None Remove="HTTPRoot\css\tariffs\tariffs.css" />
+    <None Remove="HTTPRoot\css\tariffs\tariffs.min.css" />
     <None Remove="HTTPRoot\css\template.css" />
     <None Remove="HTTPRoot\css\template.min.css" />
     <None Remove="HTTPRoot\css\versions\versionDetails.css" />
@@ -92,6 +94,8 @@
     <None Remove="HTTPRoot\remoteParty\remoteParty.scss" />
     <None Remove="HTTPRoot\remoteParty\remoteParty.shtml" />
     <None Remove="HTTPRoot\remoteParty\remoteParty.ts" />
+    <None Remove="HTTPRoot\tariffs\tariffs.js" />
+    <None Remove="HTTPRoot\tariffs\tariffs.js.map" />
     <None Remove="HTTPRoot\template.html" />
     <None Remove="HTTPRoot\template.scss" />
     <None Remove="HTTPRoot\versions\versionDetails.js" />
@@ -134,6 +138,8 @@
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParties.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParty.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParty.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\tariffs\tariffs.css" />
+    <EmbeddedResource Include="HTTPRoot\css\tariffs\tariffs.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\template.css" />
     <EmbeddedResource Include="HTTPRoot\css\template.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.css" />
@@ -153,6 +159,11 @@
     <EmbeddedResource Include="HTTPRoot\defaults\_defaults.scss" />
     <EmbeddedResource Include="HTTPRoot\favicon.png" />
     <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />
+    <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.js" />
+    <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.js.map" />
+    <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.scss" />
+    <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.shtml" />
+    <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.ts" />
     <EmbeddedResource Include="HTTPRoot\locations\locations.js" />
     <EmbeddedResource Include="HTTPRoot\locations\locations.js.map" />
     <EmbeddedResource Include="HTTPRoot\locations\locations.scss" />

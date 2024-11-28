@@ -6,11 +6,12 @@ function StartVersionDetails(versionId: string) {
     const common                               = GetDefaults();
     common.topLeft.innerHTML                   = "/version/details"
     common.menuVersions.style.backgroundColor  = "#CCCCCC";
+    common.menuVersions.href                   = "../versions";
 
     const versionDetailInfosDiv                = document.getElementById("versionDetailInfos")                as HTMLDivElement;
 
     const accessTokenEncoding                  = versionDetailInfosDiv.querySelector("#accessTokenEncoding")  as HTMLInputElement;
-    const accessTokenInput                     = versionDetailInfosDiv.querySelector("#accessToken")          as HTMLInputElement;
+    const accessTokenInput                     = versionDetailInfosDiv.querySelector("#accessTokenInput")     as HTMLInputElement;
     const accessTokenButton                    = versionDetailInfosDiv.querySelector("#accessTokenButton")    as HTMLButtonElement;
 
     const versionDetailsDiv                    = versionDetailInfosDiv.querySelector("#versionDetails")       as HTMLDivElement;

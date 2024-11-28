@@ -6,13 +6,17 @@
 
 <div id="versionDetailInfos" class="entity">
 
-    <div id="accessTokenDiv">
-        <input id="accessToken" name="accessToken">
-        <div id="accessTokenEncodingDiv">
+    <div id="accessTokenBar">
+
+        <input id="accessTokenInput" name="accessToken">
+
+        <div id="accessTokenEncoding">
             <input id="accessTokenEncoding" type="checkbox" name="accessTokenEncoding">
             Base64 Encoding?
         </div>
-        <button id="accessTokenButton">Set OCPI Access Token</button>
+
+        <button id="accessTokenButton">Update OCPI Access Token</button>
+
     </div>
 
     <div id="versionDetails">

@@ -19,6 +19,7 @@ function StartLocations() {
     const common = GetDefaults();
     common.topLeft.innerHTML = "/Locations";
     common.menuVersions.classList.add("activated");
+    common.menuVersions.href = "../../versions";
     const locationInfosDiv = document.getElementById("locationInfos");
     const locationsDiv = locationInfosDiv.querySelector("#locations");
     const numberOfLocationsDiv = locationInfosDiv.querySelector("#numberOfLocations");

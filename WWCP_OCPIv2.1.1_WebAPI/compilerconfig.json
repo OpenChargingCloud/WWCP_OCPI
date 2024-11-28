@@ -20,6 +20,10 @@
     "inputFile": "HTTPRoot/locations/locations.scss"
   },
   {
+    "outputFile": "HTTPRoot/css/tariffs/tariffs.css",
+    "inputFile": "HTTPRoot/tariffs/tariffs.scss"
+  },
+  {
     "outputFile": "HTTPRoot/css/versions/versionDetails.css",
     "inputFile": "HTTPRoot/versions/versionDetails.scss"
   },

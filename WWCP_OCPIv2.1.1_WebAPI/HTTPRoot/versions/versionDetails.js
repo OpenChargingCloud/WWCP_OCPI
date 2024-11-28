@@ -4,9 +4,10 @@ function StartVersionDetails(versionId) {
     const common = GetDefaults();
     common.topLeft.innerHTML = "/version/details";
     common.menuVersions.style.backgroundColor = "#CCCCCC";
+    common.menuVersions.href = "../versions";
     const versionDetailInfosDiv = document.getElementById("versionDetailInfos");
     const accessTokenEncoding = versionDetailInfosDiv.querySelector("#accessTokenEncoding");
-    const accessTokenInput = versionDetailInfosDiv.querySelector("#accessToken");
+    const accessTokenInput = versionDetailInfosDiv.querySelector("#accessTokenInput");
     const accessTokenButton = versionDetailInfosDiv.querySelector("#accessTokenButton");
     const versionDetailsDiv = versionDetailInfosDiv.querySelector("#versionDetails");
     const versionIdDiv = versionDetailsDiv.querySelector("#versionId");

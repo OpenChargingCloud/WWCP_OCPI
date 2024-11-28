@@ -1,4 +1,18 @@
-﻿body #page #bottom #right #text #versionDetailInfos #versionDetails {
+﻿body #page #bottom #right #text #versionDetailInfos #accessTokenBar {
+  display: flex;
+  margin: 10px 0px;
+}
+body #page #bottom #right #text #versionDetailInfos #accessTokenBar accessTokenInput {
+  border-radius: 4px;
+}
+body #page #bottom #right #text #versionDetailInfos #accessTokenBar accessTokenEncoding {
+  padding: 0px 10px;
+}
+body #page #bottom #right #text #versionDetailInfos #accessTokenBar accessTokenButton {
+  border: 0;
+  border-radius: 4px;
+}
+body #page #bottom #right #text #versionDetailInfos #versionDetails {
   padding: 1vh 2vw;
   border-radius: 6px;
   background-color: #e7e7e7;
