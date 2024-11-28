@@ -18,8 +18,6 @@
 
     "HTTPRoot/defaults/defaults.ts",
 
-    "HTTPRoot/dashboard/dashboard.ts",
-
     "HTTPRoot/versions/versions.ts",
     "HTTPRoot/versions/versionDetails.ts",
 
