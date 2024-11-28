@@ -220,6 +220,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BuildWebCompiler2022" Version="1.14.10" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj" />
     <ProjectReference Include="..\..\OpenChargingCloudAPI\OpenChargingCloudAPI\OpenChargingCloudAPI.csproj" />
     <ProjectReference Include="..\..\SMSAPI\SMSAPI\SMSAPI.csproj" />
