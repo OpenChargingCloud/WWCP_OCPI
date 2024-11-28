@@ -115,5 +115,9 @@ UpgradeLog*.XML
 
 *.js
 *.js.map
-
-
+WWCP_OCPIv2.1.1_WebAPI/HTTPRoot/css/*.css
+WWCP_OCPIv2.1.1_WebAPI/HTTPRoot/css/*.min.css
+WWCP_OCPIv2.1.1_WebAPI/HTTPRoot/css/locations
+WWCP_OCPIv2.1.1_WebAPI/HTTPRoot/css/remoteParty
+WWCP_OCPIv2.1.1_WebAPI/HTTPRoot/css/tariffs
+WWCP_OCPIv2.1.1_WebAPI/HTTPRoot/css/versions
