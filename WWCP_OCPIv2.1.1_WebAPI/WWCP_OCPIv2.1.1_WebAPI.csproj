@@ -8,8 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="HTTPRoot\dashboard\**" />
     <Compile Remove="HTTPRoot\js\**" />
+    <EmbeddedResource Remove="HTTPRoot\dashboard\**" />
     <EmbeddedResource Remove="HTTPRoot\js\**" />
+    <None Remove="HTTPRoot\dashboard\**" />
     <None Remove="HTTPRoot\js\**" />
   </ItemGroup>
 
@@ -40,13 +43,6 @@
     <None Remove="HTTPRoot\css\versions\versionDetails.min.css" />
     <None Remove="HTTPRoot\css\versions\versions.css" />
     <None Remove="HTTPRoot\css\versions\versions.min.css" />
-    <None Remove="HTTPRoot\dashboard\dashboard.css" />
-    <None Remove="HTTPRoot\dashboard\dashboard.html" />
-    <None Remove="HTTPRoot\dashboard\dashboard.js" />
-    <None Remove="HTTPRoot\dashboard\dashboard.js.map" />
-    <None Remove="HTTPRoot\dashboard\dashboard.min.css" />
-    <None Remove="HTTPRoot\dashboard\dashboard.scss" />
-    <None Remove="HTTPRoot\dashboard\dashboard.ts" />
     <None Remove="HTTPRoot\defaults\defaults.js" />
     <None Remove="HTTPRoot\defaults\defaults.js.map" />
     <None Remove="HTTPRoot\defaults\defaults.ts" />
@@ -146,13 +142,6 @@
     <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.min.css" />
-    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.css" />
-    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.html" />
-    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.js" />
-    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.js.map" />
-    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.min.css" />
-    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.scss" />
-    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.ts" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.js" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.js.map" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.ts" />
