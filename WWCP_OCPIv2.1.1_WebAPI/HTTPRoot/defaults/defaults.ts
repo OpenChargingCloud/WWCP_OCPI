@@ -435,7 +435,7 @@ function OCPIGet(RessourceURI: string,
     const accessToken          = localStorage.getItem("ocpiAccessToken");
     const accessTokenEncoding  = localStorage.getItem("ocpiAccessTokenEncoding");
 
-    if (localStorage.getItem("OCPIAccessToken") != null)
+    if (accessToken)
         ajax.setRequestHeader("Authorization", "Token " + (accessTokenEncoding === "base64" ? btoa(accessToken) : accessToken));
 
     ajax.onreadystatechange = function () {
