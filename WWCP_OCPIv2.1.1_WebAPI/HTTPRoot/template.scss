@@ -979,40 +979,319 @@ body {
 
                         }
 
-                        .filter {
+                        #controls {
 
-                            padding:            30px 0 11px 0;
-                            font-size:          9pt;
+                            padding:            30px 0 5px 0;
 
-                            .filterBar {
+                            #search {
 
-                                width:              30%;
-                                padding-top:        1px;
-                                /*margin-left:        auto;
-                                margin-right:       0;*/
-                                position:           relative;
-                                border:             1px solid;
-                                border-radius:      4px;
+                                display:            flex;
 
-                                #sign {
-                                    position:           absolute;
-                                    top:                6px;
-                                    right:              calc(100% - 18px);
-                                    font-size:          10pt;
-                                    color:              #AAAAAA;
+                                .patternFilter {
+
+                                    font-size:          9pt;
+
+                                    .patternFilterBar {
+
+                                        width:              30vw;
+                                        /*margin-left:        auto;
+                                        margin-right:       0;*/
+                                        position:           relative;
+                                        border:             1px solid;
+                                        border-radius:      4px;
+
+                                        #patternFilterInput {
+
+                                            padding:            5px 6px 4px 23px;
+                                            width:              calc(100% - 29px);
+                                            border:             0;
+                                            border-radius:      4px;
+                                            outline:            none;
+
+                                            &::placeholder {
+                                                color:              darkgreen;
+                                            }
+
+                                            &:focus {
+                                                color:              #436ba8;
+                                                background-color:   #dae9ff;
+                                            }
+
+                                        }
+
+                                        #sign {
+                                            position:           absolute;
+                                            top:                6px;
+                                            right:              calc(100% - 18px);
+                                            font-size:          10pt;
+                                            color:              #AAAAAA;
+                                        }
+
+                                        &:focus-within {
+                                            border:             1px solid #aeb2c7;
+                                            #sign {
+                                                color:              red;
+                                            }
+                                        }
+
+                                    }
+
                                 }
 
-                                #filter {
-                                    padding:            4px 6px 4px 23px;
-                                    width:              calc(100% - 29px);
-                                    border:             0;
-                                    border-radius:      4px;
+                                .take {
+
+                                    padding-left:       10px;
+
+                                    select {
+
+                                        border:             0;
+                                        padding:            5px 6px;
+                                        outline:            0;
+                                        background-color:   #efefff;
+                                        border-radius:      4px;
+
+                                        option {
+                                            padding:            2px 3px;
+                                        }
+
+                                    }
+
+                                    select:focus {
+                                        background-color:   #afafff;
+                                    }
+
+                                }
+
+                                .searchButtons {
+
+                                    padding-left:       10px;
+
+                                    button {
+                                        border:             0;
+                                        background-color:   #e4e4e4;
+                                        border-radius:      50%;
+                                        outline:            none;
+                                        width:              28px;
+                                        height:             28px;
+                                        font-size:          80%;
+                                        color:              black;
+                                        margin:             0px 2px;
+                                    }
+
+                                    button[disabled] {
+                                        background:         none;
+                                        cursor:             not-allowed;
+                                    }
+
+                                    button[disabled]:hover {
+                                        background:         none;
+                                        cursor:             not-allowed;
+                                    }
+
+                                    button[disabled].busy {
+                                        background-color:   #e4e4e4;
+                                        color:              black;
+                                    }
+
+                                    button[disabled].busyActive {
+                                        background-color:   #ffab66;
+                                    }
+
+                                    button.busy {
+                                        background-color:   #e4e4e4;
+                                        color:              black;
+                                    }
+
+                                    button:hover {
+                                        background-color:   #ffd5b2;
+                                    }
+
+                                    button:focus {
+                                        background-color:   #ffefef;
+                                    }
+
+
+                                    #searchButton {
+                                        display:            inline-block;
+                                    }
+
+                                    #leftButton {
+                                        display:            inline-block;
+                                    }
+
+                                    #rightButton {
+                                        display:            inline-block;
+                                    }
+
+                                }
+
+                                .dateFilters {
+
+                                    padding-left:       10px;
+                                    margin:             5px 0px 0px 30px;
+
+                                    #dateFrom {
+                                        display:            inline-block;
+                                    }
+
+                                    #dateTo {
+                                        display:            inline-block;
+                                        margin-left:        20px;
+                                    }
+
+                                    label {
+                                        font-size:          80%;
+                                    }
+
+                                    .datepicker {
+
+                                        display:            inline-block;
+                                        position:           relative;
+
+                                        input {
+                                            background-color:   #e8e8e8;
+                                            padding:            4px 23px 4px 6px;
+                                            border:             0;
+                                            border-radius:      4px;
+                                            outline:            none;
+                                        }
+
+                                        input:focus {
+                                            color:              #ff7300;
+                                            background-color:   #777;
+                                        }
+
+                                        i {
+                                            font-size:          83%;
+                                            position:           absolute;
+                                            right:              5px;
+                                            top:                5px;
+                                        }
+
+                                    }
+
                                 }
 
                             }
 
                         }
 
+                        #message {
+                            padding:            5px 30px;
+                            font-size:          80%;
+                            color:              #707070;
+                        }
+
+                        #localSearchMessage {
+                            display:            none;
+                            padding:            5px 30px;
+                            font-size:          80%;
+                            color:              #707070;
+                        }
+
+                        .searchResults {
+                            display:                        flex;
+                            flex-direction:                 column;
+                        }
+
+                        .searchResults .searchResult:first-child {
+                            border-top-left-radius:         6px;
+                            border-top-right-radius:        6px;
+                        }
+
+                        .searchResults .searchResult:last-child {
+                            border-bottom-left-radius:      6px;
+                            border-bottom-right-radius:     6px;
+                        }
+
+
+
+                        #lowerButtons {
+
+                            display:            flex;
+                            flex-direction:     row;
+                            margin:             1vh 1vw;
+
+       /*                     button {
+                                border:             0;
+                                white-space:        nowrap;
+                                color:              #6b6b6b;
+                                padding:            8px 14px;
+                                margin:             10px 0 15px 0;
+                                border-radius:      5px;
+                                font-size:          70%;
+                                text-decoration:    none;
+                            }*/
+
+                            /* Also used for 'a'-tags which should behave like a button! */
+
+                            .button {
+
+                                background:                 #ffba83;
+                                background-image:           linear-gradient(to bottom, #ffc99e, #ffba83);
+                                color:                      #b36630;
+                                padding:                    10px 20px;
+                                margin-left:                5px;
+                                border-radius:              4px;
+                                border:                     0px;
+                                box-shadow:                 2px 2px 6px #999;
+                                font-size:                  70%;
+                                white-space:                nowrap;
+                                text-decoration:            none;
+
+                                .text {
+
+                                    display:            inline-block;
+
+                                    .text2 {
+                                        display:            inline-block;
+                                        padding-left:       8px;
+                                        vertical-align:     top;
+                                        padding-top:        7px;
+                                    }
+
+                                }
+
+                            }
+
+                         /*   button:hover {
+                                background-color:   #fdcca4;
+                            }*/
+
+                            .button:hover {
+                                background-color:           #fbd1af;
+                                background-image:           linear-gradient(to bottom, #ffe5d1, #fbd1af);
+                                color:                      #cb8f64;
+                            }
+
+    /*                        button i:first-child {
+                                margin-right:       2px;
+                                font-size:          75%;
+                            }*/
+
+
+
+                            .button:active {
+                                box-shadow:                 0 1px 2px #999;
+                                transform:                  translateY(4px);
+                            }
+
+                            .button:focus {
+                                outline:                    0px;
+                            }
+
+                            .button:disabled {
+                                background-color:           rgb(238, 226, 215);
+                                background-image:           none;
+                                color:                      #ceb9aa;
+                                box-shadow:                 none;
+                            }
+
+                        }
+
+                        #saveButton {
+                            margin-top:                 40px;
+                        }
 
                     }
 

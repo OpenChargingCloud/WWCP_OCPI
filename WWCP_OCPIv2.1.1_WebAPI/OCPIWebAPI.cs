@@ -1,12 +1,12 @@
 ﻿/*
  * Copyright (c) 2015-2024 GraphDefined GmbH <achim.friedland@graphdefined.com>
- * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
+ * This file is part of WWCP OCPI WebAPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.gnu.org/licenses/agpl.html
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -834,20 +834,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                              HTTPContentType.Text.HTML_UTF8,
                                              HTTPDelegate: Request => {
 
+                                                 // Appending "?download" to the URL within a web browser will open a download dialog.
+                                                 // Note: This happens here, as the ACCEPT types of the HTTP request do often not include "application/json"!
+                                                 var download = Request.QueryString.GetBoolean("download", false);
+
                                                  return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         //Server                     = DefaultHTTPServerName,
-                                                         Date                       = Timestamp.Now,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                         AccessControlAllowHeaders  = [ "Authorization" ],
-                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("tariffs.tariffs.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
-                                                         Connection                 = ConnectionType.Close,
-                                                         Vary                       = "Accept"
-                                                     }.AsImmutable);
+
+                                                     download
+
+                                                         ? new HTTPResponse.Builder(Request) {
+                                                               HTTPStatusCode             = HTTPStatusCode.OK,
+                                                               Server                     = HTTPServer.DefaultServerName,
+                                                               Date                       = Timestamp.Now,
+                                                               AccessControlAllowOrigin   = "*",
+                                                               AccessControlAllowMethods  = [ "GET" ],
+                                                               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
+                                                               ContentDisposition         = download
+                                                                                                ? @"attachment; filename = ""tariffs.json"""
+                                                                                                : null,
+                                                               ContentType                = HTTPContentType.Application.JSON_UTF8,
+                                                               Content                    = new JArray(CommonAPI.GetTariffs().Select(tariff => tariff.ToJSON())).ToUTF8Bytes(),
+                                                               Vary                       = "Accept",
+                                                               Connection                 = ConnectionType.Close
+                                                           }.AsImmutable
+
+                                                         : new HTTPResponse.Builder(Request) {
+                                                               HTTPStatusCode             = HTTPStatusCode.OK,
+                                                               //Server                     = DefaultHTTPServerName,
+                                                               Date                       = Timestamp.Now,
+                                                               AccessControlAllowOrigin   = "*",
+                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                               AccessControlAllowHeaders  = [ "Authorization" ],
+                                                               ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                                               Content                    = MixWithHTMLTemplate("tariffs.tariffs.shtml",
+                                                                                                                html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                               Connection                 = ConnectionType.Close,
+                                                               Vary                       = "Accept"
+                                                           }.AsImmutable
+
+                                                 );
 
                                              });
 

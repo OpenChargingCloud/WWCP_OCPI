@@ -12,7 +12,7 @@
     "../../UsersAPI/UsersAPI/HTTPRoot/defaults/defaults.ts",
     "../../UsersAPI/UsersAPI/HTTPRoot/defaults/tools.ts",
     "../../UsersAPI/UsersAPI/HTTPRoot/defaults/views.ts",
-    "../../UsersAPI/UsersAPI/HTTPRoot/defaults/search.ts",
+    //"../../UsersAPI/UsersAPI/HTTPRoot/defaults/search.ts",
     "../../UsersAPI/UsersAPI/HTTPRoot/defaults/datePicker.ts",
     "../../UsersAPI/UsersAPI/HTTPRoot/login/SignInOut.ts",
 

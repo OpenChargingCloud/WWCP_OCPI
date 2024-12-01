@@ -52,8 +52,6 @@ body {
 
                             #tariffs {
 
-                                display:                flex;
-                                flex-direction:         column;
                                 border-top:             none;
 
                                 .properties {
@@ -84,8 +82,17 @@ body {
                                     font-weight:            bold;
                                     background-color:       #efefef;
                                     border-top:             1px solid #ffffff;
+                                    text-decoration:        none;
+
+                                    .counter {
+                                        display:                inline-block;
+                                        color:                  #7a96c1;
+                                        margin-right:           3px;
+                                        padding-bottom:         1px;
+                                    }
 
                                     .id {
+                                        display:                inline-block;
                                         padding-bottom:         1px;
                                     }
 
@@ -191,22 +198,12 @@ body {
                                         margin-top:             15px;
                                     }
 
+                                    &:hover {
+                                        background-color:       rgba(188, 201, 221, 0.5);
+                                    }
+
                                 }
 
-                                .tariff:hover {
-                                    background-color:       rgba(188, 201, 221, 0.5);
-                                }
-
-                            }
-
-                            #tariffs .tariff:first-child {
-                                border-top-left-radius:         6px;
-                                border-top-right-radius:        6px;
-                            }
-
-                            #tariffs .tariff:last-child {
-                                border-bottom-left-radius:      6px;
-                                border-bottom-right-radius:     6px;
                             }
 
                         }
