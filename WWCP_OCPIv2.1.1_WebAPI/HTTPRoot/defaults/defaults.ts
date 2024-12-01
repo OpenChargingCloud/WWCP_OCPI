@@ -124,6 +124,10 @@ interface ILocation {
     last_updated:                    string;
 }
 
+interface ILocationMetadata extends TMetadataDefaults {
+
+}
+
 interface ICoordinates {
     latitude:                        string;
     longitude:                       string;

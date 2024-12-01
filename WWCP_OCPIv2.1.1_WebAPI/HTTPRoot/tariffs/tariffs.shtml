@@ -8,14 +8,6 @@
 
     <div id="tariffInfos2">
 
-        <div class="description">
-            Tariffs
-        </div>
-
-        <div id="tariffStatistics" class="statistics">
-            <div class="row"><div class="key">Number of tariffs</div><div id="numberOfTariffs">-</div></div>
-        </div>
-
         <div id="controls">
 
             <div id="search">

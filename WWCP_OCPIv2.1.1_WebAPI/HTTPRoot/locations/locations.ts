@@ -51,263 +51,520 @@ function StartLocations()
     common.menuVersions.classList.add("activated");
     common.menuVersions.href           = "../../versions";
 
-    const locationInfosDiv             = document.getElementById("locationInfos")                     as HTMLDivElement;
-    const locationsDiv                 = locationInfosDiv.querySelector("#locations")                 as HTMLDivElement;
+    //const locationInfosDiv             = document.getElementById("locationInfos")                     as HTMLDivElement;
+    //const locationsDiv                 = locationInfosDiv.querySelector("#locations")                 as HTMLDivElement;
 
-    const numberOfLocationsDiv         = locationInfosDiv.querySelector("#numberOfLocations")         as HTMLDivElement;
-    const numberOfEVSEsDiv             = locationInfosDiv.querySelector("#numberOfEVSEs")             as HTMLDivElement;
-    const numberOfEVSEsAvailableDiv    = locationInfosDiv.querySelector("#numberOfEVSEsAvailable")    as HTMLDivElement;
-    const numberOfEVSEsChargingDiv     = locationInfosDiv.querySelector("#numberOfEVSEsCharging")     as HTMLDivElement;
-    const numberOfEVSEsOutOfOrderDiv   = locationInfosDiv.querySelector("#numberOfEVSEsOutOfOrder")   as HTMLDivElement;
-    const numberOfEVSEsInoperativeDiv  = locationInfosDiv.querySelector("#numberOfEVSEsInoperative")  as HTMLDivElement;
-    const numberOfEVSEsUnkownDiv       = locationInfosDiv.querySelector("#numberOfEVSEsUnkown")       as HTMLDivElement;
-    const numberOfEVSEsRemovedDiv      = locationInfosDiv.querySelector("#numberOfEVSEsRemoved")      as HTMLDivElement;
-    const numberOfEVSEsXDiv            = locationInfosDiv.querySelector("#numberOfEVSEsX")            as HTMLDivElement;
+    //const numberOfLocationsDiv         = locationInfosDiv.querySelector("#numberOfLocations")         as HTMLDivElement;
+    //const numberOfEVSEsDiv             = locationInfosDiv.querySelector("#numberOfEVSEs")             as HTMLDivElement;
+    //const numberOfEVSEsAvailableDiv    = locationInfosDiv.querySelector("#numberOfEVSEsAvailable")    as HTMLDivElement;
+    //const numberOfEVSEsChargingDiv     = locationInfosDiv.querySelector("#numberOfEVSEsCharging")     as HTMLDivElement;
+    //const numberOfEVSEsOutOfOrderDiv   = locationInfosDiv.querySelector("#numberOfEVSEsOutOfOrder")   as HTMLDivElement;
+    //const numberOfEVSEsInoperativeDiv  = locationInfosDiv.querySelector("#numberOfEVSEsInoperative")  as HTMLDivElement;
+    //const numberOfEVSEsUnkownDiv       = locationInfosDiv.querySelector("#numberOfEVSEsUnkown")       as HTMLDivElement;
+    //const numberOfEVSEsRemovedDiv      = locationInfosDiv.querySelector("#numberOfEVSEsRemoved")      as HTMLDivElement;
+    //const numberOfEVSEsXDiv            = locationInfosDiv.querySelector("#numberOfEVSEsX")            as HTMLDivElement;
 
-    let   totalNumberOfEVSEs           = 0;
-    let   evsesAvailable               = 0;
-    let   evsesCharging                = 0;
-    let   evsesOutOfOrder              = 0;
-    let   evsesInoperative             = 0;
-    let   evsesUnkown                  = 0;
-    let   evsesRemoved                 = 0;
-    let   evsesX                       = 0;
+    //let   totalNumberOfEVSEs           = 0;
+    //let   evsesAvailable               = 0;
+    //let   evsesCharging                = 0;
+    //let   evsesOutOfOrder              = 0;
+    //let   evsesInoperative             = 0;
+    //let   evsesUnkown                  = 0;
+    //let   evsesRemoved                 = 0;
+    //let   evsesX                       = 0;
 
-    const tariffStatisticsDiv          = locationInfosDiv.querySelector("#tariffStatistics")          as HTMLDivElement;
+    //const tariffStatisticsDiv          = locationInfosDiv.querySelector("#tariffStatistics")          as HTMLDivElement;
     const tariffs                      = new Map<string, number>();
     const errors                       = new Array<any>();
 
-    OCPIGet(window.location.href,
+    OCPIStartSearch2<ILocationMetadata, ILocation>(
 
-            (status, response) => {
+        window.location.href,
+        () => {
+            //return (statusFilterSelect.selectedOptions[0].value !== "any" ? "&matchStatus=" + statusFilterSelect.selectedOptions[0].value : "");
+            return "";
+        },
+        metadata => {
 
-                try
-                {
+            //if (metadata["description"] != null && firstValue(metadata["description"]) != null)
+            //{
+            //    (communicatorDescription.querySelector("#language") as HTMLDivElement).innerText = firstKey  (metadata["description"]);
+            //    (communicatorDescription.querySelector("#I18NText") as HTMLDivElement).innerText = firstValue(metadata["description"]);
+            //}
 
-                    const ocpiResponse = JSON.parse(response) as IOCPIResponse;
+        },
+        "location",
+        location => location.id,
+        "locations",
+        "locations",
 
-                    if (ocpiResponse?.data != undefined  &&
-                        ocpiResponse?.data != null       &&
-                        Array.isArray(ocpiResponse.data) &&
-                        ocpiResponse.data.length > 0)
-                    {
+        // list view
+        (resultCounter,
+         location,
+         locationAnchor) => {
 
-                        numberOfLocationsDiv.innerHTML = ocpiResponse.data.length.toString();
+             //if (location.evses)
+             //    totalNumberOfEVSEs += location.evses.length;
 
-                        let numberOfLocation = 1;
+             const locationCounterDiv      = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
+             locationCounterDiv.className  = "counter";
+             locationCounterDiv.innerHTML  = resultCounter.toString() + ".";
 
-                        for (const location of (ocpiResponse.data as ILocation[])) {
+             const locationTitleDiv        = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
+             locationTitleDiv.className    = "title";
+             locationTitleDiv.innerHTML    = location.name
+                                                 ? location.name + " (" + location.id + ")"
+                                                 : location.id;
+                                             // country_code
+                                             // party_id
 
-                            if (location.evses)
-                                totalNumberOfEVSEs += location.evses.length;
+             const propertiesDiv           = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
+             propertiesDiv.className       = "properties";
 
-                            const locationDiv           = locationsDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                            locationDiv.className       = "location";
+             // address
+             // city
+             // postal_code
+             // country
+             // time_zone
 
-                            const locationTitleDiv      = locationDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                            locationTitleDiv.className  = "title";
-                            locationTitleDiv.innerHTML  = (numberOfLocation++) + ". " + (location.name
-                                                                                             ? location.name + " (" + location.id + ")"
-                                                                                             : location.id);
-                                                          // country_code
-                                                          // party_id
+             // coordinates
 
-                            const propertiesDiv         = locationDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                            propertiesDiv.className     = "properties";
+             // opening_times
 
-                            CreateLine(
-                                propertiesDiv,
-                                "details",
-                                "Type",
-                                location.type
-                            )
+             // related_locations
+             // directions
+             // facilities
 
-                            // address
-                            // city
-                            // postal_code
-                            // country
-                            // coordinates
-                            // related_locations
-                            // directions
-                            // facilities
-                            // time_zone
-                            // opening_times
-                            // charging_when_closed
-                            // images
-                            // energy_mix
-                            // publish (PlugSurfing extension)
+             // charging_when_closed
+             // images
+             // energy_mix
+             // publish (PlugSurfing extension)
 
-                            if (location.operator) {
-                                CreateLine(
-                                    propertiesDiv,
-                                    "businessDetails",
-                                    "Operator",
-                                   (location.operator.website
-                                        ? "<a href=\"" + location.operator.website + "\">" + location.operator.name + "</a>"
-                                        : location.operator.name)
-                                )
-                            }
+             if (location.operator) {
+                 CreateLine(
+                     propertiesDiv,
+                     "businessDetails",
+                     "Operator",
+                    (location.operator.website
+                         ? "<a href=\"" + location.operator.website + "\">" + location.operator.name + "</a>"
+                         : location.operator.name)
+                 )
+             }
 
-                            if (location.suboperator) {
-                                CreateLine(
-                                    propertiesDiv,
-                                    "businessDetails",
-                                    "Suboperator",
-                                   (location.suboperator.website
-                                        ? "<a href=\"" + location.suboperator.website + "\">" + location.suboperator.name + "</a>"
-                                        : location.suboperator.name)
-                                )
-                            }
+             if (location.suboperator) {
+                 CreateLine(
+                     propertiesDiv,
+                     "businessDetails",
+                     "Suboperator",
+                    (location.suboperator.website
+                         ? "<a href=\"" + location.suboperator.website + "\">" + location.suboperator.name + "</a>"
+                         : location.suboperator.name)
+                 )
+             }
 
-                            if (location.owner) {
-                                CreateLine(
-                                    propertiesDiv,
-                                    "businessDetails",
-                                    "Owner",
-                                    (location.owner.website
-                                        ? "<a href=\"" + location.owner.website + "\">" + location.owner.name + "</a>"
-                                        : location.owner.name)
-                                )
-                            }
+             if (location.owner) {
+                 CreateLine(
+                     propertiesDiv,
+                     "businessDetails",
+                     "Owner",
+                     (location.owner.website
+                         ? "<a href=\"" + location.owner.website + "\">" + location.owner.name + "</a>"
+                         : location.owner.name)
+                 )
+             }
 
-                            const evsesDiv        = locationDiv.appendChild(document.createElement('a')) as HTMLAnchorElement;
-                            evsesDiv.className    = "evses";
+             CreateLine(
+                 propertiesDiv,
+                 "details",
+                 "Type",
+                 location.type
+             )
 
-                            let   numberOfEVSE    = 1;
-                            const numberOfEVSEs   = location.evses?.length ?? 0;
+             const evsesDiv        = locationAnchor.appendChild(document.createElement('a')) as HTMLAnchorElement;
+             evsesDiv.className    = "evses";
 
-                            if (location.evses) {
-                                for (var evse of location.evses) {
+             let   numberOfEVSE    = 1;
+             const numberOfEVSEs   = location.evses?.length ?? 0;
 
-                                    const evseDiv           = evsesDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                                    evseDiv.className       = "evse evseStatus_" + evse.status;
+             if (location.evses) {
+                 for (var evse of location.evses) {
 
-                                    const statusDiv         = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                                    statusDiv.className     = "evseStatus evseStatus_" + evse.status;
-                                    statusDiv.innerHTML     = evse.status;
+                     const evseDiv           = evsesDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                     evseDiv.className       = "evse evseStatus_" + evse.status;
 
-                                    const evesIdDiv         = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                                    evesIdDiv.className     = "evseId";
-                                    evesIdDiv.innerHTML     = (numberOfEVSE++) + ". " + evse.uid + (evse.evse_id && evse.evse_id != evse.uid ? " (" + evse.evse_id + ")" : "");
-                                                              // physical_reference
+                     const statusDiv         = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                     statusDiv.className     = "evseStatus evseStatus_" + evse.status;
+                     statusDiv.innerHTML     = evse.status;
 
-                                    // capabilities
-                                    // energy_meter (OCPI Calibration Law Extentions)
-                                    // floor_level
-                                    // coordinates
-                                    // directions
-                                    // parking_restrictions
-                                    // images
-                                    // last_updated
+                     const evesIdDiv         = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                     evesIdDiv.className     = "evseId";
+                     evesIdDiv.innerHTML     = (numberOfEVSE++) + ". " + evse.uid + (evse.evse_id && evse.evse_id != evse.uid ? " (" + evse.evse_id + ")" : "");
+                                               // physical_reference
 
-                                    const connectorsDiv     = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                                    connectorsDiv.className = "connectors";
+                     // capabilities
+                     // energy_meter (OCPI Calibration Law Extentions)
+                     // floor_level
+                     // coordinates
+                     // directions
+                     // parking_restrictions
+                     // images
+                     // last_updated
 
-                                    if (evse.connectors) {
-                                        for (var connector of evse.connectors) {
+                     const connectorsDiv     = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                     connectorsDiv.className = "connectors";
 
-                                            const connectorDiv     = connectorsDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                                            connectorDiv.className = "connector";
+                     if (evse.connectors) {
+                         for (var connector of evse.connectors) {
 
-                                            const connectorInfoDiv = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                                            connectorInfoDiv.className = "connectorInfo";
-                                            connectorInfoDiv.innerHTML = connector.id + ". " + connector.standard + ", " + connector.format + ", " + connector.amperage + " A, " + connector.voltage + " V, " + connector.power_type;
+                             const connectorDiv     = connectorsDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                             connectorDiv.className = "connector";
 
-                                            if (connector.tariff_id) {
+                             const connectorInfoDiv = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                             connectorInfoDiv.className = "connectorInfo";
+                             connectorInfoDiv.innerHTML = connector.id + ". " + connector.standard + ", " + connector.format + ", " + connector.amperage + " A, " + connector.voltage + " V, " + connector.power_type;
 
-                                                if (!tariffs.has(connector.tariff_id)) {
-                                                    tariffs.set(connector.tariff_id, 0);
-                                                }
+                             if (connector.tariff_id) {
 
-                                                tariffs.set(
-                                                    connector.tariff_id,
-                                                    tariffs.get(connector.tariff_id) + 1
-                                                );
+                                 if (!tariffs.has(connector.tariff_id)) {
+                                     tariffs.set(connector.tariff_id, 0);
+                                 }
 
-                                                const tariffInfoDiv = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                                                tariffInfoDiv.className = "tariffInfo";
-                                                tariffInfoDiv.innerHTML = "Tariff: " + connector.tariff_id + (connector.terms_and_conditions
-                                                                                                                  ? ", terms: " + connector.terms_and_conditions
-                                                                                                                  : "");
+                                 tariffs.set(
+                                     connector.tariff_id,
+                                     tariffs.get(connector.tariff_id) + 1
+                                 );
 
-                                            }
+                                 const tariffInfoDiv = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                                 tariffInfoDiv.className = "tariffInfo";
+                                 tariffInfoDiv.innerHTML = "Tariff: " + connector.tariff_id + (connector.terms_and_conditions
+                                                                                                   ? ", terms: " + connector.terms_and_conditions
+                                                                                                   : "");
 
-                                            // last_updated
+                             }
 
-                                        }
-                                    }
+                             // last_updated
 
-                                    switch (evse.status) {
+                         }
+                     }
 
-                                        case "AVAILABLE":
-                                            evsesAvailable++;
-                                            break;
+                     //switch (evse.status) {
 
-                                        case "CHARGING":
-                                            evsesCharging++;
-                                            break;
+                     //    case "AVAILABLE":
+                     //        evsesAvailable++;
+                     //        break;
 
-                                        case "OUTOFORDER":
-                                            evsesOutOfOrder++;
-                                            break;
+                     //    case "CHARGING":
+                     //        evsesCharging++;
+                     //        break;
 
-                                        case "INOPERATIVE":
-                                            evsesInoperative++;
-                                            break;
+                     //    case "OUTOFORDER":
+                     //        evsesOutOfOrder++;
+                     //        break;
 
-                                        case "UNKNOWN":
-                                            evsesUnkown++;
-                                            break;
+                     //    case "INOPERATIVE":
+                     //        evsesInoperative++;
+                     //        break;
 
-                                        case "REMOVED":
-                                            evsesRemoved++;
-                                            break;
+                     //    case "UNKNOWN":
+                     //        evsesUnkown++;
+                     //        break;
 
-                                        default:
-                                            evsesX++;
-                                            break;
+                     //    case "REMOVED":
+                     //        evsesRemoved++;
+                     //        break;
 
-                                    }
+                     //    default:
+                     //        evsesX++;
+                     //        break;
 
-                                }
-                            }
+                     //}
 
-                        }
+                 }
+             }
 
-                        numberOfEVSEsDiv.innerHTML            = totalNumberOfEVSEs.toString();
-
-                        numberOfEVSEsAvailableDiv.innerHTML   = evsesAvailable.toString();
-                        numberOfEVSEsChargingDiv.innerHTML    = evsesCharging.toString();
-                        numberOfEVSEsOutOfOrderDiv.innerHTML  = evsesOutOfOrder.toString();
-                        numberOfEVSEsInoperativeDiv.innerHTML = evsesInoperative.toString();
-                        numberOfEVSEsUnkownDiv.innerHTML      = evsesUnkown.toString();
-                        numberOfEVSEsRemovedDiv.innerHTML     = evsesRemoved.toString();
-                        numberOfEVSEsXDiv.innerHTML           = evsesX.toString();
+             const locationLastUpdatedDiv = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
+             locationLastUpdatedDiv.className = "lastUpdated";
+             locationLastUpdatedDiv.innerHTML = "Last updated: " + location.last_updated;
 
 
-                        for (const [tariffId, count] of tariffs) {
-                            CreateLine(
-                                tariffStatisticsDiv,
-                                "tariff",
-                                tariffId,
-                                count.toString()
-                            )
-                        }
+                    //    }
 
-                    }
+                    //    numberOfEVSEsDiv.innerHTML            = totalNumberOfEVSEs.toString();
 
-                }
-                catch (exception) {
-                    errors.push(exception);
-                }
+                    //    numberOfEVSEsAvailableDiv.innerHTML   = evsesAvailable.toString();
+                    //    numberOfEVSEsChargingDiv.innerHTML    = evsesCharging.toString();
+                    //    numberOfEVSEsOutOfOrderDiv.innerHTML  = evsesOutOfOrder.toString();
+                    //    numberOfEVSEsInoperativeDiv.innerHTML = evsesInoperative.toString();
+                    //    numberOfEVSEsUnkownDiv.innerHTML      = evsesUnkown.toString();
+                    //    numberOfEVSEsRemovedDiv.innerHTML     = evsesRemoved.toString();
+                    //    numberOfEVSEsXDiv.innerHTML           = evsesX.toString();
 
-            },
 
-            (status, statusText, response) => {
-            }
+                    //    for (const [tariffId, count] of tariffs) {
+                    //        CreateLine(
+                    //            tariffStatisticsDiv,
+                    //            "tariff",
+                    //            tariffId,
+                    //            count.toString()
+                    //        )
+                    //    }
+
+                    //}
+
+        },
+
+        // table view
+        (tariffs, tariffsDiv) => {
+        },
+
+        // linkPrefix
+        null,//tariff => "",
+        searchResultsMode.listView,
+
+        context => {
+            //statusFilterSelect.onchange = () => {
+            //    context.Search(true);
+            //}
+        }
 
     );
 
+}
+
+
+
+
+    //OCPIGet(window.location.href,
+
+    //        (status, response) => {
+
+    //            try
+    //            {
+
+    //                const ocpiResponse = JSON.parse(response) as IOCPIResponse;
+
+    //                if (ocpiResponse?.data != undefined  &&
+    //                    ocpiResponse?.data != null       &&
+    //                    Array.isArray(ocpiResponse.data) &&
+    //                    ocpiResponse.data.length > 0)
+    //                {
+
+    //                    numberOfLocationsDiv.innerHTML = ocpiResponse.data.length.toString();
+
+    //                    let numberOfLocation = 1;
+
+    //                    for (const location of (ocpiResponse.data as ILocation[])) {
+
+    //                        if (location.evses)
+    //                            totalNumberOfEVSEs += location.evses.length;
+
+    //                        const locationDiv           = locationsDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    //                        locationDiv.className       = "location";
+
+    //                        const locationTitleDiv      = locationDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    //                        locationTitleDiv.className  = "title";
+    //                        locationTitleDiv.innerHTML  = (numberOfLocation++) + ". " + (location.name
+    //                                                                                         ? location.name + " (" + location.id + ")"
+    //                                                                                         : location.id);
+    //                                                      // country_code
+    //                                                      // party_id
+
+    //                        const propertiesDiv         = locationDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    //                        propertiesDiv.className     = "properties";
+
+    //                        CreateLine(
+    //                            propertiesDiv,
+    //                            "details",
+    //                            "Type",
+    //                            location.type
+    //                        )
+
+    //                        // address
+    //                        // city
+    //                        // postal_code
+    //                        // country
+    //                        // coordinates
+    //                        // related_locations
+    //                        // directions
+    //                        // facilities
+    //                        // time_zone
+    //                        // opening_times
+    //                        // charging_when_closed
+    //                        // images
+    //                        // energy_mix
+    //                        // publish (PlugSurfing extension)
+
+    //                        if (location.operator) {
+    //                            CreateLine(
+    //                                propertiesDiv,
+    //                                "businessDetails",
+    //                                "Operator",
+    //                               (location.operator.website
+    //                                    ? "<a href=\"" + location.operator.website + "\">" + location.operator.name + "</a>"
+    //                                    : location.operator.name)
+    //                            )
+    //                        }
+
+    //                        if (location.suboperator) {
+    //                            CreateLine(
+    //                                propertiesDiv,
+    //                                "businessDetails",
+    //                                "Suboperator",
+    //                               (location.suboperator.website
+    //                                    ? "<a href=\"" + location.suboperator.website + "\">" + location.suboperator.name + "</a>"
+    //                                    : location.suboperator.name)
+    //                            )
+    //                        }
+
+    //                        if (location.owner) {
+    //                            CreateLine(
+    //                                propertiesDiv,
+    //                                "businessDetails",
+    //                                "Owner",
+    //                                (location.owner.website
+    //                                    ? "<a href=\"" + location.owner.website + "\">" + location.owner.name + "</a>"
+    //                                    : location.owner.name)
+    //                            )
+    //                        }
+
+    //                        const evsesDiv        = locationDiv.appendChild(document.createElement('a')) as HTMLAnchorElement;
+    //                        evsesDiv.className    = "evses";
+
+    //                        let   numberOfEVSE    = 1;
+    //                        const numberOfEVSEs   = location.evses?.length ?? 0;
+
+    //                        if (location.evses) {
+    //                            for (var evse of location.evses) {
+
+    //                                const evseDiv           = evsesDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    //                                evseDiv.className       = "evse evseStatus_" + evse.status;
+
+    //                                const statusDiv         = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    //                                statusDiv.className     = "evseStatus evseStatus_" + evse.status;
+    //                                statusDiv.innerHTML     = evse.status;
+
+    //                                const evesIdDiv         = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    //                                evesIdDiv.className     = "evseId";
+    //                                evesIdDiv.innerHTML     = (numberOfEVSE++) + ". " + evse.uid + (evse.evse_id && evse.evse_id != evse.uid ? " (" + evse.evse_id + ")" : "");
+    //                                                          // physical_reference
+
+    //                                // capabilities
+    //                                // energy_meter (OCPI Calibration Law Extentions)
+    //                                // floor_level
+    //                                // coordinates
+    //                                // directions
+    //                                // parking_restrictions
+    //                                // images
+    //                                // last_updated
+
+    //                                const connectorsDiv     = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    //                                connectorsDiv.className = "connectors";
+
+    //                                if (evse.connectors) {
+    //                                    for (var connector of evse.connectors) {
+
+    //                                        const connectorDiv     = connectorsDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    //                                        connectorDiv.className = "connector";
+
+    //                                        const connectorInfoDiv = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    //                                        connectorInfoDiv.className = "connectorInfo";
+    //                                        connectorInfoDiv.innerHTML = connector.id + ". " + connector.standard + ", " + connector.format + ", " + connector.amperage + " A, " + connector.voltage + " V, " + connector.power_type;
+
+    //                                        if (connector.tariff_id) {
+
+    //                                            if (!tariffs.has(connector.tariff_id)) {
+    //                                                tariffs.set(connector.tariff_id, 0);
+    //                                            }
+
+    //                                            tariffs.set(
+    //                                                connector.tariff_id,
+    //                                                tariffs.get(connector.tariff_id) + 1
+    //                                            );
+
+    //                                            const tariffInfoDiv = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    //                                            tariffInfoDiv.className = "tariffInfo";
+    //                                            tariffInfoDiv.innerHTML = "Tariff: " + connector.tariff_id + (connector.terms_and_conditions
+    //                                                                                                              ? ", terms: " + connector.terms_and_conditions
+    //                                                                                                              : "");
+
+    //                                        }
+
+    //                                        // last_updated
+
+    //                                    }
+    //                                }
+
+    //                                switch (evse.status) {
+
+    //                                    case "AVAILABLE":
+    //                                        evsesAvailable++;
+    //                                        break;
+
+    //                                    case "CHARGING":
+    //                                        evsesCharging++;
+    //                                        break;
+
+    //                                    case "OUTOFORDER":
+    //                                        evsesOutOfOrder++;
+    //                                        break;
+
+    //                                    case "INOPERATIVE":
+    //                                        evsesInoperative++;
+    //                                        break;
+
+    //                                    case "UNKNOWN":
+    //                                        evsesUnkown++;
+    //                                        break;
+
+    //                                    case "REMOVED":
+    //                                        evsesRemoved++;
+    //                                        break;
+
+    //                                    default:
+    //                                        evsesX++;
+    //                                        break;
+
+    //                                }
+
+    //                            }
+    //                        }
+
+    //                    }
+
+    //                    numberOfEVSEsDiv.innerHTML            = totalNumberOfEVSEs.toString();
+
+    //                    numberOfEVSEsAvailableDiv.innerHTML   = evsesAvailable.toString();
+    //                    numberOfEVSEsChargingDiv.innerHTML    = evsesCharging.toString();
+    //                    numberOfEVSEsOutOfOrderDiv.innerHTML  = evsesOutOfOrder.toString();
+    //                    numberOfEVSEsInoperativeDiv.innerHTML = evsesInoperative.toString();
+    //                    numberOfEVSEsUnkownDiv.innerHTML      = evsesUnkown.toString();
+    //                    numberOfEVSEsRemovedDiv.innerHTML     = evsesRemoved.toString();
+    //                    numberOfEVSEsXDiv.innerHTML           = evsesX.toString();
+
+
+    //                    for (const [tariffId, count] of tariffs) {
+    //                        CreateLine(
+    //                            tariffStatisticsDiv,
+    //                            "tariff",
+    //                            tariffId,
+    //                            count.toString()
+    //                        )
+    //                    }
+
+    //                }
+
+    //            }
+    //            catch (exception) {
+    //                errors.push(exception);
+    //            }
+
+    //        },
+
+    //        (status, statusText, response) => {
+    //        }
+
+    //);
+
     //var refresh = setTimeout(StartDashboard, 30000);
 
-}
+//}

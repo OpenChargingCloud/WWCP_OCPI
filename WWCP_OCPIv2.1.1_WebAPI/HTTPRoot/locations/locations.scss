@@ -89,7 +89,15 @@ body {
                                     background-color:       #efefef;
                                     border-top:             1px solid #ffffff;
 
+                                    .counter {
+                                        display:                inline-block;
+                                        color:                  #7a96c1;
+                                        margin-right:           3px;
+                                        padding-bottom:         3px;
+                                    }
+
                                     .title {
+                                        display:                inline-block;
                                         padding-bottom:         3px;
                                     }
 
@@ -152,8 +160,18 @@ body {
                                                     padding:                10px 20px;
                                                     border-radius:          6px;
 
+                                                    .lastUpdated {
+                                                        font-size:              70%;
+                                                        margin-top:             15px;
+                                                    }
+
                                                 }
 
+                                            }
+
+                                            .lastUpdated {
+                                                font-size:              70%;
+                                                margin-top:             15px;
                                             }
 
                                         }
@@ -194,10 +212,15 @@ body {
                                         border-bottom-right-radius:     4px;
                                     }
 
-                                }
+                                    .lastUpdated {
+                                        font-size:              70%;
+                                        margin-top:             15px;
+                                    }
 
-                                .location:hover {
-                                    background-color:       rgba(188, 201, 221, 0.5);
+                                    &:hover {
+                                        background-color:       rgba(188, 201, 221, 0.5);
+                                    }
+
                                 }
 
                             }

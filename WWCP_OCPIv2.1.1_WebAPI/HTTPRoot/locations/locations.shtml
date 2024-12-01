@@ -8,7 +8,7 @@
 
     <div id="locationInfos2">
 
-        <div class="description">
+        <!-- <div class="description">
             Locations
         </div>
 
@@ -29,20 +29,20 @@
             <div class="row"><div class="key">Unkown</div><div id="numberOfEVSEsUnkown">-</div></div>
             <div class="row"><div class="key">Removed</div><div id="numberOfEVSEsRemoved">-</div></div>
             <div class="row"><div class="key">?</div><div id="numberOfEVSEsX">-</div></div>
-        </div>
+        </div> -->
 
         <div id="controls">
 
             <div id="search">
 
-                <div class="filter">
-                    <div class="filterBar">
-                        <input id="filter" placeholder="only show tariffs matching...">
+                <div class="patternFilter">
+                    <div class="patternFilterBar">
+                        <input id="patternFilterInput" placeholder="only show locations matching...">
                         <i id="sign" class="fa fa-filter  fa-2x"></i>
                     </div>
                 </div>
 
-                <div id="take">
+                <div class="take">
                     <select id="takeSelect">
                         <option id="take10"   value=  "10">10</option>
                         <option id="take25"   value=  "25">25</option>
@@ -55,7 +55,7 @@
                     </select>
                 </div>
 
-                <div id="searchButtons">
+                <div class="searchButtons">
 
                     <button id="searchButton"><i class="fas fa-search"></i></button>
 
@@ -68,16 +68,12 @@
 
         </div>
 
-        <div class="description">
-            Tariffs
-        </div>
+        <div id="message">&nbsp;</div>
 
-        <div id="tariffStatistics" class="statistics">
-            
-        </div>
+        <div id="locations" class="searchResults"></div>
 
-        <div id="locations">
-
+        <div id="lowerButtons">
+            <a id="downLoadButton" class="button" href="" type="application/json"><i class="fa fa-download"></i> Download</a>
         </div>
 
     </div>
