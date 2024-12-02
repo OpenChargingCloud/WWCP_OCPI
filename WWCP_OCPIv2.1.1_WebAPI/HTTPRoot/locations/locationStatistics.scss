@@ -1,0 +1,64 @@
+﻿@import "../defaults/_defaults.scss";
+
+body {
+    #page {
+        #bottom {
+
+            overflow-y: auto;
+
+            #right {
+                #text {
+                    #locationInfos {
+
+                        #locationInfos2 {
+
+                            padding:            1vh 2vw;
+                            border-radius:      6px;
+
+                            .description {
+                                font-weight:        bold;
+                                padding-bottom:     3px;
+                            }
+
+                            .statistics {
+
+                                display:            table;
+
+                                .row {
+                                    display:            table-row;
+
+                                    .key {
+                                        display:            table-cell;
+                                        /*padding-right:      10px;*/
+                                        width:              15vh;
+                                    }
+
+                                    .value {
+                                        display:            table-cell;
+                                    }
+
+                                }
+
+                            }
+
+                            #locationStatistics {
+                                padding-bottom:     10px;
+                            }
+
+                            #evseStatusStatistics {
+                                padding-bottom:     10px;
+                            }
+
+                            #tariffStatistics {
+                                padding-bottom:     15px;
+                            }
+
+                        }
+
+                    }
+                }
+            }
+
+        }
+    }
+}

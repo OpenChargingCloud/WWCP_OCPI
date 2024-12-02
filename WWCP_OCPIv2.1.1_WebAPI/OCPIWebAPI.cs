@@ -768,6 +768,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             #region ~/v2.1.1/cpo/locations
 
+            // ~/cpo/locations
             if (OverlayURLPathPrefix.HasValue)
                 HTTPServer.AddMethodCallback(this,
                                              HTTPHostname.Any,
@@ -786,6 +787,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                          AccessControlAllowHeaders  = [ "Authorization" ],
                                                          ContentType                = HTTPContentType.Text.HTML_UTF8,
                                                          Content                    = MixWithHTMLTemplate("locations.locations.shtml",
+                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                         Connection                 = ConnectionType.Close,
+                                                         Vary                       = "Accept"
+                                                     }.AsImmutable);
+
+                                             });
+
+
+            // ~/cpo/locationStatistics
+            if (OverlayURLPathPrefix.HasValue)
+                HTTPServer.AddMethodCallback(this,
+                                             HTTPHostname.Any,
+                                             HTTPMethod.GET,
+                                             OverlayURLPathPrefix.Value + Version.String + "/cpo/locationStatistics",
+                                             HTTPContentType.Text.HTML_UTF8,
+                                             HTTPDelegate: Request => {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         //Server                     = DefaultHTTPServerName,
+                                                         Date                       = Timestamp.Now,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                         AccessControlAllowHeaders  = [ "Authorization" ],
+                                                         ContentType                = HTTPContentType.Text.HTML_UTF8,
+                                                         Content                    = MixWithHTMLTemplate("locations.locationStatistics.shtml",
                                                                                                           html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
                                                          Connection                 = ConnectionType.Close,
                                                          Vary                       = "Accept"

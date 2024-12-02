@@ -16,6 +16,10 @@
     "inputFile": "HTTPRoot/locations/locations.scss"
   },
   {
+    "outputFile": "HTTPRoot/css/locations/locationStatistics.css",
+    "inputFile": "HTTPRoot/locations/locationStatistics.scss"
+  },
+  {
     "outputFile": "HTTPRoot/css/tariffs/tariffs.css",
     "inputFile": "HTTPRoot/tariffs/tariffs.scss"
   },

@@ -2752,14 +2752,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
+                                        var withExtensions       = Request.QueryString.GetBoolean ("withExtensions", false);
+                                        //var withMetadata         = Request.QueryString.GetBoolean("withMetadata", false);
+
                                         var filters              = Request.GetDateAndPaginationFilters();
+                                        var matchFilter          = Request.QueryString.CreateStringFilter<Location>(
+                                                                       "match",
+                                                                       (location, pattern) => location.Id.     ToString().Contains(pattern)         ||
+                                                                                              location.Name?.             Contains(pattern) == true ||
+                                                                                              location.Address.           Contains(pattern)         ||
+                                                                                              location.City.              Contains(pattern)         ||
+                                                                                              location.PostalCode.        Contains(pattern)         ||
+                                                                                              location.Country.ToString().Contains(pattern)         ||
+                                                                                              location.Directions.        Matches (pattern)         ||
+                                                                                              location.Operator?.   Name. Contains(pattern) == true ||
+                                                                                              location.SubOperator?.Name. Contains(pattern) == true ||
+                                                                                              location.Owner?.      Name. Contains(pattern) == true ||
+                                                                                              location.Facilities.        Matches (pattern)         ||
+                                                                                              location.EVSEUIds.          Matches (pattern)         ||
+                                                                                              location.EVSEIds.           Matches (pattern)
+                                                                   );
 
                                                                                             //ToDo: Filter to NOT show all locations to everyone!
                                         var allLocations         = CommonAPI.GetLocations().//location => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == location.CountryCode &&
                                                                                             //                                                       role.PartyId     == location.PartyId)).
                                                                              ToArray();
 
-                                        var filteredLocations    = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
+                                        var filteredLocations    = allLocations.Where(matchFilter).
+                                                                                Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
                                                                                 Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
                                                                                 ToArray();
 
@@ -2773,10 +2793,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    }.
 
                                                                    // The overall number of locations
-                                                                   Set("X-Total-Count",  allLocations.Length).
+                                                                   Set("X-Total-Count",     allLocations.     Length).
+
+                                                                   // The number of locations matching search filters
+                                                                   Set("X-Filtered-Count",  filteredLocations.Length).
 
                                                                    // The maximum number of locations that the server WILL return within a single request
-                                                                   Set("X-Limit",        allLocations.Length);
+                                                                   Set("X-Limit",           allLocations.     Length);
 
 
                                         #region When the limit query parameter was set & this is not the last pagination page...
@@ -3227,17 +3250,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var timestamp        = Request.QueryString.GetDateTime("timestamp");
                                         var tolerance        = Request.QueryString.GetTimeSpan("tolerance");
-                                        var withExtensions   = Request.QueryString.GetBoolean ("withExtensions") ?? false;
+                                        var withExtensions   = Request.QueryString.GetBoolean ("withExtensions", false);
+                                        //var withMetadata     = Request.QueryString.GetBoolean("withMetadata", false);
 
                                         var filters          = Request.GetDateAndPaginationFilters();
+                                        var matchFilter      = Request.QueryString.CreateStringFilter<Tariff>(
+                                                                   "match",
+                                                                   (tariff, pattern) => tariff.Id.ToString().Contains(pattern) ||
+                                                                                        tariff.TariffAltText.Matches (pattern)
+                                                               );
 
                                         //ToDo: Maybe not all EMSP should see all charging tariffs!
                                         var allTariffs       = CommonAPI.GetTariffs(//CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
                                                                                     //CommonAPI.OurPartyId       //Request.AccessInfo.Value.PartyId
-                                                                                    Timestamp: timestamp,
-                                                                                    Tolerance: tolerance).ToArray();
+                                                                                    Timestamp:  timestamp,
+                                                                                    Tolerance:  tolerance).ToArray();
 
-                                        var filteredTariffs  = allTariffs.Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
+                                        var filteredTariffs  = allTariffs.Where(matchFilter).
+                                                                          Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
                                                                           Where(tariff => !filters.To.  HasValue || tariff.LastUpdated <= filters.To.  Value).
                                                                           ToArray();
 
@@ -3251,10 +3281,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    }.
 
                                                                    // The overall number of tariffs
-                                                                   Set("X-Total-Count",  allTariffs.Length).
+                                                                   Set("X-Total-Count",     allTariffs.     Length).
+
+                                                                   // The number of tariffs matching search filters
+                                                                   Set("X-Filtered-Count",  filteredTariffs.Length).
 
                                                                    // The maximum number of tariffs that the server WILL return within a single request
-                                                                   Set("X-Limit",        allTariffs.Length);
+                                                                   Set("X-Limit",           allTariffs.     Length);
 
 
                                         #region When the limit query parameter was set & this is not the last pagination page...

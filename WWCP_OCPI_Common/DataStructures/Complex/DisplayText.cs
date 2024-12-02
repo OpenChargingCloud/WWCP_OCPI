@@ -71,6 +71,23 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #region Matches(DisplayTexts, Match, IgnoreCase = true)
+
+        /// <summary>
+        /// Checks whether the given multi-language text matches the given text.
+        /// </summary>
+        /// <param name="DisplayTexts">An enumeration of multi-language texts.</param>
+        /// <param name="Match">A text to match.</param>
+        /// <param name="IgnoreCase">Whether to ignore the case of the text.</param>
+        public static Boolean Matches(this IEnumerable<DisplayText>  DisplayTexts,
+                                      String                         Match,
+                                      Boolean                        IgnoreCase  = true)
+
+            => DisplayTexts.Any(displayText => IgnoreCase
+                                                   ? displayText.Text.Contains(Match, StringComparison.OrdinalIgnoreCase)
+                                                   : displayText.Text.Contains(Match, StringComparison.Ordinal));
+
+        #endregion
 
     }
 

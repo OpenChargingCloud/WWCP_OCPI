@@ -12,157 +12,124 @@ body {
 
                         #locationInfos2 {
 
-                            padding:            1vh 2vw;
-                            border-radius:      6px;
+                            padding:                    1vh 2vw;
+                            border-radius:              6px;
 
                             .description {
-                                font-weight:        bold;
-                                padding-bottom:     3px;
+                                font-weight:                bold;
+                                padding-bottom:             3px;
                             }
-
-                            .statistics {
-
-                                display:            table;
-
-                                .row {
-                                    display:            table-row;
-
-                                    .key {
-                                        display:            table-cell;
-                                        /*padding-right:      10px;*/
-                                        width:              15vh;
-                                    }
-
-                                    .value {
-                                        display:            table-cell;
-                                    }
-
-                                }
-
-                            }
-
-                            #locationStatistics {
-                                padding-bottom:     10px;
-                            }
-
-                            #evseStatusStatistics {
-                                padding-bottom:     10px;
-                            }
-
-                            #tariffStatistics {
-                                padding-bottom:     15px;
-                            }
-
 
                             #locations {
 
-                                display:                flex;
-                                flex-direction:         column;
-                                border-top:             none;
+                                display:                        flex;
+                                flex-direction:                 column;
+                                border-top:                     none;
 
                                 .properties {
 
-                                    display:                table;
+                                    display:                        table;
 
                                     .row {
 
-                                        display:                table-row;
+                                        display:                        table-row;
 
                                         .key {
-                                            display:                table-cell;
-                                            padding-right:          10px;
+                                            display:                        table-cell;
+                                            padding-right:                  10px;
                                         }
 
                                         .value {
-                                            display:                table-cell;
+                                            display:                        table-cell;
                                         }
 
                                     }
+
                                 }
 
                                 .location {
 
-                                    padding:                15px 22px;
-                                    display:                inline-block;
-                                    color:                  #5272a3;
-                                    font-weight:            bold;
-                                    background-color:       #efefef;
-                                    border-top:             1px solid #ffffff;
+                                    padding:                        15px 22px;
+                                    display:                        inline-block;
+                                    color:                          #5272a3;
+                                    font-weight:                    bold;
+                                    background-color:               #efefef;
+                                    border-top:                     1px solid #ffffff;
 
                                     .counter {
-                                        display:                inline-block;
-                                        color:                  #7a96c1;
-                                        margin-right:           3px;
-                                        padding-bottom:         3px;
+                                        display:                        inline-block;
+                                        color:                          #7a96c1;
+                                        margin-right:                   3px;
+                                        padding-bottom:                 3px;
                                     }
 
                                     .title {
-                                        display:                inline-block;
-                                        padding-bottom:         3px;
+                                        display:                        inline-block;
+                                        padding-bottom:                 3px;
                                     }
 
                                     .locationLink {
-                                        font-size:              85%;
-                                        font-weight:            normal;
+                                        font-size:                      85%;
+                                        font-weight:                    normal;
                                     }
 
                                     .evses {
 
-                                        padding-left: 10px;
+                                        padding-left:                   10px;
 
                                         .evse {
 
-                                            background-color:       #e2e2e2;
-                                            padding:                10px 15px;
-                                            margin-top:             1px;
+                                            background-color:               #e2e2e2;
+                                            padding:                        10px 15px;
+                                            margin-top:                     1px;
 
                                             .evseId {
-                                                font-size:              90%;
+                                                font-size:                      90%;
                                             }
 
                                             .evseStatus {
-                                                font-size:              67%;
-                                                padding-bottom:         4px;
+                                                font-size:                      67%;
+                                                padding-bottom:                 4px;
                                             }
 
                                             .evseStatus_AVAILABLE {
-                                                color:                  rgb(  6, 146,   6, 0.5);
-                                                background-color:       unset;
+                                                color:                          rgb(  6, 146,   6, 0.5);
+                                                background-color:               unset;
                                             }
 
                                             .evseStatus_CHARGING {
-                                                color:                  rgb(206,   3,   3, 0.5);
-                                                background-color:       unset;
+                                                color:                          rgb(206,   3,   3, 0.5);
+                                                background-color:               unset;
                                             }
 
-                                            .evseStatus_OUTOFORDER {    
-                                                color:                  rgb(215, 146,   3, 0.5);
-                                                background-color:       unset;
+                                            .evseStatus_OUTOFORDER {
+                                                color:                          rgb(215, 146,   3, 0.5);
+                                                background-color:               unset;
                                             }
 
                                             .evseStatus_INOPERATIVE {
-                                                color:                  rgb(204,  91,   0, 0.5);
-                                                background-color:       unset;
+                                                color:                          rgb(204,  91,   0, 0.5);
+                                                background-color:               unset;
                                             }
 
                                             .evseStatus_UNKNOWN {
-                                                color:                  rgb(130, 130, 130, 0.5);
-                                                background-color:       unset;
+                                                color:                          rgb(130, 130, 130, 0.5);
+                                                background-color:               unset;
                                             }
 
                                             .connectors {
 
-                                                padding-left:           10px;
-                                                font-size:              90%;
+                                                padding-left:                   10px;
+                                                font-size:                      90%;
 
                                                 .connector {
 
-                                                    padding:                10px 20px;
-                                                    border-radius:          6px;
+                                                    padding:                        10px 20px;
+                                                    border-radius:                  6px;
 
                                                     .lastUpdated {
-                                                        font-size:              70%;
-                                                        margin-top:             15px;
+                                                        font-size:                      70%;
+                                                        margin-top:                     15px;
                                                     }
 
                                                 }
@@ -170,34 +137,34 @@ body {
                                             }
 
                                             .lastUpdated {
-                                                font-size:              70%;
-                                                margin-top:             15px;
+                                                font-size:                      70%;
+                                                margin-top:                     15px;
                                             }
 
                                         }
 
                                         .evse:first-child {
-                                            margin-top:             unset;
+                                            margin-top:                     unset;
                                         }
 
                                         .evseStatus_AVAILABLE {
-                                            background-color:       rgb(  0, 255,   0, 0.25);
+                                            background-color:               rgb(  0, 255,   0, 0.25);
                                         }
 
                                         .evseStatus_CHARGING {
-                                            background-color:       rgb(255,   0,   0, 0.25);
+                                            background-color:               rgb(255,   0,   0, 0.25);
                                         }
 
                                         .evseStatus_OUTOFORDER {
-                                            background-color:       rgb(255, 172,   0, 0.25);
+                                            background-color:               rgb(255, 172,   0, 0.25);
                                         }
 
                                         .evseStatus_INOPERATIVE {
-                                            background-color:       rgb(255, 114,   0, 0.25);
+                                            background-color:               rgb(255, 114,   0, 0.25);
                                         }
 
                                         .evseStatus_UNKNOWN {
-                                            background-color:       rgb(175, 175, 175, 0.25);
+                                            background-color:               rgb(175, 175, 175, 0.25);
                                         }
 
                                     }
@@ -213,12 +180,12 @@ body {
                                     }
 
                                     .lastUpdated {
-                                        font-size:              70%;
-                                        margin-top:             15px;
+                                        font-size:                      70%;
+                                        margin-top:                     15px;
                                     }
 
                                     &:hover {
-                                        background-color:       rgba(188, 201, 221, 0.5);
+                                        background-color:               rgba(188, 201, 221, 0.5);
                                     }
 
                                 }
@@ -240,6 +207,7 @@ body {
                     }
                 }
             }
+
         }
     }
 }

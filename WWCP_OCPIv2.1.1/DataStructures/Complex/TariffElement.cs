@@ -20,19 +20,30 @@
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using System.Linq;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
+    /// <summary>
+    /// Extention methods for tariff elements.
+    /// </summary>
     public static class TariffElementExtensions
     {
 
+        #region HasRestrictions(this TariffElement)
+
+        /// <summary>
+        /// Whether the given charging tariff element has restrictions.
+        /// </summary>
+        /// <param name="TariffElement"></param>
         public static Boolean HasRestrictions(this TariffElement TariffElement)
+
             => TariffElement.TariffRestrictions is not null &&
                TariffElement.TariffRestrictions.HasRestrictions();
+
+        #endregion
 
     }
 

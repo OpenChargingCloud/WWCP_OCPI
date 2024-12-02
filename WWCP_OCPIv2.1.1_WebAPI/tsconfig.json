@@ -22,6 +22,7 @@
     "HTTPRoot/versions/versionDetails.ts",
 
     "HTTPRoot/locations/locations.ts",
+    "HTTPRoot/locations/locationStatistics.ts",
     "HTTPRoot/tariffs/tariffs.ts",
 
     "HTTPRoot/remoteParty/remoteParties.ts",

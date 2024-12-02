@@ -52,6 +52,16 @@ interface SearchTableView<TSearchResult> {
      searchResultDiv:  HTMLDivElement): void;
 }
 
+interface StatisticsDelegate<TSearchResult> {
+    (resultCounter:    number,
+     searchResult:     TSearchResult): void;
+}
+interface StatisticsFinishedDelegate<TSearchResult> {
+    (resultCounter:    number): void;
+}
+
+
+
 interface SearchResult2Link<TSearchResult> {
     (searchResult: TSearchResult): string;
 }
@@ -978,6 +988,164 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
     Search(true);
 
     return context__;
+
+}
+
+
+function OCPIGetCollection<TMetadata extends TMetadataDefaults, TSearchResult>(requestURL:    string,
+                                                                               doStartUp:     SearchStartUp<TMetadata>,
+                                                                               nameOfItems:   string,
+                                                                               doStatistics:  StatisticsDelegate<TSearchResult>,
+                                                                               doFinish?:     StatisticsFinishedDelegate<TSearchResult>) {
+
+    requestURL = requestURL.indexOf('?') === -1
+                    ? requestURL + '?'
+                    : requestURL.endsWith('&')
+                          ? requestURL
+                          : requestURL + '&';
+
+    let   firstSearch              = true;
+    let   offset                   = 0;
+    let   limit                    = 2000;
+    let   currentDateFrom:string   = null;
+    let   currentDateTo:string     = null;
+    let   numberOfResults          = 0;
+    let   linkURL                  = "";
+    let   filteredNumberOfResults  = 0;
+    let   totalNumberOfResults     = 0;
+
+    const messageDiv               = document.getElementById('message')         as HTMLDivElement;
+    const downLoadButton           = document.getElementById("downLoadButton")  as HTMLAnchorElement;
+
+    function DoSearchError(Message: string) {
+
+        messageDiv.innerHTML = Message;
+
+        if (downLoadButton)
+            downLoadButton.style.display = "none";
+
+    }
+
+
+    offset = 0;
+
+    const filters = (currentDateFrom !=  null && currentDateFrom !== "" ? "&from="    + currentDateFrom                : "") +
+                    (currentDateTo   !=  null && currentDateTo   !== "" ? "&to="      + currentDateTo                  : "");
+
+    if (downLoadButton)
+        downLoadButton.href = requestURL + "download" + filters;
+
+    OCPIGet(
+
+        requestURL + "offset=" + offset + "&limit=" + limit,
+
+        (status, response, httpHeaders) => {
+
+            try
+            {
+
+                if (status == 200 && response) {
+
+                    const ocpiResponse = JSON.parse(response) as IOCPIResponse;
+
+                    if (ocpiResponse.status_code >= 1000 &&
+                        ocpiResponse.status_code <  2000)
+                    {
+
+                        if (ocpiResponse?.data               &&
+                            Array.isArray(ocpiResponse.data) &&
+                            ocpiResponse.data.length > 0)
+                        {
+
+                            const searchResults = ocpiResponse.data as Array<TSearchResult>;
+
+                            numberOfResults          = searchResults.length;
+
+                            // https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/transport_and_format.md
+                            linkURL                  = httpHeaders("Link");
+                            totalNumberOfResults     = Number.parseInt(httpHeaders("X-Total-Count"));
+                            filteredNumberOfResults  = Number.parseInt(httpHeaders("X-Filtered-Count"));
+                            //limit                    = Number.parseInt(httpHeaders("X-Limit"));
+
+                            if (Number.isNaN(totalNumberOfResults))
+                                totalNumberOfResults     = numberOfResults;
+
+                            if (Number.isNaN(filteredNumberOfResults))
+                                filteredNumberOfResults  = totalNumberOfResults;
+
+
+                            //if (deletePreviousResults || numberOfResults > 0)
+                            //    searchResultsDiv.innerHTML = "";
+
+                            if (firstSearch && doStartUp) {
+                                //doStartUp(JSONresponse);
+                                firstSearch = false;
+                            }
+
+                            if (searchResults.length > 0) {
+
+                                let resultCounter = offset + 1;
+
+                                for (const searchResult of searchResults) {
+
+                                    try {
+
+                                        doStatistics(
+                                            resultCounter,
+                                            searchResult
+                                        );
+
+                                        resultCounter++;
+
+                                    }
+                                    catch (exception)
+                                    {
+                                        DoSearchError("Exception in statistics delegate: " + exception);
+                                        //break;
+                                    }
+
+                                }
+
+                                if (downLoadButton)
+                                    downLoadButton.style.display = "block";
+
+                            }
+
+                            //messageDiv.innerHTML = searchResults.length > 0
+                            //                           ? "showing results " + (offset + 1) + " - " + (offset + Math.min(searchResults.length, limit)) +
+                            //                                 " of " + filteredNumberOfResults
+                            //                           : "no matching " + nameOfItems + " found";
+
+                        }
+                        else
+                            DoSearchError("Invalid search results!");
+
+                    }
+                    else
+                        DoSearchError("OCPI Status Code " + ocpiResponse.status_code + (ocpiResponse.status_message ? ": " + ocpiResponse.status_message : ""));
+
+                }
+                else
+                    DoSearchError("HTTP Status Code " + status + (response ? ": " + response : ""));
+
+            }
+            catch (exception)
+            {
+                DoSearchError("Exception occured: " + exception);
+            }
+
+            if (doFinish)
+                doFinish(totalNumberOfResults);
+
+        },
+
+        (status, response, httpHeaders) => {
+
+            DoSearchError("Server error: " + status + "<br />" + response);
+
+        }
+
+    );
 
 }
 

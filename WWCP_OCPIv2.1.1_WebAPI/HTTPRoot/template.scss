@@ -467,6 +467,30 @@ body {
 
                         }
 
+                        .topLinks {
+
+                            margin:                         1vh 3vw;
+
+                            a {
+                                color:                          #a1a1a1;
+                                text-decoration:                none;
+                                padding:                        4px 8px;
+                                margin:                         0px 10px;
+                                border-radius:                  8px;
+                            }
+
+                            a.active {
+                                color:                          #1f1e5e;
+                                font-weight:                    bold;
+                            }
+
+                            a:hover {
+                                color:                          #456ca7;
+                                background:                     #c3dbff;
+                            }
+
+                        }
+
                         .entity {
 
                             display:                flex;

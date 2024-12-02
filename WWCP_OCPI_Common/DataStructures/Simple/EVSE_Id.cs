@@ -44,6 +44,26 @@ namespace cloud.charging.open.protocols.OCPI
         public static Boolean IsNotNullOrEmpty(this EVSE_Id? EVSEId)
             => EVSEId.HasValue && EVSEId.Value.IsNotNullOrEmpty;
 
+
+        #region Matches(EVSEIds, Match, IgnoreCase = true)
+
+        /// <summary>
+        /// Checks whether the given enumeration of EVSE identifications matches the given text.
+        /// </summary>
+        /// <param name="EVSEIds">An enumeration of EVSE identifications.</param>
+        /// <param name="Match">A text to match.</param>
+        /// <param name="IgnoreCase">Whether to ignore the case of the text.</param>
+        public static Boolean Matches(this IEnumerable<EVSE_Id>  EVSEIds,
+                                      String                     Match,
+                                      Boolean                    IgnoreCase  = true)
+
+            => EVSEIds.Any(evseId => IgnoreCase
+                                          ? evseId.ToString().Contains(Match, StringComparison.OrdinalIgnoreCase)
+                                          : evseId.ToString().Contains(Match, StringComparison.Ordinal));
+
+        #endregion
+
+
     }
 
 

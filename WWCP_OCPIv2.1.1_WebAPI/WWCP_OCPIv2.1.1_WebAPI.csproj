@@ -21,6 +21,8 @@
     <None Remove="HTTPRoot\css\index.min.css" />
     <None Remove="HTTPRoot\css\locations\locations.css" />
     <None Remove="HTTPRoot\css\locations\locations.min.css" />
+    <None Remove="HTTPRoot\css\locations\locationStatistics.css" />
+    <None Remove="HTTPRoot\css\locations\locationStatistics.min.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
@@ -56,6 +58,8 @@
     <None Remove="HTTPRoot\locations\locations.scss" />
     <None Remove="HTTPRoot\locations\locations.shtml" />
     <None Remove="HTTPRoot\locations\locations.ts" />
+    <None Remove="HTTPRoot\locations\locationStatistics.js" />
+    <None Remove="HTTPRoot\locations\locationStatistics.js.map" />
     <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js" />
     <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js.map" />
     <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.scss" />
@@ -120,6 +124,8 @@
     <EmbeddedResource Include="HTTPRoot\css\index.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\locations\locations.css" />
     <EmbeddedResource Include="HTTPRoot\css\locations\locations.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\locations\locationStatistics.css" />
+    <EmbeddedResource Include="HTTPRoot\css\locations\locationStatistics.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
@@ -148,6 +154,11 @@
     <EmbeddedResource Include="HTTPRoot\defaults\_defaults.scss" />
     <EmbeddedResource Include="HTTPRoot\favicon.png" />
     <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />
+    <EmbeddedResource Include="HTTPRoot\locations\locationStatistics.js" />
+    <EmbeddedResource Include="HTTPRoot\locations\locationStatistics.js.map" />
+    <EmbeddedResource Include="HTTPRoot\locations\locationStatistics.ts" />
+    <EmbeddedResource Include="HTTPRoot\locations\locationStatistics.scss" />
+    <EmbeddedResource Include="HTTPRoot\locations\locationStatistics.shtml" />
     <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.js" />
     <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.js.map" />
     <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.scss" />

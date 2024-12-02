@@ -63,13 +63,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The parent CommonAPI of this charging location.
         /// </summary>
-        internal CommonAPI?                           CommonAPI                { get; set; }
+        internal  CommonAPI?                          CommonAPI                { get; set; }
 
         /// <summary>
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.
         /// </summary>
         [Mandatory]
-        public   CountryCode                          CountryCode              { get; }
+        public    CountryCode                         CountryCode              { get; }
 
         /// <summary>
         /// The identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).
