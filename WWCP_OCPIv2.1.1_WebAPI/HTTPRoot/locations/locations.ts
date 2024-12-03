@@ -51,29 +51,6 @@ function StartLocations()
     common.menuVersions.classList.add("activated");
     common.menuVersions.href           = "../../versions";
 
-    //const locationInfosDiv             = document.getElementById("locationInfos")                     as HTMLDivElement;
-    //const locationsDiv                 = locationInfosDiv.querySelector("#locations")                 as HTMLDivElement;
-
-    //const numberOfLocationsDiv         = locationInfosDiv.querySelector("#numberOfLocations")         as HTMLDivElement;
-    //const numberOfEVSEsDiv             = locationInfosDiv.querySelector("#numberOfEVSEs")             as HTMLDivElement;
-    //const numberOfEVSEsAvailableDiv    = locationInfosDiv.querySelector("#numberOfEVSEsAvailable")    as HTMLDivElement;
-    //const numberOfEVSEsChargingDiv     = locationInfosDiv.querySelector("#numberOfEVSEsCharging")     as HTMLDivElement;
-    //const numberOfEVSEsOutOfOrderDiv   = locationInfosDiv.querySelector("#numberOfEVSEsOutOfOrder")   as HTMLDivElement;
-    //const numberOfEVSEsInoperativeDiv  = locationInfosDiv.querySelector("#numberOfEVSEsInoperative")  as HTMLDivElement;
-    //const numberOfEVSEsUnkownDiv       = locationInfosDiv.querySelector("#numberOfEVSEsUnkown")       as HTMLDivElement;
-    //const numberOfEVSEsRemovedDiv      = locationInfosDiv.querySelector("#numberOfEVSEsRemoved")      as HTMLDivElement;
-    //const numberOfEVSEsXDiv            = locationInfosDiv.querySelector("#numberOfEVSEsX")            as HTMLDivElement;
-
-    //let   totalNumberOfEVSEs           = 0;
-    //let   evsesAvailable               = 0;
-    //let   evsesCharging                = 0;
-    //let   evsesOutOfOrder              = 0;
-    //let   evsesInoperative             = 0;
-    //let   evsesUnkown                  = 0;
-    //let   evsesRemoved                 = 0;
-    //let   evsesX                       = 0;
-
-    //const tariffStatisticsDiv          = locationInfosDiv.querySelector("#tariffStatistics")          as HTMLDivElement;
     const tariffs                      = new Map<string, number>();
     const errors                       = new Array<any>();
 
@@ -103,58 +80,39 @@ function StartLocations()
          location,
          locationAnchor) => {
 
-             //if (location.evses)
-             //    totalNumberOfEVSEs += location.evses.length;
+            //if (location.evses)
+            //    totalNumberOfEVSEs += location.evses.length;
 
-             const locationCounterDiv      = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
-             locationCounterDiv.className  = "counter";
-             locationCounterDiv.innerHTML  = resultCounter.toString() + ".";
+            const locationCounterDiv      = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
+            locationCounterDiv.className  = "counter";
+            locationCounterDiv.innerHTML  = resultCounter.toString() + ".";
 
-             const locationTitleDiv        = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
-             locationTitleDiv.className    = "title";
-             locationTitleDiv.innerHTML    = location.name
-                                                 ? location.name + " (" + location.id + ")"
-                                                 : location.id;
-                                             // country_code
-                                             // party_id
+            const locationTitleDiv        = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
+            locationTitleDiv.className    = "title";
+            locationTitleDiv.innerHTML    = location.name
+                                                ? location.name + " (" + location.id + ")"
+                                                : location.id;
+                                            // country_code
+                                            // party_id
 
-             const propertiesDiv           = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
-             propertiesDiv.className       = "properties";
+            const propertiesDiv           = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
+            propertiesDiv.className       = "properties";
 
-             // address
-             // city
-             // postal_code
-             // country
-             // time_zone
+            if (location.operator) {
+                CreateLine(
+                    propertiesDiv,
+                    "businessDetails operator",
+                    "Operator",
+                   (location.operator.website
+                        ? "<a href=\"" + location.operator.website + "\">" + location.operator.name + "</a>"
+                        : location.operator.name)
+                )
+            }
 
-             // coordinates
-
-             // opening_times
-
-             // related_locations
-             // directions
-             // facilities
-
-             // charging_when_closed
-             // images
-             // energy_mix
-             // publish (PlugSurfing extension)
-
-             if (location.operator) {
+            if (location.suboperator) {
                  CreateLine(
                      propertiesDiv,
-                     "businessDetails",
-                     "Operator",
-                    (location.operator.website
-                         ? "<a href=\"" + location.operator.website + "\">" + location.operator.name + "</a>"
-                         : location.operator.name)
-                 )
-             }
-
-             if (location.suboperator) {
-                 CreateLine(
-                     propertiesDiv,
-                     "businessDetails",
+                     "businessDetails suboperator",
                      "Suboperator",
                     (location.suboperator.website
                          ? "<a href=\"" + location.suboperator.website + "\">" + location.suboperator.name + "</a>"
@@ -162,10 +120,10 @@ function StartLocations()
                  )
              }
 
-             if (location.owner) {
+            if (location.owner) {
                  CreateLine(
                      propertiesDiv,
-                     "businessDetails",
+                     "businessDetails owner",
                      "Owner",
                      (location.owner.website
                          ? "<a href=\"" + location.owner.website + "\">" + location.owner.name + "</a>"
@@ -173,143 +131,181 @@ function StartLocations()
                  )
              }
 
-             CreateLine(
-                 propertiesDiv,
-                 "details",
-                 "Type",
-                 location.type
-             )
+            CreateLine(
+                propertiesDiv,
+                "type",
+                "Type",
+                location.type
+            )
 
-             const evsesDiv        = locationAnchor.appendChild(document.createElement('a')) as HTMLAnchorElement;
-             evsesDiv.className    = "evses";
+            CreateLine(
+                propertiesDiv,
+                "address",
+                "Address",
+                location.address + ", " + location.postal_code + " " + location.city + ", " + location.country + (location.time_zone ? " (" + location.time_zone + ")" : "")
+            );
 
-             let   numberOfEVSE    = 1;
-             const numberOfEVSEs   = location.evses?.length ?? 0;
+            CreateLine(
+                propertiesDiv,
+                "coordinates",
+                "Lat/Lng",
+                location.coordinates.latitude + ", " + location.coordinates.longitude
+            );
 
-             if (location.evses) {
-                 for (var evse of location.evses) {
+            // opening_times?
 
-                     const evseDiv           = evsesDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                     evseDiv.className       = "evse evseStatus_" + evse.status;
+            // related_locations?
+            // directions?
+            // facilities?
 
-                     const statusDiv         = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                     statusDiv.className     = "evseStatus evseStatus_" + evse.status;
-                     statusDiv.innerHTML     = evse.status;
+            // charging_when_closed?
+            // images?
+            // energy_mix?
 
-                     const evesIdDiv         = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                     evesIdDiv.className     = "evseId";
-                     evesIdDiv.innerHTML     = (numberOfEVSE++) + ". " + evse.uid + (evse.evse_id && evse.evse_id != evse.uid ? " (" + evse.evse_id + ")" : "");
-                                               // physical_reference
+            // publish (PlugSurfing extension)
 
-                     // capabilities
-                     // energy_meter (OCPI Calibration Law Extentions)
-                     // floor_level
-                     // coordinates
-                     // directions
-                     // parking_restrictions
-                     // images
-                     // last_updated
+            const evsesDiv        = locationAnchor.appendChild(document.createElement('a')) as HTMLAnchorElement;
+            evsesDiv.className    = "evses";
 
-                     const connectorsDiv     = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                     connectorsDiv.className = "connectors";
+            let   numberOfEVSE    = 1;
+          //  const numberOfEVSEs   = location.evses?.length ?? 0;
 
-                     if (evse.connectors) {
-                         for (var connector of evse.connectors) {
+            if (location.evses) {
+                for (var evse of location.evses) {
 
-                             const connectorDiv     = connectorsDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                             connectorDiv.className = "connector";
+                    const evseDiv                = evsesDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                    evseDiv.className            = "evse evseStatus_" + evse.status;
 
-                             const connectorInfoDiv = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                             connectorInfoDiv.className = "connectorInfo";
-                             connectorInfoDiv.innerHTML = connector.id + ". " + connector.standard + ", " + connector.format + ", " + connector.amperage + " A, " + connector.voltage + " V, " + connector.power_type;
+                    const statusDiv              = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                    statusDiv.className          = "evseStatus evseStatus_" + evse.status;
+                    statusDiv.innerHTML          = evse.status;
 
-                             if (connector.tariff_id) {
+                    const evesIdDiv              = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                    evesIdDiv.className          = "evseId";
+                    evesIdDiv.innerHTML          = (numberOfEVSE++) + ". " + evse.uid + (evse.evse_id && evse.evse_id != evse.uid ? " (" + evse.evse_id + ")" : "")
+                                                       + (evse.physical_reference ? " [" + evse.physical_reference + "]" : "");
 
-                                 if (!tariffs.has(connector.tariff_id)) {
-                                     tariffs.set(connector.tariff_id, 0);
-                                 }
+                    const evsePropertiesDiv      = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                    evsePropertiesDiv.className  = "properties";
 
-                                 tariffs.set(
-                                     connector.tariff_id,
-                                     tariffs.get(connector.tariff_id) + 1
-                                 );
+                    if (evse.floor_level)
+                        CreateLine(
+                            evsePropertiesDiv,
+                            "floorLevel",
+                            "Floor Level",
+                            evse.floor_level
+                        );
 
-                                 const tariffInfoDiv = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                                 tariffInfoDiv.className = "tariffInfo";
-                                 tariffInfoDiv.innerHTML = "Tariff: " + connector.tariff_id + (connector.terms_and_conditions
-                                                                                                   ? ", terms: " + connector.terms_and_conditions
-                                                                                                   : "");
+                    CreateLine(
+                        evsePropertiesDiv,
+                        "coordinates",
+                        "Lat/Lng",
+                        evse.coordinates.latitude + ", " + evse.coordinates.longitude
+                    );
 
-                             }
+                    if (evse.capabilities)
+                        CreateLine(
+                            evsePropertiesDiv,
+                            "capabilities",
+                            "Capabilities",
+                            evse.capabilities.map(capability => capability).join(", ")
+                        );
 
-                             // last_updated
+                    if (evse.parking_restrictions)
+                        CreateLine(
+                            evsePropertiesDiv,
+                            "parkingRestrictions",
+                            "Parking Restrictions",
+                            evse.parking_restrictions.map(parkingRestriction => parkingRestriction).join(", ")
+                        );
 
-                         }
-                     }
+                    if (evse.images)
+                        CreateLine(
+                            evsePropertiesDiv,
+                            "images",
+                            "Images",
+                            evse.images.map(image => image).join("<br />")
+                        );
 
-                     //switch (evse.status) {
+                    if (evse.directions)
+                        CreateLine(
+                            evsePropertiesDiv,
+                            "directions",
+                            "Directions",
+                            evse.directions.map(direction => "(" + direction.language + ") " + direction.text).join("<br />")
+                        );
 
-                     //    case "AVAILABLE":
-                     //        evsesAvailable++;
-                     //        break;
+                    if (evse.status_schedule)
+                        CreateLine(
+                            evsePropertiesDiv,
+                            "statusSchedule",
+                            "Status Schedule",
+                            evse.status_schedule.map(statusSchedule => statusSchedule.status + " (" + statusSchedule.period_begin + (statusSchedule.period_end ? " => " + statusSchedule.period_end : "") + ")").join("<br />")
+                        );
 
-                     //    case "CHARGING":
-                     //        evsesCharging++;
-                     //        break;
+                    // energy_meter (OCC Calibration Law Extentions)
 
-                     //    case "OUTOFORDER":
-                     //        evsesOutOfOrder++;
-                     //        break;
+                    const connectorsDiv     = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                    connectorsDiv.className = "connectors";
 
-                     //    case "INOPERATIVE":
-                     //        evsesInoperative++;
-                     //        break;
+                    if (evse.connectors) {
+                        for (var connector of evse.connectors) {
 
-                     //    case "UNKNOWN":
-                     //        evsesUnkown++;
-                     //        break;
+                            const connectorDiv                = connectorsDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                            connectorDiv.className            = "connector";
 
-                     //    case "REMOVED":
-                     //        evsesRemoved++;
-                     //        break;
+                            const connectorInfoDiv            = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                            connectorInfoDiv.className        = "connectorInfo";
+                            connectorInfoDiv.innerHTML        = connector.id + ". " + connector.standard + ", " + connector.format + ", " + connector.amperage + " A, " + connector.voltage + " V, " + connector.power_type;
 
-                     //    default:
-                     //        evsesX++;
-                     //        break;
+                            const connectorPropertiesDiv      = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                            connectorPropertiesDiv.className  = "properties";
 
-                     //}
+                            if (connector.tariff_id) {
 
-                 }
-             }
+                                if (!tariffs.has(connector.tariff_id)) {
+                                    tariffs.set(connector.tariff_id, 0);
+                                }
 
-             const locationLastUpdatedDiv = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
-             locationLastUpdatedDiv.className = "lastUpdated";
-             locationLastUpdatedDiv.innerHTML = "Last updated: " + location.last_updated;
+                                tariffs.set(
+                                    connector.tariff_id,
+                                    tariffs.get(connector.tariff_id) + 1
+                                );
 
+                                CreateLine(
+                                    connectorPropertiesDiv,
+                                    "tariffInfo",
+                                    "Tariff",
+                                    connector.tariff_id
+                                );
 
-                    //    }
+                            }
 
-                    //    numberOfEVSEsDiv.innerHTML            = totalNumberOfEVSEs.toString();
+                            if (connector.terms_and_conditions)
+                                CreateLine(
+                                    connectorPropertiesDiv,
+                                    "terms",
+                                    "Terms",
+                                    connector.terms_and_conditions
+                                );
 
-                    //    numberOfEVSEsAvailableDiv.innerHTML   = evsesAvailable.toString();
-                    //    numberOfEVSEsChargingDiv.innerHTML    = evsesCharging.toString();
-                    //    numberOfEVSEsOutOfOrderDiv.innerHTML  = evsesOutOfOrder.toString();
-                    //    numberOfEVSEsInoperativeDiv.innerHTML = evsesInoperative.toString();
-                    //    numberOfEVSEsUnkownDiv.innerHTML      = evsesUnkown.toString();
-                    //    numberOfEVSEsRemovedDiv.innerHTML     = evsesRemoved.toString();
-                    //    numberOfEVSEsXDiv.innerHTML           = evsesX.toString();
+                            const connectorLastUpdatedDiv = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                            connectorLastUpdatedDiv.className = "lastUpdated";
+                            connectorLastUpdatedDiv.innerHTML = "Last updated: " + connector.last_updated;
 
+                        }
+                    }
 
-                    //    for (const [tariffId, count] of tariffs) {
-                    //        CreateLine(
-                    //            tariffStatisticsDiv,
-                    //            "tariff",
-                    //            tariffId,
-                    //            count.toString()
-                    //        )
-                    //    }
+                    const evseLastUpdatedDiv = evseDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                    evseLastUpdatedDiv.className = "lastUpdated";
+                    evseLastUpdatedDiv.innerHTML = "Last updated: " + evse.last_updated;
 
-                    //}
+                }
+            }
+
+            const locationLastUpdatedDiv = locationAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
+            locationLastUpdatedDiv.className = "lastUpdated";
+            locationLastUpdatedDiv.innerHTML = "Last updated: " + location.last_updated;
 
         },
 

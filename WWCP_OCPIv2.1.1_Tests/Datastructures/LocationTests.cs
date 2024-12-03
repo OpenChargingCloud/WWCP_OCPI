@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
     /// <summary>
     /// Unit tests for locations.
-    /// https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc
+    /// https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/mod_locations.md#31-location-object
     /// </summary>
     [TestFixture]
     public static class LocationTests
@@ -52,7 +52,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #region Define Location1
 
-            var Location1 = new Location(
+            var location1 = new Location(
                                 CountryCode. Parse("DE"),
                                 Party_Id.    Parse("GEF"),
                                 Location_Id. Parse("LOC0001"),
@@ -63,18 +63,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                 Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Location 0001",
-                                new[] {
+                                [
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
                                         Longitude.Parse(22),
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
-                                },
-                                new[] {
+                                ],
+                                [
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                                         StatusType.AVAILABLE,
-                                        new[] {
+                                        [
                                             new Connector(
                                                 Connector_Id.Parse("1"),
                                                 ConnectorType.IEC_62196_T2,
@@ -97,9 +97,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
-                                        },
+                                        ],
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
-                                        new[] {
+                                        [
                                             new StatusSchedule(
                                                 StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
@@ -110,11 +110,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
-                                        },
-                                        new[] {
+                                        ],
+                                        [
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
-                                        },
+                                        ],
 
                                         // OCPI Computer Science Extensions
                                         new EnergyMeter(
@@ -127,7 +127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             null,
                                             null,
                                             null,
-                                            new[] {
+                                            [
                                                 new TransparencySoftwareStatus(
                                                     new TransparencySoftware(
                                                         "Chargy Transparency Software Desktop Application",
@@ -162,21 +162,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                     NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
                                                     NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
                                                 )
-                                            }
+                                            ]
                                         ),
 
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
-                                        new[] {
+                                        [
                                             DisplayText.Create(Languages.de, "Bitte klingeln!"),
                                             DisplayText.Create(Languages.en, "Ken sent me!")
-                                        },
-                                        new[] {
+                                        ],
+                                        [
                                             ParkingRestrictions.EV_ONLY,
                                             ParkingRestrictions.PLUGGED
-                                        },
-                                        new[] {
+                                        ],
+                                        [
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
@@ -185,14 +185,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
                                             )
-                                        },
+                                        ],
                                         DateTime.Parse("2020-09-22")
                                     )
-                                },
-                                new[] {
+                                ],
+                                [
                                     new DisplayText(Languages.de, "Hallo Welt!"),
                                     new DisplayText(Languages.en, "Hello world!")
-                                },
+                                ],
                                 new BusinessDetails(
                                     "Open Charging Cloud",
                                     URL.Parse("https://open.charging.cloud"),
@@ -229,33 +229,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         URL.Parse("http://ahzf.de/logo_small.gif")
                                     )
                                 ),
-                                new[] {
-                                    Facilities.CAFE
-                                },
+                                [ Facilities.CAFE ],
                                 "Europe/Berlin",
                                 new Hours(
-                                    new[] {
+                                    [
                                         new OCPI.RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
                                         new OCPI.RegularHours(DayOfWeek.Tuesday,   new HourMin(09, 00), new HourMin(16, 00)),
                                         new OCPI.RegularHours(DayOfWeek.Wednesday, new HourMin(10, 00), new HourMin(17, 00)),
                                         new OCPI.RegularHours(DayOfWeek.Thursday,  new HourMin(11, 00), new HourMin(18, 00)),
                                         new OCPI.RegularHours(DayOfWeek.Friday,    new HourMin(12, 00), new HourMin(19, 00))
-                                    },
-                                    new[] {
+                                    ],
+                                    [
                                         new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-09-21T00:00:00Z"),
                                             DateTime.Parse("2020-09-22T00:00:00Z")
                                         )
-                                    },
-                                    new[] {
+                                    ],
+                                    [
                                         new OCPI.ExceptionalPeriod(
                                             DateTime.Parse("2020-12-24T00:00:00Z"),
                                             DateTime.Parse("2020-12-26T00:00:00Z")
                                         )
-                                    }
+                                    ]
                                 ),
                                 false,
-                                new[] {
+                                [
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
@@ -264,10 +262,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
                                     )
-                                },
+                                ],
                                 new EnergyMix(
                                     true,
-                                    new[] {
+                                    [
                                         new EnergySource(
                                             EnergySourceCategory.SOLAR,
                                             80
@@ -276,13 +274,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                             EnergySourceCategory.WIND,
                                             20
                                         )
-                                    },
-                                    new[] {
+                                    ],
+                                    [
                                         new EnvironmentalImpact(
                                             EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
-                                    },
+                                    ],
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
@@ -292,50 +290,54 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             #endregion
 
-            var json    = Location1.ToJSON();
+            var json = location1.ToJSON();
 
             ClassicAssert.AreEqual ("LOC0001", json["id"]?.Value<String>());
 
-            var result  = Location.TryParse(json,
-                                            out var location2,
-                                            out var errorResponse,
-                                            Location1.CountryCode,
-                                            Location1.PartyId);
-
-            ClassicAssert.IsTrue   (result, errorResponse);
-            ClassicAssert.IsNotNull(location2);
-            ClassicAssert.IsNull   (errorResponse);
-
-            if (location2 is not null)
+            if (Location.TryParse(json,
+                                  out var location2,
+                                  out var errorResponse,
+                                  location1.CountryCode,
+                                  location1.PartyId))
             {
 
-                ClassicAssert.AreEqual (Location1.Id,                       location2.Id);
+                ClassicAssert.IsNotNull(location2);
+                ClassicAssert.IsNull   (errorResponse);
 
-                ClassicAssert.AreEqual (Location1.Publish,                  location2.Publish);
-                ClassicAssert.AreEqual (Location1.Address,                  location2.Address);
-                ClassicAssert.AreEqual (Location1.City,                     location2.City);
-                ClassicAssert.AreEqual (Location1.Country,                  location2.Country);
-                ClassicAssert.AreEqual (Location1.Coordinates,              location2.Coordinates);
-                ClassicAssert.AreEqual (Location1.Timezone,                 location2.Timezone);
+                if (location2 is not null)
+                {
 
-                ClassicAssert.AreEqual (Location1.Name,                     location2.Name);
-                ClassicAssert.AreEqual (Location1.PostalCode,               location2.PostalCode);
-                ClassicAssert.AreEqual (Location1.RelatedLocations,         location2.RelatedLocations);
-                ClassicAssert.AreEqual (Location1.LocationType,              location2.LocationType);
-                //ClassicAssert.AreEqual(LocationA.EVSEs,                    LocationB.EVSEs);
-                ClassicAssert.AreEqual (Location1.Directions,               location2.Directions);
-                ClassicAssert.AreEqual (Location1.Operator,                 location2.Operator);
-                ClassicAssert.AreEqual (Location1.SubOperator,              location2.SubOperator);
-                ClassicAssert.AreEqual (Location1.Owner,                    location2.Owner);
-                ClassicAssert.AreEqual (Location1.Facilities,               location2.Facilities);
-                //ClassicAssert.AreEqual(LocationA.OpeningTimes,             LocationB.OpeningTimes);
-                ClassicAssert.AreEqual (Location1.ChargingWhenClosed,       location2.ChargingWhenClosed);
-                ClassicAssert.AreEqual (Location1.Images,                   location2.Images);
-                ClassicAssert.AreEqual (Location1.EnergyMix,                location2.EnergyMix);
+                    ClassicAssert.AreEqual (location1.Id,                        location2.Id);
 
-                ClassicAssert.AreEqual (Location1.LastUpdated.ToIso8601(),  location2.LastUpdated.ToIso8601());
+                    ClassicAssert.AreEqual (location1.Publish,                   location2.Publish);
+                    ClassicAssert.AreEqual (location1.Address,                   location2.Address);
+                    ClassicAssert.AreEqual (location1.City,                      location2.City);
+                    ClassicAssert.AreEqual (location1.Country,                   location2.Country);
+                    ClassicAssert.AreEqual (location1.Coordinates,               location2.Coordinates);
+                    ClassicAssert.AreEqual (location1.Timezone,                  location2.Timezone);
+
+                    ClassicAssert.AreEqual (location1.Name,                      location2.Name);
+                    ClassicAssert.AreEqual (location1.PostalCode,                location2.PostalCode);
+                    ClassicAssert.AreEqual (location1.RelatedLocations,          location2.RelatedLocations);
+                    ClassicAssert.AreEqual (location1.LocationType,               location2.LocationType);
+                    //ClassicAssert.AreEqual(LocationA.EVSEs,                     LocationB.EVSEs);
+                    ClassicAssert.AreEqual (location1.Directions,                location2.Directions);
+                    ClassicAssert.AreEqual (location1.Operator,                  location2.Operator);
+                    ClassicAssert.AreEqual (location1.SubOperator,               location2.SubOperator);
+                    ClassicAssert.AreEqual (location1.Owner,                     location2.Owner);
+                    ClassicAssert.AreEqual (location1.Facilities,                location2.Facilities);
+                    //ClassicAssert.AreEqual(LocationA.OpeningTimes,              LocationB.OpeningTimes);
+                    ClassicAssert.AreEqual (location1.ChargingWhenClosed,        location2.ChargingWhenClosed);
+                    ClassicAssert.AreEqual (location1.Images,                    location2.Images);
+                    ClassicAssert.AreEqual (location1.EnergyMix,                 location2.EnergyMix);
+
+                    ClassicAssert.AreEqual (location1.LastUpdated.ToIso8601(),   location2.LastUpdated.ToIso8601());
+
+                }
 
             }
+            else
+                ClassicAssert.Fail("Failed to parse the JSON representation of Location1: " + errorResponse);
 
         }
 

@@ -144,7 +144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual (PowerTypes.      AC_1_PHASE,          parsedSession.Location.EVSEs.First().Connectors.First().PowerType);
                 ClassicAssert.AreEqual (230,                                  parsedSession.Location.EVSEs.First().Connectors.First().Voltage);
                 ClassicAssert.AreEqual (64,                                   parsedSession.Location.EVSEs.First().Connectors.First().Amperage);
-                ClassicAssert.AreEqual (Tariff_Id.       Parse("11"),         parsedSession.Location.EVSEs.First().Connectors.First().TariffId);
+                ClassicAssert.AreEqual (Tariff_Id.       Parse("11"),         parsedSession.Location.EVSEs.First().Connectors.First().GetTariffId());
                 ClassicAssert.AreEqual ("2015-06-29T22:39:09.000Z",           parsedSession.Location.EVSEs.First().Connectors.First().LastUpdated.ToIso8601());
 
             }
@@ -301,7 +301,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                 ClassicAssert.AreEqual (PowerTypes.      AC_1_PHASE,          parsedSession.Location.EVSEs.First().Connectors.First().PowerType);
                 ClassicAssert.AreEqual (230,                                  parsedSession.Location.EVSEs.First().Connectors.First().Voltage);
                 ClassicAssert.AreEqual (64,                                   parsedSession.Location.EVSEs.First().Connectors.First().Amperage);
-                ClassicAssert.AreEqual (Tariff_Id.       Parse("11"),         parsedSession.Location.EVSEs.First().Connectors.First().TariffId);
+                ClassicAssert.AreEqual (Tariff_Id.       Parse("11"),         parsedSession.Location.EVSEs.First().Connectors.First().GetTariffId());
                 ClassicAssert.AreEqual ("2015-06-29T23:09:10.000Z",           parsedSession.Location.EVSEs.First().Connectors.First().LastUpdated.ToIso8601());
 
             }

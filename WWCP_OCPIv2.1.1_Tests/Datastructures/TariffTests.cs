@@ -26,7 +26,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using org.GraphDefined.Vanaheimr.Aegir;
 
 #endregion
 
@@ -202,14 +201,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                               Party_Id.   Parse("GEF"),
                               Tariff_Id.  Parse("TARIFF0001"),
                               OCPI.Currency.EUR,
-                              new[] {
+                              [
                                   new TariffElement(
-                                      new[] {
+                                      [
                                           PriceComponent.ChargingTime(
                                               2.00M,
                                               TimeSpan.FromSeconds(300)
                                           )
-                                      },
+                                      ],
                                       new TariffRestrictions(
                                           Time.FromHourMin(08,00),       // Start time
                                           Time.FromHourMin(18,00),       // End time
@@ -221,21 +220,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                           9.91M,                         // MaxPower
                                           TimeSpan.FromMinutes(10),      // MinDuration
                                           TimeSpan.FromMinutes(30),      // MaxDuration
-                                          new[] {
+                                          [
                                               DayOfWeek.Monday,
                                               DayOfWeek.Tuesday
-                                          }
+                                          ]
                                       )
                                   )
-                              },
-                              new[] {
+                              ],
+                              [
                                   new DisplayText(Languages.de, "Hallo Welt!"),
                                   new DisplayText(Languages.en, "Hello world!"),
-                              },
+                              ],
                               URL.Parse("https://open.charging.cloud"),
                               new EnergyMix(
                                   true,
-                                  new[] {
+                                  [
                                       new EnergySource(
                                           EnergySourceCategory.SOLAR,
                                           80
@@ -244,13 +243,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
                                           EnergySourceCategory.WIND,
                                           20
                                       )
-                                  },
-                                  new[] {
+                                  ],
+                                  [
                                       new EnvironmentalImpact(
                                           EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                           0.1
                                       )
-                                  },
+                                  ],
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
@@ -262,32 +261,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var json = tariff1.ToJSON();
 
-            ClassicAssert.AreEqual("TARIFF0001",                     json["id"]?.          Value<String>());
+            ClassicAssert.AreEqual("TARIFF0001",   json["id"]?.Value<String>());
 
 
-            var result = Tariff.TryParse(json,
-                                         out var tariff2,
-                                         out var errorResponse,
-                                         tariff1.CountryCode,
-                                         tariff1.PartyId);
-
-            ClassicAssert.IsTrue   (result, errorResponse);
-            ClassicAssert.IsNotNull(tariff2);
-            ClassicAssert.IsNull   (errorResponse);
-
-            if (tariff2 is not null)
+            if (Tariff.TryParse(json,
+                                out var tariff2,
+                                out var errorResponse,
+                                tariff1.CountryCode,
+                                tariff1.PartyId))
             {
 
-                ClassicAssert.AreEqual(tariff1.Id,                        tariff2.Id);
-                ClassicAssert.AreEqual(tariff1.Currency,                  tariff2.Currency);
-                ClassicAssert.AreEqual(tariff1.TariffElements,            tariff2.TariffElements);
-                ClassicAssert.AreEqual(tariff1.TariffAltText,             tariff2.TariffAltText);
-                ClassicAssert.AreEqual(tariff1.TariffAltURL,              tariff2.TariffAltURL);
-                ClassicAssert.AreEqual(tariff1.EnergyMix,                 tariff2.EnergyMix);
+                ClassicAssert.IsNotNull(tariff2);
+                ClassicAssert.IsNull   (errorResponse);
 
-                ClassicAssert.AreEqual(tariff1.LastUpdated.ToIso8601(),   tariff2.LastUpdated.ToIso8601());
+                if (tariff2 is not null)
+                {
+
+                    ClassicAssert.AreEqual(tariff1.Id,                        tariff2.Id);
+                    ClassicAssert.AreEqual(tariff1.Currency,                  tariff2.Currency);
+                    ClassicAssert.AreEqual(tariff1.TariffElements,            tariff2.TariffElements);
+                    ClassicAssert.AreEqual(tariff1.TariffAltText,             tariff2.TariffAltText);
+                    ClassicAssert.AreEqual(tariff1.TariffAltURL,              tariff2.TariffAltURL);
+                    ClassicAssert.AreEqual(tariff1.EnergyMix,                 tariff2.EnergyMix);
+
+                    ClassicAssert.AreEqual(tariff1.LastUpdated.ToIso8601(),   tariff2.LastUpdated.ToIso8601());
+
+                }
 
             }
+            else
+                ClassicAssert.Fail("Error: " + errorResponse);
 
         }
 

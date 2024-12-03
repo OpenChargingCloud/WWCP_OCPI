@@ -27,7 +27,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
-using System.Linq;
 
 #endregion
 
@@ -49,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly Object patchLock = new();
+        private readonly Lock patchLock = new();
 
         #endregion
 

@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -99,7 +101,7 @@ namespace cloud.charging.open.protocols.OCPI
                          out var errorResponse,
                          CustomBusinessDetailsParser))
             {
-                return businessDetails!;
+                return businessDetails;
             }
 
             throw new ArgumentException("The given JSON representation of a business detail is invalid: " + errorResponse,
@@ -119,9 +121,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="BusinessDetails">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject               JSON,
-                                       out BusinessDetails?  BusinessDetails,
-                                       out String?           ErrorResponse)
+        public static Boolean TryParse(JObject                                    JSON,
+                                       [NotNullWhen(true)]  out BusinessDetails?  BusinessDetails,
+                                       [NotNullWhen(false)] out String?           ErrorResponse)
 
             => TryParse(JSON,
                         out BusinessDetails,
@@ -137,8 +139,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomBusinessDetailsParser">A delegate to parse custom business details.</param>
         public static Boolean TryParse(JObject                                        JSON,
-                                       out BusinessDetails?                           BusinessDetails,
-                                       out String?                                    ErrorResponse,
+                                       [NotNullWhen(true)]  out BusinessDetails?      BusinessDetails,
+                                       [NotNullWhen(false)] out String?               ErrorResponse,
                                        CustomJObjectParserDelegate<BusinessDetails>?  CustomBusinessDetailsParser)
         {
 
@@ -194,9 +196,11 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                BusinessDetails = new BusinessDetails(Name,
-                                                      Website,
-                                                      Logo);
+                BusinessDetails = new BusinessDetails(
+                                      Name,
+                                      Website,
+                                      Logo
+                                  );
 
 
                 if (CustomBusinessDetailsParser is not null)

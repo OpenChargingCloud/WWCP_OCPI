@@ -3430,7 +3430,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
                                         //ToDo: await...
-                                        CommonAPI.RemoveAllLocations();
+                                        await CommonAPI.RemoveAllLocations();
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -3871,7 +3871,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
                                         //ToDo: await...
-                                        CommonAPI.RemoveLocation(location!);
+                                        await CommonAPI.RemoveLocation(location!);
 
 
                                         return new OCPIResponse.Builder(Request) {

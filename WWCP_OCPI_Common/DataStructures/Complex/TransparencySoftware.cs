@@ -147,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPI
                          out var errorResponse,
                          CustomTransparencySoftwareParser))
             {
-                return transparencySoftware!;
+                return transparencySoftware;
             }
 
             throw new ArgumentException("The given JSON representation of a transparency software is invalid: " + errorResponse,

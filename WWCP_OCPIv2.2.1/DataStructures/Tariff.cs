@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Data
 
-        private readonly Object patchLock = new();
+        private readonly Lock patchLock = new();
 
         #endregion
 

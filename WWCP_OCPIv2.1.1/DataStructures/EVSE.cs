@@ -46,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly Object patchLock = new();
+        private readonly Lock patchLock = new();
 
         #endregion
 
@@ -459,17 +459,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Connectors             [mandatory]
 
-                if (!JSON.ParseMandatoryJSON<Connector, Connector_Id>("connectors",
-                                                                      "connectors",
-                                                                      Connector.TryParse,
-                                                                      out IEnumerable<Connector> Connectors,
-                                                                      out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON("connectors",
+                                             "connectors",
+                                             //Connector.TryParse,
+                                             (JObject                                  Input,
+                                              out Connector?                           Connector,
+                                              out String?                              ErrorResponse,
+                                              Connector_Id?                            ConnectorIdURL,
+                                              CustomJObjectParserDelegate<Connector>?  CustomConnectorParser) => Connector.TryParse(Input, out Connector, out ErrorResponse, ConnectorIdURL, false, CustomConnectorParser),
+                                             out IEnumerable<Connector> Connectors,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
 
                 #endregion
-
 
                 #region Parse EVSEId                 [optional]
 
@@ -518,7 +522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
                                            OCPI.EnergyMeter.TryParse,
-                                           out EnergyMeter EnergyMeter,
+                                           out EnergyMeter? EnergyMeter,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -608,22 +612,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                EVSE = new EVSE(EVSEUIdBody ?? EVSEUIdURL!.Value,
-                                Status,
-                                Connectors,
+                EVSE = new EVSE(
 
-                                EVSEId,
-                                StatusSchedule,
-                                Capabilities,
-                                EnergyMeter,
-                                FloorLevel,
-                                Coordinates,
-                                PhysicalReference,
-                                Directions,
-                                ParkingRestrictions,
-                                Images,
+                           EVSEUIdBody ?? EVSEUIdURL!.Value,
+                           Status,
+                           Connectors,
 
-                                LastUpdated);
+                           EVSEId,
+                           StatusSchedule,
+                           Capabilities,
+                           EnergyMeter,
+                           FloorLevel,
+                           Coordinates,
+                           PhysicalReference,
+                           Directions,
+                           ParkingRestrictions,
+                           Images,
+
+                           LastUpdated
+
+                       );
 
 
                 if (CustomEVSEParser is not null)

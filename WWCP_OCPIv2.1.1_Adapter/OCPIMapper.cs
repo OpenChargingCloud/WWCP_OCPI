@@ -480,13 +480,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     var ocpiEVSE = evse.ToOCPI(CustomEVSEUIdConverter,
                                                CustomEVSEIdConverter,
                                                IncludeChargingConnectorIds,
-                                               (evseId, connectorId) => GetTariffIdsDelegate is not null
-                                                                            ? GetTariffIdsDelegate(countryCode.Value,
-                                                                                                   partyId.    Value,
-                                                                                                   locationId. Value,
-                                                                                                   evseId,
-                                                                                                   connectorId)
-                                                                            : null,
+                                               //(evseId, connectorId) => GetTariffIdsDelegate is not null
+                                               //                             ? GetTariffIdsDelegate(countryCode.Value,
+                                               //                                                    partyId.    Value,
+                                               //                                                    locationId. Value,
+                                               //                                                    evseId,
+                                               //                                                    connectorId)
+                                               //                             : null,
                                                evse.Status.Timestamp > evse.LastChangeDate
                                                    ? evse.Status.Timestamp
                                                    : evse.LastChangeDate,
@@ -724,7 +724,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                    WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
                                    WWCP.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
-                                   Func<EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
+                                   //Func<EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
                                    DateTime?                                 LastUpdate,
                                    ref List<Warning>                         Warnings)
         {
@@ -732,7 +732,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             var evse = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                    CustomEVSEIdConverter,
                                    IncludeChargingConnectorIds,
-                                   GetTariffIdsDelegate,
+                                   //GetTariffIdsDelegate,
                                    LastUpdate,
                                    out var warnings);
 
@@ -751,7 +751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                    WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
                                    WWCP.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
-                                   Func<EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
+                                   //Func<EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
                                    DateTime?                                 LastUpdate,
                                    out IEnumerable<Warning>                  Warnings)
         {
@@ -813,28 +813,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       Cast<Connector>().
                                       ToArray();
 
-                if (GetTariffIdsDelegate is not null)
-                {
+                //if (GetTariffIdsDelegate is not null)
+                //{
 
-                    connectors = connectors.Select(connector => connector.TariffId.HasValue
-                                                                    ? connector
-                                                                    : new Connector(
-                                                                          connector.Id,
-                                                                          connector.Standard,
-                                                                          connector.Format,
-                                                                          connector.PowerType,
-                                                                          connector.Voltage,
-                                                                          connector.Amperage,
-                                                                          GetTariffIdsDelegate(evseId.Value, connector.Id),
-                                                                          connector.TermsAndConditionsURL,
+                //    connectors = connectors.Select(connector => connector.GetTariffId().HasValue
+                //                                                    ? connector
+                //                                                    : new Connector(
+                //                                                          connector.Id,
+                //                                                          connector.Standard,
+                //                                                          connector.Format,
+                //                                                          connector.PowerType,
+                //                                                          connector.Voltage,
+                //                                                          connector.Amperage,
+                //                                                          //GetTariffIdsDelegate(evseId.Value, connector.Id),
+                //                                                          connector.TermsAndConditionsURL,
 
-                                                                          connector.LastUpdated,
-                                                                          connector.EMSPId,
-                                                                          connector.CustomConnectorSerializer
-                                                                      )).
-                                            ToArray();
+                //                                                          connector.LastUpdated
+                //                                                      )).
+                //                            ToArray();
 
-                }
+                //}
+
 
                 if (connectors.Length == 0)
                 {
@@ -886,14 +885,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                                WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
                                                WWCP.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
-                                               Func<EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
+                                               //Func<EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
                                                ref List<Warning>                         Warnings)
         {
 
             var evses = EVSEs.ToOCPI(CustomEVSEUIdConverter,
                                      CustomEVSEIdConverter,
                                      IncludeChargingConnectorIds,
-                                     GetTariffIdsDelegate,
+                                     //GetTariffIdsDelegate,
                                      out var warnings);
 
             foreach (var warning in warnings)
@@ -911,7 +910,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                WWCPEVSEId_2_EVSEUId_Delegate?            CustomEVSEUIdConverter,
                                                WWCPEVSEId_2_EVSEId_Delegate?             CustomEVSEIdConverter,
                                                WWCP.IncludeChargingConnectorIdDelegate?  IncludeChargingConnectorIds,
-                                               Func<EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
+                                               //Func<EVSE_Id, Connector_Id, Tariff_Id?>?  GetTariffIdsDelegate,
                                                out IEnumerable<Warning>                  Warnings)
         {
 
@@ -927,7 +926,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                             CustomEVSEIdConverter,
                                             IncludeChargingConnectorIds,
-                                            GetTariffIdsDelegate,
+                                            //GetTariffIdsDelegate,
                                             evse.Status.Timestamp > evse.LastChangeDate
                                                 ? evse.Status.Timestamp
                                                 : evse.LastChangeDate,
@@ -1100,7 +1099,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                         _     => ConnectorFormats.SOCKET
                                                     },
                            PowerType:               powerType.Value,
-                           Voltage:                 (EVSE.AverageVoltage.HasValue && EVSE.AverageVoltage.Value.Value != 0
+                           Voltage:                 EVSE.AverageVoltage.HasValue && EVSE.AverageVoltage.Value.Value != 0
                                                         ? powerType.Value switch {
                                                               PowerTypes.AC_1_PHASE  => EVSE.AverageVoltage.Value,
                                                                                       // 400 V between two conductors => 230 V between conductor and neutral (OCPI design flaw!)
@@ -1112,15 +1111,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                               PowerTypes.AC_3_PHASE  => Volt.ParseV(230),  // Line to neutral for AC_3_PHASE: https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_connector_object
                                                               PowerTypes.DC          => Volt.ParseV(400),
                                                               _                      => Volt.ParseV(0)
-                                                          }),
-                           Amperage:                (EVSE.MaxCurrent.HasValue     && EVSE.MaxCurrent.Value.Value != 0
+                                                          },
+                           Amperage:                EVSE.MaxCurrent.HasValue     && EVSE.MaxCurrent.Value.Value != 0
                                                         ? EVSE.MaxCurrent.Value
                                                         : powerType.Value switch {
                                                               PowerTypes.AC_1_PHASE  => Ampere.ParseA(16),
                                                               PowerTypes.AC_3_PHASE  => Ampere.ParseA(16),
                                                               PowerTypes.DC          => Ampere.ParseA(50),
                                                               _                      => Ampere.ParseA(0)
-                                                          }),
+                                                          },
 
                            //TariffId:              Via lookup table!
                            TermsAndConditionsURL:   EVSE.Operator?.TermsAndConditionsURL,

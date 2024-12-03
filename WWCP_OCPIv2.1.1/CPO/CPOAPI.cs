@@ -24,6 +24,7 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using System.Runtime.InteropServices;
 
 #endregion
 
@@ -2752,6 +2753,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
+                                        var emspId               = Request.LocalAccessInfo is not null
+                                                                       ? EMSP_Id.Parse(Request.LocalAccessInfo.CountryCode, Request.LocalAccessInfo.PartyId)
+                                                                       : new EMSP_Id?();
+
                                         var withExtensions       = Request.QueryString.GetBoolean ("withExtensions", false);
                                         //var withMetadata         = Request.QueryString.GetBoolean("withMetadata", false);
 
@@ -2770,7 +2775,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                               location.Owner?.      Name. Contains(pattern) == true ||
                                                                                               location.Facilities.        Matches (pattern)         ||
                                                                                               location.EVSEUIds.          Matches (pattern)         ||
-                                                                                              location.EVSEIds.           Matches (pattern)
+                                                                                              location.EVSEIds.           Matches (pattern)         ||
+                                                                                              location.EVSEs.Any(evse => evse.Connectors.Any(connector => connector?.GetTariffId(emspId).ToString()?.Contains(pattern) == true))
                                                                    );
 
                                                                                             //ToDo: Filter to NOT show all locations to everyone!

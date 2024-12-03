@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -159,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPI
                          out var errorResponse,
                          CustomOpenDataLicenseParser))
             {
-                return openDataLicense!;
+                return openDataLicense;
             }
 
             throw new ArgumentException("The given JSON representation of an Open Data license is invalid: " + errorResponse,
@@ -179,9 +181,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="OpenDataLicense">The parsed Open Data license.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject               JSON,
-                                       out OpenDataLicense?  OpenDataLicense,
-                                       out String?           ErrorResponse)
+        public static Boolean TryParse(JObject                                    JSON,
+                                       [NotNullWhen(true)]  out OpenDataLicense?  OpenDataLicense,
+                                       [NotNullWhen(false)] out String?           ErrorResponse)
 
             => TryParse(JSON,
                         out OpenDataLicense,
@@ -197,8 +199,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomOpenDataLicenseParser">A delegate to parse custom Open Data license JSON objects.</param>
         public static Boolean TryParse(JObject                                        JSON,
-                                       out OpenDataLicense?                           OpenDataLicense,
-                                       out String?                                    ErrorResponse,
+                                       [NotNullWhen(true)]  out OpenDataLicense?      OpenDataLicense,
+                                       [NotNullWhen(false)] out String?               ErrorResponse,
                                        CustomJObjectParserDelegate<OpenDataLicense>?  CustomOpenDataLicenseParser   = null)
         {
 
@@ -256,9 +258,11 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                OpenDataLicense = new OpenDataLicense(Id,
-                                                      Description,
-                                                      URLs.ToArray());
+                OpenDataLicense = new OpenDataLicense(
+                                      Id,
+                                      Description,
+                                      [.. URLs]
+                                  );
 
                 if (CustomOpenDataLicenseParser is not null)
                     OpenDataLicense = CustomOpenDataLicenseParser(JSON,

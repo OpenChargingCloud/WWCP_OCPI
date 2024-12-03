@@ -60,7 +60,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region Data
 
-        private readonly Object patchLock = new();
+        private readonly Lock patchLock = new();
 
         #endregion
 
@@ -829,7 +829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (!JSON.ParseMandatoryJSON("coordinates",
                                              "geo coordinates",
                                              GeoCoordinate.TryParse,
-                                             out GeoCoordinate Coordinates,
+                                             out GeoCoordinate? Coordinates,
                                              out ErrorResponse))
                 {
                     return false;
@@ -848,7 +848,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 }
 
                 #endregion
-
 
                 #region Parse PublishTokenTypes     [optional]
 
@@ -1076,36 +1075,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                Location = new Location(null,
-                                        CountryCodeBody ?? CountryCodeURL!.Value,
-                                        PartyIdBody     ?? PartyIdURL!.    Value,
-                                        LocationIdBody  ?? LocationIdURL!. Value,
-                                        Publish,
-                                        Address,
-                                        City,
-                                        Country,
-                                        Coordinates,
-                                        TimeZone,
+                Location = new Location(
+                               null,
+                               CountryCodeBody ?? CountryCodeURL!.Value,
+                               PartyIdBody     ?? PartyIdURL!.    Value,
+                               LocationIdBody  ?? LocationIdURL!. Value,
+                               Publish,
+                               Address,
+                               City,
+                               Country,
+                               Coordinates.Value,
+                               TimeZone,
 
-                                        PublishTokenTypes,
-                                        Name,
-                                        PostalCode,
-                                        State,
-                                        RelatedLocations,
-                                        ParkingType,
-                                        EVSEs,
-                                        Directions,
-                                        Operator,
-                                        Suboperator,
-                                        Owner,
-                                        Facilities,
-                                        OpeningTimes,
-                                        ChargingWhenClosed,
-                                        Images,
-                                        EnergyMix,
+                               PublishTokenTypes,
+                               Name,
+                               PostalCode,
+                               State,
+                               RelatedLocations,
+                               ParkingType,
+                               EVSEs,
+                               Directions,
+                               Operator,
+                               Suboperator,
+                               Owner,
+                               Facilities,
+                               OpeningTimes,
+                               ChargingWhenClosed,
+                               Images,
+                               EnergyMix,
 
-                                        Created,
-                                        LastUpdated);
+                               Created,
+                               LastUpdated
+                           );
 
                 if (CustomLocationParser is not null)
                     Location = CustomLocationParser(JSON,

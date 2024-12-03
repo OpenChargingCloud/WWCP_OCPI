@@ -334,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (!JSON.ParseMandatoryJSON("coordinates",
                                              "geo coordinates",
                                              GeoCoordinate.TryParse,
-                                             out GeoCoordinate Coordinates,
+                                             out GeoCoordinate? Coordinates,
                                              out ErrorResponse))
                 {
                     return false;
@@ -421,20 +421,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                CDRLocation = new CDRLocation(Id,
-                                              Address,
-                                              City,
-                                              Country,
-                                              Coordinates,
-                                              EVSEUId,
-                                              EVSEId,
-                                              ConnectorId,
-                                              ConnectorStandard,
-                                              ConnectorFormat,
-                                              ConnectorPowerType,
-                                              Name,
-                                              PostalCode,
-                                              State);
+                CDRLocation = new CDRLocation(
+                                  Id,
+                                  Address,
+                                  City,
+                                  Country,
+                                  Coordinates.Value,
+                                  EVSEUId,
+                                  EVSEId,
+                                  ConnectorId,
+                                  ConnectorStandard,
+                                  ConnectorFormat,
+                                  ConnectorPowerType,
+                                  Name,
+                                  PostalCode,
+                                  State
+                              );
 
 
                 if (CustomCDRLocationParser is not null)

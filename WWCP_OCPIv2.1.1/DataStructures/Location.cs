@@ -54,7 +54,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly Object patchLock = new();
+        private readonly Lock patchLock = new();
 
         #endregion
 
@@ -811,7 +811,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatoryJSON("coordinates",
                                              "geo coordinates",
                                              GeoCoordinate.TryParse,
-                                             out GeoCoordinate Coordinates,
+                                             out GeoCoordinate? Coordinates,
                                              out ErrorResponse))
                 {
                     return false;
@@ -1027,35 +1027,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                Location = new Location(null,
-                                        CountryCodeBody ?? CountryCodeURL!.Value,
-                                        PartyIdBody     ?? PartyIdURL!.    Value,
-                                        LocationIdBody  ?? LocationIdURL!. Value,
-                                        LocationType,
-                                        Address,
-                                        City,
-                                        PostalCode,
-                                        Country,
-                                        Coordinates,
+                Location = new Location(
+                               null,
+                               CountryCodeBody ?? CountryCodeURL!.Value,
+                               PartyIdBody     ?? PartyIdURL!.    Value,
+                               LocationIdBody  ?? LocationIdURL!. Value,
+                               LocationType,
+                               Address,
+                               City,
+                               PostalCode,
+                               Country,
+                               Coordinates.Value,
 
-                                        Name,
-                                        RelatedLocations,
-                                        EVSEs,
-                                        Directions,
-                                        Operator,
-                                        Suboperator,
-                                        Owner,
-                                        Facilities,
-                                        TimeZone,
-                                        OpeningTimes,
-                                        ChargingWhenClosed,
-                                        Images,
-                                        EnergyMix,
+                               Name,
+                               RelatedLocations,
+                               EVSEs,
+                               Directions,
+                               Operator,
+                               Suboperator,
+                               Owner,
+                               Facilities,
+                               TimeZone,
+                               OpeningTimes,
+                               ChargingWhenClosed,
+                               Images,
+                               EnergyMix,
 
-                                        Publish,
+                               Publish,
 
-                                        Created,
-                                        LastUpdated);
+                               Created,
+                               LastUpdated
+                           );
 
                 if (CustomLocationParser is not null)
                     Location = CustomLocationParser(JSON,

@@ -26,14 +26,14 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Linq;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
-
-    public delegate IEnumerable<Tariff_Id> GetTariffIdsForEMP_Delegate(EMSP_Id? EMSPId);
-
 
     /// <summary>
     /// A connector is the socket or cable available for the electric vehicle to make use of.
@@ -46,7 +46,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        private readonly Object patchLock = new();
+        private readonly Lock                             patchLock  = new();
+
+        private readonly Tariff_Id?                       tariffId;
+        private readonly Dictionary<EMSP_Id, Tariff_Id>?  emspTariffIds;
 
         #endregion
 
@@ -95,28 +98,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         [Mandatory]
         public Ampere            Amperage                 { get; }
 
-        public EMSP_Id?          EMSPId                   { get; }
-
-        private readonly Tariff_Id? tariffId;
-
-        /// <summary>
-        /// The identification of the currently valid charging tariff.
-        /// For a "Free of Charge" tariff this field should be set, and point to a defined "Free of Charge" tariff.
-        /// </summary>
-        [Optional]
-        public Tariff_Id?        TariffId
-        {
-            get
-            {
-
-                if (tariffId.HasValue)
-                    return tariffId;
-
-                return ParentEVSE?.GetTariffIds(Id, EMSPId)?.FirstOrDefault();
-
-            }
-        }
-
         /// <summary>
         /// The optional URL to the operator's terms and conditions.
         /// </summary>
@@ -135,13 +116,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public String            ETag                     { get; }
 
 
-        public CustomJObjectSerializerDelegate<Connector>? CustomConnectorSerializer { get; }
+        //public CustomJObjectSerializerDelegate<Connector>? CustomConnectorSerializer { get; }
 
         #endregion
 
         #region Constructor(s)
 
-        #region (internal) Connector(ParentEVSE, Id, Standard, ... )
+        #region (internal) Connector(ParentEVSE, Id, Standard, ... TariffId = null, ...)
 
         /// <summary>
         /// A connector is the socket or cable available for the electric vehicle to make use of.
@@ -158,52 +139,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="TermsAndConditionsURL">An optional URL to the operator's terms and conditions.</param>
         /// 
         /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        internal Connector(EVSE?                                        ParentEVSE,
+        internal Connector(EVSE?             ParentEVSE,
 
-                           Connector_Id                                 Id,
-                           ConnectorType                                Standard,
-                           ConnectorFormats                             Format,
-                           PowerTypes                                   PowerType,
-                           Volt                                         Voltage,
-                           Ampere                                       Amperage,
-                           Tariff_Id?                                   TariffId                    = null,
-                           URL?                                         TermsAndConditionsURL       = null,
+                           Connector_Id      Id,
+                           ConnectorType     Standard,
+                           ConnectorFormats  Format,
+                           PowerTypes        PowerType,
+                           Volt              Voltage,
+                           Ampere            Amperage,
+                           Tariff_Id         TariffId,
+                           URL?              TermsAndConditionsURL   = null,
 
-                           DateTime?                                    LastUpdated                 = null,
-                           EMSP_Id?                                     EMSPId                      = null,
-                           CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
+                           DateTime?         LastUpdated             = null)
 
         {
 
-            this.ParentEVSE                 = ParentEVSE;
+            this.ParentEVSE             = ParentEVSE;
 
-            this.Id                         = Id;
-            this.Standard                   = Standard;
-            this.Format                     = Format;
-            this.PowerType                  = PowerType;
-            this.Voltage                    = Voltage;
-            this.Amperage                   = Amperage;
-            this.tariffId                   = TariffId;
-            this.TermsAndConditionsURL      = TermsAndConditionsURL;
+            this.Id                     = Id;
+            this.Standard               = Standard;
+            this.Format                 = Format;
+            this.PowerType              = PowerType;
+            this.Voltage                = Voltage;
+            this.Amperage               = Amperage;
+            this.tariffId               = TariffId;
+            this.emspTariffIds          = null;
+            this.TermsAndConditionsURL  = TermsAndConditionsURL;
 
-            this.LastUpdated                = LastUpdated ?? Timestamp.Now;
+            this.LastUpdated            = LastUpdated ?? Timestamp.Now;
 
-            this.ETag                       = SHA256.HashData(ToJSON(EMSPId, CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();    //ToDo: EMP Id must not be null!
+            this.ETag                   = SHA256.HashData(ToJSON().ToUTF8Bytes()).ToBase64();
 
-            this.CustomConnectorSerializer  = CustomConnectorSerializer;
 
             unchecked
             {
 
-                hashCode = this.Id.                    GetHashCode()       * 23 ^
-                           this.Standard.              GetHashCode()       * 19 ^
-                           this.Format.                GetHashCode()       * 17 ^
-                           this.PowerType.             GetHashCode()       * 13 ^
-                           this.Voltage.               GetHashCode()       * 11 ^
-                           this.Amperage.              GetHashCode()       *  7 ^
-                          (this.tariffId?.             GetHashCode() ?? 0) *  5 ^
-                          (this.TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
+                hashCode = this.Id.                    GetHashCode()        * 27 ^
+                           this.Standard.              GetHashCode()        * 23 ^
+                           this.Format.                GetHashCode()        * 19 ^
+                           this.PowerType.             GetHashCode()        * 17 ^
+                           this.Voltage.               GetHashCode()        * 13 ^
+                           this.Amperage.              GetHashCode()        * 11 ^
+                          (this.tariffId?.             GetHashCode()  ?? 0) *  7 ^
+                          (this.emspTariffIds?.        CalcHashCode() ?? 0) *  5 ^
+                          (this.TermsAndConditionsURL?.GetHashCode()  ?? 0) *  3 ^
                            this.LastUpdated.           GetHashCode();
 
             }
@@ -212,7 +191,77 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region Connector(Id, Standard, ... )
+        #region (internal) Connector(ParentEVSE, Id, Standard, ... EMSPTariffIds,   ...)
+
+        /// <summary>
+        /// A connector is the socket or cable available for the electric vehicle to make use of.
+        /// </summary>
+        /// <param name="ParentEVSE">The parent EVSE of this connector.</param>
+        /// 
+        /// <param name="Id">An identification of the connector within the EVSE.</param>
+        /// <param name="Standard">The standard of the installed connector.</param>
+        /// <param name="Format">The format (socket/cable) of the installed connector.</param>
+        /// <param name="PowerType">The type of power at the connector.</param>
+        /// <param name="Voltage">The voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].</param>
+        /// <param name="Amperage">The amperage of the connector, in ampere [A].</param>
+        /// <param name="EMSPTariffIds">The mapping of EMSP identifications to tariff identifications.</param>
+        /// <param name="TermsAndConditionsURL">An optional URL to the operator's terms and conditions.</param>
+        /// 
+        /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
+        internal Connector(EVSE?                            ParentEVSE,
+
+                           Connector_Id                     Id,
+                           ConnectorType                    Standard,
+                           ConnectorFormats                 Format,
+                           PowerTypes                       PowerType,
+                           Volt                             Voltage,
+                           Ampere                           Amperage,
+                           Dictionary<EMSP_Id, Tariff_Id>?  EMSPTariffIds           = null,
+                           URL?                             TermsAndConditionsURL   = null,
+
+                           DateTime?                        LastUpdated             = null)
+
+        {
+
+            this.ParentEVSE             = ParentEVSE;
+
+            this.Id                     = Id;
+            this.Standard               = Standard;
+            this.Format                 = Format;
+            this.PowerType              = PowerType;
+            this.Voltage                = Voltage;
+            this.Amperage               = Amperage;
+            this.tariffId               = null;
+            this.emspTariffIds          = EMSPTariffIds;
+            this.TermsAndConditionsURL  = TermsAndConditionsURL;
+
+            this.LastUpdated            = LastUpdated ?? Timestamp.Now;
+
+            this.ETag                   = SHA256.HashData(ToJSON().ToUTF8Bytes()).ToBase64();
+
+
+            unchecked
+            {
+
+                hashCode = this.Id.                    GetHashCode()        * 27 ^
+                           this.Standard.              GetHashCode()        * 23 ^
+                           this.Format.                GetHashCode()        * 19 ^
+                           this.PowerType.             GetHashCode()        * 17 ^
+                           this.Voltage.               GetHashCode()        * 13 ^
+                           this.Amperage.              GetHashCode()        * 11 ^
+                          (this.tariffId?.             GetHashCode()  ?? 0) *  7 ^
+                          (this.emspTariffIds?.        CalcHashCode() ?? 0) *  5 ^
+                          (this.TermsAndConditionsURL?.GetHashCode()  ?? 0) *  3 ^
+                           this.LastUpdated.           GetHashCode();
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region Connector(Id, Standard, ... TariffId = null, ...)
 
         /// <summary>
         /// A connector is the socket or cable available for the electric vehicle to make use of.
@@ -227,19 +276,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="TermsAndConditionsURL">Optional URL to the operator's terms and conditions.</param>
         /// 
         /// <param name="LastUpdated">Timestamp when this connector was last updated (or created).</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        public Connector(Connector_Id                                 Id,
-                         ConnectorType                                Standard,
-                         ConnectorFormats                             Format,
-                         PowerTypes                                   PowerType,
-                         Volt                                         Voltage,
-                         Ampere                                       Amperage,
-                         Tariff_Id?                                   TariffId                    = null,
-                         URL?                                         TermsAndConditionsURL       = null,
+        public Connector(Connector_Id      Id,
+                         ConnectorType     Standard,
+                         ConnectorFormats  Format,
+                         PowerTypes        PowerType,
+                         Volt              Voltage,
+                         Ampere            Amperage,
+                         Tariff_Id         TariffId,
+                         URL?              TermsAndConditionsURL   = null,
 
-                         DateTime?                                    LastUpdated                 = null,
-                         EMSP_Id?                                     EMSPId                      = null,
-                         CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
+                         DateTime?         LastUpdated             = null)
 
             : this(null,
 
@@ -252,9 +298,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    TariffId,
                    TermsAndConditionsURL,
 
-                   LastUpdated,
-                   EMSPId,
-                   CustomConnectorSerializer)
+                   LastUpdated)
+
+        { }
+
+        #endregion
+
+        #region Connector(Id, Standard, ... EMSPTariffIds,   ...)
+
+        /// <summary>
+        /// A connector is the socket or cable available for the electric vehicle to make use of.
+        /// </summary>
+        /// <param name="Id">Identifier of the connector within the EVSE.</param>
+        /// <param name="Standard">The standard of the installed connector.</param>
+        /// <param name="Format">The format (socket/cable) of the installed connector.</param>
+        /// <param name="PowerType">The type of powert at the connector.</param>
+        /// <param name="Voltage">Voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].</param>
+        /// <param name="Amperage">Maximum amperage of the connector, in ampere [A].</param>
+        /// <param name="EMSPTariffIds">The mapping of EMSP identifications to tariff identifications.</param>
+        /// <param name="TermsAndConditionsURL">Optional URL to the operator's terms and conditions.</param>
+        /// 
+        /// <param name="LastUpdated">Timestamp when this connector was last updated (or created).</param>
+        public Connector(Connector_Id                     Id,
+                         ConnectorType                    Standard,
+                         ConnectorFormats                 Format,
+                         PowerTypes                       PowerType,
+                         Volt                             Voltage,
+                         Ampere                           Amperage,
+                         Dictionary<EMSP_Id, Tariff_Id>?  EMSPTariffIds           = null,
+                         URL?                             TermsAndConditionsURL   = null,
+
+                         DateTime?                        LastUpdated             = null)
+
+            : this(null,
+
+                   Id,
+                   Standard,
+                   Format,
+                   PowerType,
+                   Voltage,
+                   Amperage,
+                   EMSPTariffIds,
+                   TermsAndConditionsURL,
+
+                   LastUpdated)
 
         { }
 
@@ -263,16 +350,49 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region (static) Parse   (JSON, ConnectorIdURL = null, CustomConnectorParser = null)
+        #region GetTariffId(EMSPId = null)
+
+        /// <summary>
+        /// Returns the identification of the currently valid tariff.
+        /// For a "Free of Charge" tariff this field should be set, and point to a defined "Free of Charge" tariff.
+        /// </summary>
+        /// <param name="EMSPId">An optional EMSP identification, e.g. for including the right tariff.</param>
+        public Tariff_Id? GetTariffId(EMSP_Id? EMSPId = null)
+        {
+
+            var tariffIds = ParentEVSE?.GetTariffIds(Id, EMSPId) ?? [];
+            if (tariffIds.Any())
+                return tariffIds.First();
+
+            if (emspTariffIds is not null &&
+                EMSPId.HasValue       &&
+                emspTariffIds.TryGetValue(EMSPId.Value, out var emspTariffId))
+            {
+                return emspTariffId;
+            }
+
+            if (tariffId.HasValue)
+                return tariffId;
+
+            return null;
+
+        }
+
+        #endregion
+
+
+        #region (static) Parse   (JSON, ConnectorIdURL = null, IgnoreTariffId = false, CustomConnectorParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a connector.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="ConnectorIdURL">An optional connector identification, e.g. from the HTTP URL.</param>
+        /// <param name="IgnoreTariffId">Whether to ignore the 'tariff_id' property.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
         public static Connector Parse(JObject                                  JSON,
                                       Connector_Id?                            ConnectorIdURL          = null,
+                                      Boolean                                  IgnoreTariffId          = false,
                                       CustomJObjectParserDelegate<Connector>?  CustomConnectorParser   = null)
         {
 
@@ -280,6 +400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          out var connector,
                          out var errorResponse,
                          ConnectorIdURL,
+                         IgnoreTariffId,
                          CustomConnectorParser))
             {
                 return connector;
@@ -292,7 +413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(JSON, out Connector, out ErrorResponse, ConnectorIdURL = null, CustomConnectorParser = null)
+        #region (static) TryParse(JSON, out Connector, out ErrorResponse, ConnectorIdURL = null, IgnoreTariffId = false, CustomConnectorParser = null)
 
         /// <summary>
         /// Try to parse the given JSON representation of a connector.
@@ -301,11 +422,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Connector">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="ConnectorIdURL">An optional connector identification, e.g. from the HTTP URL.</param>
+        /// <param name="IgnoreTariffId">Whether to ignore the 'tariff_id' property.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
         public static Boolean TryParse(JObject                                  JSON,
                                        [NotNullWhen(true)]  out Connector?      Connector,
                                        [NotNullWhen(false)] out String?         ErrorResponse,
                                        Connector_Id?                            ConnectorIdURL          = null,
+                                       Boolean                                  IgnoreTariffId          = false,
                                        CustomJObjectParserDelegate<Connector>?  CustomConnectorParser   = null)
         {
 
@@ -322,6 +445,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Id                 [mandatory]
 
+                Connector_Id ConnectorId;
+
                 if (JSON.ParseOptional("id",
                                        "connector identification",
                                        Connector_Id.TryParse,
@@ -332,13 +457,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     if (ErrorResponse is not null)
                         return false;
 
+                    if (!ConnectorIdBody.HasValue) {
+                        ErrorResponse = $"The connector identification '{JSON["id"]?.Value<String>() ?? ""}' is invalid!";
+                        return false;
+                    }
+
+                    ConnectorId = ConnectorIdBody.Value;
+
                 }
 
-                if (!ConnectorIdURL.HasValue && !ConnectorIdBody.HasValue)
+                else if (ConnectorIdURL.HasValue)
+                    ConnectorId = ConnectorIdURL.Value;
+
+                else
                 {
                     ErrorResponse = "The connector identification is missing!";
                     return false;
                 }
+
 
                 if (ConnectorIdURL.HasValue && ConnectorIdBody.HasValue && ConnectorIdURL.Value != ConnectorIdBody.Value)
                 {
@@ -415,14 +551,65 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse TariffId           [optional]
 
-                if (JSON.ParseOptional("tariff_id",
-                                       "tariff identification",
-                                       Tariff_Id.TryParse,
-                                       out Tariff_Id? TariffId,
-                                       out ErrorResponse))
+                Tariff_Id? TariffId = null;
+
+                if (!IgnoreTariffId)
                 {
-                    if (ErrorResponse is not null)
-                        return false;
+                    if (JSON.ParseOptional("tariff_id",
+                                           "tariff identification",
+                                           Tariff_Id.TryParse,
+                                           out TariffId,
+                                           out ErrorResponse))
+                    {
+                        if (ErrorResponse is not null)
+                            return false;
+                    }
+                }
+
+                #endregion
+
+                #region Parse EMSPTariffIds      [optional]   // OCC OCPI Computer Science Extensions
+
+                Dictionary<EMSP_Id, Tariff_Id>? EMSPTariffIds = null;
+
+                if (!IgnoreTariffId)
+                {
+
+                    var emspTariffIds = JSON["emsp_tariff_ids"] as JObject;
+
+                    if (emspTariffIds is not null &&
+                        emspTariffIds.Count > 0)
+                    {
+                        foreach (var tariffKVP in emspTariffIds)
+                        {
+                            if (EMSP_Id.TryParse(tariffKVP.Key, out var emspId))
+                            {
+                                if (Tariff_Id.TryParse(tariffKVP.Value?.Value<String>() ?? "", out var tariffId))
+                                {
+
+                                    EMSPTariffIds ??= [];
+
+                                    if (!EMSPTariffIds.TryAdd(emspId, tariffId))
+                                    {
+                                        ErrorResponse = $"Could not add EMSP tariff Id '{tariffId}' for EMSP '{emspId}'!";
+                                        return false;
+                                    }
+
+                                }
+                                else
+                                {
+                                    ErrorResponse = $"Could not parse EMSP tariff Id '{tariffKVP.Value?.Value<String>() ?? ""}' for EMSP '{tariffKVP.Key}'!";
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                ErrorResponse = $"Could not parse EMSP identification '{tariffKVP.Key}'!";
+                                return false;
+                            }
+                        }
+                    }
+
                 }
 
                 #endregion
@@ -454,17 +641,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                Connector = new Connector(
-                                ConnectorIdBody ?? ConnectorIdURL.Value,
-                                Standard,
-                                Format,
-                                PowerType,
-                                Voltage,
-                                Amperage,
-                                TariffId,
-                                TermsAndConditionsURL,
-                                LastUpdated
-                            );
+                Connector = TariffId.HasValue
+
+                                ? new Connector(
+                                      ConnectorId,
+                                      Standard,
+                                      Format,
+                                      PowerType,
+                                      Voltage,
+                                      Amperage,
+                                      TariffId.Value,
+                                      TermsAndConditionsURL,
+                                      LastUpdated
+                                  )
+
+                                : new Connector(
+                                      ConnectorId,
+                                      Standard,
+                                      Format,
+                                      PowerType,
+                                      Voltage,
+                                      Amperage,
+                                      EMSPTariffIds,
+                                      TermsAndConditionsURL,
+                                      LastUpdated
+                                  );
 
 
                 if (CustomConnectorParser is not null)
@@ -496,10 +697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
         {
 
-            var tariffIds   = GetTariffIds(EMSPId);
-            var tariffId    = this.tariffId ?? (tariffIds.Any()
-                                                    ? tariffIds.First()
-                                                    : null);
+            var tariffId    = GetTariffId(EMSPId);
 
             var json        = JSONObject.Create(
 
@@ -510,8 +708,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         new JProperty("voltage",                (UInt16) Voltage. Value),
                                         new JProperty("amperage",               (UInt16) Amperage.Value),
 
-                                  tariffId is not null
+                                  tariffId.HasValue
                                       ? new JProperty("tariff_id",              tariffId.       Value.ToString())
+                                      : null,
+
+                                  emspTariffIds is not null && !tariffId.HasValue
+                                      ? new JProperty("emsp_tariff_ids",        new JObject(
+                                                                                    emspTariffIds.Select(emspTariffId => new JProperty(
+                                                                                                                             emspTariffId.Key.  ToString(),
+                                                                                                                             emspTariffId.Value.ToString()
+                                                                                                                         )
+                                                                                                        )
+                                                                                ))
                                       : null,
 
                                   TermsAndConditionsURL.HasValue
@@ -522,10 +730,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                               );
 
-            var serializer  = CustomConnectorSerializer ?? this.CustomConnectorSerializer;
-
-            return serializer is not null
-                       ? serializer(this, json)
+            return CustomConnectorSerializer is not null
+                       ? CustomConnectorSerializer(this, json)
                        : json;
 
         }
@@ -539,18 +745,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public Connector Clone()
 
-            => new (ParentEVSE,
+            => tariffId.HasValue
 
-                    Id.                    Clone,
-                    Standard.              Clone,
-                    Format,
-                    PowerType,
-                    Voltage,
-                    Amperage,
-                    TariffId?.             Clone,
-                    TermsAndConditionsURL?.Clone,
+                   ? new (ParentEVSE,
+                          Id,
+                          Standard,
+                          Format,
+                          PowerType,
+                          Voltage,
+                          Amperage,
+                          tariffId.Value,
+                          TermsAndConditionsURL,
+                          LastUpdated)
 
-                    LastUpdated);
+                   : new (ParentEVSE,
+
+                          Id.                    Clone,
+                          Standard.              Clone,
+                          Format,
+                          PowerType,
+                          Voltage,
+                          Amperage,
+                          emspTariffIds?.ToDictionary(),
+                          TermsAndConditionsURL?.Clone,
+
+                          LastUpdated);
 
         #endregion
 
@@ -673,12 +892,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
         #endregion
-
-
-        internal IEnumerable<Tariff_Id> GetTariffIds(EMSP_Id? EMSPId = null)
-
-            => ParentEVSE?.GetTariffIds(Id,
-                                        EMSPId) ?? [];
 
 
         #region Operator overloading
@@ -871,21 +1084,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Connector">A connector to compare with.</param>
         public Boolean Equals(Connector? Connector)
 
-            => Connector is not null &&
+        {
 
-               Id.                     Equals(Connector.Id)                      &&
-               Standard.               Equals(Connector.Standard)                &&
-               Format.                 Equals(Connector.Format)                  &&
-               PowerType.              Equals(Connector.PowerType)               &&
-               Voltage.                Equals(Connector.Voltage)                 &&
-               Amperage.               Equals(Connector.Amperage)                &&
-               LastUpdated.ToIso8601().Equals(Connector.LastUpdated.ToIso8601()) &&
+            var thisTariffId = GetTariffId();
+            var thatTariffId = Connector?.GetTariffId();
 
-            ((!TariffId.             HasValue && !Connector.TariffId.             HasValue) ||
-              (TariffId.             HasValue &&  Connector.TariffId.             HasValue && TariffId.             Value.Equals(Connector.TariffId.             Value))) &&
+            return Connector is not null &&
 
-            ((!TermsAndConditionsURL.HasValue && !Connector.TermsAndConditionsURL.HasValue) ||
-              (TermsAndConditionsURL.HasValue &&  Connector.TermsAndConditionsURL.HasValue && TermsAndConditionsURL.Value.Equals(Connector.TermsAndConditionsURL.Value)));
+                   Id.                     Equals(Connector.Id)                      &&
+                   Standard.               Equals(Connector.Standard)                &&
+                   Format.                 Equals(Connector.Format)                  &&
+                   PowerType.              Equals(Connector.PowerType)               &&
+                   Voltage.                Equals(Connector.Voltage)                 &&
+                   Amperage.               Equals(Connector.Amperage)                &&
+                   LastUpdated.ToIso8601().Equals(Connector.LastUpdated.ToIso8601()) &&
+
+                ((!thisTariffId.         HasValue && !thatTariffId.                   HasValue) ||
+                  (thisTariffId.         HasValue &&  thatTariffId.                   HasValue && thisTariffId.         Value.Equals(thatTariffId.                   Value))) &&
+
+                ((!TermsAndConditionsURL.HasValue && !Connector.TermsAndConditionsURL.HasValue) ||
+                  (TermsAndConditionsURL.HasValue &&  Connector.TermsAndConditionsURL.HasValue && TermsAndConditionsURL.Value.Equals(Connector.TermsAndConditionsURL.Value)));
+
+        }
 
         #endregion
 
@@ -909,24 +1129,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Return a text representation of this object.
         /// </summary>
         public override String ToString()
+        {
 
-            => String.Concat(
+            var tariffId = GetTariffId();
 
-                   Id,
-                   " (",
-                   Standard,           ", ",
-                   Format.   AsText(), ", ",
-                   PowerType.AsText(), ", ",
-                   Voltage,            " V, ",
-                   Amperage,           "A",
+            return String.Concat(
 
-                   TariffId.HasValue
-                       ? ", " + TariffId.Value.ToString()
-                       : "",
+                       Id,
+                       " (",
+                       Standard,           ", ",
+                       Format.   AsText(), ", ",
+                       PowerType.AsText(), ", ",
+                       Voltage,            " V, ",
+                       Amperage,           "A",
 
-                   ")"
+                       tariffId.HasValue
+                           ? ", tariff: " + tariffId.Value.ToString()
+                           : "",
 
-               );
+                       emspTariffIds is not null
+                           ? ", tariffs: " + emspTariffIds.Select(tariffId => $"'{tariffId.Key}':'{tariffId.Value}'").AggregateWith(";")
+                           : "",
+
+                       ")"
+
+                   );
+
+        }
 
         #endregion
 

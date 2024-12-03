@@ -25,6 +25,7 @@ body {
                                 display:            table;
 
                                 .row {
+
                                     display:            table-row;
 
                                     .key {
@@ -35,6 +36,10 @@ body {
 
                                     .value {
                                         display:            table-cell;
+                                    }
+
+                                    .tariff {
+                                        padding-right:      20px;
                                     }
 
                                 }

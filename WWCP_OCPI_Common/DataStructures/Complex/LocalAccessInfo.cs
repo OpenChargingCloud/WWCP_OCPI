@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -134,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPI
                          out var errorResponse,
                          CustomLocalAccessInfoParser))
             {
-                return localAccessInfo!;
+                return localAccessInfo;
             }
 
             throw new ArgumentException("The given JSON representation of a local access information is invalid: " + errorResponse,
@@ -154,9 +156,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="LocalAccessInfo">The parsed local access information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject               JSON,
-                                       out LocalAccessInfo?  LocalAccessInfo,
-                                       out String?           ErrorResponse)
+        public static Boolean TryParse(JObject                                    JSON,
+                                       [NotNullWhen(true)]  out LocalAccessInfo?  LocalAccessInfo,
+                                       [NotNullWhen(false)] out String?           ErrorResponse)
 
             => TryParse(JSON,
                         out LocalAccessInfo,
@@ -172,8 +174,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomLocalAccessInfoParser">A delegate to parse custom local access information JSON objects.</param>
         public static Boolean TryParse(JObject                                        JSON,
-                                       out LocalAccessInfo?                           LocalAccessInfo,
-                                       out String?                                    ErrorResponse,
+                                       [NotNullWhen(true)]  out LocalAccessInfo?      LocalAccessInfo,
+                                       [NotNullWhen(false)] out String?               ErrorResponse,
                                        CustomJObjectParserDelegate<LocalAccessInfo>?  CustomLocalAccessInfoParser   = null)
         {
 
@@ -265,12 +267,14 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                LocalAccessInfo = new LocalAccessInfo(AccessToken,
-                                                      Status,
-                                                      NotBefore,
-                                                      NotAfter,
-                                                      AccessTokenIsBase64Encoded,
-                                                      AllowDowngrades);
+                LocalAccessInfo = new LocalAccessInfo(
+                                      AccessToken,
+                                      Status,
+                                      NotBefore,
+                                      NotAfter,
+                                      AccessTokenIsBase64Encoded,
+                                      AllowDowngrades
+                                  );
 
 
                 if (CustomLocalAccessInfoParser is not null)

@@ -68,9 +68,40 @@ body {
                                         padding-bottom:                 3px;
                                     }
 
-                                    .locationLink {
-                                        font-size:                      85%;
+                                    .businessDetails {
+
+                                        font-size:                      95%;
                                         font-weight:                    normal;
+
+                                        a {
+                                            color:                          #2d4f83;
+                                            text-decoration:                none;
+                                        }
+
+                                    }
+
+                                    .operator {
+                                        font-size:                      95%;
+                                    }
+
+                                    .suboperator {
+                                        font-size:                      95%;
+                                    }
+
+                                    .owner {
+                                        font-size:                      95%;
+                                    }
+
+                                    .type {
+                                        font-size:                      80%;
+                                    }
+
+                                    .address {
+                                        font-size:                      80%;
+                                    }
+
+                                    .coordinates {
+                                        font-size:                      80%;
                                     }
 
                                     .evses {
@@ -93,7 +124,7 @@ body {
                                             }
 
                                             .evseStatus_AVAILABLE {
-                                                color:                          rgb(  6, 146,   6, 0.5);
+                                                color:                          rgb(178, 239, 170);//rgb(  6, 146,   6, 0.5);
                                                 background-color:               unset;
                                             }
 
@@ -185,7 +216,18 @@ body {
                                     }
 
                                     &:hover {
+
                                         background-color:               rgba(188, 201, 221, 0.5);
+
+                                        .evses {
+                                            .evse {
+                                                .evseStatus_AVAILABLE {
+                                                    color:                          rgb(207, 249, 202);
+                                                    background-color:               unset;
+                                                }
+                                            }
+                                        }
+
                                     }
 
                                 }

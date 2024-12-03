@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -164,7 +166,7 @@ namespace cloud.charging.open.protocols.OCPI
                          out var errorResponse,
                          CustomRemoteAccessInfoParser))
             {
-                return remoteAccessInfo!;
+                return remoteAccessInfo;
             }
 
             throw new ArgumentException("The given JSON representation of a remote access information is invalid: " + errorResponse,
@@ -184,9 +186,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="RemoteAccessInfo">The parsed remote access information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                JSON,
-                                       out RemoteAccessInfo?  RemoteAccessInfo,
-                                       out String?            ErrorResponse)
+        public static Boolean TryParse(JObject                                     JSON,
+                                       [NotNullWhen(true)]  out RemoteAccessInfo?  RemoteAccessInfo,
+                                       [NotNullWhen(false)] out String?            ErrorResponse)
 
             => TryParse(JSON,
                         out RemoteAccessInfo,
@@ -202,8 +204,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomRemoteAccessInfoParser">A delegate to parse custom remote access information JSON objects.</param>
         public static Boolean TryParse(JObject                                         JSON,
-                                       out RemoteAccessInfo?                           RemoteAccessInfo,
-                                       out String?                                     ErrorResponse,
+                                       [NotNullWhen(true)]  out RemoteAccessInfo?      RemoteAccessInfo,
+                                       [NotNullWhen(false)] out String?                ErrorResponse,
                                        CustomJObjectParserDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoParser   = null)
         {
 
@@ -323,20 +325,22 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                RemoteAccessInfo = new RemoteAccessInfo(AccessToken,
-                                                        VersionsURL,
-                                                        null,
-                                                        SelectedVersionId,
-                                                        Status,
-                                                        NotBefore,
-                                                        NotAfter,
-                                                        AccessTokenIsBase64Encoded,
-                                                        AllowDowngrades);
+                RemoteAccessInfo = new RemoteAccessInfo(
+                                       AccessToken,
+                                       VersionsURL,
+                                       null,
+                                       SelectedVersionId,
+                                       Status,
+                                       NotBefore,
+                                       NotAfter,
+                                       AccessTokenIsBase64Encoded,
+                                       AllowDowngrades
+                                   );
 
 
                 if (CustomRemoteAccessInfoParser is not null)
                     RemoteAccessInfo = CustomRemoteAccessInfoParser(JSON,
-                                                          RemoteAccessInfo);
+                                                                    RemoteAccessInfo);
 
                 return true;
 

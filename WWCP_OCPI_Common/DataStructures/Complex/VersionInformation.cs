@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -86,7 +88,7 @@ namespace cloud.charging.open.protocols.OCPI
                          out var errorResponse,
                          CustomVersionInformationParser))
             {
-                return versionInformation!;
+                return versionInformation;
             }
 
             throw new ArgumentException("The given JSON representation of a version information is invalid: " + errorResponse, nameof(JSON));
@@ -105,9 +107,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Version">The parsed version information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                  JSON,
-                                       out VersionInformation?  Version,
-                                       out String?              ErrorResponse)
+        public static Boolean TryParse(JObject                                       JSON,
+                                       [NotNullWhen(true)]  out VersionInformation?  Version,
+                                       [NotNullWhen(false)] out String?              ErrorResponse)
 
             => TryParse(JSON,
                         out Version,
@@ -123,8 +125,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomVersionInformationParser">A delegate to parse custom version information JSON objects.</param>
         public static Boolean TryParse(JObject                                           JSON,
-                                       out VersionInformation?                           Version,
-                                       out String?                                       ErrorResponse,
+                                       [NotNullWhen(true)]  out VersionInformation?      Version,
+                                       [NotNullWhen(false)] out String?                  ErrorResponse,
                                        CustomJObjectParserDelegate<VersionInformation>?  CustomVersionInformationParser)
         {
 
@@ -166,8 +168,10 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                Version = new VersionInformation(Id,
-                                                 URL);
+                Version = new VersionInformation(
+                              Id,
+                              URL
+                          );
 
 
                 if (CustomVersionInformationParser is not null)

@@ -20,7 +20,11 @@
 function StartLocationStatistics()
 {
 
-    function CreateLine(parent: HTMLDivElement | HTMLAnchorElement, className: string, key: string, innerHTML: string | HTMLDivElement): HTMLDivElement {
+    function CreateLine(parent:       HTMLDivElement | HTMLAnchorElement,
+                        className:    string,
+                        key:          string,
+                        innerHTML1:   string | HTMLDivElement,
+                        innerHTML2?:  string | HTMLDivElement): HTMLDivElement {
 
         const rowDiv = parent.appendChild(document.createElement('div')) as HTMLDivElement;
         rowDiv.className = "row";
@@ -30,16 +34,31 @@ function StartLocationStatistics()
         keyDiv.className = "key";
         keyDiv.innerHTML = key;
 
-        // value
+
+        // value 1
         const valueDiv = rowDiv.appendChild(document.createElement('div')) as HTMLDivElement;
         valueDiv.className = "value " + className;
 
-        if (typeof innerHTML === 'string')
-            valueDiv.innerHTML = innerHTML;
+        if (typeof innerHTML1 === 'string')
+            valueDiv.innerHTML = innerHTML1;
 
-        else if (innerHTML instanceof HTMLDivElement)
-            valueDiv.appendChild(innerHTML);
+        else if (innerHTML1 instanceof HTMLDivElement)
+            valueDiv.appendChild(innerHTML1);
 
+
+        // value 2
+        if (innerHTML2) {
+
+            const value2Div = rowDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+            value2Div.className = "value " + className;
+
+            if (typeof innerHTML2 === 'string')
+                value2Div.innerHTML = innerHTML2;
+
+            else if (innerHTML2 instanceof HTMLDivElement)
+                value2Div.appendChild(innerHTML2);
+
+        }
 
         return rowDiv;
 
@@ -62,21 +81,16 @@ function StartLocationStatistics()
     const evseStatusMap            = new Map<string, number>();
 
     const tariffStatisticsDiv      = locationInfosDiv.querySelector("#tariffStatistics")          as HTMLDivElement;
-    const tariffsMap               = new Map<string, number>();
+    const tariffsMapActive         = new Map<string, number>();
+    const tariffsMapRemoved        = new Map<string, number>();
+    let   noTariffCounter          = 0;
+    let   noTariffREMOVEDCounter   = 0;
 
 
     OCPIGetCollection<ILocationMetadata, ILocation>(
 
         window.location.href.replace(/\/locationStatistics$/, "/locations"),
-        metadata => {
-
-            //if (metadata["description"] != null && firstValue(metadata["description"]) != null)
-            //{
-            //    (communicatorDescription.querySelector("#language") as HTMLDivElement).innerText = firstKey  (metadata["description"]);
-            //    (communicatorDescription.querySelector("#I18NText") as HTMLDivElement).innerText = firstValue(metadata["description"]);
-            //}
-
-        },
+        metadata => { },
         "locations",
 
         (resultCounter,
@@ -95,25 +109,41 @@ function StartLocationStatistics()
 
                             if (connector.tariff_id) {
 
-                                // Tariffs map
-                                if (!tariffsMap.has(connector.tariff_id)) {
-                                    tariffsMap.set(connector.tariff_id, 0);
-                                }
+                                // Tariffs for EVSEs in use...
+                                if (!tariffsMapActive.has(connector.tariff_id))
+                                    tariffsMapActive.set(connector.tariff_id, 0);
 
-                                tariffsMap.set(
-                                    connector.tariff_id,
-                                    tariffsMap.get(connector.tariff_id) + 1
-                                );
+                                // ...or for removed EVSEs
+                                if (!tariffsMapRemoved.has(connector.tariff_id))
+                                    tariffsMapRemoved.set(connector.tariff_id, 0);
 
+
+                                if (evse.status === "REMOVED")
+                                    tariffsMapRemoved.set(
+                                        connector.tariff_id,
+                                        tariffsMapRemoved.get(connector.tariff_id) + 1
+                                    );
+
+                                else
+                                    tariffsMapActive.set(
+                                        connector.tariff_id,
+                                        tariffsMapActive.get(connector.tariff_id) + 1
+                                    );
+
+                            }
+                            else {
+                                if (evse.status === "REMOVED")
+                                    noTariffREMOVEDCounter++;
+                                else
+                                    noTariffCounter++;
                             }
 
                         }
                     }
 
                     // EVSE Status map
-                    if (!evseStatusMap.has(evse.status)) {
+                    if (!evseStatusMap.has(evse.status))
                         evseStatusMap.set(evse.status, 0);
-                    }
 
                     evseStatusMap.set(
                         evse.status,
@@ -139,18 +169,27 @@ function StartLocationStatistics()
                 )
             }
 
-            for (const [tariffId, count] of tariffsMap) {
+
+            CreateLine(
+                tariffStatisticsDiv,
+                "tariff",
+                "&lt;no tariff&gt;",
+                noTariffCounter.toString(),
+                "(" + noTariffREMOVEDCounter.toString() + ")"
+            )
+
+            for (const [tariffId, count] of tariffsMapActive) {
                 CreateLine(
                     tariffStatisticsDiv,
                     "tariff",
                     tariffId,
-                    count.toString()
+                    count.toString(),
+                    "(" + tariffsMapRemoved.get(tariffId).toString() + ")"
                 )
             }
 
         }
 
     );
-
 
 }

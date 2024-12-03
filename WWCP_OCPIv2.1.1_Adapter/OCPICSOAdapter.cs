@@ -1302,7 +1302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
                                                         connectorId => true,
-                                                        null,
+                                                        //null,
                                                         EVSE.Status.Timestamp > EVSE.LastChangeDate
                                                             ? EVSE.Status.Timestamp
                                                             : EVSE.LastChangeDate,
@@ -1425,7 +1425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
                                                         connectorId => true,
-                                                        null,
+                                                        //null,
                                                         EVSE.Status.Timestamp > EVSE.LastChangeDate
                                                             ? EVSE.Status.Timestamp
                                                             : EVSE.LastChangeDate,
@@ -1566,7 +1566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
                                                         connectorId => true,
-                                                        null,
+                                                        //null,
                                                         EVSE.Status.Timestamp > EVSE.LastChangeDate
                                                             ? EVSE.Status.Timestamp
                                                             : EVSE.LastChangeDate,
@@ -1727,7 +1727,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
                                                                 CustomEVSEIdConverter,
                                                                 connectorId => true,
-                                                                null,
+                                                                //null,
                                                                 evse.Status.Timestamp > evse.LastChangeDate
                                                                     ? evse.Status.Timestamp
                                                                     : evse.LastChangeDate,

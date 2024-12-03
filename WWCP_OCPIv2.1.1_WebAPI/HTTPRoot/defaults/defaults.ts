@@ -87,7 +87,7 @@ enum searchResultsMode {
 interface IOCPIResponse {
     data:                            any;
     status_code:                     number;
-    status_message:                  string;
+    status_message?:                 string;
     timestamp:                       Date;
 }
 
@@ -311,7 +311,7 @@ interface IEVSE {
     status_schedule?:                Array<IStatusSchedule>;
     capabilities?:                   Array<string>;
     connectors:                      Array<IConnector>;
-    energy_meter?:                   IEnergyMeter;                      // OCC OCPI Computer Science Extension!
+    energy_meter?:                   IEnergyMeter;                      // OCC Computer Science Extension!
     floor_level?:                    string;
     coordinates:                     ICoordinates;
     physical_reference?:             string;
@@ -540,6 +540,51 @@ function OCPIGet(RessourceURI: string,
 
 // #endregion
 
+
+async function OCPIGetAsync(RessourceURI: string): Promise<[IOCPIResponse, (key: string) => string | null]> {
+
+    return new Promise((resolve, reject) => {
+
+        const ajax = new XMLHttpRequest();
+        ajax.open("GET", RessourceURI, true);
+        ajax.setRequestHeader("Accept",   "application/json; charset=UTF-8");
+        ajax.setRequestHeader("X-Portal", "true");
+
+        const accessToken         = localStorage.getItem("ocpiAccessToken");
+        const accessTokenEncoding = localStorage.getItem("ocpiAccessTokenEncoding");
+
+        if (accessToken)
+            ajax.setRequestHeader("Authorization", "Token " + (accessTokenEncoding === "base64" ? btoa(accessToken) : accessToken));
+
+        ajax.onreadystatechange = function () {
+            if (this.readyState == 4) {
+                if (this.status >= 100 && this.status < 300) {
+                    try {
+
+                        const ocpiResponse = JSON.parse(ajax.responseText) as IOCPIResponse;
+
+                        if (ocpiResponse.status_code >= 1000 &&
+                            ocpiResponse.status_code <  2000) {
+                            resolve([ocpiResponse, (key: string) => ajax.getResponseHeader(key)]);
+                        }
+                        else
+                            reject(new Error(ocpiResponse.status_code + (ocpiResponse.status_message ? ": " + ocpiResponse.status_message : "")));
+
+                    }
+                    catch (exception) {
+                        reject(new Error(exception));
+                    }
+                } else {
+                    reject(new Error(`HTTP Status Code ${this.status}: ${ajax.responseText}`));
+                }
+            }
+        };
+
+        ajax.send();
+
+    });
+
+}
 
 
 function OCPIStartSearch<TSearchResult>(requestURL:   string,
@@ -992,11 +1037,11 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
 }
 
 
-function OCPIGetCollection<TMetadata extends TMetadataDefaults, TSearchResult>(requestURL:    string,
-                                                                               doStartUp:     SearchStartUp<TMetadata>,
-                                                                               nameOfItems:   string,
-                                                                               doStatistics:  StatisticsDelegate<TSearchResult>,
-                                                                               doFinish?:     StatisticsFinishedDelegate<TSearchResult>) {
+async function OCPIGetCollection<TMetadata extends TMetadataDefaults, TSearchResult>(requestURL:    string,
+                                                                                     doStartUp:     SearchStartUp<TMetadata>,
+                                                                                     nameOfItems:   string,
+                                                                                     doStatistics:  StatisticsDelegate<TSearchResult>,
+                                                                                     doFinish?:     StatisticsFinishedDelegate<TSearchResult>) {
 
     requestURL = requestURL.indexOf('?') === -1
                     ? requestURL + '?'
@@ -1006,7 +1051,7 @@ function OCPIGetCollection<TMetadata extends TMetadataDefaults, TSearchResult>(r
 
     let   firstSearch              = true;
     let   offset                   = 0;
-    let   limit                    = 2000;
+    let   limit                    = 2500;
     let   currentDateFrom:string   = null;
     let   currentDateTo:string     = null;
     let   numberOfResults          = 0;
@@ -1035,117 +1080,188 @@ function OCPIGetCollection<TMetadata extends TMetadataDefaults, TSearchResult>(r
     if (downLoadButton)
         downLoadButton.href = requestURL + "download" + filters;
 
-    OCPIGet(
 
-        requestURL + "offset=" + offset + "&limit=" + limit,
+    do {
 
-        (status, response, httpHeaders) => {
+        const [ocpiResponse, httpHeaders] = await OCPIGetAsync(requestURL + "offset=" + offset + "&limit=" + limit);
 
-            try
-            {
+        if (ocpiResponse.data &&
+            Array.isArray(ocpiResponse.data) &&
+            ocpiResponse.data.length > 0) {
 
-                if (status == 200 && response) {
+            const searchResults = ocpiResponse.data as Array<TSearchResult>;
 
-                    const ocpiResponse = JSON.parse(response) as IOCPIResponse;
+            numberOfResults = searchResults.length;
 
-                    if (ocpiResponse.status_code >= 1000 &&
-                        ocpiResponse.status_code <  2000)
-                    {
+            // https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/transport_and_format.md
+            linkURL                  = httpHeaders("Link");
+            totalNumberOfResults     = Number.parseInt(httpHeaders("X-Total-Count"));
+            filteredNumberOfResults  = Number.parseInt(httpHeaders("X-Filtered-Count"));
+            //limit                    = Number.parseInt(httpHeaders("X-Limit"));
 
-                        if (ocpiResponse?.data               &&
-                            Array.isArray(ocpiResponse.data) &&
-                            ocpiResponse.data.length > 0)
-                        {
+            if (Number.isNaN(totalNumberOfResults))
+                totalNumberOfResults    = numberOfResults;
 
-                            const searchResults = ocpiResponse.data as Array<TSearchResult>;
+            if (Number.isNaN(filteredNumberOfResults))
+                filteredNumberOfResults = totalNumberOfResults;
 
-                            numberOfResults          = searchResults.length;
+            if (searchResults.length > 0) {
 
-                            // https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/transport_and_format.md
-                            linkURL                  = httpHeaders("Link");
-                            totalNumberOfResults     = Number.parseInt(httpHeaders("X-Total-Count"));
-                            filteredNumberOfResults  = Number.parseInt(httpHeaders("X-Filtered-Count"));
-                            //limit                    = Number.parseInt(httpHeaders("X-Limit"));
+                let resultCounter = offset + 1;
 
-                            if (Number.isNaN(totalNumberOfResults))
-                                totalNumberOfResults     = numberOfResults;
+                for (const searchResult of searchResults) {
 
-                            if (Number.isNaN(filteredNumberOfResults))
-                                filteredNumberOfResults  = totalNumberOfResults;
+                    try {
 
+                        doStatistics(
+                            resultCounter,
+                            searchResult
+                        );
 
-                            //if (deletePreviousResults || numberOfResults > 0)
-                            //    searchResultsDiv.innerHTML = "";
-
-                            if (firstSearch && doStartUp) {
-                                //doStartUp(JSONresponse);
-                                firstSearch = false;
-                            }
-
-                            if (searchResults.length > 0) {
-
-                                let resultCounter = offset + 1;
-
-                                for (const searchResult of searchResults) {
-
-                                    try {
-
-                                        doStatistics(
-                                            resultCounter,
-                                            searchResult
-                                        );
-
-                                        resultCounter++;
-
-                                    }
-                                    catch (exception)
-                                    {
-                                        DoSearchError("Exception in statistics delegate: " + exception);
-                                        //break;
-                                    }
-
-                                }
-
-                                if (downLoadButton)
-                                    downLoadButton.style.display = "block";
-
-                            }
-
-                            //messageDiv.innerHTML = searchResults.length > 0
-                            //                           ? "showing results " + (offset + 1) + " - " + (offset + Math.min(searchResults.length, limit)) +
-                            //                                 " of " + filteredNumberOfResults
-                            //                           : "no matching " + nameOfItems + " found";
-
-                        }
-                        else
-                            DoSearchError("Invalid search results!");
+                        resultCounter++;
 
                     }
-                    else
-                        DoSearchError("OCPI Status Code " + ocpiResponse.status_code + (ocpiResponse.status_message ? ": " + ocpiResponse.status_message : ""));
+                    catch (exception) {
+                        DoSearchError("Exception in statistics delegate: " + exception);
+                        //break;
+                    }
 
                 }
-                else
-                    DoSearchError("HTTP Status Code " + status + (response ? ": " + response : ""));
 
             }
-            catch (exception)
-            {
-                DoSearchError("Exception occured: " + exception);
-            }
-
-            if (doFinish)
-                doFinish(totalNumberOfResults);
-
-        },
-
-        (status, response, httpHeaders) => {
-
-            DoSearchError("Server error: " + status + "<br />" + response);
 
         }
 
-    );
+        offset = offset + numberOfResults;
+
+    } while (offset + numberOfResults < totalNumberOfResults);
+
+    if (doFinish)
+        doFinish(totalNumberOfResults);
+
+    //if (downLoadButton)
+    //    downLoadButton.style.display = "block";
+
+
+
+    //OCPIGet(
+    //
+    //    requestURL + "offset=" + offset + "&limit=" + limit,
+    //
+    //    (status, response, httpHeaders) => {
+    //
+    //        try
+    //        {
+    //
+    //            var xLimit = 0;
+    //
+    //            if (status == 200 && response) {
+    //
+    //                const ocpiResponse = JSON.parse(response) as IOCPIResponse;
+    //
+    //                if (ocpiResponse.status_code >= 1000 &&
+    //                    ocpiResponse.status_code <  2000)
+    //                {
+    //
+    //                    if (ocpiResponse?.data               &&
+    //                        Array.isArray(ocpiResponse.data) &&
+    //                        ocpiResponse.data.length > 0)
+    //                    {
+    //
+    //                        xLimit = Number.parseInt(httpHeaders("X-Limit"));
+    //
+    //                        if (isNaN(xLimit))
+    //                            xLimit = ocpiResponse?.data.length;
+    //
+    //                        const searchResults = ocpiResponse.data as Array<TSearchResult>;
+    //
+    //                        numberOfResults          = searchResults.length;
+    //
+    //                        // https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/transport_and_format.md
+    //                        linkURL                  = httpHeaders("Link");
+    //                        totalNumberOfResults     = Number.parseInt(httpHeaders("X-Total-Count"));
+    //                        filteredNumberOfResults  = Number.parseInt(httpHeaders("X-Filtered-Count"));
+    //                        //limit                    = Number.parseInt(httpHeaders("X-Limit"));
+    //
+    //                        if (Number.isNaN(totalNumberOfResults))
+    //                            totalNumberOfResults     = numberOfResults;
+    //
+    //                        if (Number.isNaN(filteredNumberOfResults))
+    //                            filteredNumberOfResults  = totalNumberOfResults;
+    //
+    //
+    //                        //if (deletePreviousResults || numberOfResults > 0)
+    //                        //    searchResultsDiv.innerHTML = "";
+    //
+    //                        if (firstSearch && doStartUp) {
+    //                            //doStartUp(JSONresponse);
+    //                            firstSearch = false;
+    //                        }
+    //
+    //                        if (searchResults.length > 0) {
+    //
+    //                            let resultCounter = offset + 1;
+    //
+    //                            for (const searchResult of searchResults) {
+    //
+    //                                try {
+    //
+    //                                    doStatistics(
+    //                                        resultCounter,
+    //                                        searchResult
+    //                                    );
+    //
+    //                                    resultCounter++;
+    //
+    //                                }
+    //                                catch (exception)
+    //                                {
+    //                                    DoSearchError("Exception in statistics delegate: " + exception);
+    //                                    //break;
+    //                                }
+    //
+    //                            }
+    //
+    //                            if (downLoadButton)
+    //                                downLoadButton.style.display = "block";
+    //
+    //                        }
+    //
+    //                        //messageDiv.innerHTML = searchResults.length > 0
+    //                        //                           ? "showing results " + (offset + 1) + " - " + (offset + Math.min(searchResults.length, limit)) +
+    //                        //                                 " of " + filteredNumberOfResults
+    //                        //                           : "no matching " + nameOfItems + " found";
+    //
+    //                    }
+    //                    else
+    //                        DoSearchError("Invalid search results!");
+    //
+    //                }
+    //                else
+    //                    DoSearchError("OCPI Status Code " + ocpiResponse.status_code + (ocpiResponse.status_message ? ": " + ocpiResponse.status_message : ""));
+    //
+    //            }
+    //            else
+    //                DoSearchError("HTTP Status Code " + status + (response ? ": " + response : ""));
+    //
+    //        }
+    //        catch (exception)
+    //        {
+    //            DoSearchError("Exception occured: " + exception);
+    //        }
+    //
+    //        if (doFinish)
+    //            doFinish(totalNumberOfResults);
+    //
+    //    },
+    //
+    //    (status, response, httpHeaders) => {
+    //
+    //      DoSearchError("Server error: " + status + "<br />" + response);
+    //
+    //  }
+    //
+    //);
 
 }
 

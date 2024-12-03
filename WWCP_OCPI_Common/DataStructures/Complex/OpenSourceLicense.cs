@@ -160,7 +160,7 @@ namespace cloud.charging.open.protocols.OCPI
                          out var errorResponse,
                          CustomOpenSourceLicenseParser))
             {
-                return openSourceLicense!;
+                return openSourceLicense;
             }
 
             throw new ArgumentException("The given JSON representation of an Open Source license is invalid: " + errorResponse,

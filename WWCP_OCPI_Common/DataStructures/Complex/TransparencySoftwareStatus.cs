@@ -126,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPI
                          out var errorResponse,
                          CustomTransparencySoftwareStatusParser))
             {
-                return transparencySoftwareStatus!;
+                return transparencySoftwareStatus;
             }
 
             throw new ArgumentException("The given JSON representation of a transparency software status is invalid: " + errorResponse,
