@@ -392,6 +392,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         null,
                         null);
 
+
         /// <summary>
         /// Try to parse the given JSON representation of an EVSE.
         /// </summary>

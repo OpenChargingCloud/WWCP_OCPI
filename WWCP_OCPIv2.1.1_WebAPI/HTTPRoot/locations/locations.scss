@@ -220,12 +220,11 @@ body {
                                         background-color:               rgba(188, 201, 221, 0.5);
 
                                         .evses {
-                                            .evse {
+                                            //.evse {
                                                 .evseStatus_AVAILABLE {
-                                                    color:                          rgb(207, 249, 202);
-                                                    background-color:               unset;
+                                                    background-color:               rgb(207, 249, 202);
                                                 }
-                                            }
+                                            //}
                                         }
 
                                     }

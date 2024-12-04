@@ -148,6 +148,7 @@
     <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.min.css" />
+    <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.1.1.ts" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.js" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.js.map" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.ts" />
