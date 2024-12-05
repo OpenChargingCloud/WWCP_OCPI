@@ -12,18 +12,52 @@ body {
                             display:                        flex;
                             margin:                         10px 0px;
 
-                            accessTokenInput {
-                                border-radius:                  4px;
+                            #accessTokenConfig {
+
+                                margin-right:                   10px;
+                                display:                        flex;
+                                flex-direction:                 column;
+                                gap:                            3px;
+
+                                #accessTokenInput {
+                                    background-color:               #f0f0f0;
+                                    padding:                        4px 6px;
+                                    border-radius:                  4px;
+                                    border:                         0;
+                                    width:                          23vw;
+                                }
+
+                                #accessTokenEncoding {
+
+                                    display:                        flex;
+                                    align-items:                    center;
+                                    gap:                            5px;
+                                    font-size:                      70%;
+                                    align-self:                     end;
+                                    padding-right:                  5px;
+
+                                    input[type="checkbox"] {
+                                        margin:                         0; /* Resets any default margins on the checkbox */
+                                    }
+
+                                }
+
                             }
 
-                            accessTokenEncoding {
-                                padding:                        0px 10px;
-                            }
+                            #accessTokenButton {
 
-                            accessTokenButton {
+                                color:                          #c0c0c0;
+                                padding:                        10px 20px;
                                 border:                         0;
                                 border-radius:                  4px;
+
+                                &:hover {
+                                    color:                          #000000;
+                                    background-color:               #aaaaff;
+                                }
+
                             }
+
 
                         }
 
@@ -31,7 +65,7 @@ body {
 
                             padding:                        1vh 2vw;
                             border-radius:                  6px;
-                            background-color:               #e7e7e7;
+                            /*background-color:               #e7e7e7;*/
 
                             #versionId {
                                 font-weight:                    bold;

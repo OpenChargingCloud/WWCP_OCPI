@@ -21,12 +21,15 @@
     "HTTPRoot/versions/versions.ts",
     "HTTPRoot/versions/versionDetails.ts",
 
+    "HTTPRoot/cdrs/cdrs.ts",
     "HTTPRoot/locations/locations.ts",
     "HTTPRoot/locations/locationStatistics.ts",
+    "HTTPRoot/sessions/sessions.ts",
     "HTTPRoot/tariffs/tariffs.ts",
+    "HTTPRoot/tokens/tokens.ts",
 
-    "HTTPRoot/remoteParty/remoteParties.ts",
-    "HTTPRoot/remoteParty/remoteParty.ts",
+    "HTTPRoot/remoteParties/remoteParties.ts",
+    "HTTPRoot/remoteParties/remoteParty.ts",
 
     "HTTPRoot/remoteParty/remoteCPO/reserveNow.ts",
     "HTTPRoot/remoteParty/remoteCPO/cancelReservation.ts",

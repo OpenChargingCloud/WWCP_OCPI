@@ -8,9 +8,9 @@ body {
 
             #right {
                 #text {
-                    #tariffInfos {
+                    #cdrInfos {
 
-                        #tariffInfos2 {
+                        #cdrInfos2 {
 
                             padding:            1vh 2vw;
                             border-radius:      6px;
@@ -41,7 +41,7 @@ body {
 
                             }
 
-                            #tariffStatistics {
+                            #cdrStatistics {
                                 padding-bottom:     10px;
                             }
 
@@ -50,7 +50,7 @@ body {
                             }
 
 
-                            #tariffs {
+                            #cdrs {
 
                                 border-top:             none;
 
@@ -74,7 +74,7 @@ body {
                                     }
                                 }
 
-                                .tariff {
+                                .cdr {
 
                                     padding:                15px 22px;
                                     display:                inline-block;
@@ -112,11 +112,11 @@ body {
                                         font-size:              80%;
                                     }
 
-                                    .tariffElements {
+                                    .cdrElements {
 
                                         padding-left:           10px;
 
-                                        .tariffElement {
+                                        .cdrElement {
 
                                             background-color:       #e2e2e2;
                                             padding:                10px 15px;
@@ -158,7 +158,7 @@ body {
 
                                             }
 
-                                            .tariffRestrictions {
+                                            .cdrRestrictions {
 
                                                 font-size:              85%;
                                                 margin-top:             6px;
@@ -193,9 +193,9 @@ body {
 
                                     }
 
-                                    .dates {
-                                        margin-top:             15px;
+                                    .lastUpdated {
                                         font-size:              70%;
+                                        margin-top:             15px;
                                     }
 
                                     &:hover {

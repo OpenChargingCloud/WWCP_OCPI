@@ -20,67 +20,18 @@
 function StartTariffs()
 {
 
-    function CreateLine(parent: HTMLDivElement | HTMLAnchorElement, className: string, key: string, innerHTML: string | HTMLDivElement): HTMLDivElement {
-
-        const rowDiv = parent.appendChild(document.createElement('div')) as HTMLDivElement;
-        rowDiv.className = "row";
-
-        // key
-        const keyDiv = rowDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-        keyDiv.className = "key";
-        keyDiv.innerHTML = key;
-
-        // value
-        const valueDiv = rowDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-        valueDiv.className = "value " + className;
-
-        if (typeof innerHTML === 'string')
-            valueDiv.innerHTML = innerHTML;
-
-        else if (innerHTML instanceof HTMLDivElement)
-            valueDiv.appendChild(innerHTML);
-
-
-        return rowDiv;
-
-    }
-
-
     const common                       = GetDefaults();
     common.topLeft.innerHTML           = "/Tariffs"
     common.menuVersions.classList.add("activated");
     common.menuVersions.href           = "../../versions";
 
-    //const tariffInfosDiv               = document.getElementById("tariffInfos")                     as HTMLDivElement;
-    //const tariffsDiv                   = tariffInfosDiv.querySelector("#tariffs")                   as HTMLDivElement;
-
-    //const numberOfTariffsDiv           = tariffInfosDiv.querySelector("#numberOfTariffs")           as HTMLDivElement;
- 
-    //let   totalNumberOfEVSEs           = 0;
-
-    //const controlsDiv         = document.       getElementById("controls")              as HTMLDivElement;
-    //const searchDiv           = controlsDiv.    querySelector ("#search")               as HTMLDivElement;
-
-    //const lowerButtonsDiv     = document.       getElementById("lowerButtons")          as HTMLDivElement;
-    //const downLoadButton      = lowerButtonsDiv.querySelector ("#downLoadButton")       as HTMLAnchorElement;
-
-
     OCPIStartSearch2<ITariffMetadata, ITariff>(
 
         window.location.href,
         () => {
-            //return (statusFilterSelect.selectedOptions[0].value !== "any" ? "&matchStatus=" + statusFilterSelect.selectedOptions[0].value : "");
             return "";
         },
-        metadata => {
-
-            //if (metadata["description"] != null && firstValue(metadata["description"]) != null)
-            //{
-            //    (communicatorDescription.querySelector("#language") as HTMLDivElement).innerText = firstKey  (metadata["description"]);
-            //    (communicatorDescription.querySelector("#I18NText") as HTMLDivElement).innerText = firstValue(metadata["description"]);
-            //}
-
-        },
+        metadata => { },
         "tariff",
         tariff => tariff.id,
         "tariffs",
@@ -90,8 +41,6 @@ function StartTariffs()
         (resultCounter,
          tariff,
          tariffAnchor) => {
-
-            //numberOfTariffsDiv.innerHTML = ocpiResponse.data.length.toString();
 
             const tariffCounterDiv          = tariffAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
             tariffCounterDiv.className      = "counter";
@@ -351,9 +300,23 @@ function StartTariffs()
             }
 
 
-            const tariffLastUpdatedDiv      = tariffAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
-            tariffLastUpdatedDiv.className  = "lastUpdated";
-            tariffLastUpdatedDiv.innerHTML  = "Last updated: " + tariff.last_updated;
+            const datesDiv = tariffAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
+            datesDiv.className = "dates properties";
+
+            if (tariff.created)
+                CreateProperty(
+                    datesDiv,
+                    "created",
+                    "Created:",
+                    tariff.created
+                )
+
+            CreateProperty(
+                datesDiv,
+                "lastUpdated",
+                "Last updated:",
+                tariff.last_updated
+            )
 
         },
 

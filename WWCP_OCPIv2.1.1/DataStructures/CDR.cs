@@ -576,7 +576,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public   String?                                  Remark                      { get; }
 
         /// <summary>
-        /// The timestamp when this charge detail record was created.
+        /// The timestamp when this Charge Detail Record was created.
         /// </summary>
         [Mandatory, NonStandard("Pagination")]
         public   DateTime                                 Created                     { get; }

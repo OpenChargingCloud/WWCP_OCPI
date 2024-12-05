@@ -120,45 +120,45 @@ function StartRemoteParty(versionId: string) {
 
                     }
 
-                    if (remoteParty.accessInfos !== undefined &&
-                        remoteParty.accessInfos.length > 0) {
+                    //if (remoteParty.accessInfos !== undefined &&
+                    //    remoteParty.accessInfos.length > 0) {
 
-                        for (const accessInfo of remoteParty.accessInfos) {
+                    //    for (const accessInfo of remoteParty.accessInfos) {
 
-                            const accessInfoDiv      = accessInfos.appendChild(document.createElement('div')) as HTMLDivElement;
-                            accessInfoDiv.className  = "accessInfo";
-
-
-                            const accessToken            = accessInfoDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                            accessToken.className        = "row";
-
-                            const accessTokenKey         = accessToken.appendChild(document.createElement('div')) as HTMLDivElement;
-                            accessTokenKey.className     = "subkey";
-                            accessTokenKey.innerHTML     = "Access Token";
-
-                            const accessTokenValue       = accessToken.appendChild(document.createElement('div')) as HTMLDivElement;
-                            accessTokenValue.className   = "value";
-
-                            const accessTokenInput       = accessTokenValue.appendChild(document.createElement('input')) as HTMLInputElement;
-                            accessTokenInput.value       = accessInfo.token;
+                    //        const accessInfoDiv      = accessInfos.appendChild(document.createElement('div')) as HTMLDivElement;
+                    //        accessInfoDiv.className  = "accessInfo";
 
 
-                            const accessStatus           = accessInfoDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                            accessStatus.className       = "row";
+                    //        const accessToken            = accessInfoDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                    //        accessToken.className        = "row";
 
-                            const accessStatusKey        = accessStatus.appendChild(document.createElement('div')) as HTMLDivElement;
-                            accessStatusKey.className    = "subkey";
-                            accessStatusKey.innerHTML    = "Status";
+                    //        const accessTokenKey         = accessToken.appendChild(document.createElement('div')) as HTMLDivElement;
+                    //        accessTokenKey.className     = "subkey";
+                    //        accessTokenKey.innerHTML     = "Access Token";
 
-                            const accessStatusValue      = accessStatus.appendChild(document.createElement('div')) as HTMLDivElement;
-                            accessStatusValue.className  = "value";
+                    //        const accessTokenValue       = accessToken.appendChild(document.createElement('div')) as HTMLDivElement;
+                    //        accessTokenValue.className   = "value";
 
-                            const accessStatusInput      = accessStatusValue.appendChild(document.createElement('input')) as HTMLInputElement;
-                            accessStatusInput.value      = accessInfo.status;
+                    //        const accessTokenInput       = accessTokenValue.appendChild(document.createElement('input')) as HTMLInputElement;
+                    //        accessTokenInput.value       = accessInfo.token;
 
-                        }
 
-                    }
+                    //        const accessStatus           = accessInfoDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                    //        accessStatus.className       = "row";
+
+                    //        const accessStatusKey        = accessStatus.appendChild(document.createElement('div')) as HTMLDivElement;
+                    //        accessStatusKey.className    = "subkey";
+                    //        accessStatusKey.innerHTML    = "Status";
+
+                    //        const accessStatusValue      = accessStatus.appendChild(document.createElement('div')) as HTMLDivElement;
+                    //        accessStatusValue.className  = "value";
+
+                    //        const accessStatusInput      = accessStatusValue.appendChild(document.createElement('input')) as HTMLInputElement;
+                    //        accessStatusInput.value      = accessInfo.status;
+
+                    //    }
+
+                    //}
 
                 }
 

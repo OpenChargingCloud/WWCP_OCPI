@@ -159,6 +159,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public PartyStatus                           Status                        { get; }
 
         /// <summary>
+        /// The timestamp when this remote party was created.
+        /// </summary>
+        [Mandatory, NonStandard("Pagination")]
+        public DateTime                              Created                       { get; }
+
+        /// <summary>
         /// Timestamp when this remote party was last updated (or created).
         /// </summary>
         [Mandatory]
@@ -239,8 +245,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
 
-
-
         private readonly List<LocalAccessInfo> localAccessInfos;
 
         /// <summary>
@@ -280,7 +284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                           LocalCertificateSelectionHandler?                          LocalCertificateSelector    = null,
+                           LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
                            X509Certificate?                                           ClientCert                   = null,
                            SslProtocols?                                              TLSProtocol                  = null,
                            String?                                                    HTTPUserAgent                = null,
@@ -290,6 +294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
+                           DateTime?                                                  Created                      = null,
                            DateTime?                                                  LastUpdated                  = null)
 
             : this(CountryCode,
@@ -322,6 +327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    InternalBufferSize,
                    UseHTTPPipelining,
 
+                   Created,
                    LastUpdated)
 
         { }
@@ -349,7 +355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                           LocalCertificateSelectionHandler?                          LocalCertificateSelector    = null,
+                           LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
                            X509Certificate?                                           ClientCert                   = null,
                            SslProtocols?                                              TLSProtocol                  = null,
                            String?                                                    HTTPUserAgent                = null,
@@ -359,6 +365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
+                           DateTime?                                                  Created                      = null,
                            DateTime?                                                  LastUpdated                  = null)
 
             : this(CountryCode,
@@ -394,6 +401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    InternalBufferSize,
                    UseHTTPPipelining,
 
+                   Created,
                    LastUpdated)
 
         { }
@@ -427,7 +435,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                           LocalCertificateSelectionHandler?                          LocalCertificateSelector    = null,
+                           LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
                            X509Certificate?                                           ClientCert                   = null,
                            SslProtocols?                                              TLSProtocol                  = null,
                            String?                                                    HTTPUserAgent                = null,
@@ -437,6 +445,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
+                           DateTime?                                                  Created                      = null,
                            DateTime?                                                  LastUpdated                  = null)
 
             : this(CountryCode,
@@ -481,6 +490,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    InternalBufferSize,
                    UseHTTPPipelining,
 
+                   Created,
                    LastUpdated)
 
         { }
@@ -500,7 +510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            Boolean?                                                   PreferIPv4                   = null,
                            RemoteTLSServerCertificateValidationHandler<IHTTPClient>?  RemoteCertificateValidator   = null,
-                           LocalCertificateSelectionHandler?                          LocalCertificateSelector    = null,
+                           LocalCertificateSelectionHandler?                          LocalCertificateSelector     = null,
                            X509Certificate?                                           ClientCert                   = null,
                            SslProtocols?                                              TLSProtocol                  = null,
                            String?                                                    HTTPUserAgent                = null,
@@ -510,16 +520,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            UInt32?                                                    InternalBufferSize           = null,
                            Boolean?                                                   UseHTTPPipelining            = null,
 
+                           DateTime?                                                  Created                      = null,
                            DateTime?                                                  LastUpdated                  = null)
 
         {
 
-            this.Id                          = RemoteParty_Id.Parse(
-                                                   String.Concat(CountryCode,
-                                                                 "-",
-                                                                 PartyId,
-                                                                 "_",
-                                                                 Role));
+            this.Id                          = RemoteParty_Id.Parse($"{CountryCode}-{PartyId}_{Role}");
 
             this.CountryCode                 = CountryCode;
             this.PartyId                     = PartyId;
@@ -532,7 +538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                certificateChain,
                                                                                tlsClient,
                                                                                policyErrors) => (true, Array.Empty<String>()));
-            this.LocalCertificateSelector   = LocalCertificateSelector;
+            this.LocalCertificateSelector    = LocalCertificateSelector;
             this.ClientCert                  = ClientCert;
             this.TLSProtocol                 = TLSProtocol;
             this.PreferIPv4                  = PreferIPv4;
@@ -543,10 +549,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.InternalBufferSize          = InternalBufferSize;
             this.UseHTTPPipelining           = UseHTTPPipelining;
 
-            this.LastUpdated                 = LastUpdated ?? Timestamp.Now;
+            this.Created                     = Created     ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated                 = LastUpdated ?? Created     ?? Timestamp.Now;
 
-            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? new List<LocalAccessInfo> (LocalAccessInfos)  : new List<LocalAccessInfo>();
-            this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : new List<RemoteAccessInfo>();
+            this.localAccessInfos            = LocalAccessInfos. IsNeitherNullNorEmpty() ? new List<LocalAccessInfo> (LocalAccessInfos)  : [];
+            this.remoteAccessInfos           = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : [];
 
             this.ETag                        = CalcSHA256Hash();
 
@@ -722,6 +729,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 // ...
 
+                #region Parse Created              [optional, NonStandard]
+
+                if (JSON.ParseOptional("created",
+                                       "created",
+                                       out DateTime? Created,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse LastUpdated          [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
@@ -735,16 +755,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                RemoteParty = new RemoteParty(CountryCode,
-                                              PartyId,
-                                              Role,
-                                              BusinessDetails,
+                RemoteParty = new RemoteParty(
 
-                                              LocalAccessInfos,
-                                              RemoteAccessInfos,
+                                  CountryCode,
+                                  PartyId,
+                                  Role,
+                                  BusinessDetails,
 
-                                              Status,
-                                              LastUpdated: LastUpdated);
+                                  LocalAccessInfos,
+                                  RemoteAccessInfos,
+
+                                  Status,
+
+                                  Created:      Created,
+                                  LastUpdated:  LastUpdated
+
+                              );
 
 
                 if (CustomRemotePartyParser is not null)
@@ -785,11 +811,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var json = JSONObject.Create(
 
-                                 new JProperty("@id",                 Id.                  ToString()),
+                                 //new JProperty("id",                  Id.                  ToString()),
 
-                           Embedded
-                               ? new JProperty("@context",            DefaultJSONLDContext.ToString())
-                               : null,
+                           //Embedded
+                           //    ? new JProperty("@context",            DefaultJSONLDContext.ToString())
+                           //    : null,
 
                                  new JProperty("countryCode",         CountryCode.         ToString()),
                                  new JProperty("partyId",             PartyId.             ToString()),
@@ -801,14 +827,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                   CustomImageSerializer))
                                : null,
 
-                           localAccessInfos.Any()
+                           localAccessInfos. Count != 0
                                ? new JProperty("localAccessInfos",    new JArray(localAccessInfos. Select(localAccessInfo  => localAccessInfo. ToJSON(CustomLocalAccessInfoSerializer))))
                                : null,
 
-                           remoteAccessInfos.Any()
+                           remoteAccessInfos.Count != 0
                                ? new JProperty("remoteAccessInfos",   new JArray(remoteAccessInfos.Select(remoteAccessInfo => remoteAccessInfo.ToJSON(CustomRemoteAccessInfoSerializer))))
                                : null,
 
+                                 new JProperty("created",             Created.             ToIso8601()),
                                  new JProperty("last_updated",        LastUpdated.         ToIso8601())
 
                        );

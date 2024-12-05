@@ -17,12 +17,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="HTTPRoot\css\cdrs\cdrs.css" />
+    <None Remove="HTTPRoot\css\cdrs\cdrs.min.css" />
     <None Remove="HTTPRoot\css\index.css" />
     <None Remove="HTTPRoot\css\index.min.css" />
     <None Remove="HTTPRoot\css\locations\locations.css" />
     <None Remove="HTTPRoot\css\locations\locations.min.css" />
     <None Remove="HTTPRoot\css\locations\locationStatistics.css" />
     <None Remove="HTTPRoot\css\locations\locationStatistics.min.css" />
+    <None Remove="HTTPRoot\css\remoteParties\remoteParties.css" />
+    <None Remove="HTTPRoot\css\remoteParties\remoteParties.min.css" />
+    <None Remove="HTTPRoot\css\remoteParties\remoteParty.css" />
+    <None Remove="HTTPRoot\css\remoteParties\remoteParty.min.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
@@ -33,14 +39,14 @@
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\stopSession.min.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.css" />
     <None Remove="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.min.css" />
-    <None Remove="HTTPRoot\css\remoteParty\remoteParties.css" />
-    <None Remove="HTTPRoot\css\remoteParty\remoteParties.min.css" />
-    <None Remove="HTTPRoot\css\remoteParty\remoteParty.css" />
-    <None Remove="HTTPRoot\css\remoteParty\remoteParty.min.css" />
+    <None Remove="HTTPRoot\css\sessions\sessions.css" />
+    <None Remove="HTTPRoot\css\sessions\sessions.min.css" />
     <None Remove="HTTPRoot\css\tariffs\tariffs.css" />
     <None Remove="HTTPRoot\css\tariffs\tariffs.min.css" />
     <None Remove="HTTPRoot\css\template.css" />
     <None Remove="HTTPRoot\css\template.min.css" />
+    <None Remove="HTTPRoot\css\tokens\tokens.css" />
+    <None Remove="HTTPRoot\css\tokens\tokens.min.css" />
     <None Remove="HTTPRoot\css\versions\versionDetails.css" />
     <None Remove="HTTPRoot\css\versions\versionDetails.min.css" />
     <None Remove="HTTPRoot\css\versions\versions.css" />
@@ -60,6 +66,7 @@
     <None Remove="HTTPRoot\locations\locations.ts" />
     <None Remove="HTTPRoot\locations\locationStatistics.js" />
     <None Remove="HTTPRoot\locations\locationStatistics.js.map" />
+    <None Remove="HTTPRoot\remoteParties\remoteParties.scss" />
     <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js" />
     <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js.map" />
     <None Remove="HTTPRoot\remoteParty\remoteCPO\cancelReservation.scss" />
@@ -94,6 +101,7 @@
     <None Remove="HTTPRoot\remoteParty\remoteParty.scss" />
     <None Remove="HTTPRoot\remoteParty\remoteParty.shtml" />
     <None Remove="HTTPRoot\remoteParty\remoteParty.ts" />
+    <None Remove="HTTPRoot\sessions\sessions.js.map" />
     <None Remove="HTTPRoot\tariffs\tariffs.js" />
     <None Remove="HTTPRoot\tariffs\tariffs.js.map" />
     <None Remove="HTTPRoot\template.html" />
@@ -111,6 +119,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\css\cdrs\cdrs.css" />
+    <EmbeddedResource Include="HTTPRoot\css\cdrs\cdrs.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\css\all.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.ttf" />
     <EmbeddedResource Include="HTTPRoot\css\FontAwesome\webfonts\fa-brands-400.woff2" />
@@ -126,6 +136,10 @@
     <EmbeddedResource Include="HTTPRoot\css\locations\locations.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\locations\locationStatistics.css" />
     <EmbeddedResource Include="HTTPRoot\css\locations\locationStatistics.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParties.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParties.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParty.css" />
+    <EmbeddedResource Include="HTTPRoot\css\remoteParties\remoteParty.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\cancelReservation.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\reserveNow.css" />
@@ -136,14 +150,14 @@
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\stopSession.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.css" />
     <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteCPO\unlockConnector.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParties.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParties.min.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParty.css" />
-    <EmbeddedResource Include="HTTPRoot\css\remoteParty\remoteParty.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\sessions\sessions.css" />
+    <EmbeddedResource Include="HTTPRoot\css\sessions\sessions.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\tariffs\tariffs.css" />
     <EmbeddedResource Include="HTTPRoot\css\tariffs\tariffs.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\template.css" />
     <EmbeddedResource Include="HTTPRoot\css\template.min.css" />
+    <EmbeddedResource Include="HTTPRoot\css\tokens\tokens.css" />
+    <EmbeddedResource Include="HTTPRoot\css\tokens\tokens.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.css" />
@@ -160,6 +174,25 @@
     <EmbeddedResource Include="HTTPRoot\locations\locationStatistics.ts" />
     <EmbeddedResource Include="HTTPRoot\locations\locationStatistics.scss" />
     <EmbeddedResource Include="HTTPRoot\locations\locationStatistics.shtml" />
+    <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.js" />
+    <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.js.map" />
+    <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.map" />
+    <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.scss" />
+    <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.shtml" />
+    <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.scss" />
+    <EmbeddedResource Include="HTTPRoot\sessions\sessions.js" />
+    <EmbeddedResource Include="HTTPRoot\sessions\sessions.js.map" />
+    <EmbeddedResource Include="HTTPRoot\sessions\sessions.map" />
+    <EmbeddedResource Include="HTTPRoot\sessions\sessions.scss" />
+    <EmbeddedResource Include="HTTPRoot\sessions\sessions.shtml" />
+    <EmbeddedResource Include="HTTPRoot\sessions\sessions.ts" />
+    <EmbeddedResource Include="HTTPRoot\support\support.shtml" />
+    <EmbeddedResource Include="HTTPRoot\tokens\tokens.js" />
+    <EmbeddedResource Include="HTTPRoot\tokens\tokens.map" />
+    <EmbeddedResource Include="HTTPRoot\tokens\tokens.scss" />
+    <EmbeddedResource Include="HTTPRoot\tokens\tokens.shtml" />
+    <EmbeddedResource Include="HTTPRoot\tokens\tokens.ts" />
     <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.js" />
     <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.js.map" />
     <EmbeddedResource Include="HTTPRoot\tariffs\tariffs.scss" />
@@ -195,15 +228,15 @@
     <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.scss" />
     <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.shtml" />
     <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.ts" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.js" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.js.map" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.shtml" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.ts" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.js" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.js.map" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.scss" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.shtml" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParties.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.js" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.js.map" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParties\remoteParty.ts" />
     <EmbeddedResource Include="HTTPRoot\template.html" />
     <EmbeddedResource Include="HTTPRoot\template.scss" />
     <EmbeddedResource Include="HTTPRoot\index.shtml" />

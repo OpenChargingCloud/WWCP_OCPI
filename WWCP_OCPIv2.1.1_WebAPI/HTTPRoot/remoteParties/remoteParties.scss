@@ -11,7 +11,6 @@ body {
 
                             padding:            1vh 2vw;
                             border-radius:      6px;
-                            background-color:   #e7e7e7;
 
                             #description {
                                 font-weight:        bold;
@@ -24,7 +23,28 @@ body {
                                 flex-direction:         column;
                                 border-top:             none;
 
-                                a.remoteParty {
+                                .properties {
+
+                                    display:                        table;
+
+                                    .row {
+
+                                        display:                        table-row;
+
+                                        .key {
+                                            display:                        table-cell;
+                                            padding-right:                  10px;
+                                        }
+
+                                        .value {
+                                            display:                        table-cell;
+                                        }
+
+                                    }
+
+                                }
+
+                                .remoteParty {
 
                                     padding:                1vh 2vw;
                                     display:                inline-block;
@@ -61,10 +81,15 @@ body {
 
                                     }
 
-                                }
+                                    .dates {
+                                        margin-top:             15px;
+                                        font-size:              70%;
+                                    }
 
-                                a.remoteParty:hover {
-                                    background-color:       #bcc9dd;
+                                    &:hover {
+                                        background-color:       #bcc9dd;
+                                    }
+
                                 }
 
                             }

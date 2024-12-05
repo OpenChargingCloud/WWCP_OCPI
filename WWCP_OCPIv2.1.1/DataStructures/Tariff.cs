@@ -282,7 +282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.Currency        = Currency;
             this.TariffElements  = TariffElements.Distinct();
 
-            this.TariffAltText   = TariffAltText?.Distinct() ?? Array.Empty<DisplayText>();
+            this.TariffAltText   = TariffAltText?.Distinct() ?? [];
             this.TariffAltURL    = TariffAltURL;
             this.EnergyMix       = EnergyMix;
 

@@ -21,6 +21,7 @@ let topLeft: HTMLDivElement = null;
 interface ICommons {
     topLeft:                        HTMLDivElement;
     menuVersions:                   HTMLAnchorElement;
+    menuRemoteParties:              HTMLAnchorElement;
 }
 
 interface TMetadataDefaults {
@@ -330,9 +331,8 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
                                 ocpiResponse.status_code <  2000)
                             {
 
-                                if (ocpiResponse?.data               &&
-                                    Array.isArray(ocpiResponse.data) &&
-                                    ocpiResponse.data.length > 0)
+                                if (ocpiResponse?.data &&
+                                    Array.isArray(ocpiResponse.data))
                                 {
 
                                     const searchResults = ocpiResponse.data as Array<TSearchResult>;
@@ -351,8 +351,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
                                     if (Number.isNaN(filteredNumberOfResults))
                                         filteredNumberOfResults  = totalNumberOfResults;
 
-
-                                    if (deletePreviousResults || numberOfResults > 0)
+                                    if (deletePreviousResults)
                                         searchResultsDiv.innerHTML = "";
 
                                     if (firstSearch && doStartUp) {
@@ -877,7 +876,35 @@ async function OCPIGetCollection<TMetadata extends TMetadataDefaults, TSearchRes
 function GetDefaults() : ICommons
 {
     return {
-        topLeft:       document.getElementById("topLeft")        as HTMLDivElement,
-        menuVersions:  document.getElementById("menuVersions")   as HTMLAnchorElement
+        topLeft:            document.getElementById("topLeft")            as HTMLDivElement,
+        menuVersions:       document.getElementById("menuVersions")       as HTMLAnchorElement,
+        menuRemoteParties:  document.getElementById("menuRemoteParties")  as HTMLAnchorElement
     }
+}
+
+
+
+function CreateProperty(parent: HTMLDivElement | HTMLAnchorElement, className: string, key: string, innerHTML: string | HTMLDivElement): HTMLDivElement {
+
+    const rowDiv = parent.appendChild(document.createElement('div')) as HTMLDivElement;
+    rowDiv.className = "row";
+
+    // key
+    const keyDiv = rowDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    keyDiv.className = "key";
+    keyDiv.innerHTML = key;
+
+    // value
+    const valueDiv = rowDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+    valueDiv.className = "value " + className;
+
+    if (typeof innerHTML === 'string')
+        valueDiv.innerHTML = innerHTML;
+
+    else if (innerHTML instanceof HTMLDivElement)
+        valueDiv.appendChild(innerHTML);
+
+
+    return rowDiv;
+
 }

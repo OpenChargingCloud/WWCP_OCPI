@@ -566,12 +566,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPServer:                          cpoHTTPAPI.HTTPServer,
                                        CommonAPI:                           cpoCommonAPI,
                                        OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
+                                       APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1/api"),
                                        WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
                                        BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
                                        HTTPRealm:                           "GraphDefined OCPI CPO WebAPI",
-                                       HTTPLogins:                          new[] {
+                                       HTTPLogins:                          [
                                                                                 new KeyValuePair<String, String>("a", "b")
-                                                                            },
+                                                                            ],
                                        HTMLTemplate:                        null,
                                        RequestTimeout:                      null
                                    );
@@ -580,12 +581,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPServer:                          emsp1HTTPAPI.HTTPServer,
                                        CommonAPI:                           emsp1CommonAPI,
                                        OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
+                                       APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1/api"),
                                        WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
                                        BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
                                        HTTPRealm:                           "GraphDefined OCPI EMSP #1 WebAPI",
-                                       HTTPLogins:                          new[] {
+                                       HTTPLogins:                          [
                                                                                 new KeyValuePair<String, String>("c", "d")
-                                                                            },
+                                                                            ],
                                        HTMLTemplate:                        null,
                                        RequestTimeout:                      null
                                    );
@@ -594,12 +596,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        HTTPServer:                          emsp2HTTPAPI.HTTPServer,
                                        CommonAPI:                           emsp2CommonAPI,
                                        OverlayURLPathPrefix:                HTTPPath.Parse("/ocpi/v2.1"),
+                                       APIURLPathPrefix:                    HTTPPath.Parse("/ocpi/v2.1/api"),
                                        WebAPIURLPathPrefix:                 HTTPPath.Parse("/ocpi/v2.1/webapi"),
                                        BasePath:                            HTTPPath.Parse("/ocpi/v2.1"),
                                        HTTPRealm:                           "GraphDefined OCPI EMSP #2 WebAPI",
-                                       HTTPLogins:                          new[] {
+                                       HTTPLogins:                          [
                                                                                 new KeyValuePair<String, String>("e", "f")
-                                                                            },
+                                                                            ],
                                        HTMLTemplate:                        null,
                                        RequestTimeout:                      null
                                    );

@@ -8,9 +8,9 @@ body {
 
             #right {
                 #text {
-                    #tariffInfos {
+                    #sessionInfos {
 
-                        #tariffInfos2 {
+                        #sessionInfos2 {
 
                             padding:            1vh 2vw;
                             border-radius:      6px;
@@ -41,7 +41,7 @@ body {
 
                             }
 
-                            #tariffStatistics {
+                            #sessionStatistics {
                                 padding-bottom:     10px;
                             }
 
@@ -50,7 +50,7 @@ body {
                             }
 
 
-                            #tariffs {
+                            #sessions {
 
                                 border-top:             none;
 
@@ -74,7 +74,7 @@ body {
                                     }
                                 }
 
-                                .tariff {
+                                .session {
 
                                     padding:                15px 22px;
                                     display:                inline-block;
@@ -112,11 +112,11 @@ body {
                                         font-size:              80%;
                                     }
 
-                                    .tariffElements {
+                                    .sessionElements {
 
                                         padding-left:           10px;
 
-                                        .tariffElement {
+                                        .sessionElement {
 
                                             background-color:       #e2e2e2;
                                             padding:                10px 15px;
@@ -158,7 +158,7 @@ body {
 
                                             }
 
-                                            .tariffRestrictions {
+                                            .sessionRestrictions {
 
                                                 font-size:              85%;
                                                 margin-top:             6px;
