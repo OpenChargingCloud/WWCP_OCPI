@@ -560,7 +560,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
 
         offset += limit;
 
-        Search(false, false, () => {
+        Search(true, false, () => {
             leftButton.classList.remove("busy");
             rightButton.classList.remove("busy", "busyActive");
         });
