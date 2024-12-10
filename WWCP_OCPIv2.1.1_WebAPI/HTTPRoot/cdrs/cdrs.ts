@@ -228,7 +228,7 @@ function StartCDRs()
 
         // linkPrefix
         null,//cdr => "",
-        searchResultsMode.listView,
+        SearchResultsMode.listView,
 
         context => {
             //statusFilterSelect.onchange = () => {

@@ -25,7 +25,7 @@ function StartLocations()
     common.menuVersions.classList.add("activated");
     common.menuVersions.href           = "../../versions";
 
-    const tariffs                      = new Map<string, number>();
+    //const tariffs                      = new Map<string, number>();
     //const errors                       = new Array<any>();
 
     OCPIStartSearch2<ILocationMetadata, ILocation>(
@@ -224,14 +224,14 @@ function StartLocations()
 
                             if (connector.tariff_id) {
 
-                                if (!tariffs.has(connector.tariff_id)) {
-                                    tariffs.set(connector.tariff_id, 0);
-                                }
+                                //if (!tariffs.has(connector.tariff_id)) {
+                                //    tariffs.set(connector.tariff_id, 0);
+                                //}
 
-                                tariffs.set(
-                                    connector.tariff_id,
-                                    tariffs.get(connector.tariff_id) + 1
-                                );
+                                //tariffs.set(
+                                //    connector.tariff_id,
+                                //    tariffs.get(connector.tariff_id) + 1
+                                //);
 
                                 CreateProperty(
                                     connectorPropertiesDiv,
@@ -318,7 +318,7 @@ function StartLocations()
 
         // linkPrefix
         null,//tariff => "",
-        searchResultsMode.listView,
+        SearchResultsMode.listView,
 
         context => {
             //statusFilterSelect.onchange = () => {

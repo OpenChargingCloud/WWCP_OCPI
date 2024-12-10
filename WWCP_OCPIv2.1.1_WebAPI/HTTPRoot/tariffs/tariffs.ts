@@ -326,7 +326,7 @@ function StartTariffs()
 
         // linkPrefix
         null,//tariff => "",
-        searchResultsMode.listView,
+        SearchResultsMode.listView,
 
         context => {
             //statusFilterSelect.onchange = () => {

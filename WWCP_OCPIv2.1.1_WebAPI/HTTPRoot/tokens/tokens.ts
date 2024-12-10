@@ -140,7 +140,7 @@ function StartTokens()
 
         // linkPrefix
         null,//token => "",
-        searchResultsMode.listView,
+        SearchResultsMode.listView,
 
         context => {
             //statusFilterSelect.onchange = () => {

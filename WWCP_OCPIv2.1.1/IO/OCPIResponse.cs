@@ -404,7 +404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            Request_Id?      RequestId               = null,
                            Correlation_Id?  CorrelationId           = null,
-                           URL?             Location                = null)
+                           URL?             HTTPLocation            = null)
             {
 
                 this.Request                = Request;
@@ -415,7 +415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 this.RequestId              = RequestId;
                 this.CorrelationId          = CorrelationId;
-                this.HTTPLocation               = Location;
+                this.HTTPLocation           = HTTPLocation;
 
             }
 
@@ -431,7 +431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 HTTPResponseBuilder.Server                     ??= Request?.HTTPRequest.HTTPServer.DefaultServerName;
                 HTTPResponseBuilder.Date                       ??= Timestamp.Value;
                 HTTPResponseBuilder.AccessControlAllowOrigin   ??= "*";
-                HTTPResponseBuilder.AccessControlAllowHeaders  ??= new[] { "Authorization" };
+                HTTPResponseBuilder.AccessControlAllowHeaders  ??= [ "Authorization" ];
                 HTTPResponseBuilder.Vary                       ??= "Accept";
                 HTTPResponseBuilder.Connection                 ??= ConnectionType.Close;
 

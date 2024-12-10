@@ -72,7 +72,7 @@ interface SearchContext {
     (context: any): void;
 }
 
-enum searchResultsMode {
+enum SearchResultsMode {
     listView,
     tableView
 }
@@ -204,7 +204,7 @@ function OCPIStartSearch<TSearchResult>(requestURL:   string,
                                         doListView:   SearchListView<TSearchResult>,
                                         doTableView:  SearchTableView<TSearchResult>,
                                         linkPrefix?:  SearchResult2Link<TSearchResult>,
-                                        startView?:   searchResultsMode,
+                                        startView?:   SearchResultsMode,
                                         context?:     SearchContext) {
 
     return OCPIStartSearch2<any, TSearchResult>(
@@ -234,7 +234,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
                                                                               doListView:     SearchListView<TSearchResult>,
                                                                               doTableView:    SearchTableView<TSearchResult>,
                                                                               linkPrefix?:    SearchResult2Link<TSearchResult>,
-                                                                              startView?:     searchResultsMode,
+                                                                              startView?:     SearchResultsMode,
                                                                               context?:       SearchContext) {
 
     requestURL = requestURL.indexOf('?') === -1
@@ -248,7 +248,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
     let   limit                    = 10;
     let   currentDateFrom:string   = null;
     let   currentDateTo:string     = null;
-    let   viewMode                 = startView !== null ? startView : searchResultsMode.listView;
+    let   viewMode                 = startView !== null ? startView : SearchResultsMode.listView;
     const context__                = { Search: Search };
     let   numberOfResults          = 0;
     let   linkURL                  = "";
@@ -362,7 +362,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
                                     switch (viewMode)
                                     {
 
-                                        case searchResultsMode.tableView:
+                                        case SearchResultsMode.tableView:
                                             try
                                             {
                                                 doTableView(
@@ -376,7 +376,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
                                             }
                                             break;
 
-                                        case searchResultsMode.listView:
+                                        case SearchResultsMode.listView:
                                             if (searchResults.length > 0) {
 
                                                 let resultCounter = offset + 1;
@@ -621,14 +621,14 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
 
     if (listViewButton !== null) {
         listViewButton.onclick = () => {
-            viewMode = searchResultsMode.listView;
+            viewMode = SearchResultsMode.listView;
             Search(true);
         }
     }
 
     if (tableViewButton !== null) {
         tableViewButton.onclick = () => {
-            viewMode = searchResultsMode.tableView;
+            viewMode = SearchResultsMode.tableView;
             Search(true);
         }
     }

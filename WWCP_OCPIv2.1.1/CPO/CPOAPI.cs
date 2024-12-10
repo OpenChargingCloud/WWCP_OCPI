@@ -24,7 +24,6 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using System.Runtime.InteropServices;
 
 #endregion
 
@@ -2697,25 +2696,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region OPTIONS  ~/locations
 
             // https://example.com/ocpi/2.2/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "locations",
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "locations",
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                       Allow                      = new[] {
-                                                                                        HTTPMethod.OPTIONS,
-                                                                                        HTTPMethod.GET
-                                                                                    },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode              = HTTPStatusCode.OK,
+                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders   = [ "Authorization" ],
+                                   AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count" ]
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -2791,11 +2789,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
                                         var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                       Server                     = DefaultHTTPServerName,
-                                                                       Date                       = Timestamp.Now,
-                                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                                                       HTTPStatusCode              = HTTPStatusCode.OK,
+                                                                       Server                      = DefaultHTTPServerName,
+                                                                       Date                        = Timestamp.Now,
+                                                                       AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                                                       AccessControlAllowHeaders   = [ "Authorization" ],
+                                                                       AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
                                                                    }.
 
                                                                    // The overall number of locations
@@ -2878,25 +2877,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/locations/{locationId}
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "locations/{locationId}",
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "locations/{locationId}",
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                       Allow                      = new[] {
-                                                                                        HTTPMethod.OPTIONS,
-                                                                                        HTTPMethod.GET
-                                                                                    },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -2991,25 +2988,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/locations/{locationId}/{evseId}
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "locations/{locationId}/{evseId}",
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "locations/{locationId}/{evseId}",
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                       Allow                      = new[] {
-                                                                                        HTTPMethod.OPTIONS,
-                                                                                        HTTPMethod.GET
-                                                                                    },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -3095,25 +3090,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/locations/{locationId}/{evseId}/{connectorId}
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                       Allow                      = new[] {
-                                                                                        HTTPMethod.OPTIONS,
-                                                                                        HTTPMethod.GET
-                                                                                    },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -3196,25 +3189,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region OPTIONS  ~/tariffs
 
             // https://example.com/ocpi/2.2/cpo/tariffs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "tariffs",
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "tariffs",
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                       Allow                      = new[] {
-                                                                                        HTTPMethod.OPTIONS,
-                                                                                        HTTPMethod.GET
-                                                                                    },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode              = HTTPStatusCode.OK,
+                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders   = [ "Authorization" ],
+                                   AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count" ]
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -3358,25 +3350,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/tariffs/{tariffId}
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "tariffs/{tariffId}",
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "tariffs/{tariffId}",
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                       Allow                      = new[] {
-                                                                                        HTTPMethod.OPTIONS,
-                                                                                        HTTPMethod.GET
-                                                                                    },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -3466,25 +3456,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region OPTIONS  ~/sessions
 
             // https://example.com/ocpi/2.2/cpo/sessions/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "sessions",
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "sessions",
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                       Allow                      = new[] {
-                                                                                        HTTPMethod.OPTIONS,
-                                                                                        HTTPMethod.GET
-                                                                                    },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode              = HTTPStatusCode.OK,
+                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders   = [ "Authorization" ],
+                                   AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count" ]
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -3620,25 +3609,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/sessions/{sessionId}
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "sessions/{sessionId}",
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "sessions/{sessionId}",
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                       Allow                      = new[] {
-                                                                                        HTTPMethod.OPTIONS,
-                                                                                        HTTPMethod.GET
-                                                                                    },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -3746,25 +3733,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region OPTIONS  ~/cdrs
 
             // https://example.com/ocpi/2.2/cpo/CDRs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "CDRs",
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "CDRs",
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                       Allow                      = new[] {
-                                                                                        HTTPMethod.OPTIONS,
-                                                                                        HTTPMethod.GET
-                                                                                    },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode              = HTTPStatusCode.OK,
+                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders   = [ "Authorization" ],
+                                   AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count" ]
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -3912,26 +3898,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/cdrs/{CDRId}
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "cdrs/{CDRId}",
-                                    HTTPContentType.Application.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "cdrs/{CDRId}",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                       Allow                      = new[] {
-                                                                                        HTTPMethod.OPTIONS,
-                                                                                        HTTPMethod.GET
-                                                                                    },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                   AccessControlAllowHeaders  = [ "Authorization" ],
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -4040,26 +4024,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/tokens/{country_code}/{party_id}      [NonStandard]
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "tokens/{country_code}/{party_id}",
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "tokens/{country_code}/{party_id}",
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                                new OCPIResponse.Builder(Request) {
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
-                                                           Allow                      = new[] {
-                                                                                            HTTPMethod.OPTIONS,
-                                                                                            HTTPMethod.GET,
-                                                                                            HTTPMethod.DELETE
-                                                                                        },
-                                                           AccessControlAllowHeaders  = [ "Authorization" ]
-                                                       }
-                                                });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode              = HTTPStatusCode.OK,
+                                   Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.DELETE ],
+                                   AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE"],
+                                   AccessControlAllowHeaders   = [ "Authorization" ],
+                                   AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count" ]
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -4254,31 +4236,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/tokens/{country_code}/{party_id}/{tokenId}      [NonStandard]
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
-                                    OCPIRequestHandler: Request => {
+            CommonAPI.AddOCPIMethod(
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
+                OCPIRequestHandler: request =>
 
-                                        return Task.FromResult(
-                                                new OCPIResponse.Builder(Request) {
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.OK,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "PUT", "PATCH", "DELETE" },
-                                                           Allow                      = new[] {
-                                                                                            HTTPMethod.OPTIONS,
-                                                                                            HTTPMethod.GET,
-                                                                                            HTTPMethod.PUT,
-                                                                                            HTTPMethod.PATCH,
-                                                                                            HTTPMethod.DELETE
-                                                                                        },
-                                                           AcceptPatch                = new List<HTTPContentType> {
-                                                                                            HTTPContentType.Application.JSONMergePatch_UTF8
-                                                                                        },
-                                                           AccessControlAllowHeaders  = [ "Authorization" ]
-                                                       }
-                                                });
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET, HTTPMethod.PUT, HTTPMethod.PATCH, HTTPMethod.DELETE ],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE"],
+                                   AccessControlAllowHeaders  = [ "Authorization" ],
+                                   AcceptPatch                = [ HTTPContentType.Application.JSONMergePatch_UTF8 ]
+                               }
+                        })
 
-                                    });
+            );
 
             #endregion
 
@@ -4664,22 +4639,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/commands/RESERVE_NOW
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "commands/RESERVE_NOW",
-                                    HTTPContentType.Application.JSON_UTF8,
-                                    OCPIRequestHandler: Request =>
+            CommonAPI.AddOCPIMethod(
 
-                                        Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            })
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "commands/RESERVE_NOW",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestHandler: request =>
 
-                                    );
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.POST],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST"],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
+
+            );
 
             #endregion
 
@@ -4776,22 +4754,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/commands/CANCEL_RESERVATION
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "commands/CANCEL_RESERVATION",
-                                    HTTPContentType.Application.JSON_UTF8,
-                                    OCPIRequestHandler: Request =>
+            CommonAPI.AddOCPIMethod(
 
-                                        Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            })
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "commands/CANCEL_RESERVATION",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestHandler: request =>
 
-                                    );
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.POST],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST"],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
+
+            );
 
             #endregion
 
@@ -4888,22 +4869,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/commands/START_SESSION
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "commands/START_SESSION",
-                                    HTTPContentType.Application.JSON_UTF8,
-                                    OCPIRequestHandler: Request =>
+            CommonAPI.AddOCPIMethod(
 
-                                        Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            })
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "commands/START_SESSION",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestHandler: request =>
 
-                                    );
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.POST],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST"],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
+
+            );
 
             #endregion
 
@@ -5002,22 +4986,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/commands/STOP_SESSION
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "commands/STOP_SESSION",
-                                    HTTPContentType.Application.JSON_UTF8,
-                                    OCPIRequestHandler: Request =>
+            CommonAPI.AddOCPIMethod(
 
-                                        Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            })
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "commands/STOP_SESSION",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestHandler: request =>
 
-                                    );
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.POST],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST"],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
+
+            );
 
             #endregion
 
@@ -5114,22 +5101,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/commands/UNLOCK_CONNECTOR
 
-            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                    HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "commands/UNLOCK_CONNECTOR",
-                                    HTTPContentType.Application.JSON_UTF8,
-                                    OCPIRequestHandler: Request =>
+            CommonAPI.AddOCPIMethod(
 
-                                        Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "POST" },
-                                                       AccessControlAllowHeaders  = [ "Authorization" ]
-                                                   }
-                                            })
+                HTTPHostname.Any,
+                HTTPMethod.OPTIONS,
+                URLPathPrefix + "commands/UNLOCK_CONNECTOR",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestHandler: request =>
 
-                                    );
+                    Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                               HTTPResponseBuilder = new HTTPResponse.Builder(request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.OK,
+                                   Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.POST],
+                                   AccessControlAllowMethods  = [ "OPTIONS", "POST"],
+                                   AccessControlAllowHeaders  = [ "Authorization" ]
+                               }
+                        })
+
+            );
 
             #endregion
 

@@ -177,7 +177,7 @@ function StartSessions()
 
         // linkPrefix
         null,//session => "",
-        searchResultsMode.listView,
+        SearchResultsMode.listView,
 
         context => {
             //statusFilterSelect.onchange = () => {

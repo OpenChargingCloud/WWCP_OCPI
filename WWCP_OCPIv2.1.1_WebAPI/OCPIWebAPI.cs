@@ -32,6 +32,7 @@ using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
 using cloud.charging.open.protocols.OCPI;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
 using org.GraphDefined.Vanaheimr.Hermod.SMTP;
+using static org.GraphDefined.Vanaheimr.BouncyCastle.OpenPGP2;
 
 #endregion
 
@@ -748,33 +749,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                      download
 
                                                          ? new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               Server                     = HTTPServer.DefaultServerName,
-                                                               Date                       = Timestamp.Now,
-                                                               AccessControlAllowOrigin   = "*",
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                               ContentDisposition         = download
-                                                                                                ? @"attachment; filename = ""locations.json"""
-                                                                                                : null,
-                                                               ContentType                = HTTPContentType.Application.JSON_UTF8,
-                                                               Content                    = new JArray(CommonAPI.GetLocations().Select(location => location.ToJSON())).ToUTF8Bytes(),
-                                                               Vary                       = "Accept",
-                                                               Connection                 = ConnectionType.Close
+                                                               HTTPStatusCode              = HTTPStatusCode.OK,
+                                                               Server                      = HTTPServer.DefaultServerName,
+                                                               Date                        = Timestamp.Now,
+                                                               AccessControlAllowOrigin    = "*",
+                                                               AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                                               AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
+                                                               AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
+                                                               ContentDisposition          = download
+                                                                                                 ? @"attachment; filename = ""locations.json"""
+                                                                                                 : null,
+                                                               ContentType                 = HTTPContentType.Application.JSON_UTF8,
+                                                               Content                     = new JArray(CommonAPI.GetLocations().Select(location => location.ToJSON())).ToUTF8Bytes(),
+                                                               Vary                        = "Accept",
+                                                               Connection                  = ConnectionType.Close
                                                            }.AsImmutable
 
                                                          : new HTTPResponse.Builder(request) {
-                                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               Server                     = HTTPServer.DefaultServerName,
-                                                               Date                       = Timestamp.Now,
-                                                               AccessControlAllowOrigin   = "*",
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                               AccessControlAllowHeaders  = [ "Content-Type", "Accept", "Authorization" ],
-                                                               ContentType                = HTTPContentType.Text.HTML_UTF8,
-                                                               Content                    = MixWithHTMLTemplate("locations.locations.shtml",
-                                                                                                          html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
-                                                               Connection                 = ConnectionType.Close,
-                                                               Vary                       = "Accept"
+                                                               HTTPStatusCode              = HTTPStatusCode.OK,
+                                                               Server                      = HTTPServer.DefaultServerName,
+                                                               Date                        = Timestamp.Now,
+                                                               AccessControlAllowOrigin    = "*",
+                                                               AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                                               AccessControlAllowHeaders   = [ "Content-Type", "Accept", "Authorization" ],
+                                                               ContentType                 = HTTPContentType.Text.HTML_UTF8,
+                                                               Content                     = MixWithHTMLTemplate("locations.locations.shtml",
+                                                                                                           html => html.Replace("{{versionPath}}", "v2.1/")).ToUTF8Bytes(),
+                                                               Connection                  = ConnectionType.Close,
+                                                               Vary                        = "Accept"
                                                            }.AsImmutable
 
                                                  );

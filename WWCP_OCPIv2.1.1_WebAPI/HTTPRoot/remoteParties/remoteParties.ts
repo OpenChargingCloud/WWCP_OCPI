@@ -104,7 +104,7 @@ function StartRemoteParties()
 
         // linkPrefix
         null,//remoteParty => "",
-        searchResultsMode.listView,
+        SearchResultsMode.listView,
 
         context => {
             //statusFilterSelect.onchange = () => {
