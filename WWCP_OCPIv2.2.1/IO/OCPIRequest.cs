@@ -50,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <summary>
         /// Add a method callback for the given URL template.
         /// </summary>
-        /// <param name="CommonAPI">The OCPI Common API.</param>
+        /// <param name="CommonAPI">The OCPI CommonAPI.</param>
         /// <param name="Hostname">The HTTP hostname.</param>
         /// <param name="HTTPMethod">The HTTP method.</param>
         /// <param name="URLTemplate">The URL template.</param>

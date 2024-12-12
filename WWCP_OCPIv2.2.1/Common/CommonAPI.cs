@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
 
     /// <summary>
-    /// The Common API.
+    /// The CommonAPI.
     /// </summary>
     public class CommonAPI : CommonAPIBase
     {
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public Boolean                       Disable_OCPIv2_1_1         { get; }
 
         /// <summary>
-        /// The Common API logger.
+        /// The CommonAPI logger.
         /// </summary>
         public CommonAPILogger?              CommonAPILogger            { get; }
 
@@ -129,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a GET versions request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetVersionsRequest(DateTime     Timestamp,
                                                    HTTPAPI      API,
@@ -152,7 +152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a GET versions response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetVersionsResponse(DateTime      Timestamp,
@@ -179,7 +179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a GET version request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetVersionRequest(DateTime     Timestamp,
                                                   HTTPAPI      API,
@@ -202,7 +202,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a GET version response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetVersionResponse(DateTime      Timestamp,
@@ -229,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a GET credentials request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task GetCredentialsRequest(DateTime     Timestamp,
                                                       HTTPAPI      API,
@@ -252,7 +252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a GET credentials response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task GetCredentialsResponse(DateTime      Timestamp,
@@ -279,7 +279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a POST credentials request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PostCredentialsRequest(DateTime     Timestamp,
                                                        HTTPAPI      API,
@@ -302,7 +302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a POST credentials response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PostCredentialsResponse(DateTime      Timestamp,
@@ -329,7 +329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a PUT credentials request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PutCredentialsRequest(DateTime     Timestamp,
                                                       HTTPAPI      API,
@@ -352,7 +352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a PUT credentials response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PutCredentialsResponse(DateTime      Timestamp,
@@ -379,7 +379,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a DELETE credentials request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task DeleteCredentialsRequest(DateTime     Timestamp,
                                                          HTTPAPI      API,
@@ -402,7 +402,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// An event sent whenever a DELETE credentials response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The Common API.</param>
+        /// <param name="API">The CommonAPI.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteCredentialsResponse(DateTime      Timestamp,
