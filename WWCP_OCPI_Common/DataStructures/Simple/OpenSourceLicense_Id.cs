@@ -88,7 +88,7 @@ namespace cloud.charging.open.protocols.OCPI
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new OICP Open Source license identification based on the given string.
+        /// Create a new OCPI Open Source license identification based on the given string.
         /// </summary>
         private OpenSourceLicense_Id(String Text)
         {

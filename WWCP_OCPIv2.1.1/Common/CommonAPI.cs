@@ -521,8 +521,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LocalCertificateSelector">An optional delegate to select the TLS client certificate used for authentication.</param>
         /// <param name="AllowedTLSProtocols">The TLS protocol(s) allowed for this connection.</param>
         /// 
-        /// <param name="ServerThreadName">The optional name of the TCP server thread.</param>
-        /// <param name="ServerThreadPriority">The optional priority of the TCP server thread.</param>
         /// <param name="ServerThreadIsBackground">Whether the TCP server thread is a background thread or not.</param>
         /// <param name="ConnectionIdBuilder">An optional delegate to build a connection identification based on IP socket information.</param>
         /// <param name="ConnectionTimeout">The TCP client timeout for all incoming client connections in seconds (default: 30 sec).</param>
@@ -848,12 +846,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region (private) ReadRemotePartyDatabaseFile()
+        #region LoadRemotePartyDatabaseFile (DatabaseFileName = null)
 
-        private new void ReadRemotePartyDatabaseFile()
+        public void LoadRemotePartyDatabaseFile(String? DatabaseFileName = null)
         {
 
-            foreach (var command in base.ReadRemotePartyDatabaseFile())
+            ProcessRemotePartyCommands(
+                ReadRemotePartyDatabaseFile(DatabaseFileName)
+            );
+
+        }
+
+        #endregion
+
+        #region ProcessRemotePartyCommands  (Commands)
+
+        public void ProcessRemotePartyCommands(IEnumerable<Command> Commands)
+        {
+
+            foreach (var command in Commands)
             {
 
                 String?      errorResponse   = null;
@@ -998,9 +1009,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #endregion
 
-
                 }
-
 
             }
 
@@ -1008,16 +1017,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region (private) ReadAssetsDatabaseFile()
 
-        private new void ReadAssetsDatabaseFile()
+        #region LoadAssetsDatabaseFile      (DatabaseFileName = null)
+
+        public void LoadAssetsDatabaseFile(String? DatabaseFileName = null)
         {
 
-            foreach (var command in base.ReadAssetsDatabaseFile())
+            ProcessAssetCommands(
+                ReadAssetsDatabaseFile(DatabaseFileName)
+            );
+
+        }
+
+        #endregion
+
+        #region ProcessAssetCommands        (Commands)
+
+        public void ProcessAssetCommands(IEnumerable<Command> Commands)
+        {
+
+            foreach (var command in Commands)
             {
 
                 String?       errorResponse   = null;
                 Location?     location;
+                EVSE?         evse;
                 Tariff?       tariff;
                 Session?      session;
                 TokenStatus  _tokenStatus;
@@ -1036,8 +1060,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Location.TryParse(command.JSONObject,
                                                   out location,
-                                                  out errorResponse) &&
-                                location is not null)
+                                                  out errorResponse))
                             {
                                 locations.TryAdd(location.Id, location);
                             }
@@ -1060,8 +1083,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Location.TryParse(command.JSONObject,
                                                   out location,
-                                                  out errorResponse) &&
-                                location is not null)
+                                                  out errorResponse))
                             {
                                 locations.TryAdd(location.Id, location);
                             }
@@ -1084,8 +1106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Location.TryParse(command.JSONObject,
                                                   out location,
-                                                  out errorResponse) &&
-                                location is not null)
+                                                  out errorResponse))
                             {
 
                                 if (locations.ContainsKey(location.Id))
@@ -1113,8 +1134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Location.TryParse(command.JSONObject,
                                                   out location,
-                                                  out errorResponse) &&
-                                location is not null)
+                                                  out errorResponse))
                             {
                                 locations.Remove(location.Id, out _);
                                 locations.TryAdd(location.Id, location);
@@ -1138,8 +1158,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Location.TryParse(command.JSONObject,
                                                   out location,
-                                                  out errorResponse) &&
-                                location is not null)
+                                                  out errorResponse))
                             {
                                 locations.Remove(location.Id, out _);
                             }
@@ -1163,6 +1182,65 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     #endregion
 
 
+                    // Experimental!
+
+                    #region addOrUpdateEVSE
+
+                    case addOrUpdateEVSE:
+                        try
+                        {
+                            if (command.JSONObject is not null &&
+
+                                command.JSONObject.TryGetValue("locationId", out var locationId) &&
+                                locationId.Type == JTokenType.String &&
+                                Location_Id.TryParse(locationId?.Value<String>() ?? "", out var location_Id) &&
+                                locations.ContainsKey(location_Id) &&
+
+                                command.JSONObject.TryGetValue("evse",       out var evseJToken) &&
+                                evseJToken.Type == JTokenType.Object &&
+                                evseJToken is JObject &&
+                                EVSE.TryParse((evseJToken as JObject)!,
+                                              out evse,
+                                              out errorResponse))
+
+                            {
+
+                                if (locations.TryGetValue(location_Id, out location))
+                                {
+
+                                    var updatedLocation = location.Update(loc => {
+
+                                        var newEVSEs = loc.EVSEs.Where(evseX => evseX.UId != evse.UId).ToList();
+                                        newEVSEs.Add(evse);
+
+                                        loc.EVSEs.Clear();
+
+                                        foreach (var newEVSE in newEVSEs)
+                                            loc.EVSEs.Add(newEVSE);
+
+                                    }, out var warnings);
+
+                                    if (updatedLocation is not null)
+                                    {
+                                        locations.Remove(location.Id, out _);
+                                        locations.TryAdd(location.Id, updatedLocation);
+                                    }
+
+                                }
+
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            errorResponse ??= e.Message;
+                        }
+                        if (errorResponse is not null)
+                            errorResponses.Add(new Tuple<Command, String>(command, errorResponse));
+                        break;
+
+                    #endregion
+
+
                     #region addTariff
 
                     case addTariff:
@@ -1171,8 +1249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Tariff.TryParse(command.JSONObject,
                                                 out tariff,
-                                                out errorResponse) &&
-                                tariff is not null)
+                                                out errorResponse))
                             {
                                 tariffs.TryAdd(tariff.Id, tariff);
                             }
@@ -1195,8 +1272,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Tariff.TryParse(command.JSONObject,
                                                 out tariff,
-                                                out errorResponse) &&
-                                tariff is not null)
+                                                out errorResponse))
                             {
                                 tariffs.TryAdd(tariff.Id, tariff);
                             }
@@ -1219,8 +1295,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Tariff.TryParse(command.JSONObject,
                                                 out tariff,
-                                                out errorResponse) &&
-                                tariff is not null)
+                                                out errorResponse))
                             {
 
                                 if (tariffs.ContainsKey(tariff.Id))
@@ -1248,8 +1323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Tariff.TryParse(command.JSONObject,
                                                 out tariff,
-                                                out errorResponse) &&
-                                tariff is not null)
+                                                out errorResponse))
                             {
                                 tariffs.Remove(tariff.Id);
                                 tariffs.TryAdd(tariff.Id, tariff);
@@ -1273,8 +1347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Tariff.TryParse(command.JSONObject,
                                                 out tariff,
-                                                out errorResponse) &&
-                                tariff is not null)
+                                                out errorResponse))
                             {
                                 tariffs.Remove(tariff.Id);
                             }
@@ -1306,8 +1379,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Session.TryParse(command.JSONObject,
                                                  out session,
-                                                 out errorResponse) &&
-                                session is not null)
+                                                 out errorResponse))
                             {
                                 chargingSessions.TryAdd(session.Id, session);
                             }
@@ -1330,8 +1402,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Session.TryParse(command.JSONObject,
                                                  out session,
-                                                 out errorResponse) &&
-                                session is not null)
+                                                 out errorResponse))
                             {
                                 chargingSessions.TryAdd(session.Id, session);
                             }
@@ -1354,8 +1425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Session.TryParse(command.JSONObject,
                                                  out session,
-                                                 out errorResponse) &&
-                                session is not null)
+                                                 out errorResponse))
                             {
 
                                 if (chargingSessions.ContainsKey(session.Id))
@@ -1383,8 +1453,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Session.TryParse(command.JSONObject,
                                                  out session,
-                                                 out errorResponse) &&
-                                session is not null)
+                                                 out errorResponse))
                             {
                                 chargingSessions.Remove(session.Id, out _);
                                 chargingSessions.TryAdd(session.Id, session);
@@ -1408,8 +1477,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 Session.TryParse(command.JSONObject,
                                                  out session,
-                                                 out errorResponse) &&
-                                session is not null)
+                                                 out errorResponse))
                             {
                                 chargingSessions.Remove(session.Id, out _);
                             }
@@ -1571,8 +1639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 CDR.TryParse(command.JSONObject,
                                              out cdr,
-                                             out errorResponse) &&
-                                cdr is not null)
+                                             out errorResponse))
                             {
                                 chargeDetailRecords.TryAdd(cdr.Id, cdr);
                             }
@@ -1595,8 +1662,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 CDR.TryParse(command.JSONObject,
                                              out cdr,
-                                             out errorResponse) &&
-                                cdr is not null)
+                                             out errorResponse))
                             {
                                 chargeDetailRecords.TryAdd(cdr.Id, cdr);
                             }
@@ -1619,8 +1685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 CDR.TryParse(command.JSONObject,
                                              out cdr,
-                                             out errorResponse) &&
-                                cdr is not null)
+                                             out errorResponse))
                             {
 
                                 if (chargeDetailRecords.ContainsKey(cdr.Id))
@@ -1648,8 +1713,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 CDR.TryParse(command.JSONObject,
                                                 out cdr,
-                                                out errorResponse) &&
-                                cdr is not null)
+                                                out errorResponse))
                             {
                                 chargeDetailRecords.Remove(cdr.Id, out _);
                                 chargeDetailRecords.TryAdd(cdr.Id, cdr);
@@ -1673,8 +1737,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             if (command.JSONObject is not null &&
                                 CDR.TryParse(command.JSONObject,
                                              out cdr,
-                                             out errorResponse) &&
-                                cdr is not null)
+                                             out errorResponse))
                             {
                                 chargeDetailRecords.Remove(cdr.Id, out _);
                             }

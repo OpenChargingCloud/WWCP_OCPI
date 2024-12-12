@@ -34,12 +34,14 @@ using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 namespace cloud.charging.open.protocols.OCPI
 {
 
-    public delegate String                 OCPILogfileCreatorDelegate(String LoggingPath, IRemoteParty? RemoteParty, String Context, String LogfileName);
-    //public delegate LogfileCreatorDelegate OCPILogfileCreatorMapper  (RemoteParty_Id RemotePartyId);
+    public delegate String OCPILogfileCreatorDelegate(String         LoggingPath,
+                                                      IRemoteParty?  RemoteParty,
+                                                      String         Context,
+                                                      String         LogfileName);
 
 
     /// <summary>
-    /// The Common API Base.
+    /// The CommonAPI Base.
     /// </summary>
     public class CommonAPIBase : HTTPAPI
     {
@@ -560,6 +562,13 @@ namespace cloud.charging.open.protocols.OCPI
         protected const String removeLocation                     = "removeLocation";
         protected const String removeAllLocations                 = "removeAllLocations";
 
+        protected const String addEVSE                            = "addEVSE";
+        protected const String addEVSEIfNotExists                 = "addEVSEIfNotExists";
+        protected const String addOrUpdateEVSE                    = "addOrUpdateEVSE";
+        protected const String updateEVSE                         = "updateEVSE";
+        protected const String removeEVSE                         = "removeEVSE";
+        protected const String removeAllEVSEs                     = "removeAllEVSEs";
+
         protected const String addTariff                          = "addTariff";
         protected const String addTariffIfNotExists               = "addTariffIfNotExists";
         protected const String addOrUpdateTariff                  = "addOrUpdateTariff";
@@ -975,20 +984,22 @@ namespace cloud.charging.open.protocols.OCPI
 
         //ToDo: Wrap the following into a plugable interface!
 
-        #region Read/write database files
+        #region (private) Read/Write Database Files
 
-        #region (private, static) WriteToDatabase       (FileName, Text)
+        #region (private static) WriteToDatabase                          (FileName, Text)
 
         private static Task WriteToDatabase(String  FileName,
                                             String  Text)
 
-            => File.AppendAllTextAsync(FileName,
-                                       Text + Environment.NewLine,
-                                       Encoding.UTF8);
+            => File.AppendAllTextAsync(
+                   FileName,
+                   Text + Environment.NewLine,
+                   Encoding.UTF8
+               );
 
         #endregion
 
-        #region (private, static) WriteToDatabase       (FileName, JToken, ...)
+        #region (private static) WriteToDatabase                          (FileName, JToken, ...)
 
         private static Task WriteToDatabase(String            FileName,
                                             String            Command,
@@ -996,91 +1007,149 @@ namespace cloud.charging.open.protocols.OCPI
                                             EventTracking_Id  EventTrackingId,
                                             User_Id?          CurrentUserId   = null)
 
-            => WriteToDatabase(FileName,
-                               JSONObject.Create(
+            => WriteToDatabase(
 
-                                         // Command is always the first property!
-                                         new JProperty(Command,            JToken),
-                                         new JProperty("timestamp",        Timestamp.Now.  ToIso8601()),
-                                         new JProperty("eventTrackingId",  EventTrackingId.ToString()),
+                   FileName,
 
-                                   CurrentUserId is not null
-                                       ? new JProperty("userId",           CurrentUserId)
-                                       : null).
-                               ToString(Newtonsoft.Json.Formatting.None));
+                   JSONObject.Create(
+
+                             // Command is always the first property!
+                             new JProperty(Command,            JToken),
+                             new JProperty("timestamp",        Timestamp.Now.  ToIso8601()),
+                             new JProperty("eventTrackingId",  EventTrackingId.ToString()),
+
+                       CurrentUserId is not null
+                           ? new JProperty("userId",           CurrentUserId)
+                           : null).
+
+                   ToString(Newtonsoft.Json.Formatting.None)
+
+               );
 
         #endregion
 
-        #region (private, static) WriteCommentToDatabase(FileName, Text, ...)
+        #region (private static) WriteCommentToDatabase                   (FileName, Text, ...)
 
         private static Task WriteCommentToDatabase(String            FileName,
                                                    String            Text,
                                                    EventTracking_Id  EventTrackingId,
                                                    User_Id?          CurrentUserId   = null)
 
-            => File.AppendAllTextAsync(FileName,
-                                       $"//{Timestamp.Now.ToIso8601()} {EventTrackingId} {(CurrentUserId is not null ? CurrentUserId : "-")}: {Text}{Environment.NewLine}",
-                                       Encoding.UTF8);
+            => File.AppendAllTextAsync(
+                   FileName,
+                   $"//{Timestamp.Now.ToIso8601()} {EventTrackingId} {(CurrentUserId is not null ? CurrentUserId : "-")}: {Text}{Environment.NewLine}",
+                   Encoding.UTF8
+               );
 
         #endregion
 
 
-        #region (private, static) ReadDatabaseFile            (DBFileName)
+        #region (private static) LoadCommandsFromDatabaseFile             (DBFileName)
 
-        private static IEnumerable<Command> ReadDatabaseFile(String DBFileName)
+        private static IEnumerable<Command> LoadCommandsFromDatabaseFile(String DBFileName)
         {
 
             try
             {
 
-                var list = new List<Command>();
+                return ParseCommands(
+                           File.ReadLines(
+                               DBFileName,
+                               Encoding.UTF8
+                           )
+                       );
 
-                foreach (var line in File.ReadLines(DBFileName,
-                                                    Encoding.UTF8))
+            }
+            catch (Exception e)
+            {
+                DebugX.Log(e, $"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName})");
+            }
+
+            return [];
+
+        }
+
+        #endregion
+
+        #region (private static) ParseCommands                            (Commands)
+
+        private static IEnumerable<Command> ParseCommands(IEnumerable<String> Commands)
+        {
+
+            try
+            {
+
+                var commands = new List<Command>();
+
+                foreach (var line in Commands)
                 {
 
                     try
                     {
 
-                        if (line.StartsWith("//"))
+                        if (line.StartsWith("//") || line.StartsWith('#'))
                             continue;
 
-                        var json    = JObject.Parse(line);
-                        var command = json.Properties().First();
+                        var json     = JObject.Parse(line);
+                        var command  = json.Properties().First();
 
                         if (     command.Value.Type == JTokenType.Object)
-                            list.Add(new Command(command.Name,
-                                                 command.Value as JObject));
+                            commands.Add(
+                                new Command(
+                                    command.Name,
+                                    command.Value as JObject
+                                )
+                            );
 
                         else if (command.Value.Type == JTokenType.Array)
-                            list.Add(new Command(command.Name,
-                                                 command.Value as JArray));
+                            commands.Add(
+                                new Command(
+                                    command.Name,
+                                    command.Value as JArray
+                                )
+                            );
 
                         else if (command.Value.Type == JTokenType.String)
-                            list.Add(new Command(command.Name,
-                                                 command.Value<String>()));
+                            commands.Add(
+                                new Command(
+                                    command.Name,
+                                    command.Value<String>()
+                                )
+                            );
 
                         else if (command.Value.Type == JTokenType.Integer)
-                            list.Add(new Command(command.Name,
-                                                 command.Value<Int64>()));
+                            commands.Add(
+                                new Command(
+                                    command.Name,
+                                    command.Value<Int64>()
+                                )
+                            );
 
                         else if (command.Value.Type == JTokenType.Float)
-                            list.Add(new Command(command.Name,
-                                                 command.Value<Single>()));
+                            commands.Add(
+                                new Command(
+                                    command.Name,
+                                    command.Value<Single>()
+                                )
+                            );
 
                         else if (command.Value.Type == JTokenType.Boolean)
-                            list.Add(new Command(command.Name,
-                                                 command.Value<Boolean>()));
+                            commands.Add(
+                                new Command(
+                                    command.Name,
+                                    command.Value<Boolean>()
+                                )
+                            );
 
                     }
                     catch (Exception e)
                     {
-                        DebugX.Log(e, $"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName})");
+                        DebugX.Log(e, $"OCPI.CommonAPIBase.ProcessCommands()");
                     }
 
                 }
 
-                return list;
+                return commands;
 
             }
             catch
@@ -1092,28 +1161,54 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region (private, static) ReadDatabaseFileWithMetadata(DBFileName)
+        #region (private static) LoadCommandsWithMetadataFromDatabaseFile (DBFileName)
 
-        private static IEnumerable<CommandWithMetadata> ReadDatabaseFileWithMetadata(String DBFileName)
+        private static IEnumerable<CommandWithMetadata> LoadCommandsWithMetadataFromDatabaseFile(String DBFileName)
         {
 
             try
             {
 
-                var list = new List<CommandWithMetadata>();
+                return ParseCommandsWithMetadata(
+                           File.ReadLines(
+                               DBFileName,
+                               Encoding.UTF8
+                           )
+                       );
 
-                foreach (var line in File.ReadLines(DBFileName,
-                                                    Encoding.UTF8))
+            }
+            catch (Exception e)
+            {
+                DebugX.Log(e, $"OCPI.CommonAPIBase.ReadDatabaseFileWithMetadata({DBFileName})");
+            }
+
+            return [];
+
+        }
+
+        #endregion
+
+        #region (private static) ParseCommandsWithMetadata                (Commands)
+
+        private static IEnumerable<CommandWithMetadata> ParseCommandsWithMetadata(IEnumerable<String> Commands)
+        {
+
+            try
+            {
+
+                var commands = new List<CommandWithMetadata>();
+
+                foreach (var command in Commands)
                 {
 
                     try
                     {
 
-                        if (line.StartsWith("//"))
+                        if (command.StartsWith("//"))
                             continue;
 
-                        var json             = JObject.Parse(line);
-                        var command          = json.Properties().First();
+                        var json             = JObject.Parse(command);
+                        var ocpiCommand      = json.Properties().First();
                         var timestamp        = json["timestamp"]?.      Value<DateTime>();
                         var eventtrackingid  = json["eventTrackingId"]?.Value<String>();
                         var eventTrackingId  = eventtrackingid is not null ? EventTracking_Id.Parse(eventtrackingid) : null;
@@ -1124,110 +1219,128 @@ namespace cloud.charging.open.protocols.OCPI
                             eventTrackingId is not null)
                         {
 
-                            if (command.Value.Type == JTokenType.String)
-                                list.Add(new CommandWithMetadata(
-                                             command.Name,
-                                             command.Value<String>(),
-                                             timestamp.Value,
-                                             eventTrackingId,
-                                             userId
-                                         ));
+                            if (ocpiCommand.Value.Type == JTokenType.String)
+                                commands.Add(
+                                    new CommandWithMetadata(
+                                        ocpiCommand.Name,
+                                        ocpiCommand.Value<String>(),
+                                        timestamp.Value,
+                                        eventTrackingId,
+                                        userId
+                                    )
+                                );
 
-                            else if (command.Value.Type == JTokenType.Object)
-                                list.Add(new CommandWithMetadata(
-                                             command.Name,
-                                             command.Value as JObject,
-                                             timestamp.Value,
-                                             eventTrackingId,
-                                             userId
-                                         ));
+                            else if (ocpiCommand.Value.Type == JTokenType.Object)
+                                commands.Add(
+                                    new CommandWithMetadata(
+                                        ocpiCommand.Name,
+                                        ocpiCommand.Value as JObject,
+                                        timestamp.Value,
+                                        eventTrackingId,
+                                        userId
+                                    )
+                                );
 
-                            else if (command.Value.Type == JTokenType.Integer)
-                                list.Add(new CommandWithMetadata(
-                                             command.Name,
-                                             command.Value<Int64>(),
-                                             timestamp.Value,
-                                             eventTrackingId,
-                                             userId
-                                         ));
+                            else if (ocpiCommand.Value.Type == JTokenType.Integer)
+                                commands.Add(
+                                    new CommandWithMetadata(
+                                        ocpiCommand.Name,
+                                        ocpiCommand.Value<Int64>(),
+                                        timestamp.Value,
+                                        eventTrackingId,
+                                        userId
+                                    )
+                                );
 
 
-                            if (     command.Value.Type == JTokenType.Object)
-                                list.Add(new CommandWithMetadata(
-                                             command.Name,
-                                             command.Value as JObject,
-                                             timestamp.Value,
-                                             eventTrackingId,
-                                             userId
-                                         ));
+                            if (     ocpiCommand.Value.Type == JTokenType.Object)
+                                commands.Add(
+                                    new CommandWithMetadata(
+                                        ocpiCommand.Name,
+                                        ocpiCommand.Value as JObject,
+                                        timestamp.Value,
+                                        eventTrackingId,
+                                        userId
+                                    )
+                                );
 
-                            else if (command.Value.Type == JTokenType.Array)
-                                list.Add(new CommandWithMetadata(
-                                             command.Name,
-                                             command.Value as JArray,
-                                             timestamp.Value,
-                                             eventTrackingId,
-                                             userId
-                                         ));
+                            else if (ocpiCommand.Value.Type == JTokenType.Array)
+                                commands.Add(
+                                    new CommandWithMetadata(
+                                        ocpiCommand.Name,
+                                        ocpiCommand.Value as JArray,
+                                        timestamp.Value,
+                                        eventTrackingId,
+                                        userId
+                                    )
+                                );
 
-                            else if (command.Value.Type == JTokenType.String)
-                                list.Add(new CommandWithMetadata(
-                                             command.Name,
-                                             command.Value<String>(),
-                                             timestamp.Value,
-                                             eventTrackingId,
-                                             userId
-                                         ));
+                            else if (ocpiCommand.Value.Type == JTokenType.String)
+                                commands.Add(
+                                    new CommandWithMetadata(
+                                        ocpiCommand.Name,
+                                        ocpiCommand.Value<String>(),
+                                        timestamp.Value,
+                                        eventTrackingId,
+                                        userId
+                                    )
+                                );
 
-                            else if (command.Value.Type == JTokenType.Integer)
-                                list.Add(new CommandWithMetadata(
-                                             command.Name,
-                                             command.Value<Int64>(),
-                                             timestamp.Value,
-                                             eventTrackingId,
-                                             userId
-                                         ));
+                            else if (ocpiCommand.Value.Type == JTokenType.Integer)
+                                commands.Add(
+                                    new CommandWithMetadata(
+                                        ocpiCommand.Name,
+                                        ocpiCommand.Value<Int64>(),
+                                        timestamp.Value,
+                                        eventTrackingId,
+                                        userId
+                                    )
+                                );
 
-                            else if (command.Value.Type == JTokenType.Float)
-                                list.Add(new CommandWithMetadata(
-                                             command.Name,
-                                             command.Value<Single>(),
-                                             timestamp.Value,
-                                             eventTrackingId,
-                                             userId
-                                         ));
+                            else if (ocpiCommand.Value.Type == JTokenType.Float)
+                                commands.Add(
+                                    new CommandWithMetadata(
+                                        ocpiCommand.Name,
+                                        ocpiCommand.Value<Single>(),
+                                        timestamp.Value,
+                                        eventTrackingId,
+                                        userId
+                                    )
+                                );
 
-                            else if (command.Value.Type == JTokenType.Boolean)
-                                list.Add(new CommandWithMetadata(
-                                             command.Name,
-                                             command.Value<Boolean>(),
-                                             timestamp.Value,
-                                             eventTrackingId,
-                                             userId
-                                         ));
+                            else if (ocpiCommand.Value.Type == JTokenType.Boolean)
+                                commands.Add(
+                                    new CommandWithMetadata(
+                                        ocpiCommand.Name,
+                                        ocpiCommand.Value<Boolean>(),
+                                        timestamp.Value,
+                                        eventTrackingId,
+                                        userId
+                                    )
+                                );
 
 
                             else
-                                DebugX.Log($"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName}, IncludeMetaData): Invalid command: '{line}'!");
+                                DebugX.Log($"OCPI.CommonAPIBase.ProcessCommandsWithMetadata(): Invalid command: '{command}'!");
 
                         }
                         else
-                            DebugX.Log($"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName}, IncludeMetaData): Invalid command: '{line}'!");
+                            DebugX.Log($"OCPI.CommonAPIBase.ProcessCommandsWithMetadata(): Invalid command: '{command}'!");
 
                     }
                     catch (Exception e)
                     {
-                        DebugX.LogException(e, $"OCPI.CommonAPIBase.ReadDatabaseFile({DBFileName}, IncludeMetaData)");
+                        DebugX.LogException(e, $"OCPI.CommonAPIBase.ProcessCommandsWithMetadata()");
                     }
 
                 }
 
-                return list;
+                return commands;
 
             }
             catch
             {
-                return Array.Empty<CommandWithMetadata>();
+                return [];
             }
 
         }
@@ -1236,184 +1349,214 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
+        #region Log/Read   Remote Parties
 
-        #region (protected) LogRemoteParty       (Command,              ...)
+        #region (protected) LogRemoteParty        (Command,              ...)
 
         protected Task LogRemoteParty(String            Command,
                                       EventTracking_Id  EventTrackingId,
                                       User_Id?          CurrentUserId   = null)
 
-            => WriteToDatabase(RemotePartyDBFileName,
-                               Command,
-                               null,
-                               EventTrackingId,
-                               CurrentUserId);
+            => WriteToDatabase(
+                   RemotePartyDBFileName,
+                   Command,
+                   null,
+                   EventTrackingId,
+                   CurrentUserId
+               );
 
         #endregion
 
-        #region (protected) LogRemoteParty       (Command, Text = null, ...)
+        #region (protected) LogRemoteParty        (Command, Text = null, ...)
 
         protected Task LogRemoteParty(String            Command,
                                       String?           Text,
                                       EventTracking_Id  EventTrackingId,
                                       User_Id?          CurrentUserId   = null)
 
-            => WriteToDatabase(RemotePartyDBFileName,
-                               Command,
-                               Text is not null
-                                   ? JToken.Parse(Text)
-                                   : null,
-                               EventTrackingId,
-                               CurrentUserId);
+            => WriteToDatabase(
+                   RemotePartyDBFileName,
+                   Command,
+                   Text is not null
+                       ? JToken.Parse(Text)
+                       : null,
+                   EventTrackingId,
+                   CurrentUserId
+               );
 
         #endregion
 
-        #region (protected) LogRemoteParty       (Command, JSON,        ...)
+        #region (protected) LogRemoteParty        (Command, JSON,        ...)
 
         protected Task LogRemoteParty(String            Command,
                                       JObject           JSON,
                                       EventTracking_Id  EventTrackingId,
                                       User_Id?          CurrentUserId   = null)
 
-            => WriteToDatabase(RemotePartyDBFileName,
-                               Command,
-                               JSON,
-                               EventTrackingId,
-                               CurrentUserId);
+            => WriteToDatabase(
+                   RemotePartyDBFileName,
+                   Command,
+                   JSON,
+                   EventTrackingId,
+                   CurrentUserId
+               );
 
         #endregion
 
-        #region (protected) LogRemoteParty       (Command, Number,      ...)
+        #region (protected) LogRemoteParty        (Command, Number,      ...)
 
         protected Task Log(String            Command,
                            Int64             Number,
                            EventTracking_Id  EventTrackingId,
                            User_Id?          CurrentUserId   = null)
 
-            => WriteToDatabase(RemotePartyDBFileName,
-                               Command,
-                               Number,
-                               EventTrackingId,
-                               CurrentUserId);
+            => WriteToDatabase(
+                   RemotePartyDBFileName,
+                   Command,
+                   Number,
+                   EventTrackingId,
+                   CurrentUserId
+               );
 
         #endregion
 
-        #region (protected) LogRemotePartyComment(Text,                 ...)
+        #region (protected) LogRemotePartyComment (Text,                 ...)
 
         protected Task LogRemotePartyComment(String           Text,
                                             EventTracking_Id  EventTrackingId,
                                             User_Id?          CurrentUserId   = null)
 
-            => WriteCommentToDatabase(RemotePartyDBFileName,
-                                      Text,
-                                      EventTrackingId,
-                                      CurrentUserId);
-
-        #endregion
-
-        #region (protected) ReadRemotePartyDatabaseFile()
-
-        protected IEnumerable<Command> ReadRemotePartyDatabaseFile()
-
-            => ReadDatabaseFile(RemotePartyDBFileName);
+            => WriteCommentToDatabase(
+                   RemotePartyDBFileName,
+                   Text,
+                   EventTrackingId,
+                   CurrentUserId
+               );
 
         #endregion
 
 
-        #region (protected) LogAsset       (Command,              ...)
+        #region ReadRemotePartyDatabaseFile       (DatabaseFileName = null)
+
+        public IEnumerable<Command> ReadRemotePartyDatabaseFile(String? DatabaseFileName = null)
+
+            => LoadCommandsFromDatabaseFile(DatabaseFileName ?? RemotePartyDBFileName);
+
+        #endregion
+
+        #endregion
+
+        #region Log/Read   Assets
+
+        #region (protected) LogAsset              (Command,              ...)
 
         protected Task LogAsset(String            Command,
                                 EventTracking_Id  EventTrackingId,
                                 User_Id?          CurrentUserId   = null)
 
-            => WriteToDatabase(AssetsDBFileName,
-                               Command,
-                               null,
-                               EventTrackingId,
-                               CurrentUserId);
+            => WriteToDatabase(
+                   AssetsDBFileName,
+                   Command,
+                   null,
+                   EventTrackingId,
+                   CurrentUserId
+               );
 
         #endregion
 
-        #region (protected) LogAsset       (Command, Text = null, ...)
+        #region (protected) LogAsset              (Command, Text = null, ...)
 
         protected Task LogAsset(String             Command,
                                 String?            Text,
                                 EventTracking_Id?  EventTrackingId   = null,
                                 User_Id?           CurrentUserId     = null)
 
-            => WriteToDatabase(AssetsDBFileName,
-                               Command,
-                               Text is not null
-                                   ? JToken.Parse(Text)
-                                   : null,
-                               EventTrackingId ?? EventTracking_Id.New,
-                               CurrentUserId);
+            => WriteToDatabase(
+                   AssetsDBFileName,
+                   Command,
+                   Text is not null
+                       ? JToken.Parse(Text)
+                       : null,
+                   EventTrackingId ?? EventTracking_Id.New,
+                   CurrentUserId
+               );
 
         #endregion
 
-        #region (protected) LogAsset       (Command, JSONObject,  ...)
+        #region (protected) LogAsset              (Command, JSONObject,  ...)
 
         protected Task LogAsset(String            Command,
                                 JObject           JSONObject,
                                 EventTracking_Id  EventTrackingId,
                                 User_Id?          CurrentUserId   = null)
 
-            => WriteToDatabase(AssetsDBFileName,
-                               Command,
-                               JSONObject,
-                               EventTrackingId,
-                               CurrentUserId);
+            => WriteToDatabase(
+                   AssetsDBFileName,
+                   Command,
+                   JSONObject,
+                   EventTrackingId,
+                   CurrentUserId
+               );
 
         #endregion
 
-        #region (protected) LogAsset       (Command, JSONArray,   ...)
+        #region (protected) LogAsset              (Command, JSONArray,   ...)
 
         protected Task LogAsset(String            Command,
                                 JArray            JSONArray,
                                 EventTracking_Id  EventTrackingId,
                                 User_Id?          CurrentUserId   = null)
 
-            => WriteToDatabase(AssetsDBFileName,
-                               Command,
-                               JSONArray,
-                               EventTrackingId,
-                               CurrentUserId);
+            => WriteToDatabase(
+                   AssetsDBFileName,
+                   Command,
+                   JSONArray,
+                   EventTrackingId,
+                   CurrentUserId
+               );
 
         #endregion
 
-        #region (protected) LogAsset       (Command, Number,      ...)
+        #region (protected) LogAsset              (Command, Number,      ...)
 
         protected Task LogAsset(String            Command,
                                 Int64             Number,
                                 EventTracking_Id  EventTrackingId,
                                 User_Id?          CurrentUserId   = null)
 
-            => WriteToDatabase(AssetsDBFileName,
-                               Command,
-                               Number,
-                               EventTrackingId,
-                               CurrentUserId);
+            => WriteToDatabase(
+                   AssetsDBFileName,
+                   Command,
+                   Number,
+                   EventTrackingId,
+                   CurrentUserId
+               );
 
         #endregion
 
-        #region (protected) LogAssetComment(Text,                 ...)
+        #region (protected) LogAssetComment       (Text,                 ...)
 
         protected Task LogAssetComment(String            Text,
                                        EventTracking_Id  EventTrackingId,
                                        User_Id?          CurrentUserId   = null)
 
-            => WriteCommentToDatabase(AssetsDBFileName,
-                                      Text,
-                                      EventTrackingId,
-                                      CurrentUserId);
+            => WriteCommentToDatabase(
+                   AssetsDBFileName,
+                   Text,
+                   EventTrackingId,
+                   CurrentUserId
+               );
 
         #endregion
 
-        #region (protected) ReadAssetsDatabaseFile()
 
-        protected IEnumerable<Command> ReadAssetsDatabaseFile()
+        #region ReadAssetsDatabaseFile            (DatabaseFileName = null)
 
-            => ReadDatabaseFile(AssetsDBFileName);
+        public IEnumerable<Command> ReadAssetsDatabaseFile(String? DatabaseFileName = null)
+
+            => LoadCommandsFromDatabaseFile(DatabaseFileName ?? AssetsDBFileName);
+
+        #endregion
 
         #endregion
 
@@ -1436,9 +1579,11 @@ namespace cloud.charging.open.protocols.OCPI
 
             var result = base.Start();
 
-            await LogAsset("started",
-                           EventTrackingId,
-                           CurrentUserId);
+            await LogAsset(
+                      "started",
+                      EventTrackingId,
+                      CurrentUserId
+                  );
 
             #region Send 'Open Data API restarted'-e-mail...
 
@@ -1486,14 +1631,18 @@ namespace cloud.charging.open.protocols.OCPI
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var result = base.Shutdown(Message,
-                                       Wait,
-                                       EventTrackingId);
+            var result = base.Shutdown(
+                             Message,
+                             Wait,
+                             EventTrackingId
+                         );
 
-            await LogAsset("shutdown",
-                           Message,
-                           EventTrackingId,
-                           CurrentUserId);
+            await LogAsset(
+                      "shutdown",
+                      Message,
+                      EventTrackingId,
+                      CurrentUserId
+                  );
 
             //SendShutdown(this, Timestamp.Now);
 

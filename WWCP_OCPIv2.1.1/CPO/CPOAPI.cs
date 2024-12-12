@@ -2695,7 +2695,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/locations
 
-            // https://example.com/ocpi/2.2/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
                 HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
@@ -2741,9 +2740,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     StatusCode           = 2000,
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
-                                                        AccessControlAllowHeaders  = [ "Authorization" ]
+                                                        HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
+                                                        AccessControlAllowHeaders   = [ "Authorization" ],
+                                                        AccessControlExposeHeaders  = ["X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count"]
                                                     }
                                                 });
 
@@ -2795,7 +2795,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                        Date                        = Timestamp.Now,
                                                                        AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
                                                                        AccessControlAllowHeaders   = [ "Authorization" ],
-                                                                       AccessControlExposeHeaders  = [ "Link", "X-Total-Count", "X-Filtered-Count"],
+                                                                       AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
                                                                    }.
 
                                                                    // The overall number of locations
@@ -2835,6 +2835,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         }
 
                                         #endregion
+
 
                                         return Task.FromResult(
                                                    new OCPIResponse.Builder(Request) {
@@ -3189,7 +3190,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/tariffs
 
-            // https://example.com/ocpi/2.2/cpo/tariffs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
                 HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
@@ -3236,9 +3236,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     StatusCode           = 2000,
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
-                                                        AccessControlAllowHeaders  = [ "Authorization" ]
+                                                        HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
+                                                        AccessControlAllowHeaders   = [ "Authorization" ],
+                                                        AccessControlExposeHeaders  = ["X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count"]
                                                     }
                                                 });
 
@@ -3247,36 +3248,38 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        var timestamp        = Request.QueryString.GetDateTime("timestamp");
-                                        var tolerance        = Request.QueryString.GetTimeSpan("tolerance");
-                                        var withExtensions   = Request.QueryString.GetBoolean ("withExtensions", false);
-                                        //var withMetadata     = Request.QueryString.GetBoolean("withMetadata", false);
+                                        var timestamp            = Request.QueryString.GetDateTime("timestamp");
+                                        var tolerance            = Request.QueryString.GetTimeSpan("tolerance");
+                                        var withExtensions       = Request.QueryString.GetBoolean ("withExtensions", false);
+                                        //var withMetadata         = Request.QueryString.GetBoolean("withMetadata", false);
 
-                                        var filters          = Request.GetDateAndPaginationFilters();
-                                        var matchFilter      = Request.QueryString.CreateStringFilter<Tariff>(
-                                                                   "match",
-                                                                   (tariff, pattern) => tariff.Id.ToString().Contains(pattern) ||
-                                                                                        tariff.TariffAltText.Matches (pattern)
-                                                               );
+                                        var filters              = Request.GetDateAndPaginationFilters();
+                                        var matchFilter          = Request.QueryString.CreateStringFilter<Tariff>(
+                                                                       "match",
+                                                                       (tariff, pattern) => tariff.Id.ToString().Contains(pattern) ||
+                                                                                            tariff.TariffAltText.Matches (pattern)
+                                                                   );
 
                                         //ToDo: Maybe not all EMSP should see all charging tariffs!
-                                        var allTariffs       = CommonAPI.GetTariffs(//CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
-                                                                                    //CommonAPI.OurPartyId       //Request.AccessInfo.Value.PartyId
-                                                                                    Timestamp:  timestamp,
-                                                                                    Tolerance:  tolerance).ToArray();
+                                        var allTariffs           = CommonAPI.GetTariffs(//CommonAPI.OurCountryCode,  //Request.AccessInfo.Value.CountryCode,
+                                                                                        //CommonAPI.OurPartyId       //Request.AccessInfo.Value.PartyId
+                                                                                        Timestamp:  timestamp,
+                                                                                        Tolerance:  tolerance).ToArray();
 
-                                        var filteredTariffs  = allTariffs.Where(matchFilter).
-                                                                          Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
-                                                                          Where(tariff => !filters.To.  HasValue || tariff.LastUpdated <= filters.To.  Value).
-                                                                          ToArray();
+                                        var filteredTariffs      = allTariffs.Where(matchFilter).
+                                                                              Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
+                                                                              Where(tariff => !filters.To.  HasValue || tariff.LastUpdated <= filters.To.  Value).
+                                                                              ToArray();
 
 
                                         var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                       Server                     = DefaultHTTPServerName,
-                                                                       Date                       = Timestamp.Now,
-                                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                                                       HTTPStatusCode              = HTTPStatusCode.OK,
+                                                                       Server                      = DefaultHTTPServerName,
+                                                                       Date                        = Timestamp.Now,
+                                                                       Allow                       = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                                                       AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                                                       AccessControlAllowHeaders   = [ "Authorization" ],
+                                                                       AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
                                                                    }.
 
                                                                    // The overall number of tariffs
@@ -3316,6 +3319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         }
 
                                         #endregion
+
 
                                         return Task.FromResult(
                                                    new OCPIResponse.Builder(Request) {
@@ -3456,7 +3460,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/sessions
 
-            // https://example.com/ocpi/2.2/cpo/sessions/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
                 HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
@@ -3500,9 +3503,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     StatusCode           = 2000,
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
-                                                        AccessControlAllowHeaders  = [ "Authorization" ]
+                                                        HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
+                                                        AccessControlAllowHeaders   = [ "Authorization" ],
+                                                        AccessControlExposeHeaders  = ["X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count"]
                                                     }
                                                 });
 
@@ -3523,11 +3527,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
                                         var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                       Server                     = DefaultHTTPServerName,
-                                                                       Date                       = Timestamp.Now,
-                                                                       AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                                       AccessControlAllowHeaders  = [ "Authorization" ]
+                                                                       HTTPStatusCode              = HTTPStatusCode.OK,
+                                                                       Server                      = DefaultHTTPServerName,
+                                                                       Date                        = Timestamp.Now,
+                                                                       AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                                                       AccessControlAllowHeaders   = [ "Authorization" ],
+                                                                       AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
                                                                    }.
 
                                                                    // The overall number of sessions
@@ -3564,6 +3569,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         }
 
                                         #endregion
+
 
                                         return Task.FromResult(
                                                    new OCPIResponse.Builder(Request) {
@@ -3733,7 +3739,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS  ~/cdrs
 
-            // https://example.com/ocpi/2.2/cpo/CDRs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
                 HTTPHostname.Any,
                 HTTPMethod.OPTIONS,
@@ -3777,9 +3782,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     StatusCode           = 2000,
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET", "DELETE" ],
-                                                        AccessControlAllowHeaders  = [ "Authorization" ]
+                                                        HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
+                                                        AccessControlAllowHeaders   = [ "Authorization" ],
+                                                        AccessControlExposeHeaders  = ["X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count"]
                                                     }
                                                 });
 
@@ -3804,11 +3810,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
                                         var httpResponseBuilder      = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                                           HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                           Server                     = DefaultHTTPServerName,
-                                                                           Date                       = Timestamp.Now,
-                                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                                           AccessControlAllowHeaders  = [ "Authorization" ]
+                                                                           HTTPStatusCode              = HTTPStatusCode.OK,
+                                                                           Server                      = DefaultHTTPServerName,
+                                                                           Date                        = Timestamp.Now,
+                                                                           AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                                                           AccessControlAllowHeaders   = [ "Authorization" ],
+                                                                           AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
                                                                        }.
 
                                                                        // The overall number of CDRs
@@ -3845,6 +3852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         }
 
                                         #endregion
+
 
                                         return Task.FromResult(
                                                    new OCPIResponse.Builder(Request) {

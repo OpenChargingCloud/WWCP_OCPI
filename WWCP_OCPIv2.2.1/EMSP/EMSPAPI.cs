@@ -144,7 +144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingLocation">Whether to fail when the location for the given location identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseLocation(this OCPIRequest           Request,
@@ -287,7 +287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="Location">The resolved user.</param>
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
         /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingEVSE">Whether to fail when the location for the given EVSE identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseLocationEVSE(this OCPIRequest           Request,
@@ -474,7 +474,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="EVSE">The resolved EVSE.</param>
         /// <param name="ConnectorId">The parsed unique connector identification.</param>
         /// <param name="Connector">The resolved connector.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingConnector">Whether to fail when the connector for the given connector identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseLocationEVSEConnector(this OCPIRequest           Request,
@@ -698,7 +698,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="TariffId">The parsed unique tariff identification.</param>
         /// <param name="Tariff">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingTariff">Whether to fail when the tariff for the given tariff identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseTariff(this OCPIRequest           Request,
@@ -838,7 +838,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="SessionId">The parsed unique session identification.</param>
         /// <param name="Session">The resolved session.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingSession">Whether to fail when the session for the given session identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseSession(this OCPIRequest          Request,
@@ -977,7 +977,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="CDRId">The parsed unique charge detail record identification.</param>
         /// <param name="CDR">The resolved charge detail record.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingCDR">Whether to fail when the charge detail record for the given charge detail record identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseCDR(this OCPIRequest           Request,
@@ -1114,7 +1114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="Request">A HTTP request.</param>
         /// <param name="EMSPAPI">The EMSP API.</param>
         /// <param name="TokenId">The parsed unique token identification.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseTokenId(this OCPIRequest           Request,
                                            EMSPAPI                    EMSPAPI,
@@ -1188,7 +1188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="EMSPAPI">The Users API.</param>
         /// <param name="TokenId">The parsed unique token identification.</param>
         /// <param name="TokenStatus">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingToken">Whether to fail when the token for the given token identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseToken(this OCPIRequest           Request,

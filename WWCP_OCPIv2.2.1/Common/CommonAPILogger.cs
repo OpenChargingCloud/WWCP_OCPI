@@ -25,7 +25,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 {
 
     /// <summary>
-    /// A Common API logger.
+    /// A CommonAPI logger.
     /// </summary>
     public class CommonAPILogger : OCPIAPILogger
     {
@@ -42,7 +42,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #region Properties
 
         /// <summary>
-        /// The linked Common API.
+        /// The linked CommonAPI.
         /// </summary>
         public CommonAPI  CommonAPI    { get; }
 
@@ -51,9 +51,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new Common API logger using the default logging delegates.
+        /// Create a new CommonAPI logger using the default logging delegates.
         /// </summary>
-        /// <param name="CommonAPI">An Common API.</param>
+        /// <param name="CommonAPI">An CommonAPI.</param>
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         public CommonAPILogger(CommonAPI                    CommonAPI,
@@ -68,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         {
 
-            this.CommonAPI = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given Common API must not be null!");
+            this.CommonAPI = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given CommonAPI must not be null!");
 
             #region Version(s)
 
