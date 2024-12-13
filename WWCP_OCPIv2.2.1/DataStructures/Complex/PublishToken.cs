@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -119,8 +121,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomPublishTokenParser">A delegate to parse custom publish token type JSON objects.</param>
-        public static PublishToken Parse(JObject                                     JSON,
-                                         CustomJObjectParserDelegate<PublishToken>?  CustomPublishTokenParser   = null)
+        public static PublishToken? Parse(JObject                                     JSON,
+                                          CustomJObjectParserDelegate<PublishToken>?  CustomPublishTokenParser   = null)
         {
 
             if (TryParse(JSON,
@@ -128,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          out var errorResponse,
                          CustomPublishTokenParser))
             {
-                return publishToken!;
+                return publishToken;
             }
 
             throw new ArgumentException("The given JSON representation of a publish token type is invalid: " + errorResponse,
@@ -148,9 +150,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="PublishToken">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject            JSON,
-                                       out PublishToken?  PublishToken,
-                                       out String?        ErrorResponse)
+        public static Boolean TryParse(JObject                                 JSON,
+                                                            out PublishToken?  PublishToken,
+                                       [NotNullWhen(false)] out String?        ErrorResponse)
 
             => TryParse(JSON,
                         out PublishToken,
@@ -166,8 +168,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomPublishTokenParser">A delegate to parse custom publish token type JSON objects.</param>
         public static Boolean TryParse(JObject                                     JSON,
-                                       out PublishToken?                           PublishToken,
-                                       out String?                                 ErrorResponse,
+                                                            out PublishToken?      PublishToken,
+                                       [NotNullWhen(false)] out String?            ErrorResponse,
                                        CustomJObjectParserDelegate<PublishToken>?  CustomPublishTokenParser)
         {
 
@@ -243,11 +245,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                 Issuer.      IsNotNullOrEmpty() ||
                                 GroupId.     HasValue)
 
-                                    ? new PublishToken(Id,
-                                                       Type,
-                                                       VisualNumber,
-                                                       Issuer,
-                                                       GroupId)
+                                    ? new PublishToken(
+                                          Id,
+                                          Type,
+                                          VisualNumber,
+                                          Issuer,
+                                          GroupId
+                                      )
 
                                     : null;
 

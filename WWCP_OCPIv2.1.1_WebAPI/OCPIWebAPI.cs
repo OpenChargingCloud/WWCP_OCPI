@@ -21,18 +21,14 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.Mail;
+using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 
 using social.OpenData.UsersAPI;
 
 using cloud.charging.open.protocols.WWCP;
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
-using cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP;
-using cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP;
-
 using cloud.charging.open.protocols.OCPI;
-using org.GraphDefined.Vanaheimr.Hermod.Mail;
-using org.GraphDefined.Vanaheimr.Hermod.SMTP;
-using static org.GraphDefined.Vanaheimr.BouncyCastle.OpenPGP2;
+using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
 #endregion
 
@@ -366,48 +362,48 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
-        public HTTPPath?                                    OverlayURLPathPrefix     { get; }
+        public HTTPPath?                                    OverlayURLPathPrefix    { get; }
 
         /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
-        public HTTPPath?                                    APIURLPathPrefix            { get; }
+        public HTTPPath?                                    APIURLPathPrefix        { get; }
 
         /// <summary>
         /// The HTTP realm, if HTTP Basic Authentication is used.
         /// </summary>
-        public String                                       HTTPRealm          { get; }
+        public String                                       HTTPRealm               { get; }
 
         /// <summary>
         /// An enumeration of logins for an optional HTTP Basic Authentication.
         /// </summary>
-        public IEnumerable<KeyValuePair<String, String>>    HTTPLogins         { get; }
+        public IEnumerable<KeyValuePair<String, String>>    HTTPLogins              { get; }
 
 
         /// <summary>
         /// Send debug information via HTTP Server Sent Events.
         /// </summary>
-        public HTTPEventSource<JObject>                     DebugLog           { get; }
+        public HTTPEventSource<JObject>                     DebugLog                { get; }
 
 
-        public CommonAPI                                    CommonAPI          { get; }
+        public CommonAPI                                    CommonAPI               { get; }
 
-        public CommonAPILogger                              CommonAPILogger    { get; set; }
-
-
-        public CPOAPI                                       CPOAPI             { get; set; }
-
-        public CPOAPILogger                                 CPOAPILogger       { get; set; }
+        public CommonAPILogger                              CommonAPILogger         { get; set; }
 
 
-        public EMSPAPI                                      EMSPAPI            { get; set; }
+        public CPOAPI                                       CPOAPI                  { get; set; }
 
-        public EMSPAPILogger                                EMSPAPILogger      { get; set; }
+        public CPOAPILogger                                 CPOAPILogger            { get; set; }
+
+
+        public EMSPAPI                                      EMSPAPI                 { get; set; }
+
+        public EMSPAPILogger                                EMSPAPILogger           { get; set; }
 
         /// <summary>
         /// The default request timeout for new CPO/EMSP clients.
         /// </summary>
-        public TimeSpan?                                    RequestTimeout     { get; set; }
+        public TimeSpan?                                    RequestTimeout          { get; set; }
 
         #endregion
 

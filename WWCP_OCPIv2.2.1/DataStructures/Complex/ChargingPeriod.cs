@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -170,9 +172,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="ChargingPeriod">The parsed charging period.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject             JSON,
-                                       out ChargingPeriod  ChargingPeriod,
-                                       out String?         ErrorResponse)
+        public static Boolean TryParse(JObject                                  JSON,
+                                       [NotNullWhen(true)]  out ChargingPeriod  ChargingPeriod,
+                                       [NotNullWhen(false)] out String?         ErrorResponse)
 
             => TryParse(JSON,
                         out ChargingPeriod,
@@ -188,8 +190,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomChargingPeriodParser">A delegate to parse custom charging period JSON objects.</param>
         public static Boolean TryParse(JObject                                       JSON,
-                                       out ChargingPeriod                            ChargingPeriod,
-                                       out String?                                   ErrorResponse,
+                                       [NotNullWhen(true)]  out ChargingPeriod       ChargingPeriod,
+                                       [NotNullWhen(false)] out String?              ErrorResponse,
                                        CustomJObjectParserDelegate<ChargingPeriod>?  CustomChargingPeriodParser   = null)
         {
 
@@ -244,9 +246,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                ChargingPeriod = new ChargingPeriod(StartTimestamp,
-                                                    Dimensions,
-                                                    TariffId);
+                ChargingPeriod = new ChargingPeriod(
+                                     StartTimestamp,
+                                     Dimensions,
+                                     TariffId
+                                 );
 
 
                 if (CustomChargingPeriodParser is not null)

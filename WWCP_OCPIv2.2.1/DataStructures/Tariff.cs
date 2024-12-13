@@ -687,7 +687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptionalJSON("energy_mix",
                                            "energy mix",
                                            OCPIv2_2_1.EnergyMix.TryParse,
-                                           out EnergyMix EnergyMix,
+                                           out EnergyMix? EnergyMix,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

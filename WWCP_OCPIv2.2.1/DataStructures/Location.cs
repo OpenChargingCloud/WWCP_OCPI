@@ -19,6 +19,7 @@
 
 using System.Text;
 using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -634,7 +635,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          LocationIdURL,
                          CustomLocationParser))
             {
-                return location!;
+                return location;
             }
 
             throw new ArgumentException("The given JSON representation of a charging location is invalid: " + errorResponse,
@@ -654,9 +655,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Location">The parsed charging location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject        JSON,
-                                       out Location?  Location,
-                                       out String?    ErrorResponse)
+        public static Boolean TryParse(JObject                             JSON,
+                                       [NotNullWhen(true)]  out Location?  Location,
+                                       [NotNullWhen(false)] out String?    ErrorResponse)
 
             => TryParse(JSON,
                         out Location,
@@ -678,8 +679,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="LocationIdURL">An optional charging location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom charging location JSON objects.</param>
         public static Boolean TryParse(JObject                                 JSON,
-                                       out Location?                           Location,
-                                       out String?                             ErrorResponse,
+                                       [NotNullWhen(true)]  out Location?      Location,
+                                       [NotNullWhen(false)] out String?        ErrorResponse,
                                        CountryCode?                            CountryCodeURL         = null,
                                        Party_Id?                               PartyIdURL             = null,
                                        Location_Id?                            LocationIdURL          = null,
@@ -791,7 +792,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatoryText("address",
                                              "address",
-                                             out String Address,
+                                             out String? Address,
                                              out ErrorResponse))
                 {
                     return false;
@@ -803,7 +804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatoryText("city",
                                              "city",
-                                             out String City,
+                                             out String? City,
                                              out ErrorResponse))
                 {
                     return false;
@@ -841,7 +842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatoryText("time_zone",
                                              "time zone",
-                                             out String TimeZone,
+                                             out String? TimeZone,
                                              out ErrorResponse))
                 {
                     return false;
@@ -851,11 +852,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #region Parse PublishTokenTypes     [optional]
 
-                if (JSON.ParseOptionalHashSet("publish_allowed_to",
-                                              "publish allowed to",
-                                              PublishToken.TryParse,
-                                              out HashSet<PublishToken> PublishTokenTypes,
-                                              out ErrorResponse))
+                if (JSON.ParseOptionalHashSetNull("publish_allowed_to",
+                                                  "publish allowed to",
+                                                  PublishToken.TryParse,
+                                                  out HashSet<PublishToken> PublishTokenTypes,
+                                                  out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -942,7 +943,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptionalJSON("operator",
                                            "operator",
                                            BusinessDetails.TryParse,
-                                           out BusinessDetails Operator,
+                                           out BusinessDetails? Operator,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -956,7 +957,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptionalJSON("suboperator",
                                            "suboperator",
                                            BusinessDetails.TryParse,
-                                           out BusinessDetails Suboperator,
+                                           out BusinessDetails? Suboperator,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -970,7 +971,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptionalJSON("owner",
                                            "owner",
                                            BusinessDetails.TryParse,
-                                           out BusinessDetails Owner,
+                                           out BusinessDetails? Owner,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -998,7 +999,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptionalJSON("opening_times",
                                            "opening times",
                                            Hours.TryParse,
-                                           out Hours OpeningTimes,
+                                           out Hours? OpeningTimes,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -1039,7 +1040,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptionalJSON("energy_mix",
                                            "energy mix",
                                            OCPIv2_2_1.EnergyMix.TryParse,
-                                           out EnergyMix EnergyMix,
+                                           out EnergyMix? EnergyMix,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

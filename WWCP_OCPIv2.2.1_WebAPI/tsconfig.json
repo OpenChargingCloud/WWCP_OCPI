@@ -10,22 +10,26 @@
   "files": [
 
     "../../UsersAPI/UsersAPI/HTTPRoot/defaults/defaults.ts",
+    "../../UsersAPI/UsersAPI/HTTPRoot/defaults/tools.ts",
     "../../UsersAPI/UsersAPI/HTTPRoot/defaults/views.ts",
-    "../../UsersAPI/UsersAPI/HTTPRoot/defaults/search.ts",
     "../../UsersAPI/UsersAPI/HTTPRoot/defaults/datePicker.ts",
     "../../UsersAPI/UsersAPI/HTTPRoot/login/SignInOut.ts",
 
     "HTTPRoot/defaults/defaults.ts",
-
-    "HTTPRoot/dashboard/dashboard.ts",
+    "HTTPRoot/defaults/OCPIv2.2.1.ts",
 
     "HTTPRoot/versions/versions.ts",
     "HTTPRoot/versions/versionDetails.ts",
 
+    "HTTPRoot/cdrs/cdrs.ts",
     "HTTPRoot/locations/locations.ts",
+    "HTTPRoot/locations/locationStatistics.ts",
+    "HTTPRoot/sessions/sessions.ts",
+    "HTTPRoot/tariffs/tariffs.ts",
+    "HTTPRoot/tokens/tokens.ts",
 
-    "HTTPRoot/remoteParty/remoteParties.ts",
-    "HTTPRoot/remoteParty/remoteParty.ts",
+    "HTTPRoot/remoteParties/remoteParties.ts",
+    "HTTPRoot/remoteParties/remoteParty.ts",
 
     "HTTPRoot/remoteParty/remoteCPO/reserveNow.ts",
     "HTTPRoot/remoteParty/remoteCPO/cancelReservation.ts",

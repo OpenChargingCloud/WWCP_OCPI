@@ -19,6 +19,7 @@
 
 using System.Text;
 using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -539,7 +540,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          CDRIdURL,
                          CustomCDRParser))
             {
-                return CDR!;
+                return CDR;
             }
 
             throw new ArgumentException("The given JSON representation of a charge detail record is invalid: " + errorResponse, nameof(JSON));
@@ -558,9 +559,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDR">The parsed CDR.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject      JSON,
-                                       out CDR?     CDR,
-                                       out String?  ErrorResponse)
+        public static Boolean TryParse(JObject                           JSON,
+                                       [NotNullWhen(true)]  out CDR?     CDR,
+                                       [NotNullWhen(false)] out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out CDR,
@@ -582,8 +583,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CDRIdURL">An optional CDR identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomCDRParser">A delegate to parse custom CDR JSON objects.</param>
         public static Boolean TryParse(JObject                            JSON,
-                                       out CDR?                           CDR,
-                                       out String?                        ErrorResponse,
+                                       [NotNullWhen(true)]  out CDR?      CDR,
+                                       [NotNullWhen(false)] out String?   ErrorResponse,
                                        CountryCode?                       CountryCodeURL    = null,
                                        Party_Id?                          PartyIdURL        = null,
                                        CDR_Id?                            CDRIdURL          = null,
@@ -791,7 +792,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
                                            OCPI.EnergyMeter.TryParse,
-                                           out EnergyMeter EnergyMeter,
+                                           out EnergyMeter? EnergyMeter,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -859,7 +860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 if (JSON.ParseOptionalJSON("signed_data",
                                            "signed data",
                                            OCPIv2_2_1.SignedData.TryParse,
-                                           out SignedData SignedData,
+                                           out SignedData? SignedData,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -1082,41 +1083,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                CDR = new CDR(CountryCodeBody ?? CountryCodeURL!.Value,
-                              PartyIdBody     ?? PartyIdURL!.    Value,
-                              CDRIdBody       ?? CDRIdURL!.      Value,
-                              Start,
-                              End,
-                              CDRToken,
-                              AuthMethod,
-                              Location,
-                              Currency,
-                              ChargingPeriods,
-                              TotalCosts,
-                              TotalEnergy,
-                              TotalTimeHours,
+                CDR = new CDR(
 
-                              SessionId,
-                              AuthorizationReference,
-                              MeterId,
-                              EnergyMeter,
-                              TransparencySoftwares,
-                              Tariffs,
-                              SignedData,
-                              TotalFixedCosts,
-                              TotalEnergyCost,
-                              TotalTimeCost,
-                              TotalParkingTimeHours,
-                              TotalParkingCost,
-                              TotalReservationCost,
-                              Remark,
-                              InvoiceReferenceId,
-                              Credit,
-                              CreditReferenceId,
-                              HomeChargingCompensation,
+                          CountryCodeBody ?? CountryCodeURL!.Value,
+                          PartyIdBody     ?? PartyIdURL!.    Value,
+                          CDRIdBody       ?? CDRIdURL!.      Value,
+                          Start,
+                          End,
+                          CDRToken,
+                          AuthMethod,
+                          Location,
+                          Currency,
+                          ChargingPeriods,
+                          TotalCosts,
+                          TotalEnergy,
+                          TotalTimeHours,
 
-                              Created,
-                              LastUpdated);
+                          SessionId,
+                          AuthorizationReference,
+                          MeterId,
+                          EnergyMeter,
+                          TransparencySoftwares,
+                          Tariffs,
+                          SignedData,
+                          TotalFixedCosts,
+                          TotalEnergyCost,
+                          TotalTimeCost,
+                          TotalParkingTimeHours,
+                          TotalParkingCost,
+                          TotalReservationCost,
+                          Remark,
+                          InvoiceReferenceId,
+                          Credit,
+                          CreditReferenceId,
+                          HomeChargingCompensation,
+
+                          Created,
+                          LastUpdated
+
+                      );
 
 
                 if (CustomCDRParser is not null)

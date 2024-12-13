@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -105,9 +107,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="ExceptionalPeriod">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                JSON,
-                                       out ExceptionalPeriod  ExceptionalPeriod,
-                                       out String?            ErrorResponse)
+        public static Boolean TryParse(JObject                                     JSON,
+                                       [NotNullWhen(true)]  out ExceptionalPeriod  ExceptionalPeriod,
+                                       [NotNullWhen(false)] out String?            ErrorResponse)
 
             => TryParse(JSON,
                         out ExceptionalPeriod,
@@ -123,8 +125,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomExceptionalPeriodParser">A delegate to parse custom exceptional period JSON objects.</param>
         public static Boolean TryParse(JObject                                          JSON,
-                                       out ExceptionalPeriod                            ExceptionalPeriod,
-                                       out String?                                      ErrorResponse,
+                                       [NotNullWhen(true)]  out ExceptionalPeriod       ExceptionalPeriod,
+                                       [NotNullWhen(false)] out String?                 ErrorResponse,
                                        CustomJObjectParserDelegate<ExceptionalPeriod>?  CustomExceptionalPeriodParser)
         {
 
@@ -164,8 +166,10 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                ExceptionalPeriod = new ExceptionalPeriod(PeriodBegin,
-                                                          PeriodEnd);
+                ExceptionalPeriod = new ExceptionalPeriod(
+                                        PeriodBegin,
+                                        PeriodEnd
+                                    );
 
 
                 if (CustomExceptionalPeriodParser is not null)

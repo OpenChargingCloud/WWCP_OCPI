@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -162,9 +164,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDRToken">The parsed charge detail record token.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject       JSON,
-                                       out CDRToken  CDRToken,
-                                       out String?   ErrorResponse)
+        public static Boolean TryParse(JObject                            JSON,
+                                       [NotNullWhen(true)]  out CDRToken  CDRToken,
+                                       [NotNullWhen(false)] out String?   ErrorResponse)
 
             => TryParse(JSON,
                         out CDRToken,
@@ -180,8 +182,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
         public static Boolean TryParse(JObject                                 JSON,
-                                       out CDRToken                            CDRToken,
-                                       out String?                             ErrorResponse,
+                                       [NotNullWhen(true)]  out CDRToken       CDRToken,
+                                       [NotNullWhen(false)] out String?        ErrorResponse,
                                        CustomJObjectParserDelegate<CDRToken>?  CustomCDRTokenParser   = null)
         {
 

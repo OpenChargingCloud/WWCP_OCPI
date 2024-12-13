@@ -18,6 +18,10 @@
 // ------------------------------------------------------------
 //  OCPI v2.1.1
 //  https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/
+//
+//  Keep it in sync with:
+//  https://github.com/OpenChargingCloud/OCPIExplorerWebApp
+//  https://github.com/OpenChargingCloud/OCPIExplorerDesktopApp
 // ------------------------------------------------------------
 
 ///<reference path="defaults.ts" />
@@ -38,7 +42,7 @@ interface IVersion {
     url:                             string;
 }
 
-interface IVersionDetails {
+interface IVersionDetail {
     version:                         VersionNumber;
     endpoints:                       Array<IEndpoints>;
 }

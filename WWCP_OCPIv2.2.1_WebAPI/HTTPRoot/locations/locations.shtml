@@ -1,19 +1,61 @@
 ﻿
-<link href="{{BasePath}}/webapi/css/versions/versions.min.css" type="text/css" rel="stylesheet" />
+<link href="{{BasePath}}/webapi/css/locations/locations.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="/shared/UsersAPI/js/date.format.js"></script>
-<script type="text/javascript" src="{{BasePath}}/webapi/versions/versions.js"></script>
+<script type="text/javascript" src="{{BasePath}}/webapi/libs/js/date.format.js"></script>
+<script type="text/javascript" src="{{BasePath}}/webapi/locations/locations.js"></script>
 
-<div id="versionInfos" class="entity">
+<div class="topLinks">
+    <a href="locations" class="active">Search</a> | <a href="locationStatistics">Statistics</a>
+</div>
 
-    <div id="versionInfos2">
+<div id="locationInfos" class="entity">
 
-        <div id="description">
-            Versions
+    <div id="locationInfos2">
+
+        <div id="controls">
+
+            <div id="search">
+
+                <div class="patternFilter">
+                    <div class="patternFilterBar">
+                        <input id="patternFilterInput" placeholder="only show locations matching...">
+                        <i id="sign" class="fa fa-filter  fa-2x"></i>
+                    </div>
+                </div>
+
+                <div class="take">
+                    <select id="takeSelect">
+                        <option id="take5"    value=   "5">5</option>
+                        <option id="take10"   value=  "10">10</option>
+                        <option id="take25"   value=  "25">25</option>
+                        <option id="take50"   value=  "50">50</option>
+                        <option id="take100"  value= "100">100</option>
+                        <option id="take250"  value= "250">250</option>
+                        <option id="take500"  value= "500">500</option>
+                        <option id="take1000" value="1000">1000</option>
+                        <option id="take2000" value="2000">2000</option>
+                    </select>
+                </div>
+
+                <div class="searchButtons">
+
+                    <button id="searchButton"><i class="fas fa-search"></i></button>
+
+                    <button id="leftButton"><i class="fas fa-chevron-left"></i></button>
+                    <button id="rightButton"><i class="fas fa-chevron-right"></i></button>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <div id="versions">
+        <div id="message">&nbsp;</div>
 
+        <div id="locations" class="searchResults"></div>
+
+        <div id="lowerButtons">
+            <a id="downLoadButton" class="button" href="" type="application/json"><i class="fa fa-download"></i> Download</a>
         </div>
 
     </div>

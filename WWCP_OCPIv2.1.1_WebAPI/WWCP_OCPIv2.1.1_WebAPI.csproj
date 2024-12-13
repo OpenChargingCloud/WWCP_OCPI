@@ -54,6 +54,8 @@
     <None Remove="HTTPRoot\defaults\defaults.js" />
     <None Remove="HTTPRoot\defaults\defaults.js.map" />
     <None Remove="HTTPRoot\defaults\defaults.ts" />
+    <None Remove="HTTPRoot\defaults\OCPIv2.1.1.js" />
+    <None Remove="HTTPRoot\defaults\OCPIv2.1.1.js.map" />
     <None Remove="HTTPRoot\defaults\_defaults.scss" />
     <None Remove="HTTPRoot\favicon.png" />
     <None Remove="HTTPRoot\images\favicon_big.png" />
@@ -162,6 +164,8 @@
     <EmbeddedResource Include="HTTPRoot\css\versions\versionDetails.min.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.css" />
     <EmbeddedResource Include="HTTPRoot\css\versions\versions.min.css" />
+    <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.1.1.js" />
+    <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.1.1.js.map" />
     <EmbeddedResource Include="HTTPRoot\defaults\OCPIv2.1.1.ts" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.js" />
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.js.map" />

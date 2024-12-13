@@ -18,6 +18,7 @@
 #region Usings
 
 using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -290,7 +291,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          ConnectorIdURL,
                          CustomConnectorParser))
             {
-                return connector!;
+                return connector;
             }
 
             throw new ArgumentException("The given JSON representation of a connector is invalid: " + errorResponse,
@@ -311,8 +312,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ConnectorIdURL">An optional connector identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
         public static Boolean TryParse(JObject                                  JSON,
-                                       out Connector?                           Connector,
-                                       out String?                              ErrorResponse,
+                                       [NotNullWhen(true)]  out Connector?      Connector,
+                                       [NotNullWhen(false)] out String?         ErrorResponse,
                                        Connector_Id?                            ConnectorIdURL          = null,
                                        CustomJObjectParserDelegate<Connector>?  CustomConnectorParser   = null)
         {

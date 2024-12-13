@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -131,9 +133,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EnergyContract">The parsed energy contract.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject             JSON,
-                                       out EnergyContract  EnergyContract,
-                                       out String?         ErrorResponse)
+        public static Boolean TryParse(JObject                                  JSON,
+                                       [NotNullWhen(true)]  out EnergyContract  EnergyContract,
+                                       [NotNullWhen(false)] out String?         ErrorResponse)
 
             => TryParse(JSON,
                         out EnergyContract,
@@ -149,8 +151,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
         public static Boolean TryParse(JObject                                       JSON,
-                                       out EnergyContract                            EnergyContract,
-                                       out String?                                   ErrorResponse,
+                                       [NotNullWhen(true)]  out EnergyContract       EnergyContract,
+                                       [NotNullWhen(false)] out String?              ErrorResponse,
                                        CustomJObjectParserDelegate<EnergyContract>?  CustomEnergyContractParser   = null)
         {
 
@@ -169,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (!JSON.ParseMandatoryText("supplier_name",
                                              "energy supplier name",
-                                             out String SupplierName,
+                                             out String? SupplierName,
                                              out ErrorResponse))
                 {
                     return false;
@@ -191,8 +193,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                EnergyContract = new EnergyContract(SupplierName,
-                                                    ContractId);
+                EnergyContract = new EnergyContract(
+                                     SupplierName,
+                                     ContractId
+                                 );
 
 
                 if (CustomEnergyContractParser is not null)

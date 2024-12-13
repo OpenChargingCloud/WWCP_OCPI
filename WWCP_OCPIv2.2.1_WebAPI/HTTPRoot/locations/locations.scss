@@ -3,56 +3,242 @@
 body {
     #page {
         #bottom {
+
+            overflow-y: auto;
+
             #right {
                 #text {
-                    #versionInfos {
+                    #locationInfos {
 
-                        #versionInfos2 {
+                        #locationInfos2 {
 
-                            padding:            1vh 2vw;
-                            border-radius:      6px;
-                            background-color:   #e7e7e7;
+                            padding:                    1vh 2vw;
+                            border-radius:              6px;
 
-                            #description {
-                                font-weight:        bold;
-                                padding-bottom:     .6vh;
+                            .description {
+                                font-weight:                bold;
+                                padding-bottom:             3px;
                             }
 
                             #locations {
 
-                                display:                flex;
-                                flex-direction:         column;
-                                border-top:             none;
+                                display:                        flex;
+                                flex-direction:                 column;
+                                border-top:                     none;
 
-                                a.location {
+                                .properties {
 
-                                    padding:                1vh 2vw;
-                                    display:                inline-block;
-                                    color:                  #5272a3;
-                                    font-weight:            bold;
-                                    background-color:       #e1e1e1;
-                                    text-decoration:        none;
-                                    border-top:             1px solid #ebebeb;
+                                    display:                        table;
 
-                                    .locationLink {
-                                        font-size:              85%;
-                                        font-weight:            normal;
+                                    .row {
+
+                                        display:                        table-row;
+
+                                        .key {
+                                            display:                        table-cell;
+                                            padding-right:                  10px;
+                                        }
+
+                                        .value {
+                                            display:                        table-cell;
+                                        }
+
                                     }
 
                                 }
 
-                                a.location:hover {
-                                    background-color:       #bcc9dd;
+                                .location {
+
+                                    padding:                        15px 22px;
+                                    display:                        inline-block;
+                                    color:                          #5272a3;
+                                    font-weight:                    bold;
+                                    background-color:               #efefef;
+                                    border-top:                     1px solid #ffffff;
+
+                                    .counter {
+                                        display:                        inline-block;
+                                        color:                          #7a96c1;
+                                        margin-right:                   3px;
+                                        padding-bottom:                 3px;
+                                    }
+
+                                    .title {
+                                        display:                        inline-block;
+                                        padding-bottom:                 3px;
+                                    }
+
+                                    .businessDetails {
+
+                                        font-size:                      95%;
+                                        font-weight:                    normal;
+
+                                        a {
+                                            color:                          #2d4f83;
+                                            text-decoration:                none;
+                                        }
+
+                                    }
+
+                                    .operator {
+                                        font-size:                      95%;
+                                    }
+
+                                    .suboperator {
+                                        font-size:                      95%;
+                                    }
+
+                                    .owner {
+                                        font-size:                      95%;
+                                    }
+
+                                    .type {
+                                        font-size:                      80%;
+                                    }
+
+                                    .address {
+                                        font-size:                      80%;
+                                    }
+
+                                    .coordinates {
+                                        font-size:                      80%;
+                                    }
+
+                                    .evses {
+
+                                        padding-left:                   10px;
+
+                                        .evse {
+
+                                            background-color:               #e2e2e2;
+                                            padding:                        10px 15px;
+                                            margin-top:                     1px;
+
+                                            .evseId {
+                                                font-size:                      90%;
+                                            }
+
+                                            .evseStatus {
+                                                font-size:                      67%;
+                                                padding-bottom:                 4px;
+                                            }
+
+                                            .evseStatus_AVAILABLE {
+                                                color:                          rgb(178, 239, 170);//rgb(  6, 146,   6, 0.5);
+                                                background-color:               unset;
+                                            }
+
+                                            .evseStatus_CHARGING {
+                                                color:                          rgb(206,   3,   3, 0.5);
+                                                background-color:               unset;
+                                            }
+
+                                            .evseStatus_OUTOFORDER {
+                                                color:                          rgb(215, 146,   3, 0.5);
+                                                background-color:               unset;
+                                            }
+
+                                            .evseStatus_INOPERATIVE {
+                                                color:                          rgb(204,  91,   0, 0.5);
+                                                background-color:               unset;
+                                            }
+
+                                            .evseStatus_UNKNOWN {
+                                                color:                          rgb(130, 130, 130, 0.5);
+                                                background-color:               unset;
+                                            }
+
+                                            .connectors {
+
+                                                padding-left:                   10px;
+                                                font-size:                      90%;
+
+                                                .connector {
+
+                                                    padding:                        10px 20px;
+                                                    border-radius:                  6px;
+
+                                                    .dates {
+                                                        margin-top:             15px;
+                                                        font-size:              70%;
+                                                    }
+
+                                                }
+
+                                            }
+
+                                            .dates {
+                                                margin-top:             15px;
+                                                font-size:              70%;
+                                            }
+
+                                        }
+
+                                        .evse:first-child {
+                                            margin-top:                     unset;
+                                        }
+
+                                        .evseStatus_AVAILABLE {
+                                            background-color:               rgb(  0, 255,   0, 0.25);
+                                        }
+
+                                        .evseStatus_CHARGING {
+                                            background-color:               rgb(255,   0,   0, 0.25);
+                                        }
+
+                                        .evseStatus_OUTOFORDER {
+                                            background-color:               rgb(255, 172,   0, 0.25);
+                                        }
+
+                                        .evseStatus_INOPERATIVE {
+                                            background-color:               rgb(255, 114,   0, 0.25);
+                                        }
+
+                                        .evseStatus_UNKNOWN {
+                                            background-color:               rgb(175, 175, 175, 0.25);
+                                        }
+
+                                    }
+
+                                    .evses .evse:first-child {
+                                        border-top-left-radius:         4px;
+                                        border-top-right-radius:        4px;
+                                    }
+
+                                    .evses .evse:last-child {
+                                        border-bottom-left-radius:      4px;
+                                        border-bottom-right-radius:     4px;
+                                    }
+
+                                    .dates {
+                                        margin-top:             15px;
+                                        font-size:              70%;
+                                    }
+
+                                    &:hover {
+
+                                        background-color:               rgba(188, 201, 221, 0.5);
+
+                                        .evses {
+                                            //.evse {
+                                                .evseStatus_AVAILABLE {
+                                                    background-color:               rgb(207, 249, 202);
+                                                }
+                                            //}
+                                        }
+
+                                    }
+
                                 }
 
                             }
 
-                            #location a.location:first-child {
+                            #locations .location:first-child {
                                 border-top-left-radius:         6px;
                                 border-top-right-radius:        6px;
                             }
 
-                            #location a.location:last-child {
+                            #locations .location:last-child {
                                 border-bottom-left-radius:      6px;
                                 border-bottom-right-radius:     6px;
                             }
@@ -62,6 +248,7 @@ body {
                     }
                 }
             }
+
         }
     }
 }

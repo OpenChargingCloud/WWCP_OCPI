@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -117,9 +119,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="RegularHours">The parsed regular hours specification.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject           JSON,
-                                       out RegularHours  RegularHours,
-                                       out String?       ErrorResponse)
+        public static Boolean TryParse(JObject                                JSON,
+                                       [NotNullWhen(true)]  out RegularHours  RegularHours,
+                                       [NotNullWhen(false)] out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out RegularHours,
@@ -135,8 +137,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomRegularHoursParser">A delegate to parse custom regular hours specification JSON objects.</param>
         public static Boolean TryParse(JObject                                     JSON,
-                                       out RegularHours                            RegularHours,
-                                       out String                                  ErrorResponse,
+                                       [NotNullWhen(true)]  out RegularHours       RegularHours,
+                                       [NotNullWhen(false)] out String             ErrorResponse,
                                        CustomJObjectParserDelegate<RegularHours>?  CustomRegularHoursParser)
         {
 
@@ -195,9 +197,11 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                RegularHours = new RegularHours(WeekDay,
-                                                PeriodBegin,
-                                                PeriodEnd);
+                RegularHours = new RegularHours(
+                                   WeekDay,
+                                   PeriodBegin,
+                                   PeriodEnd
+                               );
 
 
                 if (CustomRegularHoursParser is not null)

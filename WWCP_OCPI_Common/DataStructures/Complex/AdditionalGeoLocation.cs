@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
@@ -132,9 +134,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="AdditionalGeoLocation">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                    JSON,
-                                       out AdditionalGeoLocation  AdditionalGeoLocation,
-                                       out String?                ErrorResponse)
+        public static Boolean TryParse(JObject                                         JSON,
+                                       [NotNullWhen(true)]  out AdditionalGeoLocation  AdditionalGeoLocation,
+                                       [NotNullWhen(false)] out String?                ErrorResponse)
 
             => TryParse(JSON,
                         out AdditionalGeoLocation,
@@ -150,8 +152,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom additional geo location JSON objects.</param>
         public static Boolean TryParse(JObject                                              JSON,
-                                       out AdditionalGeoLocation                            AdditionalGeoLocation,
-                                       out String?                                          ErrorResponse,
+                                       [NotNullWhen(true)]  out AdditionalGeoLocation       AdditionalGeoLocation,
+                                       [NotNullWhen(false)] out String?                     ErrorResponse,
                                        CustomJObjectParserDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationParser)
         {
 
@@ -207,9 +209,13 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                AdditionalGeoLocation = new AdditionalGeoLocation(new GeoCoordinate(Latitude,
-                                                                                    Longitude),
-                                                                  Name);
+                AdditionalGeoLocation = new AdditionalGeoLocation(
+                                            new GeoCoordinate(
+                                                Latitude,
+                                                Longitude
+                                            ),
+                                            Name
+                                        );
 
 
                 if (CustomAdditionalGeoLocationParser is not null)

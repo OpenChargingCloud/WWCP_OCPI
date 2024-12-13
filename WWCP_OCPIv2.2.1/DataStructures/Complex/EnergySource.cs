@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -105,9 +107,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EnergySource">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject           JSON,
-                                       out EnergySource  EnergySource,
-                                       out String?       ErrorResponse)
+        public static Boolean TryParse(JObject                                JSON,
+                                       [NotNullWhen(true)]  out EnergySource  EnergySource,
+                                       [NotNullWhen(false)] out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out EnergySource,
@@ -123,8 +125,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomEnergySourceParser">A delegate to parse custom energy source JSON objects.</param>
         public static Boolean TryParse(JObject                                     JSON,
-                                       out EnergySource                            EnergySource,
-                                       out String?                                 ErrorResponse,
+                                       [NotNullWhen(true)]  out EnergySource       EnergySource,
+                                       [NotNullWhen(false)] out String?            ErrorResponse,
                                        CustomJObjectParserDelegate<EnergySource>?  CustomEnergySourceParser)
         {
 
@@ -165,8 +167,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                EnergySource = new EnergySource(EnergySourceCategory,
-                                                Percentage);
+                EnergySource = new EnergySource(
+                                   EnergySourceCategory,
+                                   Percentage
+                               );
 
 
                 if (CustomEnergySourceParser is not null)

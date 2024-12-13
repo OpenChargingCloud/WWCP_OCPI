@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -105,9 +107,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EnvironmentalImpact">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                  JSON,
-                                       out EnvironmentalImpact  EnvironmentalImpact,
-                                       out String?              ErrorResponse)
+        public static Boolean TryParse(JObject                                       JSON,
+                                       [NotNullWhen(true)]  out EnvironmentalImpact  EnvironmentalImpact,
+                                       [NotNullWhen(false)] out String?              ErrorResponse)
 
             => TryParse(JSON,
                         out EnvironmentalImpact,
@@ -123,8 +125,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomEnvironmentalImpactParser">A delegate to parse custom environmental impact JSON objects.</param>
         public static Boolean TryParse(JObject                                            JSON,
-                                       out EnvironmentalImpact                            EnvironmentalImpact,
-                                       out String?                                        ErrorResponse,
+                                       [NotNullWhen(true)]  out EnvironmentalImpact       EnvironmentalImpact,
+                                       [NotNullWhen(false)] out String?                   ErrorResponse,
                                        CustomJObjectParserDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactParser)
         {
 
@@ -165,8 +167,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                EnvironmentalImpact = new EnvironmentalImpact(EnvironmentalImpactCategory,
-                                                              Amount);
+                EnvironmentalImpact = new EnvironmentalImpact(
+                                          EnvironmentalImpactCategory,
+                                          Amount
+                                      );
 
 
                 if (CustomEnvironmentalImpactParser is not null)

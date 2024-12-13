@@ -1,7 +1,45 @@
-﻿body #page #bottom #right #text #versionDetailInfos #versionDetails {
+﻿body #page #bottom #right #text #versionDetailInfos #accessTokenBar {
+  display: flex;
+  margin: 10px 0px;
+}
+body #page #bottom #right #text #versionDetailInfos #accessTokenBar #accessTokenConfig {
+  margin-right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+body #page #bottom #right #text #versionDetailInfos #accessTokenBar #accessTokenConfig #accessTokenInput {
+  background-color: #f0f0f0;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 0;
+  width: 23vw;
+}
+body #page #bottom #right #text #versionDetailInfos #accessTokenBar #accessTokenConfig #accessTokenEncoding {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 70%;
+  align-self: end;
+  padding-right: 5px;
+}
+body #page #bottom #right #text #versionDetailInfos #accessTokenBar #accessTokenConfig #accessTokenEncoding input[type=checkbox] {
+  margin: 0; /* Resets any default margins on the checkbox */
+}
+body #page #bottom #right #text #versionDetailInfos #accessTokenBar #accessTokenButton {
+  color: #c0c0c0;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 4px;
+}
+body #page #bottom #right #text #versionDetailInfos #accessTokenBar #accessTokenButton:hover {
+  color: #000000;
+  background-color: #aaaaff;
+}
+body #page #bottom #right #text #versionDetailInfos #versionDetails {
   padding: 1vh 2vw;
   border-radius: 6px;
-  background-color: #e7e7e7;
+  /*background-color:               #e7e7e7;*/
 }
 body #page #bottom #right #text #versionDetailInfos #versionDetails #versionId {
   font-weight: bold;

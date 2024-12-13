@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -79,7 +81,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static CDRDimension Create(CDRDimensionType  Type,
                                           Decimal           Volume)
 
-            => new (Type, Volume);
+            => new (Type,
+                    Volume);
 
         #endregion
 
@@ -144,9 +147,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDRDimension">The parsed charging dimension.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject           JSON,
-                                       out CDRDimension  CDRDimension,
-                                       out String?       ErrorResponse)
+        public static Boolean TryParse(JObject                                JSON,
+                                       [NotNullWhen(true)]  out CDRDimension  CDRDimension,
+                                       [NotNullWhen(false)] out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out CDRDimension,
@@ -162,8 +165,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCDRDimensionParser">A delegate to parse custom charging dimension JSON objects.</param>
         public static Boolean TryParse(JObject                                     JSON,
-                                       out CDRDimension                            CDRDimension,
-                                       out String?                                 ErrorResponse,
+                                       [NotNullWhen(true)]  out CDRDimension       CDRDimension,
+                                       [NotNullWhen(false)] out String?            ErrorResponse,
                                        CustomJObjectParserDelegate<CDRDimension>?  CustomCDRDimensionParser   = null)
         {
 
@@ -204,8 +207,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                CDRDimension = new CDRDimension(Type,
-                                                Volume);
+                CDRDimension = new CDRDimension(
+                                   Type,
+                                   Volume
+                               );
 
 
                 if (CustomCDRDimensionParser is not null)

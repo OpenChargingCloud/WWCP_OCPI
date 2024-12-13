@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -83,9 +85,9 @@ namespace cloud.charging.open.protocols.OCPI
         {
 
             this.IsTwentyFourSevenOpen  = IsTwentyFourSevenOpen;
-            this.RegularHours           = RegularHours?.       Distinct() ?? Array.Empty<RegularHours>();
-            this.ExceptionalOpenings    = ExceptionalOpenings?.Distinct() ?? Array.Empty<ExceptionalPeriod>();
-            this.ExceptionalClosings    = ExceptionalClosings?.Distinct() ?? Array.Empty<ExceptionalPeriod>();
+            this.RegularHours           = RegularHours?.       Distinct() ?? [];
+            this.ExceptionalOpenings    = ExceptionalOpenings?.Distinct() ?? [];
+            this.ExceptionalClosings    = ExceptionalClosings?.Distinct() ?? [];
 
 
             unchecked
@@ -139,7 +141,7 @@ namespace cloud.charging.open.protocols.OCPI
                                                 IEnumerable<ExceptionalPeriod>?  ExceptionalClosings   = null)
 
             => new (true,
-                    Array.Empty<RegularHours>(),
+                    [],
                     ExceptionalOpenings,
                     ExceptionalClosings);
 
@@ -182,9 +184,9 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Hours">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject      JSON,
-                                       out Hours?   Hours,
-                                       out String?  ErrorResponse)
+        public static Boolean TryParse(JObject                           JSON,
+                                       [NotNullWhen(true)]  out Hours?   Hours,
+                                       [NotNullWhen(false)] out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out Hours,
@@ -200,8 +202,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomHoursParser">A delegate to parse custom hours JSON objects.</param>
         public static Boolean TryParse(JObject                              JSON,
-                                       out Hours?                           Hours,
-                                       out String?                          ErrorResponse,
+                                       [NotNullWhen(true)]  out Hours?      Hours,
+                                       [NotNullWhen(false)] out String?     ErrorResponse,
                                        CustomJObjectParserDelegate<Hours>?  CustomHoursParser)
         {
 
@@ -271,10 +273,12 @@ namespace cloud.charging.open.protocols.OCPI
                 #endregion
 
 
-                Hours = new Hours(TwentyFourSeven,
-                                  RegularHours,
-                                  ExceptionalOpenings,
-                                  ExceptionalClosings);
+                Hours = new Hours(
+                            TwentyFourSeven,
+                            RegularHours,
+                            ExceptionalOpenings,
+                            ExceptionalClosings
+                        );
 
 
                 if (CustomHoursParser is not null)

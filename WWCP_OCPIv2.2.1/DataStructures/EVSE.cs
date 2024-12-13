@@ -386,7 +386,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          EVSEUIdURL,
                          CustomEVSEParser))
             {
-                return evse!;
+                return evse;
             }
 
             throw new ArgumentException("The given JSON representation of an EVSE is invalid: " + errorResponse,

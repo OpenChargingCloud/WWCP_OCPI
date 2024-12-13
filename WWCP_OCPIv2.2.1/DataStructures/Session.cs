@@ -18,6 +18,7 @@
 #region Usings
 
 using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -327,7 +328,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          SessionIdURL,
                          CustomSessionParser))
             {
-                return session!;
+                return session;
             }
 
             throw new ArgumentException("The given JSON representation of a charging session is invalid: " + errorResponse,
@@ -347,9 +348,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Session">The parsed charging session.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject       JSON,
-                                       out Session?  Session,
-                                       out String?   ErrorResponse)
+        public static Boolean TryParse(JObject                            JSON,
+                                       [NotNullWhen(true)]  out Session?  Session,
+                                       [NotNullWhen(false)] out String?   ErrorResponse)
 
             => TryParse(JSON,
                         out Session,
@@ -371,8 +372,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="SessionIdURL">An optional charging session identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomSessionParser">A delegate to parse custom session JSON objects.</param>
         public static Boolean TryParse(JObject                                JSON,
-                                       out Session?                           Session,
-                                       out String?                            ErrorResponse,
+                                       [NotNullWhen(true)]  out Session?      Session,
+                                       [NotNullWhen(false)] out String?       ErrorResponse,
                                        CountryCode?                           CountryCodeURL        = null,
                                        Party_Id?                              PartyIdURL            = null,
                                        Session_Id?                            SessionIdURL          = null,

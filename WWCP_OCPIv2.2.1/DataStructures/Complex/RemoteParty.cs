@@ -539,38 +539,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
         /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
-        public JObject ToJSON(Boolean Embedded,
-                              CustomJObjectSerializerDelegate<RemoteParty>? CustomRemotePartySerializer = null,
-                              CustomJObjectSerializerDelegate<CredentialsRole>? CustomCredentialsRoleSerializer = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>? CustomBusinessDetailsSerializer = null,
-                              CustomJObjectSerializerDelegate<Image>? CustomImageSerializer = null,
-                              CustomJObjectSerializerDelegate<LocalAccessInfo>? CustomLocalAccessInfoSerializer = null,
-                              CustomJObjectSerializerDelegate<RemoteAccessInfo>? CustomRemoteAccessInfoSerializer = null)
+        public JObject ToJSON(Boolean                                             Embedded,
+                              CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
+                              CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
+                              CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
+                              CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
+                              CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null)
         {
 
             var json = JSONObject.Create(
 
-                                 new JProperty("@id", Id.ToString()),
+                                 new JProperty("@id",                Id.ToString()),
 
                            Embedded
-                               ? new JProperty("@context", DefaultJSONLDContext.ToString())
+                               ? new JProperty("@context",           DefaultJSONLDContext.ToString())
                                : null,
 
-                                 new JProperty("partyStatus", Status.ToString()),
+                                 new JProperty("partyStatus",        Status.ToString()),
 
-                                 new JProperty("roles", new JArray(Roles.Select(role => role.ToJSON(CustomCredentialsRoleSerializer,
-                                                                                                                  CustomBusinessDetailsSerializer,
-                                                                                                                  CustomImageSerializer)))),
+                                 new JProperty("roles",              new JArray(Roles.Select(role => role.ToJSON(CustomCredentialsRoleSerializer,
+                                                                                                                 CustomBusinessDetailsSerializer,
+                                                                                                                 CustomImageSerializer)))),
 
-                           localAccessInfos.Any()
-                               ? new JProperty("accessInfos", new JArray(localAccessInfos.Select(localAccessInfo => localAccessInfo.ToJSON(CustomLocalAccessInfoSerializer))))
+                           localAccessInfos. Count != 0
+                               ? new JProperty("accessInfos",        new JArray(localAccessInfos.Select(localAccessInfo => localAccessInfo.ToJSON(CustomLocalAccessInfoSerializer))))
                                : null,
 
-                           remoteAccessInfos.Any()
-                               ? new JProperty("remoteAccessInfos", new JArray(remoteAccessInfos.Select(remoteAccessInfo => remoteAccessInfo.ToJSON(CustomRemoteAccessInfoSerializer))))
+                           remoteAccessInfos.Count != 0
+                               ? new JProperty("remoteAccessInfos",  new JArray(remoteAccessInfos.Select(remoteAccessInfo => remoteAccessInfo.ToJSON(CustomRemoteAccessInfoSerializer))))
                                : null,
 
-                                 new JProperty("last_updated", LastUpdated.ToIso8601())
+                                 new JProperty("last_updated",       LastUpdated.ToIso8601())
 
                        );
 
@@ -590,8 +590,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public RemoteParty Clone()
 
             => new(Id.Clone,
-                    Roles.Select(credentialsRole => credentialsRole.Clone()),
-                    LocalAccessInfos.Select(accessInfoStatus => accessInfoStatus.Clone()),
+                    Roles.            Select(credentialsRole   => credentialsRole.  Clone()),
+                    LocalAccessInfos. Select(accessInfoStatus  => accessInfoStatus. Clone()),
                     RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
                     Status,
 
@@ -622,12 +622,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomLocalAccessInfoSerializer">A delegate to serialize custom local access information JSON objects.</param>
         /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<RemoteParty>? CustomRemotePartySerializer = null,
-                                     CustomJObjectSerializerDelegate<CredentialsRole>? CustomCredentialsRoleSerializer = null,
-                                     CustomJObjectSerializerDelegate<BusinessDetails>? CustomBusinessDetailsSerializer = null,
-                                     CustomJObjectSerializerDelegate<Image>? CustomImageSerializer = null,
-                                     CustomJObjectSerializerDelegate<LocalAccessInfo>? CustomLocalAccessInfoSerializer = null,
-                                     CustomJObjectSerializerDelegate<RemoteAccessInfo>? CustomRemoteAccessInfoSerializer = null)
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer        = null,
+                                     CustomJObjectSerializerDelegate<CredentialsRole>?   CustomCredentialsRoleSerializer    = null,
+                                     CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer    = null,
+                                     CustomJObjectSerializerDelegate<Image>?             CustomImageSerializer              = null,
+                                     CustomJObjectSerializerDelegate<LocalAccessInfo>?   CustomLocalAccessInfoSerializer    = null,
+                                     CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null)
         {
 
             this.ETag = SHA256.HashData(ToJSON(false, // always with @context!

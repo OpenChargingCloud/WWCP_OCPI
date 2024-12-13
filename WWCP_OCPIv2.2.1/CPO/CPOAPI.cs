@@ -2679,7 +2679,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region OPTIONS  ~/locations
 
-            // https://example.com/ocpi/2.2/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
                 HTTPHostname.Any,
@@ -2715,18 +2714,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if ((Request.LocalAccessInfo is not null || CommonAPI.LocationsAsOpenData == false) &&
+                                            (Request.LocalAccessInfo?.Status            != AccessStatus.ALLOWED ||
+                                             Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true))
                                         {
+
+
+                                        //if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
+                                        //    Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
+                                        //{
 
                                             return Task.FromResult(
                                                 new OCPIResponse.Builder(Request) {
                                                     StatusCode           = 2000,
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                        HTTPStatusCode              = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods   = [ "OPTIONS", "GET", "DELETE" ],
+                                                        AccessControlAllowHeaders   = [ "Authorization" ],
+                                                        AccessControlExposeHeaders  = ["X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count"]
                                                     }
                                                 });
 
@@ -2735,31 +2741,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #endregion
 
 
-                                        var filters            = Request.GetDateAndPaginationFilters();
+                                        //var emspId               = Request.LocalAccessInfo is not null
+                                        //                               ? EMSP_Id.Parse(Request.LocalAccessInfo.CountryCode, Request.LocalAccessInfo.PartyId)
+                                        //                               : new EMSP_Id?();
+
+                                        var withExtensions       = Request.QueryString.GetBoolean ("withExtensions", false);
+
+
+                                        var filters              = Request.GetDateAndPaginationFilters();
+                                        var matchFilter          = Request.QueryString.CreateStringFilter<Location>(
+                                                                       "match",
+                                                                       (location, pattern) => location.Id.     ToString().Contains(pattern)         ||
+                                                                                              location.Name?.             Contains(pattern) == true ||
+                                                                                              location.Address.           Contains(pattern)         ||
+                                                                                              location.City.              Contains(pattern)         ||
+                                                                                              location.PostalCode.        Contains(pattern)         ||
+                                                                                              location.Country.ToString().Contains(pattern)         ||
+                                                                                              location.Directions.        Matches (pattern)         ||
+                                                                                              location.Operator?.   Name. Contains(pattern) == true ||
+                                                                                              location.SubOperator?.Name. Contains(pattern) == true ||
+                                                                                              location.Owner?.      Name. Contains(pattern) == true ||
+                                                                                              //location.Facilities.        Matches (pattern)         ||
+                                                                                              location.EVSEUIds.          Matches (pattern)         ||
+                                                                                              location.EVSEIds.           Matches (pattern)         
+                                                                                              //location.EVSEs.Any(evse => evse.Connectors.Any(connector => connector?.GetTariffId(emspId).ToString()?.Contains(pattern) == true))
+                                                                   );
 
                                                                                           //ToDo: Filter to NOT show all locations to everyone!
                                         var allLocations       = CommonAPI.GetLocations().//location => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == location.CountryCode &&
                                                                                           //                                                       role.PartyId     == location.PartyId)).
                                                                            ToArray();
 
-                                        var filteredLocations  = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
+                                        var filteredLocations  = allLocations.Where(matchFilter).
+                                                                              Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
                                                                               Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
                                                                               ToArray();
 
 
                                         var httpResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                                       Server                     = DefaultHTTPServerName,
-                                                                       Date                       = Timestamp.Now,
-                                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                                       AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                                       HTTPStatusCode              = HTTPStatusCode.OK,
+                                                                       Server                      = DefaultHTTPServerName,
+                                                                       Date                        = Timestamp.Now,
+                                                                       AccessControlAllowMethods   = [ "OPTIONS", "GET" ],
+                                                                       AccessControlAllowHeaders   = [ "Authorization" ],
+                                                                       AccessControlExposeHeaders  = [ "X-Request-ID", "X-Correlation-ID", "Link", "X-Total-Count", "X-Filtered-Count" ]
                                                                    }.
 
                                                                    // The overall number of locations
-                                                                   Set("X-Total-Count",  allLocations.Length).
+                                                                   Set("X-Total-Count",     allLocations.     Length).
+
+                                                                   // The number of locations matching search filters
+                                                                   Set("X-Filtered-Count",  filteredLocations.Length).
 
                                                                    // The maximum number of locations that the server WILL return within a single request
-                                                                   Set("X-Limit",        allLocations.Length);
+                                                                   Set("X-Limit",           allLocations.     Length);
 
 
                                         #region When the limit query parameter was set & this is not the last pagination page...
@@ -2789,6 +2824,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         }
 
                                         #endregion
+
 
                                         return Task.FromResult(
                                                    new OCPIResponse.Builder(Request) {
@@ -2885,7 +2921,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -2992,7 +3028,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -3092,7 +3128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -3157,7 +3193,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region OPTIONS  ~/tariffs
 
-            // https://example.com/ocpi/2.2/cpo/tariffs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
                 HTTPHostname.Any,
@@ -3191,7 +3226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -3333,7 +3368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -3393,7 +3428,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region OPTIONS  ~/sessions
 
-            // https://example.com/ocpi/2.2/cpo/sessions/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
                 HTTPHostname.Any,
@@ -3427,7 +3461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -3563,7 +3597,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -3671,7 +3705,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             #region OPTIONS  ~/cdrs
 
-            // https://example.com/ocpi/2.2/cpo/CDRs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(
 
                 HTTPHostname.Any,
@@ -3705,7 +3738,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -3854,7 +3887,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -3963,7 +3996,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -4082,7 +4115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                        if (Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -4172,7 +4205,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #region Check access token
 
                                         if (Request.LocalAccessInfo is null ||
-                                            Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                            Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -4244,7 +4277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #region Check access token
 
                                         if (Request.LocalAccessInfo is null ||
-                                            Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                            Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -4364,7 +4397,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #region Check access token
 
                                         if (Request.LocalAccessInfo is null ||
-                                            Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                            Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                         {
 
@@ -4458,7 +4491,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                         #region Check access token
 
                                         if (Request.LocalAccessInfo is null ||
-                                            Request.LocalAccessInfo.IsNot(Roles.EMSP) ||
+                                            Request.LocalAccessInfo?.IsNot(Roles.EMSP) == true ||
                                             Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
                                         {
 

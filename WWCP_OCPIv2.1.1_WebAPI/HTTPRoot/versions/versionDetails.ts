@@ -68,16 +68,16 @@ function StartVersionDetails(versionId: string) {
                         ocpiResponse?.data != null)
                     {
 
-                        const versionDetails = ocpiResponse.data as IVersionDetails;
+                        const versionDetail = ocpiResponse.data as IVersionDetail;
 
-                        versionIdDiv.innerHTML = "Version " + versionDetails.version;
+                        versionIdDiv.innerHTML = "Version " + versionDetail.version;
 
-                        for (const endpoint of versionDetails.endpoints) {
+                        for (const endpoint of versionDetail.endpoints) {
 
                             const endpointDiv      = endpointsDiv.appendChild(document.createElement('a')) as HTMLAnchorElement;
                             endpointDiv.className  = "endpoint";
                             endpointDiv.href       = endpoint.url;
-                            endpointDiv.innerHTML  = endpoint.identifier + (versionDetails.version.startsWith("2.2") ? "/" + endpoint.role : "") + "<br /><span class=\"url\">" + endpoint.url + "</span>";
+                            endpointDiv.innerHTML  = endpoint.identifier + (versionDetail.version.startsWith("2.2") ? "/" + endpoint.role : "") + "<br /><span class=\"url\">" + endpoint.url + "</span>";
 
                         }
 
