@@ -15,7 +15,6 @@
   <ItemGroup>
     <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.js" />
     <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.js.map" />
-    <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.map" />
     <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.scss" />
     <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.shtml" />
     <EmbeddedResource Include="HTTPRoot\cdrs\cdrs.ts" />
@@ -120,7 +119,6 @@
     <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.ts" />
     <EmbeddedResource Include="HTTPRoot\sessions\sessions.js" />
     <EmbeddedResource Include="HTTPRoot\sessions\sessions.js.map" />
-    <EmbeddedResource Include="HTTPRoot\sessions\sessions.map" />
     <EmbeddedResource Include="HTTPRoot\sessions\sessions.scss" />
     <EmbeddedResource Include="HTTPRoot\sessions\sessions.shtml" />
     <EmbeddedResource Include="HTTPRoot\sessions\sessions.ts" />
@@ -133,7 +131,6 @@
     <EmbeddedResource Include="HTTPRoot\template.html" />
     <EmbeddedResource Include="HTTPRoot\template.scss" />
     <EmbeddedResource Include="HTTPRoot\tokens\tokens.js" />
-    <EmbeddedResource Include="HTTPRoot\tokens\tokens.map" />
     <EmbeddedResource Include="HTTPRoot\tokens\tokens.scss" />
     <EmbeddedResource Include="HTTPRoot\tokens\tokens.shtml" />
     <EmbeddedResource Include="HTTPRoot\tokens\tokens.ts" />
