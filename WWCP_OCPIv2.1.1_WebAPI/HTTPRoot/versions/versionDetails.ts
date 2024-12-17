@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-///<reference path="../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
 ///<reference path="../defaults/defaults.ts" />
 
 function StartVersionDetails(versionId: string) {

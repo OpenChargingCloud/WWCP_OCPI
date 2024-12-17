@@ -265,7 +265,7 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
     const dateFilters              = controlsDiv. querySelector ("#dateFilters")          as HTMLDivElement;
     const dateFrom                 = dateFilters?.querySelector ("#dateFromText")         as HTMLInputElement;
     const dateTo                   = dateFilters?.querySelector ("#dateToText")           as HTMLInputElement;
-    const datepicker               = dateFilters != null ? new DatePicker() : null;
+    //const datepicker               = dateFilters != null ? new DatePicker() : null;
 
     const listViewButton           = controlsDiv. querySelector ("#listView")             as HTMLButtonElement;
     const tableViewButton          = controlsDiv. querySelector ("#tableView")            as HTMLButtonElement;
@@ -595,29 +595,29 @@ function OCPIStartSearch2<TMetadata extends TMetadataDefaults, TSearchResult>(re
 
     }
 
-    if (dateFrom != null) {
-        dateFrom.onclick = () => {
-            datepicker.show(dateFrom,
-                currentDateFrom,
-                function (newDate) {
-                    dateFrom.value = parseUTCDate(newDate);
-                    currentDateFrom = newDate;
-                    Search(true, true);
-                });
-        }
-    }
+    //if (dateFrom != null) {
+    //    dateFrom.onclick = () => {
+    //        datepicker.show(dateFrom,
+    //            currentDateFrom,
+    //            function (newDate) {
+    //                dateFrom.value = parseUTCDate(newDate);
+    //                currentDateFrom = newDate;
+    //                Search(true, true);
+    //            });
+    //    }
+    //}
 
-    if (dateTo != null) {
-        dateTo.onclick = () => {
-            datepicker.show(dateTo,
-                currentDateTo,
-                function (newDate) {
-                    dateTo.value = parseUTCDate(newDate);
-                    currentDateTo = newDate;
-                    Search(true, true);
-                });
-        }
-    }
+    //if (dateTo != null) {
+    //    dateTo.onclick = () => {
+    //        datepicker.show(dateTo,
+    //            currentDateTo,
+    //            function (newDate) {
+    //                dateTo.value = parseUTCDate(newDate);
+    //                currentDateTo = newDate;
+    //                Search(true, true);
+    //            });
+    //    }
+    //}
 
     if (listViewButton !== null) {
         listViewButton.onclick = () => {
@@ -906,5 +906,127 @@ function CreateProperty(parent: HTMLDivElement | HTMLAnchorElement, className: s
 
 
     return rowDiv;
+
+}
+
+
+
+// Legacies!!!
+
+// #region HTTP(Method, RessourceURI, Data, OnSuccess, OnError)
+
+function HTTP(Method:       string,
+              RessourceURI: string,
+              Data,
+              OnSuccess,
+              OnError) {
+
+    // #region Make HTTP call
+
+    const ajax = new XMLHttpRequest();
+    ajax.open(Method, RessourceURI, true);
+    ajax.setRequestHeader("Accept",       "application/json; charset=UTF-8");
+    ajax.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+
+    //if (APIKey != null)
+    //    ajax.setRequestHeader("APIKey", APIKey);
+
+    ajax.onreadystatechange = function () {
+
+        // 0 UNSENT | 1 OPENED | 2 HEADERS_RECEIVED | 3 LOADING | 4 DONE
+        if (this.readyState == 4) {
+
+            // Ok
+            if (this.status >= 100 && this.status < 300) {
+
+                //alert(ajax.getAllResponseHeaders());
+                //alert(ajax.getResponseHeader("Date"));
+                //alert(ajax.getResponseHeader("Cache-control"));
+                //alert(ajax.getResponseHeader("ETag"));
+
+                if (OnSuccess && typeof OnSuccess === 'function')
+                    OnSuccess(this.status, ajax.responseText);
+
+            }
+
+            else
+                if (OnError && typeof OnError === 'function')
+                    OnError(this.status, this.statusText, ajax.responseText);
+
+        }
+
+    }
+
+    if (Data != null)
+        ajax.send(JSON.stringify(Data));
+    else
+        ajax.send();
+
+    // #endregion
+
+}
+
+// #endregion
+
+// #region HTTPGet  (RessourceURI, OnSuccess, OnError)
+
+function HTTPGet(RessourceURI: string,
+                 OnSuccess,
+                 OnError) {
+
+    // #region Make HTTP call
+
+    const ajax = new XMLHttpRequest();
+    ajax.open("GET", RessourceURI, true);
+    ajax.setRequestHeader("Accept",   "application/json; charset=UTF-8");
+    ajax.setRequestHeader("X-Portal", "true");
+    //ajax.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+
+    //if (APIKey != null)
+    //    ajax.setRequestHeader("APIKey", APIKey);
+
+    ajax.onreadystatechange = function () {
+
+        // 0 UNSENT | 1 OPENED | 2 HEADERS_RECEIVED | 3 LOADING | 4 DONE
+        if (this.readyState == 4) {
+
+            // Ok
+            if (this.status >= 100 && this.status < 300) {
+
+                //alert(ajax.getAllResponseHeaders());
+                //alert(ajax.getResponseHeader("Date"));
+                //alert(ajax.getResponseHeader("Cache-control"));
+                //alert(ajax.getResponseHeader("ETag"));
+
+                if (OnSuccess && typeof OnSuccess === 'function')
+                    OnSuccess(this.status, ajax.responseText);
+
+            }
+
+            else
+                if (OnError && typeof OnError === 'function')
+                    OnError(this.status, this.statusText, ajax.responseText);
+
+        }
+
+    }
+
+    ajax.send();
+
+    // #endregion
+
+}
+
+// #endregion
+
+function ParseJSON_LD<T>(Text: string,
+    Context: string = null): T {
+
+    const data = JSON.parse(Text);
+
+    if (!Array.isArray(data))
+        data["id"] = data["@id"];
+
+    return data as T;
 
 }

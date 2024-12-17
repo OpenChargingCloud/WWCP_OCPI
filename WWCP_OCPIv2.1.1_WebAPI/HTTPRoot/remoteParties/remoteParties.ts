@@ -1,6 +1,4 @@
-﻿///<reference path="../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
-
-function StartRemoteParties()
+﻿function StartRemoteParties()
 {
 
     const common                = GetDefaults();

@@ -9,12 +9,6 @@
   },
   "files": [
 
-    "../../UsersAPI/UsersAPI/HTTPRoot/defaults/defaults.ts",
-    "../../UsersAPI/UsersAPI/HTTPRoot/defaults/tools.ts",
-    "../../UsersAPI/UsersAPI/HTTPRoot/defaults/views.ts",
-    "../../UsersAPI/UsersAPI/HTTPRoot/defaults/datePicker.ts",
-    "../../UsersAPI/UsersAPI/HTTPRoot/login/SignInOut.ts",
-
     "HTTPRoot/defaults/defaults.ts",
     "HTTPRoot/defaults/OCPIv2.2.1.ts",
 

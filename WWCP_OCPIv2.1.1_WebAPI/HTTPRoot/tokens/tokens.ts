@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-///<reference path="../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
-
 function StartTokens()
 {
 

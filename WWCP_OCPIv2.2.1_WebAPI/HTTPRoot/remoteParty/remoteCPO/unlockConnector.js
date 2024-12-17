@@ -1,4 +1,3 @@
-///<reference path="../../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
 function StartUnlockConnector(versionId) {
     function ToogleUnlockConnectorButton() {
         var _a, _b, _c;

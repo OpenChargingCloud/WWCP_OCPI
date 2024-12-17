@@ -1,5 +1,4 @@
-﻿///<reference path="../../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
-
+﻿
 function StartReserveNow(versionId: string) {
 
     const pathElements             = window.location.pathname.split("/");

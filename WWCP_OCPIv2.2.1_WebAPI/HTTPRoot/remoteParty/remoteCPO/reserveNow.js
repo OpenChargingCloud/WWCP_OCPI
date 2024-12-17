@@ -1,4 +1,3 @@
-///<reference path="../../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
 function StartReserveNow(versionId) {
     const pathElements = window.location.pathname.split("/");
     const remotePartyId = pathElements[pathElements.length - 2];
