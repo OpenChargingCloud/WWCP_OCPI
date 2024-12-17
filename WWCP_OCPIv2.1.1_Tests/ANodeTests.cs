@@ -33,8 +33,6 @@ using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 using cloud.charging.open.protocols.OCPIv2_1_1.WebAPI;
 
-using social.OpenData.UsersAPI;
-
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
