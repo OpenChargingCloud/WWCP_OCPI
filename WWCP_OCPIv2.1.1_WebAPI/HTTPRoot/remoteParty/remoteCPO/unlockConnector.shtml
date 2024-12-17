@@ -1,7 +1,6 @@
 ﻿
 <link href="../../remoteParty/remoteCPO/unlockConnector.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="/shared/UsersAPI/js/date.format.js"></script>
 <script type="text/javascript" src="../../remoteParty/remoteCPO/unlockConnector.js"></script>
 
 <div id="unlockConnectorInfos" class="entity headline">

@@ -24,8 +24,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
 using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 
-using social.OpenData.UsersAPI;
-
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
@@ -523,23 +521,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #region (protected override) GetResourceStream      (ResourceName)
 
-        protected override Stream GetResourceStream(String ResourceName)
+        protected override Stream? GetResourceStream(String ResourceName)
 
-            => GetResourceStream(ResourceName,
-                                 new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                                 new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                                 new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+            => GetResourceStream(
+                   ResourceName,
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+               );
 
         #endregion
 
         #region (protected override) GetResourceMemoryStream(ResourceName)
 
-        protected override MemoryStream GetResourceMemoryStream(String ResourceName)
+        protected override MemoryStream? GetResourceMemoryStream(String ResourceName)
 
-            => GetResourceMemoryStream(ResourceName,
-                                       new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                                       new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                                       new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+            => GetResourceMemoryStream(
+                   ResourceName,
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+               );
 
         #endregion
 
@@ -547,10 +549,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         protected override String GetResourceString(String ResourceName)
 
-            => GetResourceString(ResourceName,
-                                 new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                                 new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                                 new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+            => GetResourceString(
+                   ResourceName,
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+               );
 
         #endregion
 
@@ -558,10 +562,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         protected override Byte[] GetResourceBytes(String ResourceName)
 
-            => GetResourceBytes(ResourceName,
-                                new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                                new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                                new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+            => GetResourceBytes(
+                   ResourceName,
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+               );
 
         #endregion
 
@@ -569,10 +575,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         protected override String MixWithHTMLTemplate(String ResourceName)
 
-            => MixWithHTMLTemplate(ResourceName,
-                                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                                   new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+            => MixWithHTMLTemplate(
+                   ResourceName,
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+               );
 
         #endregion
 
@@ -580,11 +588,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         protected override String MixWithHTMLTemplate(String ResourceName, Func<String, String> HTMLConverter)
 
-            => MixWithHTMLTemplate(ResourceName,
-                                   HTMLConverter,
-                                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
-                                   new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
-                                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+            => MixWithHTMLTemplate(
+                   ResourceName,
+                   HTMLConverter,
+                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                   //new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly)
+               );
 
         #endregion
 
@@ -659,10 +669,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             #region ~/libs
 
-            this.MapResourceAssemblyFolder(HTTPHostname.Any,
-                                           URLPathPrefix + "libs",
-                                           UsersAPI.HTTPRoot,
-                                           typeof(UsersAPI).Assembly);
+            //this.MapResourceAssemblyFolder(HTTPHostname.Any,
+            //                               URLPathPrefix + "libs",
+            //                               UsersAPI.HTTPRoot,
+            //                               typeof(UsersAPI).Assembly);
 
             #endregion
 

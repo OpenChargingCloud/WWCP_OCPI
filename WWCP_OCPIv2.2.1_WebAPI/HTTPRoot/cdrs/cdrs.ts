@@ -67,12 +67,13 @@ function StartCDRs()
                 cdr.end_date_time
             )
 
-            CreateProperty(
-                propertiesDiv,
-                "authorizationReference",
-                "Auth Ref",
-                cdr.authorization_reference
-            )
+            if (cdr.authorization_reference)
+                CreateProperty(
+                    propertiesDiv,
+                    "authorizationReference",
+                    "Auth Ref",
+                    cdr.authorization_reference
+                )
 
             CreateProperty(
                 propertiesDiv,

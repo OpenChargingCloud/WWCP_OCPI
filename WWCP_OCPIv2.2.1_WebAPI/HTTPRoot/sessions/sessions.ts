@@ -76,12 +76,13 @@ function StartSessions()
                 session.kwh.toString()
             )
 
-            CreateProperty(
-                propertiesDiv,
-                "authorizationReference",
-                "Auth Ref",
-                session.authorization_reference
-            )
+            if (session.authorization_reference)
+                CreateProperty(
+                    propertiesDiv,
+                    "authorizationReference",
+                    "Auth Ref",
+                    session.authorization_reference
+                )
 
             CreateProperty(
                 propertiesDiv,

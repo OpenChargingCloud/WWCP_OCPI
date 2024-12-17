@@ -158,12 +158,13 @@ function StartLocations()
                             evse.floor_level
                         );
 
-                    CreateProperty(
-                        evsePropertiesDiv,
-                        "coordinates",
-                        "Lat/Lng",
-                        evse.coordinates.latitude + ", " + evse.coordinates.longitude
-                    );
+                    if (evse.coordinates)
+                        CreateProperty(
+                            evsePropertiesDiv,
+                            "coordinates",
+                            "Lat/Lng",
+                            evse.coordinates.latitude + ", " + evse.coordinates.longitude
+                        );
 
                     if (evse.capabilities)
                         CreateProperty(
@@ -223,25 +224,13 @@ function StartLocations()
                             const connectorPropertiesDiv      = connectorDiv.appendChild(document.createElement('div')) as HTMLDivElement;
                             connectorPropertiesDiv.className  = "properties";
 
-                            if (connector.tariff_ids) {
-
-                                //if (!tariffs.has(connector.tariff_id)) {
-                                //    tariffs.set(connector.tariff_id, 0);
-                                //}
-
-                                //tariffs.set(
-                                //    connector.tariff_id,
-                                //    tariffs.get(connector.tariff_id) + 1
-                                //);
-
+                            if (connector.tariff_ids)
                                 CreateProperty(
                                     connectorPropertiesDiv,
                                     "tariffsInfo",
                                     "Tariffs",
                                     connector.tariff_ids.join(", ")
                                 );
-
-                            }
 
                             if (connector.terms_and_conditions)
                                 CreateProperty(

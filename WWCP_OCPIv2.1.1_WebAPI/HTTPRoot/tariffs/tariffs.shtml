@@ -1,7 +1,6 @@
 ﻿
 <link href="{{BasePath}}/webapi/css/tariffs/tariffs.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="{{BasePath}}/webapi/libs/js/date.format.js"></script>
 <script type="text/javascript" src="{{BasePath}}/webapi/tariffs/tariffs.js"></script>
 
 <div id="tariffInfos" class="entity">

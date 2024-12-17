@@ -1,7 +1,6 @@
 ﻿
 <link href="../../remoteParty/remoteCPO/cancelReservation.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="/shared/UsersAPI/js/date.format.js"></script>
 <script type="text/javascript" src="../../remoteParty/remoteCPO/cancelReservation.js"></script>
 
 <div id="cancelReservationInfos" class="entity headline">

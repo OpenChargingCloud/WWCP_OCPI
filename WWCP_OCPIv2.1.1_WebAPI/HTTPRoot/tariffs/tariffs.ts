@@ -59,13 +59,14 @@ function StartTariffs()
             const tariffAltTextsDiv         = tariffAnchor.appendChild(document.createElement('div')) as HTMLDivElement;
             tariffAltTextsDiv.className     = "altTexts";
 
-            for (const tariff_alt_text_instance of tariff.tariff_alt_text) {
+            if (tariff.tariff_alt_text)
+                for (const tariff_alt_text_instance of tariff.tariff_alt_text) {
 
-                const altTextDiv                = tariffAltTextsDiv.appendChild(document.createElement('div')) as HTMLDivElement;
-                altTextDiv.className            = "altText";
-                altTextDiv.innerHTML            = "(" + tariff_alt_text_instance.language + ") " + tariff_alt_text_instance.text;
+                    const altTextDiv            = tariffAltTextsDiv.appendChild(document.createElement('div')) as HTMLDivElement;
+                    altTextDiv.className        = "altText";
+                    altTextDiv.innerHTML        = "(" + tariff_alt_text_instance.language + ") " + tariff_alt_text_instance.text;
 
-            }
+                }
 
             if (tariff.energy_mix) {
                 const altURLDiv             = tariffAnchor.appendChild(document.createElement('div')) as HTMLDivElement;

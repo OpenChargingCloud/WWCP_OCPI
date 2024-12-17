@@ -274,7 +274,7 @@ interface IEVSE {
     connectors:                     Array<IConnector>;              // List of available connectors on the EVSE.
     energy_meter?:                  IEnergyMeter;                   // Optional energy meter [OCPI Computer Science Extension!]
     floor_level?:                   string;                         // Level on which the charging station is located (in garage buildings) in the locally displayed numbering scheme.
-    coordinates:                    IGeoLocation;                   // Coordinates of the EVSE.
+    coordinates?:                   IGeoLocation;                   // Coordinates of the EVSE.
     physical_reference?:            string;                         // A number/string printed on the outside of the EVSE for visual identification.
     directions?:                    Array<IDisplayText>;            // Multi-language human-readable directions when more detailed information on how to reach the EVSE from the Location is required.
     parking_restrictions?:          Array<string>;                  // The restrictions that apply to the parking spot.
@@ -306,7 +306,7 @@ interface IConnector {
 interface ITariff {
     id:                             string,                         // Uniquely identifies the tariff within the CPOs platform(and suboperator platforms).
     currency:                       string,                         // Currency of this tariff, ISO 4217 Code
-    tariff_alt_text:                Array<IDisplayText>,            // List of multi language alternative tariff info text
+    tariff_alt_text?:               Array<IDisplayText>,            // List of multi language alternative tariff info text
     tariff_alt_url?:                string,                         // Alternative URL to tariff info
     elements:                       Array<ITariffElement>,          // List of tariff elements
     energy_mix?:                    IEnergyMix,                     // Details on the energy supplied with this tariff.

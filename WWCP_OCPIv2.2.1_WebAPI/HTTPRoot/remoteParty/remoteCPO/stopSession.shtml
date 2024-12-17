@@ -1,7 +1,6 @@
 ﻿
 <link href="../../remoteParty/remoteCPO/stopSession.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="/shared/UsersAPI/js/date.format.js"></script>
 <script type="text/javascript" src="../../remoteParty/remoteCPO/stopSession.js"></script>
 
 <div id="stopSessionInfos" class="entity headline">

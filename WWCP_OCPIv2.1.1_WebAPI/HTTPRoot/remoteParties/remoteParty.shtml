@@ -1,7 +1,6 @@
 ﻿
 <link href="../remoteParty/remoteParty.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="/shared/UsersAPI/js/date.format.js"></script>
 <script type="text/javascript" src="../remoteParty/remoteParty.js"></script>
 
 <div id="remotePartyInfos" class="entity headline">

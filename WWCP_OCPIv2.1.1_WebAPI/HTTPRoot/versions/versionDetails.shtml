@@ -1,7 +1,6 @@
 ﻿
 <link href="{{BasePath}}/webapi/css/versions/versionDetails.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="{{BasePath}}/webapi/libs/libs/date.format.js"></script>
 <script type="text/javascript" src="{{BasePath}}/webapi/versions/versionDetails.js"></script>
 
 <div id="versionDetailInfos" class="entity">

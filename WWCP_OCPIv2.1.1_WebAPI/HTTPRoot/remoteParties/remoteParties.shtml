@@ -1,7 +1,6 @@
 ﻿
 <link href="{{BasePath}}/webapi/css/remoteParties/remoteParties.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="{{BasePath}}/webapi/libs/js/date.format.js"></script>
 <script type="text/javascript" src="{{BasePath}}/webapi/remoteParties/remoteParties.js"></script>
 
 <div id="remotePartiesInfos" class="entity">

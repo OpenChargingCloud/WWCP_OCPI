@@ -260,7 +260,6 @@
     <ProjectReference Include="..\..\SMSAPI\SMSAPI\SMSAPI.csproj" />
     <ProjectReference Include="..\..\Styx\Styx\Styx.csproj" />
     <ProjectReference Include="..\..\TelegramBotAPI\TelegramBotAPI\TelegramBotAPI.csproj" />
-    <ProjectReference Include="..\..\UsersAPI\UsersAPI\UsersAPI.csproj" />
     <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj" />
     <ProjectReference Include="..\WWCP_OCPIv2.1.1\WWCP_OCPIv2.1.1.csproj" />
   </ItemGroup>

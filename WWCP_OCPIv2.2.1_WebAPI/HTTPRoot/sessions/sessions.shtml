@@ -1,7 +1,6 @@
 ﻿
 <link href="{{BasePath}}/webapi/css/sessions/sessions.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="{{BasePath}}/webapi/libs/js/date.format.js"></script>
 <script type="text/javascript" src="{{BasePath}}/webapi/sessions/sessions.js"></script>
 
 <div id="sessionInfos" class="entity">

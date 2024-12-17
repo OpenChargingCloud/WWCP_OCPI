@@ -157,12 +157,13 @@ function StartLocations()
                             evse.floor_level
                         );
 
-                    CreateProperty(
-                        evsePropertiesDiv,
-                        "coordinates",
-                        "Lat/Lng",
-                        evse.coordinates.latitude + ", " + evse.coordinates.longitude
-                    );
+                    if (evse.coordinates)
+                        CreateProperty(
+                            evsePropertiesDiv,
+                            "coordinates",
+                            "Lat/Lng",
+                            evse.coordinates.latitude + ", " + evse.coordinates.longitude
+                        );
 
                     if (evse.capabilities)
                         CreateProperty(
