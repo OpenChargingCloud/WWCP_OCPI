@@ -17,11 +17,12 @@ since version 2.2 also roaming hubs are defined.
 - We love [Open Source](https://en.wikipedia.org/wiki/Open_source) and [Open Data](OpenData.md). Therefore we provide an extention to the OCPI specification allowing charging stations operators and e-mobility providers to provide their charging locations, charging tariffs and other data as Open Data.
 
 
-# Open Data
+## Open Data
 
-This OCPI implementation includes an optional feature to enable anonymous, unauthenticated access to the VERSIONS, LOCATIONS, and TARIFFS endpoints. By activating this feature, you can ensure compliance with regulatory requirements such as the EU Alternative Fuels Infrastructure Regulation (AFIR) and the UK's charge point regulations.
+This OCPI implementation includes an optional feature to enable anonymous, unauthenticated access to the VERSIONS, LOCATIONS, and TARIFFS endpoints via a simple WebAPI. By activating this feature, you can ensure compliance with regulatory requirements such as the EU Alternative Fuels Infrastructure Regulation (AFIR) and the UK's charge point regulations.
 
 This capability facilitates the provision of open and transparent access to essential data about charging station availability, locations, and pricing, aligning with the mandates for publicly accessible information to promote interoperability and user convenience. Additionally, this feature simplifies integration with third-party platforms and services that rely on open access to charging infrastructure data, supporting a seamless user experience while adhering to legal standards.
+
 
 ### Your participation
 
