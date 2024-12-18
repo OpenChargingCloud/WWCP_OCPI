@@ -1,0 +1,51 @@
+﻿
+<link href="../../remoteParty/remoteCPO/unlockConnector.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="../../remoteParty/remoteCPO/unlockConnector.js"></script>
+
+<div id="unlockConnectorInfos" class="entity headline">
+
+    <div id="headline">
+        <div id="title">
+            Remote Party <div id="id"></div>
+        </div>
+    </div>
+
+    <div id="about">
+        Unlock the following connector
+    </div>
+
+    <div id="unlockConnector">
+
+        <div id="data">
+
+            <div class="row">
+                <div class="key">Location</div>
+                <div class="value"><input id="locationId" type="text" placeholder="The location identification"></div>
+            </div>
+
+            <div class="row">
+                <div class="key">EVSE</div>
+                <div class="value"><input id="EVSEUId" type="text" placeholder="The EVSE unique identification"></div>
+            </div>
+
+            <div class="row">
+                <div class="key">Connector</div>
+                <div class="value"><input id="connectorId" type="text" placeholder="The connector identification"></div>
+            </div>
+
+        </div>
+
+        <div id="response"></div>
+
+        <div class="lowerButtons">
+            <button id="unlockConnector" disabled>Unlock Connector</button>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    StartUnlockConnector();
+</script>

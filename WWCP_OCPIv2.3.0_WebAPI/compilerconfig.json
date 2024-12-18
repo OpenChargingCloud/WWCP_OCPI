@@ -1,0 +1,70 @@
+﻿[
+  {
+    "outputFile": "HTTPRoot/css/template.css",
+    "inputFile": "HTTPRoot/template.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/index.css",
+    "inputFile": "HTTPRoot/index.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/versions/versions.css",
+    "inputFile": "HTTPRoot/versions/versions.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/cdrs/cdrs.css",
+    "inputFile": "HTTPRoot/cdrs/cdrs.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/locations/locations.css",
+    "inputFile": "HTTPRoot/locations/locations.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/locations/locationStatistics.css",
+    "inputFile": "HTTPRoot/locations/locationStatistics.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/sessions/sessions.css",
+    "inputFile": "HTTPRoot/sessions/sessions.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/tariffs/tariffs.css",
+    "inputFile": "HTTPRoot/tariffs/tariffs.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/tokens/tokens.css",
+    "inputFile": "HTTPRoot/tokens/tokens.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/versions/versionDetails.css",
+    "inputFile": "HTTPRoot/versions/versionDetails.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/remoteParties/remoteParties.css",
+    "inputFile": "HTTPRoot/remoteParties/remoteParties.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/remoteParties/remoteParty.css",
+    "inputFile": "HTTPRoot/remoteParties/remoteParty.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/remoteParty/remoteCPO/reserveNow.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteCPO/reserveNow.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/remoteParty/remoteCPO/cancelReservation.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteCPO/cancelReservation.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/remoteParty/remoteCPO/startSession.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteCPO/startSession.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/remoteParty/remoteCPO/stopSession.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteCPO/stopSession.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/css/remoteParty/remoteCPO/unlockConnector.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteCPO/unlockConnector.scss"
+  }
+]

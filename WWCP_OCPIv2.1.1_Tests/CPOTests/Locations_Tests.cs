@@ -177,8 +177,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                    DisplayText.Create(Languages.en, "Ken sent me!")
                                                                                },
                                                                                new[] {
-                                                                                   ParkingRestrictions.EV_ONLY,
-                                                                                   ParkingRestrictions.PLUGGED
+                                                                                   ParkingRestriction.EV_ONLY,
+                                                                                   ParkingRestriction.PLUGGED
                                                                                },
                                                                                new[] {
                                                                                    new Image(
@@ -472,8 +472,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                               DisplayText.Create(Languages.en, "Ken sent me!")
                                                                                           },
                                                                                           new[] {
-                                                                                              ParkingRestrictions.EV_ONLY,
-                                                                                              ParkingRestrictions.PLUGGED
+                                                                                              ParkingRestriction.EV_ONLY,
+                                                                                              ParkingRestriction.PLUGGED
                                                                                           },
                                                                                           new[] {
                                                                                               new Image(
@@ -690,8 +690,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.CPOTests
                                                                                   DisplayText.Create(Languages.en, "Dave sent me!")
                                                                               },
                                                                               new[] {
-                                                                                  ParkingRestrictions.EV_ONLY,
-                                                                                  ParkingRestrictions.PLUGGED
+                                                                                  ParkingRestriction.EV_ONLY,
+                                                                                  ParkingRestriction.PLUGGED
                                                                               },
                                                                               new[] {
                                                                                   new Image(

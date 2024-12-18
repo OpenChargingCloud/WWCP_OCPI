@@ -17,10 +17,11 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -30,9 +31,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
     /// <summary>
     /// A price component defines the pricing of a tariff.
     /// </summary>
-    public readonly struct PriceComponent : IEquatable<PriceComponent>,
-                                            IComparable<PriceComponent>,
-                                            IComparable
+    /// <param name="Type">A tariff dimension.</param>
+    /// <param name="Price">Price per unit for this dimension. This is including or excluding taxes according to the `tax_included` field of the Tariff that this PriceComponent is contained in.</param>
+    /// <param name="VAT">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable.</param>
+    /// <param name="StepSize">The minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
+    public readonly struct PriceComponent(TariffDimension  Type,
+                                          Decimal          Price,
+                                          Decimal?         VAT        = null,
+                                          UInt32           StepSize   = 1) : IEquatable<PriceComponent>,
+                                                                             IComparable<PriceComponent>,
+                                                                             IComparable
     {
 
         #region Properties
@@ -41,20 +49,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// The tariff dimension.
         /// </summary>
         [Mandatory]
-        public TariffDimension  Type           { get; }
+        public TariffDimension  Type        { get; } = Type;
 
         /// <summary>
-        /// The price per unit (excl. VAT) for this tariff dimension.
+        /// Price per unit for this dimension. This is including or excluding taxes according to the
+        /// `tax_included` field of the Tariff that this PriceComponent is contained in.
         /// </summary>
         [Mandatory]
-        public Decimal          Price          { get; }
+        public Decimal          Price       { get; } = Price;
 
         /// <summary>
-        /// The applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable.
-        /// Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.
+        /// Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable.
         /// </summary>
         [Optional]
-        public Decimal?         VAT            { get; }
+        public Decimal?         VAT         { get; } = VAT;
 
         /// <summary>
         /// The minimum amount to be billed. This unit will be billed in this step_size blocks.
@@ -64,31 +72,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// so if 6 minutes is used, 10 minutes (2 blocks of step_size) will be billed.
         /// </example>
         [Mandatory]
-        public UInt32           StepSize       { get; }
-
-        #endregion
-
-        #region Constructor(s)
-
-        /// <summary>
-        /// Create a new price component defining the pricing of a tariff.
-        /// </summary>
-        /// <param name="Type">A tariff dimension.</param>
-        /// <param name="Price">A price per unit (excl. VAT) for this tariff dimension.</param>
-        /// <param name="VAT">An applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
-        /// <param name="StepSize">The minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
-        public PriceComponent(TariffDimension  Type,
-                              Decimal          Price,
-                              Decimal?         VAT        = null,
-                              UInt32           StepSize   = 1)
-        {
-
-            this.Type            = Type;
-            this.Price           = Price;
-            this.VAT             = VAT;
-            this.StepSize        = StepSize;
-
-        }
+        public UInt32           StepSize    { get; } = StepSize;
 
         #endregion
 
@@ -314,10 +298,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                PriceComponent = new PriceComponent(Type,
-                                                    Price,
-                                                    VAT,
-                                                    StepSize);
+                PriceComponent = new PriceComponent(
+                                     Type,
+                                     Price,
+                                     VAT,
+                                     StepSize
+                                 );
 
 
                 if (CustomPriceComponentParser is not null)

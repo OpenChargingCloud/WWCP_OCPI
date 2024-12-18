@@ -86,10 +86,14 @@ namespace cloud.charging.open.protocols.OCPI
                                      Altitude?     Altitude   = null,
                                      DisplayText?  Name       = null)
 
-            : this(new GeoCoordinate(Latitude,
-                                     Longitude,
-                                     Altitude),
-                   Name)
+            : this(
+                  new GeoCoordinate(
+                      Latitude,
+                      Longitude,
+                      Altitude
+                  ),
+                  Name
+              )
 
         { }
 

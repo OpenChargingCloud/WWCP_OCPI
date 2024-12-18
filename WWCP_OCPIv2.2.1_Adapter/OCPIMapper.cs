@@ -840,15 +840,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            Connectors:            connectors,
 
                            EVSEId:                evseId,
-                           StatusSchedule:        Array.Empty<StatusSchedule>(),
+                           StatusSchedule:        [],
                            Capabilities:          EVSE.ChargingStation.ToOCPI_Capabilities(),
                            EnergyMeter:           EVSE.EnergyMeter?.ToOCPI(),
                            FloorLevel:            EVSE.ChargingStation.Address?.FloorLevel ?? EVSE.ChargingPool.Address?.FloorLevel,
                            Coordinates:           EVSE.ChargingStation.GeoLocation         ?? EVSE.ChargingPool.GeoLocation,
                            PhysicalReference:     EVSE.PhysicalReference                   ?? EVSE.ChargingStation.PhysicalReference,
                            Directions:            EVSE.ChargingStation.ArrivalInstructions.ToOCPI(),
-                           ParkingRestrictions:   Array.Empty<ParkingRestrictions>(),
-                           Images:                Array.Empty<Image>(),
+                           ParkingRestrictions:   [],
+                           Images:                [],
 
                            LastUpdated:           LastUpdate ?? EVSE.LastChangeDate
 

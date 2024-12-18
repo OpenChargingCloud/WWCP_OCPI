@@ -1,0 +1,27 @@
+﻿
+<link href="{{BasePath}}/webapi/css/versions/versions.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="{{BasePath}}/webapi/versions/versions.js"></script>
+
+<div id="versionInfos" class="entity">
+
+    <!--<div id="versionInfos2">
+
+        <div id="description">
+            Versions
+        </div>-->
+        <div id="description">
+            The following OCPI versions are available:
+        </div>
+
+        <div id="versions">
+
+        </div>
+
+    <!--</div>-->
+
+</div>
+
+<script type="text/javascript">
+    StartVersions();
+</script>

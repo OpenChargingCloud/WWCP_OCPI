@@ -1,0 +1,35 @@
+﻿{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "system",
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "allowJs": false,
+    "target": "ES2018"
+  },
+  "files": [
+
+    "HTTPRoot/defaults/defaults.ts",
+    "HTTPRoot/defaults/OCPIv2.3.0.ts",
+
+    "HTTPRoot/versions/versions.ts",
+    "HTTPRoot/versions/versionDetails.ts",
+
+    "HTTPRoot/cdrs/cdrs.ts",
+    "HTTPRoot/locations/locations.ts",
+    "HTTPRoot/locations/locationStatistics.ts",
+    "HTTPRoot/sessions/sessions.ts",
+    "HTTPRoot/tariffs/tariffs.ts",
+    "HTTPRoot/tokens/tokens.ts",
+
+    "HTTPRoot/remoteParties/remoteParties.ts",
+    "HTTPRoot/remoteParties/remoteParty.ts",
+
+    "HTTPRoot/remoteParty/remoteCPO/reserveNow.ts",
+    "HTTPRoot/remoteParty/remoteCPO/cancelReservation.ts",
+    "HTTPRoot/remoteParty/remoteCPO/startSession.ts",
+    "HTTPRoot/remoteParty/remoteCPO/stopSession.ts",
+    "HTTPRoot/remoteParty/remoteCPO/unlockConnector.ts"
+
+  ]
+}

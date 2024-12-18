@@ -1,0 +1,45 @@
+﻿
+<link href="{{BasePath}}/webapi/css/locations/locationStatistics.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="{{BasePath}}/webapi/locations/locationStatistics.js"></script>
+
+<div class="topLinks">
+    <a href="locations">Search</a> | <a href="locationStatistics" class="active">Statistics</a>
+</div>
+
+<div id="locationInfos" class="entity">
+
+    <div id="locationInfos2">
+
+        <div id="message">&nbsp;</div>
+
+        <div class="description">
+            Location Statistics
+        </div>
+
+        <div id="locationStatistics" class="statistics">
+            <div class="row"><div class="key">Number of locations</div><div id="numberOfLocations">-</div></div>
+            <div class="row"><div class="key">Number of EVSEs</div><div id="numberOfEVSEs">-</div></div>
+        </div>
+
+        <div class="description">
+            EVSE Status Statistics
+        </div>
+
+        <div id="evseStatusStatistics" class="statistics">
+        </div>
+
+        <div class="description">
+            Tariff Statistics
+        </div>
+
+        <div id="tariffStatistics" class="statistics">
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    StartLocationStatistics();
+</script>

@@ -55,57 +55,57 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <summary>
         /// The parent location of this EVSE.
         /// </summary>
-        public Location?                         ParentLocation             { get; internal set; }
+        public Location?                        ParentLocation             { get; internal set; }
 
         /// <summary>
         /// The unique identification of the EVSE within the CPOs platform.
         /// For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!
         /// </summary>
         [Mandatory]
-        public EVSE_UId                          UId                        { get; }
+        public EVSE_UId                         UId                        { get; }
 
         /// <summary>
         /// The official unique identification of the EVSE.
         /// For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!
         /// </summary>
         [Optional]
-        public EVSE_Id?                          EVSEId                     { get; }
+        public EVSE_Id?                         EVSEId                     { get; }
 
         /// <summary>
         /// The current status of the EVSE.
         /// </summary>
         [Mandatory]
-        public StatusType                        Status                     { get; }
+        public StatusType                       Status                     { get; }
 
         /// <summary>
         /// The enumeration of planned future status of the EVSE.
         /// </summary>
         [Optional]
-        public IEnumerable<StatusSchedule>       StatusSchedule             { get; }
+        public IEnumerable<StatusSchedule>      StatusSchedule             { get; }
 
         /// <summary>
         /// The enumeration of functionalities that the EVSE is capable of.
         /// </summary>
         [Optional]
-        public IEnumerable<Capability>           Capabilities               { get; }
+        public IEnumerable<Capability>          Capabilities               { get; }
 
         /// <summary>
         /// The optional energy meter, e.g. for the German calibration law.
         /// </summary>
         [Optional, NonStandard]
-        public EnergyMeter?                      EnergyMeter                { get; }
+        public EnergyMeter?                     EnergyMeter                { get; }
 
         /// <summary>
         /// The enumeration of available connectors attached to this EVSE.
         /// </summary>
         [Mandatory]
-        public IEnumerable<Connector>            Connectors                 { get; private set; }
+        public IEnumerable<Connector>           Connectors                 { get; private set; }
 
         /// <summary>
         /// The enumeration of connector identifications attached to this EVSE.
         /// </summary>
         [Optional]
-        public IEnumerable<Connector_Id>         ConnectorIds
+        public IEnumerable<Connector_Id>        ConnectorIds
             => Connectors.Select(connector => connector.Id);
 
         /// <summary>
@@ -114,56 +114,56 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// string(4)
         /// </summary>
         [Optional]
-        public String?                           FloorLevel                 { get; }
+        public String?                          FloorLevel                 { get; }
 
         /// <summary>
         /// The optional geographical location of the EVSE.
         /// </summary>
         [Optional]
-        public GeoCoordinate?                    Coordinates                { get; }
+        public GeoCoordinate?                   Coordinates                { get; }
 
         /// <summary>
         /// The optional number/string printed on the outside of the EVSE for visual identification.
         /// string(16)
         /// </summary>
         [Optional]
-        public String?                           PhysicalReference          { get; }
+        public String?                          PhysicalReference          { get; }
 
         /// <summary>
         /// The optional multi-language human-readable directions when more detailed
         /// information on how to reach the EVSE from the location is required.
         /// </summary>
         [Optional]
-        public IEnumerable<DisplayText>          Directions                 { get; }
+        public IEnumerable<DisplayText>         Directions                 { get; }
 
         /// <summary>
         /// The optional enumeration of restrictions that apply to the parking spot.
         /// </summary>
         [Optional]
-        public IEnumerable<ParkingRestrictions>  ParkingRestrictions        { get; }
+        public IEnumerable<ParkingRestriction>  ParkingRestrictions        { get; }
 
         /// <summary>
         /// The optional enumeration of images related to the EVSE such as photos or logos.
         /// </summary>
         [Optional]
-        public IEnumerable<Image>                Images                     { get; }
+        public IEnumerable<Image>               Images                     { get; }
 
         /// <summary>
         /// The timestamp when this EVSE was created.
         /// </summary>
         [Mandatory, NonStandard("Pagination")]
-        public DateTime                          Created                    { get; }
+        public DateTime                         Created                    { get; }
 
         /// <summary>
         /// Timestamp when this EVSE was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                          LastUpdated                { get; }
+        public DateTime                         LastUpdated                { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this EVSE.
         /// </summary>
-        public String                            ETag                       { get; private set; }
+        public String                           ETag                       { get; private set; }
 
         #endregion
 
@@ -216,7 +216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                       GeoCoordinate?                                                Coordinates                                  = null,
                       String?                                                       PhysicalReference                            = null,
                       IEnumerable<DisplayText>?                                     Directions                                   = null,
-                      IEnumerable<ParkingRestrictions>?                             ParkingRestrictions                          = null,
+                      IEnumerable<ParkingRestriction>?                              ParkingRestrictions                          = null,
                       IEnumerable<Image>?                                           Images                                       = null,
 
                       DateTime?                                                     Created                                      = null,
@@ -314,7 +314,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     GeoCoordinate?                                                Coordinates                                  = null,
                     String?                                                       PhysicalReference                            = null,
                     IEnumerable<DisplayText>?                                     Directions                                   = null,
-                    IEnumerable<ParkingRestrictions>?                             ParkingRestrictions                          = null,
+                    IEnumerable<ParkingRestriction>?                              ParkingRestrictions                          = null,
                     IEnumerable<Image>?                                           Images                                       = null,
 
                     DateTime?                                                     Created                                      = null,
@@ -594,10 +594,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 #region Parse ParkingRestrictions    [optional]
 
-                if (JSON.ParseOptionalEnums("parking_restrictions",
-                                            "parking restrictions",
-                                            out HashSet<ParkingRestrictions> ParkingRestrictions,
-                                            out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("parking_restrictions",
+                                              "parking restrictions",
+                                              ParkingRestriction.TryParse,
+                                              out HashSet<ParkingRestriction> ParkingRestrictions,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -1479,58 +1480,58 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             /// <summary>
             /// The parent location of this EVSE.
             /// </summary>
-            public Location?                         ParentLocation             { get; set; }
+            public Location?                        ParentLocation             { get; set; }
 
             /// <summary>
             /// The unique identification of the EVSE within the CPOs platform.
             /// For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!
             /// </summary>
             [Mandatory]
-            public EVSE_UId?                         UId                        { get; set; }
+            public EVSE_UId?                        UId                        { get; set; }
 
             /// <summary>
             /// The official unique identification of the EVSE.
             /// For interoperability please make sure, that the official EVSE Id has the same value as the internal EVSE UId!
             /// </summary>
             [Optional]
-            public EVSE_Id?                          EVSEId                     { get; set; }
+            public EVSE_Id?                         EVSEId                     { get; set; }
 
             /// <summary>
             /// The current status of the EVSE.
             /// </summary>
             [Mandatory]
-            public StatusType?                       Status                     { get; set; }
+            public StatusType?                      Status                     { get; set; }
 
             /// <summary>
             /// The enumeration of planned future status of the EVSE.
             /// </summary>
             [Optional]
-            public HashSet<StatusSchedule>           StatusSchedule             { get; }
+            public HashSet<StatusSchedule>          StatusSchedule             { get; }
 
             /// <summary>
             /// The enumeration of functionalities that the EVSE is capable of.
             /// </summary>
             [Optional]
-            public HashSet<Capability>               Capabilities               { get; }
+            public HashSet<Capability>              Capabilities               { get; }
 
             /// <summary>
             /// The enumeration of available connectors attached to this EVSE.
             /// </summary>
             [Mandatory]
-            public HashSet<Connector>                Connectors                 { get; }
+            public HashSet<Connector>               Connectors                 { get; }
 
             /// <summary>
             /// The enumeration of connector identifications attached to this EVSE.
             /// </summary>
             [Optional]
-            public IEnumerable<Connector_Id>         ConnectorIds
+            public IEnumerable<Connector_Id>        ConnectorIds
                 => Connectors.Select(connector => connector.Id);
 
             /// <summary>
             /// The optional energy meter, e.g. for the German calibration law.
             /// </summary>
             [Optional, NonStandard]
-            public EnergyMeter?                      EnergyMeter                { get; set; }
+            public EnergyMeter?                     EnergyMeter                { get; set; }
 
             /// <summary>
             /// The optional floor level on which the EVSE is located (in garage buildings)
@@ -1538,51 +1539,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             /// string(4)
             /// </summary>
             [Optional]
-            public String?                           FloorLevel                 { get; set; }
+            public String?                          FloorLevel                 { get; set; }
 
             /// <summary>
             /// The optional geographical location of the EVSE.
             /// </summary>
             [Optional]
-            public GeoCoordinate?                    Coordinates                { get; set; }
+            public GeoCoordinate?                   Coordinates                { get; set; }
 
             /// <summary>
             /// The optional number/string printed on the outside of the EVSE for visual identification.
             /// string(16)
             /// </summary>
             [Optional]
-            public String?                           PhysicalReference          { get; set; }
+            public String?                          PhysicalReference          { get; set; }
 
             /// <summary>
             /// The optional multi-language human-readable directions when more detailed
             /// information on how to reach the EVSE from the location is required.
             /// </summary>
             [Optional]
-            public HashSet<DisplayText>              Directions                 { get; }
+            public HashSet<DisplayText>             Directions                 { get; }
 
             /// <summary>
             /// The optional enumeration of restrictions that apply to the parking spot.
             /// </summary>
             [Optional]
-            public HashSet<ParkingRestrictions>      ParkingRestrictions        { get; }
+            public HashSet<ParkingRestriction>      ParkingRestrictions        { get; }
 
             /// <summary>
             /// The optional enumeration of images related to the EVSE such as photos or logos.
             /// </summary>
             [Optional]
-            public HashSet<Image>                    Images                     { get; }
+            public HashSet<Image>                   Images                     { get; }
 
             /// <summary>
             /// The timestamp when this EVSE was created.
             /// </summary>
             [Mandatory, NonStandard("Pagination")]
-            public DateTime                          Created                    { get; set; }
+            public DateTime                         Created                    { get; set; }
 
             /// <summary>
             /// Timestamp when this EVSE was last updated (or created).
             /// </summary>
             [Mandatory]
-            public DateTime                          LastUpdated                { get; set; }
+            public DateTime                         LastUpdated                { get; set; }
 
             #endregion
 
@@ -1610,25 +1611,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             /// 
             /// <param name="Created">The optional timestamp when this EVSE was created.</param>
             /// <param name="LastUpdated">The optional timestamp when this EVSE was last updated (or created).</param>
-            internal Builder(Location?                          ParentLocation        = null,
+            internal Builder(Location?                         ParentLocation        = null,
 
-                             EVSE_UId?                          UId                   = null,
-                             StatusType?                        Status                = null,
-                             IEnumerable<Connector>?            Connectors            = null,
+                             EVSE_UId?                         UId                   = null,
+                             StatusType?                       Status                = null,
+                             IEnumerable<Connector>?           Connectors            = null,
 
-                             EVSE_Id?                           EVSEId                = null,
-                             IEnumerable<StatusSchedule>?       StatusSchedule        = null,
-                             IEnumerable<Capability>?           Capabilities          = null,
-                             EnergyMeter?                       EnergyMeter           = null,
-                             String?                            FloorLevel            = null,
-                             GeoCoordinate?                     Coordinates           = null,
-                             String?                            PhysicalReference     = null,
-                             IEnumerable<DisplayText>?          Directions            = null,
-                             IEnumerable<ParkingRestrictions>?  ParkingRestrictions   = null,
-                             IEnumerable<Image>?                Images                = null,
+                             EVSE_Id?                          EVSEId                = null,
+                             IEnumerable<StatusSchedule>?      StatusSchedule        = null,
+                             IEnumerable<Capability>?          Capabilities          = null,
+                             EnergyMeter?                      EnergyMeter           = null,
+                             String?                           FloorLevel            = null,
+                             GeoCoordinate?                    Coordinates           = null,
+                             String?                           PhysicalReference     = null,
+                             IEnumerable<DisplayText>?         Directions            = null,
+                             IEnumerable<ParkingRestriction>?  ParkingRestrictions   = null,
+                             IEnumerable<Image>?               Images                = null,
 
-                             DateTime?                          Created               = null,
-                             DateTime?                          LastUpdated           = null)
+                             DateTime?                         Created               = null,
+                             DateTime?                         LastUpdated           = null)
 
             {
 
@@ -1636,18 +1637,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 this.UId                   = UId;
                 this.Status                = Status;
-                this.Connectors            = Connectors          is not null ? new HashSet<Connector>          (Connectors)          : [];
+                this.Connectors            = Connectors          is not null ? new HashSet<Connector>         (Connectors)          : [];
 
                 this.EVSEId                = EVSEId;
-                this.StatusSchedule        = StatusSchedule      is not null ? new HashSet<StatusSchedule>     (StatusSchedule)      : [];
-                this.Capabilities          = Capabilities        is not null ? new HashSet<Capability>         (Capabilities)        : [];
+                this.StatusSchedule        = StatusSchedule      is not null ? new HashSet<StatusSchedule>    (StatusSchedule)      : [];
+                this.Capabilities          = Capabilities        is not null ? new HashSet<Capability>        (Capabilities)        : [];
                 this.EnergyMeter           = EnergyMeter;
                 this.FloorLevel            = FloorLevel;
                 this.Coordinates           = Coordinates;
                 this.PhysicalReference     = PhysicalReference;
-                this.Directions            = Directions          is not null ? new HashSet<DisplayText>        (Directions)          : [];
-                this.ParkingRestrictions   = ParkingRestrictions is not null ? new HashSet<ParkingRestrictions>(ParkingRestrictions) : [];
-                this.Images                = Images              is not null ? new HashSet<Image>              (Images)              : [];
+                this.Directions            = Directions          is not null ? new HashSet<DisplayText>       (Directions)          : [];
+                this.ParkingRestrictions   = ParkingRestrictions is not null ? new HashSet<ParkingRestriction>(ParkingRestrictions) : [];
+                this.Images                = Images              is not null ? new HashSet<Image>             (Images)              : [];
 
                 this.Created               = Created     ?? LastUpdated ?? Timestamp.Now;
                 this.LastUpdated           = LastUpdated ?? Created     ?? Timestamp.Now;
