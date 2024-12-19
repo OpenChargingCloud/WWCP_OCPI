@@ -165,15 +165,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this currency.
         /// </summary>
-        public Currency Clone
+        public Currency Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

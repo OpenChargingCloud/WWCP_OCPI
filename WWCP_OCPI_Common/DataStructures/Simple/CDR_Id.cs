@@ -178,15 +178,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this charge detail record identification.
         /// </summary>
-        public CDR_Id Clone
+        public CDR_Id Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

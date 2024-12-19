@@ -408,15 +408,17 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public RemoteAccessInfo Clone()
 
-            => new(AccessToken.Clone,
-                   VersionsURL.Clone,
+            => new (
+                   AccessToken.Clone(),
+                   VersionsURL.Clone(),
                    VersionIds.Select(versionId => versionId.Clone).ToArray(),
                    SelectedVersionId,
                    Status,
                    NotBefore,
                    NotAfter,
                    AccessTokenIsBase64Encoded,
-                   AllowDowngrades);
+                   AllowDowngrades
+               );
 
         #endregion
 

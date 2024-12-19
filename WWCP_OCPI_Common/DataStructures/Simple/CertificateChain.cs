@@ -165,15 +165,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this certificate chain.
         /// </summary>
-        public CertificateChain Clone
+        public CertificateChain Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

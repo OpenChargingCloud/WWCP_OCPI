@@ -143,15 +143,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this connector identification.
         /// </summary>
-        public Connector_Id Clone
+        public Connector_Id Clone()
 
-            => new Connector_Id(
-                   new String(InternalId?.ToCharArray())
+            => new (
+                   InternalId.CloneString()
                );
 
         #endregion

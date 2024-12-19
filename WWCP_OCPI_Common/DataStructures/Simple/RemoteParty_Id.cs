@@ -271,16 +271,18 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this remote party identification.
         /// </summary>
         public RemoteParty_Id Clone
 
-            => new (CountryCode.Clone,
-                    PartyId.    Clone,
-                    Role);
+            => new (
+                   CountryCode.Clone(),
+                   PartyId.    Clone(),
+                   Role
+               );
 
         #endregion
 

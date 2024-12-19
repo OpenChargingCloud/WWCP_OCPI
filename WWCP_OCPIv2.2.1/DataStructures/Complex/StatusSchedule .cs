@@ -248,9 +248,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public StatusSchedule Clone()
 
-            => new (Status.Clone,
-                    Begin,
-                    End);
+            => new (
+                   Status.Clone(),
+                   Begin,
+                   End
+               );
 
         #endregion
 

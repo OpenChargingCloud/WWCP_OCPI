@@ -40,20 +40,19 @@ namespace cloud.charging.open.protocols.OCPI
         #region Properties
 
         /// <summary>
-        /// Name of the operator.
-        /// [max 100]
+        /// The name of the operator.
         /// </summary>
         [Mandatory]
         public String  Name       { get; }
 
         /// <summary>
-        /// Optinal link to the operator's website.
+        /// The optinal URL of the company’s website.
         /// </summary>
         [Optional]
         public URL?    Website    { get; }
 
         /// <summary>
-        /// Optinal image link to the operator's logo.
+        /// The optinal image link to the operator's logo.
         /// </summary>
         [Optional]
         public Image?  Logo       { get; }
@@ -66,8 +65,8 @@ namespace cloud.charging.open.protocols.OCPI
         /// Create new business details.
         /// </summary>
         /// <param name="Name">Name of the operator.</param>
-        /// <param name="Website">Optinal link to the operator's website.</param>
-        /// <param name="Logo">Optinal image link to the operator's logo.</param>
+        /// <param name="Website">An optinal URL of the company’s website.</param>
+        /// <param name="Logo">An optinal image link to the operator's logo.</param>
         public BusinessDetails(String  Name,
                                URL?    Website   = null,
                                Image?  Logo      = null)
@@ -79,6 +78,15 @@ namespace cloud.charging.open.protocols.OCPI
             this.Name     = Name.Trim();
             this.Website  = Website;
             this.Logo     = Logo;
+
+            unchecked
+            {
+
+                hashCode = this.Name.    GetHashCode()       * 5 ^
+                          (this.Website?.GetHashCode() ?? 0) * 3 ^
+                           this.Logo?.   GetHashCode() ?? 0;
+
+            }
 
         }
 
@@ -159,7 +167,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (!JSON.ParseMandatoryText("name",
                                              "name",
-                                             out String Name,
+                                             out String? Name,
                                              out ErrorResponse))
                 {
                     return false;
@@ -186,7 +194,7 @@ namespace cloud.charging.open.protocols.OCPI
                 if (JSON.ParseOptionalJSON("logo",
                                            "logo",
                                            Image.TryParse,
-                                           out Image Logo,
+                                           out Image? Logo,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -221,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region ToJSON(CustomBusinessDetailsSerializer = null)
+        #region ToJSON(CustomBusinessDetailsSerializer = null, CustomImageSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
@@ -261,9 +269,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public BusinessDetails Clone()
 
-            => new (new String(Name.ToCharArray()),
-                    Website.HasValue    ? Website.Value.Clone   : null,
-                    Logo    is not null ? Logo.         Clone() : null);
+            => new (
+                   Name.    CloneString(),
+                   Website?.Clone(),
+                   Logo?.   Clone()
+               );
 
         #endregion
 
@@ -404,17 +414,17 @@ namespace cloud.charging.open.protocols.OCPI
             if (BusinessDetails is null)
                 throw new ArgumentNullException(nameof(BusinessDetails), "The given business details must not be null!");
 
-            var c = Name.   CompareTo(BusinessDetails.Name);
+            var c = Name.CompareTo(BusinessDetails.Name);
 
             if (c == 0)
                 c = Website.HasValue && BusinessDetails.Website.HasValue
                         ? Website.Value.CompareTo(BusinessDetails.Website.Value)
-                        : 0;
+                        : Website.HasValue ? 1 : BusinessDetails.Website.HasValue ? -1 : 0;
 
             if (c == 0)
                 c = Logo is not null && BusinessDetails.Logo is not null
                         ? Logo.CompareTo(BusinessDetails.Logo)
-                        : 0;
+                        : Logo is not null ? 1 : BusinessDetails.Logo is not null ? -1 : 0;
 
             return c;
 
@@ -463,21 +473,14 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return  Name.    GetHashCode()       * 5 ^
-                       (Website?.GetHashCode() ?? 0) * 3 ^
-                       (Logo?.   GetHashCode() ?? 0);
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

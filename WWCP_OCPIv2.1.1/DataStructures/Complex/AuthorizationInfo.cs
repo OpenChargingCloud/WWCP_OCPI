@@ -285,12 +285,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public AuthorizationInfo Clone()
 
-            => new (Allowed.     Clone,
-                    Location?.   Clone(),
-                    Info?.       Clone(),
-                    RemoteParty?.Clone(),
-                    EMSPId?.     Clone,
-                    Runtime);
+            => new (
+                   Allowed.     Clone(),
+                   Location?.   Clone(),
+                   Info?.       Clone(),
+                   RemoteParty?.Clone(),
+                   EMSPId?.     Clone(),
+                   Runtime
+               );
 
         #endregion
 

@@ -236,11 +236,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                Credentials = new Credentials(Token,
-                                              URL,
-                                              BusinessDetails,
-                                              CountryCode,
-                                              PartyId);
+                Credentials = new Credentials(
+                                  Token,
+                                  URL,
+                                  BusinessDetails,
+                                  CountryCode,
+                                  PartyId
+                              );
 
 
                 if (CustomCredentialsParser is not null)
@@ -297,11 +299,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public Credentials Clone()
 
-            => new (Token.          Clone,
-                    URL.            Clone,
-                    BusinessDetails.Clone(),
-                    CountryCode.    Clone,
-                    PartyId.        Clone);
+            => new (
+                   Token.          Clone(),
+                   URL.            Clone(),
+                   BusinessDetails.Clone(),
+                   CountryCode.    Clone(),
+                   PartyId.        Clone()
+               );
 
         #endregion
 

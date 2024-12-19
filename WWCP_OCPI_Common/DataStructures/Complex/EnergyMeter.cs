@@ -547,20 +547,22 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public EnergyMeter Clone()
 
-            => new (Id.Clone,
-                    Model                     is not null ? new String(Model.          ToCharArray()) : null,
-                    ModelURL.                 HasValue    ? ModelURL.                 Value.Clone     : null,
-                    HardwareVersion           is not null ? new String(HardwareVersion.ToCharArray()) : null,
-                    FirmwareVersion           is not null ? new String(FirmwareVersion.ToCharArray()) : null,
-                    Manufacturer              is not null ? new String(Manufacturer.   ToCharArray()) : null,
-                    ManufacturerURL.          HasValue    ? ManufacturerURL.          Value.Clone     : null,
-                    PublicKeys.           Select(publicKey                  => publicKey.                 Clone).  ToArray(),
-                    PublicKeyCertificateChain.HasValue    ? PublicKeyCertificateChain.Value.Clone     : null,
-                    TransparencySoftwares.Select(transparencySoftwareStatus => transparencySoftwareStatus.Clone()).ToArray(),
-                    Description.          Select(displayText                => displayText.               Clone()).ToArray(),
-                    CustomData,
-                    InternalData,
-                    LastUpdated);
+            => new (
+                   Id.              Clone(),
+                   Model.           CloneNullableString(),
+                   ModelURL?.       Clone(),
+                   HardwareVersion. CloneNullableString(),
+                   FirmwareVersion. CloneNullableString(),
+                   Manufacturer.    CloneNullableString(),
+                   ManufacturerURL?.Clone(),
+                   PublicKeys.           Select(publicKey                  => publicKey.                 Clone).  ToArray(),
+                   PublicKeyCertificateChain.HasValue    ? PublicKeyCertificateChain.Value.Clone()     : null,
+                   TransparencySoftwares.Select(transparencySoftwareStatus => transparencySoftwareStatus.Clone()).ToArray(),
+                   Description.          Select(displayText                => displayText.               Clone()).ToArray(),
+                   CustomData,
+                   InternalData,
+                   LastUpdated
+               );
 
         #endregion
 

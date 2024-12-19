@@ -325,11 +325,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public PublishToken Clone()
 
-            => new (Id?.Clone,
-                    Type?.Clone,
-                    VisualNumber is not null ? new String(VisualNumber.ToCharArray()) : null,
-                    Issuer       is not null ? new String(Issuer.      ToCharArray()) : null,
-                    GroupId?.Clone);
+            => new (
+                   Id?.         Clone(),
+                   Type?.       Clone(),
+                   VisualNumber.CloneNullableString(),
+                   Issuer.      CloneNullableString(),
+                   GroupId?.    Clone()
+               );
 
         #endregion
 

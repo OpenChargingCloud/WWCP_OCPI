@@ -258,9 +258,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public Credentials Clone()
 
-            => new (Token.Clone,
-                    URL.  Clone,
-                    Roles.Select(role => role.Clone()).ToArray());
+            => new (
+                   Token.Clone(),
+                   URL.  Clone(),
+                   Roles.Select(role => role.Clone()).ToArray()
+               );
 
         #endregion
 

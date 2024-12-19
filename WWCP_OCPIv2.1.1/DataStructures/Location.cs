@@ -545,33 +545,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                hashCode = CountryCode.        GetHashCode()       * 97 ^
-                           PartyId.            GetHashCode()       * 89 ^
-                           Id.                 GetHashCode()       * 83 ^
-                           LocationType.       GetHashCode()       * 79 ^
-                           Address.            GetHashCode()       * 73 ^
-                           City.               GetHashCode()       * 71 ^
-                           PostalCode.         GetHashCode()       * 67 ^
-                           Country.            GetHashCode()       * 61 ^
-                           Coordinates.        GetHashCode()       * 59 ^
-                           Created.            GetHashCode()       * 53 ^
-                           LastUpdated.        GetHashCode()       * 47 ^
+                hashCode = CountryCode.        GetHashCode()        * 97 ^
+                           PartyId.            GetHashCode()        * 89 ^
+                           Id.                 GetHashCode()        * 83 ^
+                           LocationType.       GetHashCode()        * 79 ^
+                           Address.            GetHashCode()        * 73 ^
+                           City.               GetHashCode()        * 71 ^
+                           PostalCode.         GetHashCode()        * 67 ^
+                           Country.            GetHashCode()        * 61 ^
+                           Coordinates.        GetHashCode()        * 59 ^
+                           Created.            GetHashCode()        * 53 ^
+                           LastUpdated.        GetHashCode()        * 47 ^
 
-                          (Name?.              GetHashCode() ?? 0) * 43 ^
-                          (RelatedLocations?.  GetHashCode() ?? 0) * 41 ^
-                          (EVSEs?.             GetHashCode() ?? 0) * 37 ^
-                          (Directions?.        GetHashCode() ?? 0) * 31 ^
-                          (Operator?.          GetHashCode() ?? 0) * 29 ^
-                          (SubOperator?.       GetHashCode() ?? 0) * 23 ^
-                          (Owner?.             GetHashCode() ?? 0) * 19 ^
-                          (Facilities?.        GetHashCode() ?? 0) * 17 ^
-                          (Timezone?.          GetHashCode() ?? 0) * 13 ^
-                          (OpeningTimes?.      GetHashCode() ?? 0) * 11 ^
-                          (ChargingWhenClosed?.GetHashCode() ?? 0) *  7 ^
-                          (Images?.            GetHashCode() ?? 0) *  5 ^
-                          (EnergyMix?.         GetHashCode() ?? 0) *  3 ^
+                          (Name?.              GetHashCode()  ?? 0) * 43 ^
+                          (RelatedLocations?.  GetHashCode()  ?? 0) * 41 ^
+                          (EVSEs?.             CalcHashCode() ?? 0) * 37 ^
+                          (Directions?.        GetHashCode()  ?? 0) * 31 ^
+                          (Operator?.          GetHashCode()  ?? 0) * 29 ^
+                          (SubOperator?.       GetHashCode()  ?? 0) * 23 ^
+                          (Owner?.             GetHashCode()  ?? 0) * 19 ^
+                          (Facilities?.        GetHashCode()  ?? 0) * 17 ^
+                          (Timezone?.          GetHashCode()  ?? 0) * 13 ^
+                          (OpeningTimes?.      GetHashCode()  ?? 0) * 11 ^
+                          (ChargingWhenClosed?.GetHashCode()  ?? 0) *  7 ^
+                          (Images?.            GetHashCode()  ?? 0) *  5 ^
+                          (EnergyMix?.         GetHashCode()  ?? 0) *  3 ^
 
-                          (Publish?.           GetHashCode() ?? 0);
+                          (Publish?.           GetHashCode()  ?? 0);
 
             }
 
@@ -1235,35 +1235,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public Location Clone()
 
-            => new (CommonAPI,
-                    CountryCode.  Clone,
-                    PartyId.      Clone,
-                    Id.           Clone,
-                    LocationType. Clone,
-                    new String(Address.   ToCharArray()),
-                    new String(City.      ToCharArray()),
-                    new String(PostalCode.ToCharArray()),
-                    Country.      Clone,
-                    Coordinates.  Clone(),
+            => new (
+                   CommonAPI,
+                   CountryCode.  Clone(),
+                   PartyId.      Clone(),
+                   Id.           Clone(),
+                   LocationType. Clone(),
+                   new String(Address.   ToCharArray()),
+                   new String(City.      ToCharArray()),
+                   new String(PostalCode.ToCharArray()),
+                   Country.      Clone(),
+                   Coordinates.  Clone(),
 
-                    Name     is not null ? new String(Name.    ToCharArray()) : null,
-                    RelatedLocations.Select(relatedLocation => relatedLocation.Clone()).ToArray(),
-                    EVSEs.           Select(evse            => evse.           Clone()).ToArray(),
-                    Directions.      Select(displayText     => displayText.    Clone()).ToArray(),
-                    Operator?.    Clone(),
-                    SubOperator?. Clone(),
-                    Owner?.       Clone(),
-                    Facilities.      Select(facility        => facility.       Clone  ).ToArray(),
-                    Timezone is not null ? new String(Timezone.ToCharArray()) : null,
-                    OpeningTimes?.Clone(),
-                    ChargingWhenClosed,
-                    Images.          Select(image           => image.          Clone()).ToArray(),
-                    EnergyMix?.   Clone(),
+                   Name     is not null ? new String(Name.    ToCharArray()) : null,
+                   RelatedLocations.Select(relatedLocation => relatedLocation.Clone()).ToArray(),
+                   EVSEs.           Select(evse            => evse.           Clone()).ToArray(),
+                   Directions.      Select(displayText     => displayText.    Clone()).ToArray(),
+                   Operator?.    Clone(),
+                   SubOperator?. Clone(),
+                   Owner?.       Clone(),
+                   Facilities.      Select(facility        => facility.       Clone  ).ToArray(),
+                   Timezone is not null ? new String(Timezone.ToCharArray()) : null,
+                   OpeningTimes?.Clone(),
+                   ChargingWhenClosed,
+                   Images.          Select(image           => image.          Clone()).ToArray(),
+                   EnergyMix?.   Clone(),
 
-                    Publish,
+                   Publish,
 
-                    Created,
-                    LastUpdated);
+                   Created,
+                   LastUpdated
+               );
 
         #endregion
 

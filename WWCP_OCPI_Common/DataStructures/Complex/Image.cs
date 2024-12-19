@@ -103,6 +103,18 @@ namespace cloud.charging.open.protocols.OCPI
             this.Height     = Height;
             this.Thumbnail  = Thumbnail;
 
+            unchecked
+            {
+
+                hashCode = URL.       GetHashCode()       * 13 ^
+                           Type.      GetHashCode()       * 11 ^
+                           Category.  GetHashCode()       *  7 ^
+                          (Thumbnail?.GetHashCode() ?? 0) *  5 ^
+                          (Width?.    GetHashCode() ?? 0) *  3 ^
+                          (Height?.   GetHashCode() ?? 0);
+
+            }
+
         }
 
         #endregion
@@ -330,12 +342,14 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public Image Clone()
 
-            => new (URL.     Clone,
-                    Type.    Clone,
-                    Category.Clone,
-                    Width.    HasValue ? Width.    Value : null,
-                    Height.   HasValue ? Height.   Value : null,
-                    Thumbnail.HasValue ? Thumbnail.Value : null);
+            => new (
+                   URL.     Clone(),
+                   Type.    Clone,
+                   Category.Clone,
+                   Width.    HasValue ? Width.    Value : null,
+                   Height.   HasValue ? Height.   Value : null,
+                   Thumbnail.HasValue ? Thumbnail.Value : null
+               );
 
         #endregion
 
@@ -552,25 +566,14 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return URL.       GetHashCode()       * 13 ^
-                       Type.      GetHashCode()       * 11 ^
-                       Category.  GetHashCode()       *  7 ^
-
-                      (Thumbnail?.GetHashCode() ?? 0) *  5 ^
-                      (Width?.    GetHashCode() ?? 0) *  3 ^
-                      (Height?.   GetHashCode() ?? 0);
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

@@ -855,28 +855,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public RemoteParty Clone()
 
-            => new (CountryCode. Clone,
-                    PartyId.     Clone,
-                    Role,
-                    BusinessDetails.Clone(),
+            => new (
+                   CountryCode. Clone(),
+                   PartyId.     Clone(),
+                   Role,
+                   BusinessDetails.Clone(),
 
-                    LocalAccessInfos. Select(localAccesssInfo  => localAccesssInfo. Clone()),
-                    RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
-                    Status,
+                   LocalAccessInfos. Select(localAccesssInfo  => localAccesssInfo. Clone()),
+                   RemoteAccessInfos.Select(remoteAccessInfos => remoteAccessInfos.Clone()),
+                   Status,
 
-                    PreferIPv4,
-                    RemoteCertificateValidator,
-                    LocalCertificateSelector,
-                    ClientCert,
-                    TLSProtocol,
-                    HTTPUserAgent,
-                    RequestTimeout,
-                    TransmissionRetryDelay,
-                    MaxNumberOfRetries,
-                    InternalBufferSize,
-                    UseHTTPPipelining,
+                   PreferIPv4,
+                   RemoteCertificateValidator,
+                   LocalCertificateSelector,
+                   ClientCert,
+                   TLSProtocol,
+                   HTTPUserAgent,
+                   RequestTimeout,
+                   TransmissionRetryDelay,
+                   MaxNumberOfRetries,
+                   InternalBufferSize,
+                   UseHTTPPipelining,
 
-                    LastUpdated);
+                   LastUpdated
+               );
 
         #endregion
 

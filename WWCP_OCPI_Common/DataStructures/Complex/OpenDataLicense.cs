@@ -318,9 +318,11 @@ namespace cloud.charging.open.protocols.OCPI
         /// </summary>
         public OpenDataLicense Clone()
 
-            => new (Id.         Clone,
-                    Description.Select(displayText => displayText.Clone()).ToArray(),
-                    URLs.       Select(url         => url.        Clone).  ToArray());
+            => new (
+                   Id.         Clone,
+                   Description.Select(displayText => displayText.Clone()).ToArray(),
+                   URLs.       Select(url         => url.        Clone()).ToArray()
+               );
 
         #endregion
 

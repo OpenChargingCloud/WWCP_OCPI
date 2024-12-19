@@ -150,7 +150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                     Name:                 I18NString.Create("Test station #1A"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -175,7 +175,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
                                                     Name:                 I18NString.Create("Test station #1B"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #1B"),
 
@@ -200,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
                                                     Name:                 I18NString.Create("Test station #2A"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #2A"),
 
@@ -452,7 +452,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                     Name:                 I18NString.Create("Test station #1A"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -477,7 +477,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
                                                     Name:                 I18NString.Create("Test station #1B"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #1B"),
 
@@ -502,7 +502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
                                                     Name:                 I18NString.Create("Test station #2A"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #2A"),
 
@@ -670,7 +670,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                 #region Update Add DE*GEF*POOL2, DE*GEF*STATION*2*A, DE*GEF*POOL2
 
                 var updatedPoolProperties     = new List<PropertyUpdateInfo<ChargingPool_Id>>();
-                var updatedStationProperties  = new List<PropertyUpdateInfo<ChargingStation_Id>>();
+                var updatedStationProperties  = new List<PropertyUpdateInfo<WWCP.ChargingStation_Id>>();
                 var updatedEVSEProperties     = new List<PropertyUpdateInfo<WWCP.EVSE_Id>>();
 
                 #region Subscribe charging pool events
@@ -739,7 +739,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                         oldValue,
                                                         dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>((chargingStation as IChargingStation)!.Id, propertyName, newValue, oldValue, dataSource));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>((chargingStation as IChargingStation)!.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -752,7 +752,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                     oldValue,
                                                     dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -765,7 +765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                                  oldValue,
                                                                  dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -778,7 +778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
                                                                    oldValue,
                                                                    dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -1030,7 +1030,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                     Name:                 I18NString.Create("Test station #1A"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -1055,7 +1055,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
                                                     Name:                 I18NString.Create("Test station #1B"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #1B"),
 
@@ -1080,7 +1080,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
                                                     Name:                 I18NString.Create("Test station #2A"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #2A"),
 
@@ -1481,7 +1481,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                     Name:                 I18NString.Create("Test station #1A"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
@@ -1506,7 +1506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
                                                     Name:                 I18NString.Create("Test station #1B"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #1B"),
 
@@ -1531,7 +1531,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests.RoamingTests
 
                 var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
-                                                    Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
                                                     Name:                 I18NString.Create("Test station #2A"),
                                                     Description:          I18NString.Create("GraphDefined charging station for tests #2A"),
 

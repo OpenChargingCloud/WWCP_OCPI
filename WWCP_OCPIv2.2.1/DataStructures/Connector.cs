@@ -566,19 +566,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public Connector Clone()
 
-            => new (ParentEVSE,
+            => new (
+                   ParentEVSE,
 
-                    Id.                    Clone,
-                    Standard.              Clone,
-                    Format,
-                    PowerType,
-                    MaxVoltage,
-                    MaxAmperage,
-                    MaxElectricPower,
-                    TariffIds.Select(tariffId => tariffId.Clone).ToArray(),
-                    TermsAndConditionsURL?.Clone,
+                   Id.                    Clone(),
+                   Standard.              Clone(),
+                   Format,
+                   PowerType,
+                   MaxVoltage,
+                   MaxAmperage,
+                   MaxElectricPower,
+                   TariffIds.Select(tariffId => tariffId.Clone()),
+                   TermsAndConditionsURL?.Clone(),
 
-                    LastUpdated);
+                   LastUpdated
+               );
 
         #endregion
 

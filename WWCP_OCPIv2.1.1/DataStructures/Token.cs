@@ -584,19 +584,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public Token Clone()
 
-            => new (CountryCode.Clone,
-                    PartyId.    Clone,
-                    Id.         Clone,
-                    Type.       Clone,
-                    AuthId.     Clone,
-                    new String(Issuer.ToCharArray()),
-                    IsValid,
-                    WhitelistType,
-                    VisualNumber is not null ? new String(VisualNumber.ToCharArray()) : null,
-                    UILanguage,
+            => new (
+                   CountryCode. Clone(),
+                   PartyId.     Clone(),
+                   Id.          Clone(),
+                   Type.        Clone(),
+                   AuthId.      Clone(),
+                   Issuer.      CloneString(),
+                   IsValid,
+                   WhitelistType,
+                   VisualNumber.CloneNullableString(),
+                   UILanguage,
 
-                    Created,
-                    LastUpdated);
+                   Created,
+                   LastUpdated
+               );
 
         #endregion
 

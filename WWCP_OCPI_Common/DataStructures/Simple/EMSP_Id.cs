@@ -260,15 +260,17 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this EMSP identification.
         /// </summary>
-        public EMSP_Id Clone
+        public EMSP_Id Clone()
 
-            => new (CountryCode.Clone,
-                    PartyId.    Clone);
+            => new (
+                   CountryCode.Clone(),
+                   PartyId.    Clone()
+               );
 
         #endregion
 

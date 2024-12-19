@@ -282,9 +282,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public TokenStatus Clone()
 
-            => new (Token.             Clone(),
-                    Status.            Clone,
-                    LocationReference?.Clone());
+            => new (
+                   Token.             Clone(),
+                   Status.            Clone(),
+                   LocationReference?.Clone()
+               );
 
         #endregion
 

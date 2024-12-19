@@ -801,27 +801,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public Session Clone()
 
-            => new (CountryCode.            Clone,
-                    PartyId.                Clone,
-                    Id.                     Clone,
-                    Start,
-                    kWh,
-                    CDRToken.               Clone(),
-                    AuthMethod,
-                    LocationId.             Clone,
-                    EVSEUId.                Clone,
-                    ConnectorId.            Clone,
-                    Currency.               Clone,
-                    Status,
+            => new (
+                   CountryCode.            Clone(),
+                   PartyId.                Clone(),
+                   Id.                     Clone(),
+                   Start,
+                   kWh,
+                   CDRToken.               Clone(),
+                   AuthMethod,
+                   LocationId.             Clone(),
+                   EVSEUId.                Clone(),
+                   ConnectorId.            Clone(),
+                   Currency.               Clone(),
+                   Status,
 
-                    End,
-                    AuthorizationReference?.Clone,
-                    MeterId?.               Clone,
-                    ChargingPeriods.Select(chargingPeriod => chargingPeriod.Clone()).ToArray(),
-                    TotalCosts,
+                   End,
+                   AuthorizationReference?.Clone(),
+                   MeterId?.               Clone(),
+                   ChargingPeriods.Select(chargingPeriod => chargingPeriod.Clone()).ToArray(),
+                   TotalCosts,
 
-                    Created,
-                    LastUpdated);
+                   Created,
+                   LastUpdated
+               );
 
         #endregion
 

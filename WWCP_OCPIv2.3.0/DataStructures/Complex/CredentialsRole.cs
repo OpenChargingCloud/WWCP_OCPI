@@ -249,11 +249,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 #endregion
 
 
-                CredentialsRole = new CredentialsRole(CountryCode,
-                                                      PartyId,
-                                                      Role,
-                                                      BusinessDetails,
-                                                      AllowDowngrades);
+                CredentialsRole = new CredentialsRole(
+                                      CountryCode,
+                                      PartyId,
+                                      Role,
+                                      BusinessDetails,
+                                      AllowDowngrades
+                                  );
 
 
                 if (CustomCredentialsRoleParser is not null)
@@ -316,11 +318,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public CredentialsRole Clone()
 
-            => new (CountryCode.    Clone,
-                    PartyId.        Clone,
-                    Role,
-                    BusinessDetails.Clone(),
-                    AllowDowngrades);
+            => new (
+                   CountryCode.    Clone(),
+                   PartyId.        Clone(),
+                   Role,
+                   BusinessDetails.Clone(),
+                   AllowDowngrades
+               );
 
         #endregion
 

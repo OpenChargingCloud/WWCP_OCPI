@@ -331,11 +331,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public SignedData Clone()
 
-            => new (EncodingMethod.Clone,
-                    SignedValues.Select(signedValue => signedValue.Clone()).ToArray(),
-                    EncodingMethodVersion,
-                    PublicKey?.    Clone,
-                    URL?.          Clone);
+            => new (
+                   EncodingMethod.Clone,
+                   SignedValues.Select(signedValue => signedValue.Clone()).ToArray(),
+                   EncodingMethodVersion,
+                   PublicKey?.    Clone,
+                   URL?.          Clone()
+               );
 
         #endregion
 

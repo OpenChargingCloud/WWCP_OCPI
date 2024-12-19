@@ -787,25 +787,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public EVSE Clone()
 
-            => new (ParentLocation,
+            => new (
+                   ParentLocation,
 
-                    UId.         Clone,
-                    Status.      Clone,
-                    Connectors.         Select(connector          => connector.         Clone()).ToArray(),
+                   UId.              Clone(),
+                   Status.           Clone(),
+                   Connectors.         Select(connector          => connector.         Clone()).ToArray(),
 
-                    EVSEId?.     Clone,
-                    StatusSchedule.     Select(statusSchedule     => statusSchedule.    Clone()).ToArray(),
-                    Capabilities.       Select(capability         => capability.        Clone).  ToArray(),
-                    EnergyMeter?.Clone(),
-                    FloorLevel        is not null ? new String(FloorLevel.       ToCharArray()) : null,
-                    Coordinates?.Clone(),
-                    PhysicalReference is not null ? new String(PhysicalReference.ToCharArray()) : null,
-                    Directions.         Select(displayText        => displayText.       Clone()).ToArray(),
-                    ParkingRestrictions.Select(parkingRestriction => parkingRestriction        ).ToArray(),
-                    Images.             Select(image              => image.             Clone()).ToArray(),
+                   EVSEId?.          Clone(),
+                   StatusSchedule.     Select(statusSchedule     => statusSchedule.    Clone()).ToArray(),
+                   Capabilities.       Select(capability         => capability.        Clone).  ToArray(),
+                   EnergyMeter?.     Clone(),
+                   FloorLevel.       CloneNullableString(),
+                   Coordinates?.     Clone(),
+                   PhysicalReference.CloneNullableString(),
+                   Directions.         Select(displayText        => displayText.       Clone()).ToArray(),
+                   ParkingRestrictions.Select(parkingRestriction => parkingRestriction        ).ToArray(),
+                   Images.             Select(image              => image.             Clone()).ToArray(),
 
-                    Created,
-                    LastUpdated);
+                   Created,
+                   LastUpdated
+               );
 
         #endregion
 

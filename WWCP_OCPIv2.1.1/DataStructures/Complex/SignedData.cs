@@ -335,7 +335,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     SignedValues.Select(signedValue => signedValue.Clone()).ToArray(),
                     EncodingMethodVersion,
                     PublicKey?.    Clone,
-                    URL?.          Clone);
+                    URL?.          Clone());
 
         #endregion
 

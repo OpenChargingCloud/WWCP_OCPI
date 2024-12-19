@@ -760,14 +760,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    : new (ParentEVSE,
 
-                          Id.                    Clone,
-                          Standard.              Clone,
+                          Id.                    Clone(),
+                          Standard.              Clone(),
                           Format,
                           PowerType,
                           Voltage,
                           Amperage,
                           emspTariffIds?.ToDictionary(),
-                          TermsAndConditionsURL?.Clone,
+                          TermsAndConditionsURL?.Clone(),
 
                           LastUpdated);
 

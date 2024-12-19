@@ -677,23 +677,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public Token Clone()
 
-            => new (CountryCode.    Clone,
-                    PartyId.        Clone,
-                    Id.             Clone,
-                    Type.           Clone,
-                    ContractId.     Clone,
-                    new String(Issuer.ToCharArray()),
-                    IsValid,
-                    WhitelistType,
+            => new (
+                   CountryCode.    Clone(),
+                   PartyId.        Clone(),
+                   Id.             Clone(),
+                   Type.           Clone(),
+                   ContractId.     Clone(),
+                   Issuer.         CloneString(),
+                   IsValid,
+                   WhitelistType,
 
-                    VisualNumber is not null ? new String(VisualNumber.ToCharArray()) : null,
-                    GroupId?.       Clone,
-                    UILanguage,
-                    DefaultProfile,
-                    EnergyContract?.Clone(),
+                   VisualNumber.   CloneNullableString(),
+                   GroupId?.       Clone(),
+                   UILanguage,
+                   DefaultProfile,
+                   EnergyContract?.Clone(),
 
-                    Created,
-                    LastUpdated);
+                   Created,
+                   LastUpdated
+               );
 
         #endregion
 

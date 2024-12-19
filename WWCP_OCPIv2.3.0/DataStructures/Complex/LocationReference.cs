@@ -250,8 +250,10 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public LocationReference Clone()
 
-            => new (LocationId.Clone,
-                    EVSEUIds.Select(evseUId => evseUId.Clone).ToArray());
+            => new (
+                   LocationId.Clone(),
+                   EVSEUIds.Select(evseUId => evseUId.Clone()).ToArray()
+               );
 
         #endregion
 

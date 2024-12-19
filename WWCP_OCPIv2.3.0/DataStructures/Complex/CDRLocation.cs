@@ -516,21 +516,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public CDRLocation Clone()
 
-            => new (Id.               Clone,
-                    new String(Address.ToCharArray()),
-                    new String(City.   ToCharArray()),
-                    Country.          Clone,
-                    Coordinates.      Clone(),
-                    EVSEUId.          Clone,
-                    EVSEId.           Clone,
-                    ConnectorId.      Clone,
-                    ConnectorStandard.Clone,
-                    ConnectorFormat,
-                    ConnectorPowerType,
+            => new (
 
-                    Name       is not null ? new String(Name.      ToCharArray()) : null,
-                    PostalCode is not null ? new String(PostalCode.ToCharArray()) : null,
-                    State      is not null ? new String(State.     ToCharArray()) : null);
+                   Id.               Clone(),
+                   Address.          CloneString(),
+                   City.             CloneString(),
+                   Country.          Clone(),
+                   Coordinates.      Clone(),
+                   EVSEUId.          Clone(),
+                   EVSEId.           Clone(),
+                   ConnectorId.      Clone(),
+                   ConnectorStandard.Clone(),
+                   ConnectorFormat,
+                   ConnectorPowerType,
+
+                   Name.             CloneNullableString(),
+                   PostalCode.       CloneNullableString(),
+                   State.            CloneNullableString()
+
+               );
 
         #endregion
 

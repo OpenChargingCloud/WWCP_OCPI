@@ -574,34 +574,34 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             unchecked
             {
 
-                hashCode = CountryCode.        GetHashCode()       * 107 ^
-                           PartyId.            GetHashCode()       * 103 ^
-                           Id.                 GetHashCode()       * 101 ^
-                           Publish.            GetHashCode()       *  97 ^
-                           Address.            GetHashCode()       *  89 ^
-                           City.               GetHashCode()       *  83 ^
-                           Country.            GetHashCode()       *  79 ^
-                           Coordinates.        GetHashCode()       *  73 ^
-                           Timezone.           GetHashCode()       *  71 ^
-                           Created.            GetHashCode()       *  67 ^
-                           LastUpdated.        GetHashCode()       *  61 ^
+                hashCode = CountryCode.        GetHashCode()        * 107 ^
+                           PartyId.            GetHashCode()        * 103 ^
+                           Id.                 GetHashCode()        * 101 ^
+                           Publish.            GetHashCode()        *  97 ^
+                           Address.            GetHashCode()        *  89 ^
+                           City.               GetHashCode()        *  83 ^
+                           Country.            GetHashCode()        *  79 ^
+                           Coordinates.        GetHashCode()        *  73 ^
+                           Timezone.           GetHashCode()        *  71 ^
+                           Created.            GetHashCode()        *  67 ^
+                           LastUpdated.        GetHashCode()        *  61 ^
 
-                          (PublishAllowedTo?.  GetHashCode() ?? 0) *  59 ^
-                          (Name?.              GetHashCode() ?? 0) *  53 ^
-                          (PostalCode?.        GetHashCode() ?? 0) *  47 ^
-                          (State?.             GetHashCode() ?? 0) *  41 ^
-                          (RelatedLocations?.  GetHashCode() ?? 0) *  37 ^
-                          (ParkingType?.       GetHashCode() ?? 0) *  31^
-                          (EVSEs?.             GetHashCode() ?? 0) *  29 ^
-                          (Directions?.        GetHashCode() ?? 0) *  23 ^
-                          (Operator?.          GetHashCode() ?? 0) *  19 ^
-                          (SubOperator?.       GetHashCode() ?? 0) *  17 ^
-                          (Owner?.             GetHashCode() ?? 0) *  13 ^
-                          (Facilities?.        GetHashCode() ?? 0) *  11 ^
-                          (OpeningTimes?.      GetHashCode() ?? 0) *   7 ^
-                          (ChargingWhenClosed?.GetHashCode() ?? 0) *   5 ^
-                          (Images?.            GetHashCode() ?? 0) *   3 ^
-                          (EnergyMix?.         GetHashCode() ?? 0);
+                          (PublishAllowedTo?.  GetHashCode()  ?? 0) *  59 ^
+                          (Name?.              GetHashCode()  ?? 0) *  53 ^
+                          (PostalCode?.        GetHashCode()  ?? 0) *  47 ^
+                          (State?.             GetHashCode()  ?? 0) *  41 ^
+                          (RelatedLocations?.  GetHashCode()  ?? 0) *  37 ^
+                          (ParkingType?.       GetHashCode()  ?? 0) *  31^
+                          (EVSEs?.             CalcHashCode() ?? 0) *  29 ^
+                          (Directions?.        GetHashCode()  ?? 0) *  23 ^
+                          (Operator?.          GetHashCode()  ?? 0) *  19 ^
+                          (SubOperator?.       GetHashCode()  ?? 0) *  17 ^
+                          (Owner?.             GetHashCode()  ?? 0) *  13 ^
+                          (Facilities?.        GetHashCode()  ?? 0) *  11 ^
+                          (OpeningTimes?.      GetHashCode()  ?? 0) *   7 ^
+                          (ChargingWhenClosed?.GetHashCode()  ?? 0) *   5 ^
+                          (Images?.            GetHashCode()  ?? 0) *   3 ^
+                          (EnergyMix?.         GetHashCode()  ?? 0);
 
             }
 
@@ -1282,36 +1282,38 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public Location Clone()
 
-            => new (CommonAPI,
-                    CountryCode.  Clone,
-                    PartyId.      Clone,
-                    Id.           Clone,
-                    Publish,
-                    new String(Address.   ToCharArray()),
-                    new String(City.      ToCharArray()),
-                    Country.      Clone,
-                    Coordinates.  Clone(),
-                    new String(Timezone.ToCharArray()),
+            => new (
+                   CommonAPI,
+                   CountryCode.  Clone(),
+                   PartyId.      Clone(),
+                   Id.           Clone(),
+                   Publish,
+                   Address.      CloneString(),
+                   City.         CloneString(),
+                   Country.      Clone(),
+                   Coordinates.  Clone(),
+                   Timezone.     CloneString(),
 
-                    PublishAllowedTo.Select(publishToken    => publishToken.   Clone()).ToArray(),
-                    Name       is not null ? new String(Name.      ToCharArray()) : null,
-                    PostalCode is not null ? new String(PostalCode.ToCharArray()) : null,
-                    State      is not null ? new String(State.     ToCharArray()) : null,
-                    RelatedLocations.Select(relatedLocation => relatedLocation.Clone()).ToArray(),
-                    ParkingType?. Clone,
-                    EVSEs.           Select(evse            => evse.           Clone()).ToArray(),
-                    Directions.      Select(displayText     => displayText.    Clone()).ToArray(),
-                    Operator?.    Clone(),
-                    SubOperator?. Clone(),
-                    Owner?.       Clone(),
-                    Facilities.      Select(facility        => facility.       Clone  ).ToArray(),
-                    OpeningTimes?.Clone(),
-                    ChargingWhenClosed,
-                    Images.          Select(image           => image.          Clone()).ToArray(),
-                    EnergyMix?.   Clone(),
+                   PublishAllowedTo.Select(publishToken    => publishToken.   Clone()).ToArray(),
+                   Name.         CloneNullableString(),
+                   PostalCode.   CloneNullableString(),
+                   State.        CloneNullableString(),
+                   RelatedLocations.Select(relatedLocation => relatedLocation.Clone()).ToArray(),
+                   ParkingType?. Clone(),
+                   EVSEs.           Select(evse            => evse.           Clone()).ToArray(),
+                   Directions.      Select(displayText     => displayText.    Clone()).ToArray(),
+                   Operator?.    Clone(),
+                   SubOperator?. Clone(),
+                   Owner?.       Clone(),
+                   Facilities.      Select(facility        => facility.       Clone()).ToArray(),
+                   OpeningTimes?.Clone(),
+                   ChargingWhenClosed,
+                   Images.          Select(image           => image.          Clone()).ToArray(),
+                   EnergyMix?.   Clone(),
 
-                    Created,
-                    LastUpdated);
+                   Created,
+                   LastUpdated
+               );
 
         #endregion
 

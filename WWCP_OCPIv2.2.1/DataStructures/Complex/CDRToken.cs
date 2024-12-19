@@ -325,11 +325,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public CDRToken Clone()
 
-            => new (CountryCode.Clone,
-                    PartyId.    Clone,
-                    UID.        Clone,
-                    TokenType.  Clone,
-                    ContractId. Clone);
+            => new (
+                   CountryCode.Clone(),
+                   PartyId.    Clone(),
+                   UID.        Clone(),
+                   TokenType.  Clone(),
+                   ContractId. Clone()
+               );
 
         #endregion
 

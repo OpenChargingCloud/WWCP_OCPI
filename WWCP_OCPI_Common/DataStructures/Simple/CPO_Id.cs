@@ -260,15 +260,17 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this CPO identification.
         /// </summary>
-        public CPO_Id Clone
+        public CPO_Id Clone()
 
-            => new (CountryCode.Clone,
-                    PartyId.    Clone);
+            => new (
+                   CountryCode.Clone(),
+                   PartyId.    Clone()
+               );
 
         #endregion
 

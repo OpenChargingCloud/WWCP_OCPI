@@ -395,11 +395,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// </summary>
         public ClientInfo Clone()
 
-            => new (CountryCode.Clone,
-                    PartyId.    Clone,
-                    Role,
-                    Status,
-                    LastUpdated);
+            => new (
+                   CountryCode.Clone(),
+                   PartyId.    Clone(),
+                   Role,
+                   Status,
+                   LastUpdated
+               );
 
         #endregion
 

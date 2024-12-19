@@ -485,7 +485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.Datastructures
 
             var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-                                                Id:                   ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
                                                 Name:                 I18NString.Create("Test station #1A"),
                                                 Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 

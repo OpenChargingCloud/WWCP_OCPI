@@ -741,20 +741,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public Tariff Clone()
 
-            => new (CountryCode.  Clone,
-                    PartyId.      Clone,
-                    Id.           Clone,
-                    Currency.     Clone,
-                    TariffElements.Select(tariffElement => tariffElement.Clone()).ToArray(),
+            => new (
+                   CountryCode.  Clone(),
+                   PartyId.      Clone(),
+                   Id.           Clone(),
+                   Currency.     Clone(),
+                   TariffElements.Select(tariffElement => tariffElement.Clone()).ToArray(),
 
-                    TariffAltText. Select(displayText   => displayText.  Clone()).ToArray(),
-                    TariffAltURL?.Clone,
-                    EnergyMix?.   Clone(),
+                   TariffAltText. Select(displayText   => displayText.  Clone()).ToArray(),
+                   TariffAltURL?.Clone(),
+                   EnergyMix?.   Clone(),
 
-                    Created,
-                    NotBefore,
-                    NotAfter,
-                    LastUpdated);
+                   Created,
+                   NotBefore,
+                   NotAfter,
+                   LastUpdated
+               );
 
         #endregion
 

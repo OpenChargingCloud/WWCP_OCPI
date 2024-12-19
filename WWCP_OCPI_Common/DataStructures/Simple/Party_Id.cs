@@ -49,7 +49,6 @@ namespace cloud.charging.open.protocols.OCPI
 
     /// <summary>
     /// The unique identification of a party.
-    /// CiString(3)
     /// </summary>
     public readonly struct Party_Id : IId<Party_Id>
     {
@@ -168,15 +167,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this party identification.
         /// </summary>
-        public Party_Id Clone
+        public Party_Id Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

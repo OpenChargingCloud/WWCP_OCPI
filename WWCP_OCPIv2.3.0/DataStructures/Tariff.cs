@@ -892,23 +892,25 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         public Tariff Clone()
 
-            => new (CountryCode.  Clone,
-                    PartyId.      Clone,
-                    Id.           Clone,
-                    Currency.     Clone,
-                    TariffElements.Select(tariffElement => tariffElement.Clone()).ToArray(),
-                    TaxIncluded,
-                    TariffType,
-                    TariffAltText. Select(displayText   => displayText.  Clone()).ToArray(),
-                    TariffAltURL?.Clone,
-                    MinPrice,
-                    MaxPrice,
-                    Start,
-                    End,
-                    EnergyMix?.   Clone(),
+            => new (
+                   CountryCode.  Clone(),
+                   PartyId.      Clone(),
+                   Id.           Clone(),
+                   Currency.     Clone(),
+                   TariffElements.Select(tariffElement => tariffElement.Clone()).ToArray(),
+                   TaxIncluded,
+                   TariffType,
+                   TariffAltText. Select(displayText   => displayText.  Clone()).ToArray(),
+                   TariffAltURL?.Clone(),
+                   MinPrice,
+                   MaxPrice,
+                   Start,
+                   End,
+                   EnergyMix?.   Clone(),
 
-                    Created,
-                    LastUpdated);
+                   Created,
+                   LastUpdated
+               );
 
         #endregion
 

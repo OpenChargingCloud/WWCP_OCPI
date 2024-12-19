@@ -1461,31 +1461,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public CDR Clone()
 
-            => new (CountryCode.Clone,
-                    PartyId.    Clone,
-                    Id.         Clone,
-                    Start,
-                    Stop,
-                    AuthId.     Clone,
-                    AuthMethod,
-                    Location.   Clone(),
-                    Currency.   Clone,
-                    ChargingPeriods.      Select(chargingPeriod       => chargingPeriod.      Clone()).ToArray(),
-                    TotalCost,
-                    TotalEnergy,
-                    TotalTime,
+            => new (
+                   CountryCode. Clone(),
+                   PartyId.     Clone(),
+                   Id.          Clone(),
+                   Start,
+                   Stop,
+                   AuthId.      Clone(),
+                   AuthMethod,
+                   Location.    Clone(),
+                   Currency.    Clone(),
+                   ChargingPeriods.      Select(chargingPeriod       => chargingPeriod.      Clone()).ToArray(),
+                   TotalCost,
+                   TotalEnergy,
+                   TotalTime,
 
-                    CostDetails?.            Clone(),
-                    MeterId?.             Clone,
-                    EnergyMeter?.         Clone(),
-                    TransparencySoftwares.Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
-                    Tariffs.              Select(tariff               => tariff.              Clone()).ToArray(),
-                    SignedData?.          Clone(),
-                    TotalParkingTime,
-                    Remark is not null ? new String(Remark.ToCharArray()) : null,
+                   CostDetails?.Clone(),
+                   MeterId?.    Clone(),
+                   EnergyMeter?.Clone(),
+                   TransparencySoftwares.Select(transparencySoftware => transparencySoftware.Clone()).ToArray(),
+                   Tariffs.              Select(tariff               => tariff.              Clone()).ToArray(),
+                   SignedData?. Clone(),
+                   TotalParkingTime,
+                   Remark?.     CloneNullableString(),
 
-                    Created,
-                    LastUpdated);
+                   Created,
+                   LastUpdated
+               );
 
         #endregion
 
