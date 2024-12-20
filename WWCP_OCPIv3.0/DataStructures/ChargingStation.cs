@@ -217,8 +217,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             foreach (var evse in this.EVSEs)
                 evse.ParentChargingStation = this;
 
-            this.ETag                  = CalcSHA256Hash(EMSPId,
-                                                        CustomChargingStationSerializer,
+            this.ETag                  = CalcSHA256Hash(CustomChargingStationSerializer,
                                                         CustomStatusScheduleSerializer,
                                                         CustomEVSESerializer,
                                                         CustomConnectorSerializer,
@@ -595,8 +594,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(EMSP_Id?                                                      EMSPId                                       = null,
-                              CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
+        public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -613,8 +611,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            EVSEs.Any()
                                ? new JProperty("evse",                  new JArray(EVSEs.              OrderBy(evse               => evse.UId).
-                                                                                                       Select (evse               => evse.              ToJSON(EMSPId,
-                                                                                                                                                               CustomEVSESerializer,
+                                                                                                       Select (evse               => evse.              ToJSON(CustomEVSESerializer,
                                                                                                                                                                CustomStatusScheduleSerializer,
                                                                                                                                                                CustomConnectorSerializer,
                                                                                                                                                                CustomEnergyMeterSerializer,
@@ -916,8 +913,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public String CalcSHA256Hash(EMSP_Id?                                                      EMSPId                                       = null,
-                                     CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
                                      CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                                      CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                                      CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -928,8 +924,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null)
         {
 
-            this.ETag = SHA256.HashData(ToJSON(EMSPId,
-                                               CustomChargingStationSerializer,
+            this.ETag = SHA256.HashData(ToJSON(CustomChargingStationSerializer,
                                                CustomStatusScheduleSerializer,
                                                CustomEVSESerializer,
                                                CustomConnectorSerializer,

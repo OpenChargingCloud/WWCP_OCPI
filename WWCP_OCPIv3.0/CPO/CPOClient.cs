@@ -1825,8 +1825,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                                                      RequestBuilder: requestBuilder => {
                                                                                          requestBuilder.Authorization  = TokenAuth;
                                                                                          requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestBuilder.Content        = EVSE.ToJSON(EMSPId,
-                                                                                                                                     CustomEVSESerializer,
+                                                                                         requestBuilder.Content        = EVSE.ToJSON(CustomEVSESerializer,
                                                                                                                                      CustomStatusScheduleSerializer,
                                                                                                                                      CustomConnectorSerializer,
                                                                                                                                      CustomEnergyMeterSerializer,

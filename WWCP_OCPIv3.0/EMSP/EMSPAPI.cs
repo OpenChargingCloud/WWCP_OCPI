@@ -4330,8 +4330,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = evse.ToJSON(Request.EMSPId,
-                                                                                      CustomEVSESerializer,
+                                                   Data                 = evse.ToJSON(CustomEVSESerializer,
                                                                                       CustomStatusScheduleSerializer,
                                                                                       CustomConnectorSerializer,
                                                                                       CustomEnergyMeterSerializer,
@@ -4633,8 +4632,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = existingEVSE.ToJSON(Request.EMSPId,
-                                                                                                  CustomEVSESerializer,
+                                                       Data                 = existingEVSE.ToJSON(CustomEVSESerializer,
                                                                                                   CustomStatusScheduleSerializer,
                                                                                                   CustomConnectorSerializer,
                                                                                                   CustomEnergyMeterSerializer,

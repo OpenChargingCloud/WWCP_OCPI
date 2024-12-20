@@ -222,7 +222,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                       DateTime?                                                     Created                                      = null,
                       DateTime?                                                     LastUpdated                                  = null,
 
-                      EMSP_Id?                                                      EMSPId                                       = null,
                       CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                       CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                       CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -257,8 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             foreach (var connector in this.Connectors)
                 connector.ParentEVSE = this;
 
-            this.ETag                   = CalcSHA256Hash(EMSPId,
-                                                         CustomEVSESerializer,
+            this.ETag                   = CalcSHA256Hash(CustomEVSESerializer,
                                                          CustomStatusScheduleSerializer,
                                                          CustomConnectorSerializer,
                                                          CustomEnergyMeterSerializer,
@@ -320,7 +318,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     DateTime?                                                     Created                                      = null,
                     DateTime?                                                     LastUpdated                                  = null,
 
-                    EMSP_Id?                                                      EMSPId                                       = null,
                     CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                     CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                     CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
@@ -350,7 +347,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    Created,
                    LastUpdated,
 
-                   EMSPId,
                    CustomEVSESerializer,
                    CustomStatusScheduleSerializer,
                    CustomConnectorSerializer,
@@ -701,8 +697,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(EMSP_Id?                                                      EMSPId                                       = null,
-                              CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
                               CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
@@ -1031,8 +1026,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public String CalcSHA256Hash(EMSP_Id?                                                      EMSPId                                       = null,
-                                     CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                                      CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                                      CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
                                      CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
@@ -1042,8 +1036,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null)
         {
 
-            this.ETag = SHA256.HashData(ToJSON(EMSPId,
-                                               CustomEVSESerializer,
+            this.ETag = SHA256.HashData(ToJSON(CustomEVSESerializer,
                                                CustomStatusScheduleSerializer,
                                                CustomConnectorSerializer,
                                                CustomEnergyMeterSerializer,

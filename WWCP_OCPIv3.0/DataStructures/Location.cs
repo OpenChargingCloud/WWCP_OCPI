@@ -1073,8 +1073,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            ChargingPool.Any()
                                ? new JProperty("charging_pool",          new JArray(ChargingPool.    OrderBy(chargingStation       => chargingStation.Id).
-                                                                                                     Select (chargingStation       => chargingStation.ToJSON(EMSPId,
-                                                                                                                                                             CustomChargingStationSerializer,
+                                                                                                     Select (chargingStation       => chargingStation.ToJSON(CustomChargingStationSerializer,
                                                                                                                                                              CustomStatusScheduleSerializer,
                                                                                                                                                              CustomEVSESerializer,
                                                                                                                                                              CustomConnectorSerializer,

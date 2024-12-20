@@ -52,44 +52,44 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The parent EVSE of this connector.
         /// </summary>
-        public EVSE?                   ParentEVSE               { get; internal set; }
+        public EVSE?                             ParentEVSE            { get; internal set; }
 
         /// <summary>
         /// The standard of the installed connector.
         /// </summary>
         [Mandatory]
-        public ConnectorType           Standard                 { get; }
+        public ConnectorType                     Standard              { get; }
 
         /// <summary>
         /// The format (socket/cable) of the installed connector.
         /// </summary>
         [Mandatory]
-        public ConnectorFormats        Format                   { get; }
+        public ConnectorFormats                  Format                { get; }
 
         /// <summary>
         /// The length of the attached cable in centimeters.
         /// Only applicable if the value of the format field is CABLE.
         /// </summary>
         [Optional]
-        public Meter?                  CableLength              { get; }
+        public Meter?                            CableLength           { get; }
 
         /// <summary>
         /// The type of power at the connector.
         /// </summary>
         [Mandatory]
-        public PowerTypes              PowerType                { get; }
+        public PowerTypes                        PowerType             { get; }
 
         /// <summary>
         /// The maximum voltage of the connector (line to neutral for AC_3_PHASE).
         /// </summary>
         [Mandatory]
-        public Volt                    MaxVoltage               { get; }
+        public Volt                              MaxVoltage            { get; }
 
         /// <summary>
         /// The maximum amperage of the connector.
         /// </summary>
         [Mandatory]
-        public Ampere                  MaxAmperage              { get; }
+        public Ampere                            MaxAmperage           { get; }
 
         /// <summary>
         /// The maximum electric power that can be delivered by this connector.
@@ -97,30 +97,36 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// and amperage, this value should be set.
         /// </summary>
         [Optional]
-        public Watt?                   MaxElectricPower         { get; }
+        public Watt?                             MaxElectricPower      { get; }
 
         /// <summary>
         /// The optional URL to the operator's terms and conditions.
         /// </summary>
         [Optional]
-        public URL?                    TermsAndConditions    { get; }
+        public URL?                              TermsAndConditions    { get; }
 
         /// <summary>
         /// The enumeration of functionalities that the ChargingStation is capable of.
         /// </summary>
         [Optional]
-        public IEnumerable<ConnectorCapability>  Capabilities               { get; }
+        public IEnumerable<ConnectorCapability>  Capabilities          { get; }
+
+        /// <summary>
+        /// The timestamp when this EVSE was created.
+        /// </summary>
+        [Mandatory, NonStandard("Pagination")]
+        public DateTime                          Created               { get; }
 
         /// <summary>
         /// The timestamp when this connector was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                LastUpdated              { get; }
+        public DateTime                          LastUpdated           { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this connector.
         /// </summary>
-        public String                  ETag                     { get; }
+        public String                            ETag                  { get; }
 
         #endregion
 
@@ -143,6 +149,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="MaxElectricPower">The maximum electric power that can be delivered by this connector.</param>
         /// <param name="TermsAndConditions">An optional URL to the operator's terms and conditions.</param>
         /// 
+        /// <param name="Created">The optional timestamp when this connector was created.</param>
         /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         internal Connector(EVSE?                                        ParentEVSE,
@@ -158,6 +165,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            URL?                                         TermsAndConditions          = null,
                            IEnumerable<ConnectorCapability>?            Capabilities                = null,
 
+                           DateTime?                                    Created                     = null,
                            DateTime?                                    LastUpdated                 = null,
                            CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
@@ -177,7 +185,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.TermsAndConditions  = TermsAndConditions;
             this.Capabilities        = Capabilities?.Distinct() ?? [];
 
-            this.LastUpdated         = LastUpdated ?? Timestamp.Now;
+            this.Created             = Created                  ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated         = LastUpdated              ?? Created     ?? Timestamp.Now;
 
             this.ETag                = SHA256.HashData(ToJSON(CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();
 
@@ -193,7 +202,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           (this.CableLength?.       GetHashCode()  ?? 0) * 11 ^
                           (this.MaxElectricPower?.  GetHashCode()  ?? 0) *  7 ^
                           (this.TermsAndConditions?.GetHashCode()  ?? 0) *  5 ^
-                          (this.Capabilities?.      CalcHashCode() ?? 0) *  3 ^
+                           this.Capabilities.       CalcHashCode()       *  3 ^
                            this.LastUpdated.        GetHashCode();
 
             }
@@ -217,6 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="MaxElectricPower">The maximum electric power that can be delivered by this connector.</param>
         /// <param name="TermsAndConditions">An optional URL to the operator's terms and conditions.</param>
         /// 
+        /// <param name="Created">The optional timestamp when this connector was created.</param>
         /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         public Connector(Connector_Id                                 Id,
@@ -230,6 +240,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                          URL?                                         TermsAndConditions          = null,
                          IEnumerable<ConnectorCapability>?            Capabilities                = null,
 
+                         DateTime?                                    Created                     = null,
                          DateTime?                                    LastUpdated                 = null,
                          CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
@@ -246,6 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    TermsAndConditions,
                    Capabilities,
 
+                   Created,
                    LastUpdated,
                    CustomConnectorSerializer)
 
