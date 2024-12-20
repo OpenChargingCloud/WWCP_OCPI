@@ -51,7 +51,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Compares two party issued object references.
         /// </summary>
         /// <param name="Object">A party issued object reference to compare with.</param>
-        public Int32 CompareTo(Object? Object)
+        public virtual Int32 CompareTo(Object? Object)
 
             => Object is PartyIssuedObjectReference<TId> partyIssuedObjectReference
                    ? CompareTo(partyIssuedObjectReference)
@@ -66,7 +66,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Compares two party issued object references.
         /// </summary>
         /// <param name="PartyRole">A party issued object reference to compare with.</param>
-        public Int32 CompareTo(PartyIssuedObjectReference<TId> PartyIssuedObjectReference)
+        public virtual Int32 CompareTo(PartyIssuedObjectReference<TId> PartyIssuedObjectReference)
         {
 
             if (PartyIssuedObjectReference is null)

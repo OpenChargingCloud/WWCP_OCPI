@@ -53,9 +53,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Properties
 
         /// <summary>
-        /// The parent location of this EVSE.
+        /// The parent charging station of this EVSE.
         /// </summary>
-        public Location?                        ParentLocation             { get; internal set; }
+        public ChargingStation?                 ParentChargingStation      { get; internal set; }
 
         /// <summary>
         /// The unique identification of the EVSE within the CPOs platform.
@@ -174,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Create a new EVSE.
         /// </summary>
-        /// <param name="ParentLocation">The parent location of this EVSE.</param>
+        /// <param name="ParentChargingStation">The parent location of this EVSE.</param>
         /// 
         /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="Status">A current status of the EVSE.</param>
@@ -202,7 +202,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        internal EVSE(Location?                                                     ParentLocation,
+        internal EVSE(ChargingStation?                                              ParentChargingStation,
 
                       EVSE_UId                                                      UId,
                       StatusType                                                    Status,
@@ -234,38 +234,38 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         {
 
-            this.ParentLocation        = ParentLocation;
+            this.ParentChargingStation  = ParentChargingStation;
 
-            this.UId                   = UId;
-            this.Status                = Status;
-            this.Connectors            = Connectors?.         Distinct() ?? [];
+            this.UId                    = UId;
+            this.Status                 = Status;
+            this.Connectors             = Connectors?.         Distinct() ?? [];
 
-            this.EVSEId                = EVSEId;
-            this.StatusSchedule        = StatusSchedule?.     Distinct() ?? [];
-            this.Capabilities          = Capabilities?.       Distinct() ?? [];
-            this.EnergyMeter           = EnergyMeter;
-            this.FloorLevel            = FloorLevel?.       Trim();
-            this.Coordinates           = Coordinates;
-            this.PhysicalReference     = PhysicalReference?.Trim();
-            this.Directions            = Directions?.         Distinct() ?? [];
-            this.ParkingRestrictions   = ParkingRestrictions?.Distinct() ?? [];
-            this.Images                = Images?.             Distinct() ?? [];
+            this.EVSEId                 = EVSEId;
+            this.StatusSchedule         = StatusSchedule?.     Distinct() ?? [];
+            this.Capabilities           = Capabilities?.       Distinct() ?? [];
+            this.EnergyMeter            = EnergyMeter;
+            this.FloorLevel             = FloorLevel?.       Trim();
+            this.Coordinates            = Coordinates;
+            this.PhysicalReference      = PhysicalReference?.Trim();
+            this.Directions             = Directions?.         Distinct() ?? [];
+            this.ParkingRestrictions    = ParkingRestrictions?.Distinct() ?? [];
+            this.Images                 = Images?.             Distinct() ?? [];
 
-            this.Created               = Created                         ?? LastUpdated ?? Timestamp.Now;
-            this.LastUpdated           = LastUpdated                     ?? Created     ?? Timestamp.Now;
+            this.Created                = Created                         ?? LastUpdated ?? Timestamp.Now;
+            this.LastUpdated            = LastUpdated                     ?? Created     ?? Timestamp.Now;
 
             foreach (var connector in this.Connectors)
                 connector.ParentEVSE = this;
 
-            this.ETag                  = CalcSHA256Hash(EMSPId,
-                                                        CustomEVSESerializer,
-                                                        CustomStatusScheduleSerializer,
-                                                        CustomConnectorSerializer,
-                                                        CustomEnergyMeterSerializer,
-                                                        CustomTransparencySoftwareStatusSerializer,
-                                                        CustomTransparencySoftwareSerializer,
-                                                        CustomDisplayTextSerializer,
-                                                        CustomImageSerializer);
+            this.ETag                   = CalcSHA256Hash(EMSPId,
+                                                         CustomEVSESerializer,
+                                                         CustomStatusScheduleSerializer,
+                                                         CustomConnectorSerializer,
+                                                         CustomEnergyMeterSerializer,
+                                                         CustomTransparencySoftwareStatusSerializer,
+                                                         CustomTransparencySoftwareSerializer,
+                                                         CustomDisplayTextSerializer,
+                                                         CustomImageSerializer);
 
         }
 
@@ -732,8 +732,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            Connectors.Any()
                                ? new JProperty("connectors",            new JArray(Connectors.         OrderBy(connector          => connector.Id).
-                                                                                                       Select (connector          => connector.         ToJSON(EMSPId,
-                                                                                                                                                               CustomConnectorSerializer))))
+                                                                                                       Select (connector          => connector.         ToJSON(CustomConnectorSerializer))))
                                : null,
 
                            EnergyMeter is not null
@@ -788,7 +787,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public EVSE Clone()
 
             => new (
-                   ParentLocation,
+                   ParentChargingStation,
 
                    UId.              Clone(),
                    Status.           Clone(),
@@ -996,14 +995,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         }
 
         #endregion
-
-
-        internal IEnumerable<Tariff_Id> GetTariffIds(Connector_Id?  ConnectorId   = null,
-                                                     EMSP_Id?       EMSPId        = null)
-
-            => ParentLocation?.GetTariffIds(UId,
-                                            ConnectorId,
-                                            EMSPId) ?? [];
 
 
         #region (internal) UpdateConnector(Connector)
@@ -1447,7 +1438,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="NewEVSEUId">An optional new EVSE identification.</param>
         public Builder ToBuilder(EVSE_UId? NewEVSEUId = null)
 
-            => new (ParentLocation,
+            => new (ParentChargingStation,
 
                     NewEVSEUId ?? UId,
                     Status,
@@ -1480,9 +1471,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             #region Properties
 
             /// <summary>
-            /// The parent location of this EVSE.
+            /// The parent charging station of this EVSE.
             /// </summary>
-            public Location?                        ParentLocation             { get; set; }
+            public ChargingStation?                 ParentChargingStation      { get; set; }
 
             /// <summary>
             /// The unique identification of the EVSE within the CPOs platform.
@@ -1594,7 +1585,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <summary>
             /// Create a new EVSE builder.
             /// </summary>
-            /// <param name="ParentLocation">The parent location of this EVSE.</param>
+            /// <param name="ParentChargingStation">The parent charging station of this EVSE.</param>
             /// 
             /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!</param>
             /// <param name="Status">A current status of the EVSE.</param>
@@ -1613,47 +1604,47 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// 
             /// <param name="Created">The optional timestamp when this EVSE was created.</param>
             /// <param name="LastUpdated">The optional timestamp when this EVSE was last updated (or created).</param>
-            internal Builder(Location?                         ParentLocation        = null,
+            internal Builder(ChargingStation?                  ParentChargingStation   = null,
 
-                             EVSE_UId?                         UId                   = null,
-                             StatusType?                       Status                = null,
-                             IEnumerable<Connector>?           Connectors            = null,
+                             EVSE_UId?                         UId                     = null,
+                             StatusType?                       Status                  = null,
+                             IEnumerable<Connector>?           Connectors              = null,
 
-                             EVSE_Id?                          EVSEId                = null,
-                             IEnumerable<StatusSchedule>?      StatusSchedule        = null,
-                             IEnumerable<Capability>?          Capabilities          = null,
-                             EnergyMeter?                      EnergyMeter           = null,
-                             String?                           FloorLevel            = null,
-                             GeoCoordinate?                    Coordinates           = null,
-                             String?                           PhysicalReference     = null,
-                             IEnumerable<DisplayText>?         Directions            = null,
-                             IEnumerable<ParkingRestriction>?  ParkingRestrictions   = null,
-                             IEnumerable<Image>?               Images                = null,
+                             EVSE_Id?                          EVSEId                  = null,
+                             IEnumerable<StatusSchedule>?      StatusSchedule          = null,
+                             IEnumerable<Capability>?          Capabilities            = null,
+                             EnergyMeter?                      EnergyMeter             = null,
+                             String?                           FloorLevel              = null,
+                             GeoCoordinate?                    Coordinates             = null,
+                             String?                           PhysicalReference       = null,
+                             IEnumerable<DisplayText>?         Directions              = null,
+                             IEnumerable<ParkingRestriction>?  ParkingRestrictions     = null,
+                             IEnumerable<Image>?               Images                  = null,
 
-                             DateTime?                         Created               = null,
-                             DateTime?                         LastUpdated           = null)
+                             DateTime?                         Created                 = null,
+                             DateTime?                         LastUpdated             = null)
 
             {
 
-                this.ParentLocation        = ParentLocation;
+                this.ParentChargingStation  = ParentChargingStation;
 
-                this.UId                   = UId;
-                this.Status                = Status;
-                this.Connectors            = Connectors          is not null ? new HashSet<Connector>         (Connectors)          : [];
+                this.UId                    = UId;
+                this.Status                 = Status;
+                this.Connectors             = Connectors          is not null ? new HashSet<Connector>         (Connectors)          : [];
 
-                this.EVSEId                = EVSEId;
-                this.StatusSchedule        = StatusSchedule      is not null ? new HashSet<StatusSchedule>    (StatusSchedule)      : [];
-                this.Capabilities          = Capabilities        is not null ? new HashSet<Capability>        (Capabilities)        : [];
-                this.EnergyMeter           = EnergyMeter;
-                this.FloorLevel            = FloorLevel;
-                this.Coordinates           = Coordinates;
-                this.PhysicalReference     = PhysicalReference;
-                this.Directions            = Directions          is not null ? new HashSet<DisplayText>       (Directions)          : [];
-                this.ParkingRestrictions   = ParkingRestrictions is not null ? new HashSet<ParkingRestriction>(ParkingRestrictions) : [];
-                this.Images                = Images              is not null ? new HashSet<Image>             (Images)              : [];
+                this.EVSEId                 = EVSEId;
+                this.StatusSchedule         = StatusSchedule      is not null ? new HashSet<StatusSchedule>    (StatusSchedule)      : [];
+                this.Capabilities           = Capabilities        is not null ? new HashSet<Capability>        (Capabilities)        : [];
+                this.EnergyMeter            = EnergyMeter;
+                this.FloorLevel             = FloorLevel;
+                this.Coordinates            = Coordinates;
+                this.PhysicalReference      = PhysicalReference;
+                this.Directions             = Directions          is not null ? new HashSet<DisplayText>       (Directions)          : [];
+                this.ParkingRestrictions    = ParkingRestrictions is not null ? new HashSet<ParkingRestriction>(ParkingRestrictions) : [];
+                this.Images                 = Images              is not null ? new HashSet<Image>             (Images)              : [];
 
-                this.Created               = Created     ?? LastUpdated ?? Timestamp.Now;
-                this.LastUpdated           = LastUpdated ?? Created     ?? Timestamp.Now;
+                this.Created                = Created     ?? LastUpdated ?? Timestamp.Now;
+                this.LastUpdated            = LastUpdated ?? Created     ?? Timestamp.Now;
 
             }
 
@@ -1710,7 +1701,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            : new EVSE(
 
-                                 ParentLocation,
+                                 ParentChargingStation,
 
                                  UId.   Value,
                                  Status.Value,

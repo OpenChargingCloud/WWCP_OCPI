@@ -1072,7 +1072,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                : null,
 
                            ChargingPool.Any()
-                               ? new JProperty("charging_pool",          new JArray(ChargingPool.    OrderBy(chargingStation       => chargingStation.UId).
+                               ? new JProperty("charging_pool",          new JArray(ChargingPool.    OrderBy(chargingStation       => chargingStation.Id).
                                                                                                      Select (chargingStation       => chargingStation.ToJSON(EMSPId,
                                                                                                                                                              CustomChargingStationSerializer,
                                                                                                                                                              CustomStatusScheduleSerializer,
@@ -1408,7 +1408,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
                 foreach (var station in ChargingPool)
                 {
-                    if (station.UId == ChargingStationId)
+                    if (station.Id == ChargingStationId)
                         return true;
                 }
             }
@@ -1434,7 +1434,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
                 foreach (var station in ChargingPool)
                 {
-                    if (station.UId == ChargingStationId)
+                    if (station.Id == ChargingStationId)
                     {
                         ChargingStation = station;
                         return true;
@@ -1526,7 +1526,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             lock (ChargingPool)
             {
 
-                ChargingPool = ChargingPool.Where  (station => station.UId != Station.UId).
+                ChargingPool = ChargingPool.Where  (station => station.Id != Station.Id).
                                             Concat ([ Station ]).
                                             ToArray();
 
@@ -1547,7 +1547,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             lock (ChargingPool)
             {
 
-                ChargingPool = ChargingPool.Where(evse => evse.UId != Station.UId).
+                ChargingPool = ChargingPool.Where(evse => evse.Id != Station.Id).
                                             ToArray();
 
             }
@@ -1563,7 +1563,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             lock (ChargingPool)
             {
 
-                ChargingPool = ChargingPool.Where(chargingStation => chargingStation.UId != ChargingStationId).
+                ChargingPool = ChargingPool.Where(chargingStation => chargingStation.Id != ChargingStationId).
                                             ToArray();
 
             }

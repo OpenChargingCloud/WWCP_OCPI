@@ -1679,13 +1679,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
         {
 
-            if (EVSE.ParentLocation is null)
-                return OCPIResponse<EVSE>.Error("The parent location of the given EVSE must not be null!");
+            if (EVSE.ParentChargingStation is null)
+                return OCPIResponse<EVSE>.Error("The parent charging station of the given EVSE must not be null!");
 
             return await PutEVSE(EVSE,
-                                 default,//EVSE.ParentLocation.CountryCode,
-                                 default,//EVSE.ParentLocation.PartyId,
-                                 EVSE.ParentLocation.Id,
+                                 //EVSE.ParentLocation.CountryCode,
+                                 //EVSE.ParentLocation.PartyId,
+                                 EVSE.ParentChargingStation.ParentLocation.Id,
+                                 EVSE.ParentChargingStation.Id,
                                  EMSPId,
 
                                  RequestId,
@@ -1716,9 +1717,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE                EVSE,
-                    CountryCode         CountryCode,
-                    Party_Id            PartyId,
+                    //CountryCode         CountryCode,
+                    //Party_Id            PartyId,
                     Location_Id         LocationId,
+                    ChargingStation_Id  ChargingStationId,
                     EMSP_Id?            EMSPId              = null,
 
                     Request_Id?         RequestId           = null,
@@ -1759,8 +1761,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      correlationId,
 
                                                      EVSE,
-                                                     CountryCode,
-                                                     PartyId,
+                                                     default,//CountryCode,
+                                                     default,//PartyId,
                                                      LocationId,
 
                                                      CancellationToken,
@@ -1816,8 +1818,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                            PartyId.    ToString() +
+                                                                                     remoteURL.Value.Path + //CountryCode.ToString() +
+                                                                                                            //PartyId.    ToString() +
                                                                                                             LocationId. ToString() +
                                                                                                             EVSE.UId.   ToString(),
                                                                                      RequestBuilder: requestBuilder => {
@@ -1888,8 +1890,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      correlationId,
 
                                                      EVSE,
-                                                     CountryCode,
-                                                     PartyId,
+                                                     default,//CountryCode,
+                                                     default,//PartyId,
                                                      LocationId,
 
                                                      CancellationToken,
@@ -2357,7 +2359,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
             if (Connector.ParentEVSE is null)
                 return OCPIResponse<String, Connector>.Error("The parent EVSE of the connector must not be null!");
 
-            if (Connector.ParentEVSE.ParentLocation is null)
+            if (Connector.ParentEVSE.ParentChargingStation is null)
+                return OCPIResponse<String, Connector>.Error("The parent location of the connector must not be null!");
+
+            if (Connector.ParentEVSE.ParentChargingStation.ParentLocation is null)
                 return OCPIResponse<String, Connector>.Error("The parent location of the connector must not be null!");
 
             #endregion
@@ -2446,13 +2451,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
                                                                                      remoteURL.Value.Path + //Connector.ParentEVSE.ParentLocation.CountryCode.ToString() +
                                                                                                             //Connector.ParentEVSE.ParentLocation.PartyId.    ToString() +
-                                                                                                            Connector.ParentEVSE.ParentLocation.Id.         ToString() +
+                                                                                                            //Connector.ParentEVSE.ParentLocation.Id.         ToString() +
                                                                                                             Connector.ParentEVSE.               UId.        ToString() +
                                                                                                             Connector.                          Id.         ToString(),
                                                                                      RequestBuilder: requestBuilder => {
                                                                                          requestBuilder.Authorization  = TokenAuth;
                                                                                          requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestBuilder.Content        = Connector.ToJSON(EMSPId, CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
+                                                                                         requestBuilder.Content        = Connector.ToJSON(CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
                                                                                          requestBuilder.Connection     = ConnectionType.Close;
                                                                                          requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
                                                                                          requestBuilder.Set("X-Request-ID",      requestId);
