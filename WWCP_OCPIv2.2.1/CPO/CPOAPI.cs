@@ -36,1220 +36,187 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
     public static class CPOAPIExtensions
     {
 
-        #region ParseCountryCodeAndPartyId (this Request, CPOAPI, out CountryCode, out PartyId,                                                        out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The CPO API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCountryCodeAndPartyId(this OCPIRequest           Request,
-                                                         CPOAPI                     CPOAPI,
-                                                         out CountryCode?           CountryCode,
-                                                         out Party_Id?              PartyId,
-                                                         out OCPIResponse.Builder?  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI is null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            CountryCode          = default;
-            PartyId              = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 2)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code and/or party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid country code!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!PartyId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocation              (this Request, CPOAPI, out LocationId, out Location,                                                        out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The Users API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocation(this OCPIRequest                           Request,
-                                            CPOAPI                                     CPOAPI,
-                                            IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                            out Location_Id?                           LocationId,
-                                            out Location?                              Location,
-                                            out OCPIResponse.Builder?                  OCPIResponseBuilder,
-                                            Boolean                                    FailOnMissingLocation = true)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  is null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            LocationId           =  default;
-            Location             =  default;
-            OCPIResponseBuilder  =  default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            if (!CPOAPI.CommonAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
-                                                 CPOAPI.DefaultPartyId,
-                                                 LocationId.Value,
-                                                 out Location) ||
-                 Location is null)
-            {
-
-                if (FailOnMissingLocation)
-                {
-
-                    OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                        StatusCode           = 2003,
-                        StatusMessage        = "Unknown location!",
-                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                            HTTPStatusCode             = HTTPStatusCode.NotFound,
-                            //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                            AccessControlAllowHeaders  = new[] { "Authorization" }
-                        }
-                    };
-
-                    return false;
-
-                }
-
-                return true;
-
-            }
-
-
-            foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
-            {
-                if (CPOAPI.CommonAPI.TryGetLocation(countryCodeWithPartyId.Item1,
-                                                    countryCodeWithPartyId.Item2,
-                                                    LocationId.Value,
-                                                    out Location) &&
-                    Location is not null)
-                {
-                    return true;
-                }
-            }
-
-
-            OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                StatusCode           = 2001,
-                StatusMessage        = "Unknown location!",
-                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                    //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
-                }
-            };
-
-            return false;
-
-        }
-
-        #endregion
-
-        #region ParseLocationEVSE          (this Request, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The Users API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSE(this OCPIRequest                           Request,
-                                                CPOAPI                                     CPOAPI,
-                                                IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                                out Location_Id?                           LocationId,
-                                                out Location?                              Location,
-                                                out EVSE_UId?                              EVSEUId,
-                                                out EVSE?                                  EVSE,
-                                                out OCPIResponse.Builder?                  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  is null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            LocationId           = default;
-            Location             = default;
-            EVSEUId              = default;
-            EVSE                 = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 2)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing location and/or EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
-            {
-                if (CPOAPI.CommonAPI.TryGetLocation(countryCodeWithPartyId.Item1,
-                                                    countryCodeWithPartyId.Item2,
-                                                    LocationId.Value,
-                                                    out Location) &&
-                    Location is not null)
-                {
-
-                    if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
-
-                        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                            StatusCode           = 2001,
-                            StatusMessage        = "Unkown EVSE!",
-                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                AccessControlAllowHeaders  = new[] { "Authorization" }
-                            }
-                        };
-
-                        return false;
-
-                    }
-
-                    return true;
-
-                }
-            }
-
-
-            OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                StatusCode           = 2001,
-                StatusMessage        = "Unknown location!",
-                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                    //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
-                }
-            };
-
-            return false;
-
-        }
-
-        #endregion
-
-        #region ParseLocationEVSEConnector (this Request, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The Users API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="ConnectorId">The parsed unique connector identification.</param>
-        /// <param name="Connector">The resolved connector.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnector(this OCPIRequest                           Request,
-                                                         CPOAPI                                     CPOAPI,
-                                                         IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                                         out Location_Id?                           LocationId,
-                                                         out Location?                              Location,
-                                                         out EVSE_UId?                              EVSEUId,
-                                                         out EVSE?                                  EVSE,
-                                                         out Connector_Id?                          ConnectorId,
-                                                         out Connector?                             Connector,
-                                                         out OCPIResponse.Builder?                  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  is null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            LocationId           = default;
-            Location             = default;
-            EVSEUId              = default;
-            EVSE                 = default;
-            ConnectorId          = default;
-            Connector            = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 3) {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing location, EVSE and/or connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue) {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[2]);
-
-            if (!ConnectorId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
-            {
-                if (CPOAPI.CommonAPI.TryGetLocation(countryCodeWithPartyId.Item1,
-                                                    countryCodeWithPartyId.Item2,
-                                                    LocationId.Value,
-                                                    out Location) &&
-                    Location is not null)
-                {
-
-                    if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE) ||
-                         EVSE is null) {
-
-                        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                            StatusCode           = 2001,
-                            StatusMessage        = "Unknown EVSE!",
-                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                AccessControlAllowHeaders  = new[] { "Authorization" }
-                            }
-                        };
-
-                        return false;
-
-                    }
-
-                    if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector)) {
-
-                        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                            StatusCode           = 2001,
-                            StatusMessage        = "Unknown connector!",
-                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                AccessControlAllowHeaders  = new[] { "Authorization" }
-                            }
-                        };
-
-                        return false;
-
-                    }
-
-                    return true;
-
-                }
-            }
-
-
-            OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                StatusCode           = 2001,
-                StatusMessage        = "Unknown location!",
-                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                    //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
-                }
-            };
-
-            return false;
-
-        }
-
-        #endregion
-
-
-        #region ParseTariff                (this Request, CPOAPI, out TariffId, out Tariff,                                                            out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the tariff identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The Users API.</param>
-        /// <param name="TariffId">The parsed unique tariff identification.</param>
-        /// <param name="Tariff">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTariff(this OCPIRequest                           Request,
-                                          CPOAPI                                     CPOAPI,
-                                          IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                          out Tariff_Id?                             TariffId,
-                                          out Tariff?                                Tariff,
-                                          out OCPIResponse.Builder?                  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  is null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            TariffId             =  default;
-            Tariff               =  default;
-            OCPIResponseBuilder  =  default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            TariffId = Tariff_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TariffId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
-            {
-                if (CPOAPI.CommonAPI.TryGetTariff(countryCodeWithPartyId.Item1,
-                                                  countryCodeWithPartyId.Item2,
-                                                  TariffId.Value,
-                                                  out Tariff))
-                {
-                    return true;
-                }
-            }
-
-
-            OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                StatusCode           = 2003,
-                StatusMessage        = "Unknown tariff!",
-                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                    //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
-                }
-            };
-
-            return false;
-
-        }
-
-        #endregion
-
-        #region ParseSession               (this Request, CPOAPI, out SessionId, out Session,                                                          out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the session identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The Users API.</param>
-        /// <param name="SessionId">The parsed unique session identification.</param>
-        /// <param name="Session">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseSession(this OCPIRequest                           Request,
-                                           CPOAPI                                     CPOAPI,
-                                           IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                           out Session_Id?                            SessionId,
-                                           out Session?                               Session,
-                                           out OCPIResponse.Builder?                  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  is null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            SessionId            =  default;
-            Session              =  default;
-            OCPIResponseBuilder  =  default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!SessionId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
-            {
-                if (CPOAPI.CommonAPI.TryGetSession(countryCodeWithPartyId.Item1,
-                                                   countryCodeWithPartyId.Item2,
-                                                   SessionId.Value,
-                                                   out Session))
-                {
-                    return true;
-                }
-            }
-
-
-            OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                StatusCode           = 2003,
-                StatusMessage        = "Unknown session!",
-                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                    //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
-                }
-            };
-
-            return false;
-
-        }
-
-        #endregion
-
-        #region ParseCDR                   (this Request, CPOAPI, out CDRId, out CDR,                                                                  out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the CDR identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The Users API.</param>
-        /// <param name="CDRId">The parsed unique CDR identification.</param>
-        /// <param name="CDR">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCDR(this OCPIRequest                           Request,
-                                       CPOAPI                                     CPOAPI,
-                                       IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                       out CDR_Id?                                CDRId,
-                                       out CDR?                                   CDR,
-                                       out OCPIResponse.Builder?                  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  is null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            CDRId                =  default;
-            CDR                  =  default;
-            OCPIResponseBuilder  =  default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing CDR identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CDRId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid CDR identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
-            {
-                if (CPOAPI.CommonAPI.TryGetCDR(countryCodeWithPartyId.Item1,
-                                               countryCodeWithPartyId.Item2,
-                                               CDRId.Value,
-                                               out CDR))
-                {
-                    return true;
-                }
-            }
-
-
-            OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                StatusCode           = 2003,
-                StatusMessage        = "Unknown CDR!",
-                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                    HTTPStatusCode             = HTTPStatusCode.NotFound,
-                    //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
-                }
-            };
-
-            return false;
-
-        }
-
-        #endregion
-
-        #region ParseTokenId               (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId,                                           out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the tariff identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The Users API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="TokenId">The parsed unique tariff identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        public static Boolean ParseTokenId(this OCPIRequest           Request,
-                                           CPOAPI                     CPOAPI,
-                                           out CountryCode?           CountryCode,
-                                           out Party_Id?              PartyId,
-                                           out Token_Id?              TokenId,
-                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  is null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            CountryCode          = default;
-            PartyId              = default;
-            TokenId              = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid country code!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!PartyId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
-
-            if (!TokenId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid token identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseToken                 (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId, out TokenStatus,                          out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the tariff identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The Users API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="TokenId">The parsed unique tariff identification.</param>
-        /// <param name="TokenStatus">The resolved tariff with status.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <param name="FailOnMissingToken">Whether to fail when the tariff for the given tariff identification was not found.</param>
-        public static Boolean ParseToken(this OCPIRequest                           Request,
-                                         CPOAPI                                     CPOAPI,
-                                         IEnumerable<Tuple<CountryCode, Party_Id>>  CountryCodesWithPartyIds,
-                                         out CountryCode?                           CountryCode,
-                                         out Party_Id?                              PartyId,
-                                         out Token_Id?                              TokenId,
-                                         out TokenStatus                            TokenStatus,
-                                         out OCPIResponse.Builder?                  OCPIResponseBuilder,
-                                         Boolean                                    FailOnMissingToken = true)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  is null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            CountryCode          = default;
-            PartyId              = default;
-            TokenId              = default;
-            TokenStatus          = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid country code!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!PartyId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
-
-            if (!TokenId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid token identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            foreach (var countryCodeWithPartyId in CountryCodesWithPartyIds)
-            {
-                if (CPOAPI.CommonAPI.TryGetToken(countryCodeWithPartyId.Item1,
-                                                 countryCodeWithPartyId.Item2,
-                                                 TokenId.Value,
-                                                 out TokenStatus) &&
-                    TokenStatus.Token is not null)
-                {
-
-                    if (TokenStatus.Token.CountryCode != CountryCode ||
-                        TokenStatus.Token.PartyId     != PartyId)
-                    {
-
-                        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                            StatusCode           = 2004,
-                            StatusMessage        = "Invalid token identification!",
-                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                HTTPStatusCode             = HTTPStatusCode.UnprocessableEntity,
-                                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                AccessControlAllowHeaders  = new[] { "Authorization" }
-                            }
-                        };
-
-                    }
-
-                    return true;
-
-                }
-            }
-
-            if (FailOnMissingToken)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2004,
-                    StatusMessage        = "Unknown token identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-
-        #region ParseCommandId             (this Request, CPOAPI, out CommandId,                                                                       out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the command identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The CPO API.</param>
-        /// <param name="CommandId">The parsed unique command identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCommandId(this OCPIRequest           Request,
-                                             CPOAPI                     CPOAPI,
-                                             out Command_Id?            CommandId,
-                                             out OCPIResponse.Builder?  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  is null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            CommandId            = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing command identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            CommandId = Command_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CommandId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid command identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
+        //#region ParseCountryCodeAndPartyId (this Request, CPOAPI, out CountryCode, out PartyId,                                                        out HTTPResponse)
+
+        ///// <summary>
+        ///// Parse the given HTTP request and return the location identification
+        ///// for the given HTTP hostname and HTTP query parameter
+        ///// or an HTTP error response.
+        ///// </summary>
+        ///// <param name="Request">A HTTP request.</param>
+        ///// <param name="CPOAPI">The CPO API.</param>
+        ///// <param name="CountryCode">The parsed country code.</param>
+        ///// <param name="PartyId">The parsed party identification.</param>
+        ///// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        ///// <returns>True, when user identification was found; false else.</returns>
+        //public static Boolean ParseCountryCodeAndPartyId(this OCPIRequest           Request,
+        //                                                 CPOAPI                     CPOAPI,
+        //                                                 out CountryCode?           CountryCode,
+        //                                                 out Party_Id?              PartyId,
+        //                                                 out OCPIResponse.Builder?  OCPIResponseBuilder)
+        //{
+
+        //    #region Initial checks
+
+        //    if (Request is null)
+        //        throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+        //    if (CPOAPI is null)
+        //        throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
+
+        //    #endregion
+
+        //    CountryCode          = default;
+        //    PartyId              = default;
+        //    OCPIResponseBuilder  = default;
+
+        //    if (Request.ParsedURLParameters.Length < 2)
+        //    {
+
+        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+        //            StatusCode           = 2001,
+        //            StatusMessage        = "Missing country code and/or party identification!",
+        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
+        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                AccessControlAllowHeaders  = new[] { "Authorization" }
+        //            }
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+
+        //    if (!CountryCode.HasValue)
+        //    {
+
+        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+        //            StatusCode           = 2001,
+        //            StatusMessage        = "Invalid country code!",
+        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
+        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                AccessControlAllowHeaders  = new[] { "Authorization" }
+        //            }
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+
+        //    if (!PartyId.HasValue)
+        //    {
+
+        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+        //            StatusCode           = 2001,
+        //            StatusMessage        = "Invalid party identification!",
+        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
+        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                AccessControlAllowHeaders  = new[] { "Authorization" }
+        //            }
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    return true;
+
+        //}
+
+        //#endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //#region ParseCommandId             (this Request, CPOAPI, out CommandId,                                                                       out HTTPResponse)
+
+        ///// <summary>
+        ///// Parse the given HTTP request and return the command identification
+        ///// for the given HTTP hostname and HTTP query parameter
+        ///// or an HTTP error response.
+        ///// </summary>
+        ///// <param name="Request">A HTTP request.</param>
+        ///// <param name="CPOAPI">The CPO API.</param>
+        ///// <param name="CommandId">The parsed unique command identification.</param>
+        ///// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        ///// <returns>True, when user identification was found; false else.</returns>
+        //public static Boolean ParseCommandId(this OCPIRequest           Request,
+        //                                     CPOAPI                     CPOAPI,
+        //                                     out Command_Id?            CommandId,
+        //                                     out OCPIResponse.Builder?  OCPIResponseBuilder)
+        //{
+
+        //    #region Initial checks
+
+        //    if (Request is null)
+        //        throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+        //    if (CPOAPI  is null)
+        //        throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
+
+        //    #endregion
+
+        //    CommandId            = default;
+        //    OCPIResponseBuilder  = default;
+
+        //    if (Request.ParsedURLParameters.Length < 1)
+        //    {
+
+        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+        //            StatusCode           = 2001,
+        //            StatusMessage        = "Missing command identification!",
+        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
+        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                AccessControlAllowHeaders  = new[] { "Authorization" }
+        //            }
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    CommandId = Command_Id.TryParse(Request.ParsedURLParameters[0]);
+
+        //    if (!CommandId.HasValue)
+        //    {
+
+        //        OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+        //            StatusCode           = 2001,
+        //            StatusMessage        = "Invalid command identification!",
+        //            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+        //                HTTPStatusCode             = HTTPStatusCode.BadRequest,
+        //                //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+        //                AccessControlAllowHeaders  = new[] { "Authorization" }
+        //            }
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    return true;
+
+        //}
+
+        //#endregion
 
     }
 
@@ -1294,16 +261,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// The CommonAPI.
         /// </summary>
         public CommonAPI      CommonAPI             { get; }
-
-        /// <summary>
-        /// The default country code to use.
-        /// </summary>
-        public CountryCode    DefaultCountryCode    { get; }
-
-        /// <summary>
-        /// The default party identification to use.
-        /// </summary>
-        public Party_Id       DefaultPartyId        { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
@@ -2547,8 +1504,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// using the given CommonAPI.
         /// </summary>
         /// <param name="CommonAPI">The OCPI common API.</param>
-        /// <param name="DefaultCountryCode">The default country code to use.</param>
-        /// <param name="DefaultPartyId">The default party identification to use.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
@@ -2557,8 +1512,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         public CPOAPI(CommonAPI                    CommonAPI,
-                      CountryCode                  DefaultCountryCode,
-                      Party_Id                     DefaultPartyId,
                       Boolean?                     AllowDowngrades           = null,
 
                       HTTPHostname?                HTTPHostname              = null,
@@ -2617,8 +1570,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         {
 
             this.CommonAPI           = CommonAPI;
-            this.DefaultCountryCode  = DefaultCountryCode;
-            this.DefaultPartyId      = DefaultPartyId;
             this.AllowDowngrades     = AllowDowngrades;
 
             this.CPOAPILogger        = this.DisableLogging == false
@@ -2942,7 +1893,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check location
 
-                                        if (!Request.ParseLocation(this,
+                                        if (!Request.ParseLocation(CommonAPI,
                                                                    //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                                                    CommonAPI.OurCredentialRoles.Select(credentialRole => new Tuple<CountryCode, Party_Id>(credentialRole.CountryCode, credentialRole.PartyId)),
                                                                    out var locationId,
@@ -3049,7 +2000,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check EVSE
 
-                                        if (!Request.ParseLocationEVSE(this,
+                                        if (!Request.ParseLocationEVSE(CommonAPI,
                                                                        //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                                                        CommonAPI.OurCredentialRoles.Select(credentialRole => new Tuple<CountryCode, Party_Id>(credentialRole.CountryCode, credentialRole.PartyId)),
                                                                        out var locationId,
@@ -3149,7 +2100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check connector
 
-                                        if (!Request.ParseLocationEVSEConnector(this,
+                                        if (!Request.ParseLocationEVSEConnector(CommonAPI,
                                                                                 //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                                                                 CommonAPI.OurCredentialRoles.Select(credentialRole => new Tuple<CountryCode, Party_Id>(credentialRole.CountryCode, credentialRole.PartyId)),
                                                                                 out var locationId,
@@ -3389,7 +2340,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check tariff
 
-                                        if (!Request.ParseTariff(this,
+                                        if (!Request.ParseTariff(CommonAPI,
                                                                  //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                                                  CommonAPI.OurCredentialRoles.Select(credentialRole => new Tuple<CountryCode, Party_Id>(credentialRole.CountryCode, credentialRole.PartyId)),
                                                                  out var tariffId,
@@ -3618,7 +2569,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check session
 
-                                        if (!Request.ParseSession(this,
+                                        if (!Request.ParseSession(CommonAPI,
                                                                   //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                                                   CommonAPI.OurCredentialRoles.Select(credentialRole => new Tuple<CountryCode, Party_Id>(credentialRole.CountryCode, credentialRole.PartyId)),
                                                                   out var sessionId,
@@ -3908,7 +2859,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check CDR
 
-                                        if (!Request.ParseCDR(this,
+                                        if (!Request.ParseCDR(CommonAPI,
                                                               //Request.AccessInfo.Value.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                                               CommonAPI.OurCredentialRoles.Select(credentialRole => new Tuple<CountryCode, Party_Id>(credentialRole.CountryCode, credentialRole.PartyId)),
                                                               out var cdrId,
@@ -4017,7 +2968,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check country code and party identification
 
-                                        if (!Request.ParseCountryCodeAndPartyId(this,
+                                        if (!Request.ParseCountryCodeAndPartyId(CommonAPI,
                                                                                 out var countryCode,
                                                                                 out var partyId,
                                                                                 out var ocpiResponseBuilder) ||
@@ -4135,10 +3086,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check country code and party identification
 
-                                        if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                  out CountryCode?          CountryCode,
-                                                                                  out Party_Id?             PartyId,
-                                                                                  out OCPIResponse.Builder  OCPIResponseBuilder))
+                                        if (!Request.ParseCountryCodeAndPartyId(CommonAPI,
+                                                                                out var CountryCode,
+                                                                                out var PartyId,
+                                                                                out var OCPIResponseBuilder))
                                         {
                                             return OCPIResponseBuilder;
                                         }
@@ -4226,7 +3177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check token
 
-                                        if (!Request.ParseToken(this,
+                                        if (!Request.ParseToken(CommonAPI,
                                                                 Request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                                                 out var countryCode,
                                                                 out var partyId,
@@ -4297,7 +3248,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check token
 
-                                        if (!Request.ParseTokenId(this,
+                                        if (!Request.ParseTokenId(CommonAPI,
                                                                   out var countryCode,
                                                                   out var partyId,
                                                                   out var tokenId,
@@ -4417,7 +3368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check token
 
-                                        if (!Request.ParseToken(this,
+                                        if (!Request.ParseToken(CommonAPI,
                                                                 Request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                                                 out var countryCode,
                                                                 out var partyId,
@@ -4511,7 +3462,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
                                         #region Check token (status)
 
-                                        if (!Request.ParseToken(this,
+                                        if (!Request.ParseToken(CommonAPI,
                                                                 Request.LocalAccessInfo.Roles.Select(role => new Tuple<CountryCode, Party_Id>(role.CountryCode, role.PartyId)),
                                                                 out var countryCode,
                                                                 out var partyId,

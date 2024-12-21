@@ -66,6 +66,1370 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
     /// <summary>
+    /// Extention methods for the Common HTTP API.
+    /// </summary>
+    public static class CommonAPIExtentions
+    {
+
+        #region ParseParseCountryCodePartyId (this Request,            out CountryCode, out PartyId,                                                        out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The CPO API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseParseCountryCodePartyId(this OCPIRequest           Request,
+                                                           out CountryCode?           CountryCode,
+                                                           out Party_Id?              PartyId,
+                                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            #endregion
+
+            CountryCode          = default;
+            PartyId              = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 2)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code and/or party identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid country code!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid party identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+
+        #region ParseLocation                (this Request, CommonAPI, out LocationId, out Location,                                                        out OCPIResponseBuilder, FailOnMissingLocation = true)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="Location">The resolved user.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="FailOnMissingLocation">Whether to fail when the location for the given location identification was not found.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocation(this OCPIRequest           Request,
+                                            CommonAPI                    CommonAPI,
+                                            CountryCode                CountryCode,
+                                            Party_Id                   PartyId,
+                                            out Location_Id?           LocationId,
+                                            out Location?              Location,
+                                            out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                            Boolean                    FailOnMissingLocation = true)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI is null)
+                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
+
+            #endregion
+
+            LocationId           = default;
+            Location             = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code, party identification and/or location identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!LocationId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid location identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (FailOnMissingLocation &&
+                (!CommonAPI.TryGetLocation(LocationId.Value, out Location) ||
+                  Location is null                                                 ||
+                  Location.CountryCode != CountryCode                              ||
+                  Location.PartyId     != PartyId))
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Unknown location identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseLocationEVSE            (this Request, CommonAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out OCPIResponseBuilder, FailOnMissingEVSE = true)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="Location">The resolved user.</param>
+        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        /// <param name="EVSE">The resolved EVSE.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="FailOnMissingEVSE">Whether to fail when the location for the given EVSE identification was not found.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationEVSE(this OCPIRequest           Request,
+                                                CommonAPI                    CommonAPI,
+                                                CountryCode                CountryCode,
+                                                Party_Id                   PartyId,
+                                                out Location_Id?           LocationId,
+                                                out Location?              Location,
+                                                out EVSE_UId?              EVSEUId,
+                                                out EVSE?                  EVSE,
+                                                out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                                Boolean                    FailOnMissingEVSE = true)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI is null)
+                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
+
+            #endregion
+
+            LocationId           = default;
+            Location             = default;
+            EVSEUId              = default;
+            EVSE                 = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 2)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code, party identification, location identification and/or EVSE identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!LocationId.HasValue) {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid location identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid EVSE identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (!CommonAPI.TryGetLocation(LocationId.Value, out Location) ||
+                 Location is null                                                 ||
+                 Location.CountryCode != CountryCode                              ||
+                 Location.PartyId     != PartyId)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Unknown location identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE) &&
+                 FailOnMissingEVSE)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Unknown EVSE identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseLocationEVSEConnector   (this Request, CommonAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out OCPIResponseBuilder)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="Location">The resolved user.</param>
+        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        /// <param name="EVSE">The resolved EVSE.</param>
+        /// <param name="ConnectorId">The parsed unique connector identification.</param>
+        /// <param name="Connector">The resolved connector.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="FailOnMissingConnector">Whether to fail when the connector for the given connector identification was not found.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationEVSEConnector(this OCPIRequest           Request,
+                                                         CommonAPI                    CommonAPI,
+                                                         CountryCode                CountryCode,
+                                                         Party_Id                   PartyId,
+                                                         out Location_Id?           LocationId,
+                                                         out Location?              Location,
+                                                         out EVSE_UId?              EVSEUId,
+                                                         out EVSE?                  EVSE,
+                                                         out Connector_Id?          ConnectorId,
+                                                         out Connector?             Connector,
+                                                         out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                                         Boolean                    FailOnMissingConnector = true)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI is null)
+                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
+
+            #endregion
+
+            LocationId           = default;
+            Location             = default;
+            EVSEUId              = default;
+            EVSE                 = default;
+            ConnectorId          = default;
+            Connector            = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 3)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code, party identification, location identification, EVSE identification and/or connector identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!LocationId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid location identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid EVSE identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[2]);
+
+            if (!ConnectorId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid connector identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (!CommonAPI.TryGetLocation(LocationId.Value, out Location) ||
+                 Location is null                                                 ||
+                 Location.CountryCode != CountryCode                              ||
+                 Location.PartyId     != PartyId)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Unknown location identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE) ||
+                 EVSE is null)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Unknown EVSE identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector) &&
+                FailOnMissingConnector)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Unknown connector identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+
+        #region ParseTariff                  (this Request, CommonAPI, out TariffId,  out Tariff,   out OCPIResponseBuilder)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the tariff identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="TariffId">The parsed unique tariff identification.</param>
+        /// <param name="Tariff">The resolved user.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="FailOnMissingTariff">Whether to fail when the tariff for the given tariff identification was not found.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseTariff(this OCPIRequest           Request,
+                                          CommonAPI                    CommonAPI,
+                                          CountryCode                CountryCode,
+                                          Party_Id                   PartyId,
+                                          out Tariff_Id?             TariffId,
+                                          out Tariff?                Tariff,
+                                          out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                          Boolean                    FailOnMissingTariff = true)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI is null)
+                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
+
+            #endregion
+
+            TariffId             = default;
+            Tariff               = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            TariffId = Tariff_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!TariffId.HasValue) {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid tariff identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (FailOnMissingTariff &&
+                (!CommonAPI.TryGetTariff(TariffId.Value, out Tariff) ||
+                  Tariff is null                                             ||
+                  Tariff.CountryCode != CountryCode                          ||
+                  Tariff.PartyId     != PartyId))
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Unknown tariff identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseSession                 (this Request, CommonAPI, out SessionId, out Session,  out OCPIResponseBuilder)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the session identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="SessionId">The parsed unique session identification.</param>
+        /// <param name="Session">The resolved session.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="FailOnMissingSession">Whether to fail when the session for the given session identification was not found.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseSession(this OCPIRequest           Request,
+                                           CommonAPI                  CommonAPI,
+                                           CountryCode                CountryCode,
+                                           Party_Id                   PartyId,
+                                           out Session_Id?            SessionId,
+                                           out Session?               Session,
+                                           out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                           Boolean                    FailOnMissingSession = true)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI is null)
+                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
+
+            #endregion
+
+            SessionId            = default;
+            Session              = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing session identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[2]);
+
+            if (!SessionId.HasValue) {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid session identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (FailOnMissingSession &&
+                (!CommonAPI.TryGetSession(SessionId.Value, out Session) ||
+                  Session is null                    ||
+                  Session.CountryCode != CountryCode ||
+                  Session.PartyId     != PartyId))
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Unknown session identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseCDR                     (this Request, CommonAPI, out CDRId,     out CDR,      out OCPIResponseBuilder)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the charge detail record identification
+        /// for the given HTTP hostname and HTTP query parameter or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="CDRId">The parsed unique charge detail record identification.</param>
+        /// <param name="CDR">The resolved charge detail record.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="FailOnMissingCDR">Whether to fail when the charge detail record for the given charge detail record identification was not found.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseCDR(this OCPIRequest           Request,
+                                       CommonAPI                    CommonAPI,
+                                       CountryCode                CountryCode,
+                                       Party_Id                   PartyId,
+                                       out CDR_Id?                CDRId,
+                                       out CDR?                   CDR,
+                                       out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                       Boolean                    FailOnMissingCDR = true)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI is null)
+                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
+
+            #endregion
+
+            CDRId                = default;
+            CDR                  = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing charge detail record identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!CDRId.HasValue) {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid charge detail record identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (FailOnMissingCDR &&
+                (!CommonAPI.TryGetCDR(CDRId.Value, out CDR) ||
+                  CDR is null                                       ||
+                  CDR.CountryCode != CountryCode                    ||
+                  CDR.PartyId     != PartyId))
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Unknown charge detail record identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseTokenId                 (this Request, CommonAPI, out TokenId,                 out OCPIResponseBuilder)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the token identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The EMSP API.</param>
+        /// <param name="TokenId">The parsed unique token identification.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseTokenId(this OCPIRequest           Request,
+                                           CommonAPI                    CommonAPI,
+                                           out Token_Id?              TokenId,
+                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI is null)
+                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
+
+            #endregion
+
+            TokenId              = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing token identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!TokenId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid token identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseTokenId                 (this Request,            out CountryCode, out PartyId, out TokenId,                                           out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the tariff identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CPOAPI">The Users API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="TokenId">The parsed unique tariff identification.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        public static Boolean ParseTokenId(this OCPIRequest           Request,
+                                           out CountryCode?           CountryCode,
+                                           out Party_Id?              PartyId,
+                                           out Token_Id?              TokenId,
+                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            #endregion
+
+            CountryCode          = default;
+            PartyId              = default;
+            TokenId              = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 3)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid country code!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid party identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
+
+            if (!TokenId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid token identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseToken                   (this Request, CommonAPI, out CountryCode, out PartyId, out TokenId, out Token,                                out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the tariff identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="TokenId">The parsed unique tariff identification.</param>
+        /// <param name="TokenStatus">The resolved tariff with status.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="FailOnMissingToken">Whether to fail when the tariff for the given tariff identification was not found.</param>
+        public static Boolean ParseToken(this OCPIRequest           Request,
+                                         CommonAPI                  CommonAPI,
+                                         out CountryCode?           CountryCode,
+                                         out Party_Id?              PartyId,
+                                         out Token_Id?              TokenId,
+                                         out TokenStatus?           TokenStatus,
+                                         out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                         Boolean                    FailOnMissingToken = true)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI  is null)
+                throw new ArgumentNullException(nameof(CommonAPI),   "The given CPO API must not be null!");
+
+            #endregion
+
+            CountryCode          = default;
+            PartyId              = default;
+            TokenId              = default;
+            TokenStatus          = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 3)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPI.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid country code!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid party identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
+
+            if (!TokenId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid token identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (!CommonAPI.TryGetToken(TokenId.Value, out var tokenStatus))
+            {
+
+                if (FailOnMissingToken)
+                {
+
+                    OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                        StatusCode           = 2004,
+                        StatusMessage        = "Unknown token identification!",
+                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                            //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                            AccessControlAllowHeaders  = [ "Authorization" ]
+                        }
+                    };
+
+                    TokenStatus = null;
+                    return false;
+
+                }
+
+            }
+            else
+            {
+
+                if (tokenStatus.Token.CountryCode != CountryCode ||
+                    tokenStatus.Token.PartyId     != PartyId)
+                {
+
+                    OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                        StatusCode           = 2004,
+                        StatusMessage        = "Invalid token identification!",
+                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                            HTTPStatusCode             = HTTPStatusCode.UnprocessableEntity,
+                            //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                            AccessControlAllowHeaders  = [ "Authorization" ]
+                        }
+                    };
+
+                }
+
+                TokenStatus = tokenStatus;
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+        #endregion
+
+        #region ParseToken                   (this Request, CommonAPI, out TokenId,   out Token,    out OCPIResponseBuilder)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the token identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The Users API.</param>
+        /// <param name="TokenId">The parsed unique token identification.</param>
+        /// <param name="TokenStatus">The resolved user.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <param name="FailOnMissingToken">Whether to fail when the token for the given token identification was not found.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseToken(this OCPIRequest           Request,
+                                         CommonAPI                  CommonAPI,
+                                         CountryCode                CountryCode,
+                                         Party_Id                   PartyId,
+                                         out Token_Id?              TokenId,
+                                         out TokenStatus            TokenStatus,
+                                         out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                         Boolean                    FailOnMissingToken = true)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI is null)
+                throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
+
+            #endregion
+
+            TokenId              = default;
+            TokenStatus          = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing token identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!TokenId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid token identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+
+            if (FailOnMissingToken &&
+                (!CommonAPI.TryGetToken(TokenId.Value, out TokenStatus) ||
+                  TokenStatus.Token.CountryCode != CountryCode                  ||
+                  TokenStatus.Token.PartyId     != PartyId))
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Unknown token identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+
+        #region ParseCommandId               (this Request, CommonAPI, out CommandId, out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the command identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CommonAPI">The EMSP API.</param>
+        /// <param name="CommandId">The parsed unique command identification.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseCommandId(this OCPIRequest           Request,
+                                             CommonAPI                    CommonAPI,
+                                             out Command_Id?            CommandId,
+                                             out OCPIResponse.Builder?  OCPIResponseBuilder)
+        {
+
+            #region Initial checks
+
+            if (Request is null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CommonAPI  is null)
+                throw new ArgumentNullException(nameof(CommonAPI),  "The given CPO API must not be null!");
+
+            #endregion
+
+            CommandId            = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing command identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            CommandId = Command_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!CommandId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid command identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
+                        AccessControlAllowHeaders  = [ "Authorization" ]
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+    }
+
+
+    /// <summary>
     /// The Common API.
     /// </summary>
     public class CommonAPI : CommonAPIBase
@@ -4906,6 +6270,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (locations.TryAdd(Location.Id, Location))
             {
 
@@ -4971,13 +6337,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<Location>.Success(Location);
+                return AddResult<Location>.Success(EventTrackingId, Location);
 
             }
 
             //DebugX.Log($"OCPI v2.1.1 Adding Location '{Location.Id}': '{Location}' failed!");
 
-            return AddResult<Location>.Failed(Location,
+            return AddResult<Location>.Failed(EventTrackingId, Location,
                                               "TryAdd(Location.Id, Location) failed!");
 
         }
@@ -4991,6 +6357,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                       EventTracking_Id?  EventTrackingId     = null,
                                                                       User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             if (locations.TryAdd(Location.Id, Location))
             {
@@ -5055,11 +6423,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<Location>.Success(Location);
+                return AddResult<Location>.Success(EventTrackingId, Location);
 
             }
 
-            return AddResult<Location>.NoOperation(Location);
+            return AddResult<Location>.NoOperation(EventTrackingId, Location);
 
         }
 
@@ -5074,6 +6442,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                            User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Update an existing location
 
             if (locations.TryGetValue(Location.Id, out var existingLocation))
@@ -5082,7 +6452,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     Location.LastUpdated <= existingLocation.LastUpdated)
                 {
-                    return AddOrUpdateResult<Location>.Failed(Location,
+                    return AddOrUpdateResult<Location>.Failed(EventTrackingId, Location,
                                                               "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
                 }
 
@@ -5199,11 +6569,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     }
 
-                    return AddOrUpdateResult<Location>.Success(Location,
-                                                               WasCreated: false);
+                    return AddOrUpdateResult<Location>.Updated(EventTrackingId, Location);
 
                 }
-                return AddOrUpdateResult<Location>.Failed(Location,
+                return AddOrUpdateResult<Location>.Failed(EventTrackingId, Location,
                                                           "locations.TryUpdate(Location.Id, Location, Location) failed!");
 
             }
@@ -5275,12 +6644,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddOrUpdateResult<Location>.Success(Location,
-                                                           WasCreated: true);
+                return AddOrUpdateResult<Location>.Created(EventTrackingId, Location);
 
             }
 
-            return AddOrUpdateResult<Location>.Failed(Location,
+            return AddOrUpdateResult<Location>.Failed(EventTrackingId, Location,
                                                       "locations.TryAdd(Location.Id, Location) failed!");
 
             #endregion
@@ -5298,6 +6666,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                  User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Validate AllowDowngrades
 
             if (locations.TryGetValue(Location.Id, out var existingLocation))
@@ -5307,14 +6677,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     Location.LastUpdated <= existingLocation.LastUpdated)
                 {
 
-                    return UpdateResult<Location>.Failed(Location,
+                    return UpdateResult<Location>.Failed(EventTrackingId, Location,
                                                          "The 'lastUpdated' timestamp of the new charging location must be newer then the timestamp of the existing location!");
 
                 }
 
             }
             else
-                return UpdateResult<Location>.Failed(Location,
+                return UpdateResult<Location>.Failed(EventTrackingId, Location,
                                                      $"Unknown charging location identification '{Location.Id}'!");
 
             #endregion
@@ -5520,11 +6890,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return UpdateResult<Location>.Success(Location);
+                return UpdateResult<Location>.Success(EventTrackingId, Location);
 
             }
 
-            return UpdateResult<Location>.Failed(Location,
+            return UpdateResult<Location>.Failed(EventTrackingId, Location,
                                                  "locations.TryUpdate(Location.Id, Location, Location) failed!");
 
         }
@@ -5541,8 +6911,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                   User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (!LocationPatch.HasValues)
-                return PatchResult<Location>.Failed(Location,
+                return PatchResult<Location>.Failed(EventTrackingId, Location,
                                                     "The given location patch must not be null or empty!");
 
             var patchResult = Location.TryPatch(LocationPatch,
@@ -5559,7 +6931,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                 CurrentUserId);
 
                 if (updateLocationResult.IsFailed)
-                    return PatchResult<Location>.Failed(Location,
+                    return PatchResult<Location>.Failed(EventTrackingId, Location,
                                                         updateLocationResult.ErrorResponse ?? "Unknown error!");
 
             }
@@ -5580,8 +6952,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (Location.EVSEExists(EVSE.UId))
-                return AddResult<EVSE>.Failed(EVSE,
+                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
                                               $"The given EVSE '{EVSE.UId}' already exists!");
 
             DebugX.Log($"OCPI v2.1.1 EVSE '{EVSE.UId}'/'{EVSE.EVSEId}': '{EVSE}' added...");
@@ -5594,7 +6968,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             if (newLocation is null)
                 return AddResult<EVSE>.Failed(
-                           EVSE,
+                           EventTrackingId, EVSE,
                            warnings.First().Text.FirstText()
                        );
 
@@ -5611,11 +6985,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             return updateLocationResult.IsSuccess
 
                        ? AddResult<EVSE>.Success(
-                             EVSE
+                             EventTrackingId, EVSE
                          )
 
                        : AddResult<EVSE>.Failed (
-                             EVSE,
+                             EventTrackingId, EVSE,
                              updateLocationResult.ErrorResponse ?? "Unknown error!"
                          );
 
@@ -5632,8 +7006,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                               User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (Location.EVSEExists(EVSE.UId))
-                return AddResult<EVSE>.Failed(EVSE,
+                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
                                               $"The given EVSE '{EVSE.UId}' already exists!");
 
 
@@ -5644,7 +7020,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               out var warnings);
 
             if (newLocation is null)
-                return AddResult<EVSE>.Failed(EVSE,
+                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
                                               warnings.First().Text.FirstText());
 
 
@@ -5655,8 +7031,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                             CurrentUserId);
 
             return updateLocationResult.IsSuccess
-                       ? AddResult<EVSE>.Success    (EVSE)
-                       : AddResult<EVSE>.NoOperation(EVSE,
+                       ? AddResult<EVSE>.Success    (EventTrackingId, EVSE)
+                       : AddResult<EVSE>.NoOperation(EventTrackingId, EVSE,
                                                      updateLocationResult.ErrorResponse);
 
         }
@@ -5673,6 +7049,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Validate AllowDowngrades
 
             if (Location.TryGetEVSE(EVSE.UId, out var existingEVSE) &&
@@ -5682,7 +7060,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     EVSE.LastUpdated <= existingEVSE.LastUpdated)
                 {
-                    return AddOrUpdateResult<EVSE>.Failed     (EVSE,
+                    return AddOrUpdateResult<EVSE>.Failed     (EventTrackingId, EVSE,
                                                                "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
                 }
 
@@ -5707,7 +7085,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               out var warnings);
 
             if (newLocation is null)
-                return AddOrUpdateResult<EVSE>.Failed(EVSE,
+                return AddOrUpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
                                                       warnings.First().Text.FirstText());
 
 
@@ -5718,10 +7096,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                             CurrentUserId);
 
             return updateLocationResult.IsSuccess
-                       ? AddOrUpdateResult<EVSE>.Success(EVSE,
-                                                         WasCreated: existingEVSE is null)
-                       : AddOrUpdateResult<EVSE>.Failed (EVSE,
-                                                         updateLocationResult.ErrorResponse ?? "Unknown error!");
+                       ? existingEVSE is null
+                             ? AddOrUpdateResult<EVSE>.Created(EventTrackingId, EVSE)
+                             : AddOrUpdateResult<EVSE>.Updated(EventTrackingId, EVSE)
+                       : AddOrUpdateResult<EVSE>.Failed(
+                             EventTrackingId, EVSE,
+                             updateLocationResult.ErrorResponse ?? "Unknown error!"
+                         );
 
         }
 
@@ -5737,6 +7118,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                          User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Validate AllowDowngrades
 
             if (Location.TryGetEVSE(EVSE.UId, out var existingEVSE) &&
@@ -5746,7 +7129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     EVSE.LastUpdated <= existingEVSE.LastUpdated)
                 {
-                    return UpdateResult<EVSE>.Failed(EVSE,
+                    return UpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
                                                      "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
                 }
 
@@ -5756,7 +7139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
             else
-                return UpdateResult<EVSE>.Failed(EVSE,
+                return UpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
                                                  $"The given EVSE '{EVSE.UId}' does not exist!");
 
             #endregion
@@ -5774,7 +7157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               out var warnings);
 
             if (newLocation is null)
-                return UpdateResult<EVSE>.Failed(EVSE,
+                return UpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
                                                  warnings.First().Text.FirstText());
 
 
@@ -5785,8 +7168,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                             CurrentUserId);
 
             return updateLocationResult.IsSuccess
-                       ? UpdateResult<EVSE>.Success(EVSE)
-                       : UpdateResult<EVSE>.Failed (EVSE,
+                       ? UpdateResult<EVSE>.Success(EventTrackingId, EVSE)
+                       : UpdateResult<EVSE>.Failed (EventTrackingId, EVSE,
                                                     updateLocationResult.ErrorResponse ?? "Unknown error!");
 
         }
@@ -5804,8 +7187,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (!EVSEPatch.HasValues)
-                return PatchResult<EVSE>.Failed(EVSE,
+                return PatchResult<EVSE>.Failed(EventTrackingId, EVSE,
                                                 "The given EVSE patch must not be null or empty!");
 
             var patchResult = EVSE.TryPatch(EVSEPatch,
@@ -5823,7 +7208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                         SkipNotifications);
 
                 if (updateEVSEResult.IsFailed)
-                    return PatchResult<EVSE>.Failed(EVSE,
+                    return PatchResult<EVSE>.Failed(EventTrackingId, EVSE,
                                                     updateEVSEResult.ErrorResponse ?? "Unknown error!");
 
             }
@@ -5845,8 +7230,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (EVSE.ConnectorExists(Connector.Id))
-                return AddResult<Connector>.Failed(Connector,
+                return AddResult<Connector>.Failed(EventTrackingId, Connector,
                                                    $"The given charging connector identification '{Connector.Id}' already exists!");
 
 
@@ -5857,7 +7244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       out var warnings);
 
             if (newEVSE is null)
-                return AddResult<Connector>.Failed(Connector,
+                return AddResult<Connector>.Failed(EventTrackingId, Connector,
                                                    warnings.First().Text.FirstText());
 
 
@@ -5867,8 +7254,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     SkipNotifications);
 
             return updateEVSEResult.IsSuccess
-                       ? AddResult<Connector>.Success(Connector)
-                       : AddResult<Connector>.Failed (Connector,
+                       ? AddResult<Connector>.Success(EventTrackingId, Connector)
+                       : AddResult<Connector>.Failed (EventTrackingId, Connector,
                                                       updateEVSEResult.ErrorResponse ?? "Unknown error!");
 
         }
@@ -5885,8 +7272,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                         User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (EVSE.ConnectorExists(Connector.Id))
-                return AddResult<Connector>.Failed(Connector,
+                return AddResult<Connector>.Failed(EventTrackingId, Connector,
                                                    $"The given charging connector identification '{Connector.Id}' already exists!");
 
 
@@ -5897,7 +7286,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       out var warnings);
 
             if (newEVSE is null)
-                return AddResult<Connector>.Failed(Connector,
+                return AddResult<Connector>.Failed(EventTrackingId, Connector,
                                                    warnings.First().Text.FirstText());
 
 
@@ -5907,8 +7296,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     SkipNotifications);
 
             return updateEVSEResult.IsSuccess
-                       ? AddResult<Connector>.Success    (Connector)
-                       : AddResult<Connector>.NoOperation(Connector,
+                       ? AddResult<Connector>.Success    (EventTrackingId, Connector)
+                       : AddResult<Connector>.NoOperation(EventTrackingId, Connector,
                                                           updateEVSEResult.ErrorResponse);
 
         }
@@ -5926,6 +7315,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                              User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Validate AllowDowngrades
 
             if (EVSE.TryGetConnector(Connector.Id, out var existingConnector) &&
@@ -5935,7 +7326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     Connector.LastUpdated <= existingConnector.LastUpdated)
                 {
-                    return AddOrUpdateResult<Connector>.Failed(Connector,
+                    return AddOrUpdateResult<Connector>.Failed(EventTrackingId, Connector,
                                                                "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
                 }
 
@@ -5955,7 +7346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       out var warnings);
 
             if (newEVSE is null)
-                return AddOrUpdateResult<Connector>.Failed(Connector,
+                return AddOrUpdateResult<Connector>.Failed(EventTrackingId, Connector,
                                                            warnings.First().Text.FirstText());
 
 
@@ -5986,12 +7377,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     }
                 }
 
-                return AddOrUpdateResult<Connector>.Success(Connector,
-                                                            WasCreated: result.WasCreated ?? false);
+                return result.WasCreated ?? false
+                           ? AddOrUpdateResult<Connector>.Created(EventTrackingId, Connector)
+                           : AddOrUpdateResult<Connector>.Updated(EventTrackingId, Connector);
 
             }
 
-            return AddOrUpdateResult<Connector>.Failed(Connector,
+            return AddOrUpdateResult<Connector>.Failed(EventTrackingId, Connector,
                                                        result.ErrorResponse ?? "Unknown error!");
 
         }
@@ -6009,6 +7401,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Validate AllowDowngrades
 
             if (EVSE.TryGetConnector(Connector.Id, out var existingConnector) &&
@@ -6018,7 +7412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     Connector.LastUpdated <= existingConnector.LastUpdated)
                 {
-                    return UpdateResult<Connector>.Failed(Connector,
+                    return UpdateResult<Connector>.Failed(EventTrackingId, Connector,
                                                           "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
                 }
 
@@ -6028,7 +7422,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
             else
-                return UpdateResult<Connector>.Failed(Connector,
+                return UpdateResult<Connector>.Failed(EventTrackingId, Connector,
                                                       $"The given charging connector '{Connector.Id}' does not exist!");
 
             #endregion
@@ -6041,7 +7435,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       out var warnings);
 
             if (newEVSE is null)
-                return UpdateResult<Connector>.Failed(Connector,
+                return UpdateResult<Connector>.Failed(EventTrackingId, Connector,
                                                       warnings.First().Text.FirstText());
 
 
@@ -6051,8 +7445,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     SkipNotifications);
 
             return updateEVSEResult.IsSuccess
-                       ? UpdateResult<Connector>.Success(Connector)
-                       : UpdateResult<Connector>.Failed (Connector,
+                       ? UpdateResult<Connector>.Success(EventTrackingId, Connector)
+                       : UpdateResult<Connector>.Failed (EventTrackingId, Connector,
                                                          updateEVSEResult.ErrorResponse ?? "Unknown error!");
 
         }
@@ -6071,8 +7465,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                     User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (!ConnectorPatch.HasValues)
-                return PatchResult<Connector>.Failed(Connector,
+                return PatchResult<Connector>.Failed(EventTrackingId, Connector,
                                                      "The given connector patch must not be null or empty!");
 
             var patchResult = Connector.TryPatch(ConnectorPatch,
@@ -6089,7 +7485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                   SkipNotifications);
 
                 if (updateConnectorResult.IsFailed)
-                    return PatchResult<Connector>.Failed(Connector,
+                    return PatchResult<Connector>.Failed(EventTrackingId, Connector,
                                                          updateConnectorResult.ErrorResponse ?? "Unknown error!");
 
             }
@@ -6176,6 +7572,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                  User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (locations.Remove(LocationId, out var location))
             {
 
@@ -6237,11 +7635,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return RemoveResult<Location>.Success(location);
+                return RemoveResult<Location>.Success(EventTrackingId, location);
 
             }
 
-            return RemoveResult<Location>.Failed(null,
+            return RemoveResult<Location>.Failed(EventTrackingId,
                                                  "RemoveLocation(LocationId, ...) failed!");
 
         }
@@ -6258,6 +7656,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                   EventTracking_Id?  EventTrackingId     = null,
                                                                                   User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var existingLocations = locations.Values.ToArray();
 
@@ -6304,7 +7704,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            return RemoveResult<IEnumerable<Location>>.Success(existingLocations);
+            return RemoveResult<IEnumerable<Location>>.Success(EventTrackingId, existingLocations);
 
         }
 
@@ -6318,8 +7718,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="IncludeLocations">A charging location filter.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
         public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(Func<Location, Boolean>  IncludeLocations,
-                                                                                  Boolean                  SkipNotifications   = false)
+                                                                                  Boolean                  SkipNotifications   = false,
+                                                                                  EventTracking_Id?        EventTrackingId     = null,
+                                                                                  User_Id?                 CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var removedLocations  = new List<Location>();
             var failedLocations   = new List<RemoveResult<Location>>();
@@ -6338,11 +7742,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedLocations.Any() && !failedLocations.Any()
-                       ? RemoveResult<IEnumerable<Location>>.Success(removedLocations)
+                       ? RemoveResult<IEnumerable<Location>>.Success(EventTrackingId, removedLocations)
 
                        : !removedLocations.Any() && !failedLocations.Any()
-                             ? RemoveResult<IEnumerable<Location>>.NoOperation(Array.Empty<Location>())
-                             : RemoveResult<IEnumerable<Location>>.Failed     (failedLocations.Select(location => location.Data)!,
+                             ? RemoveResult<IEnumerable<Location>>.NoOperation(EventTrackingId, Array.Empty<Location>())
+                             : RemoveResult<IEnumerable<Location>>.Failed     (EventTrackingId, failedLocations.Select(location => location.Data)!,
                                                                                failedLocations.Select(location => location.ErrorResponse).AggregateWith(", "));
 
         }
@@ -6357,8 +7761,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="IncludeLocationIds">A charging location identification filter.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
         public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(Func<Location_Id, Boolean>  IncludeLocationIds,
-                                                                                  Boolean                     SkipNotifications   = false)
+                                                                                  Boolean                     SkipNotifications   = false,
+                                                                                  EventTracking_Id?           EventTrackingId     = null,
+                                                                                  User_Id?                    CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var removedLocations  = new List<Location>();
             var failedLocations   = new List<RemoveResult<Location>>();
@@ -6379,11 +7787,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedLocations.Any() && !failedLocations.Any()
-                       ? RemoveResult<IEnumerable<Location>>.Success(removedLocations)
+                       ? RemoveResult<IEnumerable<Location>>.Success(EventTrackingId, removedLocations)
 
                        : !removedLocations.Any() && !failedLocations.Any()
-                             ? RemoveResult<IEnumerable<Location>>.NoOperation(Array.Empty<Location>())
-                             : RemoveResult<IEnumerable<Location>>.Failed     (failedLocations.Select(location => location.Data)!,
+                             ? RemoveResult<IEnumerable<Location>>.NoOperation(EventTrackingId, Array.Empty<Location>())
+                             : RemoveResult<IEnumerable<Location>>.Failed     (EventTrackingId, failedLocations.Select(location => location.Data)!,
                                                                                failedLocations.Select(location => location.ErrorResponse).AggregateWith(", "));
 
         }
@@ -6398,10 +7806,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CountryCode">The country code of the party.</param>
         /// <param name="PartyId">The identification of the party.</param>
         /// <param name="SkipNotifications">Skip sending notifications.</param>
-        public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(CountryCode  CountryCode,
-                                                                                  Party_Id     PartyId,
-                                                                                  Boolean      SkipNotifications   = false)
+        public async Task<RemoveResult<IEnumerable<Location>>> RemoveAllLocations(CountryCode        CountryCode,
+                                                                                  Party_Id           PartyId,
+                                                                                  Boolean            SkipNotifications   = false,
+                                                                                  EventTracking_Id?  EventTrackingId     = null,
+                                                                                  User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var removedLocations  = new List<Location>();
             var failedLocations   = new List<RemoveResult<Location>>();
@@ -6421,12 +7833,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            return removedLocations.Any() && !failedLocations.Any()
-                       ? RemoveResult<IEnumerable<Location>>.Success(removedLocations)
+            return removedLocations.Count != 0 && failedLocations.Count == 0
+                       ? RemoveResult<IEnumerable<Location>>.Success(EventTrackingId, removedLocations)
 
-                       : !removedLocations.Any() && !failedLocations.Any()
-                             ? RemoveResult<IEnumerable<Location>>.NoOperation(Array.Empty<Location>())
-                             : RemoveResult<IEnumerable<Location>>.Failed     (failedLocations.Select(location => location.Data)!,
+                       : removedLocations.Count == 0 && failedLocations.Count == 0
+                             ? RemoveResult<IEnumerable<Location>>.NoOperation(EventTrackingId, Array.Empty<Location>())
+                             : RemoveResult<IEnumerable<Location>>.Failed     (EventTrackingId, failedLocations.Select(location => location.Data)!,
                                                                                failedLocations.Select(location => location.ErrorResponse).AggregateWith(", "));
 
         }
@@ -6465,6 +7877,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        EventTracking_Id?  EventTrackingId     = null,
                                                        User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             if (tariffs.TryAdd(Tariff.Id, Tariff))
             {
@@ -6505,11 +7919,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<Tariff>.Success(Tariff);
+                return AddResult<Tariff>.Success(EventTrackingId, Tariff);
 
             }
 
-            return AddResult<Tariff>.Failed(Tariff,
+            return AddResult<Tariff>.Failed(EventTrackingId, Tariff,
                                             "TryAdd(Tariff.Id, Tariff) failed!");
 
         }
@@ -6523,6 +7937,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                   EventTracking_Id?  EventTrackingId     = null,
                                                                   User_Id?           CurrentUserId       = null)
         {
+
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             if (tariffs.TryAdd(Tariff.Id, Tariff))
             {
@@ -6563,11 +7980,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<Tariff>.Success(Tariff);
+                return AddResult<Tariff>.Success(EventTrackingId, Tariff);
 
             }
 
-            return AddResult<Tariff>.NoOperation(Tariff);
+            return AddResult<Tariff>.NoOperation(EventTrackingId, Tariff);
 
         }
 
@@ -6582,6 +7999,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                        User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Update an existing tariff
 
             if (tariffs.TryGetValue(Tariff.Id,
@@ -6592,7 +8011,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     Tariff.LastUpdated <= existingTariff.LastUpdated)
                 {
-                    return AddOrUpdateResult<Tariff>.Failed(Tariff,
+                    return AddOrUpdateResult<Tariff>.Failed(EventTrackingId, Tariff,
                                                             "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
                 }
 
@@ -6633,8 +8052,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddOrUpdateResult<Tariff>.Success(Tariff,
-                                                         WasCreated: false);
+                return AddOrUpdateResult<Tariff>.Updated(EventTrackingId, Tariff);
 
             }
 
@@ -6681,12 +8099,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddOrUpdateResult<Tariff>.Success(Tariff,
-                                                         WasCreated: true);
+                return AddOrUpdateResult<Tariff>.Created(EventTrackingId, Tariff);
 
             }
 
-            return AddOrUpdateResult<Tariff>.Failed(Tariff,
+            return AddOrUpdateResult<Tariff>.Failed(EventTrackingId, Tariff,
                                                     "AddOrUpdateTariff(Tariff.Id, Tariff) failed!");
 
             #endregion
@@ -6704,6 +8121,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Validate AllowDowngrades
 
             if (tariffs.TryGetValue(Tariff.Id, out var existingTariff, Timestamp.Now))
@@ -6713,14 +8132,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     Tariff.LastUpdated <= existingTariff.LastUpdated)
                 {
 
-                    return UpdateResult<Tariff>.Failed(Tariff,
+                    return UpdateResult<Tariff>.Failed(EventTrackingId, Tariff,
                                                        "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
 
                 }
 
             }
             else
-                return UpdateResult<Tariff>.Failed(Tariff,
+                return UpdateResult<Tariff>.Failed(EventTrackingId, Tariff,
                                                    $"Unknown tariff identification '{Tariff.Id}'!");
 
             #endregion
@@ -6764,11 +8183,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return UpdateResult<Tariff>.Success(Tariff);
+                return UpdateResult<Tariff>.Success(EventTrackingId, Tariff);
 
             }
 
-            return UpdateResult<Tariff>.Failed(Tariff,
+            return UpdateResult<Tariff>.Failed(EventTrackingId, Tariff,
                                                "UpdateTariff(Tariff.Id, Tariff, Tariff) failed!");
 
         }
@@ -6785,8 +8204,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                               User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (!TariffPatch.HasValues)
-                return PatchResult<Tariff>.Failed(Tariff,
+                return PatchResult<Tariff>.Failed(EventTrackingId, Tariff,
                                                   "The given charging tariff patch must not be null or empty!");
 
             if (tariffs.TryGetValue(Tariff.Id, out var existingTariff, Timestamp.Now))
@@ -6842,12 +8263,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             else
-                return PatchResult<Tariff>.Failed(Tariff,
+                return PatchResult<Tariff>.Failed(EventTrackingId, Tariff,
                                                   "The given charging tariff does not exist!");
 
         }
 
         #endregion
+
 
         #region RemoveTariff         (Tariff,                                       SkipNotifications = false, ...)
 
@@ -6880,6 +8302,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                           EventTracking_Id?  EventTrackingId     = null,
                                                                           User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             if (tariffs.TryRemove(TariffId, out var removedTariffs))
             {
@@ -6918,11 +8342,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs);
+                return RemoveResult<IEnumerable<Tariff>>.Success(EventTrackingId, removedTariffs);
 
             }
 
-            return RemoveResult<IEnumerable<Tariff>>.Failed(null,
+            return RemoveResult<IEnumerable<Tariff>>.Failed(EventTrackingId,
                                                             "RemoveTariff(TariffId, ...) failed!");
 
         }
@@ -6939,6 +8363,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               EventTracking_Id?  EventTrackingId     = null,
                                                                               User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var existingTariffs = tariffs.Values().ToArray();
 
@@ -6969,7 +8395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            return RemoveResult<IEnumerable<Tariff>>.Success(existingTariffs);
+            return RemoveResult<IEnumerable<Tariff>>.Success(EventTrackingId, existingTariffs);
 
         }
 
@@ -6987,6 +8413,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               EventTracking_Id?      EventTrackingId     = null,
                                                                               User_Id?               CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var removedTariffs  = new List<Tariff>();
             var failedTariffs   = new List<RemoveResult<IEnumerable<Tariff>>>();
@@ -7007,11 +8435,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedTariffs.Count != 0 && failedTariffs.Count == 0
-                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(EventTrackingId, removedTariffs)
 
                        : removedTariffs.Count == 0 && failedTariffs.Count == 0
-                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation([])
-                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
+                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(EventTrackingId, [])
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (EventTrackingId, failedTariffs.SelectMany(tariff => tariff.Data ?? []),
                                                                              failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
 
         }
@@ -7030,6 +8458,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               EventTracking_Id?         EventTrackingId     = null,
                                                                               User_Id?                  CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var removedTariffs  = new List<Tariff>();
             var failedTariffs   = new List<RemoveResult<IEnumerable<Tariff>>>();
@@ -7050,11 +8480,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedTariffs.Count != 0 && failedTariffs.Count == 0
-                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(EventTrackingId, removedTariffs)
 
                        : removedTariffs.Count == 0 && failedTariffs.Count == 0
-                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation([])
-                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
+                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(EventTrackingId, [])
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (EventTrackingId, failedTariffs.SelectMany(tariff => tariff.Data ?? []),
                                                                              failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
 
         }
@@ -7075,6 +8505,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               EventTracking_Id?  EventTrackingId     = null,
                                                                               User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             await LogAssetComment($"{removeAllTariffs}: {CountryCode} {PartyId}",
                                   EventTrackingId ?? EventTracking_Id.New,
@@ -7099,11 +8531,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedTariffs.Any() && !failedTariffs.Any()
-                       ? RemoveResult<IEnumerable<Tariff>>.Success(removedTariffs)
+                       ? RemoveResult<IEnumerable<Tariff>>.Success(EventTrackingId, removedTariffs)
 
                        : !removedTariffs.Any() && !failedTariffs.Any()
-                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(Array.Empty<Tariff>())
-                             : RemoveResult<IEnumerable<Tariff>>.Failed     (failedTariffs.SelectMany(tariff => tariff.Data ?? []),
+                             ? RemoveResult<IEnumerable<Tariff>>.NoOperation(EventTrackingId, Array.Empty<Tariff>())
+                             : RemoveResult<IEnumerable<Tariff>>.Failed     (EventTrackingId, failedTariffs.SelectMany(tariff => tariff.Data ?? []),
                                                                              failedTariffs.Select    (tariff => tariff.ErrorResponse).AggregateWith(", "));
 
         }
@@ -7242,6 +8674,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                          User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (chargingSessions.TryAdd(Session.Id, Session))
             {
 
@@ -7292,11 +8726,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<Session>.Success(Session);
+                return AddResult<Session>.Success(EventTrackingId, Session);
 
             }
 
-            return AddResult<Session>.Failed(Session,
+            return AddResult<Session>.Failed(EventTrackingId, Session,
                                             "AddSession(Session.Id, Session) failed!");
 
         }
@@ -7310,6 +8744,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                     EventTracking_Id?  EventTrackingId     = null,
                                                                     User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             if (chargingSessions.TryAdd(Session.Id, Session))
             {
@@ -7361,11 +8797,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<Session>.Success(Session);
+                return AddResult<Session>.Success(EventTrackingId, Session);
 
             }
 
-            return AddResult<Session>.NoOperation(Session);
+            return AddResult<Session>.NoOperation(EventTrackingId, Session);
 
         }
 
@@ -7380,6 +8816,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                          User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Update an existing session
 
             if (chargingSessions.TryGetValue(Session.Id, out var existingSession))
@@ -7388,7 +8826,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     Session.LastUpdated <= existingSession.LastUpdated)
                 {
-                    return AddOrUpdateResult<Session>.Failed(Session,
+                    return AddOrUpdateResult<Session>.Failed(EventTrackingId, Session,
                                                             "The 'lastUpdated' timestamp of the new charging session must be newer then the timestamp of the existing session!");
                 }
 
@@ -7440,8 +8878,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddOrUpdateResult<Session>.Success(Session,
-                                                          WasCreated: false);
+                return AddOrUpdateResult<Session>.Updated(EventTrackingId, Session);
 
             }
 
@@ -7499,12 +8936,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddOrUpdateResult<Session>.Success(Session,
-                                                          WasCreated: true);
+                return AddOrUpdateResult<Session>.Created(EventTrackingId, Session);
 
             }
 
-            return AddOrUpdateResult<Session>.Failed(Session,
+            return AddOrUpdateResult<Session>.Failed(EventTrackingId, Session,
                                                      "AddOrUpdateSession(Session.Id, Session) failed!");
 
             #endregion
@@ -7522,6 +8958,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Validate AllowDowngrades
 
             if (chargingSessions.TryGetValue(Session.Id, out var existingSession))
@@ -7531,14 +8969,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     Session.LastUpdated <= existingSession.LastUpdated)
                 {
 
-                    return UpdateResult<Session>.Failed(Session,
+                    return UpdateResult<Session>.Failed(EventTrackingId, Session,
                                                         "The 'lastUpdated' timestamp of the new charging session must be newer then the timestamp of the existing session!");
 
                 }
 
             }
             else
-                return UpdateResult<Session>.Failed(Session,
+                return UpdateResult<Session>.Failed(EventTrackingId, Session,
                                                     $"Unknown session identification '{Session.Id}'!");
 
             #endregion
@@ -7594,11 +9032,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return UpdateResult<Session>.Success(Session);
+                return UpdateResult<Session>.Success(EventTrackingId, Session);
 
             }
 
-            return UpdateResult<Session>.Failed(Session,
+            return UpdateResult<Session>.Failed(EventTrackingId, Session,
                                                 "UpdateSession(Session.Id, Session, Session) failed!");
 
         }
@@ -7616,8 +9054,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                 User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (SessionPatch is null || !SessionPatch.HasValues)
-                return PatchResult<Session>.Failed(Session,
+                return PatchResult<Session>.Failed(EventTrackingId, Session,
                                                   "The given charging session patch must not be null or empty!");
 
             if (chargingSessions.TryGetValue(Session.Id, out var existingSession))
@@ -7684,7 +9124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             else
-                return PatchResult<Session>.Failed(Session,
+                return PatchResult<Session>.Failed(EventTrackingId, Session,
                                                   "The given charging session does not exist!");
 
         }
@@ -7767,6 +9207,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (chargingSessions.Remove(SessionId, out var session))
             {
 
@@ -7815,11 +9257,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return RemoveResult<Session>.Success(session);
+                return RemoveResult<Session>.Success(EventTrackingId, session);
 
             }
 
-            return RemoveResult<Session>.Failed(null,
+            return RemoveResult<Session>.Failed(EventTrackingId,
                                                 "RemoveSession(SessionId, ...) failed!");
 
         }
@@ -7836,6 +9278,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                 EventTracking_Id?  EventTrackingId     = null,
                                                                                 User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var existingSessions = chargingSessions.Values.ToArray();
 
@@ -7866,7 +9310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            return RemoveResult<IEnumerable<Session>>.Success(existingSessions);
+            return RemoveResult<IEnumerable<Session>>.Success(EventTrackingId, existingSessions);
 
         }
 
@@ -7885,6 +9329,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                 User_Id?                CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             var removedSessions  = new List<Session>();
             var failedSessions   = new List<RemoveResult<Session>>();
 
@@ -7902,11 +9348,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedSessions.Any() && !failedSessions.Any()
-                       ? RemoveResult<IEnumerable<Session>>.Success(removedSessions)
+                       ? RemoveResult<IEnumerable<Session>>.Success(EventTrackingId, removedSessions)
 
                        : !removedSessions.Any() && !failedSessions.Any()
-                             ? RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>())
-                             : RemoveResult<IEnumerable<Session>>.Failed     (failedSessions.Select(session => session.Data)!,
+                             ? RemoveResult<IEnumerable<Session>>.NoOperation(EventTrackingId, Array.Empty<Session>())
+                             : RemoveResult<IEnumerable<Session>>.Failed     (EventTrackingId, failedSessions.Select(session => session.Data)!,
                                                                               failedSessions.Select(session => session.ErrorResponse).AggregateWith(", "));
 
         }
@@ -7925,6 +9371,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                 EventTracking_Id?          EventTrackingId     = null,
                                                                                 User_Id?                   CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var removedSessions  = new List<Session>();
             var failedSessions   = new List<RemoveResult<Session>>();
@@ -7945,11 +9393,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedSessions.Any() && !failedSessions.Any()
-                       ? RemoveResult<IEnumerable<Session>>.Success(removedSessions)
+                       ? RemoveResult<IEnumerable<Session>>.Success(EventTrackingId, removedSessions)
 
                        : !removedSessions.Any() && !failedSessions.Any()
-                             ? RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>())
-                             : RemoveResult<IEnumerable<Session>>.Failed     (failedSessions.Select(session => session.Data)!,
+                             ? RemoveResult<IEnumerable<Session>>.NoOperation(EventTrackingId, Array.Empty<Session>())
+                             : RemoveResult<IEnumerable<Session>>.Failed     (EventTrackingId, failedSessions.Select(session => session.Data)!,
                                                                               failedSessions.Select(session => session.ErrorResponse).AggregateWith(", "));
 
         }
@@ -7971,6 +9419,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                 User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             var removedSessions  = new List<Session>();
             var failedSessions   = new List<RemoveResult<Session>>();
 
@@ -7990,11 +9440,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedSessions.Any() && !failedSessions.Any()
-                       ? RemoveResult<IEnumerable<Session>>.Success(removedSessions)
+                       ? RemoveResult<IEnumerable<Session>>.Success(EventTrackingId, removedSessions)
 
                        : !removedSessions.Any() && !failedSessions.Any()
-                             ? RemoveResult<IEnumerable<Session>>.NoOperation(Array.Empty<Session>())
-                             : RemoveResult<IEnumerable<Session>>.Failed     (failedSessions.Select(session => session.Data)!,
+                             ? RemoveResult<IEnumerable<Session>>.NoOperation(EventTrackingId, Array.Empty<Session>())
+                             : RemoveResult<IEnumerable<Session>>.Failed     (EventTrackingId, failedSessions.Select(session => session.Data)!,
                                                                               failedSessions.Select(session => session.ErrorResponse).AggregateWith(", "));
 
         }
@@ -8032,6 +9482,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             var newTokenStatus = new TokenStatus(Token,
                                                  Status ??= AllowedType.ALLOWED);
 
@@ -8068,11 +9520,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<Token>.Success(Token);
+                return AddResult<Token>.Success(EventTrackingId, Token);
 
             }
 
-            return AddResult<Token>.Failed(Token,
+            return AddResult<Token>.Failed(EventTrackingId, Token,
                                            "TryAdd(Token.Id, newTokenStatus) failed!");
 
         }
@@ -8087,6 +9539,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                 EventTracking_Id?  EventTrackingId     = null,
                                                                 User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var newTokenStatus = new TokenStatus(Token,
                                                  Status ??= AllowedType.ALLOWED);
@@ -8124,11 +9578,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<Token>.Success(Token);
+                return AddResult<Token>.Success(EventTrackingId, Token);
 
             }
 
-            return AddResult<Token>.NoOperation(Token);
+            return AddResult<Token>.NoOperation(EventTrackingId, Token);
 
         }
 
@@ -8144,6 +9598,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                      User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Update an existing token
 
             if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
@@ -8152,7 +9608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
                 {
-                    return AddOrUpdateResult<Token>.Failed(Token,
+                    return AddOrUpdateResult<Token>.Failed(EventTrackingId, Token,
                                                            "The 'lastUpdated' timestamp of the new token must be newer then the timestamp of the existing token!");
                 }
 
@@ -8190,8 +9646,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddOrUpdateResult<Token>.Success(Token,
-                                                        WasCreated: false);
+                return AddOrUpdateResult<Token>.Updated(EventTrackingId, Token);
 
             }
 
@@ -8235,12 +9690,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddOrUpdateResult<Token>.Success(Token,
-                                                        WasCreated: true);
+                return AddOrUpdateResult<Token>.Created(EventTrackingId, Token);
 
             }
 
-            return AddOrUpdateResult<Token>.Failed(Token,
+            return AddOrUpdateResult<Token>.Failed(EventTrackingId, Token,
                                                    "AddOrUpdateToken(Token.Id, Token) failed!");
 
             #endregion
@@ -8259,6 +9713,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Validate AllowDowngrades
 
             if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
@@ -8268,14 +9724,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     Token.LastUpdated <= existingTokenStatus.Token.LastUpdated)
                 {
 
-                    return UpdateResult<Token>.Failed(Token,
+                    return UpdateResult<Token>.Failed(EventTrackingId, Token,
                                                       "The 'lastUpdated' timestamp of the new charging token must be newer then the timestamp of the existing token!");
 
                 }
 
             }
             else
-                return UpdateResult<Token>.Failed(Token,
+                return UpdateResult<Token>.Failed(EventTrackingId, Token,
                                                   $"Unknown token identification '{Token.Id}'!");
 
             #endregion
@@ -8319,11 +9775,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return UpdateResult<Token>.Success(Token);
+                return UpdateResult<Token>.Success(EventTrackingId, Token);
 
             }
 
-            return UpdateResult<Token>.Failed(Token,
+            return UpdateResult<Token>.Failed(EventTrackingId, Token,
                                               "UpdateToken(Token.Id, Token, Token) failed!");
 
         }
@@ -8341,8 +9797,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                             User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (TokenPatch is null || !TokenPatch.HasValues)
-                return PatchResult<Token>.Failed(Token,
+                return PatchResult<Token>.Failed(EventTrackingId, Token,
                                                  "The given token patch must not be null or empty!");
 
             if (tokenStatus.TryGetValue(Token.Id, out var existingTokenStatus))
@@ -8395,7 +9853,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             else
-                return PatchResult<Token>.Failed(Token,
+                return PatchResult<Token>.Failed(EventTrackingId, Token,
                                                   "The given token does not exist!");
 
         }
@@ -8488,6 +9946,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (tokenStatus.Remove(TokenId, out var existingTokenStatus))
             {
 
@@ -8517,11 +9977,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return RemoveResult<Token>.Success(existingTokenStatus.Token);
+                return RemoveResult<Token>.Success(EventTrackingId, existingTokenStatus.Token);
 
             }
 
-            return RemoveResult<Token>.Failed(null,
+            return RemoveResult<Token>.Failed(EventTrackingId,
                                               "RemoveToken(TokenId, ...) failed!");
 
         }
@@ -8538,6 +9998,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                             EventTracking_Id?  EventTrackingId     = null,
                                                                             User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var existingTokenStatus = tokenStatus.Values.ToArray();
 
@@ -8568,7 +10030,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            return RemoveResult<IEnumerable<Token>>.Success(existingTokenStatus.Select(tokenStatus => tokenStatus.Token));
+            return RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, existingTokenStatus.Select(tokenStatus => tokenStatus.Token));
 
         }
 
@@ -8587,6 +10049,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                             User_Id?              CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             var removedTokens  = new List<Token>();
             var failedTokens   = new List<RemoveResult<Token>>();
 
@@ -8604,11 +10068,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedTokens.Any() && !failedTokens.Any()
-                       ? RemoveResult<IEnumerable<Token>>.Success(removedTokens)
+                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
 
                        : !removedTokens.Any() && !failedTokens.Any()
-                             ? RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>())
-                             : RemoveResult<IEnumerable<Token>>.Failed     (failedTokens.Select(token => token.Data)!,
+                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, Array.Empty<Token>())
+                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
                                                                             failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
 
         }
@@ -8627,6 +10091,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                             EventTracking_Id?        EventTrackingId     = null,
                                                                             User_Id?                 CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var removedTokens  = new List<Token>();
             var failedTokens   = new List<RemoveResult<Token>>();
@@ -8647,11 +10113,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedTokens.Any() && !failedTokens.Any()
-                       ? RemoveResult<IEnumerable<Token>>.Success(removedTokens)
+                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
 
                        : !removedTokens.Any() && !failedTokens.Any()
-                             ? RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>())
-                             : RemoveResult<IEnumerable<Token>>.Failed     (failedTokens.Select(token => token.Data)!,
+                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, Array.Empty<Token>())
+                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
                                                                              failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
 
         }
@@ -8673,6 +10139,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                             User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             var removedTokens  = new List<Token>();
             var failedTokens   = new List<RemoveResult<Token>>();
 
@@ -8692,11 +10160,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedTokens.Any() && !failedTokens.Any()
-                       ? RemoveResult<IEnumerable<Token>>.Success(removedTokens)
+                       ? RemoveResult<IEnumerable<Token>>.Success(EventTrackingId, removedTokens)
 
                        : !removedTokens.Any() && !failedTokens.Any()
-                             ? RemoveResult<IEnumerable<Token>>.NoOperation(Array.Empty<Token>())
-                             : RemoveResult<IEnumerable<Token>>.Failed     (failedTokens.Select(token => token.Data)!,
+                             ? RemoveResult<IEnumerable<Token>>.NoOperation(EventTrackingId, Array.Empty<Token>())
+                             : RemoveResult<IEnumerable<Token>>.Failed     (EventTrackingId, failedTokens.Select(token => token.Data)!,
                                                                              failedTokens.Select(token => token.ErrorResponse).AggregateWith(", "));
 
         }
@@ -8731,6 +10199,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (chargeDetailRecords.TryAdd(CDR.Id, CDR))
             {
 
@@ -8789,11 +10259,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<CDR>.Success(CDR);
+                return AddResult<CDR>.Success(EventTrackingId, CDR);
 
             }
 
-            return AddResult<CDR>.Failed(CDR,
+            return AddResult<CDR>.Failed(EventTrackingId, CDR,
                                          "TryAdd(CDR.Id, CDR) failed!");
 
         }
@@ -8808,6 +10278,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                             User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (chargeDetailRecords.TryAdd(CDR.Id, CDR))
             {
 
@@ -8866,11 +10338,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<CDR>.Success(CDR);
+                return AddResult<CDR>.Success(EventTrackingId, CDR);
 
             }
 
-            return AddResult<CDR>.NoOperation(CDR);
+            return AddResult<CDR>.NoOperation(EventTrackingId, CDR);
 
         }
 
@@ -8885,6 +10357,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                  User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Update an existing charge detail record
 
             if (chargeDetailRecords.TryGetValue(CDR.Id, out var existingCDR))
@@ -8893,7 +10367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     CDR.LastUpdated <= existingCDR.LastUpdated)
                 {
-                    return AddOrUpdateResult<CDR>.Failed(CDR,
+                    return AddOrUpdateResult<CDR>.Failed(EventTrackingId, CDR,
                                                          "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!");
                 }
 
@@ -8953,8 +10427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddOrUpdateResult<CDR>.Success(CDR,
-                                                      WasCreated: false);
+                return AddOrUpdateResult<CDR>.Updated(EventTrackingId, CDR);
 
             }
 
@@ -8987,13 +10460,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddOrUpdateResult<CDR>.Success(CDR,
-                                                      WasCreated: true);
+                return AddOrUpdateResult<CDR>.Created(EventTrackingId, CDR);
 
             }
 
-            return AddOrUpdateResult<CDR>.Failed(CDR,
-                                                 "AddOrUpdateCDR(CDR.Id, CDR) failed!");
+            return AddOrUpdateResult<CDR>.Failed(
+                       EventTrackingId,
+                       CDR,
+                       "AddOrUpdateCDR(CDR.Id, CDR) failed!"
+                   );
 
             #endregion
 
@@ -9010,6 +10485,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             #region Validate AllowDowngrades
 
             if (chargeDetailRecords.TryGetValue(CDR.Id, out var existingCDR))
@@ -9019,14 +10496,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     CDR.LastUpdated <= existingCDR.LastUpdated)
                 {
 
-                    return UpdateResult<CDR>.Failed(CDR,
+                    return UpdateResult<CDR>.Failed(EventTrackingId, CDR,
                                                     "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!");
 
                 }
 
             }
             else
-                return UpdateResult<CDR>.Failed(CDR,
+                return UpdateResult<CDR>.Failed(EventTrackingId, CDR,
                                                 $"Unknown charge detail record identification '{CDR.Id}'!");
 
             #endregion
@@ -9090,11 +10567,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return UpdateResult<CDR>.Success(CDR);
+                return UpdateResult<CDR>.Success(EventTrackingId, CDR);
 
             }
 
-            return UpdateResult<CDR>.Failed(CDR,
+            return UpdateResult<CDR>.Failed(EventTrackingId, CDR,
                                             "UpdateCDR(CDR.Id, CDR, CDR) failed!");
 
         }
@@ -9112,15 +10589,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                         User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (CDRPatch is null || !CDRPatch.HasValues)
-                return PatchResult<CDR>.Failed(CDR,
+                return PatchResult<CDR>.Failed(EventTrackingId, CDR,
                                                "The given charge detail record patch must not be null or empty!");
 
             if (chargeDetailRecords.TryGetValue(CDR.Id, out var existingCDR))
             {
 
                 var patchResult = existingCDR.TryPatch(CDRPatch,
-                                                       AllowDowngrades ?? this.AllowDowngrades ?? false);
+                                                       AllowDowngrades ?? this.AllowDowngrades ?? false,
+                                                       EventTrackingId);
 
                 if (patchResult.IsSuccess &&
                     patchResult.PatchedData is not null)
@@ -9188,7 +10668,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             else
-                return PatchResult<CDR>.Failed(CDR,
+                return PatchResult<CDR>.Failed(EventTrackingId, CDR,
                                                   "The given charge detail record does not exist!");
 
         }
@@ -9280,6 +10760,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (chargeDetailRecords.Remove(CDRId, out var cdr))
             {
 
@@ -9336,11 +10818,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return RemoveResult<CDR>.Success(cdr);
+                return RemoveResult<CDR>.Success(EventTrackingId, cdr);
 
             }
 
-            return RemoveResult<CDR>.Failed(null,
+            return RemoveResult<CDR>.Failed(EventTrackingId,
                                             "Remove(CDRId, ...) failed!");
 
         }
@@ -9357,6 +10839,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                         EventTracking_Id?  EventTrackingId     = null,
                                                                         User_Id?           CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var existingCDRs = chargeDetailRecords.Values.ToArray();
 
@@ -9387,7 +10871,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            return RemoveResult<IEnumerable<CDR>>.Success(existingCDRs);
+            return RemoveResult<IEnumerable<CDR>>.Success(EventTrackingId, existingCDRs);
 
         }
 
@@ -9406,6 +10890,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                         User_Id?            CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             var removedCDRs  = new List<CDR>();
             var failedCDRs   = new List<RemoveResult<CDR>>();
 
@@ -9423,11 +10909,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedCDRs.Any() && !failedCDRs.Any()
-                       ? RemoveResult<IEnumerable<CDR>>.Success(removedCDRs)
+                       ? RemoveResult<IEnumerable<CDR>>.Success(EventTrackingId, removedCDRs)
 
                        : !removedCDRs.Any() && !failedCDRs.Any()
-                             ? RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>())
-                             : RemoveResult<IEnumerable<CDR>>.Failed     (failedCDRs.Select(cdr => cdr.Data)!,
+                             ? RemoveResult<IEnumerable<CDR>>.NoOperation(EventTrackingId, Array.Empty<CDR>())
+                             : RemoveResult<IEnumerable<CDR>>.Failed     (EventTrackingId, failedCDRs.Select(cdr => cdr.Data)!,
                                                                           failedCDRs.Select(cdr => cdr.ErrorResponse).AggregateWith(", "));
 
         }
@@ -9446,6 +10932,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                         EventTracking_Id?      EventTrackingId     = null,
                                                                         User_Id?               CurrentUserId       = null)
         {
+
+            EventTrackingId ??= EventTracking_Id.New;
 
             var removedCDRs  = new List<CDR>();
             var failedCDRs   = new List<RemoveResult<CDR>>();
@@ -9466,11 +10954,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedCDRs.Any() && !failedCDRs.Any()
-                       ? RemoveResult<IEnumerable<CDR>>.Success(removedCDRs)
+                       ? RemoveResult<IEnumerable<CDR>>.Success(EventTrackingId, removedCDRs)
 
                        : !removedCDRs.Any() && !failedCDRs.Any()
-                             ? RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>())
-                             : RemoveResult<IEnumerable<CDR>>.Failed     (failedCDRs.Select(cdr => cdr.Data)!,
+                             ? RemoveResult<IEnumerable<CDR>>.NoOperation(EventTrackingId, Array.Empty<CDR>())
+                             : RemoveResult<IEnumerable<CDR>>.Failed     (EventTrackingId, failedCDRs.Select(cdr => cdr.Data)!,
                                                                           failedCDRs.Select(cdr => cdr.ErrorResponse).AggregateWith(", "));
 
         }
@@ -9492,6 +10980,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                         User_Id?           CurrentUserId       = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             var removedCDRs  = new List<CDR>();
             var failedCDRs   = new List<RemoveResult<CDR>>();
 
@@ -9511,11 +11001,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
             return removedCDRs.Any() && !failedCDRs.Any()
-                       ? RemoveResult<IEnumerable<CDR>>.Success(removedCDRs)
+                       ? RemoveResult<IEnumerable<CDR>>.Success(EventTrackingId, removedCDRs)
 
                        : !removedCDRs.Any() && !failedCDRs.Any()
-                             ? RemoveResult<IEnumerable<CDR>>.NoOperation(Array.Empty<CDR>())
-                             : RemoveResult<IEnumerable<CDR>>.Failed     (failedCDRs.Select(cdr => cdr.Data)!,
+                             ? RemoveResult<IEnumerable<CDR>>.NoOperation(EventTrackingId, Array.Empty<CDR>())
+                             : RemoveResult<IEnumerable<CDR>>.Failed     (EventTrackingId, failedCDRs.Select(cdr => cdr.Data)!,
                                                                           failedCDRs.Select(cdr => cdr.ErrorResponse).AggregateWith(", "));
 
         }

@@ -184,55 +184,74 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Static definitions
 
         /// <summary>
+        /// The credentials & registration module.
+        /// </summary>
+        public static Module_Id Credentials
+            => new ("credentials");
+
+
+        /// <summary>
         /// The CDRs module.
         /// </summary>
         public static Module_Id CDRs
             => new ("cdrs");
 
         /// <summary>
-        /// The charging profiles module.
+        /// The Charging Profiles module.
         /// </summary>
         public static Module_Id ChargingProfiles
             => new ("chargingprofiles");
 
         /// <summary>
-        /// The commands module.
+        /// The Commands module.
         /// </summary>
         public static Module_Id Commands
             => new ("commands");
 
         /// <summary>
-        /// The credentials & registration module.
+        /// The EVSEStatuses module.
         /// </summary>
-        public static Module_Id Credentials
-            => new ("credentials");
+        public static Module_Id EVSEStatuses
+            => new ("evsestatuses");
 
         /// <summary>
-        /// The hub client info module.
+        /// The Invoice Reconciliation module.
         /// </summary>
-        public static Module_Id HubClientInfo
-            => new ("hubclientinfo");
+        public static Module_Id InvoiceReconciliation
+            => new ("irrs");
 
         /// <summary>
-        /// The locations module.
+        /// The Locations module.
         /// </summary>
         public static Module_Id Locations
             => new ("locations");
 
         /// <summary>
-        /// The sessions module.
+        /// The Sessions module.
         /// </summary>
         public static Module_Id Sessions
             => new ("sessions");
 
         /// <summary>
-        /// The tariffs module.
+        /// The Power Regulation module.
+        /// </summary>
+        public static Module_Id PowerRegulation
+            => new ("meterreadings");
+
+        /// <summary>
+        /// The Tariffs module.
         /// </summary>
         public static Module_Id Tariffs
             => new ("tariffs");
 
         /// <summary>
-        /// The tokens module.
+        /// The Tariff Assocations module.
+        /// </summary>
+        public static Module_Id TariffAssocations
+            => new ("tariffassociations");
+
+        /// <summary>
+        /// The Tokens module.
         /// </summary>
         public static Module_Id Tokens
             => new ("tokens");

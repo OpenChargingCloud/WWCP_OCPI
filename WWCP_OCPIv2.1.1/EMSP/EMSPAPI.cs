@@ -31,998 +31,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 {
 
     /// <summary>
-    /// Extention methods for the EMSP HTTP API.
-    /// </summary>
-    public static class EMSPAPIExtentions
-    {
-
-        #region ParseLocation              (this Request, EMSPAPI, out LocationId, out Location,                                                        out OCPIResponseBuilder, FailOnMissingLocation = true)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The Users API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <param name="FailOnMissingLocation">Whether to fail when the location for the given location identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocation(this OCPIRequest           Request,
-                                            EMSPAPI                    EMSPAPI,
-                                            CountryCode                CountryCode,
-                                            Party_Id                   PartyId,
-                                            out Location_Id?           LocationId,
-                                            out Location?              Location,
-                                            out OCPIResponse.Builder?  OCPIResponseBuilder,
-                                            Boolean                    FailOnMissingLocation = true)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            LocationId           = default;
-            Location             = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            if (FailOnMissingLocation &&
-                (!EMSPAPI.CommonAPI.TryGetLocation(LocationId.Value, out Location) ||
-                  Location is null                                                 ||
-                  Location.CountryCode != CountryCode                              ||
-                  Location.PartyId     != PartyId))
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Unknown location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocationEVSE          (this Request, EMSPAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out OCPIResponseBuilder, FailOnMissingEVSE = true)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The Users API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <param name="FailOnMissingEVSE">Whether to fail when the location for the given EVSE identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSE(this OCPIRequest           Request,
-                                                EMSPAPI                    EMSPAPI,
-                                                CountryCode                CountryCode,
-                                                Party_Id                   PartyId,
-                                                out Location_Id?           LocationId,
-                                                out Location?              Location,
-                                                out EVSE_UId?              EVSEUId,
-                                                out EVSE?                  EVSE,
-                                                out OCPIResponse.Builder?  OCPIResponseBuilder,
-                                                Boolean                    FailOnMissingEVSE = true)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            LocationId           = default;
-            Location             = default;
-            EVSEUId              = default;
-            EVSE                 = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 2)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification and/or EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue) {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            if (!EMSPAPI.CommonAPI.TryGetLocation(LocationId.Value, out Location) ||
-                 Location is null                                                 ||
-                 Location.CountryCode != CountryCode                              ||
-                 Location.PartyId     != PartyId)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Unknown location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE) &&
-                 FailOnMissingEVSE)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Unknown EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocationEVSEConnector (this Request, EMSPAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The Users API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="ConnectorId">The parsed unique connector identification.</param>
-        /// <param name="Connector">The resolved connector.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <param name="FailOnMissingConnector">Whether to fail when the connector for the given connector identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnector(this OCPIRequest           Request,
-                                                         EMSPAPI                    EMSPAPI,
-                                                         CountryCode                CountryCode,
-                                                         Party_Id                   PartyId,
-                                                         out Location_Id?           LocationId,
-                                                         out Location?              Location,
-                                                         out EVSE_UId?              EVSEUId,
-                                                         out EVSE?                  EVSE,
-                                                         out Connector_Id?          ConnectorId,
-                                                         out Connector?             Connector,
-                                                         out OCPIResponse.Builder?  OCPIResponseBuilder,
-                                                         Boolean                    FailOnMissingConnector = true)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            LocationId           = default;
-            Location             = default;
-            EVSEUId              = default;
-            EVSE                 = default;
-            ConnectorId          = default;
-            Connector            = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification, EVSE identification and/or connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[2]);
-
-            if (!ConnectorId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            if (!EMSPAPI.CommonAPI.TryGetLocation(LocationId.Value, out Location) ||
-                 Location is null                                                 ||
-                 Location.CountryCode != CountryCode                              ||
-                 Location.PartyId     != PartyId)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Unknown location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE) ||
-                 EVSE is null)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Unknown EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector) &&
-                FailOnMissingConnector)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Unknown connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-
-        #region ParseTariff                (this Request, EMSPAPI, out TariffId,  out Tariff,   out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the tariff identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The Users API.</param>
-        /// <param name="TariffId">The parsed unique tariff identification.</param>
-        /// <param name="Tariff">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <param name="FailOnMissingTariff">Whether to fail when the tariff for the given tariff identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTariff(this OCPIRequest           Request,
-                                          EMSPAPI                    EMSPAPI,
-                                          CountryCode                CountryCode,
-                                          Party_Id                   PartyId,
-                                          out Tariff_Id?             TariffId,
-                                          out Tariff?                Tariff,
-                                          out OCPIResponse.Builder?  OCPIResponseBuilder,
-                                          Boolean                    FailOnMissingTariff = true)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            TariffId             = default;
-            Tariff               = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            TariffId = Tariff_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TariffId.HasValue) {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            if (FailOnMissingTariff &&
-                (!EMSPAPI.CommonAPI.TryGetTariff(TariffId.Value, out Tariff) ||
-                  Tariff is null                                             ||
-                  Tariff.CountryCode != CountryCode                          ||
-                  Tariff.PartyId     != PartyId))
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Unknown tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseSession               (this Request, EMSPAPI, out SessionId, out Session,  out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the session identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The Users API.</param>
-        /// <param name="SessionId">The parsed unique session identification.</param>
-        /// <param name="Session">The resolved session.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <param name="FailOnMissingSession">Whether to fail when the session for the given session identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseSession(this OCPIRequest           Request,
-                                           EMSPAPI                    EMSPAPI,
-                                           CountryCode                CountryCode,
-                                           Party_Id                   PartyId,
-                                           out Session_Id?            SessionId,
-                                           out Session?               Session,
-                                           out OCPIResponse.Builder?  OCPIResponseBuilder,
-                                           Boolean                    FailOnMissingSession = true)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            SessionId            = default;
-            Session              = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[2]);
-
-            if (!SessionId.HasValue) {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            if (FailOnMissingSession &&
-                (!EMSPAPI.CommonAPI.TryGetSession(SessionId.Value, out Session) ||
-                  Session is null                    ||
-                  Session.CountryCode != CountryCode ||
-                  Session.PartyId     != PartyId))
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Unknown session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseCDR                   (this Request, EMSPAPI, out CDRId,     out CDR,      out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the charge detail record identification
-        /// for the given HTTP hostname and HTTP query parameter or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The Users API.</param>
-        /// <param name="CDRId">The parsed unique charge detail record identification.</param>
-        /// <param name="CDR">The resolved charge detail record.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <param name="FailOnMissingCDR">Whether to fail when the charge detail record for the given charge detail record identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCDR(this OCPIRequest           Request,
-                                       EMSPAPI                    EMSPAPI,
-                                       CountryCode                CountryCode,
-                                       Party_Id                   PartyId,
-                                       out CDR_Id?                CDRId,
-                                       out CDR?                   CDR,
-                                       out OCPIResponse.Builder?  OCPIResponseBuilder,
-                                       Boolean                    FailOnMissingCDR = true)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            CDRId                = default;
-            CDR                  = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing charge detail record identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CDRId.HasValue) {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid charge detail record identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            if (FailOnMissingCDR &&
-                (!EMSPAPI.CommonAPI.TryGetCDR(CDRId.Value, out CDR) ||
-                  CDR is null                                       ||
-                  CDR.CountryCode != CountryCode                    ||
-                  CDR.PartyId     != PartyId))
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Unknown charge detail record identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseTokenId               (this Request, EMSPAPI, out TokenId,                 out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the token identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="TokenId">The parsed unique token identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTokenId(this OCPIRequest           Request,
-                                           EMSPAPI                    EMSPAPI,
-                                           out Token_Id?              TokenId,
-                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            TokenId              = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing token identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TokenId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid token identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseToken                 (this Request, EMSPAPI, out TokenId,   out Token,    out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the token identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The Users API.</param>
-        /// <param name="TokenId">The parsed unique token identification.</param>
-        /// <param name="TokenStatus">The resolved user.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <param name="FailOnMissingToken">Whether to fail when the token for the given token identification was not found.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseToken(this OCPIRequest           Request,
-                                         EMSPAPI                    EMSPAPI,
-                                         CountryCode                CountryCode,
-                                         Party_Id                   PartyId,
-                                         out Token_Id?              TokenId,
-                                         out TokenStatus            TokenStatus,
-                                         out OCPIResponse.Builder?  OCPIResponseBuilder,
-                                         Boolean                    FailOnMissingToken = true)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            TokenId              = default;
-            TokenStatus          = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing token identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TokenId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid token identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-
-            if (FailOnMissingToken &&
-                (!EMSPAPI.CommonAPI.TryGetToken(TokenId.Value, out TokenStatus) ||
-                  TokenStatus.Token.CountryCode != CountryCode                  ||
-                  TokenStatus.Token.PartyId     != PartyId))
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Unknown token identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-
-        #region ParseCommandId             (this Request, EMSPAPI, out CommandId, out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the command identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="CommandId">The parsed unique command identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCommandId(this OCPIRequest           Request,
-                                             EMSPAPI                    EMSPAPI,
-                                             out Command_Id?            CommandId,
-                                             out OCPIResponse.Builder?  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI  is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given CPO API must not be null!");
-
-            #endregion
-
-            CommandId            = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing command identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            CommandId = Command_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CommandId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid command identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = [ "Authorization" ]
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-    }
-
-
-    /// <summary>
     /// The HTTP API for e-mobility service providers.
     /// CPOs will connect to this API.
     /// </summary>
@@ -3507,7 +2515,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check location
 
-                                        if (!Request.ParseLocation(this,
+                                        if (!Request.ParseLocation(CommonAPI,
                                                                    Request.LocalAccessInfo.CountryCode,
                                                                    Request.LocalAccessInfo.PartyId,
                                                                    out var locationId,
@@ -3590,7 +2598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing location
 
-                                        if (!Request.ParseLocation(this,
+                                        if (!Request.ParseLocation(CommonAPI,
                                                                    Request.LocalAccessInfo.CountryCode,
                                                                    Request.LocalAccessInfo.PartyId,
                                                                    out var locationId,
@@ -3741,7 +2749,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check location
 
-                                        if (!Request.ParseLocation(this,
+                                        if (!Request.ParseLocation(CommonAPI,
                                                                    Request.LocalAccessInfo.CountryCode,
                                                                    Request.LocalAccessInfo.PartyId,
                                                                    out var locationId,
@@ -3848,7 +2856,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing location
 
-                                        if (!Request.ParseLocation(this,
+                                        if (!Request.ParseLocation(CommonAPI,
                                                                    Request.LocalAccessInfo.CountryCode,
                                                                    Request.LocalAccessInfo.PartyId,
                                                                    out var locationId,
@@ -3962,7 +2970,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check EVSE
 
-                                        if (!Request.ParseLocationEVSE(this,
+                                        if (!Request.ParseLocationEVSE(CommonAPI,
                                                                        Request.LocalAccessInfo.CountryCode,
                                                                        Request.LocalAccessInfo.PartyId,
                                                                        out var locationId,
@@ -4038,7 +3046,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing EVSE
 
-                                        if (!Request.ParseLocationEVSE(this,
+                                        if (!Request.ParseLocationEVSE(CommonAPI,
                                                                        Request.LocalAccessInfo.CountryCode,
                                                                        Request.LocalAccessInfo.PartyId,
                                                                        out var locationId,
@@ -4170,7 +3178,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check EVSE
 
-                                        if (!Request.ParseLocationEVSE(this,
+                                        if (!Request.ParseLocationEVSE(CommonAPI,
                                                                        Request.LocalAccessInfo.CountryCode,
                                                                        Request.LocalAccessInfo.PartyId,
                                                                        out var locationId,
@@ -4261,7 +3269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing Location/EVSE(UId URI parameter)
 
-                                        if (!Request.ParseLocationEVSE(this,
+                                        if (!Request.ParseLocationEVSE(CommonAPI,
                                                                        Request.LocalAccessInfo.CountryCode,
                                                                        Request.LocalAccessInfo.PartyId,
                                                                        out var locationId,
@@ -4370,7 +3378,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check connector
 
-                                        if (!Request.ParseLocationEVSEConnector(this,
+                                        if (!Request.ParseLocationEVSEConnector(CommonAPI,
                                                                                 Request.LocalAccessInfo.CountryCode,
                                                                                 Request.LocalAccessInfo.PartyId,
                                                                                 out var locationId,
@@ -4440,7 +3448,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check connector
 
-                                        if (!Request.ParseLocationEVSEConnector(this,
+                                        if (!Request.ParseLocationEVSEConnector(CommonAPI,
                                                                                 Request.LocalAccessInfo.CountryCode,
                                                                                 Request.LocalAccessInfo.PartyId,
                                                                                 out var locationId,
@@ -4558,7 +3566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check connector
 
-                                        if (!Request.ParseLocationEVSEConnector(this,
+                                        if (!Request.ParseLocationEVSEConnector(CommonAPI,
                                                                                 Request.LocalAccessInfo.CountryCode,
                                                                                 Request.LocalAccessInfo.PartyId,
                                                                                 out var locationId,
@@ -4653,7 +3661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing Location/EVSE/Connector(UId URI parameter)
 
-                                        if (!Request.ParseLocationEVSEConnector(this,
+                                        if (!Request.ParseLocationEVSEConnector(CommonAPI,
                                                                                 Request.LocalAccessInfo.CountryCode,
                                                                                 Request.LocalAccessInfo.PartyId,
                                                                                 out var locationId,
@@ -4754,7 +3762,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing EVSE
 
-                                        if (!Request.ParseLocationEVSE(this,
+                                        if (!Request.ParseLocationEVSE(CommonAPI,
                                                                        Request.LocalAccessInfo.CountryCode,
                                                                        Request.LocalAccessInfo.PartyId,
                                                                        out var locationId,
@@ -5033,7 +4041,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check tariff
 
-                                        if (!Request.ParseTariff(this,
+                                        if (!Request.ParseTariff(CommonAPI,
                                                                  Request.LocalAccessInfo.CountryCode,
                                                                  Request.LocalAccessInfo.PartyId,
                                                                  out var tariffId,
@@ -5109,7 +4117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing tariff
 
-                                        if (!Request.ParseTariff(this,
+                                        if (!Request.ParseTariff(CommonAPI,
                                                                  Request.LocalAccessInfo.CountryCode,
                                                                  Request.LocalAccessInfo.PartyId,
                                                                  out var tariffId,
@@ -5228,7 +4236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check tariff
 
-                                        if (!Request.ParseTariff(this,
+                                        if (!Request.ParseTariff(CommonAPI,
                                                                  Request.LocalAccessInfo.CountryCode,
                                                                  Request.LocalAccessInfo.PartyId,
                                                                  out var tariffId,
@@ -5329,7 +4337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing tariff
 
-                                        if (!Request.ParseTariff(this,
+                                        if (!Request.ParseTariff(CommonAPI,
                                                                  Request.LocalAccessInfo.CountryCode,
                                                                  Request.LocalAccessInfo.PartyId,
                                                                  out var tariffId,
@@ -5627,7 +4635,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check session
 
-                                        if (!Request.ParseSession(this,
+                                        if (!Request.ParseSession(CommonAPI,
                                                                   Request.LocalAccessInfo.CountryCode,
                                                                   Request.LocalAccessInfo.PartyId,
                                                                   out var sessionId,
@@ -5713,7 +4721,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing session
 
-                                        if (!Request.ParseSession(this,
+                                        if (!Request.ParseSession(CommonAPI,
                                                                   Request.LocalAccessInfo.CountryCode,
                                                                   Request.LocalAccessInfo.PartyId,
                                                                   out var sessionId,
@@ -5865,7 +4873,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check session
 
-                                        if (!Request.ParseSession(this,
+                                        if (!Request.ParseSession(CommonAPI,
                                                                   Request.LocalAccessInfo.CountryCode,
                                                                   Request.LocalAccessInfo.PartyId, 
                                                                   out var sessionId,
@@ -5973,7 +4981,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing session
 
-                                        if (!Request.ParseSession(this,
+                                        if (!Request.ParseSession(CommonAPI,
                                                                   Request.LocalAccessInfo.CountryCode,
                                                                   Request.LocalAccessInfo.PartyId, 
                                                                   out var sessionId,
@@ -6402,7 +5410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing CDR
 
-                                        if (!Request.ParseCDR(this,
+                                        if (!Request.ParseCDR(CommonAPI,
                                                               Request.LocalAccessInfo.CountryCode,
                                                               Request.LocalAccessInfo.PartyId,
                                                               out var cdrId,
@@ -6500,7 +5508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check existing CDR
 
-                                        if (!Request.ParseCDR(this,
+                                        if (!Request.ParseCDR(CommonAPI,
                                                               Request.LocalAccessInfo.CountryCode,
                                                               Request.LocalAccessInfo.PartyId, 
                                                               out var cdrId,
@@ -6768,7 +5776,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check TokenId URI parameter
 
-                                        if (!Request.ParseTokenId(this,
+                                        if (!Request.ParseTokenId(CommonAPI,
                                                                   out var tokenId,
                                                                   out var ocpiResponseBuilder) ||
                                              !tokenId.HasValue)
@@ -7100,7 +6108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check command identification
 
-                                        if (!Request.ParseCommandId(this,
+                                        if (!Request.ParseCommandId(CommonAPI,
                                                                     out var commandId,
                                                                     out var ocpiResponseBuilder) ||
                                             !commandId.HasValue)
@@ -7209,7 +6217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check command identification
 
-                                        if (!Request.ParseCommandId(this,
+                                        if (!Request.ParseCommandId(CommonAPI,
                                                                     out var commandId,
                                                                     out var ocpiResponseBuilder) ||
                                             !commandId.HasValue)
@@ -7318,7 +6326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check command identification
 
-                                        if (!Request.ParseCommandId(this,
+                                        if (!Request.ParseCommandId(CommonAPI,
                                                                     out var commandId,
                                                                     out var ocpiResponseBuilder) ||
                                             !commandId.HasValue)
@@ -7427,7 +6435,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check command identification
 
-                                        if (!Request.ParseCommandId(this,
+                                        if (!Request.ParseCommandId(CommonAPI,
                                                                     out var commandId,
                                                                     out var ocpiResponseBuilder) ||
                                             !commandId.HasValue)
@@ -7536,7 +6544,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check command identification
 
-                                        if (!Request.ParseCommandId(this,
+                                        if (!Request.ParseCommandId(CommonAPI,
                                                                     out var commandId,
                                                                     out var ocpiResponseBuilder) ||
                                             !commandId.HasValue)

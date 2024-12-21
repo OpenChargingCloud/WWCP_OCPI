@@ -57,7 +57,7 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region Data
 
-        public static readonly Regex EMSPId_RegEx = new("^([a-zA-Z0-9]{2})\\-([a-zA-Z0-9]{2,10})$");
+        public static readonly Regex EMSPId_RegEx = new ("^([a-zA-Z0-9]{2})\\-([a-zA-Z0-9]{2,10})$");
 
         #endregion
 

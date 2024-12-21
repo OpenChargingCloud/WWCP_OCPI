@@ -264,8 +264,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                            Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 EMP1 Roaming"),
 
                                            CommonAPI:                           emsp1CommonAPI,
-                                           DefaultCountryCode:                  emsp1CommonAPI.OurCredentialRoles.First().CountryCode,
-                                           DefaultPartyId:                      emsp1CommonAPI.OurCredentialRoles.First().PartyId,
 
                                            CustomEVSEIdConverter:               null,
                                            CustomEVSEConverter:                 null,
@@ -296,8 +294,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                            Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 EMP2 Roaming"),
 
                                            CommonAPI:                           emsp2CommonAPI,
-                                           DefaultCountryCode:                  emsp2CommonAPI.OurCredentialRoles.First().CountryCode,
-                                           DefaultPartyId:                      emsp2CommonAPI.OurCredentialRoles.First().PartyId,
 
                                            CustomEVSEIdConverter:               null,
                                            CustomEVSEConverter:                 null,

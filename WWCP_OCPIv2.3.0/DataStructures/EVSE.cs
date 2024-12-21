@@ -815,18 +815,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region (private) TryPrivatePatch(JSON, Patch)
 
         private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
-                                                     JObject  Patch)
+                                                     JObject  Patch,
+                                                     EventTracking_Id  EventTrackingId)
         {
 
             foreach (var property in Patch)
             {
 
                 if (property.Key == "uid")
-                    return PatchResult<JObject>.Failed(JSON,
+                    return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'unique identification' of an EVSE is not allowed!");
 
                 else if (property.Key == "connectors")
-                    return PatchResult<JObject>.Failed(JSON,
+                    return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'connectors' array of an EVSE is not allowed!");
                 //{
 
@@ -908,7 +909,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                             //ToDo: Perhaps use a more generic JSON patch here!
                             // PatchObject.Apply(ToJSON(), EVSEPatch),
-                            var patchResult = TryPrivatePatch(oldSubObject, subObject);
+                            var patchResult = TryPrivatePatch(oldSubObject, subObject, EventTrackingId);
 
                             if (patchResult.IsSuccess)
                                 JSON[property.Key] = patchResult.PatchedData;
@@ -934,7 +935,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            return PatchResult<JObject>.Success(JSON);
+            return PatchResult<JObject>.Success(EventTrackingId, JSON);
 
         }
 
@@ -947,12 +948,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         /// <param name="EVSEPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
-        public PatchResult<EVSE> TryPatch(JObject  EVSEPatch,
-                                          Boolean  AllowDowngrades = false)
+        public PatchResult<EVSE> TryPatch(JObject           EVSEPatch,
+                                          Boolean           AllowDowngrades   = false,
+                                          EventTracking_Id? EventTrackingId   = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (EVSEPatch is null)
-                return PatchResult<EVSE>.Failed(this,
+                return PatchResult<EVSE>.Failed(EventTrackingId, this,
                                                 "The given EVSE patch must not be null!");
 
             lock (patchLock)
@@ -965,16 +969,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         EVSEPatch["last_updated"].Type == JTokenType.Date &&
                        (EVSEPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
                 {
-                    return PatchResult<EVSE>.Failed(this,
+                    return PatchResult<EVSE>.Failed(EventTrackingId, this,
                                                     "The 'lastUpdated' timestamp of the EVSE patch must be newer then the timestamp of the existing EVSE!");
                 }
 
 
-                var patchResult = TryPrivatePatch(ToJSON(), EVSEPatch);
+                var patchResult = TryPrivatePatch(ToJSON(), EVSEPatch, EventTrackingId);
 
 
                 if (patchResult.IsFailed)
-                    return PatchResult<EVSE>.Failed(this,
+                    return PatchResult<EVSE>.Failed(EventTrackingId, this,
                                                     patchResult.ErrorResponse);
 
                 if (TryParse(patchResult.PatchedData,
@@ -982,13 +986,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                              out var errorResponse))
                 {
 
-                    return PatchResult<EVSE>.Success(patchedEVSE,
+                    return PatchResult<EVSE>.Success(EventTrackingId, patchedEVSE,
                                                      errorResponse);
 
                 }
 
                 else
-                    return PatchResult<EVSE>.Failed(this,
+                    return PatchResult<EVSE>.Failed(EventTrackingId, this,
                                                     "Invalid JSON merge patch of an EVSE: " + errorResponse);
 
             }

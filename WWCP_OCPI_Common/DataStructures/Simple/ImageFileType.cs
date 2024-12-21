@@ -165,15 +165,15 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this image file type.
         /// </summary>
-        public ImageFileType Clone
+        public ImageFileType Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

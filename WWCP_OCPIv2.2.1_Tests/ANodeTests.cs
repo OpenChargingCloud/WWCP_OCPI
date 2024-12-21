@@ -185,7 +185,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                        OurBaseURL:                          URL.Parse("http://127.0.0.1:3301/ocpi/v2.2"),
                                        OurVersionsURL:                      cpoVersionsAPIURL.Value,
-                                       OurCredentialRoles:                  new[] {
+                                       OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      CountryCode.Parse("DE"),
                                                                                      Party_Id.   Parse("GEF"),
@@ -195,7 +195,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                          URL.Parse("https://www.graphdefined.com/cso")
                                                                                      )
                                                                                 )
-                                                                            },
+                                                                            ],
+                                       DefaultCountryCode:                  CountryCode.Parse("DE"),
+                                       DefaultPartyId:                      Party_Id.   Parse("GEF"),
                                        HTTPServer:                          cpoHTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
@@ -237,7 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                        OurBaseURL:                          URL.Parse("http://127.0.0.1:3401/ocpi/v2.2"),
                                        OurVersionsURL:                      emsp1VersionsAPIURL.Value,
-                                       OurCredentialRoles:                  new[] {
+                                       OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      CountryCode.Parse("DE"),
                                                                                      Party_Id.   Parse("GDF"),
@@ -247,7 +249,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                          URL.Parse("https://www.graphdefined.com/emsp1")
                                                                                      )
                                                                                 )
-                                                                            },
+                                                                            ],
+                                       DefaultCountryCode:                  CountryCode.Parse("DE"),
+                                       DefaultPartyId:                      Party_Id.   Parse("GDF"),
                                        HTTPServer:                          emsp1HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
@@ -289,7 +293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                        OurBaseURL:                          URL.Parse("http://127.0.0.1:3402/ocpi/v2.2"),
                                        OurVersionsURL:                      emsp2VersionsAPIURL.Value,
-                                       OurCredentialRoles:                  new[] {
+                                       OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      CountryCode.Parse("DE"),
                                                                                      Party_Id.   Parse("GD2"),
@@ -299,7 +303,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                          URL.Parse("https://www.graphdefined.com/emsp2")
                                                                                      )
                                                                                 )
-                                                                            },
+                                                                            ],
+                                       DefaultCountryCode:                  CountryCode.Parse("DE"),
+                                       DefaultPartyId:                      Party_Id.   Parse("GD2"),
                                        HTTPServer:                          emsp2HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
@@ -349,8 +355,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             cpoCPOAPI            = new CPOAPI(
 
                                        CommonAPI:                           cpoCommonAPI,
-                                       DefaultCountryCode:                  cpoCommonAPI.OurCredentialRoles.First().CountryCode,
-                                       DefaultPartyId:                      cpoCommonAPI.OurCredentialRoles.First().PartyId,
                                        AllowDowngrades:                     null,
 
                                        HTTPHostname:                        null,
@@ -382,8 +386,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             emsp1EMSPAPI         = new EMSPAPI(
 
                                        CommonAPI:                           emsp1CommonAPI,
-                                       DefaultCountryCode:                  emsp1CommonAPI.OurCredentialRoles.First().CountryCode,
-                                       DefaultPartyId:                      emsp1CommonAPI.OurCredentialRoles.First().PartyId,
                                        AllowDowngrades:                     null,
 
                                        HTTPHostname:                        null,
@@ -415,8 +417,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
             emsp2EMSPAPI         = new EMSPAPI(
 
                                        CommonAPI:                           emsp2CommonAPI,
-                                       DefaultCountryCode:                  emsp2CommonAPI.OurCredentialRoles.First().CountryCode,
-                                       DefaultPartyId:                      emsp2CommonAPI.OurCredentialRoles.First().PartyId,
                                        AllowDowngrades:                     null,
 
                                        HTTPHostname:                        null,
@@ -458,7 +458,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                  emsp1CommonAPI.OurCredentialRoles.First().PartyId,
                                                                                  emsp1CommonAPI.OurCredentialRoles.First().Role
                                                                              ),
-                                                CredentialsRoles:            new[] {
+                                                CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      CountryCode:       emsp1CommonAPI.OurCredentialRoles.First().CountryCode,
                                                                                      PartyId:           emsp1CommonAPI.OurCredentialRoles.First().PartyId,
@@ -466,7 +466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                      BusinessDetails:   emsp1CommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:   false
                                                                                  )
-                                                                             },
+                                                                             ],
 
                                                 AccessToken:                 AccessToken.Parse("cso-2-emp1:token"),
                                                 AccessStatus:                AccessStatus.ALLOWED,
@@ -484,7 +484,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                  emsp2CommonAPI.OurCredentialRoles.First().PartyId,
                                                                                  emsp2CommonAPI.OurCredentialRoles.First().Role
                                                                              ),
-                                                CredentialsRoles:            new[] {
+                                                CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      CountryCode:       emsp2CommonAPI.OurCredentialRoles.First().CountryCode,
                                                                                      PartyId:           emsp2CommonAPI.OurCredentialRoles.First().PartyId,
@@ -492,7 +492,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                      BusinessDetails:   emsp2CommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:   false
                                                                                  )
-                                                                             },
+                                                                             ],
 
                                                 AccessToken:                 AccessToken.Parse("cso-2-emp2:token"),
                                                 AccessStatus:                AccessStatus.ALLOWED,
@@ -510,7 +510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                  cpoCommonAPI.OurCredentialRoles.First().PartyId,
                                                                                  cpoCommonAPI.OurCredentialRoles.First().Role
                                                                              ),
-                                                CredentialsRoles:            new[] {
+                                                CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      CountryCode:       cpoCommonAPI.OurCredentialRoles.First().CountryCode,
                                                                                      PartyId:           cpoCommonAPI.OurCredentialRoles.First().PartyId,
@@ -518,7 +518,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                      BusinessDetails:   cpoCommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:   false
                                                                                  )
-                                                                             },
+                                                                             ],
 
                                                 AccessToken:                 AccessToken.Parse("emp1-2-cso:token"),
                                                 AccessStatus:                AccessStatus.ALLOWED,
@@ -537,7 +537,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                  cpoCommonAPI.OurCredentialRoles.First().PartyId,
                                                                                  cpoCommonAPI.OurCredentialRoles.First().Role
                                                                              ),
-                                                CredentialsRoles:            new[] {
+                                                CredentialsRoles:            [
                                                                                  new CredentialsRole(
                                                                                      CountryCode:       cpoCommonAPI.OurCredentialRoles.First().CountryCode,
                                                                                      PartyId:           cpoCommonAPI.OurCredentialRoles.First().PartyId,
@@ -545,7 +545,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                                                                                      BusinessDetails:   cpoCommonAPI.OurCredentialRoles.First().BusinessDetails,
                                                                                      AllowDowngrades:   false
                                                                                  )
-                                                                             },
+                                                                             ],
 
                                                 AccessToken:                 AccessToken.Parse("emp2-2-cso:token"),
                                                 AccessStatus:                AccessStatus.ALLOWED,

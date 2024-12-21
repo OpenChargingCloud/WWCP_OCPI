@@ -1321,26 +1321,27 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         #region (private) TryPrivatePatch(JSON, Patch)
 
         private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
-                                                     JObject  Patch)
+                                                     JObject  Patch,
+                                                     EventTracking_Id EventTrackingId)
         {
 
             foreach (var property in Patch)
             {
 
                 if      (property.Key == "country_code")
-                    return PatchResult<JObject>.Failed(JSON,
+                    return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'country code' of a charging location is not allowed!");
 
                 else if (property.Key == "party_id")
-                    return PatchResult<JObject>.Failed(JSON,
+                    return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'party identification' of a charging location is not allowed!");
 
                 else if (property.Key == "id")
-                    return PatchResult<JObject>.Failed(JSON,
+                    return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'identification' of a charging location is not allowed!");
 
                 else if (property.Key == "evses")
-                    return PatchResult<JObject>.Failed(JSON,
+                    return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'evses' array of a charging location is not allowed!");
                 //{
 
@@ -1422,7 +1423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                             //ToDo: Perhaps use a more generic JSON patch here!
                             // PatchObject.Apply(ToJSON(), EVSEPatch),
-                            var patchResult = TryPrivatePatch(oldSubObject, subObject);
+                            var patchResult = TryPrivatePatch(oldSubObject, subObject, EventTrackingId);
 
                             if (patchResult.IsSuccess)
                                 JSON[property.Key] = patchResult.PatchedData;
@@ -1448,7 +1449,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
             }
 
-            return PatchResult<JObject>.Success(JSON);
+            return PatchResult<JObject>.Success(EventTrackingId, JSON);
 
         }
 
@@ -1461,12 +1462,15 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
         /// </summary>
         /// <param name="LocationPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
-        public PatchResult<Location> TryPatch(JObject  LocationPatch,
-                                              Boolean  AllowDowngrades = false)
+        public PatchResult<Location> TryPatch(JObject           LocationPatch,
+                                              Boolean           AllowDowngrades   = false,
+                                              EventTracking_Id? EventTrackingId   = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (LocationPatch is null)
-                return PatchResult<Location>.Failed(this,
+                return PatchResult<Location>.Failed(EventTrackingId, this,
                                                     "The given location patch must not be null!");
 
             lock (patchLock)
@@ -1479,16 +1483,16 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                         LocationPatch["last_updated"].Type == JTokenType.Date &&
                        (LocationPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
                 {
-                    return PatchResult<Location>.Failed(this,
+                    return PatchResult<Location>.Failed(EventTrackingId, this,
                                                         "The 'lastUpdated' timestamp of the location patch must be newer then the timestamp of the existing location!");
                 }
 
 
-                var patchResult = TryPrivatePatch(ToJSON(), LocationPatch);
+                var patchResult = TryPrivatePatch(ToJSON(), LocationPatch, EventTrackingId);
 
 
                 if (patchResult.IsFailed)
-                    return PatchResult<Location>.Failed(this,
+                    return PatchResult<Location>.Failed(EventTrackingId, this,
                                                         patchResult.ErrorResponse);
 
                 if (TryParse(patchResult.PatchedData,
@@ -1497,13 +1501,13 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                     patchedLocation is not null)
                 {
 
-                    return PatchResult<Location>.Success(patchedLocation,
+                    return PatchResult<Location>.Success(EventTrackingId, patchedLocation,
                                                          errorResponse);
 
                 }
 
                 else
-                    return PatchResult<Location>.Failed(this,
+                    return PatchResult<Location>.Failed(EventTrackingId, this,
                                                         "Invalid JSON merge patch of a charging location: " + errorResponse);
 
             }

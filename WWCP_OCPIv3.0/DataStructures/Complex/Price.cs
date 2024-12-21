@@ -42,13 +42,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Price/Cost excluding VAT.
         /// </summary>
         [Mandatory]
-        public Double   ExcludingVAT    { get; }
+        public Decimal   ExcludingVAT    { get; }
 
         /// <summary>
         /// Price/Cost including VAT.
         /// </summary>
         [Optional]
-        public Double?  IncludingVAT    { get; }
+        public Decimal?  IncludingVAT    { get; }
 
         #endregion
 
@@ -59,8 +59,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         /// <param name="ExcludingVAT">Price/Cost excluding VAT.</param>
         /// <param name="IncludingVAT">Price/Cost including VAT.</param>
-        public Price(Double   ExcludingVAT,
-                     Double?  IncludingVAT   = null)
+        public Price(Decimal   ExcludingVAT,
+                     Decimal?  IncludingVAT   = null)
         {
 
             this.ExcludingVAT  = ExcludingVAT;
@@ -170,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("excl_vat",
                                          "price excluding VAT",
-                                         out Double ExcludingVAT,
+                                         out Decimal ExcludingVAT,
                                          out ErrorResponse))
                 {
                     return false;
@@ -182,7 +182,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("incl_vat",
                                        "price including VAT",
-                                       out Double? IncludingVAT,
+                                       out Decimal? IncludingVAT,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

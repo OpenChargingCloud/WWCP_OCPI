@@ -61,13 +61,13 @@ namespace cloud.charging.open.protocols.OCPI
         /// The optional width of the full scale image.
         /// </summary>
         [Optional]
-        public UInt32?          Width        { get; }
+        public UInt16?          Width        { get; }
 
         /// <summary>
         /// The optional height of the full scale image.
         /// </summary>
         [Optional]
-        public UInt32?          Height       { get; }
+        public UInt16?          Height       { get; }
 
         /// <summary>
         /// The optional URL from where a thumbnail of the image can be fetched.
@@ -91,8 +91,8 @@ namespace cloud.charging.open.protocols.OCPI
         public Image(URL            URL,
                      ImageFileType  Type,
                      ImageCategory  Category,
-                     UInt32?        Width       = null,
-                     UInt32?        Height      = null,
+                     UInt16?        Width       = null,
+                     UInt16?        Height      = null,
                      URL?           Thumbnail   = null)
         {
 
@@ -233,7 +233,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("width",
                                        "image width",
-                                       out UInt32? Width,
+                                       out UInt16? Width,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -246,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPI
 
                 if (JSON.ParseOptional("height",
                                        "image height",
-                                       out UInt32? Height,
+                                       out UInt16? Height,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -309,20 +309,20 @@ namespace cloud.charging.open.protocols.OCPI
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("url",                 URL.            ToString()),
-                           new JProperty("category",            Category.       ToString()),
-                           new JProperty("type",                Type.           ToString()),
+                                 new JProperty("url",         URL.            ToString()),
+                                 new JProperty("category",    Category.       ToString()),
+                                 new JProperty("type",        Type.           ToString()),
 
                            Thumbnail.HasValue
-                               ? new JProperty("thumbnail",     Thumbnail.Value.ToString())
+                               ? new JProperty("thumbnail",   Thumbnail.Value.ToString())
                                : null,
 
                            Width.HasValue
-                               ? new JProperty("width",         Width. Value)
+                               ? new JProperty("width",       Width. Value)
                                : null,
 
                            Height.HasValue
-                               ? new JProperty("height",        Height.Value)
+                               ? new JProperty("height",      Height.Value)
                                : null
 
                        );
@@ -344,8 +344,8 @@ namespace cloud.charging.open.protocols.OCPI
 
             => new (
                    URL.     Clone(),
-                   Type.    Clone,
-                   Category.Clone,
+                   Type.    Clone(),
+                   Category.Clone(),
                    Width.    HasValue ? Width.    Value : null,
                    Height.   HasValue ? Height.   Value : null,
                    Thumbnail.HasValue ? Thumbnail.Value : null

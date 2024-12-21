@@ -594,15 +594,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region (private) TryPrivatePatch(JSON, Patch)
 
-        private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
-                                                     JObject  Patch)
+        private PatchResult<JObject> TryPrivatePatch(JObject           JSON,
+                                                     JObject           Patch,
+                                                     EventTracking_Id  EventTrackingId)
         {
 
             foreach (var property in Patch)
             {
 
                 if (property.Key == "id")
-                    return PatchResult<JObject>.Failed(JSON,
+                    return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'identification' of a connector is not allowed!");
 
                 else if (property.Value is null)
@@ -619,7 +620,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                             //ToDo: Perhaps use a more generic JSON patch here!
                             // PatchObject.Apply(ToJSON(), EVSEPatch),
-                            var patchResult = TryPrivatePatch(oldSubObject, subObject);
+                            var patchResult = TryPrivatePatch(oldSubObject, subObject, EventTrackingId);
 
                             if (patchResult.IsSuccess)
                                 JSON[property.Key] = patchResult.PatchedData;
@@ -645,7 +646,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             }
 
-            return PatchResult<JObject>.Success(JSON);
+            return PatchResult<JObject>.Success(EventTrackingId, JSON);
 
         }
 
@@ -658,12 +659,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         /// <param name="ConnectorPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
-        public PatchResult<Connector> TryPatch(JObject  ConnectorPatch,
-                                               Boolean  AllowDowngrades = false)
+        public PatchResult<Connector> TryPatch(JObject           ConnectorPatch,
+                                               Boolean           AllowDowngrades   = false,
+                                               EventTracking_Id? EventTrackingId   = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (ConnectorPatch is null)
-                return PatchResult<Connector>.Failed(this,
+                return PatchResult<Connector>.Failed(EventTrackingId, this,
                                                      "The given connector patch must not be null!");
 
             lock (patchLock)
@@ -676,16 +680,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         ConnectorPatch["last_updated"].Type == JTokenType.Date &&
                        (ConnectorPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
                 {
-                    return PatchResult<Connector>.Failed(this,
+                    return PatchResult<Connector>.Failed(EventTrackingId, this,
                                                          "The 'lastUpdated' timestamp of the connector patch must be newer then the timestamp of the existing connector!");
                 }
 
 
-                var patchResult = TryPrivatePatch(ToJSON(), ConnectorPatch);
+                var patchResult = TryPrivatePatch(ToJSON(), ConnectorPatch, EventTrackingId);
 
 
                 if (patchResult.IsFailed)
-                    return PatchResult<Connector>.Failed(this,
+                    return PatchResult<Connector>.Failed(EventTrackingId,
+                                                         this,
                                                          patchResult.ErrorResponse);
 
                 if (TryParse(patchResult.PatchedData,
@@ -693,13 +698,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              out var errorResponse))
                 {
 
-                    return PatchResult<Connector>.Success(patchedConnector,
+                    return PatchResult<Connector>.Success(EventTrackingId,
+                                                          patchedConnector,
                                                           errorResponse);
 
                 }
 
                 else
-                    return PatchResult<Connector>.Failed(this,
+                    return PatchResult<Connector>.Failed(EventTrackingId, this,
                                                          "Invalid JSON merge patch of a connector: " + errorResponse);
 
             }

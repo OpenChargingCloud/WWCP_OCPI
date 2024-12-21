@@ -29,7 +29,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1
+namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
 
@@ -86,11 +86,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public GetTariffIds_Delegate?                       GetTariffIds                         { get; }
 
 
-        public WWCPEVSEId_2_EVSEUId_Delegate?               CustomEVSEUIdConverter               { get; }
-        public WWCPEVSEId_2_EVSEId_Delegate?                CustomEVSEIdConverter                { get; }
-        public WWCPEVSE_2_EVSE_Delegate?                    CustomEVSEConverter                  { get; }
-        public WWCPEVSEStatusUpdate_2_StatusType_Delegate?  CustomEVSEStatusUpdateConverter      { get; }
-        public WWCPChargeDetailRecord_2_CDR_Delegate?       CustomChargeDetailRecordConverter    { get; }
+        public WWCPChargingStationId_2_ChargingStationId_Delegate?  CustomChargingStationIdConverter     { get; }
+        public WWCPEVSEId_2_EVSEUId_Delegate?                       CustomEVSEUIdConverter               { get; }
+        public WWCPEVSEId_2_EVSEId_Delegate?                        CustomEVSEIdConverter                { get; }
+        public WWCPEVSE_2_EVSE_Delegate?                            CustomEVSEConverter                  { get; }
+        public WWCPEVSEStatusUpdate_2_StatusType_Delegate?          CustomEVSEStatusUpdateConverter      { get; }
+        public WWCPChargeDetailRecord_2_CDR_Delegate?               CustomChargeDetailRecordConverter    { get; }
 
         public new OCPILogfileCreatorDelegate? ClientsLogfileCreator { get; }
 
@@ -299,23 +300,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             this.GetTariffIds                       = GetTariffIds;
 
-            if (this.GetTariffIds is not null) {
+            //if (this.GetTariffIds is not null) {
 
-                this.CommonAPI.GetTariffIdsDelegate += (cpoCountryCode,
-                                                        cpoPartyId,
-                                                        locationId,
-                                                        evseUId,
-                                                        connectorId,
-                                                        empId) =>
+            //    this.CommonAPI.GetTariffIdsDelegate += (cpoCountryCode,
+            //                                            cpoPartyId,
+            //                                            locationId,
+            //                                            evseUId,
+            //                                            connectorId,
+            //                                            empId) =>
 
-                    this.GetTariffIds(                       WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
-                                      locationId. HasValue ? WWCP.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
-                                      null,
-                                      evseUId.    HasValue ? WWCP.EVSE_Id.                   Parse(evseUId.    Value.ToString()) : null,
-                                      connectorId.HasValue ? WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
-                                      empId.      HasValue ? WWCP.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null);
+            //        this.GetTariffIds(                       WWCP.ChargingStationOperator_Id.Parse($"{cpoCountryCode}*{cpoPartyId}"),
+            //                          locationId. HasValue ? WWCP.ChargingPool_Id.           Parse(locationId. Value.ToString()) : null,
+            //                          null,
+            //                          evseUId.    HasValue ? WWCP.EVSE_Id.                   Parse(evseUId.    Value.ToString()) : null,
+            //                          connectorId.HasValue ? WWCP.ChargingConnector_Id.      Parse(connectorId.Value.ToString()) : null,
+            //                          empId.      HasValue ? WWCP.EMobilityProvider_Id.      Parse(empId.      Value.ToString()) : null);
 
-            }
+            //}
 
             this.CustomEVSEUIdConverter             = CustomEVSEUIdConverter;
             this.CustomEVSEIdConverter              = CustomEVSEIdConverter;
@@ -495,7 +496,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
                     {
 
-                        var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
+                        var location = ChargingPool.ToOCPI(CustomChargingStationIdConverter,
+                                                           CustomEVSEUIdConverter,
                                                            CustomEVSEIdConverter,
                                                            out warnings);
 
@@ -586,7 +588,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                     {
 
 
-                        var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
+                        var location = ChargingPool.ToOCPI(CustomChargingStationIdConverter,
+                                                           CustomEVSEUIdConverter,
                                                            CustomEVSEIdConverter,
                                                            out warnings);
 
@@ -683,7 +686,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
                     {
 
-                        var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
+                        var location = ChargingPool.ToOCPI(CustomChargingStationIdConverter,
+                                                           CustomEVSEUIdConverter,
                                                            CustomEVSEIdConverter,
                                                            out warnings);
 
@@ -750,6 +754,418 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #endregion
 
+        #region (Set/Add/Update/Delete) ChargingStation(s)...
+
+        #region AddChargingStation         (ChargingStation, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Add the given ChargingStation.
+        /// </summary>
+        /// <param name="ChargingStation">An ChargingStation to add.</param>
+        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        public override async Task<WWCP.AddChargingStationResult>
+
+            AddChargingStation(WWCP.IChargingStation   ChargingStation,
+                               WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+
+                               DateTime?               Timestamp           = null,
+                               EventTracking_Id?       EventTrackingId     = null,
+                               TimeSpan?               RequestTimeout      = null,
+                               CancellationToken       CancellationToken   = default)
+
+        {
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
+                                                              CancellationToken);
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    OCPI.AddOrUpdateResult<ChargingStation> result;
+
+                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+
+                    var partyId      = OCPIv3_0.Party_Id.TryParse(ChargingStation.Id.OperatorId.Suffix);
+                    var locationId   = ChargingStation.ChargingPool is not null
+                                           ? OCPI.Location_Id.TryParse(ChargingStation.ChargingPool.Id.Suffix)
+                                           : null;
+
+                    if (partyId.    HasValue &&
+                        locationId. HasValue)
+                    {
+
+                        if (IncludeChargingStations is null ||
+                           (IncludeChargingStations is not null && IncludeChargingStations(ChargingStation)))
+                        {
+
+                            if (CommonAPI.TryGetLocation(partyId.    Value,
+                                                         locationId. Value,
+                                                         out var location) &&
+                                location is not null)
+                            {
+
+                                var station2 = ChargingStation.ToOCPI(CustomChargingStationIdConverter,
+                                                                      CustomEVSEUIdConverter,
+                                                                      CustomEVSEIdConverter,
+                                                                      //ChargingStation.Status.Timestamp > ChargingStation.LastChangeDate
+                                                                      //    ? ChargingStation.Status.Timestamp
+                                                                      //    : ChargingStation.LastChangeDate,
+                                                                      out warnings);
+
+                                if (station2 is not null)
+                                    result = await CommonAPI.AddOrUpdateChargingStation(location, station2);
+                                else
+                                    result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Could not convert the given ChargingStation!");
+
+                            }
+                            else
+                                result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Unknown location identification!");
+
+                        }
+                        else
+                            result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "The given ChargingStation was filtered!");
+
+                    }
+                    else
+                        result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Invalid location identification!");
+
+
+                    return result.IsSuccess
+
+                               ? WWCP.AddChargingStationResult.Success(
+                                     ChargingStation,
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 )
+
+                               : WWCP.AddChargingStationResult.Error(
+                                     ChargingStation,
+                                     I18NString.Create(
+                                         Languages.en,
+                                         result.ErrorResponse ?? "error"
+                                     ),
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 );
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return lockTaken
+                       ? WWCP.AddChargingStationResult.Enqueued   (ChargingStation,                     EventTrackingId, Id, this)
+                       : WWCP.AddChargingStationResult.LockTimeout(ChargingStation, MaxLockWaitingTime, EventTrackingId, Id, this);
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateChargingStation (ChargingStation, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Add or update the given ChargingStation.
+        /// </summary>
+        /// <param name="ChargingStation">An ChargingStation to add or update.</param>
+        /// <param name="TransmissionType">Whether to send the ChargingStation directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        public override async Task<WWCP.AddOrUpdateChargingStationResult>
+
+            AddOrUpdateChargingStation(WWCP.IChargingStation              ChargingStation,
+                            WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+
+                            DateTime?               Timestamp           = null,
+                            EventTracking_Id?       EventTrackingId     = null,
+                            TimeSpan?               RequestTimeout      = null,
+                            CancellationToken       CancellationToken   = default)
+
+        {
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
+                                                              CancellationToken);
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    OCPI.AddOrUpdateResult<ChargingStation> result;
+
+                    IEnumerable<Warning> warnings = [];
+
+                    var partyId      = ChargingStation.Id.OperatorId.ToOCPI();
+                    var locationId   = ChargingStation.ChargingPool is not null
+                                           ? OCPI.Location_Id.TryParse(ChargingStation.ChargingPool.Id.ToString())
+                                           : null;
+
+                    if (locationId.HasValue)
+                    {
+
+                        if (IncludeChargingStations is null ||
+                           (IncludeChargingStations is not null && IncludeChargingStations(ChargingStation)))
+                        {
+
+                            if (CommonAPI.TryGetLocation(partyId,
+                                                         locationId.Value,
+                                                         out var location) &&
+                                location is not null)
+                            {
+
+                                var station = ChargingStation.ToOCPI(CustomChargingStationIdConverter,
+                                                                     CustomEVSEUIdConverter,
+                                                                     CustomEVSEIdConverter,
+                                                                     //ChargingStation.Status.Timestamp > ChargingStation.LastChangeDate
+                                                                     //    ? ChargingStation.Status.Timestamp
+                                                                     //    : ChargingStation.LastChangeDate,
+                                                                     out warnings);
+
+                                if (station is not null)
+                                    result = await CommonAPI.AddOrUpdateChargingStation(location, station);
+                                else
+                                    result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Could not convert the given ChargingStation!");
+
+                            }
+                            else
+                                result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Unknown location identification!");
+
+                        }
+                        else
+                            result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "The given ChargingStation was filtered!");
+
+                    }
+                    else
+                        result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Invalid location identification!");
+
+
+                    return result.IsSuccess
+
+                               ? result.WasCreated == true
+
+                                     ? WWCP.AddOrUpdateChargingStationResult.Added(
+                                           ChargingStation,
+                                           EventTrackingId,
+                                           Id,
+                                           this,
+                                           Warnings: warnings
+                                       )
+
+                                     : WWCP.AddOrUpdateChargingStationResult.Updated(
+                                           ChargingStation,
+                                           EventTrackingId,
+                                           Id,
+                                           this,
+                                           Warnings: warnings
+                                       )
+
+                               : WWCP.AddOrUpdateChargingStationResult.Error(
+                                     ChargingStation,
+                                     I18NString.Create(
+                                         Languages.en,
+                                         result.ErrorResponse ?? "error"
+                                     ),
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 );
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return lockTaken
+                       ? WWCP.AddOrUpdateChargingStationResult.Enqueued   (ChargingStation,                     EventTrackingId, Id, this)
+                       : WWCP.AddOrUpdateChargingStationResult.LockTimeout(ChargingStation, MaxLockWaitingTime, EventTrackingId, Id, this);
+
+        }
+
+        #endregion
+
+        #region UpdateChargingStation      (ChargingStation, PropertyName = null, OldValue = null, NewValue = null, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Update the ChargingStation data of the given charging pool within the static ChargingStation data at the OICP server.
+        /// </summary>
+        /// <param name="ChargingStation">An ChargingStation.</param>
+        /// <param name="PropertyName">The name of the charging pool property to update.</param>
+        /// <param name="OldValue">The old value of the charging pool property to update.</param>
+        /// <param name="NewValue">The new value of the charging pool property to update.</param>
+        /// <param name="TransmissionType">Whether to send the charging pool update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public override async Task<WWCP.UpdateChargingStationResult>
+
+            UpdateChargingStation(WWCP.IChargingStation              ChargingStation,
+                       String                  PropertyName,
+                       Object?                 NewValue,
+                       Object?                 OldValue,
+                       Context?                DataSource,
+                       WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+
+                       DateTime?               Timestamp           = null,
+                       EventTracking_Id?       EventTrackingId     = null,
+                       TimeSpan?               RequestTimeout      = null,
+                       CancellationToken       CancellationToken   = default)
+
+        {
+
+            var lockTaken = await DataAndStatusLock.WaitAsync(MaxLockWaitingTime,
+                                                              CancellationToken);
+
+            try
+            {
+
+                if (lockTaken)
+                {
+
+                    OCPI.AddOrUpdateResult<ChargingStation> result;
+
+                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+
+                    var partyId      = ChargingStation.Id.OperatorId.ToOCPI();
+                    var locationId   = ChargingStation.ChargingPool is not null
+                                           ? OCPI.Location_Id.TryParse(ChargingStation.ChargingPool.Id.Suffix)
+                                           : null;
+
+                    if (locationId.HasValue)
+                    {
+
+                        if (IncludeChargingStations is null ||
+                           (IncludeChargingStations is not null && IncludeChargingStations(ChargingStation)))
+                        {
+
+                            if (CommonAPI.TryGetLocation(partyId,
+                                                         locationId.Value,
+                                                         out var location) &&
+                                location is not null)
+                            {
+
+                                var station = ChargingStation.ToOCPI(CustomChargingStationIdConverter,
+                                                                     CustomEVSEUIdConverter,
+                                                                     CustomEVSEIdConverter,
+                                                                     //ChargingStation.Status.Timestamp > ChargingStation.LastChangeDate
+                                                                     //    ? ChargingStation.Status.Timestamp
+                                                                     //    : ChargingStation.LastChangeDate,
+                                                                     out warnings);
+
+                                if (station is not null)
+                                    result = await CommonAPI.AddOrUpdateChargingStation(location, station);
+                                else
+                                    result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Could not convert the given ChargingStation!");
+
+                            }
+                            else
+                                result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Unknown location identification!");
+
+                        }
+                        else
+                            result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "The given ChargingStation was filtered!");
+
+                    }
+                    else
+                        result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Invalid location identification!");
+
+
+                    return result.IsSuccess
+
+                               ? WWCP.UpdateChargingStationResult.Success(
+                                     ChargingStation,
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 )
+
+                               : WWCP.UpdateChargingStationResult.Error(
+                                     ChargingStation,
+                                     I18NString.Create(
+                                         Languages.en,
+                                         result.ErrorResponse ?? "error"
+                                     ),
+                                     EventTrackingId,
+                                     Id,
+                                     this,
+                                     Warnings: warnings
+                                 );
+
+                }
+
+            }
+            finally
+            {
+                if (lockTaken)
+                    DataAndStatusLock.Release();
+            }
+
+            return lockTaken
+                       ? WWCP.UpdateChargingStationResult.Enqueued   (ChargingStation,                     EventTrackingId, Id, this)
+                       : WWCP.UpdateChargingStationResult.LockTimeout(ChargingStation, MaxLockWaitingTime, EventTrackingId, Id, this);
+
+        }
+
+        #endregion
+
+        #region DeleteChargingStation      (ChargingStation, TransmissionType = Enqueue, ...)
+
+        /// <summary>
+        /// Delete the ChargingStation data of the given ChargingStation from the static ChargingStation data at the OICP server.
+        /// </summary>
+        /// <param name="ChargingStation">An ChargingStation.</param>
+        /// <param name="TransmissionType">Whether to send the charging station update directly or enqueue it for a while.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public override Task<WWCP.DeleteChargingStationResult>
+
+            DeleteChargingStation(WWCP.IChargingStation              ChargingStation,
+                       WWCP.TransmissionTypes  TransmissionType    = WWCP.TransmissionTypes.Enqueue,
+
+                       DateTime?               Timestamp           = null,
+                       EventTracking_Id?       EventTrackingId     = null,
+                       TimeSpan?               RequestTimeout      = null,
+                       CancellationToken       CancellationToken   = default)
+
+        {
+
+            return Task.FromResult(WWCP.DeleteChargingStationResult.NoOperation(ChargingStation, EventTrackingId, Id, this));
+
+        }
+
+        #endregion
+
+        #endregion
+
         #region (Set/Add/Update/Delete) EVSE(s)...
 
         #region AddEVSE         (EVSE, TransmissionType = Enqueue, ...)
@@ -787,29 +1203,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     OCPI.AddOrUpdateResult<EVSE> result;
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
-                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
+                    var partyId     = EVSE.Id.OperatorId.   ToOCPI();
+                    var locationId  = EVSE.ChargingPool?.Id.ToOCPI();
 
-                    if (countryCode.HasValue &&
-                        partyId.    HasValue &&
-                        locationId. HasValue)
+                    if (locationId.HasValue)
                     {
 
                         if (IncludeEVSEs is null ||
                            (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
                         {
 
-                            if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                         partyId.    Value,
-                                                         locationId. Value,
+                            if (CommonAPI.TryGetLocation(partyId,
+                                                         locationId.Value,
                                                          out var location) &&
-                                location is not null)
+                                location.TryGetChargingStation(EVSE.ChargingStation.Id.ToOCPI(), out var chargingStation))
                             {
+
+
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
                                                         CustomEVSEIdConverter,
@@ -819,7 +1231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                         out warnings);
 
                                 if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                    result = await CommonAPI.AddOrUpdateEVSE(chargingStation, evse2);
                                 else
                                     result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
@@ -910,39 +1322,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     OCPI.AddOrUpdateResult<EVSE> result;
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
-                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
+                    var partyId     = EVSE.Id.OperatorId.   ToOCPI();
+                    var locationId  = EVSE.ChargingPool?.Id.ToOCPI();
 
-                    if (countryCode.HasValue &&
-                        partyId.    HasValue &&
-                        locationId. HasValue)
+                    if (locationId.HasValue)
                     {
 
                         if (IncludeEVSEs is null ||
                            (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
                         {
 
-                            if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                         partyId.    Value,
-                                                         locationId. Value,
+                            if (CommonAPI.TryGetLocation(partyId,
+                                                         locationId.Value,
                                                          out var location) &&
-                                location is not null)
+                                location.TryGetChargingStation(EVSE.ChargingStation.Id.ToOCPI(), out var chargingStation))
                             {
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
-                                                        CustomEVSEIdConverter,
-                                                        EVSE.Status.Timestamp > EVSE.LastChangeDate
-                                                            ? EVSE.Status.Timestamp
-                                                            : EVSE.LastChangeDate,
-                                                        out warnings);
+                                                          CustomEVSEIdConverter,
+                                                          EVSE.Status.Timestamp > EVSE.LastChangeDate
+                                                              ? EVSE.Status.Timestamp
+                                                              : EVSE.LastChangeDate,
+                                                          out warnings);
 
                                 if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                    result = await CommonAPI.AddOrUpdateEVSE(chargingStation, evse2);
                                 else
                                     result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
@@ -1052,26 +1458,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                     IEnumerable<Warning> warnings = Array.Empty<Warning>();
 
-                    var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
-                    var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
-                    var locationId   = EVSE.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
-                                           : null;
+                    var partyId     = EVSE.Id.OperatorId.   ToOCPI();
+                    var locationId  = EVSE.ChargingPool?.Id.ToOCPI();
 
-                    if (countryCode.HasValue &&
-                        partyId.    HasValue &&
-                        locationId. HasValue)
+                    if (locationId.HasValue)
                     {
 
                         if (IncludeEVSEs is null ||
                            (IncludeEVSEs is not null && IncludeEVSEs(EVSE)))
                         {
 
-                            if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                         partyId.    Value,
-                                                         locationId. Value,
+                            if (CommonAPI.TryGetLocation(partyId,
+                                                         locationId.Value,
                                                          out var location) &&
-                                location is not null)
+                                location.TryGetChargingStation(EVSE.ChargingStation.Id.ToOCPI(), out var chargingStation))
                             {
 
                                 var evse2 = EVSE.ToOCPI(CustomEVSEUIdConverter,
@@ -1082,7 +1482,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                         out warnings);
 
                                 if (evse2 is not null)
-                                    result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                    result = await CommonAPI.AddOrUpdateEVSE(chargingStation, evse2);
                                 else
                                     result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
@@ -1217,22 +1617,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                (IncludeEVSEs is not null && IncludeEVSEs(evse)))
                             {
 
-                                var countryCode  = OCPI.CountryCode.TryParse(evse.Id.OperatorId.CountryCode.Alpha2Code);
-                                var partyId      = OCPI.Party_Id.   TryParse(evse.Id.OperatorId.Suffix);
-                                var locationId   = evse.ChargingPool is not null
-                                                       ? OCPI.Location_Id.TryParse(evse.ChargingPool.Id.Suffix)
-                                                       : null;
+                                var partyId     = evse.Id.OperatorId.   ToOCPI();
+                                var locationId  = evse.ChargingPool?.Id.ToOCPI();
 
-                                if (countryCode.HasValue &&
-                                    partyId.    HasValue &&
-                                    locationId. HasValue)
+                                if (locationId.HasValue)
                                 {
 
-                                    if (CommonAPI.TryGetLocation(countryCode.Value,
-                                                                 partyId.    Value,
-                                                                 locationId. Value,
+                                    if (CommonAPI.TryGetLocation(partyId,
+                                                                 locationId.Value,
                                                                  out var location) &&
-                                        location is not null)
+                                        location.TryGetChargingStation(evse.ChargingStation.Id.ToOCPI(), out var chargingStation))
                                     {
 
                                         var evse2 = evse.ToOCPI(CustomEVSEUIdConverter,
@@ -1245,7 +1639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                         if (evse2 is not null)
                                         {
 
-                                            var result2 = await CommonAPI.AddOrUpdateEVSE(location, evse2);
+                                            var result2 = await CommonAPI.AddOrUpdateEVSE(chargingStation, evse2);
 
                                             result = result2.IsSuccess
                                                          ? WWCP.PushEVSEStatusResult.Success(Id, this, null, warnings)
@@ -1477,8 +1871,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                                                                                                         authorizationInfo.Data.Info,
                                                                                                         remoteParty,
                                                                                                         OCPI.EMSP_Id.TryParse(
-                                                                                                            authorizationInfo.FromCountryCode,
-                                                                                                            authorizationInfo.FromPartyId
+                                                                                                            //authorizationInfo.FromCountryCode,
+                                                                                                            authorizationInfo.FromPartyId.ToString()
                                                                                                         ),
                                                                                                         authorizationInfo.Data.Runtime
                                                                                                     )

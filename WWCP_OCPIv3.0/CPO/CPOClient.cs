@@ -1158,7 +1158,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                                                      RequestBuilder: requestBuilder => {
                                                                                          requestBuilder.Authorization  = TokenAuth;
                                                                                          requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;
-                                                                                         requestBuilder.Content        = Location.ToJSON(EMSPId,
+                                                                                         requestBuilder.Content        = Location.ToJSON(true,
+                                                                                                                                         true,
+                                                                                                                                         true,
                                                                                                                                          CustomLocationSerializer,
                                                                                                                                          CustomPublishTokenSerializer,
                                                                                                                                          CustomAddressSerializer,
@@ -3044,7 +3046,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     remoteURL.Value.Path + Tariff.CountryCode.ToString() +
+                                                                                     remoteURL.Value.Path + //Tariff.CountryCode.ToString() +
                                                                                                             Tariff.PartyId.    ToString() +
                                                                                                             Tariff.Id.         ToString(),
                                                                                      RequestBuilder: requestBuilder => {

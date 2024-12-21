@@ -27,21 +27,24 @@ namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
-    /// An remove result
+    /// A remove result
     /// </summary>
-    public readonly struct RemoveResult<T> : IEquatable<RemoveResult<T?>>
+    public readonly struct RemoveResult<T> : IEquatable<RemoveResult<T>>
+        //where T : IEquatable<T>
     {
 
         #region Properties
 
-        public Boolean   IsSuccess        { get; }
+        public Boolean           IsSuccess          { get; }
 
-        public Boolean   IsFailed
+        public Boolean           IsFailed
             => !IsSuccess;
 
-        public T?        Data             { get; }
+        public T?                Data               { get; }
 
-        public String?   ErrorResponse    { get; }
+        public String?           ErrorResponse      { get; }
+
+        public EventTracking_Id  EventTrackingId    { get; }
 
         #endregion
 
@@ -50,21 +53,28 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Create a new remove result.
         /// </summary>
-        private RemoveResult(Boolean   IsSuccess,
-                             T?        Data,
-                             String?   ErrorResponse)
+        /// <param name="IsSuccess">Whether the operation was successful or not.</param>
+        /// <param name="Data">The data of the operation.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+        private RemoveResult(Boolean           IsSuccess,
+                             T?                Data,
+                             String?           ErrorResponse,
+                             EventTracking_Id  EventTrackingId)
         {
 
-            this.IsSuccess      = IsSuccess;
-            this.Data           = Data;
-            this.ErrorResponse  = ErrorResponse;
+            this.IsSuccess        = IsSuccess;
+            this.Data             = Data;
+            this.ErrorResponse    = ErrorResponse;
+            this.EventTrackingId  = EventTrackingId;
 
             unchecked
             {
 
-                hashCode = this.IsSuccess.     GetHashCode() * 5       ^
-                          (this.Data?.         GetHashCode() * 3 ?? 0) ^
-                          (this.ErrorResponse?.GetHashCode()     ?? 0);
+                hashCode = this.IsSuccess.      GetHashCode()       * 7 ^
+                          (this.Data?.          GetHashCode() ?? 0) * 5 ^
+                          (this.ErrorResponse?. GetHashCode() ?? 0) * 3 ^
+                           this.EventTrackingId.GetHashCode();
 
             }
 
@@ -85,46 +95,54 @@ namespace cloud.charging.open.protocols.OCPI
         }
 
 
-        #region (static) Success    (Data, ErrorResponse = null)
+        #region (static) Success     (EventTrackingId, Data, ErrorResponse = null)
 
-        public static RemoveResult<T> Success(T        Data,
-                                              String?  ErrorResponse = null)
-
-            => new (true,
-                    Data,
-                    ErrorResponse);
-
-        #endregion
-
-        #region (static) NoOperation(Data, ErrorResponse = null)
-
-        public static RemoveResult<T> NoOperation(T        Data,
-                                                  String?  ErrorResponse = null)
+        public static RemoveResult<T> Success(EventTracking_Id  EventTrackingId,
+                                              T                 Data,
+                                              String?           ErrorResponse = null)
 
             => new (true,
                     Data,
-                    ErrorResponse);
+                    ErrorResponse,
+                    EventTrackingId);
 
         #endregion
 
-        #region (static) Failed     (Data, ErrorResponse)
+        #region (static) NoOperation (EventTrackingId, Data, ErrorResponse = null)
 
-        public static RemoveResult<T> Failed(T?       Data,
-                                             String   ErrorResponse)
+        public static RemoveResult<T> NoOperation(EventTracking_Id  EventTrackingId,
+                                                  T                 Data,
+                                                  String?           ErrorResponse = null)
+
+            => new (true,
+                    Data,
+                    ErrorResponse,
+                    EventTrackingId);
+
+        #endregion
+
+        #region (static) Failed      (EventTrackingId, Data, ErrorResponse)
+
+        public static RemoveResult<T> Failed(EventTracking_Id  EventTrackingId,
+                                             T?                Data,
+                                             String            ErrorResponse)
 
             => new (false,
                     Data,
-                    ErrorResponse);
+                    ErrorResponse,
+                    EventTrackingId);
 
         #endregion
 
-        #region (static) Failed     (      ErrorResponse)
+        #region (static) Failed      (EventTrackingId,       ErrorResponse)
 
-        public static RemoveResult<T> Failed(String ErrorResponse)
+        public static RemoveResult<T> Failed(EventTracking_Id  EventTrackingId,
+                                             String            ErrorResponse)
 
             => new (false,
                     default,
-                    ErrorResponse);
+                    ErrorResponse,
+                    EventTrackingId);
 
         #endregion
 
@@ -134,13 +152,12 @@ namespace cloud.charging.open.protocols.OCPI
         #region Operator == (RemoveResult1, RemoveResult2)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two remove results for equality.
         /// </summary>
-        /// <param name="RemoveResult1">An remove result.</param>
+        /// <param name="RemoveResult1">A remove result.</param>
         /// <param name="RemoveResult2">Another remove result.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator == (RemoveResult<T?> RemoveResult1,
-                                           RemoveResult<T?> RemoveResult2)
+        public static Boolean operator == (RemoveResult<T> RemoveResult1,
+                                           RemoveResult<T> RemoveResult2)
 
             => RemoveResult1.Equals(RemoveResult2);
 
@@ -149,13 +166,12 @@ namespace cloud.charging.open.protocols.OCPI
         #region Operator != (RemoveResult1, RemoveResult2)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two add results for inequality.
         /// </summary>
-        /// <param name="RemoveResult1">An remove result.</param>
+        /// <param name="RemoveResult1">A remove result.</param>
         /// <param name="RemoveResult2">Another remove result.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator != (RemoveResult<T?> RemoveResult1,
-                                           RemoveResult<T?> RemoveResult2)
+        public static Boolean operator != (RemoveResult<T> RemoveResult1,
+                                           RemoveResult<T> RemoveResult2)
 
             => !RemoveResult1.Equals(RemoveResult2);
 
@@ -168,13 +184,12 @@ namespace cloud.charging.open.protocols.OCPI
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two remove results for equality.
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
         public override Boolean Equals(Object? Object)
 
-            => Object is RemoveResult<T?> removeResult &&
+            => Object is RemoveResult<T> removeResult &&
                    Equals(removeResult);
 
         #endregion
@@ -182,19 +197,20 @@ namespace cloud.charging.open.protocols.OCPI
         #region Equals(RemoveResult)
 
         /// <summary>
-        /// Compares two JSON PATCH results for equality.
+        /// Compares two remove results for equality.
         /// </summary>
-        /// <param name="RemoveResult">A JSON PATCH result to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(RemoveResult<T?> RemoveResult)
+        /// <param name="RemoveResult">A remove result to compare with.</param>
+        public Boolean Equals(RemoveResult<T> RemoveResult)
 
-            => IsSuccess.Equals(RemoveResult.IsSuccess) &&
+            => IsSuccess.      Equals(RemoveResult.IsSuccess)       &&
+               EventTrackingId.Equals(RemoveResult.EventTrackingId) &&
 
-             ((Data          is null     && RemoveResult.Data          is null) ||
-              (Data          is not null && RemoveResult.Data          is not null && Data.         Equals(RemoveResult.Data))) &&
+             ((Data          is null                 && RemoveResult.Data          is null) ||
+              (Data          is IEnumerable<T> dataT && RemoveResult.Data          is IEnumerable<T> removeDataT && dataT.SequenceEqual (removeDataT)) ||
+              (Data          is not null             && RemoveResult.Data          is not null                   && Data.         Equals(RemoveResult.Data))) &&
 
-             ((ErrorResponse is null     && RemoveResult.ErrorResponse is null) ||
-              (ErrorResponse is not null && RemoveResult.ErrorResponse is not null && ErrorResponse.Equals(RemoveResult.ErrorResponse)));
+             ((ErrorResponse is null                 && RemoveResult.ErrorResponse is null) ||
+              (ErrorResponse is not null             && RemoveResult.ErrorResponse is not null                   && ErrorResponse.Equals(RemoveResult.ErrorResponse)));
 
         #endregion
 
@@ -227,7 +243,9 @@ namespace cloud.charging.open.protocols.OCPI
 
                    ErrorResponse.IsNotNullOrEmpty()
                        ? ": " + ErrorResponse
-                       : ""
+                       : "",
+
+                   $", {EventTrackingId}"
 
                );
 

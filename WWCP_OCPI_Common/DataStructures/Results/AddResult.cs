@@ -29,19 +29,21 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// An add result
     /// </summary>
-    public readonly struct AddResult<T> : IEquatable<AddResult<T?>>
+    public readonly struct AddResult<T> : IEquatable<AddResult<T>>
     {
 
         #region Properties
 
-        public Boolean   IsSuccess        { get; }
+        public Boolean           IsSuccess          { get; }
 
-        public Boolean   IsFailed
+        public Boolean           IsFailed
             => !IsSuccess;
 
-        public T?        Data             { get; }
+        public T?                Data               { get; }
 
-        public String?   ErrorResponse    { get; }
+        public String?           ErrorResponse      { get; }
+
+        public EventTracking_Id  EventTrackingId    { get; }
 
         #endregion
 
@@ -50,21 +52,28 @@ namespace cloud.charging.open.protocols.OCPI
         /// <summary>
         /// Create a new add result.
         /// </summary>
-        private AddResult(Boolean  IsSuccess,
-                          T?       Data,
-                          String?  ErrorResponse)
+        /// <param name="IsSuccess">Whether the operation was successful or not.</param>
+        /// <param name="Data">The data of the operation.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+        private AddResult(Boolean           IsSuccess,
+                          T?                Data,
+                          String?           ErrorResponse,
+                          EventTracking_Id  EventTrackingId)
         {
 
-            this.IsSuccess      = IsSuccess;
-            this.Data           = Data;
-            this.ErrorResponse  = ErrorResponse;
+            this.IsSuccess        = IsSuccess;
+            this.Data             = Data;
+            this.ErrorResponse    = ErrorResponse;
+            this.EventTrackingId  = EventTrackingId;
 
             unchecked
             {
 
-                hashCode = this.IsSuccess.     GetHashCode() * 5       ^
-                          (this.Data?.         GetHashCode() * 3 ?? 0) ^
-                          (this.ErrorResponse?.GetHashCode()     ?? 0);
+                hashCode = this.IsSuccess.      GetHashCode()       * 7 ^
+                          (this.Data?.          GetHashCode() ?? 0) * 5 ^
+                          (this.ErrorResponse?. GetHashCode() ?? 0) * 3 ^
+                           this.EventTrackingId.GetHashCode();
 
             }
 
@@ -85,46 +94,54 @@ namespace cloud.charging.open.protocols.OCPI
         }
 
 
-        #region (static) Success    (Data, ErrorResponse = null)
+        #region (static) Success     (EventTrackingId, Data, ErrorResponse = null)
 
-        public static AddResult<T> Success(T        Data,
-                                           String?  ErrorResponse = null)
-
-            => new (true,
-                    Data,
-                    ErrorResponse);
-
-        #endregion
-
-        #region (static) NoOperation(Data, ErrorResponse = null)
-
-        public static AddResult<T> NoOperation(T        Data,
-                                               String?  ErrorResponse = null)
+        public static AddResult<T> Success(EventTracking_Id  EventTrackingId,
+                                           T                 Data,
+                                           String?           ErrorResponse = null)
 
             => new (true,
                     Data,
-                    ErrorResponse);
+                    ErrorResponse,
+                    EventTrackingId);
 
         #endregion
 
-        #region (static) Failed     (Data, ErrorResponse)
+        #region (static) NoOperation (EventTrackingId, Data, ErrorResponse = null)
 
-        public static AddResult<T> Failed(T?       Data,
-                                          String   ErrorResponse)
+        public static AddResult<T> NoOperation(EventTracking_Id  EventTrackingId,
+                                               T                 Data,
+                                               String?           ErrorResponse = null)
+
+            => new (true,
+                    Data,
+                    ErrorResponse,
+                    EventTrackingId);
+
+        #endregion
+
+        #region (static) Failed      (EventTrackingId, Data, ErrorResponse)
+
+        public static AddResult<T> Failed(EventTracking_Id  EventTrackingId,
+                                          T?                Data,
+                                          String            ErrorResponse)
 
             => new (false,
                     Data,
-                    ErrorResponse);
+                    ErrorResponse,
+                    EventTrackingId);
 
         #endregion
 
-        #region (static) Failed     (      ErrorResponse)
+        #region (static) Failed      (EventTrackingId,       ErrorResponse)
 
-        public static AddResult<T> Failed(String ErrorResponse)
+        public static AddResult<T> Failed(EventTracking_Id  EventTrackingId,
+                                          String            ErrorResponse)
 
             => new (false,
                     default,
-                    ErrorResponse);
+                    ErrorResponse,
+                    EventTrackingId);
 
         #endregion
 
@@ -134,13 +151,12 @@ namespace cloud.charging.open.protocols.OCPI
         #region Operator == (AddResult1, AddResult2)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two add results for equality.
         /// </summary>
         /// <param name="AddResult1">An add result.</param>
         /// <param name="AddResult2">Another add result.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator == (AddResult<T?> AddResult1,
-                                           AddResult<T?> AddResult2)
+        public static Boolean operator == (AddResult<T> AddResult1,
+                                           AddResult<T> AddResult2)
 
             => AddResult1.Equals(AddResult2);
 
@@ -149,13 +165,12 @@ namespace cloud.charging.open.protocols.OCPI
         #region Operator != (AddResult1, AddResult2)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two add results for inequality.
         /// </summary>
         /// <param name="AddResult1">An add result.</param>
         /// <param name="AddResult2">Another add result.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator != (AddResult<T?> AddResult1,
-                                           AddResult<T?> AddResult2)
+        public static Boolean operator != (AddResult<T> AddResult1,
+                                           AddResult<T> AddResult2)
 
             => !AddResult1.Equals(AddResult2);
 
@@ -173,7 +188,7 @@ namespace cloud.charging.open.protocols.OCPI
         /// <param name="Object">An add result to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is AddResult<T?> addResult &&
+            => Object is AddResult<T> addResult &&
                    Equals(addResult);
 
         #endregion
@@ -184,15 +199,17 @@ namespace cloud.charging.open.protocols.OCPI
         /// Compares two add results for equality.
         /// </summary>
         /// <param name="AddResult">An add result to compare with.</param>
-        public Boolean Equals(AddResult<T?> AddResult)
+        public Boolean Equals(AddResult<T> AddResult)
 
-            => IsSuccess.Equals(AddResult.IsSuccess) &&
+            => IsSuccess.      Equals(AddResult.IsSuccess)       &&
+               EventTrackingId.Equals(AddResult.EventTrackingId) &&
 
-             ((Data          is null     && AddResult.Data          is null) ||
-              (Data          is not null && AddResult.Data          is not null && Data.         Equals(AddResult.Data))) &&
+             ((Data          is null                 && AddResult.Data          is null) ||
+              (Data          is IEnumerable<T> dataT && AddResult.Data          is IEnumerable<T> addDataT && dataT.SequenceEqual (addDataT)) ||
+              (Data          is not null             && AddResult.Data          is not null                && Data.         Equals(AddResult.Data))) &&
 
-             ((ErrorResponse is null     && AddResult.ErrorResponse is null) ||
-              (ErrorResponse is not null && AddResult.ErrorResponse is not null && ErrorResponse.Equals(AddResult.ErrorResponse)));
+             ((ErrorResponse is null                 && AddResult.ErrorResponse is null) ||
+              (ErrorResponse is not null             && AddResult.ErrorResponse is not null                && ErrorResponse.Equals(AddResult.ErrorResponse)));
 
         #endregion
 
@@ -225,7 +242,9 @@ namespace cloud.charging.open.protocols.OCPI
 
                    ErrorResponse.IsNotNullOrEmpty()
                        ? ": " + ErrorResponse
-                       : ""
+                       : "",
+
+                   $", {EventTrackingId}"
 
                );
 

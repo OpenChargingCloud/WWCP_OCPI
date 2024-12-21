@@ -29,42 +29,51 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// An update result
     /// </summary>
-    public readonly struct UpdateResult<T> : IEquatable<UpdateResult<T?>>
+    public readonly struct UpdateResult<T> : IEquatable<UpdateResult<T>>
     {
 
         #region Properties
 
-        public Boolean   IsSuccess        { get; }
+        public Boolean           IsSuccess          { get; }
 
-        public Boolean   IsFailed
+        public Boolean           IsFailed
             => !IsSuccess;
 
-        public T?        Data             { get; }
+        public T?                Data               { get; }
 
-        public String?   ErrorResponse    { get; }
+        public String?           ErrorResponse      { get; }
+
+        public EventTracking_Id  EventTrackingId    { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new update result.
+        /// Create a new remove result.
         /// </summary>
-        private UpdateResult(Boolean   IsSuccess,
-                             T?        Data,
-                             String?   ErrorResponse)
+        /// <param name="IsSuccess">Whether the operation was successful or not.</param>
+        /// <param name="Data">The data of the operation.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+        private UpdateResult(Boolean           IsSuccess,
+                             T?                Data,
+                             String?           ErrorResponse,
+                             EventTracking_Id  EventTrackingId)
         {
 
-            this.IsSuccess      = IsSuccess;
-            this.Data           = Data;
-            this.ErrorResponse  = ErrorResponse;
+            this.IsSuccess        = IsSuccess;
+            this.Data             = Data;
+            this.ErrorResponse    = ErrorResponse;
+            this.EventTrackingId  = EventTrackingId;
 
             unchecked
             {
 
-                hashCode = this.IsSuccess.     GetHashCode() * 5       ^
-                          (this.Data?.         GetHashCode() * 3 ?? 0) ^
-                          (this.ErrorResponse?.GetHashCode()     ?? 0);
+                hashCode = this.IsSuccess.      GetHashCode()       * 7 ^
+                          (this.Data?.          GetHashCode() ?? 0) * 5 ^
+                          (this.ErrorResponse?. GetHashCode() ?? 0) * 3 ^
+                           this.EventTrackingId.GetHashCode();
 
             }
 
@@ -85,46 +94,54 @@ namespace cloud.charging.open.protocols.OCPI
         }
 
 
-        #region (static) Success    (Data, ErrorResponse = null)
+        #region (static) Success     (EventTrackingId, Data, ErrorResponse = null)
 
-        public static UpdateResult<T> Success(T        Data,
-                                              String?  ErrorResponse = null)
-
-            => new (true,
-                    Data,
-                    ErrorResponse);
-
-        #endregion
-
-        #region (static) NoOperation(Data, ErrorResponse = null)
-
-        public static UpdateResult<T> NoOperation(T        Data,
-                                                  String?  ErrorResponse = null)
+        public static UpdateResult<T> Success(EventTracking_Id  EventTrackingId,
+                                              T                 Data,
+                                              String?           ErrorResponse = null)
 
             => new (true,
                     Data,
-                    ErrorResponse);
+                    ErrorResponse,
+                    EventTrackingId);
 
         #endregion
 
-        #region (static) Failed     (Data, ErrorResponse)
+        #region (static) NoOperation (EventTrackingId, Data, ErrorResponse = null)
 
-        public static UpdateResult<T> Failed(T?       Data,
-                                             String   ErrorResponse)
+        public static UpdateResult<T> NoOperation(EventTracking_Id  EventTrackingId,
+                                                  T                 Data,
+                                                  String?           ErrorResponse = null)
+
+            => new (true,
+                    Data,
+                    ErrorResponse,
+                    EventTrackingId);
+
+        #endregion
+
+        #region (static) Failed      (EventTrackingId, Data, ErrorResponse)
+
+        public static UpdateResult<T> Failed(EventTracking_Id  EventTrackingId,
+                                             T?                Data,
+                                             String            ErrorResponse)
 
             => new (false,
                     Data,
-                    ErrorResponse);
+                    ErrorResponse,
+                    EventTrackingId);
 
         #endregion
 
-        #region (static) Failed     (      ErrorResponse)
+        #region (static) Failed      (EventTrackingId,       ErrorResponse)
 
-        public static UpdateResult<T> Failed(String ErrorResponse)
+        public static UpdateResult<T> Failed(EventTracking_Id  EventTrackingId,
+                                             String            ErrorResponse)
 
             => new (false,
                     default,
-                    ErrorResponse);
+                    ErrorResponse,
+                    EventTrackingId);
 
         #endregion
 
@@ -134,13 +151,12 @@ namespace cloud.charging.open.protocols.OCPI
         #region Operator == (UpdateResult1, UpdateResult2)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two update results for equality.
         /// </summary>
-        /// <param name="UpdateResult1">An update result.</param>
+        /// <param name="UpdateResult1">A update result.</param>
         /// <param name="UpdateResult2">Another update result.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator == (UpdateResult<T?> UpdateResult1,
-                                           UpdateResult<T?> UpdateResult2)
+        public static Boolean operator == (UpdateResult<T> UpdateResult1,
+                                           UpdateResult<T> UpdateResult2)
 
             => UpdateResult1.Equals(UpdateResult2);
 
@@ -149,13 +165,12 @@ namespace cloud.charging.open.protocols.OCPI
         #region Operator != (UpdateResult1, UpdateResult2)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two add results for inequality.
         /// </summary>
-        /// <param name="UpdateResult1">An update result.</param>
+        /// <param name="UpdateResult1">A update result.</param>
         /// <param name="UpdateResult2">Another update result.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator != (UpdateResult<T?> UpdateResult1,
-                                           UpdateResult<T?> UpdateResult2)
+        public static Boolean operator != (UpdateResult<T> UpdateResult1,
+                                           UpdateResult<T> UpdateResult2)
 
             => !UpdateResult1.Equals(UpdateResult2);
 
@@ -168,13 +183,12 @@ namespace cloud.charging.open.protocols.OCPI
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two update results for equality.
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
         public override Boolean Equals(Object? Object)
 
-            => Object is UpdateResult<T?> updateResult &&
+            => Object is UpdateResult<T> updateResult &&
                    Equals(updateResult);
 
         #endregion
@@ -182,19 +196,20 @@ namespace cloud.charging.open.protocols.OCPI
         #region Equals(UpdateResult)
 
         /// <summary>
-        /// Compares two JSON PATCH results for equality.
+        /// Compares two update results for equality.
         /// </summary>
-        /// <param name="UpdateResult">A JSON PATCH result to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(UpdateResult<T?> UpdateResult)
+        /// <param name="UpdateResult">A update result to compare with.</param>
+        public Boolean Equals(UpdateResult<T> UpdateResult)
 
-            => IsSuccess.Equals(UpdateResult.IsSuccess) &&
+            => IsSuccess.      Equals(UpdateResult.IsSuccess)       &&
+               EventTrackingId.Equals(UpdateResult.EventTrackingId) &&
 
-             ((Data          is null     && UpdateResult.Data          is null) ||
-              (Data          is not null && UpdateResult.Data          is not null && Data.         Equals(UpdateResult.Data))) &&
+             ((Data          is null                 && UpdateResult.Data          is null) ||
+              (Data          is IEnumerable<T> dataT && UpdateResult.Data          is IEnumerable<T> updateDataT && dataT.SequenceEqual (updateDataT)) ||
+              (Data          is not null             && UpdateResult.Data          is not null                   && Data.         Equals(UpdateResult.Data))) &&
 
-             ((ErrorResponse is null     && UpdateResult.ErrorResponse is null) ||
-              (ErrorResponse is not null && UpdateResult.ErrorResponse is not null && ErrorResponse.Equals(UpdateResult.ErrorResponse)));
+             ((ErrorResponse is null                 && UpdateResult.ErrorResponse is null) ||
+              (ErrorResponse is not null             && UpdateResult.ErrorResponse is not null                   && ErrorResponse.Equals(UpdateResult.ErrorResponse)));
 
         #endregion
 
@@ -227,7 +242,9 @@ namespace cloud.charging.open.protocols.OCPI
 
                    ErrorResponse.IsNotNullOrEmpty()
                        ? ": " + ErrorResponse
-                       : ""
+                       : "",
+
+                   $", {EventTrackingId}"
 
                );
 

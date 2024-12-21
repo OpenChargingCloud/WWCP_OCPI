@@ -328,8 +328,6 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
             this.CPOAPI                             = new HTTP.CPOAPI(
 
                                                           this.CommonAPI,
-                                                          DefaultCountryCode,
-                                                          DefaultPartyId,
                                                           null, // AllowDowngrades
 
                                                           null, // HTTPHostname
@@ -823,19 +821,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 if (evse2 is not null)
                                     result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
                                 else
-                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
                             }
                             else
-                                result = OCPI.AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+                                result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
 
                         }
                         else
-                            result = OCPI.AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+                            result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
 
                     }
                     else
-                        result = OCPI.AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+                        result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -946,19 +944,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 if (evse2 is not null)
                                     result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
                                 else
-                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
                             }
                             else
-                                result = OCPI.AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+                                result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
 
                         }
                         else
-                            result = OCPI.AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+                            result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
 
                     }
                     else
-                        result = OCPI.AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+                        result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
 
                     return result.IsSuccess
@@ -1086,19 +1084,19 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                                 if (evse2 is not null)
                                     result = await CommonAPI.AddOrUpdateEVSE(location, evse2);
                                 else
-                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed("Could not convert the given EVSE!");
+                                    result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Could not convert the given EVSE!");
 
                             }
                             else
-                                result = OCPI.AddOrUpdateResult<EVSE>.Failed("Unknown location identification!");
+                                result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Unknown location identification!");
 
                         }
                         else
-                            result = OCPI.AddOrUpdateResult<EVSE>.Failed("The given EVSE was filtered!");
+                            result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "The given EVSE was filtered!");
 
                     }
                     else
-                        result = OCPI.AddOrUpdateResult<EVSE>.Failed("Invalid location identification!");
+                        result = OCPI.AddOrUpdateResult<EVSE>.Failed(EventTrackingId, "Invalid location identification!");
 
 
                     return result.IsSuccess

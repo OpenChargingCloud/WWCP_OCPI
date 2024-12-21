@@ -1494,23 +1494,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region (private) TryPrivatePatch(JSON, Patch)
 
-        private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
-                                                     JObject  Patch)
+        private PatchResult<JObject> TryPrivatePatch(JObject           JSON,
+                                                     JObject           Patch,
+                                                     EventTracking_Id  EventTrackingId)
         {
 
             foreach (var property in Patch)
             {
 
                 if      (property.Key == "country_code")
-                    return PatchResult<JObject>.Failed(JSON,
+                    return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'country code' of a charge detail record is not allowed!");
 
                 else if (property.Key == "party_id")
-                    return PatchResult<JObject>.Failed(JSON,
+                    return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'party identification' of a charge detail record is not allowed!");
 
                 else if (property.Key == "id")
-                    return PatchResult<JObject>.Failed(JSON,
+                    return PatchResult<JObject>.Failed(EventTrackingId, JSON,
                                                        "Patching the 'identification' of a charge detail record is not allowed!");
 
                 else if (property.Value is null)
@@ -1527,7 +1528,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             //ToDo: Perhaps use a more generic JSON patch here!
                             // PatchObject.Apply(ToJSON(), EVSEPatch),
-                            var patchResult = TryPrivatePatch(oldSubObject, subObject);
+                            var patchResult = TryPrivatePatch(oldSubObject, subObject, EventTrackingId);
 
                             if (patchResult.IsSuccess)
                                 JSON[property.Key] = patchResult.PatchedData;
@@ -1553,7 +1554,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             }
 
-            return PatchResult<JObject>.Success(JSON);
+            return PatchResult<JObject>.Success(EventTrackingId, JSON);
 
         }
 
@@ -1566,13 +1567,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="CDRPatch">The JSON merge patch.</param>
         /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
-        public PatchResult<CDR> TryPatch(JObject  CDRPatch,
-                                         Boolean  AllowDowngrades = false)
+        public PatchResult<CDR> TryPatch(JObject            CDRPatch,
+                                         Boolean            AllowDowngrades   = false,
+                                         EventTracking_Id?  EventTrackingId   = null)
         {
 
+            EventTrackingId ??= EventTracking_Id.New;
+
             if (!CDRPatch.HasValues)
-                return PatchResult<CDR>.Failed(this,
-                                                  "The given charge detail record patch must not be null or empty!");
+                return PatchResult<CDR>.Failed(EventTrackingId,
+                                               this,
+                                               "The given charge detail record patch must not be null or empty!");
 
             lock (patchLock)
             {
@@ -1584,16 +1589,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         CDRPatch["last_updated"].Type == JTokenType.Date &&
                        (CDRPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
                 {
-                    return PatchResult<CDR>.Failed(this,
+                    return PatchResult<CDR>.Failed(EventTrackingId, this,
                                                    "The 'lastUpdated' timestamp of the charge detail record patch must be newer then the timestamp of the existing charge detail record!");
                 }
 
 
-                var patchResult = TryPrivatePatch(ToJSON(), CDRPatch);
+                var patchResult = TryPrivatePatch(ToJSON(), CDRPatch, EventTrackingId);
 
 
                 if (patchResult.IsFailed)
-                    return PatchResult<CDR>.Failed(this,
+                    return PatchResult<CDR>.Failed(EventTrackingId, this,
                                                    patchResult.ErrorResponse);
 
                 if (TryParse(patchResult.PatchedData,
@@ -1601,13 +1606,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                              out var errorResponse))
                 {
 
-                    return PatchResult<CDR>.Success(patchedCDR,
+                    return PatchResult<CDR>.Success(EventTrackingId, patchedCDR,
                                                     errorResponse);
 
                 }
 
                 else
-                    return PatchResult<CDR>.Failed(this,
+                    return PatchResult<CDR>.Failed(EventTrackingId, this,
                                                    "Invalid JSON merge patch of a charge detail record: " + errorResponse);
 
             }

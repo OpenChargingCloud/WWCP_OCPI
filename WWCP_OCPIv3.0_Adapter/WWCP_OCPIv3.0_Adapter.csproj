@@ -1,14 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>WWCP_OCPIv3._0_Adapter</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj" />
-    <ProjectReference Include="..\WWCP_OCPIv2.2.1\WWCP_OCPIv2.2.1.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv3.0\WWCP_OCPIv3.0.csproj" />
   </ItemGroup>
 
 </Project>

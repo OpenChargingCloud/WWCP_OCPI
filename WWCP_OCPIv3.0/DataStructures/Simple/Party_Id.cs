@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Text.RegularExpressions;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -60,9 +62,27 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         private readonly String InternalId;
 
+        /// <summary>
+        /// The regular expression for parsing party identifications.
+        /// </summary>
+        public static readonly Regex PartyId_RegEx = new ("^([a-zA-Z0-9]{5})$");
+
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// The country code.
+        /// </summary>
+        public String  CountryCode
+            => InternalId.Substring(0, 2);
+
+        /// <summary>
+        /// The party.
+        /// </summary>
+        public String  Party
+            => InternalId.Substring(2, 3);
+
 
         /// <summary>
         /// Indicates whether this party identification is null or empty.
@@ -148,8 +168,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             Text = Text.Trim();
 
             if (Text.IsNotNullOrEmpty() &&
-                Text.Length >= 1        &&
-                Text.Length <= 5)
+                Text.Length == 5 &&
+                PartyId_RegEx.IsMatch(Text))
             {
                 try
                 {
