@@ -49,9 +49,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public Correlation_Id?   CorrelationId             { get; }
         public Hermod.Location?  HTTPLocation              { get; }
 
-        public Party_Id?         FromPartyId               { get; }
+        public Party_Idv3?         FromPartyId               { get; }
         public CountryCode?      FromCountryCode           { get; }
-        public Party_Id?         ToPartyId                 { get; }
+        public Party_Idv3?         ToPartyId                 { get; }
         public CountryCode?      ToCountryCode             { get; }
 
         #endregion
@@ -71,9 +71,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             Hermod.Location?  HTTPLocation            = null,
 
                             CountryCode?      FromCountryCode         = null,
-                            Party_Id?         FromPartyId             = null,
+                            Party_Idv3?         FromPartyId             = null,
                             CountryCode?      ToCountryCode           = null,
-                            Party_Id?         ToPartyId               = null)
+                            Party_Idv3?         ToPartyId               = null)
 
         {
 
@@ -107,9 +107,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             Hermod.Location?  HTTPLocation            = null,
 
                             CountryCode?      FromCountryCode         = null,
-                            Party_Id?         FromPartyId             = null,
+                            Party_Idv3?         FromPartyId             = null,
                             CountryCode?      ToCountryCode           = null,
-                            Party_Id?         ToPartyId               = null)
+                            Party_Idv3?         ToPartyId               = null)
 
         {
 
@@ -188,9 +188,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 var RemoteCorrelationId  = Response.TryParseHeaderField<Correlation_Id> ("X-Correlation-ID",       Correlation_Id. TryParse) ?? CorrelationId;
                 var location             = Response.TryParseHeaderField<Hermod.Location>("Location",               Hermod.Location.TryParse);
 
-                var fromPartyId          = Response.TryParseHeaderField<Party_Id>       ("OCPI-from-party-id",     Party_Id.       TryParse);
+                var fromPartyId          = Response.TryParseHeaderField<Party_Idv3>       ("OCPI-from-party-id",     Party_Idv3.       TryParse);
                 var fromCountryCode      = Response.TryParseHeaderField<CountryCode>    ("OCPI-from-country-code", CountryCode.    TryParse);
-                var toPartyId            = Response.TryParseHeaderField<Party_Id>       ("OCPI-to-party-id",       Party_Id.       TryParse);
+                var toPartyId            = Response.TryParseHeaderField<Party_Idv3>       ("OCPI-to-party-id",       Party_Idv3.       TryParse);
                 var toCountryCode        = Response.TryParseHeaderField<CountryCode>    ("OCPI-to-country-code",   CountryCode.    TryParse);
 
                 if (Response.HTTPBody?.Length > 0)
@@ -504,9 +504,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             Hermod.Location?  Location                = null,
 
                             CountryCode?      FromCountryCode         = null,
-                            Party_Id?         FromPartyId             = null,
+                            Party_Idv3?         FromPartyId             = null,
                             CountryCode?      ToCountryCode           = null,
-                            Party_Id?         ToPartyId               = null)
+                            Party_Idv3?         ToPartyId               = null)
 
             : base(StatusCode,
                    StatusMessage,
@@ -540,9 +540,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             Hermod.Location?  Location                = null,
 
                             CountryCode?      FromCountryCode         = null,
-                            Party_Id?         FromPartyId             = null,
+                            Party_Idv3?         FromPartyId             = null,
                             CountryCode?      ToCountryCode           = null,
-                            Party_Id?         ToPartyId               = null)
+                            Party_Idv3?         ToPartyId               = null)
 
             : this(null,
 
@@ -581,9 +581,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      Hermod.Location?         Location                = null,
 
                                      CountryCode?             FromCountryCode         = null,
-                                     Party_Id?                FromPartyId             = null,
+                                     Party_Idv3?                FromPartyId             = null,
                                      CountryCode?             ToCountryCode           = null,
-                                     Party_Id?                ToPartyId               = null)
+                                     Party_Idv3?                ToPartyId               = null)
 
         {
 
@@ -732,9 +732,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",               Hermod.Location.TryParse);
 
                 var fromCountryCode      = Response.TryParseHeaderField<CountryCode>    ("OCPI-from-country-code", CountryCode.    TryParse);
-                var fromPartyId          = Response.TryParseHeaderField<Party_Id>       ("OCPI-from-party-id",     Party_Id.       TryParse);
+                var fromPartyId          = Response.TryParseHeaderField<Party_Idv3>       ("OCPI-from-party-id",     Party_Idv3.       TryParse);
                 var toCountryCode        = Response.TryParseHeaderField<CountryCode>    ("OCPI-to-country-code",   CountryCode.    TryParse);
-                var toPartyId            = Response.TryParseHeaderField<Party_Id>       ("OCPI-to-party-id",       Party_Id.       TryParse);
+                var toPartyId            = Response.TryParseHeaderField<Party_Idv3>       ("OCPI-to-party-id",       Party_Idv3.       TryParse);
 
                 if (Response.HTTPBody?.Length > 0)
                 {
@@ -885,9 +885,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 var remoteLocation       = Response.TryParseHeaderField<Hermod.Location>("Location",               Hermod.Location.TryParse);
 
                 var fromCountryCode      = Response.TryParseHeaderField<CountryCode>    ("OCPI-from-country-code", CountryCode.    TryParse);
-                var fromPartyId          = Response.TryParseHeaderField<Party_Id>       ("OCPI-from-party-id",     Party_Id.       TryParse);
+                var fromPartyId          = Response.TryParseHeaderField<Party_Idv3>       ("OCPI-from-party-id",     Party_Idv3.       TryParse);
                 var toCountryCode        = Response.TryParseHeaderField<CountryCode>    ("OCPI-to-country-code",   CountryCode.    TryParse);
-                var toPartyId            = Response.TryParseHeaderField<Party_Id>       ("OCPI-to-party-id",       Party_Id.       TryParse);
+                var toPartyId            = Response.TryParseHeaderField<Party_Idv3>       ("OCPI-to-party-id",       Party_Idv3.       TryParse);
 
                 if (Response.HTTPBody?.Length > 0)
                 {
@@ -1017,9 +1017,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                             Hermod.Location?  Location                = null,
 
                             CountryCode?      FromCountryCode         = null,
-                            Party_Id?         FromPartyId             = null,
+                            Party_Idv3?         FromPartyId             = null,
                             CountryCode?      ToCountryCode           = null,
-                            Party_Id?         ToPartyId               = null)
+                            Party_Idv3?         ToPartyId               = null)
 
             : base(Data,
                    StatusCode,

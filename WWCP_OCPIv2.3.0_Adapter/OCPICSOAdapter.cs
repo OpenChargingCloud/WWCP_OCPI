@@ -489,20 +489,36 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (lockTaken)
                 {
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     if (IncludeChargingPools is null ||
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
                     {
 
-                        var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
-                                                           CustomEVSEIdConverter,
-                                                           out warnings);
+                        var location = ChargingPool.ToOCPI(
+                                           CustomEVSEUIdConverter,
+                                           CustomEVSEIdConverter,
+                                           out warnings
+                                       );
 
                         if (location is not null)
                         {
 
-                            var result = CommonAPI.AddLocation(location);
+                            //var result = await CommonAPI.AddLocation(
+                            //                       Location:            location,
+                            //                       SkipNotifications:   false,
+                            //                       EventTrackingId:     EventTrackingId,
+                            //                       CurrentUserId:       null,
+                            //                       CancellationToken:   CancellationToken
+                            //                   );
+
+                            var result =       CommonAPI.AddLocation(
+                                                   Location:            location,
+                                                   SkipNotifications:   false,
+                                                   EventTrackingId:     EventTrackingId,
+                                                   CurrentUserId:       null,
+                                                   CancellationToken:   CancellationToken
+                                               );
 
                             //ToDo: Handle errors!!!
 
@@ -579,7 +595,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (lockTaken)
                 {
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     if (IncludeChargingPools is null ||
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
@@ -677,7 +693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
                 if (lockTaken)
                 {
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     if (IncludeChargingPools is null ||
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
@@ -787,7 +803,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     OCPI.AddOrUpdateResult<EVSE> result;
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
                     var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
@@ -910,7 +926,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     OCPI.AddOrUpdateResult<EVSE> result;
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
                     var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);
@@ -1050,7 +1066,7 @@ namespace cloud.charging.open.protocols.OCPIv2_3_0
 
                     OCPI.AddOrUpdateResult<EVSE> result;
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     var countryCode  = OCPI.CountryCode.TryParse(EVSE.Id.OperatorId.CountryCode.Alpha2Code);
                     var partyId      = OCPI.Party_Id.   TryParse(EVSE.Id.OperatorId.Suffix);

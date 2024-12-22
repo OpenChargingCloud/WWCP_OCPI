@@ -66,8 +66,6 @@ namespace cloud.charging.open.protocols.WWCP
                                         I18NString                                               Description,
 
                                         OCPIv2_1_1.HTTP.CommonAPI                                CommonAPI,
-                                        OCPI.      CountryCode                                   DefaultCountryCode,
-                                        OCPI.      Party_Id                                      DefaultPartyId,
 
                                         OCPIv2_1_1.GetTariffIds_Delegate?                        GetTariffIds                         = null,
 
@@ -135,8 +133,6 @@ namespace cloud.charging.open.protocols.WWCP
                                          RoamingNetwork,
 
                                          CommonAPI,
-                                         DefaultCountryCode,
-                                         DefaultPartyId,
 
                                          GetTariffIds,
 

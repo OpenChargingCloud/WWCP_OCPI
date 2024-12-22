@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
     public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
-                                                                   Party_Id       CPOPartyId,
+                                                                   Party_Idv3       CPOPartyId,
                                                                    Location_Id?   Location      = null,
                                                                    EVSE_UId?      EVSEUId       = null,
                                                                    Connector_Id?  ConnectorId   = null,
@@ -277,7 +277,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public Location(Party_Id                                                      PartyId,
+        public Location(Party_Idv3                                                      PartyId,
                         Location_Id                                                   Id,
                         UInt64                                                        VersionId,
 
@@ -430,7 +430,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         internal Location(CommonAPI?                                                    CommonAPI,
-                          Party_Id                                                      PartyId,
+                          Party_Idv3                                                      PartyId,
                           Location_Id                                                   Id,
                           UInt64                                                        VersionId,
 
@@ -592,7 +592,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Location Parse(JObject                                 JSON,
-                                     Party_Id?                               PartyIdURL             = null,
+                                     Party_Idv3?                               PartyIdURL             = null,
                                      Location_Id?                            LocationIdURL          = null,
                                      UInt64?                                 VersionIdURL           = null,
                                      CustomJObjectParserDelegate<Location>?  CustomLocationParser   = null)
@@ -650,7 +650,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static Boolean TryParse(JObject                                 JSON,
                                        [NotNullWhen(true)]  out Location?      Location,
                                        [NotNullWhen(false)] out String?        ErrorResponse,
-                                       Party_Id?                               PartyIdURL             = null,
+                                       Party_Idv3?                               PartyIdURL             = null,
                                        Location_Id?                            LocationIdURL          = null,
                                        UInt64?                                 VersionIdURL           = null,
                                        CustomJObjectParserDelegate<Location>?  CustomLocationParser   = null)
@@ -671,8 +671,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("party_id",
                                        "party identification",
-                                       Party_Id.TryParse,
-                                       out Party_Id? PartyIdBody,
+                                       Party_Idv3.TryParse,
+                                       out Party_Idv3? PartyIdBody,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -2045,7 +2045,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// that make up the physical charging infrastructure of this Location.
             /// </summary>
             [Mandatory]
-            public HashSet<ChargingStation>        ChargingPool             { get; private set; }
+            public ConcurrentDictionary<ChargingStation_Id, ChargingStation> ChargingPool { get; } = new();
 
             /// <summary>
             /// The optional enumeration of human-readable directions on how to reach the location.
@@ -2173,7 +2173,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <param name="Created">An optional timestamp when this location was created.</param>
             /// <param name="LastUpdated">An optional timestamp when this location was last updated (or created).</param>
             public Builder(CommonAPI?                           CommonAPI            = null,
-                           Party_Id?                            PartyId              = null,
+                           Party_Idv3?                            PartyId              = null,
                            Location_Id?                         Id                   = null,
                            UInt64?                              VersionId            = null,
 
@@ -2217,7 +2217,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.Address             = Address;
                 this.RelatedLocations    = RelatedLocations is not null ? new HashSet<AdditionalGeoLocation>(RelatedLocations) : [];
                 this.ParkingType         = ParkingType;
-                this.ChargingPool        = ChargingPool     is not null ? new HashSet<ChargingStation>      (ChargingPool)     : [];
                 this.Directions          = Directions       is not null ? new HashSet<DisplayText>          (Directions)       : [];
                 this.Operator            = Operator;
                 this.SubOperator         = SubOperator;
@@ -2233,6 +2232,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 this.Created             = Created;
                 this.LastUpdated         = LastUpdated;
+
+                foreach (var chargingStation in ChargingPool?.Distinct() ?? [])
+                {
+
+                    chargingStation.ParentLocation = this;
+
+                    this.ChargingPool.TryAdd(
+                        chargingStation.Id,
+                        chargingStation
+                    );
+
+                }
 
             }
 
@@ -2289,7 +2300,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                Address,
                                RelatedLocations,
                                ParkingType,
-                               ChargingPool,
+                               ChargingPool.Values,
                                Directions,
                                Operator,
                                SubOperator,

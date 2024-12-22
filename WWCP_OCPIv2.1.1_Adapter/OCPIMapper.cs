@@ -518,7 +518,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            PartyId:              partyId    .Value,
                            Id:                   locationId .Value,
                            LocationType:         ChargingPool.ParkingType?.ToOICP() ?? LocationType.UNKNOWN,
-                           Address:              ChargingPool.Address.HouseNumber is not null
+                           Address:              ChargingPool.Address.HouseNumber.IsNotNullOrEmpty()
                                                      ? $"{ChargingPool.Address.Street} {ChargingPool.Address.HouseNumber}"
                                                      :    ChargingPool.Address.Street,
                            City:                 ChargingPool.Address.City.FirstText(),

@@ -107,7 +107,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
     /// <summary>
     /// A remote party.
-    /// In OCPI v2.2 this is a roaming network operator serving multiple CPOs and/or EMSPs.
+    /// In OCPI v3.0 this is a roaming network operator serving multiple CPOs and/or EMSPs.
     /// </summary>
     public class RemoteParty : IRemoteParty,
                                IEquatable<RemoteParty>,
@@ -119,7 +119,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The default JSON-LD context of this object.
         /// </summary>
-        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/remoteParty");
+        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/3.0/remoteParty");
 
         #endregion
 

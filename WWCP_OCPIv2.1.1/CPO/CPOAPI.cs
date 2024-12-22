@@ -69,16 +69,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public CommonAPI      CommonAPI             { get; }
 
         /// <summary>
-        /// The default country code to use.
-        /// </summary>
-        public CountryCode    DefaultCountryCode    { get; }
-
-        /// <summary>
-        /// The default party identification to use.
-        /// </summary>
-        public Party_Id       DefaultPartyId        { get; }
-
-        /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
@@ -1319,8 +1309,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// using the given CommonAPI.
         /// </summary>
         /// <param name="CommonAPI">The OCPI CommonAPI.</param>
-        /// <param name="DefaultCountryCode">The default country code to use.</param>
-        /// <param name="DefaultPartyId">The default party identification to use.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
@@ -1347,8 +1335,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LogfileCreator">A delegate for creating the name of the logfile for this API.</param>
         /// <param name="AutoStart">Whether to start the API automatically.</param>
         public CPOAPI(CommonAPI                    CommonAPI,
-                      CountryCode                  DefaultCountryCode,
-                      Party_Id                     DefaultPartyId,
                       Boolean?                     AllowDowngrades           = null,
 
                       HTTPHostname?                HTTPHostname              = null,
@@ -1406,19 +1392,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            this.CommonAPI           = CommonAPI;
-            this.DefaultCountryCode  = DefaultCountryCode;
-            this.DefaultPartyId      = DefaultPartyId;
-            this.AllowDowngrades     = AllowDowngrades;
+            this.CommonAPI        = CommonAPI;
+            this.AllowDowngrades  = AllowDowngrades;
 
-            this.CPOAPILogger        = this.DisableLogging == false
-                                           ? new CPOAPILogger(
-                                                 this,
-                                                 LoggingContext,
-                                                 LoggingPath,
-                                                 LogfileCreator
-                                             )
-                                           : null;
+            this.CPOAPILogger     = this.DisableLogging == false
+                                        ? new CPOAPILogger(
+                                              this,
+                                              LoggingContext,
+                                              LoggingPath,
+                                              LogfileCreator
+                                          )
+                                        : null;
 
             RegisterURLTemplates();
 

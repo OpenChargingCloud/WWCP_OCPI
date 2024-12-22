@@ -64,7 +64,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The identification of the charge point operator that 'owns' this session (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public   Party_Id                            PartyId                      { get; }
+        public   Party_Idv3                            PartyId                      { get; }
 
         /// <summary>
         /// The identification of the session within the charge point operator's platform (and suboperator platforms).
@@ -215,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
         public Session(CountryCode                                       CountryCode,
-                       Party_Id                                          PartyId,
+                       Party_Idv3                                          PartyId,
                        Session_Id                                        Id,
                        DateTime                                          Start,
                        Decimal                                           kWh,
@@ -315,7 +315,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomSessionParser">A delegate to parse custom session JSON objects.</param>
         public static Session Parse(JObject                                JSON,
                                     CountryCode?                           CountryCodeURL        = null,
-                                    Party_Id?                              PartyIdURL            = null,
+                                    Party_Idv3?                              PartyIdURL            = null,
                                     Session_Id?                            SessionIdURL          = null,
                                     CustomJObjectParserDelegate<Session>?  CustomSessionParser   = null)
         {
@@ -375,7 +375,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                        [NotNullWhen(true)]  out Session?      Session,
                                        [NotNullWhen(false)] out String?       ErrorResponse,
                                        CountryCode?                           CountryCodeURL        = null,
-                                       Party_Id?                              PartyIdURL            = null,
+                                       Party_Idv3?                              PartyIdURL            = null,
                                        Session_Id?                            SessionIdURL          = null,
                                        CustomJObjectParserDelegate<Session>?  CustomSessionParser   = null)
         {
@@ -421,8 +421,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("party_id",
                                        "party identification",
-                                       Party_Id.TryParse,
-                                       out Party_Id? PartyIdBody,
+                                       Party_Idv3.TryParse,
+                                       out Party_Idv3? PartyIdBody,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

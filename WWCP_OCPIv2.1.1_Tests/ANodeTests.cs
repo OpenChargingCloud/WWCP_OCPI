@@ -616,8 +616,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             cpoCPOAPI            = new CPOAPI(
 
                                        CommonAPI:                           cpoCommonAPI,
-                                       DefaultCountryCode:                  cpoCommonAPI.OurCountryCode,
-                                       DefaultPartyId:                      cpoCommonAPI.OurPartyId,
                                        AllowDowngrades:                     null,
 
                                        HTTPHostname:                        null,
@@ -649,8 +647,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emsp1EMSPAPI         = new EMSPAPI(
 
                                        CommonAPI:                           emsp1CommonAPI,
-                                       DefaultCountryCode:                  emsp1CommonAPI.OurCountryCode,
-                                       DefaultPartyId:                      emsp1CommonAPI.OurPartyId,
                                        AllowDowngrades:                     null,
 
                                        HTTPHostname:                        null,
@@ -682,8 +678,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             emsp2EMSPAPI         = new EMSPAPI(
 
                                        CommonAPI:                           emsp2CommonAPI,
-                                       DefaultCountryCode:                  emsp2CommonAPI.OurCountryCode,
-                                       DefaultPartyId:                      emsp2CommonAPI.OurPartyId,
                                        AllowDowngrades:                     null,
 
                                        HTTPHostname:                        null,

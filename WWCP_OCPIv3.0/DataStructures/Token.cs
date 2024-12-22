@@ -64,7 +64,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The party identification of the charge point operator that 'owns' this token (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public   Party_Id         PartyId           { get; }
+        public   Party_Idv3         PartyId           { get; }
 
         /// <summary>
         /// The unique identification of the token.
@@ -188,7 +188,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTokenSerializer"></param>
         /// <param name="CustomEnergyContractSerializer"></param>
         public Token(CountryCode                                       CountryCode,
-                     Party_Id                                          PartyId,
+                     Party_Idv3                                          PartyId,
                      Token_Id                                          Id,
                      TokenType                                         Type,
                      Contract_Id                                       ContractId,
@@ -271,7 +271,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTokenParser">A delegate to parse custom token JSON objects.</param>
         public static Token Parse(JObject                              JSON,
                                   CountryCode?                         CountryCodeURL      = null,
-                                  Party_Id?                            PartyIdURL          = null,
+                                  Party_Idv3?                            PartyIdURL          = null,
                                   Token_Id?                            TokenIdURL          = null,
                                   CustomJObjectParserDelegate<Token>?  CustomTokenParser   = null)
         {
@@ -331,7 +331,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                        [NotNullWhen(true)]  out Token?      Token,
                                        [NotNullWhen(false)] out String?     ErrorResponse,
                                        CountryCode?                         CountryCodeURL      = null,
-                                       Party_Id?                            PartyIdURL          = null,
+                                       Party_Idv3?                            PartyIdURL          = null,
                                        Token_Id?                            TokenIdURL          = null,
                                        CustomJObjectParserDelegate<Token>?  CustomTokenParser   = null)
         {
@@ -377,8 +377,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("party_id",
                                        "party identification",
-                                       Party_Id.TryParse,
-                                       out Party_Id? PartyIdBody,
+                                       Party_Idv3.TryParse,
+                                       out Party_Idv3? PartyIdBody,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

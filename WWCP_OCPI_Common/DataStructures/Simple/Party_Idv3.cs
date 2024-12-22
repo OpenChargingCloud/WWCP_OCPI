@@ -18,32 +18,32 @@
 #region Usings
 
 using System.Text.RegularExpressions;
-
+using cloud.charging.open.protocols.OCPI;
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv3_0
+namespace cloud.charging.open.protocols.OCPI
 {
 
     /// <summary>
     /// Extension methods for party identifications.
     /// </summary>
-    public static class PartyIdExtensions
+    public static class PartyIdv3Extensions
     {
 
         /// <summary>
         /// Indicates whether this party identification is null or empty.
         /// </summary>
         /// <param name="PartyId">A party identification.</param>
-        public static Boolean IsNullOrEmpty(this Party_Id? PartyId)
+        public static Boolean IsNullOrEmpty(this Party_Idv3? PartyId)
             => !PartyId.HasValue || PartyId.Value.IsNullOrEmpty;
 
         /// <summary>
         /// Indicates whether this party identification is NOT null or empty.
         /// </summary>
         /// <param name="PartyId">A party identification.</param>
-        public static Boolean IsNotNullOrEmpty(this Party_Id? PartyId)
+        public static Boolean IsNotNullOrEmpty(this Party_Idv3? PartyId)
             => PartyId.HasValue && PartyId.Value.IsNotNullOrEmpty;
 
     }
@@ -52,7 +52,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
     /// <summary>
     /// The unique identification of a party, e.g. "DEGDF"
     /// </summary>
-    public readonly struct Party_Id : IId<Party_Id>
+    public readonly struct Party_Idv3 : IId<Party_Idv3>
     {
 
         #region Data
@@ -74,32 +74,32 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// The country code.
         /// </summary>
-        public String  CountryCode
-            => InternalId.Substring(0, 2);
+        public CountryCode  CountryCode
+            => CountryCode.Parse(InternalId[..2]);
 
         /// <summary>
-        /// The party.
+        /// The party identification.
         /// </summary>
-        public String  Party
-            => InternalId.Substring(2, 3);
+        public Party_Id     Party
+            => Party_Id.Parse(InternalId.Substring(2, 3));
 
 
         /// <summary>
         /// Indicates whether this party identification is null or empty.
         /// </summary>
-        public Boolean IsNullOrEmpty
+        public Boolean      IsNullOrEmpty
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
         /// Indicates whether this party identification is NOT null or empty.
         /// </summary>
-        public Boolean IsNotNullOrEmpty
+        public Boolean      IsNotNullOrEmpty
             => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the party identification.
         /// </summary>
-        public UInt64 Length
+        public UInt64       Length
             => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Create a new party identification based on the given text.
         /// </summary>
         /// <param name="Text">A text representation of a party identification.</param>
-        private Party_Id(String Text)
+        private Party_Idv3(String Text)
         {
             this.InternalId = Text;
         }
@@ -118,13 +118,27 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
+        #region (static) Parse   (CountryCode, PartyId)
+
+        /// <summary>
+        /// Parse the given country code and party identification as a party identification.
+        /// </summary>
+        /// <param name="CountryCode">The country code.</param>
+        /// <param name="PartyId">The party identification.</param>
+        public static Party_Idv3 From(CountryCode  CountryCode,
+                                      Party_Id     PartyId)
+
+            => new ($"{CountryCode}{PartyId}");
+
+        #endregion
+
         #region (static) Parse   (Text)
 
         /// <summary>
         /// Parse the given text as a party identification.
         /// </summary>
         /// <param name="Text">A text representation of a party identification.</param>
-        public static Party_Id Parse(String Text)
+        public static Party_Idv3 Parse(String Text)
         {
 
             if (TryParse(Text, out var partyId))
@@ -143,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Try to parse the given text as a party identification.
         /// </summary>
         /// <param name="Text">A text representation of a party identification.</param>
-        public static Party_Id? TryParse(String Text)
+        public static Party_Idv3? TryParse(String Text)
         {
 
             if (TryParse(Text, out var partyId))
@@ -162,7 +176,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         /// <param name="Text">A text representation of a party identification.</param>
         /// <param name="PartyId">The parsed party identification.</param>
-        public static Boolean TryParse(String Text, out Party_Id PartyId)
+        public static Boolean TryParse(String Text, out Party_Idv3 PartyId)
         {
 
             Text = Text.Trim();
@@ -173,7 +187,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             {
                 try
                 {
-                    PartyId = new Party_Id(Text);
+                    PartyId = new Party_Idv3(Text);
                     return true;
                 }
                 catch
@@ -192,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Clone this party identification.
         /// </summary>
-        public Party_Id Clone()
+        public Party_Idv3 Clone()
 
             => new (
                    InternalId.CloneString()
@@ -211,8 +225,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="PartyId1">A party identification.</param>
         /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Party_Id PartyId1,
-                                           Party_Id PartyId2)
+        public static Boolean operator == (Party_Idv3 PartyId1,
+                                           Party_Idv3 PartyId2)
 
             => PartyId1.Equals(PartyId2);
 
@@ -226,8 +240,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="PartyId1">A party identification.</param>
         /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Party_Id PartyId1,
-                                           Party_Id PartyId2)
+        public static Boolean operator != (Party_Idv3 PartyId1,
+                                           Party_Idv3 PartyId2)
 
             => !PartyId1.Equals(PartyId2);
 
@@ -241,8 +255,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="PartyId1">A party identification.</param>
         /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Party_Id PartyId1,
-                                          Party_Id PartyId2)
+        public static Boolean operator < (Party_Idv3 PartyId1,
+                                          Party_Idv3 PartyId2)
 
             => PartyId1.CompareTo(PartyId2) < 0;
 
@@ -256,8 +270,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="PartyId1">A party identification.</param>
         /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Party_Id PartyId1,
-                                           Party_Id PartyId2)
+        public static Boolean operator <= (Party_Idv3 PartyId1,
+                                           Party_Idv3 PartyId2)
 
             => PartyId1.CompareTo(PartyId2) <= 0;
 
@@ -271,8 +285,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="PartyId1">A party identification.</param>
         /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Party_Id PartyId1,
-                                          Party_Id PartyId2)
+        public static Boolean operator > (Party_Idv3 PartyId1,
+                                          Party_Idv3 PartyId2)
 
             => PartyId1.CompareTo(PartyId2) > 0;
 
@@ -286,8 +300,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="PartyId1">A party identification.</param>
         /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Party_Id PartyId1,
-                                           Party_Id PartyId2)
+        public static Boolean operator >= (Party_Idv3 PartyId1,
+                                           Party_Idv3 PartyId2)
 
             => PartyId1.CompareTo(PartyId2) >= 0;
 
@@ -305,7 +319,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Object">A party identification to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is Party_Id partyId
+            => Object is Party_Idv3 partyId
                    ? CompareTo(partyId)
                    : throw new ArgumentException("The given object is not a party identification!",
                                                  nameof(Object));
@@ -318,7 +332,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Compares two party identifications.
         /// </summary>
         /// <param name="PartyId">A party identification to compare with.</param>
-        public Int32 CompareTo(Party_Id PartyId)
+        public Int32 CompareTo(Party_Idv3 PartyId)
 
             => String.Compare(InternalId,
                               PartyId.InternalId,
@@ -338,7 +352,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Object">A party identification to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is Party_Id partyId &&
+            => Object is Party_Idv3 partyId &&
                    Equals(partyId);
 
         #endregion
@@ -349,7 +363,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Compares two party identifications for equality.
         /// </summary>
         /// <param name="PartyId">A party identification to compare with.</param>
-        public Boolean Equals(Party_Id PartyId)
+        public Boolean Equals(Party_Idv3 PartyId)
 
             => String.Equals(InternalId,
                              PartyId.InternalId,
@@ -368,6 +382,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public override Int32 GetHashCode()
 
             => InternalId?.ToLower().GetHashCode() ?? 0;
+
+        #endregion
+
+        #region ToString(Role)
+
+        /// <summary>
+        /// Return a role-based text representation of this object.
+        /// </summary>
+        public String ToString(Roles Role)
+
+            => $"{CountryCode}{(Role == Roles.EMSP ? "-" : "*")}{Party}";
 
         #endregion
 

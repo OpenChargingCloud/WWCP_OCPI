@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The unique party identification of this party.
         /// </summary>
         [Mandatory]
-        public Party_Id                PartyId            { get; }
+        public Party_Idv3                PartyId            { get; }
 
         /// <summary>
         /// The business details of this party.
@@ -77,7 +77,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="PartyId">An unique party identification of this party.</param>
         /// <param name="BusinessDetails">The business details of this party.</param>
         /// <param name="Roles">An enumeration of roles that this platform serves for this party.</param>
-        public PlatformParty(Party_Id                PartyId,
+        public PlatformParty(Party_Idv3                PartyId,
                              BusinessDetails         BusinessDetails,
                              IEnumerable<PartyRole>  Roles)
 
@@ -177,8 +177,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("party_id",
                                          "party identification",
-                                         Party_Id.TryParse,
-                                         out Party_Id PartyId,
+                                         Party_Idv3.TryParse,
+                                         out Party_Idv3 PartyId,
                                          out ErrorResponse))
                 {
                     return false;

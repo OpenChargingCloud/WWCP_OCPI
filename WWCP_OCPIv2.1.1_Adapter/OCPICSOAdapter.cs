@@ -200,8 +200,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               WWCP.IRoamingNetwork                            RoamingNetwork,
 
                               HTTP.CommonAPI                                  CommonAPI,
-                              OCPI.CountryCode                                DefaultCountryCode,
-                              OCPI.Party_Id                                   DefaultPartyId,
 
                               GetTariffIds_Delegate?                          GetTariffIds                        = null,
 
@@ -304,8 +302,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.CPOAPI                             = new HTTP.CPOAPI(
 
                                                           this.CommonAPI,
-                                                          DefaultCountryCode,
-                                                          DefaultPartyId,
                                                           null, // AllowDowngrades
 
                                                           null, // HTTPHostname
@@ -765,19 +761,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
                     {
 
-                        var location = ChargingPool.ToOCPI(CustomEVSEUIdConverter,
-                                                           CustomEVSEIdConverter,
-                                                           evseId      => true,
-                                                           connectorId => true,
-                                                           null,
-                                                           out warnings);
+                        var location = ChargingPool.ToOCPI(
+                                           CustomEVSEUIdConverter,
+                                           CustomEVSEIdConverter,
+                                           evseId      => true,
+                                           connectorId => true,
+                                           null,
+                                           out warnings
+                                       );
 
                         if (location is not null)
                         {
 
-                            var result = await CommonAPI.AddLocation(location,
-                                                                     false,
-                                                                     EventTrackingId);
+                            var result = await CommonAPI.AddLocation(
+                                                   Location:            location,
+                                                   SkipNotifications:   false,
+                                                   EventTrackingId:     EventTrackingId,
+                                                   CurrentUserId:       null,
+                                                   CancellationToken:   CancellationToken
+                                               );
 
                             //ToDo: Handle errors!!!
 
@@ -855,7 +857,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (lockTaken)
                 {
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     if (IncludeChargingPools is null ||
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
@@ -960,7 +962,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (lockTaken)
                 {
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     if (IncludeChargingPools is null ||
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
@@ -1071,7 +1073,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    EventTrackingId
                                );
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     foreach (var chargingPool in ChargingPools)
                     {
@@ -1158,7 +1160,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                    EventTrackingId
                                );
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     foreach (var chargingPool in ChargingPools)
                     {
@@ -1405,7 +1407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     OCPI.AddOrUpdateResult<EVSE> result;
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     var locationId  = EVSE.ChargingPool is not null
                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)
@@ -1546,7 +1548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     OCPI.AddOrUpdateResult<EVSE> result;
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     var locationId  = EVSE.ChargingPool is not null
                                           ? OCPI.Location_Id.TryParse(EVSE.ChargingPool.Id.Suffix)

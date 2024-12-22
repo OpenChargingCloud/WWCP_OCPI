@@ -17,10 +17,11 @@
 
 #region Usings
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
-using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -174,15 +175,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region ToOCPI(this ChargingStationOperatorId)
 
-        public static Party_Id ToOCPI(this WWCP.ChargingStationOperator_Id ChargingStationOperatorId)
+        public static Party_Idv3 ToOCPI(this WWCP.ChargingStationOperator_Id ChargingStationOperatorId)
 
-            => Party_Id.Parse($"{ChargingStationOperatorId.CountryCode}{ChargingStationOperatorId.Suffix}");
+            => Party_Idv3.Parse($"{ChargingStationOperatorId.CountryCode.Alpha2Code}{ChargingStationOperatorId.Suffix}");
 
 
-        public static Party_Id? ToOCPI(this WWCP.ChargingStationOperator_Id? ChargingStationOperatorId)
+        public static Party_Idv3? ToOCPI(this WWCP.ChargingStationOperator_Id? ChargingStationOperatorId)
 
             => ChargingStationOperatorId.HasValue
-                   ? Party_Id.TryParse($"{ChargingStationOperatorId.Value.CountryCode}{ChargingStationOperatorId.Value.Suffix}")
+                   ? Party_Idv3.TryParse($"{ChargingStationOperatorId.Value.CountryCode.Alpha2Code}{ChargingStationOperatorId.Value.Suffix}")
                    : null;
 
         #endregion
@@ -602,9 +603,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            Publish:              true,
                            Address:              new Address(
-                                                     Street:       String.Concat(ChargingPool.Address.Street, " ", ChargingPool.Address.HouseNumber),
+                                                     Street:       ChargingPool.Address.HouseNumber.IsNotNullOrEmpty()
+                                                                       ? $"{ChargingPool.Address.Street} {ChargingPool.Address.HouseNumber}"
+                                                                       : ChargingPool.Address.Street,
                                                      City:         ChargingPool.Address.City.FirstText(),
-                                                     Country:      CountryCode.Parse(ChargingPool.Address.Country.Alpha3Code),
+                                                     Country:      CountryCode.Parse(ChargingPool.Address.Country.Alpha2Code),
                                                      Coordinates:  ChargingPool.GeoLocation.Value,
                                                      PostalCode:   ChargingPool.Address.PostalCode,
                                                      State:        null//ChargingPool.Address.State.FirstText()
@@ -782,13 +785,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 return null;
             }
 
-            if (ChargingStation.Address is null)
-            {
-                warnings.Add(Warning.Create("The given charging location must have a valid address!"));
-                Warnings = warnings;
-                return null;
-            }
-
             try
             {
 
@@ -796,8 +792,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 var evses = new List<EVSE>();
 
-                foreach (var evse in ChargingStation.//Select(station => station.EVSEs).
-                                                     Where(evse    => includeEVSEIds(evse.Id)))
+                foreach (var evse in ChargingStation.Where(evse => includeEVSEIds(evse.Id)))
                 {
 
                     var ocpiEVSE = evse.ToOCPI(CustomEVSEUIdConverter,
@@ -821,7 +816,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                            EVSEs:              evses,
                            Capabilities:       null,
-                           FloorLevel:         ChargingStation.Address.FloorLevel,
+                           FloorLevel:         ChargingStation.ChargingPool?.Address?.FloorLevel,
                            Coordinates:        ChargingStation.GeoLocation,
                            PhysicalReference:  ChargingStation.PhysicalReference,
                            Directions:         null,
@@ -1615,13 +1610,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 return new CDR(
 
                            CountryCode:                CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
-                           PartyId:                    Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
+                           PartyId:                    Party_Idv3.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
                            Id:                         CDR_Id.     Parse(ChargeDetailRecord.Id.ToString()),
                            Start:                      ChargeDetailRecord.SessionTime.StartTime,
                            End:                        ChargeDetailRecord.SessionTime.EndTime. Value,
                            CDRToken:                   new CDRToken(
                                                            CountryCode:   CountryCode.Parse(ChargeDetailRecord.ChargingStationOperator.Id.CountryCode.Alpha2Code),
-                                                           PartyId:       Party_Id.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
+                                                           PartyId:       Party_Idv3.   Parse(ChargeDetailRecord.ChargingStationOperator.Id.Suffix),
                                                            UID:           Token_Id.Parse("123"),    //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                                            TokenType:     TokenType.RFID,           //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                                            ContractId:    Contract_Id.Parse("123")  //ToDo: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

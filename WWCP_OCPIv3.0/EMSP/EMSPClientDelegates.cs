@@ -383,7 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                    Correlation_Id           CorrelationId,
 
                                                    CountryCode              CountryCode,
-                                                   Party_Id                 PartyId,
+                                                   Party_Idv3                 PartyId,
                                                    Token_Id                 TokenId,
 
                                                    CancellationToken        CancellationToken,
@@ -399,7 +399,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                     Correlation_Id           CorrelationId,
 
                                                     CountryCode              CountryCode,
-                                                    Party_Id                 PartyId,
+                                                    Party_Idv3                 PartyId,
                                                     Token_Id                 TokenId,
 
                                                     CancellationToken        CancellationToken,
@@ -457,7 +457,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                      Correlation_Id            CorrelationId,
 
                                                      CountryCode               CountryCode,
-                                                     Party_Id                  PartyId,
+                                                     Party_Idv3                  PartyId,
                                                      Token_Id                  TokenId,
                                                      JObject                   TokenPatch,
 
@@ -474,7 +474,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                       Correlation_Id            CorrelationId,
 
                                                       CountryCode               CountryCode,
-                                                      Party_Id                  PartyId,
+                                                      Party_Idv3                  PartyId,
                                                       Token_Id                  TokenId,
                                                       JObject                   TokenPatch,
 

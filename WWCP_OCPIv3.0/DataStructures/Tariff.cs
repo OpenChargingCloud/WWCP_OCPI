@@ -194,7 +194,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public Tariff(Party_Id                                               PartyId,
+        public Tariff(Party_Idv3                                               PartyId,
                       Tariff_Id                                              Id,
                       UInt64                                                 VersionId,
 
@@ -290,7 +290,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         public Tariff(CommonAPI?                                             CommonAPI,
-                      Party_Id                                               PartyId,
+                      Party_Idv3                                               PartyId,
                       Tariff_Id                                              Id,
                       UInt64                                                 VersionId,
 
@@ -394,7 +394,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTariffParser">A delegate to parse custom tariff JSON objects.</param>
         public static Tariff Parse(JObject                               JSON,
                                    CountryCode?                          CountryCodeURL       = null,
-                                   Party_Id?                             PartyIdURL           = null,
+                                   Party_Idv3?                             PartyIdURL           = null,
                                    Tariff_Id?                            TariffIdURL          = null,
                                    UInt64?                               VersionIdURL         = null,
                                    CustomJObjectParserDelegate<Tariff>?  CustomTariffParser   = null)
@@ -454,7 +454,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static Boolean TryParse(JObject                               JSON,
                                        [NotNullWhen(true)]  out Tariff?      Tariff,
                                        [NotNullWhen(false)] out String?      ErrorResponse,
-                                       Party_Id?                             PartyIdURL           = null,
+                                       Party_Idv3?                             PartyIdURL           = null,
                                        Tariff_Id?                            TariffIdURL          = null,
                                        UInt64?                               VersionIdURL         = null,
                                        CustomJObjectParserDelegate<Tariff>?  CustomTariffParser   = null)
@@ -475,8 +475,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("party_id",
                                        "party identification",
-                                       Party_Id.TryParse,
-                                       out Party_Id? PartyIdBody,
+                                       Party_Idv3.TryParse,
+                                       out Party_Idv3? PartyIdBody,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

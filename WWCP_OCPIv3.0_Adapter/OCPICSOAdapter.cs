@@ -195,8 +195,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               WWCP.RoamingNetwork                             RoamingNetwork,
 
                               HTTP.CommonAPI                                  CommonAPI,
-                              OCPI.CountryCode                                DefaultCountryCode,
-                              OCPI.Party_Id                                   DefaultPartyId,
 
                               GetTariffIds_Delegate?                          GetTariffIds                        = null,
 
@@ -387,7 +385,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region AddRemoteParty(...)
 
-        public Task<Boolean> AddRemoteParty(OCPI.RemoteParty_Id            Id,
+        public Task<Boolean> AddRemoteParty(RemoteParty_Id                 Id,
                                             IEnumerable<CredentialsRole>   CredentialsRoles,
 
                                             OCPI.AccessToken               AccessToken,
@@ -429,7 +427,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region AddRemoteParty(...)
 
-        public Task<Boolean> AddRemoteParty(OCPI.RemoteParty_Id           Id,
+        public Task<Boolean> AddRemoteParty(RemoteParty_Id                Id,
                                             IEnumerable<CredentialsRole>  CredentialsRoles,
 
                                             OCPI.AccessToken              AccessToken,
@@ -490,21 +488,29 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (lockTaken)
                 {
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     if (IncludeChargingPools is null ||
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
                     {
 
-                        var location = ChargingPool.ToOCPI(CustomChargingStationIdConverter,
-                                                           CustomEVSEUIdConverter,
-                                                           CustomEVSEIdConverter,
-                                                           out warnings);
+                        var location = ChargingPool.ToOCPI(
+                                           CustomChargingStationIdConverter,
+                                           CustomEVSEUIdConverter,
+                                           CustomEVSEIdConverter,
+                                           out warnings
+                                       );
 
                         if (location is not null)
                         {
 
-                            var result = CommonAPI.AddLocation(location);
+                            var result = await CommonAPI.AddLocation(
+                                                   Location:            location,
+                                                   SkipNotifications:   false,
+                                                   EventTrackingId:     EventTrackingId,
+                                                   CurrentUserId:       null,
+                                                   CancellationToken:   CancellationToken
+                                               );
 
                             //ToDo: Handle errors!!!
 
@@ -581,7 +587,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (lockTaken)
                 {
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     if (IncludeChargingPools is null ||
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
@@ -680,7 +686,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (lockTaken)
                 {
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     if (IncludeChargingPools is null ||
                        (IncludeChargingPools is not null && IncludeChargingPools(ChargingPool)))
@@ -791,23 +797,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                     OCPI.AddOrUpdateResult<ChargingStation> result;
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
-                    var partyId      = OCPIv3_0.Party_Id.TryParse(ChargingStation.Id.OperatorId.Suffix);
+                    var partyId      = ChargingStation.Id.OperatorId.ToOCPI();
                     var locationId   = ChargingStation.ChargingPool is not null
-                                           ? OCPI.Location_Id.TryParse(ChargingStation.ChargingPool.Id.Suffix)
+                                           ? Location_Id.TryParse(ChargingStation.ChargingPool.Id.ToString())
                                            : null;
 
-                    if (partyId.    HasValue &&
-                        locationId. HasValue)
+                    if (locationId.HasValue)
                     {
 
                         if (IncludeChargingStations is null ||
                            (IncludeChargingStations is not null && IncludeChargingStations(ChargingStation)))
                         {
 
-                            if (CommonAPI.TryGetLocation(partyId.    Value,
-                                                         locationId. Value,
+                            if (CommonAPI.TryGetLocation(partyId,
+                                                         locationId.Value,
                                                          out var location) &&
                                 location is not null)
                             {
@@ -821,7 +826,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                       out warnings);
 
                                 if (station2 is not null)
-                                    result = await CommonAPI.AddOrUpdateChargingStation(location, station2);
+                                    result = await CommonAPI.AddOrUpdateChargingStation(
+                                                       location.PartyId,
+                                                       location.Id,
+                                                       station2
+                                                   );
+
                                 else
                                     result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Could not convert the given ChargingStation!");
 
@@ -941,7 +951,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                      out warnings);
 
                                 if (station is not null)
-                                    result = await CommonAPI.AddOrUpdateChargingStation(location, station);
+                                    result = await CommonAPI.AddOrUpdateChargingStation(
+                                                       location.PartyId,
+                                                       location.Id,
+                                                       station
+                                                   );
+
                                 else
                                     result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Could not convert the given ChargingStation!");
 
@@ -1049,7 +1064,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                     OCPI.AddOrUpdateResult<ChargingStation> result;
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     var partyId      = ChargingStation.Id.OperatorId.ToOCPI();
                     var locationId   = ChargingStation.ChargingPool is not null
@@ -1078,7 +1093,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                      out warnings);
 
                                 if (station is not null)
-                                    result = await CommonAPI.AddOrUpdateChargingStation(location, station);
+                                    result = await CommonAPI.AddOrUpdateChargingStation(
+                                                       location.PartyId,
+                                                       location.Id,
+                                                       station
+                                                   );
+
                                 else
                                     result = OCPI.AddOrUpdateResult<ChargingStation>.Failed(EventTrackingId, "Could not convert the given ChargingStation!");
 
@@ -1456,7 +1476,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                     OCPI.AddOrUpdateResult<EVSE> result;
 
-                    IEnumerable<Warning> warnings = Array.Empty<Warning>();
+                    IEnumerable<Warning> warnings = [];
 
                     var partyId     = EVSE.Id.OperatorId.   ToOCPI();
                     var locationId  = EVSE.ChargingPool?.Id.ToOCPI();

@@ -334,8 +334,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               IRoamingNetwork                                   RoamingNetwork,
 
                               HTTP.CommonAPI                                    CommonAPI,
-                              OCPI.CountryCode                                  DefaultCountryCode,
-                              OCPI.Party_Id                                     DefaultPartyId,
 
                               EVSEId_2_WWCPEVSEId_Delegate?                     CustomEVSEIdConverter               = null,
                               EVSE_2_WWCPEVSE_Delegate?                         CustomEVSEConverter                 = null,
@@ -432,7 +430,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region AddRemoteParty(...)
 
-        public Task<Boolean> AddRemoteParty(OCPI.RemoteParty_Id            Id,
+        public Task<Boolean> AddRemoteParty(RemoteParty_Id                 Id,
                                             IEnumerable<CredentialsRole>   CredentialsRoles,
 
                                             OCPI.AccessToken               AccessToken,
@@ -474,7 +472,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region AddRemoteParty(...)
 
-        public Task<Boolean> AddRemoteParty(OCPI.RemoteParty_Id           Id,
+        public Task<Boolean> AddRemoteParty(RemoteParty_Id                Id,
                                             IEnumerable<CredentialsRole>  CredentialsRoles,
 
                                             OCPI.AccessToken              AccessToken,

@@ -22,21 +22,20 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
 
-using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Aegir;
+using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
-using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.WWCP;
-using System.Linq;
+using cloud.charging.open.protocols.OCPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
+namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 {
 
     [TestFixture]
-    public class LocationsStationsEVSEsTests : ACSOAdapterTests
+    public class RoamingTests : ARoamingTests
     {
 
         #region Add_ChargingLocationsAndEVSEs_Test1()
@@ -44,19 +43,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
         /// <summary>
         /// Add WWCP charging locations, stations and EVSEs.
         /// Validate that they had been sent to the OCPI module.
-        /// Validate via HTTP that they are present within the OCPI module.
+        /// Validate via HTTP that they are present within the remote OCPI module.
         /// </summary>
         [Test]
         public async Task Add_ChargingLocationsAndEVSEs_Test1()
         {
 
-            if (roamingNetwork  is not null &&
-                graphDefinedCSO is not null &&
-                csoAdapter      is not null)
-            {
+            if (csoRoamingNetwork  is not null &&
+                emp1RoamingNetwork is not null &&
+                emp2RoamingNetwork is not null &&
 
-                csoAdapter.CommonAPI.OnLocationAdded += async (location) => { };
-                csoAdapter.CommonAPI.OnEVSEAdded     += async (evse)     => { };
+                graphDefinedCSO    is not null &&
+                graphDefinedEMP    is not null &&
+                exampleEMP         is not null)
+            {
 
                 #region Add DE*GEF*POOL1
 
@@ -66,7 +66,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #1"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #1"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -95,10 +95,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                              );
 
-                Assert.That(addChargingPoolResult1, Is.Not.Null);
+                ClassicAssert.IsNotNull(addChargingPoolResult1);
 
                 var chargingPool1  = addChargingPoolResult1.ChargingPool;
-                Assert.That(chargingPool1, Is.Not.Null);
+                ClassicAssert.IsNotNull(chargingPool1);
 
                 #endregion
 
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #2"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #2"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -139,10 +139,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                              );
 
-                Assert.That(addChargingPoolResult2, Is.Not.Null);
+                ClassicAssert.IsNotNull(addChargingPoolResult2);
 
                 var chargingPool2  = addChargingPoolResult2.ChargingPool;
-                Assert.That(chargingPool2, Is.Not.Null);
+                ClassicAssert.IsNotNull(chargingPool2);
 
                 #endregion
 
@@ -167,10 +167,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.That(addChargingStationResult1, Is.Not.Null);
+                ClassicAssert.IsNotNull(addChargingStationResult1);
 
                 var chargingStation1  = addChargingStationResult1.ChargingStation;
-                Assert.That(chargingStation1, Is.Not.Null);
+                ClassicAssert.IsNotNull(chargingStation1);
 
                 #endregion
 
@@ -192,10 +192,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.That(addChargingStationResult2, Is.Not.Null);
+                ClassicAssert.IsNotNull(addChargingStationResult2);
 
                 var chargingStation2  = addChargingStationResult2.ChargingStation;
-                Assert.That(chargingStation2, Is.Not.Null);
+                ClassicAssert.IsNotNull(chargingStation2);
 
                 #endregion
 
@@ -217,40 +217,69 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                                 );
 
-                Assert.That(addChargingStationResult3, Is.Not.Null);
+                ClassicAssert.IsNotNull(addChargingStationResult3);
 
                 var chargingStation3  = addChargingStationResult3.ChargingStation;
-                Assert.That(chargingStation3, Is.Not.Null);
+                ClassicAssert.IsNotNull(chargingStation3);
 
                 #endregion
 
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
 
+                // Will call OCPICSOAdapter.AddStaticData(EVSE, ...)!
                 var addEVSE1Result1 = await chargingStation1!.AddEVSE(
 
                                           Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
                                           Name:                 I18NString.Create("Test EVSE #1A1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusType.Available,
-
                                           ChargingConnectors:   [
                                                                     new ChargingConnector(
-                                                                        ChargingPlugTypes.CHAdeMO
+                                                                        Id:             ChargingConnector_Id.Parse(1),
+                                                                        Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        Lockable:       true,
+                                                                        CableAttached:  true,
+                                                                        CableLength:    Meter.ParseM(3.0)
                                                                     )
                                                                 ],
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
 
                                       );
 
-                Assert.That(addEVSE1Result1, Is.Not.Null);
+                Assert.That(addEVSE1Result1,         Is.Not.Null);
+                Assert.That(addEVSE1Result1.Result,  Is.EqualTo(org.GraphDefined.Vanaheimr.Illias.CommandResult.Success));
 
-                var evse1     = addEVSE1Result1.EVSE;
-                Assert.That(evse1, Is.Not.Null);
+                var evse1 = addEVSE1Result1.EVSE;
+                Assert.That(evse1,                   Is.Not.Null);
+
+                if (chargingStation1 is not null && evse1 is not null)
+                {
+
+                    var ocpiLocation1  = cpoAdapter!.CommonAPI.GetLocations().FirstOrDefault(location => location.Name         == chargingPool1!.Name.FirstText());
+                    Assert.That(ocpiLocation1,  Is.Not.Null);
+
+                    var ocpiStation1   = ocpiLocation1!.ChargingPool.         FirstOrDefault(station  => station.Id.ToString() == chargingStation1.Id.ToString());
+                    Assert.That(ocpiStation1,   Is.Not.Null);
+
+                    var ocpiEVSE1      = ocpiStation1!.                       FirstOrDefault(evse     => evse.  UId.ToString() == evse1.           Id.ToString());
+                    Assert.That(ocpiEVSE1,      Is.Not.Null);
+
+                    if (ocpiEVSE1 is not null)
+                    {
+
+                        Assert.That(ocpiEVSE1.EVSEId.ToString(), Is.EqualTo(evse1.Id.ToString()));
+
+                    }
+
+                }
+
+                Assert.That(cpoAdapter!.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool).SelectMany(station => station.EVSEs).Count(), Is.EqualTo(1));
 
                 #endregion
 
@@ -262,24 +291,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #1A2"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusType.Available,
-
                                           ChargingConnectors:   [
                                                                     new ChargingConnector(
-                                                                        ChargingPlugTypes.Type2Outlet
+                                                                        Id:             ChargingConnector_Id.Parse(1),
+                                                                        Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        Lockable:       true,
+                                                                        CableAttached:  true,
+                                                                        CableLength:    Meter.ParseM(3.0)
                                                                     )
                                                                 ],
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
 
                                       );
 
-                Assert.That(addEVSE1Result2, Is.Not.Null);
+                ClassicAssert.IsNotNull(addEVSE1Result2);
 
-                var evse2     = addEVSE1Result2.EVSE;
-                Assert.That(evse2, Is.Not.Null);
+                var evse2 = addEVSE1Result2.EVSE;
+                ClassicAssert.IsNotNull(evse2);
 
                 #endregion
 
@@ -291,24 +324,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #1B1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusType.Available,
-
                                           ChargingConnectors:   [
                                                                     new ChargingConnector(
-                                                                        ChargingPlugTypes.TypeFSchuko
+                                                                        Id:             ChargingConnector_Id.Parse(1),
+                                                                        Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        Lockable:       true,
+                                                                        CableAttached:  true,
+                                                                        CableLength:    Meter.ParseM(3.0)
                                                                     )
                                                                 ],
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
 
                                       );
 
-                Assert.That(addEVSE1Result3, Is.Not.Null);
+                ClassicAssert.IsNotNull(addEVSE1Result3);
 
-                var evse3     = addEVSE1Result3.EVSE;
-                Assert.That(evse3, Is.Not.Null);
+                var evse3 = addEVSE1Result3.EVSE;
+                ClassicAssert.IsNotNull(evse2);
 
                 #endregion
 
@@ -320,47 +357,93 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                           Name:                 I18NString.Create("Test EVSE #2A1"),
                                           Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
 
-                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
-                                          InitialStatus:        EVSEStatusType.Available,
-
                                           ChargingConnectors:   [
                                                                     new ChargingConnector(
-                                                                        ChargingPlugTypes.Type2Connector_CableAttached,
-                                                                        CableAttached: true
+                                                                        Id:             ChargingConnector_Id.Parse(1),
+                                                                        Plug:           ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        Lockable:       true,
+                                                                        CableAttached:  true,
+                                                                        CableLength:    Meter.ParseM(3.0)
                                                                     )
                                                                 ],
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusType.Available,
 
                                           Configurator:         evse => {
                                                                 }
 
                                       );
 
-                Assert.That(addEVSE1Result4, Is.Not.Null);
+                ClassicAssert.IsNotNull(addEVSE1Result4);
 
-                var evse4     = addEVSE1Result4.EVSE;
-                Assert.That(evse4, Is.Not.Null);
-
-                #endregion
-
-
-                #region Validate, that locations had been sent to the OCPI module
-
-                var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
-                Assert.That(allLocations,        Is.Not.Null);
-                Assert.That(allLocations.Length, Is.EqualTo(2));
-
-                #endregion
-
-                #region Validate, that EVSEs had been sent to the OCPI module
-
-                var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
-                Assert.That(allEVSEs,        Is.Not.Null);
-                Assert.That(allEVSEs.Length, Is.EqualTo(4));
+                var evse4 = addEVSE1Result4.EVSE;
+                ClassicAssert.IsNotNull(evse4);
 
                 #endregion
 
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/locations");
+                //ToDo: There seems to be a timing issue!
+                await Task.Delay(500);
+
+
+                #region Validate, that all locations had been sent to the CPO OCPI module
+
+                var allLocationsAtCPO = cpoAdapter.CommonAPI.GetLocations().ToArray();
+                Assert.That(allLocationsAtCPO,                  Is.Not.Null);
+                Assert.That(allLocationsAtCPO.Length,           Is.EqualTo(2));
+
+                #endregion
+
+                #region Validate, that all charging stations had been sent to the CPO OCPI module
+
+                var allChargingStationsAtCPO = cpoAdapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
+                Assert.That(allChargingStationsAtCPO,           Is.Not.Null);
+                Assert.That(allChargingStationsAtCPO.Length,    Is.EqualTo(3));
+
+                #endregion
+
+                #region Validate, that all EVSEs had been sent to the CPO OCPI module
+
+                var allEVSEsAtCPO = cpoAdapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
+                Assert.That(allEVSEsAtCPO,                      Is.Not.Null);
+                Assert.That(allEVSEsAtCPO.Length,               Is.EqualTo(4));
+
+                #endregion
+
+                #region Validate, that both locations have the correct number of Charging Stations and EVSEs
+
+                if (cpoAdapter.CommonAPI.TryGetLocation(Party_Idv3.   Parse("DEGEF"),
+                                                        Location_Id.Parse(chargingPool1!.Id.ToString()),
+                                                        out var location1) &&
+                    location1 is not null)
+                {
+
+                    Assert.That(location1.ChargingPool.Count(),                                       Is.EqualTo(2));
+                    Assert.That(location1.ChargingPool.SelectMany(station => station.EVSEs).Count(),  Is.EqualTo(3));
+
+                }
+                else
+                    Assert.Fail("location1 was not found!");
+
+
+                if (cpoAdapter.CommonAPI.TryGetLocation(Party_Idv3.   Parse("DEGEF"),
+                                                        Location_Id.Parse(chargingPool2!.Id.ToString()),
+                                                        out var location2) &&
+                    location2 is not null)
+                {
+
+                    Assert.That(location2.ChargingPool.Count(),                                       Is.EqualTo(1));
+                    Assert.That(location2.ChargingPool.SelectMany(station => station.EVSEs).Count(),  Is.EqualTo(1));
+
+                }
+                else
+                    Assert.Fail("location1 was not found!");
+
+                #endregion
+
+
+                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0//locations");
 
                 #region Validate via HTTP (OpenData, no authorization)
 
@@ -409,16 +492,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #region Validate via HTTP (with authorization)
 
-                await commonAPI!.AddRemoteParty(
-                          CountryCode:      CountryCode.Parse("DE"),
-                          PartyId:          Party_Id.   Parse("GDF"),
-                          Role:             Roles.EMSP,
-                          BusinessDetails:  new BusinessDetails(
-                                                "GraphDefined EMSP"
-                                            ),
-                          AccessToken:      AccessToken.Parse("1234xyz"),
-                          AccessStatus:     AccessStatus.ALLOWED,
-                          PartyStatus:      PartyStatus.ENABLED
+                await cpoAdapter.CommonAPI.AddRemoteParty(
+                          Id:                RemoteParty_Id.Parse("DE-GDF_EMSP"),
+                          CredentialsRoles:  [
+                                                 new CredentialsRole(
+                                                     PartyId:          Party_Idv3.Parse("DEGDF"),
+                                                     Role:             Roles.EMSP,
+                                                     BusinessDetails:  new BusinessDetails(
+                                                                           "GraphDefined EMSP"
+                                                                       )
+                                                 )
+                                             ],
+                          AccessToken:       AccessToken.Parse("1234xyz"),
+                          AccessStatus:      AccessStatus.ALLOWED,
+                          PartyStatus:       PartyStatus.ENABLED
                       );
 
                 {
@@ -482,9 +569,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
         public async Task Update_ChargingLocationsAndEVSEs_Test1()
         {
 
-            if (roamingNetwork  is not null &&
-                graphDefinedCSO is not null &&
-                csoAdapter      is not null)
+            if (csoRoamingNetwork  is not null &&
+                emp1RoamingNetwork is not null &&
+                emp2RoamingNetwork is not null &&
+
+                graphDefinedCSO    is not null &&
+                graphDefinedEMP    is not null &&
+                exampleEMP         is not null)
             {
 
                 #region Add DE*GEF*POOL1
@@ -495,7 +586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #1"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #1"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -539,7 +630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #2"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #2"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -574,14 +665,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 ClassicAssert.IsNotNull(chargingPool2);
 
                 #endregion
-
-                var allLocations1 = csoAdapter.CommonAPI.GetLocations().OrderBy(location => location.Id).ToArray();
-                var time1_loc1_created = allLocations1.ElementAt(0).Created;
-                var time1_loc2_created = allLocations1.ElementAt(1).Created;
-                var time1_loc1_updated = allLocations1.ElementAt(0).LastUpdated;
-                var time1_loc2_updated = allLocations1.ElementAt(1).LastUpdated;
-
-                await Task.Delay(300);
 
 
                 // OCPI does not have stations!
@@ -661,14 +744,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #endregion
 
-                var allLocations2 = csoAdapter.CommonAPI.GetLocations().OrderBy(location => location.Id).ToArray();
-                var time2_loc1_created = allLocations2.ElementAt(0).Created;
-                var time2_loc2_created = allLocations2.ElementAt(1).Created;
-                var time2_loc1_updated = allLocations2.ElementAt(0).LastUpdated;
-                var time2_loc2_updated = allLocations2.ElementAt(1).LastUpdated;
-
-                await Task.Delay(300);
-
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
 
@@ -692,10 +767,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.That(addEVSE1Result1, Is.Not.Null);
+                ClassicAssert.IsNotNull(addEVSE1Result1);
 
                 var evse1     = addEVSE1Result1.EVSE;
-                Assert.That(evse1, Is.Not.Null);
+                ClassicAssert.IsNotNull(evse1);
 
                 #endregion
 
@@ -721,10 +796,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.That(addEVSE1Result2, Is.Not.Null);
+                ClassicAssert.IsNotNull(addEVSE1Result2);
 
                 var evse2     = addEVSE1Result2.EVSE;
-                Assert.That(evse2, Is.Not.Null);
+                ClassicAssert.IsNotNull(evse2);
 
                 #endregion
 
@@ -750,10 +825,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.That(addEVSE1Result3, Is.Not.Null);
+                ClassicAssert.IsNotNull(addEVSE1Result3);
 
                 var evse3     = addEVSE1Result3.EVSE;
-                Assert.That(evse3, Is.Not.Null);
+                ClassicAssert.IsNotNull(evse2);
 
                 #endregion
 
@@ -780,87 +855,70 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                       );
 
-                Assert.That(addEVSE1Result4, Is.Not.Null);
+                ClassicAssert.IsNotNull(addEVSE1Result4);
 
                 var evse4     = addEVSE1Result4.EVSE;
-                Assert.That(evse4, Is.Not.Null);
+                ClassicAssert.IsNotNull(evse4);
 
                 #endregion
 
-                var allLocations3 = csoAdapter.CommonAPI.GetLocations().OrderBy(location => location.Id).ToArray();
-                var time3_loc1_created = allLocations3.ElementAt(0).Created;
-                var time3_loc2_created = allLocations3.ElementAt(1).Created;
-                var time3_loc1_updated = allLocations3.ElementAt(0).LastUpdated;
-                var time3_loc2_updated = allLocations3.ElementAt(1).LastUpdated;
 
-                await Task.Delay(300);
 
+                #region Validate, that locations had been sent to the OCPI module
+
+                var allLocations  = cpoCommonAPI.GetLocations().ToArray();
+                ClassicAssert.IsNotNull(allLocations);
+                ClassicAssert.AreEqual (2, allLocations.Length);
+
+                #endregion
+
+                #region Validate, that charging stations had been sent to the OCPI module
+
+                var allChargingStations = cpoCommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
+                ClassicAssert.IsNotNull(allChargingStations);
+                ClassicAssert.AreEqual(3, allChargingStations.Length);
+
+                #endregion
 
                 #region Validate, that EVSEs had been sent to the OCPI module
 
-                var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
+                var allEVSEs      = cpoCommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
                 ClassicAssert.IsNotNull(allEVSEs);
                 ClassicAssert.AreEqual (4, allEVSEs.Length);
 
                 #endregion
 
-                #region Validate, that both locations have EVSEs
+                #region Validate, that both locations have Stations and EVSEs
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.ToString()), out var location1) && location1 is not null)
+                if (cpoCommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
+                                                Location_Id.Parse(chargingPool1.Id.ToString()),
+                                                out var location1) &&
+                    location1 is not null)
                 {
-                    Assert.That(location1.EVSEs.Count(), Is.EqualTo(3));
+
+                    ClassicAssert.AreEqual(2, location1.ChargingPool.Count());
+                    ClassicAssert.AreEqual(3, location1.ChargingPool.SelectMany(station => station.EVSEs).Count());
+
                 }
                 else
                     Assert.Fail("location1 was not found!");
 
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool2!.Id.ToString()), out var location2) && location2 is not null)
+                if (cpoCommonAPI.TryGetLocation(chargingPool2.Operator.Id.ToOCPI(),
+                                                Location_Id.Parse(chargingPool2.Id.ToString()),
+                                                out var location2) &&
+                    location2 is not null)
                 {
-                    Assert.That(location2.EVSEs.Count(), Is.EqualTo(1));
+
+                    ClassicAssert.AreEqual(1, location2.ChargingPool.Count());
+                    ClassicAssert.AreEqual(1, location2.ChargingPool.SelectMany(station => station.EVSEs).Count());
+
                 }
                 else
                     Assert.Fail("location2 was not found!");
 
                 #endregion
 
-
-                var x1_1c = time1_loc1_created.ToIso8601();
-                var x2_1c = time2_loc1_created.ToIso8601();
-                var x3_1c = time3_loc1_created.ToIso8601();
-
-                var x1_2c = time1_loc2_created.ToIso8601();
-                var x2_2c = time2_loc2_created.ToIso8601();
-                var x3_2c = time3_loc2_created.ToIso8601();
-
-                var x1_1u = time1_loc1_updated.ToIso8601();
-                var x2_1u = time2_loc1_updated.ToIso8601();
-                var x3_1u = time3_loc1_updated.ToIso8601();
-
-                var x1_2u = time1_loc2_updated.ToIso8601();
-                var x2_2u = time2_loc2_updated.ToIso8601();
-                var x3_2u = time3_loc2_updated.ToIso8601();
-
-                // Location1 Created time stamps do not change!
-                Assert.That(time1_loc1_created, Is.EqualTo    (time2_loc1_created));
-                Assert.That(time1_loc1_created, Is.EqualTo    (time3_loc1_created));
-
-                // Location1 LastUpdate time stamps are in correct order!
-                Assert.That(time1_loc1_updated, Is.EqualTo    (time2_loc1_updated));
-                Assert.That(time3_loc1_updated, Is.GreaterThan(time1_loc1_updated));
-
-                // Location2 Created time stamps do not change!
-                Assert.That(time1_loc2_created, Is.EqualTo    (time2_loc2_created));
-                Assert.That(time1_loc2_created, Is.EqualTo    (time3_loc2_created));
-
-                // Location2 LastUpdate time stamps are in correct order!
-                Assert.That(time1_loc2_updated, Is.EqualTo    (time2_loc2_updated));
-                Assert.That(time3_loc2_updated, Is.GreaterThan(time1_loc2_updated));
-
-                // Location1 is always older than Location2
-                Assert.That(time1_loc2_created, Is.GreaterThan(time1_loc1_created));
-                Assert.That(time1_loc2_updated, Is.GreaterThan(time1_loc1_updated));
-                Assert.That(time2_loc2_updated, Is.GreaterThan(time2_loc1_updated));
-                Assert.That(time3_loc2_updated, Is.GreaterThan(time3_loc1_updated));
 
 
                 #region Update Add DE*GEF*POOL2, DE*GEF*STATION*2*A, DE*GEF*POOL2
@@ -879,7 +937,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                      oldValue,
                                                      dataSource) => {
 
-                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>((chargingPool as IChargingPool)!.Id, propertyName, oldValue, newValue));
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>((chargingPool as IChargingPool)!.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -892,7 +950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  oldValue,
                                                  dataSource) => {
 
-                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, oldValue, newValue));
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -905,20 +963,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                               oldValue,
                                                               dataSource) => {
 
-                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, oldValue, newValue));
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
 
-                roamingNetwork.OnChargingPoolDataChanged  += (timestamp,
-                                                              eventTrackingId,
-                                                              chargingPool,
-                                                              propertyName,
-                                                              newValue,
-                                                              oldValue,
-                                                              dataSource) => {
+                csoRoamingNetwork.OnChargingPoolDataChanged  += (timestamp,
+                                                                 eventTrackingId,
+                                                                 chargingPool,
+                                                                 propertyName,
+                                                                 newValue,
+                                                                 oldValue,
+                                                                 dataSource) => {
 
-                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, oldValue, newValue));
+                    updatedPoolProperties.Add(new PropertyUpdateInfo<ChargingPool_Id>(chargingPool.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -935,7 +993,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                         oldValue,
                                                         dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>((chargingStation as IChargingStation)!.Id, propertyName, oldValue, newValue));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>((chargingStation as IChargingStation)!.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -948,7 +1006,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                     oldValue,
                                                     dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, oldValue, newValue));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -961,20 +1019,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                                  oldValue,
                                                                  dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, oldValue, newValue));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
 
-                roamingNetwork.OnChargingStationDataChanged += (timestamp,
-                                                                eventTrackingId,
-                                                                chargingStation,
-                                                                propertyName,
-                                                                newValue,
-                                                                oldValue,
-                                                                dataSource) => {
+                csoRoamingNetwork.OnChargingStationDataChanged += (timestamp,
+                                                                   eventTrackingId,
+                                                                   chargingStation,
+                                                                   propertyName,
+                                                                   newValue,
+                                                                   oldValue,
+                                                                   dataSource) => {
 
-                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, oldValue, newValue));
+                    updatedStationProperties.Add(new PropertyUpdateInfo<WWCP.ChargingStation_Id>(chargingStation.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -991,7 +1049,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                              oldValue,
                                              dataSource) => {
 
-                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>((evse as IEVSE)!.Id, propertyName, oldValue, newValue));
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>((evse as IEVSE)!.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -1004,7 +1062,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                          oldValue,
                                          dataSource) => {
 
-                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, oldValue, newValue));
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
@@ -1017,40 +1075,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                       oldValue,
                                                       dataSource) => {
 
-                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, oldValue, newValue));
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
 
-                roamingNetwork.OnEVSEDataChanged += (timestamp,
-                                                     eventTrackingId,
-                                                     evse,
-                                                     propertyName,
-                                                     newValue,
-                                                     oldValue,
-                                                     dataSource) => {
+                csoRoamingNetwork.OnEVSEDataChanged += (timestamp,
+                                                        eventTrackingId,
+                                                        evse,
+                                                        propertyName,
+                                                        newValue,
+                                                        oldValue,
+                                                        dataSource) => {
 
-                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, oldValue, newValue));
+                    updatedEVSEProperties.Add(new PropertyUpdateInfo<WWCP.EVSE_Id>(evse.Id, propertyName, newValue, oldValue, dataSource));
                     return Task.CompletedTask;
 
                 };
 
                 #endregion
 
-                var aaa1 = new List<String>();
-                var aaa2 = new List<String>();
-
-                csoAdapter.CommonAPI.OnLocationChanged += async (location) => {
-
-                    aaa1.Add(location.ToJSON().ToString());
-
-                };
-
-                csoAdapter.CommonAPI.OnEVSEChanged     += async (evse)     => {
-
-                    aaa2.Add(evse.ToJSON().ToString());
-
-                };
+                cpoCommonAPI.OnLocationChanged += async (location) => { };
+                cpoCommonAPI.OnEVSEChanged     += async (evse)     => { };
 
 
                 chargingPool1!.Name.       Set(Languages.en, "Test pool #1 (updated)");
@@ -1060,42 +1106,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 ClassicAssert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
                 ClassicAssert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
 
-                csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.ToString()), out var location);
+                cpoCommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
+                                            Location_Id.Parse(chargingPool1!.Id.Suffix),
+                                            out var location);
+
                 ClassicAssert.AreEqual("Test pool #1 (updated)",                             location!.Name);
                 //ClassicAssert.AreEqual("GraphDefined Charging Pool für Tests #1",            location!.Name); // Not mapped to OCPI!
 
 
-                //var chargingPool1Builder = chargingPool
-
-
-                await graphDefinedCSO.UpdateChargingPool(
-                          chargingPool1.Id,
-                          pool => pool.Address = new Address(
-
-                                                     Street:             "Amselfeld",
-                                                     PostalCode:         "07749",
-                                                     City:               I18NString.Create(Languages.de, "Jena"),
-                                                     Country:            Country.Germany,
-
-                                                     HouseNumber:        "42",
-                                                     FloorLevel:         null,
-                                                     Region:             null,
-                                                     PostalCodeSub:      null,
-                                                     TimeZone:           null,
-                                                     OfficialLanguages:  null,
-                                                     Comment:            null,
-
-                                                     CustomData:         null,
-                                                     InternalData:       null
-
-                                                 )
-                      );
-
-
-                ClassicAssert.AreEqual(12, updatedPoolProperties.Count);
-
-
                 evse1.Name.Set(Languages.en, "Test EVSE #1A1 (updated)");
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
                 //var updateChargingPoolResult2 = await graphDefinedCSO.UpdateChargingPool()
@@ -1130,111 +1162,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
 
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/locations");
-
-                #region Validate via HTTP (OpenData, no authorization)
-
-                {
-
-                    var httpResponse = await new HTTPSClient(remoteURL).
-                                                  Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                         remoteURL.Path,
-                                                                                         RequestBuilder: requestBuilder => {
-                                                                                             requestBuilder.Connection = ConnectionType.Close;
-                                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestBuilder.Set("X-Request-ID",      "123");
-                                                                                             requestBuilder.Set("X-Correlation-ID",  "123");
-                                                                                         })).
-                                                  ConfigureAwait(false);
-
-                    ClassicAssert.IsNotNull(httpResponse);
-                    ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
-
-                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody?.ToUTF8String() ?? "");
-
-                    ClassicAssert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    ClassicAssert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    ClassicAssert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
-
-                    var jsonLocations = ocpiResponse!["data"] as JArray;
-                    ClassicAssert.IsNotNull(jsonLocations);
-                    ClassicAssert.AreEqual(2, jsonLocations!.Count);
-
-                    var jsonLocation1 = jsonLocations[0] as JObject;
-                    var jsonLocation2 = jsonLocations[1] as JObject;
-                    ClassicAssert.IsNotNull(jsonLocation1);
-                    ClassicAssert.IsNotNull(jsonLocation2);
-
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    ClassicAssert.IsNotNull(jsonEVSEs1);
-                    ClassicAssert.IsNotNull(jsonEVSEs2);
-
-                    ClassicAssert.AreEqual(1, jsonEVSEs1!.Count);
-                    ClassicAssert.AreEqual(3, jsonEVSEs2!.Count);
-
-                }
-
-                #endregion
-
-                #region Validate via HTTP (with authorization)
-
-                await commonAPI!.AddRemoteParty(
-                          CountryCode:      CountryCode.Parse("DE"),
-                          PartyId:          Party_Id.Parse("GDF"),
-                          Role:             Roles.EMSP,
-                          BusinessDetails:  new BusinessDetails(
-                                                "GraphDefined EMSP"
-                                            ),
-                          AccessToken:      AccessToken.Parse("1234xyz"),
-                          AccessStatus:     AccessStatus.ALLOWED,
-                          PartyStatus:      PartyStatus.ENABLED
-                      );
-
-                {
-
-                    var httpResponse = await new HTTPSClient(remoteURL).
-                                                  Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                         remoteURL.Path,
-                                                                                         RequestBuilder: requestBuilder => {
-                                                                                             requestBuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
-                                                                                             requestBuilder.Connection     = ConnectionType.Close;
-                                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestBuilder.Set("X-Request-ID",      "123");
-                                                                                             requestBuilder.Set("X-Correlation-ID",  "123");
-                                                                                         })).
-                                                  ConfigureAwait(false);
-
-                    ClassicAssert.IsNotNull(httpResponse);
-                    ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
-
-                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
-
-                    ClassicAssert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    ClassicAssert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    ClassicAssert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
-
-                    var jsonLocations = ocpiResponse!["data"] as JArray;
-                    ClassicAssert.IsNotNull(jsonLocations);
-                    ClassicAssert.AreEqual(2, jsonLocations!.Count);
-
-                    var jsonLocation1 = jsonLocations[0] as JObject;
-                    var jsonLocation2 = jsonLocations[1] as JObject;
-                    ClassicAssert.IsNotNull(jsonLocation1);
-                    ClassicAssert.IsNotNull(jsonLocation2);
-
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    ClassicAssert.IsNotNull(jsonEVSEs1);
-                    ClassicAssert.IsNotNull(jsonEVSEs2);
-
-                    ClassicAssert.AreEqual(1, jsonEVSEs1!.Count);
-                    ClassicAssert.AreEqual(3, jsonEVSEs2!.Count);
-
-                }
-
-                #endregion
-
             }
 
         }
@@ -1252,9 +1179,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
         public async Task Update_EVSEStatus_Test1()
         {
 
-            if (roamingNetwork  is not null &&
-                graphDefinedCSO is not null &&
-                csoAdapter      is not null)
+            if (csoRoamingNetwork  is not null &&
+                emp1RoamingNetwork is not null &&
+                emp2RoamingNetwork is not null &&
+
+                graphDefinedCSO    is not null &&
+                graphDefinedEMP    is not null &&
+                exampleEMP         is not null)
             {
 
                 #region Add DE*GEF*POOL1
@@ -1265,7 +1196,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #1"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #1"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -1309,7 +1240,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #2"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #2"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -1435,6 +1366,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
+                                          ChargingConnectors:   [
+                                                                    new ChargingConnector(
+                                                                        ChargingPlugTypes.CHAdeMO
+                                                                    )
+                                                                ],
+
                                           Configurator:         evse => {
                                                                 }
 
@@ -1457,6 +1394,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
+
+                                          ChargingConnectors:   [
+                                                                    new ChargingConnector(
+                                                                        ChargingPlugTypes.Type2Outlet
+                                                                    )
+                                                                ],
 
                                           Configurator:         evse => {
                                                                 }
@@ -1481,6 +1424,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
+                                          ChargingConnectors:   [
+                                                                    new ChargingConnector(
+                                                                        ChargingPlugTypes.TypeFSchuko
+                                                                    )
+                                                                ],
+
                                           Configurator:         evse => {
                                                                 }
 
@@ -1504,6 +1453,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                           InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
                                           InitialStatus:        EVSEStatusType.Available,
 
+                                          ChargingConnectors:   [
+                                                                    new ChargingConnector(
+                                                                        ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        CableAttached: true
+                                                                    )
+                                                                ],
+
                                           Configurator:         evse => {
                                                                 }
 
@@ -1523,15 +1479,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #region Validate, that locations had been sent to the OCPI module
 
-                var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
+                var allLocations  = cpoCommonAPI.GetLocations().ToArray();
                 ClassicAssert.IsNotNull(allLocations);
                 ClassicAssert.AreEqual (2, allLocations.Length);
 
                 #endregion
 
+                #region Validate, that charging stations had been sent to the OCPI module
+
+                var allChargingStations = cpoCommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
+                ClassicAssert.IsNotNull(allChargingStations);
+                ClassicAssert.AreEqual(3, allChargingStations.Length);
+
+                #endregion
+
                 #region Validate, that EVSEs had been sent to the OCPI module
 
-                var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
+                var allEVSEs      = cpoCommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
                 ClassicAssert.IsNotNull(allEVSEs);
                 ClassicAssert.AreEqual (4, allEVSEs.Length);
 
@@ -1539,20 +1503,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #region Validate, that both locations have EVSEs
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1.Id.Suffix), out var location1) && location1 is not null)
+                if (cpoCommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
+                                                Location_Id.Parse(chargingPool1.Id.Suffix),
+                                                out var location1) &&
+                    location1 is not null)
                 {
 
-                    ClassicAssert.AreEqual(3, location1.EVSEs.Count());
+                    ClassicAssert.AreEqual(3, location1.ChargingPool.SelectMany(station => station.EVSEs).Count());
 
                 }
                 else
                     Assert.Fail("location1 was not found!");
 
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool2.Id.Suffix), out var location2) && location2 is not null)
+                if (cpoCommonAPI.TryGetLocation(chargingPool2.Operator.Id.ToOCPI(),
+                                                        Location_Id.Parse(chargingPool2.Id.Suffix),
+                                                        out var location2) &&
+                    location2 is not null)
                 {
 
-                    ClassicAssert.AreEqual(1, location2.EVSEs.Count());
+                    ClassicAssert.AreEqual(1, location2.ChargingPool.SelectMany(station => station.EVSEs).Count());
 
                 }
                 else
@@ -1590,12 +1560,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 };
 
-                roamingNetwork.OnEVSEStatusChanged += (timestamp,
-                                                       eventTrackingId,
-                                                       evse,
-                                                       newEVSEStatus,
-                                                       oldEVSEStatus,
-                                                       dataSource) => {
+                csoRoamingNetwork.OnEVSEStatusChanged += (timestamp,
+                                                          eventTrackingId,
+                                                          evse,
+                                                          newEVSEStatus,
+                                                          oldEVSEStatus,
+                                                          dataSource) => {
 
                     updatedEVSEStatus.Add(new EVSEStatusUpdate(evse.Id, newEVSEStatus, oldEVSEStatus, dataSource));
                     return Task.CompletedTask;
@@ -1608,17 +1578,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 var updatedOCPIEVSEStatus = new List<StatusType>();
 
-                csoAdapter.CommonAPI.OnEVSEChanged += (evse) => {
+                cpoCommonAPI.OnEVSEChanged += (evse) => {
 
                     updatedOCPIEVSEStatus.Add(evse.Status);
                     return Task.CompletedTask;
 
                 };
 
-                csoAdapter.CommonAPI.OnEVSEStatusChanged += (timestamp,
+                cpoCommonAPI.OnEVSEStatusChanged += (timestamp,
                                                              evse,
-                                                             newEVSEStatus,
-                                                             oldEVSEStatus) => {
+                                                             oldEVSEStatus,
+                                                             newEVSEStatus) => {
 
                     updatedOCPIEVSEStatus.Add(newEVSEStatus);
                     return Task.CompletedTask;
@@ -1631,8 +1601,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 {
                     if (evse1_UId.HasValue &&
-                        csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location) && location is not null &&
-                        location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
+                        cpoCommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
+                                                    Location_Id.Parse(chargingPool1!.Id.Suffix),
+                                                    out var location) &&
+                        location is not null &&
+                        location.TryGetChargingStation(chargingStation1.Id.ToOCPI(), out var s1) &&
+                        s1.      TryGetEVSE           (evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
                     {
                         ClassicAssert.AreEqual(StatusType.AVAILABLE, ocpiEVSE.Status);
                     }
@@ -1647,12 +1621,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 ClassicAssert.AreEqual(3, updatedEVSEStatus.    Count);
                 ClassicAssert.AreEqual(2, updatedOCPIEVSEStatus.Count);
 
-                ClassicAssert.AreEqual(EVSEStatusType.Charging,  graphDefinedCSO.GetEVSEById(evse1!.Id).Status.Value);
+                ClassicAssert.AreEqual(EVSEStatusType.Charging,  graphDefinedCSO.GetEVSEById(evse1!.Id)?.Status.Value);
 
                 {
                     if (evse1_UId.HasValue &&
-                        csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location) && location is not null &&
-                        location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
+                        cpoCommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
+                                                    Location_Id.Parse(chargingPool1!.Id.Suffix),
+                                                    out var location) &&
+                        location is not null &&
+                        location.TryGetChargingStation(chargingStation1.Id.ToOCPI(), out var s1) &&
+                        s1.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
                     {
                         ClassicAssert.AreEqual(StatusType.CHARGING, ocpiEVSE.Status);
                     }
@@ -1661,127 +1639,466 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #endregion
 
 
+            }
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/locations");
+        }
 
-                #region Validate via HTTP (OpenData, no authorization)
+        #endregion
 
-                {
 
-                    var httpResponse = await new HTTPSClient(remoteURL).
-                                                  Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                         remoteURL.Path,
-                                                                                         RequestBuilder: requestBuilder => {
-                                                                                             requestBuilder.Connection = ConnectionType.Close;
-                                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestBuilder.Set("X-Request-ID",      "123");
-                                                                                             requestBuilder.Set("X-Correlation-ID",  "123");
-                                                                                         })).
-                                                  ConfigureAwait(false);
+        #region AuthStart_Test1()
 
-                    ClassicAssert.IsNotNull(httpResponse);
-                    ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
+        /// <summary>
+        /// Add WWCP charging locations, stations and EVSEs and update the EVSE status.
+        /// Validate that they had been sent to the OCPI module.
+        /// Validate via HTTP that they are present within the OCPI module.
+        /// </summary>
+        [Test]
+        public async Task AuthStart_Test1()
+        {
 
-                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
+            if (csoRoamingNetwork  is not null &&
+                emp1RoamingNetwork is not null &&
+                emp2RoamingNetwork is not null &&
 
-                    ClassicAssert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    ClassicAssert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    ClassicAssert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
+                cpoCPOAPI          is not null &&
+                emsp1EMSPAPI       is not null &&
+                emsp2EMSPAPI       is not null &&
 
-                    var jsonLocations = ocpiResponse!["data"] as JArray;
-                    ClassicAssert.IsNotNull(jsonLocations);
-                    ClassicAssert.AreEqual(2, jsonLocations!.Count);
+                graphDefinedCSO    is not null)
+                //graphDefinedEMP    is not null &&
+                //exampleEMP         is not null)
+            {
 
-                    var jsonLocation1 = jsonLocations[0] as JObject;
-                    var jsonLocation2 = jsonLocations[1] as JObject;
-                    ClassicAssert.IsNotNull(jsonLocation1);
-                    ClassicAssert.IsNotNull(jsonLocation2);
+                #region Add DE*GEF*POOL1
 
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    ClassicAssert.IsNotNull(jsonEVSEs1);
-                    ClassicAssert.IsNotNull(jsonEVSEs2);
+                var addChargingPoolResult1 = await graphDefinedCSO.AddChargingPool(
 
-                    ClassicAssert.AreEqual(3, jsonEVSEs1!.Count);
-                    ClassicAssert.AreEqual(1, jsonEVSEs2!.Count);
+                                                 Id:                   ChargingPool_Id.Parse("DE*GEF*POOL1"),
+                                                 Name:                 I18NString.Create("Test pool #1"),
+                                                 Description:          I18NString.Create("GraphDefined charging pool for tests #1"),
 
-                    foreach (var jsonEVSE in jsonEVSEs1!)
-                    {
-                        if (jsonEVSE is JObject jobjectEVSE && jobjectEVSE["evse_id"]?.Value<String>() == evse1_UId!.ToString())
-                        {
-                            ClassicAssert.AreEqual("CHARGING", jobjectEVSE["status"]?.Value<String>());
-                        }
-                    }
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
-                }
+                                                                           Street:             "Biberweg",
+                                                                           PostalCode:         "07749",
+                                                                           City:               I18NString.Create(Languages.de, "Jena"),
+                                                                           Country:            Country.Germany,
+
+                                                                           HouseNumber:        "18",
+                                                                           FloorLevel:         null,
+                                                                           Region:             null,
+                                                                           PostalCodeSub:      null,
+                                                                           TimeZone:           null,
+                                                                           OfficialLanguages:  null,
+                                                                           Comment:            null,
+
+                                                                           CustomData:         null,
+                                                                           InternalData:       null
+
+                                                                       ),
+                                                 GeoLocation:          GeoCoordinate.Parse(50.93, 11.63),
+
+                                                 InitialAdminStatus:   ChargingPoolAdminStatusTypes.Operational,
+                                                 InitialStatus:        ChargingPoolStatusTypes.Available,
+
+                                                 Configurator:         chargingPool => {
+                                                                       }
+
+                                             );
+
+                ClassicAssert.IsNotNull(addChargingPoolResult1);
+
+                var chargingPool1  = addChargingPoolResult1.ChargingPool;
+                ClassicAssert.IsNotNull(chargingPool1);
+
+                #endregion
+
+                #region Add DE*GEF*POOL2
+
+                var addChargingPoolResult2 = await graphDefinedCSO.AddChargingPool(
+
+                                                 Id:                   ChargingPool_Id.Parse("DE*GEF*POOL2"),
+                                                 Name:                 I18NString.Create("Test pool #2"),
+                                                 Description:          I18NString.Create("GraphDefined charging pool for tests #2"),
+
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
+
+                                                                           Street:             "Biberweg",
+                                                                           PostalCode:         "07749",
+                                                                           City:               I18NString.Create(Languages.de, "Jena"),
+                                                                           Country:            Country.Germany,
+
+                                                                           HouseNumber:        "18",
+                                                                           FloorLevel:         null,
+                                                                           Region:             null,
+                                                                           PostalCodeSub:      null,
+                                                                           TimeZone:           null,
+                                                                           OfficialLanguages:  null,
+                                                                           Comment:            null,
+
+                                                                           CustomData:         null,
+                                                                           InternalData:       null
+
+                                                                       ),
+                                                 GeoLocation:          GeoCoordinate.Parse(50.93, 11.63),
+
+                                                 InitialAdminStatus:   ChargingPoolAdminStatusTypes.Operational,
+                                                 InitialStatus:        ChargingPoolStatusTypes.Available,
+
+                                                 Configurator:         chargingPool => {
+                                                                       }
+
+                                             );
+
+                ClassicAssert.IsNotNull(addChargingPoolResult2);
+
+                var chargingPool2  = addChargingPoolResult2.ChargingPool;
+                ClassicAssert.IsNotNull(chargingPool2);
 
                 #endregion
 
-                #region Validate via HTTP (with authorization)
 
-                await commonAPI!.AddRemoteParty(
-                          CountryCode:      CountryCode.Parse("DE"),
-                          PartyId:          Party_Id.Parse("GDF"),
-                          Role:             Roles.EMSP,
-                          BusinessDetails:  new BusinessDetails(
-                                                "GraphDefined EMSP"
-                                            ),
-                          AccessToken:      AccessToken.Parse("1234xyz"),
-                          AccessStatus:     AccessStatus.ALLOWED,
-                          PartyStatus:      PartyStatus.ENABLED
-                      );
+                // OCPI does not have stations!
 
-                {
+                #region Add DE*GEF*STATION*1*A
 
-                    var httpResponse = await new HTTPSClient(remoteURL).
-                                                  Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                         remoteURL.Path,
-                                                                                         RequestBuilder: requestBuilder => {
-                                                                                             requestBuilder.Authorization  = HTTPTokenAuthentication.Parse("1234xyz");
-                                                                                             requestBuilder.Connection     = ConnectionType.Close;
-                                                                                             requestBuilder.Accept.Add(HTTPContentType.Application.JSON_UTF8);
-                                                                                             requestBuilder.Set("X-Request-ID",      "123");
-                                                                                             requestBuilder.Set("X-Correlation-ID",  "123");
-                                                                                         })).
-                                                  ConfigureAwait(false);
+                var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-                    ClassicAssert.IsNotNull(httpResponse);
-                    ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                    Name:                 I18NString.Create("Test station #1A"),
+                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
-                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
+                                                    GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                    ClassicAssert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
-                    ClassicAssert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
-                    ClassicAssert.IsTrue   (Timestamp.Now -  httpResponse.Timestamp < TimeSpan.FromSeconds(10));
+                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialStatus:        ChargingStationStatusTypes.Available,
 
-                    var jsonLocations = ocpiResponse!["data"] as JArray;
-                    ClassicAssert.IsNotNull(jsonLocations);
-                    ClassicAssert.AreEqual(2, jsonLocations!.Count);
+                                                    Configurator:         chargingStation => {
+                                                                          }
 
-                    var jsonLocation1 = jsonLocations[0] as JObject;
-                    var jsonLocation2 = jsonLocations[1] as JObject;
-                    ClassicAssert.IsNotNull(jsonLocation1);
-                    ClassicAssert.IsNotNull(jsonLocation2);
+                                                );
 
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    ClassicAssert.IsNotNull(jsonEVSEs1);
-                    ClassicAssert.IsNotNull(jsonEVSEs2);
+                ClassicAssert.IsNotNull(addChargingStationResult1);
 
-                    ClassicAssert.AreEqual(3, jsonEVSEs1!.Count);
-                    ClassicAssert.AreEqual(1, jsonEVSEs2!.Count);
-
-                    foreach (var jsonEVSE in jsonEVSEs1!)
-                    {
-                        if (jsonEVSE is JObject jobjectEVSE && jobjectEVSE["evse_id"]?.Value<String>() == evse1_UId!.ToString())
-                        {
-                            ClassicAssert.AreEqual("CHARGING", jobjectEVSE["status"]?.Value<String>());
-                        }
-                    }
-
-                }
+                var chargingStation1  = addChargingStationResult1.ChargingStation;
+                ClassicAssert.IsNotNull(chargingStation1);
 
                 #endregion
+
+                #region Add DE*GEF*STATION*1*B
+
+                var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
+
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
+                                                    Name:                 I18NString.Create("Test station #1B"),
+                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1B"),
+
+                                                    GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
+
+                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialStatus:        ChargingStationStatusTypes.Available,
+
+                                                    Configurator:         chargingStation => {
+                                                                          }
+
+                                                );
+
+                ClassicAssert.IsNotNull(addChargingStationResult2);
+
+                var chargingStation2  = addChargingStationResult2.ChargingStation;
+                ClassicAssert.IsNotNull(chargingStation2);
+
+                #endregion
+
+                #region Add DE*GEF*STATION*2*A
+
+                var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
+
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
+                                                    Name:                 I18NString.Create("Test station #2A"),
+                                                    Description:          I18NString.Create("GraphDefined charging station for tests #2A"),
+
+                                                    GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
+
+                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialStatus:        ChargingStationStatusTypes.Available,
+
+                                                    Configurator:         chargingStation => {
+                                                                          }
+
+                                                );
+
+                ClassicAssert.IsNotNull(addChargingStationResult3);
+
+                var chargingStation3  = addChargingStationResult3.ChargingStation;
+                ClassicAssert.IsNotNull(chargingStation3);
+
+                #endregion
+
+
+                #region Add EVSE DE*GEF*EVSE*1*A*1
+
+                var addEVSE1Result1 = await chargingStation1!.AddEVSE(
+
+                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*1"),
+                                          Name:                 I18NString.Create("Test EVSE #1A1"),
+                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A1"),
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusType.Available,
+
+                                          ChargingConnectors:   [
+                                                                    new ChargingConnector(
+                                                                        ChargingPlugTypes.CHAdeMO
+                                                                    )
+                                                                ],
+
+                                          Configurator:         evse => {
+                                                                }
+
+                                      );
+
+                ClassicAssert.IsNotNull(addEVSE1Result1);
+
+                var evse1     = addEVSE1Result1.EVSE;
+                ClassicAssert.IsNotNull(evse1);
+
+                #endregion
+
+                #region Add EVSE DE*GEF*EVSE*1*A*2
+
+                var addEVSE1Result2 = await chargingStation1!.AddEVSE(
+
+                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*A*2"),
+                                          Name:                 I18NString.Create("Test EVSE #1A2"),
+                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1A2"),
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusType.Available,
+
+                                          ChargingConnectors:   [
+                                                                    new ChargingConnector(
+                                                                        ChargingPlugTypes.Type2Outlet
+                                                                    )
+                                                                ],
+
+                                          Configurator:         evse => {
+                                                                }
+
+                                      );
+
+                ClassicAssert.IsNotNull(addEVSE1Result2);
+
+                var evse2     = addEVSE1Result2.EVSE;
+                ClassicAssert.IsNotNull(evse2);
+
+                #endregion
+
+                #region Add EVSE DE*GEF*EVSE*1*B*1
+
+                var addEVSE1Result3 = await chargingStation2!.AddEVSE(
+
+                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*1*B*1"),
+                                          Name:                 I18NString.Create("Test EVSE #1B1"),
+                                          Description:          I18NString.Create("GraphDefined EVSE for tests #1B1"),
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusType.Available,
+
+                                          ChargingConnectors:   [
+                                                                    new ChargingConnector(
+                                                                        ChargingPlugTypes.TypeFSchuko
+                                                                    )
+                                                                ],
+
+                                          Configurator:         evse => {
+                                                                }
+
+                                      );
+
+                ClassicAssert.IsNotNull(addEVSE1Result3);
+
+                var evse3     = addEVSE1Result3.EVSE;
+                ClassicAssert.IsNotNull(evse2);
+
+                #endregion
+
+                #region Add EVSE DE*GEF*EVSE*2*A*1
+
+                var addEVSE1Result4 = await chargingStation3!.AddEVSE(
+
+                                          Id:                   WWCP.EVSE_Id.Parse("DE*GEF*EVSE*2*A*1"),
+                                          Name:                 I18NString.Create("Test EVSE #2A1"),
+                                          Description:          I18NString.Create("GraphDefined EVSE for tests #2A1"),
+
+                                          InitialAdminStatus:   EVSEAdminStatusTypes.Operational,
+                                          InitialStatus:        EVSEStatusType.Available,
+
+                                          ChargingConnectors:   [
+                                                                    new ChargingConnector(
+                                                                        ChargingPlugTypes.Type2Connector_CableAttached,
+                                                                        CableAttached: true
+                                                                    )
+                                                                ],
+
+                                          Configurator:         evse => {
+                                                                }
+
+                                      );
+
+                ClassicAssert.IsNotNull(addEVSE1Result4);
+
+                var evse4     = addEVSE1Result4.EVSE;
+                ClassicAssert.IsNotNull(evse4);
+
+                #endregion
+
+
+                emsp1EMSPAPI.OnRFIDAuthToken += async (From_CountryCode,
+                                                       From_PartyId,
+                                                       To_CountryCode,
+                                                       To_PartyId,
+                                                       tokenId,
+                                                       locationReference) => {
+
+                    return tokenId.ToString() == "11223344"
+
+                               ? new AuthorizationInfo(
+                                     Allowed:                  AllowedType.ALLOWED,
+                                     Token:                    new Token(
+                                                                   CountryCode:      To_CountryCode,
+                                                                   PartyId:          To_PartyId,
+                                                                   Id:               tokenId,
+                                                                   Type:             TokenType.RFID,
+                                                                   ContractId:       Contract_Id.Parse("DE-GDF-C12345678-X"),
+                                                                   Issuer:           "GraphDefined CA",
+                                                                   IsValid:          true,
+                                                                   WhitelistType:    WhitelistTypes.NEVER,
+                                                                   VisualNumber:     null,
+                                                                   GroupId:          null,
+                                                                   UILanguage:       null,
+                                                                   DefaultProfile:   null,
+                                                                   EnergyContract:   null,
+                                                                   LastUpdated:      null
+                                                               ),
+                                     Location:                 locationReference,
+                                     AuthorizationReference:   null,
+                                     Info:                     DisplayText.Create(Languages.en, "Hello world!"),
+                                     RemoteParty:              null,
+                                     Runtime:                  TimeSpan.FromMilliseconds(23.5)
+                                 )
+
+                               : new AuthorizationInfo(
+                                     Allowed:                  AllowedType.NOT_ALLOWED,
+                                     Token:                    new Token(
+                                                                   CountryCode:      To_CountryCode,
+                                                                   PartyId:          To_PartyId,
+                                                                   Id:               tokenId,
+                                                                   Type:             TokenType.RFID,
+                                                                   ContractId:       Contract_Id.Parse("DE-GDF-C12345678-X"),
+                                                                   Issuer:           "GraphDefined CA",
+                                                                   IsValid:          true,
+                                                                   WhitelistType:    WhitelistTypes.NEVER,
+                                                                   VisualNumber:     null,
+                                                                   GroupId:          null,
+                                                                   UILanguage:       null,
+                                                                   DefaultProfile:   null,
+                                                                   EnergyContract:   null,
+                                                                   LastUpdated:      null
+                                                               ),
+                                     Location:                 locationReference,
+                                     AuthorizationReference:   null,
+                                     Info:                     DisplayText.Create(Languages.en, "Go away!"),
+                                     RemoteParty:              null,
+                                     Runtime:                  TimeSpan.FromMilliseconds(42)
+                                 );
+
+                };
+
+                emsp2EMSPAPI.OnRFIDAuthToken += async (From_CountryCode,
+                                                       From_PartyId,
+                                                       To_CountryCode,
+                                                       To_PartyId,
+                                                       tokenId,
+                                                       locationReference) => {
+
+                    return tokenId.ToString() == "55667788"
+
+                               ? new AuthorizationInfo(
+                                     Allowed:                  AllowedType.ALLOWED,
+                                     Token:                    new Token(
+                                                                   CountryCode:      To_CountryCode,
+                                                                   PartyId:          To_PartyId,
+                                                                   Id:               tokenId,
+                                                                   Type:             TokenType.RFID,
+                                                                   ContractId:       Contract_Id.Parse("DE-GDF-C56781234-X"),
+                                                                   Issuer:           "GraphDefined CA",
+                                                                   IsValid:          true,
+                                                                   WhitelistType:    WhitelistTypes.NEVER,
+                                                                   VisualNumber:     null,
+                                                                   GroupId:          null,
+                                                                   UILanguage:       null,
+                                                                   DefaultProfile:   null,
+                                                                   EnergyContract:   null,
+                                                                   LastUpdated:      null
+                                                               ),
+                                     Location:                 locationReference,
+                                     AuthorizationReference:   null,
+                                     Info:                     DisplayText.Create(Languages.en, "Hello world!"),
+                                     RemoteParty:              null,
+                                     Runtime:                  TimeSpan.FromMilliseconds(23.5)
+                                 )
+
+                               : new AuthorizationInfo(
+                                     Allowed:                  AllowedType.NOT_ALLOWED,
+                                     Token:                    new Token(
+                                                                   CountryCode:      To_CountryCode,
+                                                                   PartyId:          To_PartyId,
+                                                                   Id:               tokenId,
+                                                                   Type:             TokenType.RFID,
+                                                                   ContractId:       Contract_Id.Parse("DE-GDF-C56781234-X"),
+                                                                   Issuer:           "GraphDefined CA",
+                                                                   IsValid:          true,
+                                                                   WhitelistType:    WhitelistTypes.NEVER,
+                                                                   VisualNumber:     null,
+                                                                   GroupId:          null,
+                                                                   UILanguage:       null,
+                                                                   DefaultProfile:   null,
+                                                                   EnergyContract:   null,
+                                                                   LastUpdated:      null
+                                                               ),
+                                     Location:                 locationReference,
+                                     AuthorizationReference:   null,
+                                     Info:                     DisplayText.Create(Languages.en, "Go away!"),
+                                     RemoteParty:              null,
+                                     Runtime:                  TimeSpan.FromMilliseconds(42)
+                                 );
+
+                };
+
+
+                var authStartResult1 = await csoRoamingNetwork.AuthorizeStart(
+                                                 LocalAuthentication: LocalAuthentication.FromAuthToken(AuthenticationToken.NewRandom7Bytes),
+                                                 ChargingLocation:    ChargingLocation.   FromEVSEId   (evse1!.Id),
+                                                 ChargingProduct:     ChargingProduct.    FromId       (ChargingProduct_Id.Parse("AC1"))
+                                             );
+
+                var authStartResult2 = await csoRoamingNetwork.AuthorizeStart(
+                                                 LocalAuthentication: LocalAuthentication.FromAuthToken(AuthenticationToken.Parse("11223344")),
+                                                 ChargingLocation:    ChargingLocation.   FromEVSEId   (evse1!.Id),
+                                                 ChargingProduct:     ChargingProduct.    FromId       (ChargingProduct_Id.Parse("AC1"))
+                                             );
+
+                var authStartResult3 = await csoRoamingNetwork.AuthorizeStart(
+                                                 LocalAuthentication: LocalAuthentication.FromAuthToken(AuthenticationToken.Parse("55667788")),
+                                                 ChargingLocation:    ChargingLocation.   FromEVSEId   (evse1!.Id),
+                                                 ChargingProduct:     ChargingProduct.    FromId       (ChargingProduct_Id.Parse("AC1"))
+                                             );
+
+                ClassicAssert.AreEqual(AuthStartResultTypes.NotAuthorized, authStartResult1.Result);
+                ClassicAssert.AreEqual(AuthStartResultTypes.Authorized,    authStartResult2.Result);
+                ClassicAssert.AreEqual(AuthStartResultTypes.Authorized,    authStartResult3.Result);
 
             }
 

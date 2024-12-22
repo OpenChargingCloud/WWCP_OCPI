@@ -862,7 +862,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<Location>>
 
             GetLocation(CountryCode         CountryCode,
-                        Party_Id            PartyId,
+                        Party_Idv3            PartyId,
                         Location_Id         LocationId,
 
                         Request_Id?         RequestId           = null,
@@ -1269,7 +1269,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<Location>>
 
             PatchLocation(CountryCode         CountryCode,
-                          Party_Id            PartyId,
+                          Party_Idv3            PartyId,
                           Location_Id         LocationId,
                           JObject             LocationPatch,
 
@@ -1473,7 +1473,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<EVSE>>
 
             GetEVSE(CountryCode         CountryCode,
-                    Party_Id            PartyId,
+                    Party_Idv3            PartyId,
                     Location_Id         LocationId,
                     EVSE_UId            EVSEUId,
 
@@ -1928,7 +1928,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<EVSE>>
 
             PatchEVSE(CountryCode         CountryCode,
-                      Party_Id            PartyId,
+                      Party_Idv3            PartyId,
                       Location_Id         LocationId,
                       EVSE_UId            EVSEUId,
                       JObject             EVSEPatch,
@@ -2139,7 +2139,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<Connector>>
 
             GetConnector(CountryCode         CountryCode,
-                         Party_Id            PartyId,
+                         Party_Idv3            PartyId,
                          Location_Id         LocationId,
                          EVSE_UId            EVSEUId,
                          Connector_Id        ConnectorId,
@@ -2549,7 +2549,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<Connector>>
 
             PatchConnector(CountryCode         CountryCode,
-                           Party_Id            PartyId,
+                           Party_Idv3            PartyId,
                            Location_Id         LocationId,
                            EVSE_UId            EVSEUId,
                            Connector_Id        ConnectorId,
@@ -2757,7 +2757,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<Tariff>>
 
             GetTariff(CountryCode         CountryCode,
-                      Party_Id            PartyId,
+                      Party_Idv3            PartyId,
                       Tariff_Id           TariffId,
 
                       Request_Id?         RequestId           = null,
@@ -3143,7 +3143,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<Tariff>>
 
             PatchTariff(CountryCode         CountryCode,
-                        Party_Id            PartyId,
+                        Party_Idv3            PartyId,
                         Tariff_Id           TariffId,
                         JObject             TariffPatch,
 
@@ -3349,7 +3349,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<Tariff>>
 
             DeleteTariff(CountryCode         CountryCode,
-                         Party_Id            PartyId,
+                         Party_Idv3            PartyId,
                          Tariff_Id           TariffId,
 
                          Request_Id?         RequestId           = null,
@@ -3544,7 +3544,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<Session>>
 
             GetSession(CountryCode         CountryCode,
-                       Party_Id            PartyId,
+                       Party_Idv3            PartyId,
                        Session_Id          SessionId,
 
                        Request_Id?         RequestId           = null,
@@ -3930,7 +3930,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<Session>>
 
             PatchSession(CountryCode         CountryCode,
-                         Party_Id            PartyId,
+                         Party_Idv3            PartyId,
                          Session_Id          SessionId,
                          JObject             SessionPatch,
 
@@ -4136,7 +4136,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<Session>>
 
             DeleteSession(CountryCode         CountryCode,
-                          Party_Id            PartyId,
+                          Party_Idv3            PartyId,
                           Session_Id          SessionId,
 
                           Request_Id?         RequestId           = null,
@@ -4521,7 +4521,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
         public async Task<OCPIResponse<CDR>>
 
             GetCDR(CountryCode         CountryCode,
-                   Party_Id            PartyId,
+                   Party_Idv3            PartyId,
                    CDR_Id              CDRId,
 
                    Request_Id?         RequestId           = null,

@@ -2500,7 +2500,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                         AccessControlAllowHeaders  = [ "Authorization" ]
                                                     }
                                                 });
@@ -3541,7 +3541,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                            AccessControlAllowHeaders  = [ "Authorization" ]
                                                        }
                                                    };
@@ -5176,7 +5176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                         AccessControlAllowHeaders  = [ "Authorization" ]
                                                     }
                                                 });
@@ -5273,7 +5273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                         AccessControlAllowHeaders  = [ "Authorization" ]
                                                     }
                                                 });
@@ -5489,7 +5489,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                            AccessControlAllowHeaders  = [ "Authorization" ]
                                                        }
                                                    };
@@ -5539,7 +5539,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                            AccessControlAllowHeaders  = [ "Authorization" ]
                                                        }
                                                    };
@@ -5827,7 +5827,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                         AccessControlAllowHeaders  = [ "Authorization" ]
                                                     }
                                                 });
@@ -5923,7 +5923,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
+                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
                                                            AccessControlAllowHeaders  = [ "Authorization" ]
                                                        }
                                                    };

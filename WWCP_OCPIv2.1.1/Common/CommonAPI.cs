@@ -19,6 +19,7 @@
 
 using System.Collections.Concurrent;
 using System.Security.Authentication;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
@@ -177,20 +178,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingLocation">Whether to fail when the location for the given location identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocation(this OCPIRequest           Request,
-                                            CommonAPI                    CommonAPI,
-                                            CountryCode                CountryCode,
-                                            Party_Id                   PartyId,
-                                            out Location_Id?           LocationId,
-                                            out Location?              Location,
-                                            out OCPIResponse.Builder?  OCPIResponseBuilder,
-                                            Boolean                    FailOnMissingLocation = true)
+        public static Boolean ParseLocation(this OCPIRequest                                Request,
+                                            CommonAPI                                       CommonAPI,
+                                            CountryCode                                     CountryCode,
+                                            Party_Id                                        PartyId,
+                                            [NotNullWhen(true)]  out Location_Id?           LocationId,
+                                            [NotNullWhen(true)]  out Location?              Location,
+                                            [NotNullWhen(false)] out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                            Boolean                                         FailOnMissingLocation = true)
         {
 
             #region Initial checks
 
             if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+                throw new ArgumentNullException(nameof(Request),    "The given HTTP request must not be null!");
 
             if (CommonAPI is null)
                 throw new ArgumentNullException(nameof(CommonAPI),  "The given EMSP API must not be null!");
@@ -1813,6 +1814,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Custom JSON serializers
 
+        public CustomJObjectSerializerDelegate<VersionInformation>?           CustomVersionInformationSerializer            { get; }
+        public CustomJObjectSerializerDelegate<VersionDetail>?                CustomVersionDetailSerializer                 { get; }
+        public CustomJObjectSerializerDelegate<VersionEndpoint>?              CustomVersionEndpointSerializer               { get; }
+
+
         public CustomJObjectSerializerDelegate<Tariff>?                       CustomTariffSerializer                        { get; }
         public CustomJObjectSerializerDelegate<DisplayText>?                  CustomDisplayTextSerializer                   { get; }
         public CustomJObjectSerializerDelegate<TariffElement>?                CustomTariffElementSerializer                 { get; }
@@ -2034,6 +2040,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              )
                                            : null;
 
+            AddVersionInformation(
+                new VersionInformation(
+                    Version.Id,
+                    URL.Parse(
+                        (OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                        (ExternalDNSName ?? "localhost" + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/")
+                    )
+                )
+            ).GetAwaiter().GetResult();
+
+
             if (!this.DisableLogging)
             {
                 ReadRemotePartyDatabaseFile();
@@ -2193,6 +2210,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    LogfileCreator
                                                )
                                              : null;
+
+            AddVersionInformation(
+                new VersionInformation(
+                    Version.Id,
+                    URL.Parse(
+                        (OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                        (ExternalDNSName ?? "localhost" + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/")
+                    )
+                )
+            ).GetAwaiter().GetResult();
+
 
             if (!this.DisableLogging)
             {
@@ -3276,60 +3304,57 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // ----------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions
             // ----------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
-                               HTTPMethod.GET,
-                               URLPathPrefix + "versions",
-                               HTTPContentType.Application.JSON_UTF8,
-                               OCPIRequestLogger:   GetVersionsRequest,
-                               OCPIResponseLogger:  GetVersionsResponse,
-                               OCPIRequestHandler:  Request => {
+            this.AddOCPIMethod(
 
-                                   #region Check access token
+                Hostname,
+                HTTPMethod.GET,
+                URLPathPrefix + "versions",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   GetVersionsRequest,
+                OCPIResponseLogger:  GetVersionsResponse,
+                OCPIRequestHandler:  request => {
 
-                                   if (Request.LocalAccessInfo is not null &&
-                                       Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
-                                   {
+                    #region Check access token
 
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                               StatusCode           = 2000,
-                                               StatusMessage        = "Invalid or blocked access token!",
-                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                   AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                   AccessControlAllowHeaders  = [ "Authorization" ]
-                                               }
-                                           });
+                    if (request.LocalAccessInfo is not null &&
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                    {
 
-                                   }
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Invalid or blocked access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
 
-                                   #endregion
+                    }
 
-                                   return Task.FromResult(
-                                       new OCPIResponse.Builder(Request) {
-                                           StatusCode           = 1000,
-                                           StatusMessage        = "Hello world!",
-                                           Data                 = new JArray(
-                                                                      new VersionInformation[] {
-                                                                          new VersionInformation(
-                                                                              Version.Id,
-                                                                              URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                      (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/"))
-                                                                          )
-                                                                      }.Where (version => version is not null).
-                                                                      Select(version => version.ToJSON())
-                                                                  ),
-                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                        //       Server                     = ServiceName,
-                                        //       Date                       = Timestamp.Now,
-                                               AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                               AccessControlAllowHeaders  = [ "Authorization" ],
-                                               Vary                       = "Accept"
-                                           }
-                                       });
+                    #endregion
 
-                               });
+                    return Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                            StatusCode           = 1000,
+                            StatusMessage        = "Hello world!",
+                            Data                 = new JArray(
+                                                       versionInformations.Values.Select(versionInformation => versionInformation.ToJSON(CustomVersionInformationSerializer))
+                                                   ),
+                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                Vary                       = "Accept"
+                            }
+                        });
+
+                }
+
+            );
 
             #endregion
 
@@ -3366,202 +3391,209 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // ---------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions/{id}
             // ---------------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
-                               HTTPMethod.GET,
-                               URLPathPrefix + "versions/{versionId}",
-                               HTTPContentType.Application.JSON_UTF8,
-                               OCPIRequestLogger:   GetVersionRequest,
-                               OCPIResponseLogger:  GetVersionResponse,
-                               OCPIRequestHandler:  Request => {
+            this.AddOCPIMethod(
 
-                                   #region Check access token
+                Hostname,
+                HTTPMethod.GET,
+                URLPathPrefix + "versions/{versionId}",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   GetVersionRequest,
+                OCPIResponseLogger:  GetVersionResponse,
+                OCPIRequestHandler:  request => {
 
-                                   if (Request.LocalAccessInfo is not null &&
-                                       Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
-                                   {
+                    #region Check access token
 
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "Invalid or blocked access token!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                  AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                  AccessControlAllowHeaders  = [ "Authorization" ]
-                                              }
-                                          });
+                    if (request.LocalAccessInfo is not null &&
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                    {
 
-                                   }
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Invalid or blocked access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
 
-                                   #endregion
+                    }
 
-                                   #region Get version identification URL parameter
+                    #endregion
 
-                                   if (Request.ParsedURLParameters.Length < 1)
-                                   {
+                    #region Get version identification URL parameter
 
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "Version identification is missing!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                  AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                  AccessControlAllowHeaders  = [ "Authorization" ]
-                                              }
-                                          });
+                    if (request.ParsedURLParameters.Length < 1)
+                    {
 
-                                   }
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Version identification is missing!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
 
-                                   if (!Version_Id.TryParse(Request.ParsedURLParameters[0], out var versionId))
-                                   {
+                    }
 
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "Version identification is invalid!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                  AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                  AccessControlAllowHeaders  = [ "Authorization" ]
-                                              }
-                                          });
+                    if (!Version_Id.TryParse(request.ParsedURLParameters[0], out var versionId))
+                    {
 
-                                   }
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Version identification is invalid!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
 
-                                   #endregion
+                    }
 
-                                   #region Only allow OCPI version v2.1.1
+                    #endregion
 
-                                   if (versionId.ToString() != Version.Id.ToString())
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "This OCPI version is not supported!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                  AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                  AccessControlAllowHeaders  = [ "Authorization" ]
-                                              }
-                                          });
+                    #region Only allow OCPI version v2.1.1
 
-                                   #endregion
+                    if (versionId.ToString() != Version.Id.ToString())
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "This OCPI version is not supported!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
 
-
-                                   var prefix = URLPathPrefix + AdditionalURLPathPrefix + $"v{versionId}";
-
-                                   #region Common credential endpoints...
-
-                                   var endpoints  = new List<VersionEndpoint>() {
-
-                                                        new VersionEndpoint(Module_Id.Credentials,
-                                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                      (Request.Host + (prefix + "credentials")).Replace("//", "/")))
-
-                                                    };
-
-                                   #endregion
+                    #endregion
 
 
-                                   #region The other side is a CPO...
+                    var prefix = URLPathPrefix + AdditionalURLPathPrefix + $"v{versionId}";
 
-                                   if (Request.RemoteParty?.Role == Roles.CPO)
-                                   {
+                    #region Common credential endpoints...
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Locations,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") + 
-                                                                                   (Request.Host + (prefix + "emsp/locations")).Replace("//", "/"))));
+                    var endpoints  = new List<VersionEndpoint>() {
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/"))));
+                                        new VersionEndpoint(Module_Id.Credentials,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                        (request.Host + (prefix + "credentials")).Replace("//", "/")))
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "emsp/sessions")). Replace("//", "/"))));
+                                    };
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "emsp/cdrs")).     Replace("//", "/"))));
+                    #endregion
 
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Commands,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "emsp/commands")). Replace("//", "/"))));
+                    #region The other side is a CPO...
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "emsp/tokens")).   Replace("//", "/"))));
+                    if (request.RemoteParty?.Role == Roles.CPO)
+                    {
 
-                                   }
+                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") + 
+                                                                    (request.Host + (prefix + "emsp/locations")).Replace("//", "/"))));
 
-                                   #endregion
+                        endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/"))));
 
-                                   #region We are a CPO, the other side is unauthenticated and we export locations as Open Data...
+                        endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "emsp/sessions")). Replace("//", "/"))));
 
-                                   if (OurRole == Roles.CPO && Request.RemoteParty is null && LocationsAsOpenData)
-                                   {
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Locations,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/locations")).Replace("//", "/"))));
-
-                                   }
-
-                                   #endregion
-
-                                   #region The other side is an EMSP...
-
-                                   if (Request.RemoteParty?.Role == Roles.EMSP)
-                                   {
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Locations,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/locations")).Replace("//", "/"))));
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/tariffs")).  Replace("//", "/"))));
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/sessions")). Replace("//", "/"))));
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/cdrs")).     Replace("//", "/"))));
+                        endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "emsp/cdrs")).     Replace("//", "/"))));
 
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Commands,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/commands")). Replace("//", "/"))));
+                        endpoints.Add(new VersionEndpoint(Module_Id.Commands,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "emsp/commands")). Replace("//", "/"))));
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/tokens")).   Replace("//", "/"))));
+                        endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "emsp/tokens")).   Replace("//", "/"))));
 
-                                   }
+                    }
 
-                                   #endregion
+                    #endregion
+
+                    #region We are a CPO, the other side is unauthenticated and we export locations as Open Data...
+
+                    if (OurRole == Roles.CPO && request.RemoteParty is null && LocationsAsOpenData)
+                    {
+
+                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))));
+
+                    }
+
+                    #endregion
+
+                    #region The other side is an EMSP...
+
+                    if (request.RemoteParty?.Role == Roles.EMSP)
+                    {
+
+                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))));
+
+                        endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/tariffs")).  Replace("//", "/"))));
+
+                        endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/sessions")). Replace("//", "/"))));
+
+                        endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/cdrs")).     Replace("//", "/"))));
 
 
-                                   return Task.FromResult(
-                                       new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 1000,
-                                              StatusMessage        = "Hello world!",
-                                              Data                 = new VersionDetail(
-                                                                         versionId,
-                                                                         endpoints
-                                                                     ).ToJSON(),
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.OK,
-                                                  AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
-                                                  AccessControlAllowHeaders  = [ "Authorization" ],
-                                                  Vary                       = "Accept"
-                                              }
-                                          });
+                        endpoints.Add(new VersionEndpoint(Module_Id.Commands,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/commands")). Replace("//", "/"))));
 
-                               });
+                        endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/tokens")).   Replace("//", "/"))));
+
+                    }
+
+                    #endregion
+
+
+                    return Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                            StatusCode           = 1000,
+                            StatusMessage        = "Hello world!",
+                            Data                 = new VersionDetail(
+                                                        versionId,
+                                                        endpoints
+                                                    ).ToJSON(CustomVersionDetailSerializer,
+                                                            CustomVersionEndpointSerializer),
+                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                Vary                       = "Accept"
+                            }
+                        }
+                    );
+
+                }
+
+            );
 
             #endregion
 
@@ -6237,11 +6269,100 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
+
+        #region OCPI Version Informations
+
+        private readonly ConcurrentDictionary<Version_Id, VersionInformation>  versionInformations   = [];
+
+        #region AddVersionInformation            (VersionInformation, ...)
+
+        public async Task<AddResult<VersionInformation>>
+
+            AddVersionInformation(VersionInformation  VersionInformation,
+                                  Boolean             SkipNotifications   = false,
+                                  EventTracking_Id?   EventTrackingId     = null,
+                                  User_Id?            CurrentUserId       = null)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (versionInformations.TryAdd(VersionInformation.Id, VersionInformation))
+            {
+
+                //await LogAsset(
+                //          addLocation,
+                //          Location.ToJSON(true,
+                //                          true,
+                //                          true,
+                //                          CustomLocationSerializer,
+                //                          CustomPublishTokenSerializer,
+                //                          CustomAddressSerializer,
+                //                          CustomAdditionalGeoLocationSerializer,
+                //                          CustomChargingStationSerializer,
+                //                          CustomEVSESerializer,
+                //                          CustomStatusScheduleSerializer,
+                //                          CustomConnectorSerializer,
+                //                          CustomEnergyMeterSerializer,
+                //                          CustomTransparencySoftwareStatusSerializer,
+                //                          CustomTransparencySoftwareSerializer,
+                //                          CustomDisplayTextSerializer,
+                //                          CustomBusinessDetailsSerializer,
+                //                          CustomHoursSerializer,
+                //                          CustomImageSerializer,
+                //                          CustomEnergyMixSerializer,
+                //                          CustomEnergySourceSerializer,
+                //                          CustomEnvironmentalImpactSerializer,
+                //                          CustomLocationMaxPowerSerializer),
+                //          EventTrackingId,
+                //          CurrentUserId
+                //      );
+
+                //if (!SkipNotifications)
+                //{
+
+                //    var OnLocationAddedLocal = OnLocationAdded;
+                //    if (OnLocationAddedLocal is not null)
+                //    {
+                //        try
+                //        {
+                //            await OnLocationAddedLocal(Location);
+                //        }
+                //        catch (Exception e)
+                //        {
+                //            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                //                        Environment.NewLine, e.Message,
+                //                        Environment.NewLine, e.StackTrace ?? "");
+                //        }
+                //    }
+
+                //}
+
+                return AddResult<VersionInformation>.Success(
+                           EventTrackingId,
+                           VersionInformation
+                       );
+
+            }
+
+            return AddResult<VersionInformation>.Failed(
+                       EventTrackingId,
+                       VersionInformation,
+                       "The given version information already exists!"
+                   );
+
+        }
+
+        #endregion
+
+        #endregion
+
+
         #region Locations
 
-        #region Data
+        private readonly ConcurrentDictionary<Location_Id, Location> locations = [];
 
-        private readonly ConcurrentDictionary<Location_Id , Location> locations = new();
+        #region Events
 
         public delegate Task OnLocationAddedDelegate    (Location  Location);
         public delegate Task OnLocationChangedDelegate  (Location  Location);
@@ -6262,12 +6383,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region AddLocation            (Location,                                                           SkipNotifications = false)
+        #region Locations
 
-        public async Task<AddResult<Location>> AddLocation(Location           Location,
-                                                           Boolean            SkipNotifications   = false,
-                                                           EventTracking_Id?  EventTrackingId     = null,
-                                                           User_Id?           CurrentUserId       = null)
+        #region AddLocation            (Location, ...)
+
+        public async Task<AddResult<Location>>
+
+            AddLocation(Location           Location,
+                        Boolean            SkipNotifications   = false,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        User_Id?           CurrentUserId       = null,
+                        CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -6275,31 +6402,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (locations.TryAdd(Location.Id, Location))
             {
 
-                DebugX.Log($"OCPI v2.1.1 Location '{Location.Id}': '{Location}' added...");
+                DebugX.Log($"OCPI {Version.String} Location '{Location.Id}': '{Location}' added...");
 
                 Location.CommonAPI = this;
 
-                await LogAsset(addLocation,
-                               Location.ToJSON(true,
-                                               true,
-                                               null,
-                                               CustomLocationSerializer,
-                                               CustomAdditionalGeoLocationSerializer,
-                                               CustomEVSESerializer,
-                                               CustomStatusScheduleSerializer,
-                                               CustomConnectorSerializer,
-                                               CustomEnergyMeterSerializer,
-                                               CustomTransparencySoftwareStatusSerializer,
-                                               CustomTransparencySoftwareSerializer,
-                                               CustomDisplayTextSerializer,
-                                               CustomBusinessDetailsSerializer,
-                                               CustomHoursSerializer,
-                                               CustomImageSerializer,
-                                               CustomEnergyMixSerializer,
-                                               CustomEnergySourceSerializer,
-                                               CustomEnvironmentalImpactSerializer),
-                               EventTrackingId ?? EventTracking_Id.New,
-                               CurrentUserId);
+                await LogAsset(
+                          addLocation,
+                          Location.ToJSON(
+                              true,
+                              true,
+                              null,
+                              CustomLocationSerializer,
+                              CustomAdditionalGeoLocationSerializer,
+                              CustomEVSESerializer,
+                              CustomStatusScheduleSerializer,
+                              CustomConnectorSerializer,
+                              CustomEnergyMeterSerializer,
+                              CustomTransparencySoftwareStatusSerializer,
+                              CustomTransparencySoftwareSerializer,
+                              CustomDisplayTextSerializer,
+                              CustomBusinessDetailsSerializer,
+                              CustomHoursSerializer,
+                              CustomImageSerializer,
+                              CustomEnergyMixSerializer,
+                              CustomEnergySourceSerializer,
+                              CustomEnvironmentalImpactSerializer
+                          ),
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
+                      );
 
                 if (!SkipNotifications)
                 {
@@ -6337,25 +6469,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<Location>.Success(EventTrackingId, Location);
+                return AddResult<Location>.Success(
+                           EventTrackingId,
+                           Location
+                       );
 
             }
 
-            //DebugX.Log($"OCPI v2.1.1 Adding Location '{Location.Id}': '{Location}' failed!");
-
-            return AddResult<Location>.Failed(EventTrackingId, Location,
-                                              "TryAdd(Location.Id, Location) failed!");
+            return AddResult<Location>.Failed(
+                       EventTrackingId,
+                       Location,
+                       "The given location already exists!"
+                   );
 
         }
 
         #endregion
 
-        #region AddLocationIfNotExists (Location,                                                           SkipNotifications = false)
+        #region AddLocationIfNotExists (Location, ...)
 
-        public async Task<AddResult<Location>> AddLocationIfNotExists(Location           Location,
-                                                                      Boolean            SkipNotifications   = false,
-                                                                      EventTracking_Id?  EventTrackingId     = null,
-                                                                      User_Id?           CurrentUserId       = null)
+        public async Task<AddResult<Location>>
+
+            AddLocationIfNotExists(Location           Location,
+                                   Boolean            SkipNotifications   = false,
+                                   EventTracking_Id?  EventTrackingId     = null,
+                                   User_Id?           CurrentUserId       = null,
+                                   CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -6363,29 +6503,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (locations.TryAdd(Location.Id, Location))
             {
 
+                DebugX.Log($"OCPI {Version.String} Location '{Location.Id}': '{Location}' added...");
+
                 Location.CommonAPI = this;
 
-                await LogAsset(addLocationIfNotExists,
-                               Location.ToJSON(true,
-                                               true,
-                                               null,
-                                               CustomLocationSerializer,
-                                               CustomAdditionalGeoLocationSerializer,
-                                               CustomEVSESerializer,
-                                               CustomStatusScheduleSerializer,
-                                               CustomConnectorSerializer,
-                                               CustomEnergyMeterSerializer,
-                                               CustomTransparencySoftwareStatusSerializer,
-                                               CustomTransparencySoftwareSerializer,
-                                               CustomDisplayTextSerializer,
-                                               CustomBusinessDetailsSerializer,
-                                               CustomHoursSerializer,
-                                               CustomImageSerializer,
-                                               CustomEnergyMixSerializer,
-                                               CustomEnergySourceSerializer,
-                                               CustomEnvironmentalImpactSerializer),
-                               EventTrackingId ?? EventTracking_Id.New,
-                               CurrentUserId);
+                await LogAsset(
+                          addLocationIfNotExists,
+                          Location.ToJSON(
+                              true,
+                              true,
+                              null,
+                              CustomLocationSerializer,
+                              CustomAdditionalGeoLocationSerializer,
+                              CustomEVSESerializer,
+                              CustomStatusScheduleSerializer,
+                              CustomConnectorSerializer,
+                              CustomEnergyMeterSerializer,
+                              CustomTransparencySoftwareStatusSerializer,
+                              CustomTransparencySoftwareSerializer,
+                              CustomDisplayTextSerializer,
+                              CustomBusinessDetailsSerializer,
+                              CustomHoursSerializer,
+                              CustomImageSerializer,
+                              CustomEnergyMixSerializer,
+                              CustomEnergySourceSerializer,
+                              CustomEnvironmentalImpactSerializer
+                          ),
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
+                      );
 
                 if (!SkipNotifications)
                 {
@@ -6423,23 +6570,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddResult<Location>.Success(EventTrackingId, Location);
+                return AddResult<Location>.Success(
+                           EventTrackingId,
+                           Location
+                       );
 
             }
 
-            return AddResult<Location>.NoOperation(EventTrackingId, Location);
+            return AddResult<Location>.NoOperation(
+                       EventTrackingId,
+                       Location,
+                       "The given location already exists."
+                   );
 
         }
 
         #endregion
 
-        #region AddOrUpdateLocation    (Location,                                  AllowDowngrades = false, SkipNotifications = false)
+        #region AddOrUpdateLocation    (Location,                  AllowDowngrades = false, ...)
 
-        public async Task<AddOrUpdateResult<Location>> AddOrUpdateLocation(Location           Location,
-                                                                           Boolean?           AllowDowngrades     = false,
-                                                                           Boolean            SkipNotifications   = false,
-                                                                           EventTracking_Id?  EventTrackingId     = null,
-                                                                           User_Id?           CurrentUserId       = null)
+        public async Task<AddOrUpdateResult<Location>>
+
+            AddOrUpdateLocation(Location           Location,
+                                Boolean?           AllowDowngrades     = false,
+                                Boolean            SkipNotifications   = false,
+                                EventTracking_Id?  EventTrackingId     = null,
+                                User_Id?           CurrentUserId       = null,
+                                CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
@@ -6452,8 +6610,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     Location.LastUpdated <= existingLocation.LastUpdated)
                 {
-                    return AddOrUpdateResult<Location>.Failed(EventTrackingId, Location,
-                                                              "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
+                    return AddOrUpdateResult<Location>.Failed(
+                               EventTrackingId,
+                               Location,
+                               "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!"
+                           );
                 }
 
                 //if (Location.LastUpdated.ToIso8601() == existingLocation.LastUpdated.ToIso8601())
@@ -6467,27 +6628,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     Location.CommonAPI = this;
 
-                    await LogAsset(addOrUpdateLocation,
-                                   Location.ToJSON(true,
-                                                   true,
-                                                   null,
-                                                   CustomLocationSerializer,
-                                                   CustomAdditionalGeoLocationSerializer,
-                                                   CustomEVSESerializer,
-                                                   CustomStatusScheduleSerializer,
-                                                   CustomConnectorSerializer,
-                                                   CustomEnergyMeterSerializer,
-                                                   CustomTransparencySoftwareStatusSerializer,
-                                                   CustomTransparencySoftwareSerializer,
-                                                   CustomDisplayTextSerializer,
-                                                   CustomBusinessDetailsSerializer,
-                                                   CustomHoursSerializer,
-                                                   CustomImageSerializer,
-                                                   CustomEnergyMixSerializer,
-                                                   CustomEnergySourceSerializer,
-                                                   CustomEnvironmentalImpactSerializer),
-                                   EventTrackingId ?? EventTracking_Id.New,
-                                   CurrentUserId);
+                    await LogAsset(
+                              addOrUpdateLocation,
+                              Location.ToJSON(
+                                  true,
+                                  true,
+                                  null,
+                                  CustomLocationSerializer,
+                                  CustomAdditionalGeoLocationSerializer,
+                                  CustomEVSESerializer,
+                                  CustomStatusScheduleSerializer,
+                                  CustomConnectorSerializer,
+                                  CustomEnergyMeterSerializer,
+                                  CustomTransparencySoftwareStatusSerializer,
+                                  CustomTransparencySoftwareSerializer,
+                                  CustomDisplayTextSerializer,
+                                  CustomBusinessDetailsSerializer,
+                                  CustomHoursSerializer,
+                                  CustomImageSerializer,
+                                  CustomEnergyMixSerializer,
+                                  CustomEnergySourceSerializer,
+                                  CustomEnvironmentalImpactSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
 
                     if (!SkipNotifications)
                     {
@@ -6569,11 +6735,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     }
 
-                    return AddOrUpdateResult<Location>.Updated(EventTrackingId, Location);
+                    return AddOrUpdateResult<Location>.Updated(
+                               EventTrackingId,
+                               Location
+                           );
 
                 }
-                return AddOrUpdateResult<Location>.Failed(EventTrackingId, Location,
-                                                          "locations.TryUpdate(Location.Id, Location, Location) failed!");
+
+                return AddOrUpdateResult<Location>.Failed(
+                           EventTrackingId,
+                           Location,
+                           "Updating the given location failed!"
+                       );
 
             }
 
@@ -6586,27 +6759,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 Location.CommonAPI = this;
 
-                await LogAsset(addOrUpdateLocation,
-                               Location.ToJSON(true,
-                                               true,
-                                               null,
-                                               CustomLocationSerializer,
-                                               CustomAdditionalGeoLocationSerializer,
-                                               CustomEVSESerializer,
-                                               CustomStatusScheduleSerializer,
-                                               CustomConnectorSerializer,
-                                               CustomEnergyMeterSerializer,
-                                               CustomTransparencySoftwareStatusSerializer,
-                                               CustomTransparencySoftwareSerializer,
-                                               CustomDisplayTextSerializer,
-                                               CustomBusinessDetailsSerializer,
-                                               CustomHoursSerializer,
-                                               CustomImageSerializer,
-                                               CustomEnergyMixSerializer,
-                                               CustomEnergySourceSerializer,
-                                               CustomEnvironmentalImpactSerializer),
-                               EventTrackingId ?? EventTracking_Id.New,
-                               CurrentUserId);
+                await LogAsset(
+                          addOrUpdateLocation,
+                          Location.ToJSON(
+                              true,
+                              true,
+                              null,
+                              CustomLocationSerializer,
+                              CustomAdditionalGeoLocationSerializer,
+                              CustomEVSESerializer,
+                              CustomStatusScheduleSerializer,
+                              CustomConnectorSerializer,
+                              CustomEnergyMeterSerializer,
+                              CustomTransparencySoftwareStatusSerializer,
+                              CustomTransparencySoftwareSerializer,
+                              CustomDisplayTextSerializer,
+                              CustomBusinessDetailsSerializer,
+                              CustomHoursSerializer,
+                              CustomImageSerializer,
+                              CustomEnergyMixSerializer,
+                              CustomEnergySourceSerializer,
+                              CustomEnvironmentalImpactSerializer
+                          ),
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
+                      );
 
                 if (!SkipNotifications)
                 {
@@ -6644,48 +6822,59 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return AddOrUpdateResult<Location>.Created(EventTrackingId, Location);
+                return AddOrUpdateResult<Location>.Created(
+                           EventTrackingId,
+                           Location
+                       );
 
             }
 
-            return AddOrUpdateResult<Location>.Failed(EventTrackingId, Location,
-                                                      "locations.TryAdd(Location.Id, Location) failed!");
-
             #endregion
+
+            return AddOrUpdateResult<Location>.Failed(
+                       EventTrackingId,
+                       Location,
+                       "Adding the given location failed because of concurrency issues!"
+                   );
 
         }
 
         #endregion
 
-        #region UpdateLocation         (Location,                                  AllowDowngrades = false, SkipNotifications = false)
+        #region UpdateLocation         (Location,                  AllowDowngrades = false, ...)
 
-        public async Task<UpdateResult<Location>> UpdateLocation(Location           Location,
-                                                                 Boolean?           AllowDowngrades     = false,
-                                                                 Boolean            SkipNotifications   = false,
-                                                                 EventTracking_Id?  EventTrackingId     = null,
-                                                                 User_Id?           CurrentUserId       = null)
+        public async Task<UpdateResult<Location>>
+
+            UpdateLocation(Location           Location,
+                           Boolean?           AllowDowngrades     = false,
+                           Boolean            SkipNotifications   = false,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           User_Id?           CurrentUserId       = null,
+                           CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
+            if (!locations.TryGetValue(Location.Id, out var existingLocation))
+                return UpdateResult<Location>.Failed(
+                           EventTrackingId,
+                           Location,
+                           $"The given location identification '{Location.Id}' is unknown!"
+                       );
+
             #region Validate AllowDowngrades
 
-            if (locations.TryGetValue(Location.Id, out var existingLocation))
+            if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                Location.LastUpdated <= existingLocation.LastUpdated)
             {
 
-                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    Location.LastUpdated <= existingLocation.LastUpdated)
-                {
-
-                    return UpdateResult<Location>.Failed(EventTrackingId, Location,
-                                                         "The 'lastUpdated' timestamp of the new charging location must be newer then the timestamp of the existing location!");
-
-                }
+                return UpdateResult<Location>.Failed(
+                            EventTrackingId, Location,
+                            "The 'lastUpdated' timestamp of the new charging location must be newer then the timestamp of the existing location!"
+                        );
 
             }
-            else
-                return UpdateResult<Location>.Failed(EventTrackingId, Location,
-                                                     $"Unknown charging location identification '{Location.Id}'!");
 
             #endregion
 
@@ -6697,27 +6886,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 Location.CommonAPI = this;
 
-                await LogAsset(updateLocation,
-                               Location.ToJSON(true,
-                                               true,
-                                               null,
-                                               CustomLocationSerializer,
-                                               CustomAdditionalGeoLocationSerializer,
-                                               CustomEVSESerializer,
-                                               CustomStatusScheduleSerializer,
-                                               CustomConnectorSerializer,
-                                               CustomEnergyMeterSerializer,
-                                               CustomTransparencySoftwareStatusSerializer,
-                                               CustomTransparencySoftwareSerializer,
-                                               CustomDisplayTextSerializer,
-                                               CustomBusinessDetailsSerializer,
-                                               CustomHoursSerializer,
-                                               CustomImageSerializer,
-                                               CustomEnergyMixSerializer,
-                                               CustomEnergySourceSerializer,
-                                               CustomEnvironmentalImpactSerializer),
-                               EventTrackingId ?? EventTracking_Id.New,
-                               CurrentUserId);
+                await LogAsset(
+                          updateLocation,
+                          Location.ToJSON(
+                              true,
+                              true,
+                              null,
+                              CustomLocationSerializer,
+                              CustomAdditionalGeoLocationSerializer,
+                              CustomEVSESerializer,
+                              CustomStatusScheduleSerializer,
+                              CustomConnectorSerializer,
+                              CustomEnergyMeterSerializer,
+                              CustomTransparencySoftwareStatusSerializer,
+                              CustomTransparencySoftwareSerializer,
+                              CustomDisplayTextSerializer,
+                              CustomBusinessDetailsSerializer,
+                              CustomHoursSerializer,
+                              CustomImageSerializer,
+                              CustomEnergyMixSerializer,
+                              CustomEnergySourceSerializer,
+                              CustomEnvironmentalImpactSerializer
+                          ),
+                          EventTrackingId,
+                          CurrentUserId,
+                          CancellationToken
+                      );
 
                 if (!SkipNotifications)
                 {
@@ -6890,654 +7084,78 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                return UpdateResult<Location>.Success(EventTrackingId, Location);
+                return UpdateResult<Location>.Success(
+                           EventTrackingId,
+                           Location
+                       );
 
             }
 
-            return UpdateResult<Location>.Failed(EventTrackingId, Location,
-                                                 "locations.TryUpdate(Location.Id, Location, Location) failed!");
+            return UpdateResult<Location>.Failed(
+                       EventTrackingId,
+                       Location,
+                       "locations.TryUpdate(Location.Id, Location, Location) failed!"
+                   );
 
         }
 
         #endregion
 
-        #region TryPatchLocation       (Location, LocationPatch,                   AllowDowngrades = false, SkipNotifications = false)
+        #region TryPatchLocation       (LocationId, LocationPatch, AllowDowngrades = false, ...)
 
-        public async Task<PatchResult<Location>> TryPatchLocation(Location           Location,
+        public async Task<PatchResult<Location>> TryPatchLocation(Location_Id        LocationId,
                                                                   JObject            LocationPatch,
                                                                   Boolean?           AllowDowngrades     = false,
                                                                   Boolean            SkipNotifications   = false,
                                                                   EventTracking_Id?  EventTrackingId     = null,
-                                                                  User_Id?           CurrentUserId       = null)
+                                                                  User_Id?           CurrentUserId       = null,
+                                                                  CancellationToken  CancellationToken   = default)
+
         {
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            if (!LocationPatch.HasValues)
-                return PatchResult<Location>.Failed(EventTrackingId, Location,
-                                                    "The given location patch must not be null or empty!");
-
-            var patchResult = Location.TryPatch(LocationPatch,
-                                                AllowDowngrades ?? this.AllowDowngrades ?? false);
-
-            if (patchResult.IsSuccess &&
-                patchResult.PatchedData is not null)
+            if (locations.TryGetValue(LocationId, out var existingLocation))
             {
 
-                var updateLocationResult = await UpdateLocation(patchResult.PatchedData,
-                                                                AllowDowngrades,
-                                                                SkipNotifications,
-                                                                EventTrackingId,
-                                                                CurrentUserId);
+                var patchResult = existingLocation.TryPatch(
+                                      LocationPatch,
+                                      AllowDowngrades ?? this.AllowDowngrades ?? false,
+                                      EventTrackingId
+                                  );
 
-                if (updateLocationResult.IsFailed)
-                    return PatchResult<Location>.Failed(EventTrackingId, Location,
-                                                        updateLocationResult.ErrorResponse ?? "Unknown error!");
-
-            }
-
-            return patchResult;
-
-        }
-
-        #endregion
-
-
-        #region AddEVSE                (Location, EVSE,                                                     SkipNotifications = false)
-
-        public async Task<AddResult<EVSE>> AddEVSE(Location           Location,
-                                                   EVSE               EVSE,
-                                                   Boolean            SkipNotifications   = false,
-                                                   EventTracking_Id?  EventTrackingId     = null,
-                                                   User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            if (Location.EVSEExists(EVSE.UId))
-                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                              $"The given EVSE '{EVSE.UId}' already exists!");
-
-            DebugX.Log($"OCPI v2.1.1 EVSE '{EVSE.UId}'/'{EVSE.EVSEId}': '{EVSE}' added...");
-
-            var newLocation = Location.Update(locationBuilder => {
-                                                  locationBuilder.SetEVSE(EVSE);
-                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
-                                              },
-                                              out var warnings);
-
-            if (newLocation is null)
-                return AddResult<EVSE>.Failed(
-                           EventTrackingId, EVSE,
-                           warnings.First().Text.FirstText()
-                       );
-
-
-            var updateLocationResult = await UpdateLocation(
-                                                 newLocation,
-                                                 AllowDowngrades,
-                                                 SkipNotifications,
-                                                 EventTrackingId,
-                                                 CurrentUserId
-                                             );
-
-
-            return updateLocationResult.IsSuccess
-
-                       ? AddResult<EVSE>.Success(
-                             EventTrackingId, EVSE
-                         )
-
-                       : AddResult<EVSE>.Failed (
-                             EventTrackingId, EVSE,
-                             updateLocationResult.ErrorResponse ?? "Unknown error!"
-                         );
-
-        }
-
-        #endregion
-
-        #region AddEVSEIfNotExists     (Location, EVSE,                                                     SkipNotifications = false)
-
-        public async Task<AddResult<EVSE>> AddEVSEIfNotExists(Location           Location,
-                                                              EVSE               EVSE,
-                                                              Boolean            SkipNotifications   = false,
-                                                              EventTracking_Id?  EventTrackingId     = null,
-                                                              User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            if (Location.EVSEExists(EVSE.UId))
-                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                              $"The given EVSE '{EVSE.UId}' already exists!");
-
-
-            var newLocation = Location.Update(locationBuilder => {
-                                                  locationBuilder.SetEVSE(EVSE);
-                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
-                                              },
-                                              out var warnings);
-
-            if (newLocation is null)
-                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                              warnings.First().Text.FirstText());
-
-
-            var updateLocationResult = await UpdateLocation(newLocation,
-                                                            AllowDowngrades,
-                                                            SkipNotifications,
-                                                            EventTrackingId,
-                                                            CurrentUserId);
-
-            return updateLocationResult.IsSuccess
-                       ? AddResult<EVSE>.Success    (EventTrackingId, EVSE)
-                       : AddResult<EVSE>.NoOperation(EventTrackingId, EVSE,
-                                                     updateLocationResult.ErrorResponse);
-
-        }
-
-        #endregion
-
-        #region AddOrUpdateEVSE        (Location, EVSE,                            AllowDowngrades = false, SkipNotifications = false)
-
-        public async Task<AddOrUpdateResult<EVSE>> AddOrUpdateEVSE(Location           Location,
-                                                                   EVSE               EVSE,
-                                                                   Boolean?           AllowDowngrades     = false,
-                                                                   Boolean            SkipNotifications   = false,
-                                                                   EventTracking_Id?  EventTrackingId     = null,
-                                                                   User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            #region Validate AllowDowngrades
-
-            if (Location.TryGetEVSE(EVSE.UId, out var existingEVSE) &&
-                existingEVSE is not null)
-            {
-
-                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    EVSE.LastUpdated <= existingEVSE.LastUpdated)
+                if (patchResult.IsSuccess &&
+                    patchResult.PatchedData is not null)
                 {
-                    return AddOrUpdateResult<EVSE>.Failed     (EventTrackingId, EVSE,
-                                                               "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
+
+                    var updateLocationResult = await UpdateLocation(
+                                                         patchResult.PatchedData,
+                                                         AllowDowngrades,
+                                                         SkipNotifications,
+                                                         EventTrackingId,
+                                                         CurrentUserId,
+                                                         CancellationToken
+                                                     );
+
+                    if (updateLocationResult.IsFailed)
+                        return PatchResult<Location>.Failed(
+                                   EventTrackingId,
+                                   existingLocation,
+                                   "Could not update the location: " + updateLocationResult.ErrorResponse
+                               );
+
                 }
 
-                //if (EVSE.LastUpdated.ToIso8601() == existingEVSE.LastUpdated.ToIso8601())
-                //    return AddOrUpdateResult<EVSE>.NoOperation(EVSE,
-                //                                               "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
+                return patchResult;
 
             }
 
-            #endregion
-
-            var newLocation = Location.Update(locationBuilder => {
-
-                                                  if (EVSE.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
-                                                      locationBuilder.SetEVSE(EVSE);
-                                                  else
-                                                      locationBuilder.RemoveEVSE(EVSE);
-
-                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
-
-                                              },
-                                              out var warnings);
-
-            if (newLocation is null)
-                return AddOrUpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                                      warnings.First().Text.FirstText());
-
-
-            var updateLocationResult = await UpdateLocation(newLocation,
-                                                            (AllowDowngrades ?? this.AllowDowngrades) == false,
-                                                            SkipNotifications,
-                                                            EventTrackingId,
-                                                            CurrentUserId);
-
-            return updateLocationResult.IsSuccess
-                       ? existingEVSE is null
-                             ? AddOrUpdateResult<EVSE>.Created(EventTrackingId, EVSE)
-                             : AddOrUpdateResult<EVSE>.Updated(EventTrackingId, EVSE)
-                       : AddOrUpdateResult<EVSE>.Failed(
-                             EventTrackingId, EVSE,
-                             updateLocationResult.ErrorResponse ?? "Unknown error!"
-                         );
+            return PatchResult<Location>.Failed(
+                       EventTrackingId,
+                       $"The given location '{LocationId}' is unknown!"
+                   );
 
         }
-
-        #endregion
-
-        #region UpdateEVSE             (Location, EVSE,                            AllowDowngrades = false, SkipNotifications = false)
-
-        public async Task<UpdateResult<EVSE>> UpdateEVSE(Location           Location,
-                                                         EVSE               EVSE,
-                                                         Boolean?           AllowDowngrades     = false,
-                                                         Boolean            SkipNotifications   = false,
-                                                         EventTracking_Id?  EventTrackingId     = null,
-                                                         User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            #region Validate AllowDowngrades
-
-            if (Location.TryGetEVSE(EVSE.UId, out var existingEVSE) &&
-                existingEVSE is not null)
-            {
-
-                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    EVSE.LastUpdated <= existingEVSE.LastUpdated)
-                {
-                    return UpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                                     "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
-                }
-
-                //if (EVSE.LastUpdated.ToIso8601() == existingEVSE.LastUpdated.ToIso8601())
-                //    return AddOrUpdateResult<EVSE>.NoOperation(EVSE,
-                //                                               "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
-
-            }
-            else
-                return UpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                                 $"The given EVSE '{EVSE.UId}' does not exist!");
-
-            #endregion
-
-            var newLocation = Location.Update(locationBuilder => {
-
-                                                  if (EVSE.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
-                                                      locationBuilder.SetEVSE(EVSE);
-                                                  else
-                                                      locationBuilder.RemoveEVSE(EVSE);
-
-                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
-
-                                              },
-                                              out var warnings);
-
-            if (newLocation is null)
-                return UpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                                 warnings.First().Text.FirstText());
-
-
-            var updateLocationResult = await UpdateLocation(newLocation,
-                                                            (AllowDowngrades ?? this.AllowDowngrades) == false,
-                                                            SkipNotifications,
-                                                            EventTrackingId,
-                                                            CurrentUserId);
-
-            return updateLocationResult.IsSuccess
-                       ? UpdateResult<EVSE>.Success(EventTrackingId, EVSE)
-                       : UpdateResult<EVSE>.Failed (EventTrackingId, EVSE,
-                                                    updateLocationResult.ErrorResponse ?? "Unknown error!");
-
-        }
-
-        #endregion
-
-        #region TryPatchEVSE           (Location, EVSE, EVSEPatch,                 AllowDowngrades = false, SkipNotifications = false)
-
-        public async Task<PatchResult<EVSE>> TryPatchEVSE(Location           Location,
-                                                          EVSE               EVSE,
-                                                          JObject            EVSEPatch,
-                                                          Boolean?           AllowDowngrades     = false,
-                                                          Boolean            SkipNotifications   = false,
-                                                          EventTracking_Id?  EventTrackingId     = null,
-                                                          User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            if (!EVSEPatch.HasValues)
-                return PatchResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                                "The given EVSE patch must not be null or empty!");
-
-            var patchResult = EVSE.TryPatch(EVSEPatch,
-                                            AllowDowngrades ?? this.AllowDowngrades ?? false);
-
-            //var justAStatusChange  = EVSEPatch.Children().Count() == 2 && EVSEPatch.ContainsKey("status") && EVSEPatch.ContainsKey("last_updated");
-
-            if (patchResult.IsSuccess &&
-                patchResult.PatchedData is not null)
-            {
-
-                var updateEVSEResult = await UpdateEVSE(Location,
-                                                        patchResult.PatchedData,
-                                                        AllowDowngrades,
-                                                        SkipNotifications);
-
-                if (updateEVSEResult.IsFailed)
-                    return PatchResult<EVSE>.Failed(EventTrackingId, EVSE,
-                                                    updateEVSEResult.ErrorResponse ?? "Unknown error!");
-
-            }
-
-            return patchResult;
-
-        }
-
-        #endregion
-
-
-        #region AddConnector           (Location, EVSE, Connector,                                          SkipNotifications = false)
-
-        public async Task<AddResult<Connector>> AddConnector(Location           Location,
-                                                             EVSE               EVSE,
-                                                             Connector          Connector,
-                                                             Boolean            SkipNotifications   = false,
-                                                             EventTracking_Id?  EventTrackingId     = null,
-                                                             User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            if (EVSE.ConnectorExists(Connector.Id))
-                return AddResult<Connector>.Failed(EventTrackingId, Connector,
-                                                   $"The given charging connector identification '{Connector.Id}' already exists!");
-
-
-            var newEVSE = EVSE.Update(evseBuilder => {
-                                          evseBuilder.SetConnector(Connector);
-                                          evseBuilder.LastUpdated = Connector.LastUpdated;
-                                      },
-                                      out var warnings);
-
-            if (newEVSE is null)
-                return AddResult<Connector>.Failed(EventTrackingId, Connector,
-                                                   warnings.First().Text.FirstText());
-
-
-            var updateEVSEResult = await UpdateEVSE(Location,
-                                                    newEVSE,
-                                                    (AllowDowngrades ?? this.AllowDowngrades) == false,
-                                                    SkipNotifications);
-
-            return updateEVSEResult.IsSuccess
-                       ? AddResult<Connector>.Success(EventTrackingId, Connector)
-                       : AddResult<Connector>.Failed (EventTrackingId, Connector,
-                                                      updateEVSEResult.ErrorResponse ?? "Unknown error!");
-
-        }
-
-        #endregion
-
-        #region AddConnectorIfNotExists(Location, EVSE, Connector,                                          SkipNotifications = false)
-
-        public async Task<AddResult<Connector>> AddConnectorIfNotExists(Location           Location,
-                                                                        EVSE               EVSE,
-                                                                        Connector          Connector,
-                                                                        Boolean            SkipNotifications   = false,
-                                                                        EventTracking_Id?  EventTrackingId     = null,
-                                                                        User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            if (EVSE.ConnectorExists(Connector.Id))
-                return AddResult<Connector>.Failed(EventTrackingId, Connector,
-                                                   $"The given charging connector identification '{Connector.Id}' already exists!");
-
-
-            var newEVSE = EVSE.Update(evseBuilder => {
-                                          evseBuilder.SetConnector(Connector);
-                                          evseBuilder.LastUpdated = Connector.LastUpdated;
-                                      },
-                                      out var warnings);
-
-            if (newEVSE is null)
-                return AddResult<Connector>.Failed(EventTrackingId, Connector,
-                                                   warnings.First().Text.FirstText());
-
-
-            var updateEVSEResult = await UpdateEVSE(Location,
-                                                    newEVSE,
-                                                    (AllowDowngrades ?? this.AllowDowngrades) == false,
-                                                    SkipNotifications);
-
-            return updateEVSEResult.IsSuccess
-                       ? AddResult<Connector>.Success    (EventTrackingId, Connector)
-                       : AddResult<Connector>.NoOperation(EventTrackingId, Connector,
-                                                          updateEVSEResult.ErrorResponse);
-
-        }
-
-        #endregion
-
-        #region AddOrUpdateConnector   (Location, EVSE, Connector,                 AllowDowngrades = false, SkipNotifications = false)
-
-        public async Task<AddOrUpdateResult<Connector>> AddOrUpdateConnector(Location           Location,
-                                                                             EVSE               EVSE,
-                                                                             Connector          Connector,
-                                                                             Boolean?           AllowDowngrades     = false,
-                                                                             Boolean            SkipNotifications   = false,
-                                                                             EventTracking_Id?  EventTrackingId     = null,
-                                                                             User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            #region Validate AllowDowngrades
-
-            if (EVSE.TryGetConnector(Connector.Id, out var existingConnector) &&
-                existingConnector is not null)
-            {
-
-                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    Connector.LastUpdated <= existingConnector.LastUpdated)
-                {
-                    return AddOrUpdateResult<Connector>.Failed(EventTrackingId, Connector,
-                                                               "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
-                }
-
-                //if (newOrUpdatedConnector.LastUpdated.ToIso8601() == existingConnector.LastUpdated.ToIso8601())
-                //    return AddOrUpdateResult<Connector>.NoOperation(newOrUpdatedConnector,
-                //                                                    "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
-
-            }
-
-            #endregion
-
-
-            var newEVSE = EVSE.Update(evseBuilder => {
-                                          evseBuilder.SetConnector(Connector);
-                                          evseBuilder.LastUpdated  = Connector.LastUpdated;
-                                      },
-                                      out var warnings);
-
-            if (newEVSE is null)
-                return AddOrUpdateResult<Connector>.Failed(EventTrackingId, Connector,
-                                                           warnings.First().Text.FirstText());
-
-
-            var result = await AddOrUpdateEVSE(Location,
-                                               newEVSE,
-                                               (AllowDowngrades ?? this.AllowDowngrades) == false,
-                                               SkipNotifications);
-
-            if (result.IsSuccess)
-            {
-
-                if (!SkipNotifications)
-                {
-                    var OnLocationChangedLocal = OnLocationChanged;
-                    if (OnLocationChangedLocal is not null)
-                    {
-                        try
-                        {
-                            if (Connector.ParentEVSE?.ParentLocation is not null)
-                                await OnLocationChangedLocal(Connector.ParentEVSE.ParentLocation);
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateConnector), " ", nameof(OnLocationChanged), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace ?? "");
-                        }
-                    }
-                }
-
-                return result.WasCreated ?? false
-                           ? AddOrUpdateResult<Connector>.Created(EventTrackingId, Connector)
-                           : AddOrUpdateResult<Connector>.Updated(EventTrackingId, Connector);
-
-            }
-
-            return AddOrUpdateResult<Connector>.Failed(EventTrackingId, Connector,
-                                                       result.ErrorResponse ?? "Unknown error!");
-
-        }
-
-        #endregion
-
-        #region UpdateConnector        (Location, EVSE, Connector,                 AllowDowngrades = false, SkipNotifications = false)
-
-        public async Task<UpdateResult<Connector>> UpdateConnector(Location           Location,
-                                                                   EVSE               EVSE,
-                                                                   Connector          Connector,
-                                                                   Boolean?           AllowDowngrades     = false,
-                                                                   Boolean            SkipNotifications   = false,
-                                                                   EventTracking_Id?  EventTrackingId     = null,
-                                                                   User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            #region Validate AllowDowngrades
-
-            if (EVSE.TryGetConnector(Connector.Id, out var existingConnector) &&
-                existingConnector is not null)
-            {
-
-                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
-                    Connector.LastUpdated <= existingConnector.LastUpdated)
-                {
-                    return UpdateResult<Connector>.Failed(EventTrackingId, Connector,
-                                                          "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
-                }
-
-                //if (newOrUpdatedConnector.LastUpdated.ToIso8601() == existingConnector.LastUpdated.ToIso8601())
-                //    return AddOrUpdateResult<Connector>.NoOperation(newOrUpdatedConnector,
-                //                                                    "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
-
-            }
-            else
-                return UpdateResult<Connector>.Failed(EventTrackingId, Connector,
-                                                      $"The given charging connector '{Connector.Id}' does not exist!");
-
-            #endregion
-
-
-            var newEVSE = EVSE.Update(evseBuilder => {
-                                          evseBuilder.SetConnector(Connector);
-                                          evseBuilder.LastUpdated  = Connector.LastUpdated;
-                                      },
-                                      out var warnings);
-
-            if (newEVSE is null)
-                return UpdateResult<Connector>.Failed(EventTrackingId, Connector,
-                                                      warnings.First().Text.FirstText());
-
-
-            var updateEVSEResult = await UpdateEVSE(Location,
-                                                    newEVSE,
-                                                    (AllowDowngrades ?? this.AllowDowngrades) == false,
-                                                    SkipNotifications);
-
-            return updateEVSEResult.IsSuccess
-                       ? UpdateResult<Connector>.Success(EventTrackingId, Connector)
-                       : UpdateResult<Connector>.Failed (EventTrackingId, Connector,
-                                                         updateEVSEResult.ErrorResponse ?? "Unknown error!");
-
-        }
-
-        #endregion
-
-        #region TryPatchConnector      (Location, EVSE, Connector, ConnectorPatch, AllowDowngrades = false, SkipNotifications = false)
-
-        public async Task<PatchResult<Connector>> TryPatchConnector(Location           Location,
-                                                                    EVSE               EVSE,
-                                                                    Connector          Connector,
-                                                                    JObject            ConnectorPatch,
-                                                                    Boolean?           AllowDowngrades     = false,
-                                                                    Boolean            SkipNotifications   = false,
-                                                                    EventTracking_Id?  EventTrackingId     = null,
-                                                                    User_Id?           CurrentUserId       = null)
-        {
-
-            EventTrackingId ??= EventTracking_Id.New;
-
-            if (!ConnectorPatch.HasValues)
-                return PatchResult<Connector>.Failed(EventTrackingId, Connector,
-                                                     "The given connector patch must not be null or empty!");
-
-            var patchResult = Connector.TryPatch(ConnectorPatch,
-                                                 AllowDowngrades ?? this.AllowDowngrades ?? false);
-
-            if (patchResult.IsSuccess &&
-                patchResult.PatchedData is not null)
-            {
-
-                var updateConnectorResult = await UpdateConnector(Location,
-                                                                  EVSE,
-                                                                  patchResult.PatchedData,
-                                                                  AllowDowngrades,
-                                                                  SkipNotifications);
-
-                if (updateConnectorResult.IsFailed)
-                    return PatchResult<Connector>.Failed(EventTrackingId, Connector,
-                                                         updateConnectorResult.ErrorResponse ?? "Unknown error!");
-
-            }
-
-            return patchResult;
-
-        }
-
-        #endregion
-
-
-        #region LocationExists(LocationId)
-
-        public Boolean LocationExists(Location_Id LocationId)
-
-            => locations.ContainsKey(LocationId);
-
-        #endregion
-
-        #region TryGetLocation(LocationId, out Location)
-
-        public Boolean TryGetLocation(Location_Id    LocationId,
-                                      out Location?  Location)
-        {
-
-            if (locations.TryGetValue(LocationId, out Location))
-                return true;
-
-            Location = null;
-            return false;
-
-        }
-
-        #endregion
-
-        #region GetLocations  (IncludeLocation = null)
-
-        public IEnumerable<Location> GetLocations(Func<Location, Boolean>? IncludeLocation = null)
-
-            => IncludeLocation is null
-                   ? locations.Values
-                   : locations.Values.Where(IncludeLocation);
-
-        #endregion
-
-        #region GetLocations  (CountryCode, PartyId)
-
-        public IEnumerable<Location> GetLocations(CountryCode  CountryCode,
-                                                  Party_Id     PartyId)
-
-            => locations.Values.Where(location => location.CountryCode == CountryCode &&
-                                                  location.PartyId     == PartyId);
 
         #endregion
 
@@ -7845,13 +7463,676 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+
+        #region LocationExists         (LocationId)
+
+        public Boolean LocationExists(Location_Id  LocationId)
+
+            => locations.ContainsKey(LocationId);
+
+        #endregion
+
+        #region GetLocation            (LocationId)
+
+        public Location? GetLocation(Location_Id  LocationId)
+        {
+
+            if (locations.TryGetValue(LocationId, out var location))
+                return location;
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region TryGetLocation         (LocationId, out Location)
+
+        public Boolean TryGetLocation(Location_Id                        LocationId,
+                                      [NotNullWhen(true)] out Location?  Location)
+        {
+
+            if (locations.TryGetValue(LocationId, out Location))
+                return true;
+
+            Location = null;
+            return false;
+
+        }
+
+        #endregion
+
+        #region GetLocations           (PartyId = null)
+
+        public IEnumerable<Location> GetLocations(Party_Idv3? PartyId = null)
+        {
+
+            if (PartyId.HasValue)
+            {
+
+                var countryCode  = PartyId.Value.CountryCode;
+                var partyId      = PartyId.Value.Party;
+
+                var results      = locations.Values.
+                                       Where(location => location.CountryCode == countryCode &&
+                                                         location.PartyId     == partyId).
+                                       ToArray();
+
+                return results;
+
+            }
+
+            return locations.Values;
+
+        }
+
+        #endregion
+
+        #region GetLocations           (CountryCode, PartyId)
+
+        public IEnumerable<Location> GetLocations(CountryCode  CountryCode,
+                                                  Party_Id     PartyId)
+
+            => locations.Values.Where(location => location.CountryCode == CountryCode &&
+                                                  location.PartyId     == PartyId);
+
+        #endregion
+
+        #region GetLocations           (IncludeLocation)
+
+        public IEnumerable<Location> GetLocations(Func<Location, Boolean> IncludeLocation)
+        {
+
+            var allLocations = new List<Location>();
+
+            foreach (var location in locations.Values)
+            {
+                if (location is not null &&
+                    IncludeLocation(location))
+                {
+                    allLocations.Add(location);
+                }
+            }
+
+            return allLocations;
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region EVSEs
+
+        #region AddEVSE                (Location, EVSE,                                                     SkipNotifications = false)
+
+        public async Task<AddResult<EVSE>> AddEVSE(Location           Location,
+                                                   EVSE               EVSE,
+                                                   Boolean            SkipNotifications   = false,
+                                                   EventTracking_Id?  EventTrackingId     = null,
+                                                   User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (Location.EVSEExists(EVSE.UId))
+                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
+                                              $"The given EVSE '{EVSE.UId}' already exists!");
+
+            DebugX.Log($"OCPI v2.1.1 EVSE '{EVSE.UId}'/'{EVSE.EVSEId}': '{EVSE}' added...");
+
+            var newLocation = Location.Update(locationBuilder => {
+                                                  locationBuilder.SetEVSE(EVSE);
+                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
+                                              },
+                                              out var warnings);
+
+            if (newLocation is null)
+                return AddResult<EVSE>.Failed(
+                           EventTrackingId, EVSE,
+                           warnings.First().Text.FirstText()
+                       );
+
+
+            var updateLocationResult = await UpdateLocation(
+                                                 newLocation,
+                                                 AllowDowngrades,
+                                                 SkipNotifications,
+                                                 EventTrackingId,
+                                                 CurrentUserId
+                                             );
+
+
+            return updateLocationResult.IsSuccess
+
+                       ? AddResult<EVSE>.Success(
+                             EventTrackingId, EVSE
+                         )
+
+                       : AddResult<EVSE>.Failed (
+                             EventTrackingId, EVSE,
+                             updateLocationResult.ErrorResponse ?? "Unknown error!"
+                         );
+
+        }
+
+        #endregion
+
+        #region AddEVSEIfNotExists     (Location, EVSE,                                                     SkipNotifications = false)
+
+        public async Task<AddResult<EVSE>> AddEVSEIfNotExists(Location           Location,
+                                                              EVSE               EVSE,
+                                                              Boolean            SkipNotifications   = false,
+                                                              EventTracking_Id?  EventTrackingId     = null,
+                                                              User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (Location.EVSEExists(EVSE.UId))
+                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
+                                              $"The given EVSE '{EVSE.UId}' already exists!");
+
+
+            var newLocation = Location.Update(locationBuilder => {
+                                                  locationBuilder.SetEVSE(EVSE);
+                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
+                                              },
+                                              out var warnings);
+
+            if (newLocation is null)
+                return AddResult<EVSE>.Failed(EventTrackingId, EVSE,
+                                              warnings.First().Text.FirstText());
+
+
+            var updateLocationResult = await UpdateLocation(newLocation,
+                                                            AllowDowngrades,
+                                                            SkipNotifications,
+                                                            EventTrackingId,
+                                                            CurrentUserId);
+
+            return updateLocationResult.IsSuccess
+                       ? AddResult<EVSE>.Success    (EventTrackingId, EVSE)
+                       : AddResult<EVSE>.NoOperation(EventTrackingId, EVSE,
+                                                     updateLocationResult.ErrorResponse);
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateEVSE        (Location, EVSE,                            AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<AddOrUpdateResult<EVSE>> AddOrUpdateEVSE(Location           Location,
+                                                                   EVSE               EVSE,
+                                                                   Boolean?           AllowDowngrades     = false,
+                                                                   Boolean            SkipNotifications   = false,
+                                                                   EventTracking_Id?  EventTrackingId     = null,
+                                                                   User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            #region Validate AllowDowngrades
+
+            if (Location.TryGetEVSE(EVSE.UId, out var existingEVSE) &&
+                existingEVSE is not null)
+            {
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    EVSE.LastUpdated <= existingEVSE.LastUpdated)
+                {
+                    return AddOrUpdateResult<EVSE>.Failed     (EventTrackingId, EVSE,
+                                                               "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
+                }
+
+                //if (EVSE.LastUpdated.ToIso8601() == existingEVSE.LastUpdated.ToIso8601())
+                //    return AddOrUpdateResult<EVSE>.NoOperation(EVSE,
+                //                                               "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
+
+            }
+
+            #endregion
+
+            var newLocation = Location.Update(locationBuilder => {
+
+                                                  if (EVSE.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
+                                                      locationBuilder.SetEVSE(EVSE);
+                                                  else
+                                                      locationBuilder.RemoveEVSE(EVSE);
+
+                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
+
+                                              },
+                                              out var warnings);
+
+            if (newLocation is null)
+                return AddOrUpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
+                                                      warnings.First().Text.FirstText());
+
+
+            var updateLocationResult = await UpdateLocation(newLocation,
+                                                            (AllowDowngrades ?? this.AllowDowngrades) == false,
+                                                            SkipNotifications,
+                                                            EventTrackingId,
+                                                            CurrentUserId);
+
+            return updateLocationResult.IsSuccess
+                       ? existingEVSE is null
+                             ? AddOrUpdateResult<EVSE>.Created(EventTrackingId, EVSE)
+                             : AddOrUpdateResult<EVSE>.Updated(EventTrackingId, EVSE)
+                       : AddOrUpdateResult<EVSE>.Failed(
+                             EventTrackingId, EVSE,
+                             updateLocationResult.ErrorResponse ?? "Unknown error!"
+                         );
+
+        }
+
+        #endregion
+
+        #region UpdateEVSE             (Location, EVSE,                            AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<UpdateResult<EVSE>> UpdateEVSE(Location           Location,
+                                                         EVSE               EVSE,
+                                                         Boolean?           AllowDowngrades     = false,
+                                                         Boolean            SkipNotifications   = false,
+                                                         EventTracking_Id?  EventTrackingId     = null,
+                                                         User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            #region Validate AllowDowngrades
+
+            if (Location.TryGetEVSE(EVSE.UId, out var existingEVSE) &&
+                existingEVSE is not null)
+            {
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    EVSE.LastUpdated <= existingEVSE.LastUpdated)
+                {
+                    return UpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
+                                                     "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
+                }
+
+                //if (EVSE.LastUpdated.ToIso8601() == existingEVSE.LastUpdated.ToIso8601())
+                //    return AddOrUpdateResult<EVSE>.NoOperation(EVSE,
+                //                                               "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
+
+            }
+            else
+                return UpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
+                                                 $"The given EVSE '{EVSE.UId}' does not exist!");
+
+            #endregion
+
+            var newLocation = Location.Update(locationBuilder => {
+
+                                                  if (EVSE.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
+                                                      locationBuilder.SetEVSE(EVSE);
+                                                  else
+                                                      locationBuilder.RemoveEVSE(EVSE);
+
+                                                  locationBuilder.LastUpdated  = EVSE.LastUpdated;
+
+                                              },
+                                              out var warnings);
+
+            if (newLocation is null)
+                return UpdateResult<EVSE>.Failed(EventTrackingId, EVSE,
+                                                 warnings.First().Text.FirstText());
+
+
+            var updateLocationResult = await UpdateLocation(newLocation,
+                                                            (AllowDowngrades ?? this.AllowDowngrades) == false,
+                                                            SkipNotifications,
+                                                            EventTrackingId,
+                                                            CurrentUserId);
+
+            return updateLocationResult.IsSuccess
+                       ? UpdateResult<EVSE>.Success(EventTrackingId, EVSE)
+                       : UpdateResult<EVSE>.Failed (EventTrackingId, EVSE,
+                                                    updateLocationResult.ErrorResponse ?? "Unknown error!");
+
+        }
+
+        #endregion
+
+        #region TryPatchEVSE           (Location, EVSE, EVSEPatch,                 AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<PatchResult<EVSE>> TryPatchEVSE(Location           Location,
+                                                          EVSE               EVSE,
+                                                          JObject            EVSEPatch,
+                                                          Boolean?           AllowDowngrades     = false,
+                                                          Boolean            SkipNotifications   = false,
+                                                          EventTracking_Id?  EventTrackingId     = null,
+                                                          User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (!EVSEPatch.HasValues)
+                return PatchResult<EVSE>.Failed(EventTrackingId, EVSE,
+                                                "The given EVSE patch must not be null or empty!");
+
+            var patchResult = EVSE.TryPatch(EVSEPatch,
+                                            AllowDowngrades ?? this.AllowDowngrades ?? false);
+
+            //var justAStatusChange  = EVSEPatch.Children().Count() == 2 && EVSEPatch.ContainsKey("status") && EVSEPatch.ContainsKey("last_updated");
+
+            if (patchResult.IsSuccess &&
+                patchResult.PatchedData is not null)
+            {
+
+                var updateEVSEResult = await UpdateEVSE(Location,
+                                                        patchResult.PatchedData,
+                                                        AllowDowngrades,
+                                                        SkipNotifications);
+
+                if (updateEVSEResult.IsFailed)
+                    return PatchResult<EVSE>.Failed(EventTrackingId, EVSE,
+                                                    updateEVSEResult.ErrorResponse ?? "Unknown error!");
+
+            }
+
+            return patchResult;
+
+        }
+
+        #endregion
+
+
+
+        #endregion
+
+        #region Connectors
+
+        #region AddConnector           (Location, EVSE, Connector,                                          SkipNotifications = false)
+
+        public async Task<AddResult<Connector>> AddConnector(Location           Location,
+                                                             EVSE               EVSE,
+                                                             Connector          Connector,
+                                                             Boolean            SkipNotifications   = false,
+                                                             EventTracking_Id?  EventTrackingId     = null,
+                                                             User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (EVSE.ConnectorExists(Connector.Id))
+                return AddResult<Connector>.Failed(EventTrackingId, Connector,
+                                                   $"The given charging connector identification '{Connector.Id}' already exists!");
+
+
+            var newEVSE = EVSE.Update(evseBuilder => {
+                                          evseBuilder.SetConnector(Connector);
+                                          evseBuilder.LastUpdated = Connector.LastUpdated;
+                                      },
+                                      out var warnings);
+
+            if (newEVSE is null)
+                return AddResult<Connector>.Failed(EventTrackingId, Connector,
+                                                   warnings.First().Text.FirstText());
+
+
+            var updateEVSEResult = await UpdateEVSE(Location,
+                                                    newEVSE,
+                                                    (AllowDowngrades ?? this.AllowDowngrades) == false,
+                                                    SkipNotifications);
+
+            return updateEVSEResult.IsSuccess
+                       ? AddResult<Connector>.Success(EventTrackingId, Connector)
+                       : AddResult<Connector>.Failed (EventTrackingId, Connector,
+                                                      updateEVSEResult.ErrorResponse ?? "Unknown error!");
+
+        }
+
+        #endregion
+
+        #region AddConnectorIfNotExists(Location, EVSE, Connector,                                          SkipNotifications = false)
+
+        public async Task<AddResult<Connector>> AddConnectorIfNotExists(Location           Location,
+                                                                        EVSE               EVSE,
+                                                                        Connector          Connector,
+                                                                        Boolean            SkipNotifications   = false,
+                                                                        EventTracking_Id?  EventTrackingId     = null,
+                                                                        User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (EVSE.ConnectorExists(Connector.Id))
+                return AddResult<Connector>.Failed(EventTrackingId, Connector,
+                                                   $"The given charging connector identification '{Connector.Id}' already exists!");
+
+
+            var newEVSE = EVSE.Update(evseBuilder => {
+                                          evseBuilder.SetConnector(Connector);
+                                          evseBuilder.LastUpdated = Connector.LastUpdated;
+                                      },
+                                      out var warnings);
+
+            if (newEVSE is null)
+                return AddResult<Connector>.Failed(EventTrackingId, Connector,
+                                                   warnings.First().Text.FirstText());
+
+
+            var updateEVSEResult = await UpdateEVSE(Location,
+                                                    newEVSE,
+                                                    (AllowDowngrades ?? this.AllowDowngrades) == false,
+                                                    SkipNotifications);
+
+            return updateEVSEResult.IsSuccess
+                       ? AddResult<Connector>.Success    (EventTrackingId, Connector)
+                       : AddResult<Connector>.NoOperation(EventTrackingId, Connector,
+                                                          updateEVSEResult.ErrorResponse);
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateConnector   (Location, EVSE, Connector,                 AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<AddOrUpdateResult<Connector>> AddOrUpdateConnector(Location           Location,
+                                                                             EVSE               EVSE,
+                                                                             Connector          Connector,
+                                                                             Boolean?           AllowDowngrades     = false,
+                                                                             Boolean            SkipNotifications   = false,
+                                                                             EventTracking_Id?  EventTrackingId     = null,
+                                                                             User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            #region Validate AllowDowngrades
+
+            if (EVSE.TryGetConnector(Connector.Id, out var existingConnector) &&
+                existingConnector is not null)
+            {
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Connector.LastUpdated <= existingConnector.LastUpdated)
+                {
+                    return AddOrUpdateResult<Connector>.Failed(EventTrackingId, Connector,
+                                                               "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
+                }
+
+                //if (newOrUpdatedConnector.LastUpdated.ToIso8601() == existingConnector.LastUpdated.ToIso8601())
+                //    return AddOrUpdateResult<Connector>.NoOperation(newOrUpdatedConnector,
+                //                                                    "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
+
+            }
+
+            #endregion
+
+
+            var newEVSE = EVSE.Update(evseBuilder => {
+                                          evseBuilder.SetConnector(Connector);
+                                          evseBuilder.LastUpdated  = Connector.LastUpdated;
+                                      },
+                                      out var warnings);
+
+            if (newEVSE is null)
+                return AddOrUpdateResult<Connector>.Failed(EventTrackingId, Connector,
+                                                           warnings.First().Text.FirstText());
+
+
+            var result = await AddOrUpdateEVSE(Location,
+                                               newEVSE,
+                                               (AllowDowngrades ?? this.AllowDowngrades) == false,
+                                               SkipNotifications);
+
+            if (result.IsSuccess)
+            {
+
+                if (!SkipNotifications)
+                {
+                    var OnLocationChangedLocal = OnLocationChanged;
+                    if (OnLocationChangedLocal is not null)
+                    {
+                        try
+                        {
+                            if (Connector.ParentEVSE?.ParentLocation is not null)
+                                await OnLocationChangedLocal(Connector.ParentEVSE.ParentLocation);
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateConnector), " ", nameof(OnLocationChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace ?? "");
+                        }
+                    }
+                }
+
+                return result.WasCreated ?? false
+                           ? AddOrUpdateResult<Connector>.Created(EventTrackingId, Connector)
+                           : AddOrUpdateResult<Connector>.Updated(EventTrackingId, Connector);
+
+            }
+
+            return AddOrUpdateResult<Connector>.Failed(EventTrackingId, Connector,
+                                                       result.ErrorResponse ?? "Unknown error!");
+
+        }
+
+        #endregion
+
+        #region UpdateConnector        (Location, EVSE, Connector,                 AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<UpdateResult<Connector>> UpdateConnector(Location           Location,
+                                                                   EVSE               EVSE,
+                                                                   Connector          Connector,
+                                                                   Boolean?           AllowDowngrades     = false,
+                                                                   Boolean            SkipNotifications   = false,
+                                                                   EventTracking_Id?  EventTrackingId     = null,
+                                                                   User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            #region Validate AllowDowngrades
+
+            if (EVSE.TryGetConnector(Connector.Id, out var existingConnector) &&
+                existingConnector is not null)
+            {
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Connector.LastUpdated <= existingConnector.LastUpdated)
+                {
+                    return UpdateResult<Connector>.Failed(EventTrackingId, Connector,
+                                                          "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
+                }
+
+                //if (newOrUpdatedConnector.LastUpdated.ToIso8601() == existingConnector.LastUpdated.ToIso8601())
+                //    return AddOrUpdateResult<Connector>.NoOperation(newOrUpdatedConnector,
+                //                                                    "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
+
+            }
+            else
+                return UpdateResult<Connector>.Failed(EventTrackingId, Connector,
+                                                      $"The given charging connector '{Connector.Id}' does not exist!");
+
+            #endregion
+
+
+            var newEVSE = EVSE.Update(evseBuilder => {
+                                          evseBuilder.SetConnector(Connector);
+                                          evseBuilder.LastUpdated  = Connector.LastUpdated;
+                                      },
+                                      out var warnings);
+
+            if (newEVSE is null)
+                return UpdateResult<Connector>.Failed(EventTrackingId, Connector,
+                                                      warnings.First().Text.FirstText());
+
+
+            var updateEVSEResult = await UpdateEVSE(Location,
+                                                    newEVSE,
+                                                    (AllowDowngrades ?? this.AllowDowngrades) == false,
+                                                    SkipNotifications);
+
+            return updateEVSEResult.IsSuccess
+                       ? UpdateResult<Connector>.Success(EventTrackingId, Connector)
+                       : UpdateResult<Connector>.Failed (EventTrackingId, Connector,
+                                                         updateEVSEResult.ErrorResponse ?? "Unknown error!");
+
+        }
+
+        #endregion
+
+        #region TryPatchConnector      (Location, EVSE, Connector, ConnectorPatch, AllowDowngrades = false, SkipNotifications = false)
+
+        public async Task<PatchResult<Connector>> TryPatchConnector(Location           Location,
+                                                                    EVSE               EVSE,
+                                                                    Connector          Connector,
+                                                                    JObject            ConnectorPatch,
+                                                                    Boolean?           AllowDowngrades     = false,
+                                                                    Boolean            SkipNotifications   = false,
+                                                                    EventTracking_Id?  EventTrackingId     = null,
+                                                                    User_Id?           CurrentUserId       = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (!ConnectorPatch.HasValues)
+                return PatchResult<Connector>.Failed(EventTrackingId, Connector,
+                                                     "The given connector patch must not be null or empty!");
+
+            var patchResult = Connector.TryPatch(ConnectorPatch,
+                                                 AllowDowngrades ?? this.AllowDowngrades ?? false);
+
+            if (patchResult.IsSuccess &&
+                patchResult.PatchedData is not null)
+            {
+
+                var updateConnectorResult = await UpdateConnector(Location,
+                                                                  EVSE,
+                                                                  patchResult.PatchedData,
+                                                                  AllowDowngrades,
+                                                                  SkipNotifications);
+
+                if (updateConnectorResult.IsFailed)
+                    return PatchResult<Connector>.Failed(EventTrackingId, Connector,
+                                                         updateConnectorResult.ErrorResponse ?? "Unknown error!");
+
+            }
+
+            return patchResult;
+
+        }
+
+        #endregion
+
+
+
+        #endregion
+
         #endregion
 
         #region Tariffs
 
         #region Data
 
-        private readonly TimeRangeDictionary<Tariff_Id , Tariff> tariffs = new();
+        private readonly TimeRangeDictionary<Tariff_Id , Tariff> tariffs = [];
 
 
         public delegate Task OnTariffAddedDelegate  (Tariff               Tariff);
@@ -8652,7 +8933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Data
 
-        private readonly ConcurrentDictionary<Session_Id , Session> chargingSessions = new();
+        private readonly ConcurrentDictionary<Session_Id , Session> chargingSessions = [];
 
 
         public delegate Task OnSessionAddedDelegate          (Session Session);
@@ -9457,7 +9738,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Data
 
-        private readonly ConcurrentDictionary<Token_Id, TokenStatus> tokenStatus = new();
+        private readonly ConcurrentDictionary<Token_Id, TokenStatus> tokenStatus = [];
 
 
         public delegate Task               OnTokenAddedDelegate  (Token     Token);
@@ -10177,7 +10458,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Data
 
-        private readonly ConcurrentDictionary<CDR_Id, CDR> chargeDetailRecords = new();
+        private readonly ConcurrentDictionary<CDR_Id, CDR> chargeDetailRecords = [];
 
 
         public delegate Task OnChargeDetailRecordAddedDelegate  (CDR CDR);

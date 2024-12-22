@@ -33,6 +33,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv2_2_1.CPO.HTTP;
 using cloud.charging.open.protocols.OCPIv2_2_1.EMSP.HTTP;
+using Org.BouncyCastle.Ocsp;
 
 #endregion
 
@@ -50,6 +51,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                                    EVSE_UId?      EVSEUId       = null,
                                                                    Connector_Id?  ConnectorId   = null,
                                                                    EMSP_Id?       EMSPId        = null);
+
+    public class PartyData(Party_Idv3 Id)
+    {
+
+        public Party_Idv3  Id    { get; } = Id;
+
+        public ConcurrentDictionary<Location_Id, Location>  Locations   = [];
+        public TimeRangeDictionary <Tariff_Id,   Tariff>    Tariffs     = [];
+        public ConcurrentDictionary<Session_Id,  Session>   Sessions    = [];
+        public ConcurrentDictionary<Token_Id,    Token>     Tokens      = [];
+        public ConcurrentDictionary<CDR_Id,      CDR>       CDRs        = [];
+
+    }
 
 
     /// <summary>
@@ -339,7 +353,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -358,7 +372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -383,7 +397,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                             HTTPStatusCode             = HTTPStatusCode.NotFound,
                             //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                            AccessControlAllowHeaders  = new[] { "Authorization" }
+                            AccessControlAllowHeaders  = [ "Authorization" ]
                         }
                     };
 
@@ -415,7 +429,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode             = HTTPStatusCode.NotFound,
                     //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
+                    AccessControlAllowHeaders  = [ "Authorization" ]
                 }
             };
 
@@ -660,7 +674,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -679,7 +693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -698,7 +712,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -724,7 +738,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.NotFound,
                                 //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                AccessControlAllowHeaders  = new[] { "Authorization" }
+                                AccessControlAllowHeaders  = [ "Authorization" ]
                             }
                         };
 
@@ -744,7 +758,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode             = HTTPStatusCode.NotFound,
                     //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
+                    AccessControlAllowHeaders  = [ "Authorization" ]
                 }
             };
 
@@ -1036,7 +1050,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -1054,7 +1068,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -1073,7 +1087,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -1092,7 +1106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -1119,7 +1133,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.NotFound,
                                 //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                AccessControlAllowHeaders  = new[] { "Authorization" }
+                                AccessControlAllowHeaders  = [ "Authorization" ]
                             }
                         };
 
@@ -1135,7 +1149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.NotFound,
                                 //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                AccessControlAllowHeaders  = new[] { "Authorization" }
+                                AccessControlAllowHeaders  = [ "Authorization" ]
                             }
                         };
 
@@ -1155,7 +1169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode             = HTTPStatusCode.NotFound,
                     //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
+                    AccessControlAllowHeaders  = [ "Authorization" ]
                 }
             };
 
@@ -1350,7 +1364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -1369,7 +1383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -1396,7 +1410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode             = HTTPStatusCode.NotFound,
                     //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
+                    AccessControlAllowHeaders  = [ "Authorization" ]
                 }
             };
 
@@ -1590,7 +1604,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -1609,7 +1623,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -1636,7 +1650,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode             = HTTPStatusCode.NotFound,
                     //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
+                    AccessControlAllowHeaders  = [ "Authorization" ]
                 }
             };
 
@@ -1829,7 +1843,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -1848,7 +1862,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -1875,7 +1889,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode             = HTTPStatusCode.NotFound,
                     //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                    AccessControlAllowHeaders  = new[] { "Authorization" }
+                    AccessControlAllowHeaders  = [ "Authorization" ]
                 }
             };
 
@@ -2003,7 +2017,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -2022,7 +2036,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -2041,7 +2055,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -2060,7 +2074,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -2225,7 +2239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -2244,7 +2258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -2263,7 +2277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -2282,7 +2296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -2310,7 +2324,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                 HTTPStatusCode             = HTTPStatusCode.UnprocessableEntity,
                                 //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                AccessControlAllowHeaders  = new[] { "Authorization" }
+                                AccessControlAllowHeaders  = [ "Authorization" ]
                             }
                         };
 
@@ -2330,7 +2344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.NotFound,
                         //AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                        AccessControlAllowHeaders  = new[] { "Authorization" }
+                        AccessControlAllowHeaders  = [ "Authorization" ]
                     }
                 };
 
@@ -2483,11 +2497,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         /// Whether to keep or delete EVSEs marked as "REMOVED".
         /// </summary>
         public Func<EVSE, Boolean>           KeepRemovedEVSEs           { get; }
-
-        /// <summary>
-        /// Disable OCPI v2.1.1.
-        /// </summary>
-        public Boolean                       Disable_OCPIv2_1_1         { get; }
 
         /// <summary>
         /// The CommonAPI logger.
@@ -2801,15 +2810,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Custom JSON serializers
 
-        public CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                 { get; }
-        public CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer            { get; }
-        public CustomJObjectSerializerDelegate<Price>?                CustomPriceSerializer                  { get; }
-        public CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer          { get; }
-        public CustomJObjectSerializerDelegate<PriceComponent>?       CustomPriceComponentSerializer         { get; }
-        public CustomJObjectSerializerDelegate<TariffRestrictions>?   CustomTariffRestrictionsSerializer     { get; }
-        public CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer              { get; }
-        public CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer           { get; }
-        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer    { get; }
+        public CustomJObjectSerializerDelegate<VersionInformation>?           CustomVersionInformationSerializer            { get; }
+        public CustomJObjectSerializerDelegate<VersionDetail>?                CustomVersionDetailSerializer                 { get; }
+        public CustomJObjectSerializerDelegate<VersionEndpoint>?              CustomVersionEndpointSerializer               { get; }
+
+
+        public CustomJObjectSerializerDelegate<Location>?                     CustomLocationSerializer                      { get; }
+        public CustomJObjectSerializerDelegate<PublishToken>?                 CustomPublishTokenSerializer                  { get; }
+        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?        CustomAdditionalGeoLocationSerializer         { get; }
+        public CustomJObjectSerializerDelegate<EVSE>?                         CustomEVSESerializer                          { get; }
+        public CustomJObjectSerializerDelegate<StatusSchedule>?               CustomStatusScheduleSerializer                { get; }
+        public CustomJObjectSerializerDelegate<Connector>?                    CustomConnectorSerializer                     { get; }
+        public CustomJObjectSerializerDelegate<EnergyMeter>?                  CustomEnergyMeterSerializer                   { get; }
+        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?   CustomTransparencySoftwareStatusSerializer    { get; }
+        public CustomJObjectSerializerDelegate<TransparencySoftware>?         CustomTransparencySoftwareSerializer          { get; }
+        public CustomJObjectSerializerDelegate<DisplayText>?                  CustomDisplayTextSerializer                   { get; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?              CustomBusinessDetailsSerializer               { get; }
+        public CustomJObjectSerializerDelegate<Hours>?                        CustomHoursSerializer                         { get; }
+        public CustomJObjectSerializerDelegate<Image>?                        CustomImageSerializer                         { get; }
+        public CustomJObjectSerializerDelegate<EnergyMix>?                    CustomEnergyMixSerializer                     { get; }
+        public CustomJObjectSerializerDelegate<EnergySource>?                 CustomEnergySourceSerializer                  { get; }
+        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?          CustomEnvironmentalImpactSerializer           { get; }
+
+
+        public CustomJObjectSerializerDelegate<Tariff>?                       CustomTariffSerializer                        { get; }
+        public CustomJObjectSerializerDelegate<Price>?                        CustomPriceSerializer                         { get; }
+        public CustomJObjectSerializerDelegate<TariffElement>?                CustomTariffElementSerializer                 { get; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?               CustomPriceComponentSerializer                { get; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?           CustomTariffRestrictionsSerializer            { get; }
 
         #endregion
 
@@ -2846,7 +2874,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          Boolean                                                    LocationsAsOpenData          = true,
                          Boolean?                                                   AllowDowngrades              = null,
                          Boolean                                                    Disable_RootServices         = true,
-                         Boolean                                                    Disable_OCPIv2_1_1           = true,
 
                          HTTPHostname?                                              HTTPHostname                 = null,
                          String?                                                    ExternalDNSName              = null,
@@ -2961,13 +2988,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
-            this.Disable_OCPIv2_1_1    = Disable_OCPIv2_1_1;
-
-            this.locations             = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this.chargingSessions      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this.tokenStatus           = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
-            this.ChargeDetailRecords   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
-
             this.CommonAPILogger       = this.DisableLogging == false
                                              ? null
                                              : new CommonAPILogger(
@@ -2976,6 +2996,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    LoggingPath,
                                                    LogfileCreator
                                                );
+
+            AddVersionInformation(
+                new VersionInformation(
+                    Version.Id,
+                    URL.Parse(
+                        (OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                        (ExternalDNSName ?? "localhost" + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/")
+                    )
+                )
+            ).GetAwaiter().GetResult();
+
 
             if (!this.DisableLogging)
                 ReadRemotePartyDatabaseFile();
@@ -3021,7 +3052,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
                          Boolean                       Disable_RootServices      = false,
-                         Boolean                       Disable_OCPIv2_1_1        = true,
 
                          JObject?                      APIVersionHashes          = null,
 
@@ -3096,13 +3126,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
             this.KeepRemovedEVSEs      = KeepRemovedEVSEs ?? (evse => true);
 
-            this.Disable_OCPIv2_1_1    = Disable_OCPIv2_1_1;
-
-            this.locations             = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this.chargingSessions      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this.tokenStatus           = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
-            this.ChargeDetailRecords   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
-
             // Link HTTP events...
             HTTPServer.RequestLog     += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
             HTTPServer.ResponseLog    += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
@@ -3116,6 +3139,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                    LogfileCreator
                                                )
                                              : null;
+
+            AddVersionInformation(
+                new VersionInformation(
+                    Version.Id,
+                    URL.Parse(
+                        (OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                        (ExternalDNSName ?? "localhost" + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/")
+                    )
+                )
+            ).GetAwaiter().GetResult();
+
 
             if (!this.DisableLogging)
                 ReadRemotePartyDatabaseFile();
@@ -3218,8 +3252,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                      Server                     = DefaultHTTPServerName,
                                                      Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                     AccessControlAllowHeaders  = new[] { "Authorization" },
+                                                     AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                     AccessControlAllowHeaders  = [ "Authorization" ],
                                                      ContentType                = HTTPContentType.Text.PLAIN,
                                                      Content                    = "This is an Open Charge Point Interface HTTP service!\r\nPlease check ~/versions!".ToUTF8Bytes(),
                                                      Connection                 = ConnectionType.Close
@@ -3266,65 +3300,58 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // ----------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions
             // ----------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
-                               HTTPMethod.GET,
-                               URLPathPrefix + "versions",
-                               HTTPContentType.Application.JSON_UTF8,
-                               OCPIRequestLogger:   GetVersionsRequest,
-                               OCPIResponseLogger:  GetVersionsResponse,
-                               OCPIRequestHandler:  Request => {
+            this.AddOCPIMethod(
 
-                                   #region Check access token
+                Hostname,
+                HTTPMethod.GET,
+                URLPathPrefix + "versions",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   GetVersionsRequest,
+                OCPIResponseLogger:  GetVersionsResponse,
+                OCPIRequestHandler:  request => {
 
-                                   if (Request.LocalAccessInfo is not null &&
-                                       Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
-                                   {
+                    #region Check access token
 
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "Invalid or blocked access token!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                  AccessControlAllowHeaders  = new[] { "Authorization" }
-                                              }
-                                          });
+                    if (request.LocalAccessInfo is not null &&
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                    {
 
-                                   }
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Invalid or blocked access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
 
-                                   #endregion
+                    }
 
-                                   return Task.FromResult(
-                                       new OCPIResponse.Builder(Request) {
-                                           StatusCode           = 1000,
-                                           StatusMessage        = "Hello world!",
-                                           Data                 = new JArray(
-                                                                      new VersionInformation?[] {
-                                                                          Disable_OCPIv2_1_1
-                                                                              ? null
-                                                                              : new VersionInformation(
-                                                                                    Version_Id.Parse("2.1.1"),
-                                                                                    URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                              (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.1.1")).Replace("//", "/"))
-                                                                                ),
-                                                                          new VersionInformation(
-                                                                              Version.Id,
-                                                                              URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                        (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + $"/versions/{Version.Id}")).Replace("//", "/"))
-                                                                          )
-                                                                      }.Where (version => version is not null).
-                                                                        Select(version => version?.ToJSON())
-                                                                  ),
-                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                               AccessControlAllowHeaders  = new[] { "Authorization" },
-                                               Vary                       = "Accept"
-                                           }
-                                       });
+                    #endregion
 
-                               });
+                    return Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                            StatusCode           = 1000,
+                            StatusMessage        = "Hello world!",
+                            Data                 = new JArray(
+                                                       versionInformations.Values.Select(versionInformation => versionInformation.ToJSON(CustomVersionInformationSerializer))
+                                                   ),
+                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                Vary                       = "Accept"
+                            }
+                        }
+                    );
+
+                }
+
+            );
 
             #endregion
 
@@ -3361,238 +3388,245 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             // ---------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions/{id}
             // ---------------------------------------------------------------------------
-            this.AddOCPIMethod(Hostname,
-                               HTTPMethod.GET,
-                               URLPathPrefix + "versions/{versionId}",
-                               HTTPContentType.Application.JSON_UTF8,
-                               OCPIRequestLogger:   GetVersionRequest,
-                               OCPIResponseLogger:  GetVersionResponse,
-                               OCPIRequestHandler:  Request => {
+            this.AddOCPIMethod(
 
-                                   #region Check access token
+                Hostname,
+                HTTPMethod.GET,
+                URLPathPrefix + "versions/{versionId}",
+                HTTPContentType.Application.JSON_UTF8,
+                OCPIRequestLogger:   GetVersionRequest,
+                OCPIResponseLogger:  GetVersionResponse,
+                OCPIRequestHandler:  request => {
 
-                                   if (Request.LocalAccessInfo is not null &&
-                                       Request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
-                                   {
+                    #region Check access token
 
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "Invalid or blocked access token!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                  AccessControlAllowHeaders  = new[] { "Authorization" }
-                                              }
-                                          });
+                    if (request.LocalAccessInfo is not null &&
+                        request.LocalAccessInfo.Status != AccessStatus.ALLOWED)
+                    {
 
-                                   }
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Invalid or blocked access token!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
 
-                                   #endregion
+                    }
 
-                                   #region Get version identification URL parameter
+                    #endregion
 
-                                   if (Request.ParsedURLParameters.Length < 1)
-                                   {
+                    #region Get version identification URL parameter
 
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "Version identification is missing!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                  AccessControlAllowHeaders  = new[] { "Authorization" }
-                                              }
-                                          });
+                    if (request.ParsedURLParameters.Length < 1)
+                    {
 
-                                   }
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Version identification is missing!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
 
-                                   if (!Version_Id.TryParse(Request.ParsedURLParameters[0], out var versionId))
-                                   {
+                    }
 
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "Version identification is invalid!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                  AccessControlAllowHeaders  = new[] { "Authorization" }
-                                              }
-                                          });
+                    if (!Version_Id.TryParse(request.ParsedURLParameters[0], out var versionId))
+                    {
 
-                                   }
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "Version identification is invalid!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
 
-                                   #endregion
+                    }
 
-                                   #region Only allow OCPI version v2.2.1
+                    #endregion
 
-                                   if (versionId.ToString() != Version.Id.ToString())
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "This OCPI version is not supported!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                  AccessControlAllowHeaders  = new[] { "Authorization" }
-                                              }
-                                          });
+                    #region Only allow OCPI version v2.2.1
 
-                                   #endregion
+                    if (versionId.ToString() != Version.Id.ToString())
+                        return Task.FromResult(
+                            new OCPIResponse.Builder(request) {
+                                StatusCode           = 2000,
+                                StatusMessage        = "This OCPI version is not supported!",
+                                HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                    HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                    AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                    AccessControlAllowHeaders  = [ "Authorization" ]
+                                }
+                            });
 
-
-                                   var prefix = URLPathPrefix + AdditionalURLPathPrefix + $"v{versionId}";
-
-                                   #region Common credential endpoints...
-
-                                   var endpoints  = new List<VersionEndpoint>() {
-
-                                                        new VersionEndpoint(Module_Id.Credentials,
-                                                                            InterfaceRoles.SENDER,
-                                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                      (Request.Host + (prefix + "credentials")).Replace("//", "/"))),
-
-                                                        new VersionEndpoint(Module_Id.Credentials,
-                                                                            InterfaceRoles.RECEIVER,
-                                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                      (Request.Host + (prefix + "credentials")).Replace("//", "/")))
-
-                                                    };
-
-                                   #endregion
+                    #endregion
 
 
-                                   #region The other side is a CPO...
+                    var prefix = URLPathPrefix + AdditionalURLPathPrefix + $"v{versionId}";
 
-                                   if (Request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Roles.CPO) == true)
-                                   {
+                    #region Common credential endpoints...
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Locations,
-                                                                         InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") + 
-                                                                                   (Request.Host + (prefix + "emsp/locations")).Replace("//", "/"))));
+                    var endpoints  = new List<VersionEndpoint>() {
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
-                                                                         InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/"))));
+                                        new VersionEndpoint(Module_Id.Credentials,
+                                                            InterfaceRoles.SENDER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                        (request.Host + (prefix + "credentials")).Replace("//", "/"))),
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
-                                                                         InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "emsp/sessions")). Replace("//", "/"))));
+                                        new VersionEndpoint(Module_Id.Credentials,
+                                                            InterfaceRoles.RECEIVER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                        (request.Host + (prefix + "credentials")).Replace("//", "/")))
 
-                                       // When the EMSP acts as smart charging receiver so that a SCSP can talk to him!
-                                       endpoints.Add(new VersionEndpoint(Module_Id.ChargingProfiles,
-                                                                         InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))));
+                                    };
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
-                                                                         InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "emsp/cdrs")).     Replace("//", "/"))));
+                    #endregion
 
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Commands,
-                                                                         InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "emsp/commands")). Replace("//", "/"))));
+                    #region The other side is a CPO...
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
-                                                                         InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "emsp/tokens")).   Replace("//", "/"))));
+                    if (request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Roles.CPO) == true)
+                    {
 
-                                       // hubclientinfo
+                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
+                                                            InterfaceRoles.RECEIVER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") + 
+                                                                    (request.Host + (prefix + "emsp/locations")).Replace("//", "/"))));
 
-                                   }
+                        endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
+                                                            InterfaceRoles.RECEIVER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "emsp/tariffs")).  Replace("//", "/"))));
 
-                                   #endregion
+                        endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
+                                                            InterfaceRoles.RECEIVER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "emsp/sessions")). Replace("//", "/"))));
 
-                                   #region We are a CPO, the other side is unauthenticated and we export locations as Open Data...
+                        // When the EMSP acts as smart charging receiver so that a SCSP can talk to him!
+                        endpoints.Add(new VersionEndpoint(Module_Id.ChargingProfiles,
+                                                            InterfaceRoles.SENDER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))));
 
-                                   if (OurCredentialRoles.Any(credentialRole => credentialRole.Role == Roles.CPO) &&
-                                       LocationsAsOpenData &&
-                                       Request.RemoteParty is null)
-                                   {
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Locations,
-                                                                         InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/locations")).Replace("//", "/"))));
-
-                                   }
-
-                                   #endregion
-
-                                   #region The other side is an EMSP...
-
-                                   if (Request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Roles.EMSP) == true)
-                                   {
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Locations,
-                                                                         InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/locations")).       Replace("//", "/"))));
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
-                                                                         InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/tariffs")).         Replace("//", "/"))));
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
-                                                                         InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/sessions")).        Replace("//", "/"))));
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.ChargingProfiles,
-                                                                         InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))));
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
-                                                                         InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/cdrs")).            Replace("//", "/"))));
+                        endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
+                                                            InterfaceRoles.RECEIVER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "emsp/cdrs")).     Replace("//", "/"))));
 
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Commands,
-                                                                         InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/commands")).        Replace("//", "/"))));
+                        endpoints.Add(new VersionEndpoint(Module_Id.Commands,
+                                                            InterfaceRoles.SENDER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "emsp/commands")). Replace("//", "/"))));
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
-                                                                         InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (prefix + "cpo/tokens")).          Replace("//", "/"))));
+                        endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
+                                                            InterfaceRoles.SENDER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "emsp/tokens")).   Replace("//", "/"))));
 
-                                       // hubclientinfo
+                        // hubclientinfo
 
-                                   }
+                    }
 
-                                   #endregion
+                    #endregion
+
+                    #region We are a CPO, the other side is unauthenticated and we export locations as Open Data...
+
+                    if (OurCredentialRoles.Any(credentialRole => credentialRole.Role == Roles.CPO) &&
+                        LocationsAsOpenData &&
+                        request.RemoteParty is null)
+                    {
+
+                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
+                                                            InterfaceRoles.SENDER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/locations")).Replace("//", "/"))));
+
+                    }
+
+                    #endregion
+
+                    #region The other side is an EMSP...
+
+                    if (request.RemoteParty?.Roles.Any(credentialsRole => credentialsRole.Role == Roles.EMSP) == true)
+                    {
+
+                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
+                                                            InterfaceRoles.SENDER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/locations")).       Replace("//", "/"))));
+
+                        endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
+                                                            InterfaceRoles.SENDER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/tariffs")).         Replace("//", "/"))));
+
+                        endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
+                                                            InterfaceRoles.SENDER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/sessions")).        Replace("//", "/"))));
+
+                        endpoints.Add(new VersionEndpoint(Module_Id.ChargingProfiles,
+                                                            InterfaceRoles.SENDER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/chargingprofiles")).Replace("//", "/"))));
+
+                        endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
+                                                            InterfaceRoles.SENDER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/cdrs")).            Replace("//", "/"))));
 
 
-                                   return Task.FromResult(
-                                       new OCPIResponse.Builder(Request) {
-                                               StatusCode           = 1000,
-                                               StatusMessage        = "Hello world!",
-                                               Data                 = new VersionDetail(
-                                                                          versionId,
-                                                                          endpoints
-                                                                      ).ToJSON(),
-                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                   AccessControlAllowHeaders  = new[] { "Authorization" },
-                                                   Vary                       = "Accept"
-                                               }
-                                           });
+                        endpoints.Add(new VersionEndpoint(Module_Id.Commands,
+                                                            InterfaceRoles.RECEIVER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/commands")).        Replace("//", "/"))));
 
-                               });
+                        endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
+                                                            InterfaceRoles.RECEIVER,
+                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                    (request.Host + (prefix + "cpo/tokens")).          Replace("//", "/"))));
+
+                        // hubclientinfo
+
+                    }
+
+                    #endregion
+
+
+                    return Task.FromResult(
+                        new OCPIResponse.Builder(request) {
+                            StatusCode           = 1000,
+                            StatusMessage        = "Hello world!",
+                            Data                 = new VersionDetail(
+                                                        versionId,
+                                                        endpoints
+                                                    ).ToJSON(CustomVersionDetailSerializer,
+                                                            CustomVersionEndpointSerializer),
+                            HTTPResponseBuilder  = new HTTPResponse.Builder(request.HTTPRequest) {
+                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                Allow                      = [ HTTPMethod.OPTIONS, HTTPMethod.GET ],
+                                AccessControlAllowHeaders  = [ "Authorization" ],
+                                Vary                       = "Accept"
+                            }
+                        }
+                    );
+
+                }
+
+            );
 
             #endregion
 
@@ -3692,8 +3726,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                               StatusMessage        = "Invalid or blocked access token!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                  AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                  AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                  AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                  AccessControlAllowHeaders  = [ "Authorization" ]
                                               }
                                           });
 
@@ -3713,7 +3747,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                HTTPStatusCode             = HTTPStatusCode.OK,
                                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                               AccessControlAllowHeaders  = new[] { "Authorization" }
+                                               AccessControlAllowHeaders  = [ "Authorization" ]
                                            }
                                        });
 
@@ -3746,7 +3780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                                          AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                          AccessControlAllowHeaders  = [ "Authorization" ]
                                                       }
                                                   };
 
@@ -3760,7 +3794,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                                  AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                  AccessControlAllowHeaders  = [ "Authorization" ]
                                               }
                                           };
 
@@ -3796,8 +3830,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                       StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is blocked!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                          AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                          AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                          AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                          AccessControlAllowHeaders  = [ "Authorization" ]
                                                       }
                                                   };
 
@@ -3816,7 +3850,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                               HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                               AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST" },
-                                                              AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                              AccessControlAllowHeaders  = [ "Authorization" ]
                                                           }
                                                       };
 
@@ -3835,8 +3869,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                       HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                      AccessControlAllowMethods  = new[] { "OPTIONS", "GET" },
-                                                      AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                      AccessControlAllowMethods  = [ "OPTIONS", "GET" ],
+                                                      AccessControlAllowHeaders  = [ "Authorization" ]
                                                   }
                                               };
 
@@ -3871,7 +3905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                                          AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                          AccessControlAllowHeaders  = [ "Authorization" ]
                                                       }
                                                   };
 
@@ -3885,7 +3919,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                       HTTPStatusCode             = HTTPStatusCode.OK,
                                                       AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                                      AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                      AccessControlAllowHeaders  = [ "Authorization" ]
                                                   }
                                               };
 
@@ -3897,7 +3931,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                                   AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                                                  AccessControlAllowHeaders  = new[] { "Authorization" }
+                                                  AccessControlAllowHeaders  = [ "Authorization" ]
                                               }
                                           };
 
@@ -3926,7 +3960,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                               AccessControlAllowHeaders  = new[] { "Authorization" }
+                               AccessControlAllowHeaders  = [ "Authorization" ]
                            }
                        };
 
@@ -3943,7 +3977,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                               AccessControlAllowHeaders  = new[] { "Authorization" }
+                               AccessControlAllowHeaders  = [ "Authorization" ]
                            }
                        };
 
@@ -3972,7 +4006,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                               AccessControlAllowHeaders  = new[] { "Authorization" }
+                               AccessControlAllowHeaders  = [ "Authorization" ]
                            }
                        };
 
@@ -4000,7 +4034,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             //                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
             //                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-            //                           AccessControlAllowHeaders  = new[] { "Authorization" }
+            //                           AccessControlAllowHeaders  = [ "Authorization" ]
             //                       }
             //                   };
 
@@ -4016,7 +4050,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
             //                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
             //                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
             //                           AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-            //                           AccessControlAllowHeaders  = new[] { "Authorization" }
+            //                           AccessControlAllowHeaders  = [ "Authorization" ]
             //                       }
             //                   };
 
@@ -4044,7 +4078,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                               AccessControlAllowHeaders  = new[] { "Authorization" }
+                               AccessControlAllowHeaders  = [ "Authorization" ]
                            }
                        };
 
@@ -4061,7 +4095,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                               AccessControlAllowHeaders  = new[] { "Authorization" }
+                               AccessControlAllowHeaders  = [ "Authorization" ]
                            }
                        };
 
@@ -4078,7 +4112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                               AccessControlAllowHeaders  = new[] { "Authorization" }
+                               AccessControlAllowHeaders  = [ "Authorization" ]
                            }
                        };
 
@@ -4094,7 +4128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                               AccessControlAllowHeaders  = new[] { "Authorization" }
+                               AccessControlAllowHeaders  = [ "Authorization" ]
                            }
                        };
 
@@ -4121,7 +4155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                               AccessControlAllowHeaders  = new[] { "Authorization" }
+                               AccessControlAllowHeaders  = [ "Authorization" ]
                            }
                        };
 
@@ -4165,7 +4199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.OK,
                                AccessControlAllowMethods  = new[] { "OPTIONS", "GET", "POST", "PUT", "DELETE" },
-                               AccessControlAllowHeaders  = new[] { "Authorization" }
+                               AccessControlAllowHeaders  = [ "Authorization" ]
                            }
                        };
 
@@ -6207,13 +6241,193 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         #endregion
 
 
+
+        #region OCPI Version Informations
+
+        private readonly ConcurrentDictionary<Version_Id, VersionInformation>  versionInformations   = [];
+
+        #region AddVersionInformation            (VersionInformation, ...)
+
+        public async Task<AddResult<VersionInformation>>
+
+            AddVersionInformation(VersionInformation  VersionInformation,
+                                  Boolean             SkipNotifications   = false,
+                                  EventTracking_Id?   EventTrackingId     = null,
+                                  User_Id?            CurrentUserId       = null)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (versionInformations.TryAdd(VersionInformation.Id, VersionInformation))
+            {
+
+                //await LogAsset(
+                //          addLocation,
+                //          Location.ToJSON(true,
+                //                          true,
+                //                          true,
+                //                          CustomLocationSerializer,
+                //                          CustomPublishTokenSerializer,
+                //                          CustomAddressSerializer,
+                //                          CustomAdditionalGeoLocationSerializer,
+                //                          CustomChargingStationSerializer,
+                //                          CustomEVSESerializer,
+                //                          CustomStatusScheduleSerializer,
+                //                          CustomConnectorSerializer,
+                //                          CustomEnergyMeterSerializer,
+                //                          CustomTransparencySoftwareStatusSerializer,
+                //                          CustomTransparencySoftwareSerializer,
+                //                          CustomDisplayTextSerializer,
+                //                          CustomBusinessDetailsSerializer,
+                //                          CustomHoursSerializer,
+                //                          CustomImageSerializer,
+                //                          CustomEnergyMixSerializer,
+                //                          CustomEnergySourceSerializer,
+                //                          CustomEnvironmentalImpactSerializer,
+                //                          CustomLocationMaxPowerSerializer),
+                //          EventTrackingId,
+                //          CurrentUserId
+                //      );
+
+                //if (!SkipNotifications)
+                //{
+
+                //    var OnLocationAddedLocal = OnLocationAdded;
+                //    if (OnLocationAddedLocal is not null)
+                //    {
+                //        try
+                //        {
+                //            await OnLocationAddedLocal(Location);
+                //        }
+                //        catch (Exception e)
+                //        {
+                //            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                //                        Environment.NewLine, e.Message,
+                //                        Environment.NewLine, e.StackTrace ?? "");
+                //        }
+                //    }
+
+                //}
+
+                return AddResult<VersionInformation>.Success(
+                           EventTrackingId,
+                           VersionInformation
+                       );
+
+            }
+
+            return AddResult<VersionInformation>.Failed(
+                       EventTrackingId,
+                       VersionInformation,
+                       "The given version information already exists!"
+                   );
+
+        }
+
+        #endregion
+
+        #endregion
+
+
+        #region Parties (local)
+
+        private readonly ConcurrentDictionary<Party_Idv3, PartyData> parties = [];
+
+
+        #region AddParty            (Id, SkipNotifications = false)
+
+        public async Task<AddResult<PartyData>>
+
+            AddParty(Party_Idv3         Id,
+                     Boolean            SkipNotifications   = false,
+                     EventTracking_Id?  EventTrackingId     = null,
+                     User_Id?           CurrentUserId       = null)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var newParty = new PartyData(Id);
+
+            if (parties.TryAdd(Id, newParty))
+            {
+
+                //await LogAsset(
+                //          addLocation,
+                //          Location.ToJSON(true,
+                //                          true,
+                //                          true,
+                //                          CustomLocationSerializer,
+                //                          CustomPublishTokenSerializer,
+                //                          CustomAddressSerializer,
+                //                          CustomAdditionalGeoLocationSerializer,
+                //                          CustomChargingStationSerializer,
+                //                          CustomEVSESerializer,
+                //                          CustomStatusScheduleSerializer,
+                //                          CustomConnectorSerializer,
+                //                          CustomEnergyMeterSerializer,
+                //                          CustomTransparencySoftwareStatusSerializer,
+                //                          CustomTransparencySoftwareSerializer,
+                //                          CustomDisplayTextSerializer,
+                //                          CustomBusinessDetailsSerializer,
+                //                          CustomHoursSerializer,
+                //                          CustomImageSerializer,
+                //                          CustomEnergyMixSerializer,
+                //                          CustomEnergySourceSerializer,
+                //                          CustomEnvironmentalImpactSerializer,
+                //                          CustomLocationMaxPowerSerializer),
+                //          EventTrackingId,
+                //          CurrentUserId
+                //      );
+
+                //if (!SkipNotifications)
+                //{
+
+                //    var OnLocationAddedLocal = OnLocationAdded;
+                //    if (OnLocationAddedLocal is not null)
+                //    {
+                //        try
+                //        {
+                //            await OnLocationAddedLocal(Location);
+                //        }
+                //        catch (Exception e)
+                //        {
+                //            DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                //                        Environment.NewLine, e.Message,
+                //                        Environment.NewLine, e.StackTrace ?? "");
+                //        }
+                //    }
+
+                //}
+
+                return AddResult<PartyData>.Success(
+                           EventTrackingId,
+                           newParty
+                       );
+
+            }
+
+            return AddResult<PartyData>.Failed(
+                       EventTrackingId,
+                       newParty,
+                       "The given party identification already exists!"
+                   );
+
+        }
+
+        #endregion
+
+        #endregion
+
+
         //ToDo: Add last modified timestamp to locations!
         //ToDo: Refactor async!
         //ToDo: Refactor result data structures!
 
         #region Locations
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> locations;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> locations = [];
 
 
         public delegate Task OnLocationAddedDelegate(Location Location);
@@ -6226,37 +6440,58 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
         public event OnLocationChangedDelegate? OnLocationChanged;
 
 
-        #region AddLocation           (Location, SkipNotifications = false)
+        #region AddLocation            (Location, ...)
 
-        public Location AddLocation(Location           Location,
-                                    Boolean            SkipNotifications   = false,
-                                    EventTracking_Id?  EventTrackingId     = null,
-                                    User_Id?           CurrentUserId       = null)
+        public async Task<AddResult<Location>>
+
+            AddLocation(Location           Location,
+                        Boolean            SkipNotifications   = false,
+                        EventTracking_Id?  EventTrackingId     = null,
+                        User_Id?           CurrentUserId       = null,
+                        CancellationToken  CancellationToken   = default)
+
         {
 
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
+            EventTrackingId ??= EventTracking_Id.New;
 
-            lock (locations)
+            if (parties.TryGetValue(Party_Idv3.From(Location.CountryCode, Location.PartyId), out var party))
             {
 
-                if (!this.locations.TryGetValue(Location.CountryCode, out var parties))
-                {
-                    parties = [];
-                    this.locations.Add(Location.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(Location.PartyId, out var locations))
-                {
-                    locations = [];
-                    parties.Add(Location.PartyId, locations);
-                }
-
-                if (!locations.ContainsKey(Location.Id))
+                if (party.Locations.TryAdd(Location.Id, Location))
                 {
 
-                    locations.Add(Location.Id, Location);
+                    DebugX.Log($"OCPI {Version.String} Location '{Location.Id}': '{Location}' added...");
+
                     Location.CommonAPI = this;
+
+                    await LogAsset(
+                              addLocation,
+                              Location.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  null,//EMSPId,
+                                  CustomLocationSerializer,
+                                  CustomPublishTokenSerializer,
+                                  CustomAdditionalGeoLocationSerializer,
+                                  CustomEVSESerializer,
+                                  CustomStatusScheduleSerializer,
+                                  CustomConnectorSerializer,
+                                  CustomEnergyMeterSerializer,
+                                  CustomTransparencySoftwareStatusSerializer,
+                                  CustomTransparencySoftwareSerializer,
+                                  CustomDisplayTextSerializer,
+                                  CustomBusinessDetailsSerializer,
+                                  CustomHoursSerializer,
+                                  CustomImageSerializer,
+                                  CustomEnergyMixSerializer,
+                                  CustomEnergySourceSerializer,
+                                  CustomEnvironmentalImpactSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
 
                     if (!SkipNotifications)
                     {
@@ -6266,7 +6501,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         {
                             try
                             {
-                                OnLocationAddedLocal(Location).Wait();
+                                await OnLocationAddedLocal(Location);
                             }
                             catch (Exception e)
                             {
@@ -6276,52 +6511,101 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                             }
                         }
 
+                        //var OnEVSEAddedLocal = OnEVSEAdded;
+                        //if (OnEVSEAddedLocal is not null)
+                        //{
+                        //    try
+                        //    {
+                        //        foreach (var evse in Location.EVSEs)
+                        //            await OnEVSEAddedLocal(evse);
+                        //    }
+                        //    catch (Exception e)
+                        //    {
+                        //        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnEVSEAdded), ": ",
+                        //                    Environment.NewLine, e.Message,
+                        //                    Environment.NewLine, e.StackTrace ?? "");
+                        //    }
+                        //}
+
                     }
 
-                    return Location;
+                    return AddResult<Location>.Success(
+                               EventTrackingId,
+                               Location
+                           );
 
                 }
 
-                return null;
-                throw new ArgumentException("The given location already exists!");
+                return AddResult<Location>.Failed(
+                           EventTrackingId,
+                           Location,
+                           "The given location already exists!"
+                       );
 
             }
+
+            return AddResult<Location>.Failed(
+                       EventTrackingId,
+                       Location,
+                       "The party identification of the location is unknown!"
+                   );
 
         }
 
         #endregion
 
-        #region AddLocationIfNotExists(Location, SkipNotifications = false)
+        #region AddLocationIfNotExists (Location, ...)
 
-        public Location AddLocationIfNotExists(Location           Location,
-                                               Boolean            SkipNotifications   = false,
-                                               EventTracking_Id?  EventTrackingId     = null,
-                                               User_Id?           CurrentUserId       = null)
+        public async Task<AddResult<Location>>
+
+            AddLocationIfNotExists(Location           Location,
+                                   Boolean            SkipNotifications   = false,
+                                   EventTracking_Id?  EventTrackingId     = null,
+                                   User_Id?           CurrentUserId       = null,
+                                   CancellationToken  CancellationToken   = default)
+
         {
 
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
+            EventTrackingId ??= EventTracking_Id.New;
 
-            lock (locations)
+            if (parties.TryGetValue(Party_Idv3.From(Location.CountryCode, Location.PartyId), out var party))
             {
 
-                if (!this.locations.TryGetValue(Location.CountryCode, out var parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                    this.locations.Add(Location.CountryCode, parties);
-                }
+                DebugX.Log($"OCPI {Version.String} Location '{Location.Id}': '{Location}' added...");
 
-                if (!parties.TryGetValue(Location.PartyId, out var locations))
-                {
-                    locations = new Dictionary<Location_Id, Location>();
-                    parties.Add(Location.PartyId, locations);
-                }
-
-                if (!locations.ContainsKey(Location.Id))
+                if (party.Locations.TryAdd(Location.Id, Location))
                 {
 
-                    locations.Add(Location.Id, Location);
                     Location.CommonAPI = this;
+
+                    await LogAsset(
+                              addLocation,
+                              Location.ToJSON(
+                                  //true,
+                                  //true,
+                                  //true,
+                                  null,//EMSPId,
+                                  CustomLocationSerializer,
+                                  CustomPublishTokenSerializer,
+                                  CustomAdditionalGeoLocationSerializer,
+                                  CustomEVSESerializer,
+                                  CustomStatusScheduleSerializer,
+                                  CustomConnectorSerializer,
+                                  CustomEnergyMeterSerializer,
+                                  CustomTransparencySoftwareStatusSerializer,
+                                  CustomTransparencySoftwareSerializer,
+                                  CustomDisplayTextSerializer,
+                                  CustomBusinessDetailsSerializer,
+                                  CustomHoursSerializer,
+                                  CustomImageSerializer,
+                                  CustomEnergyMixSerializer,
+                                  CustomEnergySourceSerializer,
+                                  CustomEnvironmentalImpactSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
 
                     if (!SkipNotifications)
                     {
@@ -6331,23 +6615,54 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
                         {
                             try
                             {
-                                OnLocationAddedLocal(Location).Wait();
+                                await OnLocationAddedLocal(Location);
                             }
                             catch (Exception e)
                             {
-                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocationIfNotExists), " ", nameof(OnLocationAdded), ": ",
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace ?? "");
                             }
                         }
 
+                        //var OnEVSEAddedLocal = OnEVSEAdded;
+                        //if (OnEVSEAddedLocal is not null)
+                        //{
+                        //    try
+                        //    {
+                        //        foreach (var evse in Location.EVSEs)
+                        //            await OnEVSEAddedLocal(evse);
+                        //    }
+                        //    catch (Exception e)
+                        //    {
+                        //        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddLocation), " ", nameof(OnEVSEAdded), ": ",
+                        //                    Environment.NewLine, e.Message,
+                        //                    Environment.NewLine, e.StackTrace ?? "");
+                        //    }
+                        //}
+
                     }
+
+                    return AddResult<Location>.Success(
+                               EventTrackingId,
+                               Location
+                           );
 
                 }
 
-                return Location;
+                return AddResult<Location>.NoOperation(
+                           EventTrackingId,
+                           Location,
+                           "The given location already exists."
+                       );
 
             }
+
+            return AddResult<Location>.Failed(
+                       EventTrackingId,
+                       Location,
+                       "The party identification of the location is unknown!"
+                   );
 
         }
 
@@ -7322,7 +7637,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Data
 
-        private readonly ConcurrentDictionary<CountryCode, ConcurrentDictionary<Party_Id, TimeRangeDictionary<Tariff_Id , Tariff>>> tariffs = new();
+        private readonly ConcurrentDictionary<CountryCode, ConcurrentDictionary<Party_Id, TimeRangeDictionary<Tariff_Id , Tariff>>> tariffs = [];
 
 
         public delegate Task OnTariffAddedDelegate(Tariff Tariff);
@@ -8377,7 +8692,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Sessions
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id , Session>>> chargingSessions;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id , Session>>> chargingSessions = [];
 
 
         public delegate Task OnSessionCreatedDelegate(Session Session);
@@ -9031,7 +9346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region Tokens
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>> tokenStatus;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>> tokenStatus = [];
 
 
         public delegate Task OnTokenAddedDelegate(Token Token);
@@ -9706,7 +10021,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.HTTP
 
         #region ChargeDetailRecords
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> ChargeDetailRecords;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> ChargeDetailRecords = [];
 
 
         public delegate Task OnChargeDetailRecordAddedDelegate(CDR CDR);

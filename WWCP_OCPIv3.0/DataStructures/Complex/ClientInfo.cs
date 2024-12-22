@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// CPO or eMSP ID of this party (following the 15118 ISO standard), as used in the credentials exchange.
         /// </summary>
         [Mandatory]
-        public Party_Id          PartyId        { get; }
+        public Party_Idv3          PartyId        { get; }
 
         /// <summary>
         /// The role of the connected party.
@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Status">Status of the connection to the party.</param>
         /// <param name="LastUpdated">Optional timestamp when this client info was last updated.</param>
         public ClientInfo(CountryCode       CountryCode,
-                          Party_Id          PartyId,
+                          Party_Idv3          PartyId,
                           Roles             Role,
                           ConnectionStatus  Status,
                           DateTime?         LastUpdated = null)
@@ -258,8 +258,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("party_id",
                                          "party identification",
-                                         Party_Id.TryParse,
-                                         out Party_Id PartyId,
+                                         Party_Idv3.TryParse,
+                                         out Party_Idv3 PartyId,
                                          out ErrorResponse))
                 {
                     return false;

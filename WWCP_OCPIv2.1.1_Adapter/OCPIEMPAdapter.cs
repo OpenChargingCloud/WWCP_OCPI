@@ -367,8 +367,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               IRoamingNetwork                                   RoamingNetwork,
 
                               HTTP.CommonAPI                                    CommonAPI,
-                              OCPI.CountryCode                                  DefaultCountryCode,
-                              OCPI.Party_Id                                     DefaultPartyId,
 
                               EVSEId_2_WWCPEVSEId_Delegate?                     CustomEVSEIdConverter               = null,
                               EVSE_2_WWCPEVSE_Delegate?                         CustomEVSEConverter                 = null,
@@ -429,8 +427,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.CommonAPI                          = CommonAPI;
             this.EMSPAPI                            = new HTTP.EMSPAPI(
                                                           this.CommonAPI,
-                                                          DefaultCountryCode,
-                                                          DefaultPartyId,
                                                           URLPathPrefix: CommonAPI.URLPathPrefix + Version.String + "emsp"
                                                       );
 

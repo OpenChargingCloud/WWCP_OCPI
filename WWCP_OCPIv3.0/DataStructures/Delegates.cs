@@ -17,37 +17,25 @@
 
 #region Usings
 
+using System.Text;
+using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
+
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 using cloud.charging.open.protocols.OCPI;
+using cloud.charging.open.protocols.OCPIv3_0.HTTP;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv3_0
 {
 
-    public interface IPartyIssuedObject<TId>// : IHasId<TId>
-        where TId : struct, IId
-    {
-
-        /// <summary>
-        /// The party identification of the party that issued this object.
-        /// </summary>
-        [Mandatory]
-        public Party_Idv3  PartyId      { get; }
-
-        /// <summary>
-        /// The unique identification of this object.
-        /// </summary>
-        [Mandatory]
-        public TId         Id           { get; }
-
-        /// <summary>
-        /// The version identification of the object.
-        /// </summary>
-        [Mandatory]
-        public UInt64      VersionId    { get; }
-
-    }
+    public delegate String OCPILogfileCreatorDelegate(String         LoggingPath,
+                                                      IRemoteParty?  RemoteParty,
+                                                      String         Context,
+                                                      String         LogfileName);
 
 }

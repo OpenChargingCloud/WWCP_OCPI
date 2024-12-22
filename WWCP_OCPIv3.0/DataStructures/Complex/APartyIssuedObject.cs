@@ -17,8 +17,10 @@
 
 #region Usings
 
-using cloud.charging.open.protocols.OCPIv3_0.HTTP;
 using org.GraphDefined.Vanaheimr.Illias;
+
+using cloud.charging.open.protocols.OCPI;
+using cloud.charging.open.protocols.OCPIv3_0.HTTP;
 
 #endregion
 
@@ -32,7 +34,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
     /// <param name="Id">An unique identification of this object.</param>
     /// <param name="VersionId">An version of the Party Issued Object that is in the payload field.</param>
     public abstract class APartyIssuedObject<TId>(CommonAPI?  CommonAPI,
-                                                  Party_Id    PartyId,
+                                                  Party_Idv3    PartyId,
                                                   TId         Id,
                                                   UInt64      VersionId) : IPartyIssuedObject<TId>
         where TId   : struct, IId
@@ -57,7 +59,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The party identification of the party that issued this object.
         /// </summary>
         [Mandatory]
-        public   Party_Id    PartyId      { get; }      = PartyId;
+        public   Party_Idv3  PartyId      { get; }      = PartyId;
 
         /// <summary>
         /// The unique identification of this object.
@@ -87,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
         public class ABuilder(CommonAPI?  CommonAPI   = null,
-                              Party_Id?   PartyId     = null,
+                              Party_Idv3?   PartyId     = null,
                               TId?        Id          = null,
                               UInt64?     VersionId   = null)
         {
@@ -102,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The party identification of the party that issued this object.
             /// </summary>
             [Mandatory]
-            public   Party_Id?   PartyId      { get; set; } = PartyId;
+            public   Party_Idv3?   PartyId      { get; set; } = PartyId;
 
             /// <summary>
             /// The unique identification of this object.
@@ -128,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
     /// <param name="PartyId">The party identification of the party that issued this object.</param>
     /// <param name="Id">An unique identification of this object.</param>
     /// <param name="VersionId">An version of the Party Issued Object that is in the payload field.</param>
-    public abstract class APartyIssuedObject2<TId>(Party_Id    PartyId,
+    public abstract class APartyIssuedObject2<TId>(Party_Idv3    PartyId,
                                                    TId         Id,
                                                    UInt64      VersionId) : IPartyIssuedObject<TId>
         where TId   : struct, IId
@@ -147,7 +149,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The party identification of the party that issued this object.
         /// </summary>
         [Mandatory]
-        public   Party_Id    PartyId      { get; }      = PartyId;
+        public   Party_Idv3    PartyId      { get; }      = PartyId;
 
         /// <summary>
         /// The unique identification of this object.
@@ -176,7 +178,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #endregion
 
 
-        public class ABuilder(Party_Id?   PartyId     = null,
+        public class ABuilder(Party_Idv3?   PartyId     = null,
                               TId?        Id          = null,
                               UInt64?     VersionId   = null)
         {
@@ -185,7 +187,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The party identification of the party that issued this object.
             /// </summary>
             [Mandatory]
-            public   Party_Id?   PartyId      { get; set; } = PartyId;
+            public   Party_Idv3?   PartyId      { get; set; } = PartyId;
 
             /// <summary>
             /// The unique identification of this object.

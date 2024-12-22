@@ -174,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         internal ChargingStation(Location?                                                     ParentLocation,
-                                 Party_Id                                                      PartyId,
+                                 Party_Idv3                                                      PartyId,
                                  ChargingStation_Id                                            Id,
                                  UInt64                                                        VersionId,
 
@@ -209,7 +209,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             this.ParentLocation        = ParentLocation;
 
-            //this.EVSEs                 = EVSEs?.       Distinct() ?? [];
             this.Capabilities          = Capabilities?.Distinct() ?? [];
             this.FloorLevel            = FloorLevel?.       Trim();
             this.Coordinates           = Coordinates;
@@ -277,7 +276,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public ChargingStation(Party_Id                                                      PartyId,
+        public ChargingStation(Party_Idv3                                                      PartyId,
                                ChargingStation_Id                                            Id,
                                UInt64                                                        VersionId,
 
@@ -348,7 +347,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="ChargingStationIdURL">An optional charging station identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomChargingStationParser">A delegate to parse custom charging station JSON objects.</param>
         public static ChargingStation Parse(JObject                                        JSON,
-                                            Party_Id?                                      PartyIdURL                    = null,
+                                            Party_Idv3?                                      PartyIdURL                    = null,
                                             ChargingStation_Id?                            ChargingStationIdURL          = null,
                                             UInt64?                                        VersionIdURL                  = null,
                                             CustomJObjectParserDelegate<ChargingStation>?  CustomChargingStationParser   = null)
@@ -404,7 +403,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public static Boolean TryParse(JObject                                        JSON,
                                        [NotNullWhen(true)]  out ChargingStation?      ChargingStation,
                                        [NotNullWhen(false)] out String?               ErrorResponse,
-                                       Party_Id?                                      PartyIdURL                    = null,
+                                       Party_Idv3?                                      PartyIdURL                    = null,
                                        ChargingStation_Id?                            ChargingStationIdURL          = null,
                                        UInt64?                                        VersionIdURL                  = null,
                                        CustomJObjectParserDelegate<ChargingStation>?  CustomChargingStationParser   = null)
@@ -426,8 +425,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("party_id",
                                        "party identification",
-                                       Party_Id.TryParse,
-                                       out Party_Id? PartyIdBody,
+                                       Party_Idv3.TryParse,
+                                       out Party_Idv3? PartyIdBody,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -1456,14 +1455,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The enumeration of available connectors attached to this ChargingStation.
             /// </summary>
             [Mandatory]
-            public HashSet<EVSE>                    EVSEs                      { get; }
+            public ConcurrentDictionary<EVSE_UId, EVSE>  EVSEs                      { get; } = new();
 
             /// <summary>
             /// The enumeration of connector identifications attached to this ChargingStation.
             /// </summary>
             [Optional]
             public IEnumerable<EVSE_UId>            EVSEUIds
-                => EVSEs.Select(evse => evse.UId);
+                => EVSEs.Values.Select(evse => evse.UId);
 
             /// <summary>
             /// The enumeration of functionalities that the ChargingStation is capable of.
@@ -1546,7 +1545,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// <param name="Created">The optional timestamp when this charging station was created.</param>
             /// <param name="LastUpdated">The optional timestamp when this charging station was last updated (or created).</param>
             internal Builder(Location?                  ParentLocation      = null,
-                             Party_Id?                  PartyId             = null,
+                             Party_Idv3?                PartyId             = null,
                              ChargingStation_Id?        Id                  = null,
                              UInt64?                    VersionId           = null,
 
@@ -1569,7 +1568,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.Id                 = Id;
                 this.VersionId          = VersionId;
 
-                this.EVSEs              = EVSEs        is not null ? new HashSet<EVSE>       (EVSEs)        : [];
                 this.Capabilities       = Capabilities is not null ? new HashSet<Capability> (Capabilities) : [];
                 this.FloorLevel         = FloorLevel;
                 this.Coordinates        = Coordinates;
@@ -1581,26 +1579,21 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 this.Created            = Created     ?? LastUpdated ?? Timestamp.Now;
                 this.LastUpdated        = LastUpdated ?? Created     ?? Timestamp.Now;
 
+                foreach (var evse in EVSEs?.Distinct() ?? [])
+                {
+
+                    evse.ParentChargingStation = this;
+
+                    this.EVSEs.TryAdd(
+                        evse.UId,
+                        evse
+                    );
+
+                }
+
             }
 
             #endregion
-
-
-            public Builder SetConnector(EVSE EVSE)
-            {
-
-                // ChargingStation.UpdateConnector(newOrUpdatedConnector);
-                var newConnectors = EVSEs.Where(connector => connector.UId != EVSE.UId).ToHashSet();
-                EVSEs.Clear();
-
-                foreach (var newConnector in newConnectors)
-                    EVSEs.Add(newConnector);
-
-                EVSEs.Add(EVSE);
-
-                return this;
-
-            }
 
 
             #region ToImmutable
@@ -1653,7 +1646,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  Id!.       Value,
                                  VersionId!.Value,
 
-                                 EVSEs,
+                                 EVSEs.Values,
                                  Capabilities,
                                  FloorLevel,
                                  Coordinates,

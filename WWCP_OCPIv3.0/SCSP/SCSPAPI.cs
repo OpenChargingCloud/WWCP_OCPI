@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <summary>
         /// The default party identification to use.
         /// </summary>
-        public Party_Id        DefaultPartyId        { get; }
+        public Party_Idv3        DefaultPartyId        { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
@@ -2101,7 +2101,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         public SCSPAPI(CommonAPI                    CommonAPI,
                        CountryCode                  DefaultCountryCode,
-                       Party_Id                     DefaultPartyId,
+                       Party_Idv3                     DefaultPartyId,
                        Boolean?                     AllowDowngrades           = null,
 
                        HTTPHostname?                HTTPHostname              = null,
@@ -2702,45 +2702,53 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                         // Validation-Checks for PATCHes
                                         // (E-Tag, Timestamp, ...)
 
-                                        var patchedLocation = await CommonAPI.TryPatchLocation(existingLocation,
-                                                                                               locationPatch);
+                                        var result = await CommonAPI.TryPatchLocation(
+                                                               partyId.   Value,
+                                                               locationId.Value,
+                                                               locationPatch
+                                                           );
 
 
                                         //ToDo: Handle update errors!
-                                        if (patchedLocation.IsSuccess)
+                                        if (result.IsSuccessAndDataNotNull(out var patchedData))
                                             return new OCPIResponse.Builder(Request) {
-                                                           StatusCode           = 1000,
-                                                           StatusMessage        = "Hello world!",
-                                                           Data                 = patchedLocation.PatchedData.ToJSON(true,true,true,CustomLocationSerializer,
-                                                                                                                     CustomPublishTokenSerializer,
-                                                                                                                     CustomAddressSerializer,
-                                                                                                                     CustomAdditionalGeoLocationSerializer,
-                                                                                                                     CustomChargingStationSerializer,
-                                                                                                                     CustomEVSESerializer,
-                                                                                                                     CustomStatusScheduleSerializer,
-                                                                                                                     CustomConnectorSerializer,
-                                                                                                                     CustomEnergyMeterSerializer,
-                                                                                                                     CustomTransparencySoftwareStatusSerializer,
-                                                                                                                     CustomTransparencySoftwareSerializer,
-                                                                                                                     CustomDisplayTextSerializer,
-                                                                                                                     CustomBusinessDetailsSerializer,
-                                                                                                                     CustomHoursSerializer,
-                                                                                                                     CustomImageSerializer,
-                                                                                                                     CustomEnergyMixSerializer,
-                                                                                                                     CustomEnergySourceSerializer,
-                                                                                                                     CustomEnvironmentalImpactSerializer),
-                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                                               AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
-                                                               AccessControlAllowHeaders  = [ "Authorization" ],
-                                                               LastModified               = patchedLocation.PatchedData.LastUpdated,
-                                                               ETag                       = patchedLocation.PatchedData.ETag
-                                                           }
-                                                       };
+                                                       StatusCode           = 1000,
+                                                       StatusMessage        = "Hello world!",
+                                                       Data                 = patchedData.ToJSON(
+                                                                                  true,
+                                                                                  true,
+                                                                                  true,
+                                                                                  CustomLocationSerializer,
+                                                                                  CustomPublishTokenSerializer,
+                                                                                  CustomAddressSerializer,
+                                                                                  CustomAdditionalGeoLocationSerializer,
+                                                                                  CustomChargingStationSerializer,
+                                                                                  CustomEVSESerializer,
+                                                                                  CustomStatusScheduleSerializer,
+                                                                                  CustomConnectorSerializer,
+                                                                                  CustomEnergyMeterSerializer,
+                                                                                  CustomTransparencySoftwareStatusSerializer,
+                                                                                  CustomTransparencySoftwareSerializer,
+                                                                                  CustomDisplayTextSerializer,
+                                                                                  CustomBusinessDetailsSerializer,
+                                                                                  CustomHoursSerializer,
+                                                                                  CustomImageSerializer,
+                                                                                  CustomEnergyMixSerializer,
+                                                                                  CustomEnergySourceSerializer,
+                                                                                  CustomEnvironmentalImpactSerializer
+                                                                              ),
+                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],
+                                                           AccessControlAllowHeaders  = [ "Authorization" ],
+                                                           LastModified               = patchedData.LastUpdated,
+                                                           ETag                       = patchedData.ETag
+                                                       }
+                                                   };
 
                                         return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2000,
-                                                       StatusMessage        = patchedLocation.ErrorResponse,
+                                                       StatusMessage        = result.ErrorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                                            AccessControlAllowMethods  = [ "OPTIONS", "GET", "PUT", "PATCH", "DELETE" ],

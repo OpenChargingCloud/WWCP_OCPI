@@ -28,11 +28,10 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.WWCP;
-using System.Linq;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
+namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
 {
 
     [TestFixture]
@@ -66,7 +65,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #1"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #1"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -110,7 +109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #2"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #2"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -343,24 +342,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #endregion
 
 
-                #region Validate, that locations had been sent to the OCPI module
+                #region Validate, that all locations had been sent to the OCPI module
 
-                var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
+                var allLocations        = csoAdapter.CommonAPI.GetLocations().ToArray();
                 Assert.That(allLocations,        Is.Not.Null);
                 Assert.That(allLocations.Length, Is.EqualTo(2));
 
                 #endregion
 
-                #region Validate, that EVSEs had been sent to the OCPI module
+                #region Validate, that all charging stations had been sent to the OCPI module
 
-                var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
+                var allChargingStations = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
+                Assert.That(allChargingStations,        Is.Not.Null);
+                Assert.That(allChargingStations.Length, Is.EqualTo(3));
+
+                #endregion
+
+                #region Validate, that all EVSEs had been sent to the OCPI module
+
+                var allEVSEs            = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
                 Assert.That(allEVSEs,        Is.Not.Null);
                 Assert.That(allEVSEs.Length, Is.EqualTo(4));
 
                 #endregion
 
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/locations");
+                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0//locations");
 
                 #region Validate via HTTP (OpenData, no authorization)
 
@@ -380,7 +387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                     ClassicAssert.IsNotNull(httpResponse);
                     ClassicAssert.AreEqual (200,             httpResponse.HTTPStatusCode.Code);
 
-                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody.ToUTF8String());
+                    var ocpiResponse  = JObject.Parse(httpResponse.HTTPBody?.ToUTF8String() ?? "");
 
                     ClassicAssert.AreEqual (1000,            ocpiResponse!["status_code"]!.   Value<Int32>() );
                     ClassicAssert.AreEqual ("Hello world!",  ocpiResponse!["status_message"]!.Value<String>());
@@ -395,13 +402,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                     ClassicAssert.IsNotNull(jsonLocation1);
                     ClassicAssert.IsNotNull(jsonLocation2);
 
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    ClassicAssert.IsNotNull(jsonEVSEs1);
-                    ClassicAssert.IsNotNull(jsonEVSEs2);
+                    var jsonChargingStation1A = (jsonLocation1!["charging_pool"] as JArray)!.ElementAt(0);
+                    var jsonChargingStation1B = (jsonLocation1!["charging_pool"] as JArray)!.ElementAt(1);
+                    var jsonChargingStation2A = (jsonLocation2!["charging_pool"] as JArray)!.ElementAt(0);
+                    ClassicAssert.IsNotNull(jsonChargingStation1A);
+                    ClassicAssert.IsNotNull(jsonChargingStation1B);
+                    ClassicAssert.IsNotNull(jsonChargingStation2A);
 
-                    ClassicAssert.AreEqual(3, jsonEVSEs1!.Count);
-                    ClassicAssert.AreEqual(1, jsonEVSEs2!.Count);
+                    var jsonEVSE1A1 = (jsonChargingStation1A!["evse"] as JArray)!.First();
+                    var jsonEVSE1A2 = (jsonChargingStation1A!["evse"] as JArray)!.First();
+                    var jsonEVSE1B1 = (jsonChargingStation1B!["evse"] as JArray)!.First();
+                    var jsonEVSE2A1 = (jsonChargingStation2A!["evse"] as JArray)!.First();
+                    ClassicAssert.IsNotNull(jsonEVSE1A1);
+                    ClassicAssert.IsNotNull(jsonEVSE1A2);
+                    ClassicAssert.IsNotNull(jsonEVSE1B1);
+                    ClassicAssert.IsNotNull(jsonEVSE2A1);
 
                 }
 
@@ -410,15 +425,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:      CountryCode.Parse("DE"),
-                          PartyId:          Party_Id.   Parse("GDF"),
-                          Role:             Roles.EMSP,
-                          BusinessDetails:  new BusinessDetails(
-                                                "GraphDefined EMSP"
-                                            ),
-                          AccessToken:      AccessToken.Parse("1234xyz"),
-                          AccessStatus:     AccessStatus.ALLOWED,
-                          PartyStatus:      PartyStatus.ENABLED
+                          Id:                RemoteParty_Id.Parse("DE-GDF_EMSP"),
+                          CredentialsRoles:  [
+                                                 new CredentialsRole(
+                                                     PartyId:          Party_Idv3.Parse("DEGDF"),
+                                                     Role:             Roles.EMSP,
+                                                     BusinessDetails:  new BusinessDetails(
+                                                                           "GraphDefined EMSP"
+                                                                       )
+                                                 )
+                                             ],
+                          AccessToken:       AccessToken.Parse("1234xyz"),
+                          AccessStatus:      AccessStatus.ALLOWED,
+                          PartyStatus:       PartyStatus.ENABLED
                       );
 
                 {
@@ -453,13 +472,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                     ClassicAssert.IsNotNull(jsonLocation1);
                     ClassicAssert.IsNotNull(jsonLocation2);
 
-                    var jsonEVSEs1    = jsonLocation1!["evses"] as JArray;
-                    var jsonEVSEs2    = jsonLocation2!["evses"] as JArray;
-                    ClassicAssert.IsNotNull(jsonEVSEs1);
-                    ClassicAssert.IsNotNull(jsonEVSEs2);
+                    var jsonChargingStation1A = (jsonLocation1!["charging_pool"] as JArray)!.ElementAt(0);
+                    var jsonChargingStation1B = (jsonLocation1!["charging_pool"] as JArray)!.ElementAt(1);
+                    var jsonChargingStation2A = (jsonLocation2!["charging_pool"] as JArray)!.ElementAt(0);
+                    ClassicAssert.IsNotNull(jsonChargingStation1A);
+                    ClassicAssert.IsNotNull(jsonChargingStation1B);
+                    ClassicAssert.IsNotNull(jsonChargingStation2A);
 
-                    ClassicAssert.AreEqual(3, jsonEVSEs1!.Count);
-                    ClassicAssert.AreEqual(1, jsonEVSEs2!.Count);
+                    var jsonEVSE1A1 = (jsonChargingStation1A!["evse"] as JArray)!.First();
+                    var jsonEVSE1A2 = (jsonChargingStation1A!["evse"] as JArray)!.First();
+                    var jsonEVSE1B1 = (jsonChargingStation1B!["evse"] as JArray)!.First();
+                    var jsonEVSE2A1 = (jsonChargingStation2A!["evse"] as JArray)!.First();
+                    ClassicAssert.IsNotNull(jsonEVSE1A1);
+                    ClassicAssert.IsNotNull(jsonEVSE1A2);
+                    ClassicAssert.IsNotNull(jsonEVSE1B1);
+                    ClassicAssert.IsNotNull(jsonEVSE2A1);
 
                 }
 
@@ -495,7 +522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #1"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #1"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -539,7 +566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #2"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #2"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -796,27 +823,58 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 await Task.Delay(300);
 
 
-                #region Validate, that EVSEs had been sent to the OCPI module
 
-                var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
-                ClassicAssert.IsNotNull(allEVSEs);
-                ClassicAssert.AreEqual (4, allEVSEs.Length);
+
+
+                #region Validate, that all locations had been sent to the OCPI module
+
+                var allLocations        = csoAdapter.CommonAPI.GetLocations().ToArray();
+                Assert.That(allLocations,        Is.Not.Null);
+                Assert.That(allLocations.Length, Is.EqualTo(2));
 
                 #endregion
 
-                #region Validate, that both locations have EVSEs
+                #region Validate, that all charging stations had been sent to the OCPI module
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.ToString()), out var location1) && location1 is not null)
+                var allChargingStations = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
+                Assert.That(allChargingStations,        Is.Not.Null);
+                Assert.That(allChargingStations.Length, Is.EqualTo(3));
+
+                #endregion
+
+                #region Validate, that all EVSEs had been sent to the OCPI module
+
+                var allEVSEs            = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
+                Assert.That(allEVSEs,        Is.Not.Null);
+                Assert.That(allEVSEs.Length, Is.EqualTo(4));
+
+                #endregion
+
+                #region Validate, that both locations have the correct number of Charging Stations and EVSEs
+
+                if (csoAdapter.CommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
+                                                        Location_Id.Parse(chargingPool1.Id.ToString()),
+                                                        out var location1) &&
+                    location1 is not null)
                 {
-                    Assert.That(location1.EVSEs.Count(), Is.EqualTo(3));
+
+                    Assert.That(location1.ChargingPool.Count(),                                       Is.EqualTo(2));
+                    Assert.That(location1.ChargingPool.SelectMany(station => station.EVSEs).Count(),  Is.EqualTo(3));
+
                 }
                 else
                     Assert.Fail("location1 was not found!");
 
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool2!.Id.ToString()), out var location2) && location2 is not null)
+                if (csoAdapter.CommonAPI.TryGetLocation(chargingPool2.Operator.Id.ToOCPI(),
+                                                        Location_Id.Parse(chargingPool2.Id.ToString()),
+                                                        out var location2) &&
+                    location2 is not null)
                 {
-                    Assert.That(location2.EVSEs.Count(), Is.EqualTo(1));
+
+                    Assert.That(location2.ChargingPool.Count(),                                       Is.EqualTo(1));
+                    Assert.That(location2.ChargingPool.SelectMany(station => station.EVSEs).Count(),  Is.EqualTo(1));
+
                 }
                 else
                     Assert.Fail("location2 was not found!");
@@ -1060,7 +1118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 ClassicAssert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
                 ClassicAssert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
 
-                csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.ToString()), out var location);
+                csoAdapter.CommonAPI.TryGetLocation(Party_Idv3.Parse("DEGEF"), Location_Id.Parse(chargingPool1!.Id.ToString()), out var location);
                 ClassicAssert.AreEqual("Test pool #1 (updated)",                             location!.Name);
                 //ClassicAssert.AreEqual("GraphDefined Charging Pool für Tests #1",            location!.Name); // Not mapped to OCPI!
 
@@ -1070,7 +1128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 await graphDefinedCSO.UpdateChargingPool(
                           chargingPool1.Id,
-                          pool => pool.Address = new Address(
+                          pool => pool.Address = new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                      Street:             "Amselfeld",
                                                      PostalCode:         "07749",
@@ -1130,7 +1188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
 
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/locations");
+                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0//locations");
 
                 #region Validate via HTTP (OpenData, no authorization)
 
@@ -1180,15 +1238,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:      CountryCode.Parse("DE"),
-                          PartyId:          Party_Id.Parse("GDF"),
-                          Role:             Roles.EMSP,
-                          BusinessDetails:  new BusinessDetails(
-                                                "GraphDefined EMSP"
-                                            ),
-                          AccessToken:      AccessToken.Parse("1234xyz"),
-                          AccessStatus:     AccessStatus.ALLOWED,
-                          PartyStatus:      PartyStatus.ENABLED
+                          Id:                RemoteParty_Id.Parse("DE-GDF_EMSP"),
+                          CredentialsRoles:  [
+                                                 new CredentialsRole(
+                                                     PartyId:          Party_Idv3.Parse("DEGDF"),
+                                                     Role:             Roles.EMSP,
+                                                     BusinessDetails:  new BusinessDetails(
+                                                                           "GraphDefined EMSP"
+                                                                       )
+                                                 )
+                                             ],
+                          AccessToken:       AccessToken.Parse("1234xyz"),
+                          AccessStatus:      AccessStatus.ALLOWED,
+                          PartyStatus:       PartyStatus.ENABLED
                       );
 
                 {
@@ -1265,7 +1327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #1"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #1"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -1309,7 +1371,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                                                  Name:                 I18NString.Create("Test pool #2"),
                                                  Description:          I18NString.Create("GraphDefined charging pool for tests #2"),
 
-                                                 Address:              new Address(
+                                                 Address:              new org.GraphDefined.Vanaheimr.Illias.Address(
 
                                                                            Street:             "Biberweg",
                                                                            PostalCode:         "07749",
@@ -1518,45 +1580,61 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
 
                 var evse1_UId = evse1!.Id.ToOCPI_EVSEUId();
-                ClassicAssert.IsTrue(evse1_UId.HasValue);
+                Assert.That(evse1_UId.HasValue,             Is.True);
 
 
-                #region Validate, that locations had been sent to the OCPI module
+                #region Validate, that all locations had been sent to the OCPI module
 
                 var allLocations  = csoAdapter.CommonAPI.GetLocations().ToArray();
-                ClassicAssert.IsNotNull(allLocations);
-                ClassicAssert.AreEqual (2, allLocations.Length);
+                Assert.That(allLocations,                   Is.Not.Null);
+                Assert.That(allLocations.Length,            Is.EqualTo(2));
 
                 #endregion
 
-                #region Validate, that EVSEs had been sent to the OCPI module
+                #region Validate, that all charging stations had been sent to the CPO OCPI module
 
-                var allEVSEs      = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.EVSEs).ToArray();
-                ClassicAssert.IsNotNull(allEVSEs);
-                ClassicAssert.AreEqual (4, allEVSEs.Length);
+                var allChargingStations = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
+                Assert.That(allChargingStations,            Is.Not.Null);
+                Assert.That(allChargingStations.Length,     Is.EqualTo(3));
+
+                #endregion
+
+                #region Validate, that all EVSEs had been sent to the CPO OCPI module
+
+                var allEVSEs = csoAdapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
+                Assert.That(allEVSEs,                       Is.Not.Null);
+                Assert.That(allEVSEs.Length,                Is.EqualTo(4));
 
                 #endregion
 
                 #region Validate, that both locations have EVSEs
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1.Id.Suffix), out var location1) && location1 is not null)
+                if (csoAdapter.CommonAPI.TryGetLocation(Party_Idv3.   Parse("DEGEF"),
+                                                        Location_Id.Parse(chargingPool1!.Id.ToString()),
+                                                        out var location1) &&
+                    location1 is not null)
                 {
 
-                    ClassicAssert.AreEqual(3, location1.EVSEs.Count());
+                    Assert.That(location1.ChargingPool.Count(),                                       Is.EqualTo(2));
+                    Assert.That(location1.ChargingPool.SelectMany(station => station.EVSEs).Count(),  Is.EqualTo(3));
 
                 }
                 else
                     Assert.Fail("location1 was not found!");
 
 
-                if (csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool2.Id.Suffix), out var location2) && location2 is not null)
+                if (csoAdapter.CommonAPI.TryGetLocation(Party_Idv3.   Parse("DEGEF"),
+                                                        Location_Id.Parse(chargingPool2!.Id.ToString()),
+                                                        out var location2) &&
+                    location2 is not null)
                 {
 
-                    ClassicAssert.AreEqual(1, location2.EVSEs.Count());
+                    Assert.That(location2.ChargingPool.Count(),                                       Is.EqualTo(1));
+                    Assert.That(location2.ChargingPool.SelectMany(station => station.EVSEs).Count(),  Is.EqualTo(1));
 
                 }
                 else
-                    Assert.Fail("location2 was not found!");
+                    Assert.Fail("location1 was not found!");
 
                 #endregion
 
@@ -1627,34 +1705,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
                 #endregion
 
-                #region Update
+                #region Update EVSE Status
 
                 {
                     if (evse1_UId.HasValue &&
-                        csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location) && location is not null &&
-                        location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
+                        csoAdapter.CommonAPI.TryGetLocation(Party_Idv3.Parse("DEGEF"), Location_Id.Parse(chargingPool1!.Id.Suffix), out var location) && location is not null &&
+                        location.TryGetChargingStation(chargingStation1.Id.ToOCPI(), out var station) &&
+                        station. TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
                     {
-                        ClassicAssert.AreEqual(StatusType.AVAILABLE, ocpiEVSE.Status);
+                        Assert.That(ocpiEVSE.Status, Is.EqualTo(StatusType.AVAILABLE));
                     }
                 }
-
 
 
                 evse1.SetStatus(EVSEStatusType.Charging);
 
 
+                Assert.That(updatedEVSEStatus.Count,                                Is.EqualTo(3));
+                Assert.That(updatedOCPIEVSEStatus.Count,                            Is.EqualTo(2));
 
-                ClassicAssert.AreEqual(3, updatedEVSEStatus.    Count);
-                ClassicAssert.AreEqual(2, updatedOCPIEVSEStatus.Count);
-
-                ClassicAssert.AreEqual(EVSEStatusType.Charging,  graphDefinedCSO.GetEVSEById(evse1!.Id).Status.Value);
+                Assert.That(graphDefinedCSO.GetEVSEById(evse1!.Id).Status.Value,    Is.EqualTo(EVSEStatusType.Charging));
 
                 {
                     if (evse1_UId.HasValue &&
-                        csoAdapter.CommonAPI.TryGetLocation(Location_Id.Parse(chargingPool1!.Id.Suffix), out var location) && location is not null &&
-                        location.TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
+                        csoAdapter.CommonAPI.TryGetLocation(Party_Idv3.Parse("DEGEF"), Location_Id.Parse(chargingPool1!.Id.Suffix), out var location) && location is not null &&
+                        location.TryGetChargingStation(chargingStation1.Id.ToOCPI(), out var station) &&
+                        station. TryGetEVSE(evse1_UId.Value, out var ocpiEVSE) && ocpiEVSE is not null)
                     {
-                        ClassicAssert.AreEqual(StatusType.CHARGING, ocpiEVSE.Status);
+                        Assert.That(ocpiEVSE.Status, Is.EqualTo(StatusType.CHARGING));
                     }
                 }
 
@@ -1662,7 +1740,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
 
 
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/locations");
+                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0//locations");
 
                 #region Validate via HTTP (OpenData, no authorization)
 
@@ -1720,15 +1798,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.AdapterTests
                 #region Validate via HTTP (with authorization)
 
                 await commonAPI!.AddRemoteParty(
-                          CountryCode:      CountryCode.Parse("DE"),
-                          PartyId:          Party_Id.Parse("GDF"),
-                          Role:             Roles.EMSP,
-                          BusinessDetails:  new BusinessDetails(
-                                                "GraphDefined EMSP"
-                                            ),
-                          AccessToken:      AccessToken.Parse("1234xyz"),
-                          AccessStatus:     AccessStatus.ALLOWED,
-                          PartyStatus:      PartyStatus.ENABLED
+                          Id:                RemoteParty_Id.Parse("DE-GDF_EMSP"),
+                          CredentialsRoles:  [
+                                                 new CredentialsRole(
+                                                     PartyId:          Party_Idv3.Parse("DEGDF"),
+                                                     Role:             Roles.EMSP,
+                                                     BusinessDetails:  new BusinessDetails(
+                                                                           "GraphDefined EMSP"
+                                                                       )
+                                                 )
+                                             ],
+                          AccessToken:       AccessToken.Parse("1234xyz"),
+                          AccessStatus:      AccessStatus.ALLOWED,
+                          PartyStatus:       PartyStatus.ENABLED
                       );
 
                 {

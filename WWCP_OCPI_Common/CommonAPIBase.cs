@@ -986,26 +986,29 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region (private) Read/Write Database Files
 
-        #region (private static) WriteToDatabase                          (FileName, Text)
+        #region (private static) WriteToDatabase                          (FileName, Text, ...)
 
-        private static Task WriteToDatabase(String  FileName,
-                                            String  Text)
+        private static Task WriteToDatabase(String             FileName,
+                                            String             Text,
+                                            CancellationToken  CancellationToken   = default)
 
             => File.AppendAllTextAsync(
                    FileName,
                    Text + Environment.NewLine,
-                   Encoding.UTF8
+                   Encoding.UTF8,
+                   CancellationToken
                );
 
         #endregion
 
         #region (private static) WriteToDatabase                          (FileName, JToken, ...)
 
-        private static Task WriteToDatabase(String            FileName,
-                                            String            Command,
-                                            JToken?           JToken,
-                                            EventTracking_Id  EventTrackingId,
-                                            User_Id?          CurrentUserId   = null)
+        private static Task WriteToDatabase(String             FileName,
+                                            String             Command,
+                                            JToken?            JToken,
+                                            EventTracking_Id   EventTrackingId,
+                                            User_Id?           CurrentUserId       = null,
+                                            CancellationToken  CancellationToken   = default)
 
             => WriteToDatabase(
 
@@ -1022,7 +1025,9 @@ namespace cloud.charging.open.protocols.OCPI
                            ? new JProperty("userId",           CurrentUserId)
                            : null).
 
-                   ToString(Newtonsoft.Json.Formatting.None)
+                   ToString(Newtonsoft.Json.Formatting.None),
+
+                   CancellationToken
 
                );
 
@@ -1030,15 +1035,17 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region (private static) WriteCommentToDatabase                   (FileName, Text, ...)
 
-        private static Task WriteCommentToDatabase(String            FileName,
-                                                   String            Text,
-                                                   EventTracking_Id  EventTrackingId,
-                                                   User_Id?          CurrentUserId   = null)
+        private static Task WriteCommentToDatabase(String             FileName,
+                                                   String             Text,
+                                                   EventTracking_Id   EventTrackingId,
+                                                   User_Id?           CurrentUserId       = null,
+                                                   CancellationToken  CancellationToken   = default)
 
             => File.AppendAllTextAsync(
                    FileName,
                    $"//{Timestamp.Now.ToIso8601()} {EventTrackingId} {(CurrentUserId is not null ? CurrentUserId : "-")}: {Text}{Environment.NewLine}",
-                   Encoding.UTF8
+                   Encoding.UTF8,
+                   CancellationToken
                );
 
         #endregion
@@ -1485,17 +1492,19 @@ namespace cloud.charging.open.protocols.OCPI
 
         #region (protected) LogAsset              (Command, JSONObject,  ...)
 
-        protected Task LogAsset(String            Command,
-                                JObject           JSONObject,
-                                EventTracking_Id  EventTrackingId,
-                                User_Id?          CurrentUserId   = null)
+        protected Task LogAsset(String             Command,
+                                JObject            JSONObject,
+                                EventTracking_Id   EventTrackingId,
+                                User_Id?           CurrentUserId       = null,
+                                CancellationToken  CancellationToken   = default)
 
             => WriteToDatabase(
                    AssetsDBFileName,
                    Command,
                    JSONObject,
                    EventTrackingId,
-                   CurrentUserId
+                   CurrentUserId,
+                   CancellationToken
                );
 
         #endregion

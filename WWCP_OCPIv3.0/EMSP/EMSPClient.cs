@@ -2691,7 +2691,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         public async Task<OCPIResponse<Token>>
 
             GetToken(CountryCode         CountryCode,
-                     Party_Id            PartyId,
+                     Party_Idv3            PartyId,
                      Token_Id            TokenId,
 
                      Request_Id?         RequestId           = null,
@@ -3077,7 +3077,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
         public async Task<OCPIResponse<Token>>
 
             PatchToken(CountryCode         CountryCode,
-                       Party_Id            PartyId,
+                       Party_Idv3            PartyId,
                        Token_Id            TokenId,
                        JObject             TokenPatch,
 

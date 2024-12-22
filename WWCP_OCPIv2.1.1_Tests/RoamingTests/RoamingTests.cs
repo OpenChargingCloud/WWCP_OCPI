@@ -217,18 +217,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
 
-                                                    Id: WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
-                                                    Name: I18NString.Create("Test station #1A"),
-                                                    Description: I18NString.Create("GraphDefined charging station for tests #1A"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*A"),
+                                                    Name:                 I18NString.Create("Test station #1A"),
+                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1A"),
 
-                                                    GeoLocation: GeoCoordinate.Parse(50.82, 11.52),
+                                                    GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus: ChargingStationAdminStatusTypes.Operational,
-                                                    InitialStatus: ChargingStationStatusTypes.Available,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialStatus:        ChargingStationStatusTypes.Available,
 
-                                                    Configurator: chargingStation =>
-                                                    {
-                                                    }
+                                                    Configurator:         chargingStation => {
+                                                                          }
 
                                                 );
 
@@ -244,18 +243,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 var addChargingStationResult2 = await chargingPool1!.AddChargingStation(
 
-                                                    Id: WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
-                                                    Name: I18NString.Create("Test station #1B"),
-                                                    Description: I18NString.Create("GraphDefined charging station for tests #1B"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*1*B"),
+                                                    Name:                 I18NString.Create("Test station #1B"),
+                                                    Description:          I18NString.Create("GraphDefined charging station for tests #1B"),
 
-                                                    GeoLocation: GeoCoordinate.Parse(50.82, 11.52),
+                                                    GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus: ChargingStationAdminStatusTypes.Operational,
-                                                    InitialStatus: ChargingStationStatusTypes.Available,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialStatus:        ChargingStationStatusTypes.Available,
 
-                                                    Configurator: chargingStation =>
-                                                    {
-                                                    }
+                                                    Configurator:         chargingStation => {
+                                                                          }
 
                                                 );
 
@@ -271,18 +269,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests.RoamingTests.CSO
 
                 var addChargingStationResult3 = await chargingPool2!.AddChargingStation(
 
-                                                    Id: WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
-                                                    Name: I18NString.Create("Test station #2A"),
-                                                    Description: I18NString.Create("GraphDefined charging station for tests #2A"),
+                                                    Id:                   WWCP.ChargingStation_Id.Parse("DE*GEF*STATION*2*A"),
+                                                    Name:                 I18NString.Create("Test station #2A"),
+                                                    Description:          I18NString.Create("GraphDefined charging station for tests #2A"),
 
-                                                    GeoLocation: GeoCoordinate.Parse(50.82, 11.52),
+                                                    GeoLocation:          GeoCoordinate.Parse(50.82, 11.52),
 
-                                                    InitialAdminStatus: ChargingStationAdminStatusTypes.Operational,
-                                                    InitialStatus: ChargingStationStatusTypes.Available,
+                                                    InitialAdminStatus:   ChargingStationAdminStatusTypes.Operational,
+                                                    InitialStatus:        ChargingStationStatusTypes.Available,
 
-                                                    Configurator: chargingStation =>
-                                                    {
-                                                    }
+                                                    Configurator:         chargingStation => {
+                                                                          }
 
                                                 );
 

@@ -1772,9 +1772,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                                     foreach (var oldCredentialsRole in oldRemoteParty.Roles)
                                     {
-                                        if (oldCredentialsRole.CountryCode == receivedCredentialsRole.CountryCode &&
-                                            oldCredentialsRole.PartyId     == receivedCredentialsRole.PartyId &&
-                                            oldCredentialsRole.Role        == receivedCredentialsRole.Role)
+                                        if (oldCredentialsRole.PartyId == receivedCredentialsRole.PartyId &&
+                                            oldCredentialsRole.Role    == receivedCredentialsRole.Role)
                                         {
                                             existingCredentialsRole = receivedCredentialsRole;
                                             break;
@@ -2305,9 +2304,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                                     foreach (var oldCredentialsRole in oldRemoteParty.Roles)
                                     {
-                                        if (oldCredentialsRole.CountryCode == receivedCredentialsRole.CountryCode &&
-                                            oldCredentialsRole.PartyId     == receivedCredentialsRole.PartyId &&
-                                            oldCredentialsRole.Role        == receivedCredentialsRole.Role)
+                                        if (oldCredentialsRole.PartyId == receivedCredentialsRole.PartyId &&
+                                            oldCredentialsRole.Role    == receivedCredentialsRole.Role)
                                         {
                                             existingCredentialsRole = receivedCredentialsRole;
                                             break;

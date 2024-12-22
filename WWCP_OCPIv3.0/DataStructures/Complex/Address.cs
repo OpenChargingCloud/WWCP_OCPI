@@ -302,8 +302,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                  new JProperty("address",       Street),
                                  new JProperty("city",          City),
-                                 new JProperty("country",       Country),
-                                 new JProperty("coordinates",   Coordinates.ToJSON(Embedded: true)),
+                                 new JProperty("country",       Country.    ToString()),
+                                 new JProperty("coordinates",   Coordinates.ToJSON  (Embedded: true)),
 
                            PostalCode.IsNotNullOrEmpty()
                                ? new JProperty("postal_code",   PostalCode)
@@ -523,8 +523,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                Country.    Equals(Address.Country)     &&
                Coordinates.Equals(Address.Coordinates) &&
 
-               (PostalCode?.Equals(Address.PostalCode) ?? Address.PostalCode is not null) &&
-               (State?.     Equals(Address.State)      ?? Address.State      is not null);
+               (PostalCode?.Equals(Address.PostalCode) ?? Address.PostalCode is null) &&
+               (State?.     Equals(Address.State)      ?? Address.State      is null);
 
         #endregion
 

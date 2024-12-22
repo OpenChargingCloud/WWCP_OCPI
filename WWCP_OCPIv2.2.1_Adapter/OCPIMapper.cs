@@ -541,7 +541,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                            PartyId:              Party_Id.   Parse(ChargingPool.Id.OperatorId.Suffix),
                            Id:                   Location_Id.Parse(ChargingPool.Id.Suffix),
                            Publish:              true,
-                           Address:              String.Concat(ChargingPool.Address.Street, " ", ChargingPool.Address.HouseNumber),
+                           Address:              ChargingPool.Address.HouseNumber.IsNotNullOrEmpty()
+                                                     ? $"{ChargingPool.Address.Street} {ChargingPool.Address.HouseNumber}"
+                                                     :    ChargingPool.Address.Street,
                            City:                 ChargingPool.Address.City.FirstText(),
                            Country:              ChargingPool.Address.Country,
                            Coordinates:          ChargingPool.GeoLocation.Value,

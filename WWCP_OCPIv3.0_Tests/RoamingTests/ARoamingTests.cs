@@ -26,7 +26,7 @@ using cloud.charging.open.protocols.WWCP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
+namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 {
 
     /// <summary>
@@ -225,7 +225,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
                 emsp2CommonAPI is not null)
             {
 
-                cpoAdapter           = csoRoamingNetwork.CreateOCPIv2_2_1_CSOAdapter(
+                cpoAdapter           = csoRoamingNetwork.CreateOCPIv3_0_CSOAdapter(
 
                                            Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.2.1_CSO_" + this.csoRoamingNetwork.Id),
                                            Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 CSO"),
@@ -255,7 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                        );
 
-                emsp1Adapter         = emp1RoamingNetwork.CreateOCPIv2_2_1_EMPAdapter(
+                emsp1Adapter         = emp1RoamingNetwork.CreateOCPIv3_0_EMPAdapter(
 
                                            Id:                                  EMPRoamingProvider_Id.Parse("OCPIv2.2.1_EMP1_" + this.emp1RoamingNetwork.Id),
                                            Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 EMP1"),
@@ -285,7 +285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1.UnitTests
 
                                        );
 
-                emsp2Adapter         = emp2RoamingNetwork.CreateOCPIv2_2_1_EMPAdapter(
+                emsp2Adapter         = emp2RoamingNetwork.CreateOCPIv3_0_EMPAdapter(
 
                                            Id:                                  EMPRoamingProvider_Id.Parse("OCPIv2.2.1_EMP2_" + this.emp1RoamingNetwork.Id),
                                            Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 EMP2"),

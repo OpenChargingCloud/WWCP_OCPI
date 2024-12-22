@@ -1422,8 +1422,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             EventTrackingId ??= EventTracking_Id.New;
 
             if (!LocationPatch.HasValues)
-                return PatchResult<Location>.Failed(EventTrackingId, this,
-                                                    "The given location patch must not be null or empty!");
+                return PatchResult<Location>.Failed(
+                           EventTrackingId,
+                           this,
+                           "The given location patch must not be null or empty!"
+                       );
 
             lock (patchLock)
             {

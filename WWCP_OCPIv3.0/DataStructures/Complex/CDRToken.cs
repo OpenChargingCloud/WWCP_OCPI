@@ -51,7 +51,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id     PartyId        { get; }
+        public Party_Idv3     PartyId        { get; }
 
         /// <summary>
         /// The unique identification by which this token can be identified.
@@ -86,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="TokenType">The type of the token.</param>
         /// <param name="ContractId">Uniquely identifies the EV driver contract token within the eMSP’s platform (and suboperator platforms).</param>
         public CDRToken(CountryCode  CountryCode,
-                        Party_Id     PartyId,
+                        Party_Idv3     PartyId,
                         Token_Id     UID,
                         TokenType    TokenType,
                         Contract_Id  ContractId)
@@ -215,8 +215,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatory("party_id",
                                          "party identification",
-                                         Party_Id.TryParse,
-                                         out Party_Id PartyId,
+                                         Party_Idv3.TryParse,
+                                         out Party_Idv3 PartyId,
                                          out ErrorResponse))
                 {
                     return false;

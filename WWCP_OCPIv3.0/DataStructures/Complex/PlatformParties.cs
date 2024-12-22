@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The optional unique party identification of this hub party.
         /// </summary>
         [Optional]
-        public Party_Id?                   HubPartyId    { get; }
+        public Party_Idv3?                   HubPartyId    { get; }
 
         /// <summary>
         /// The enumeration of parties that the platform sending this PlatformParties object
@@ -71,7 +71,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         /// <param name="HubPartyId">An optional unique party identification of this hub party.</param>
         /// <param name="Parties">An enumeration of parties that the platform sending this PlatformParties object serves to the Platform receiving this PlatformParties object.</param>
-        public PlatformParties(Party_Id?                    HubPartyId   = null,
+        public PlatformParties(Party_Idv3?                    HubPartyId   = null,
                                IEnumerable<PlatformParty>?  Parties      = null)
 
         {
@@ -165,8 +165,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseOptional("hub_party_id",
                                         "hub party identification",
-                                        Party_Id.TryParse,
-                                        out Party_Id HubPartyId,
+                                        Party_Idv3.TryParse,
+                                        out Party_Idv3 HubPartyId,
                                         out ErrorResponse))
                 {
                     if (ErrorResponse is not null)

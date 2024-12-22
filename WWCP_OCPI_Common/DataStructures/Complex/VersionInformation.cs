@@ -192,23 +192,23 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region ToJSON(CustomVersionSerializer = null)
+        #region ToJSON(CustomVersionInformationSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomVersionSerializer">A delegate to serialize custom version information JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<VersionInformation>? CustomVersionSerializer = null)
+        /// <param name="CustomVersionInformationSerializer">A delegate to serialize custom version information JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<VersionInformation>? CustomVersionInformationSerializer = null)
         {
 
-            var JSON = JSONObject.Create(
+            var json = JSONObject.Create(
                            new JProperty("version",  Id. ToString()),
                            new JProperty("url",      URL.ToString())
                        );
 
-            return CustomVersionSerializer is not null
-                       ? CustomVersionSerializer(this, JSON)
-                       : JSON;
+            return CustomVersionInformationSerializer is not null
+                       ? CustomVersionInformationSerializer(this, json)
+                       : json;
 
         }
 

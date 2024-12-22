@@ -19,6 +19,8 @@
 
 using org.GraphDefined.Vanaheimr.Illias;
 
+using cloud.charging.open.protocols.OCPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv3_0
@@ -30,10 +32,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
     /// <param name="Id">An unique identification of this object.</param>
     /// <param name="Version">An version of the Party Issued Object that is in the payload field.</param>
     /// <param name="Payload">An Party Issued Object at the version given in the version field.</param>
-    public abstract class PartyIssuedObjectUpdate<TId, TData>(Party_Id  IssuerParty,
-                                                              TId       Id,
-                                                              UInt64    Version,
-                                                              TData     Payload) : PartyIssuedObjectReference<TId>(Id)
+    public abstract class PartyIssuedObjectUpdate<TId, TData>(Party_Idv3  IssuerParty,
+                                                              TId         Id,
+                                                              UInt64      Version,
+                                                              TData       Payload) : PartyIssuedObjectReference<TId>(Id)
         where TId   : struct, IId
         where TData : class
 
@@ -45,19 +47,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The party ID of the party that issued this object.
         /// </summary>
         [Mandatory]
-        public Party_Id  IssuerParty    { get; } = IssuerParty;
+        public Party_Idv3  IssuerParty    { get; } = IssuerParty;
 
         /// <summary>
         /// The version of the Party Issued Object that is in the payload field.
         /// </summary>
         [Mandatory]
-        public UInt64    Version        { get; } = Version;
+        public UInt64      Version        { get; } = Version;
 
         /// <summary>
         /// The representation of the Party Issued Object at the version given in the version field.
         /// </summary>
         [Mandatory]
-        public TData     Payload        { get; } = Payload;
+        public TData       Payload        { get; } = Payload;
 
         #endregion
 

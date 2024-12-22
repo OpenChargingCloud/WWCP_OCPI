@@ -39,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                       Correlation_Id            CorrelationId,
 
                                                       CountryCode               CountryCode,
-                                                      Party_Id                  PartyId,
+                                                      Party_Idv3                  PartyId,
                                                       Location_Id               LocationId,
 
                                                       CancellationToken         CancellationToken,
@@ -55,7 +55,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                        Correlation_Id           CorrelationId,
 
                                                        CountryCode              CountryCode,
-                                                       Party_Id                 PartyId,
+                                                       Party_Idv3                 PartyId,
                                                        Location_Id              LocationId,
 
                                                        CancellationToken        CancellationToken,
@@ -189,7 +189,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
                                                   EVSE                     EVSE,
                                                   CountryCode              CountryCode,
-                                                  Party_Id                 PartyId,
+                                                  Party_Idv3                 PartyId,
                                                   Location_Id              LocationId,
 
                                                   CancellationToken        CancellationToken,
@@ -206,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
 
                                                    EVSE                     EVSE,
                                                    CountryCode              CountryCode,
-                                                   Party_Id                 PartyId,
+                                                   Party_Idv3                 PartyId,
                                                    Location_Id              LocationId,
 
                                                    CancellationToken        CancellationToken,
@@ -229,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                     Correlation_Id           CorrelationId,
 
                                                     CountryCode              CountryCode,
-                                                    Party_Id                 PartyId,
+                                                    Party_Idv3                 PartyId,
                                                     Location_Id              LocationId,
                                                     EVSE_UId                 EVSEUId,
                                                     JObject                  EVSEPatch,
@@ -247,7 +247,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      Correlation_Id           CorrelationId,
 
                                                      CountryCode              CountryCode,
-                                                     Party_Id                 PartyId,
+                                                     Party_Idv3                 PartyId,
                                                      Location_Id              LocationId,
                                                      EVSE_UId                 EVSEUId,
                                                      JObject                  EVSEPatch,
@@ -273,7 +273,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                        Correlation_Id            CorrelationId,
 
                                                        CountryCode               CountryCode,
-                                                       Party_Id                  PartyId,
+                                                       Party_Idv3                  PartyId,
                                                        Location_Id               LocationId,
                                                        EVSE_UId                  EVSEUId,
                                                        Connector_Id              ConnectorId,
@@ -291,7 +291,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                         Correlation_Id            CorrelationId,
 
                                                         CountryCode               CountryCode,
-                                                        Party_Id                  PartyId,
+                                                        Party_Idv3                  PartyId,
                                                         Location_Id               LocationId,
                                                         EVSE_UId                  EVSEUId,
                                                         Connector_Id              ConnectorId,
@@ -351,7 +351,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                          Correlation_Id            CorrelationId,
 
                                                          CountryCode               CountryCode,
-                                                         Party_Id                  PartyId,
+                                                         Party_Idv3                  PartyId,
                                                          Location_Id               LocationId,
                                                          EVSE_UId                  EVSEUId,
                                                          Connector_Id              ConnectorId,
@@ -370,7 +370,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                           Correlation_Id            CorrelationId,
 
                                                           CountryCode               CountryCode,
-                                                          Party_Id                  PartyId,
+                                                          Party_Idv3                  PartyId,
                                                           Location_Id               LocationId,
                                                           EVSE_UId                  EVSEUId,
                                                           Connector_Id              ConnectorId,
@@ -397,7 +397,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                     Correlation_Id            CorrelationId,
 
                                                     CountryCode               CountryCode,
-                                                    Party_Id                  PartyId,
+                                                    Party_Idv3                  PartyId,
                                                     Tariff_Id                 TariffId,
 
                                                     CancellationToken         CancellationToken,
@@ -413,7 +413,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      Correlation_Id            CorrelationId,
 
                                                      CountryCode               CountryCode,
-                                                     Party_Id                  PartyId,
+                                                     Party_Idv3                  PartyId,
                                                      Tariff_Id                 TariffId,
 
                                                      CancellationToken         CancellationToken,
@@ -471,7 +471,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                       Correlation_Id            CorrelationId,
 
                                                       CountryCode               CountryCode,
-                                                      Party_Id                  PartyId,
+                                                      Party_Idv3                  PartyId,
                                                       Tariff_Id                 TariffId,
                                                       JObject                   TariffPatch,
 
@@ -488,7 +488,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                        Correlation_Id            CorrelationId,
 
                                                        CountryCode               CountryCode,
-                                                       Party_Id                  PartyId,
+                                                       Party_Idv3                  PartyId,
                                                        Tariff_Id                 TariffId,
                                                        JObject                   TariffPatch,
 
@@ -512,7 +512,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                        Correlation_Id            CorrelationId,
 
                                                        CountryCode               CountryCode,
-                                                       Party_Id                  PartyId,
+                                                       Party_Idv3                  PartyId,
                                                        Tariff_Id                 TariffId,
 
                                                        CancellationToken         CancellationToken,
@@ -528,7 +528,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                         Correlation_Id            CorrelationId,
 
                                                         CountryCode               CountryCode,
-                                                        Party_Id                  PartyId,
+                                                        Party_Idv3                  PartyId,
                                                         Tariff_Id                 TariffId,
 
                                                         CancellationToken         CancellationToken,
@@ -552,7 +552,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                      Correlation_Id            CorrelationId,
 
                                                      CountryCode               CountryCode,
-                                                     Party_Id                  PartyId,
+                                                     Party_Idv3                  PartyId,
                                                      Session_Id                SessionId,
 
                                                      CancellationToken         CancellationToken,
@@ -568,7 +568,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                       Correlation_Id            CorrelationId,
 
                                                       CountryCode               CountryCode,
-                                                      Party_Id                  PartyId,
+                                                      Party_Idv3                  PartyId,
                                                       Session_Id                SessionId,
 
                                                       CancellationToken         CancellationToken,
@@ -626,7 +626,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                        Correlation_Id            CorrelationId,
 
                                                        CountryCode               CountryCode,
-                                                       Party_Id                  PartyId,
+                                                       Party_Idv3                  PartyId,
                                                        Session_Id                SessionId,
                                                        JObject                   SessionPatch,
 
@@ -643,7 +643,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                         Correlation_Id            CorrelationId,
 
                                                         CountryCode               CountryCode,
-                                                        Party_Id                  PartyId,
+                                                        Party_Idv3                  PartyId,
                                                         Session_Id                SessionId,
                                                         JObject                   SessionPatch,
 
@@ -667,7 +667,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                         Correlation_Id            CorrelationId,
 
                                                         CountryCode               CountryCode,
-                                                        Party_Id                  PartyId,
+                                                        Party_Idv3                  PartyId,
                                                         Session_Id                SessionId,
 
                                                         CancellationToken         CancellationToken,
@@ -683,7 +683,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                          Correlation_Id            CorrelationId,
 
                                                          CountryCode               CountryCode,
-                                                         Party_Id                  PartyId,
+                                                         Party_Idv3                  PartyId,
                                                          Session_Id                SessionId,
 
                                                          CancellationToken         CancellationToken,
@@ -707,7 +707,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                  Correlation_Id            CorrelationId,
 
                                                  CountryCode               CountryCode,
-                                                 Party_Id                  PartyId,
+                                                 Party_Idv3                  PartyId,
                                                  CDR_Id                    CDRId,
 
                                                  CancellationToken         CancellationToken,
@@ -723,7 +723,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                   Correlation_Id            CorrelationId,
 
                                                   CountryCode               CountryCode,
-                                                  Party_Id                  PartyId,
+                                                  Party_Idv3                  PartyId,
                                                   CDR_Id                    CDRId,
 
                                                   CancellationToken         CancellationToken,

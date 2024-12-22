@@ -25,18 +25,17 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+using cloud.charging.open.protocols.OCPIv3_0.HTTP;
 
 using cloud.charging.open.protocols.WWCP;
-using cloud.charging.open.protocols.WWCP.Networking;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
+namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 {
 
     /// <summary>
-    /// OCPI v2.1.1 adapter test defaults.
+    /// OCPI v3.0 adapter test defaults.
     /// </summary>
     public abstract class ACSOAdapterTests
     {
@@ -127,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                                         ]
                                );
 
-            ClassicAssert.IsNotNull(roamingNetwork);
+            Assert.That(roamingNetwork, Is.Not.Null);
 
 
             httpAPI          = new HTTPAPI(
@@ -135,21 +134,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    AutoStart:                           true
                                );
 
-            ClassicAssert.IsNotNull(httpAPI);
+            Assert.That(httpAPI, Is.Not.Null);
 
 
             commonAPI        = new CommonAPI(
 
-                                   OurBaseURL:                          URL.Parse("http://127.0.0.1:3473/ocpi/v2.1"),
-                                   OurVersionsURL:                      URL.Parse("http://127.0.0.1:3473/ocpi/v2.1/versions"),
-                                   OurBusinessDetails:                  new BusinessDetails(
-                                                                            "GraphDefined CSO",
-                                                                            URL.Parse("https://www.graphdefined.com/cso")
-                                                                        ),
-                                   OurCountryCode:                      CountryCode.Parse("DE"),
-                                   OurPartyId:                          Party_Id.   Parse("GEF"),
-                                   OurRole:                             Roles.      CPO,
-
+                                   OurBaseURL:                          URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/"),
+                                   OurVersionsURL:                      URL.Parse("http://127.0.0.1:3473/ocpi/v3.0//versions"),
+                                   OurCredentialRoles:                  [
+                                                                            new CredentialsRole(
+                                                                                PartyId:          Party_Idv3.Parse("DEGEF"),
+                                                                                Role:             Roles.   CPO,
+                                                                                BusinessDetails:  new BusinessDetails(
+                                                                                                      "GraphDefined CSO",
+                                                                                                      URL.Parse("https://www.graphdefined.com/cso")
+                                                                                                  )
+                                                                            )
+                                                                        ],
+                                   DefaultPartyId:                      Party_Idv3.Parse("DEGEF"),
                                    HTTPServer:                          httpAPI.HTTPServer,
 
                                    AdditionalURLPathPrefix:             null,
@@ -163,7 +165,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    HTTPServiceName:                     null,
                                    BasePath:                            null,
 
-                                   URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1"),
+                                   URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/"),
                                    APIVersionHashes:                    null,
 
                                    DisableMaintenanceTasks:             null,
@@ -184,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                );
 
-            ClassicAssert.IsNotNull(commonAPI);
+            Assert.That(commonAPI, Is.Not.Null);
 
 
             cpoAPI           = new CPOAPI(
@@ -197,7 +199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    HTTPServiceName:                     null,
                                    BasePath:                            null,
 
-                                   URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.1"),
+                                   URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/"),
                                    APIVersionHashes:                    null,
 
                                    DisableMaintenanceTasks:             null,
@@ -218,10 +220,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                );
 
-            ClassicAssert.IsNotNull(cpoAPI);
+            Assert.That(cpoAPI, Is.Not.Null);
 
 
-            csoAdapter       = roamingNetwork.CreateOCPIv2_1_1_CSOAdapter(
+            csoAdapter       = roamingNetwork.CreateOCPIv3_0_CSOAdapter(
 
                                    Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.1_CSO_" + this.roamingNetwork.Id),
                                    Name:                                I18NString.Create(Languages.de, "OCPI v2.1 CSO"),
@@ -251,7 +253,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                );
 
-            ClassicAssert.IsNotNull(csoAdapter);
+            Assert.That(csoAdapter, Is.Not.Null);
 
 
             graphDefinedCSO  = roamingNetwork.CreateChargingStationOperator(
@@ -262,7 +264,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    InitialStatus:       ChargingStationOperatorStatusTypes.Available
                                ).Result.ChargingStationOperator;
 
-            ClassicAssert.IsNotNull(graphDefinedCSO);
+            Assert.That(graphDefinedCSO, Is.Not.Null);
+
 
         }
 

@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public   Party_Id                            PartyId                     { get; }
+        public   Party_Idv3                            PartyId                     { get; }
 
         /// <summary>
         /// The identification of the charge detail record within the charge point operator's platform
@@ -357,7 +357,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
         public CDR(CountryCode                                             CountryCode,
-                   Party_Id                                                PartyId,
+                   Party_Idv3                                                PartyId,
                    CDR_Id                                                  Id,
                    DateTime                                                Start,
                    DateTime                                                End,
@@ -527,7 +527,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomCDRParser">A delegate to parse custom charge detail record JSON objects.</param>
         public static CDR Parse(JObject                            JSON,
                                 CountryCode?                       CountryCodeURL    = null,
-                                Party_Id?                          PartyIdURL        = null,
+                                Party_Idv3?                          PartyIdURL        = null,
                                 CDR_Id?                            CDRIdURL          = null,
                                 CustomJObjectParserDelegate<CDR>?  CustomCDRParser   = null)
         {
@@ -586,7 +586,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                        [NotNullWhen(true)]  out CDR?      CDR,
                                        [NotNullWhen(false)] out String?   ErrorResponse,
                                        CountryCode?                       CountryCodeURL    = null,
-                                       Party_Id?                          PartyIdURL        = null,
+                                       Party_Idv3?                          PartyIdURL        = null,
                                        CDR_Id?                            CDRIdURL          = null,
                                        CustomJObjectParserDelegate<CDR>?  CustomCDRParser   = null)
         {
@@ -632,8 +632,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (JSON.ParseOptional("party_id",
                                        "party identification",
-                                       Party_Id.TryParse,
-                                       out Party_Id? PartyIdBody,
+                                       Party_Idv3.TryParse,
+                                       out Party_Idv3? PartyIdBody,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
