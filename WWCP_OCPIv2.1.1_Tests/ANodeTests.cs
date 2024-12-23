@@ -317,12 +317,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         protected const String                                         BlockedCPOToken               = "blocked-cpo";
         protected const String                                         BlockedEMSPToken              = "blocked-emsp";
 
-        //protected readonly Dictionary<Operator_Id, HashSet<EVSEDataRecord>>            EVSEDataRecords;
-        //protected readonly Dictionary<Operator_Id, HashSet<EVSEStatusRecord>>          EVSEStatusRecords;
-        //protected readonly Dictionary<Operator_Id, HashSet<PricingProductDataRecord>>  PricingProductData;
-        //protected readonly Dictionary<Operator_Id, HashSet<EVSEPricing>>               EVSEPricings;
-        //protected readonly Dictionary<Operator_Id, HashSet<ChargeDetailRecord>>        ChargeDetailRecords;
-
         #endregion
 
         #region Constructor(s)

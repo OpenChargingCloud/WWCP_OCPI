@@ -43,7 +43,8 @@ namespace cloud.charging.open.protocols.OCPI
     /// <summary>
     /// The CommonAPI Base.
     /// </summary>
-    public class CommonAPIBase : HTTPAPI
+    public class CommonAPIBase : HTTPAPI,
+                                 IServerStartStop
     {
 
         #region (class) ClientConfigurator
@@ -1586,7 +1587,7 @@ namespace cloud.charging.open.protocols.OCPI
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var result = base.Start();
+            var result = await base.Start();
 
             await LogAsset(
                       "started",
@@ -1620,18 +1621,76 @@ namespace cloud.charging.open.protocols.OCPI
 
         #endregion
 
-        #region Shutdown(Message = null, Wait = true, ...)
+        #region Start    (Delay, EventTrackingId = null, InBackground = true)
+
+        public override Task<Boolean> Start(TimeSpan           Delay,
+                                            EventTracking_Id?  EventTrackingId   = null,
+                                            Boolean            InBackground      = true)
+
+            => Start(Delay,
+                     EventTrackingId,
+                     InBackground,
+                     null);
+
+
+        /// <summary>
+        /// Start the server after a little delay.
+        /// </summary>
+        /// <param name="Delay">The delay.</param>
+        /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
+        /// <param name="InBackground">Whether to wait on the main thread or in a background thread.</param>
+        public async virtual Task<Boolean> Start(TimeSpan           Delay,
+                                                 EventTracking_Id?  EventTrackingId   = null,
+                                                 Boolean            InBackground      = true,
+                                                 User_Id?           CurrentUserId     = null)
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            var result = await HTTPServer.Start(
+                                   Delay,
+                                   EventTrackingId,
+                                   InBackground
+                               );
+
+            //SendStarted(this, CurrentTimestamp);
+
+            await LogAsset(
+                      "started",
+                      EventTrackingId,
+                      CurrentUserId
+                  );
+
+            return result;
+
+        }
+
+        #endregion
+
+        #region Shutdown(EventTrackingId = null, Message = null, Wait = true, ...)
+
+        public override Task<Boolean> Shutdown(EventTracking_Id?  EventTrackingId   = null,
+                                               String?            Message           = null,
+                                               Boolean            Wait              = true)
+
+            => Shutdown(
+                   EventTrackingId,
+                   Message,
+                   Wait,
+                   null
+               );
+
 
         /// <summary>
         /// Shutdown this CommonAPI.
         /// </summary>
+        /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
         /// <param name="Message">An optional shutdown message.</param>
         /// <param name="Wait">Whether to wait for the shutdown to complete.</param>
-        /// <param name="EventTrackingId">An unique event tracking identification for correlating this request with other events.</param>
         /// <param name="CurrentUserId">An optional user identification initiating this command/request.</param>
-        public async Task<Boolean> Shutdown(String?            Message           = null,
+        public async Task<Boolean> Shutdown(EventTracking_Id?  EventTrackingId   = null,
+                                            String?            Message           = null,
                                             Boolean            Wait              = true,
-                                            EventTracking_Id?  EventTrackingId   = null,
                                             User_Id?           CurrentUserId     = null)
         {
 
@@ -1640,11 +1699,11 @@ namespace cloud.charging.open.protocols.OCPI
 
             EventTrackingId ??= EventTracking_Id.New;
 
-            var result = base.Shutdown(
-                             Message,
-                             Wait,
-                             EventTrackingId
-                         );
+            var result = await base.Shutdown(
+                                   EventTrackingId,
+                                   Message,
+                                   Wait
+                               );
 
             await LogAsset(
                       "shutdown",

@@ -38,15 +38,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
     public class LocationsStationsEVSEsTests : ACSOAdapterTests
     {
 
-        #region Add_ChargingLocationsAndEVSEs_Test1()
+        #region Add_LocationsChargingStationsAndEVSEs_Test1()
 
         /// <summary>
-        /// Add WWCP charging locations, stations and EVSEs.
+        /// Add WWCP charging pools, charging stations and EVSEs.
         /// Validate that they had been sent to the OCPI module.
         /// Validate via HTTP that they are present within the OCPI module.
         /// </summary>
         [Test]
-        public async Task Add_ChargingLocationsAndEVSEs_Test1()
+        public async Task Add_LocationsChargingStationsAndEVSEs_Test1()
         {
 
             if (roamingNetwork  is not null &&
@@ -54,8 +54,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                 csoAdapter      is not null)
             {
 
-                csoAdapter.CommonAPI.OnLocationAdded += async (location) => { };
-                csoAdapter.CommonAPI.OnEVSEAdded     += async (evse)     => { };
+                csoAdapter.CommonAPI.OnLocationAdded        += async (location)        => { };
+                csoAdapter.CommonAPI.OnChargingStationAdded += async (chargingStation) => { };
+                csoAdapter.CommonAPI.OnEVSEAdded            += async (evse)            => { };
+
 
                 #region Add DE*GEF*POOL1
 
@@ -145,8 +147,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
 
                 #endregion
 
-
-                // OCPI does not have stations!
 
                 #region Add DE*GEF*STATION*1*A
 
@@ -367,7 +367,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                 #endregion
 
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0//locations");
+                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/locations");
 
                 #region Validate via HTTP (OpenData, no authorization)
 
@@ -492,21 +492,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
 
                 #endregion
 
+
             }
 
         }
 
         #endregion
 
-        #region Update_ChargingLocationsAndEVSEs_Test1()
+        #region Update_LocationsChargingStationsAndEVSEs_Test1()
 
         /// <summary>
-        /// Add WWCP charging locations, stations and EVSEs and update their static data.
+        /// Add WWCP locations, charging stations and EVSEs and update their static data.
         /// Validate that they had been sent to the OCPI module.
         /// Validate via HTTP that they are present within the OCPI module.
         /// </summary>
         [Test]
-        public async Task Update_ChargingLocationsAndEVSEs_Test1()
+        public async Task Update_LocationsChargingStationsAndEVSEs_Test1()
         {
 
             if (roamingNetwork  is not null &&
@@ -611,7 +612,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                 await Task.Delay(300);
 
 
-                // OCPI does not have stations!
 
                 #region Add DE*GEF*STATION*1*A
 
@@ -695,6 +695,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                 var time2_loc2_updated = allLocations2.ElementAt(1).LastUpdated;
 
                 await Task.Delay(300);
+
 
 
                 #region Add EVSE DE*GEF*EVSE*1*A*1
@@ -821,8 +822,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                 var time3_loc2_updated = allLocations3.ElementAt(1).LastUpdated;
 
                 await Task.Delay(300);
-
-
 
 
 
@@ -1188,7 +1187,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
 
 
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0//locations");
+                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/locations");
 
                 #region Validate via HTTP (OpenData, no authorization)
 
@@ -1297,6 +1296,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
 
                 #endregion
 
+
             }
 
         }
@@ -1306,7 +1306,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
         #region Update_EVSEStatus_Test1()
 
         /// <summary>
-        /// Add WWCP charging locations, stations and EVSEs and update the EVSE status.
+        /// Add WWCP locations, charging stations and EVSEs and update the EVSE status.
         /// Validate that they had been sent to the OCPI module.
         /// Validate via HTTP that they are present within the OCPI module.
         /// </summary>
@@ -1407,8 +1407,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
 
                 #endregion
 
-
-                // OCPI does not have stations!
 
                 #region Add DE*GEF*STATION*1*A
 
@@ -1580,7 +1578,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
 
 
                 var evse1_UId = evse1!.Id.ToOCPI_EVSEUId();
-                Assert.That(evse1_UId.HasValue,             Is.True);
+                Assert.That(evse1_UId.HasValue, Is.True);
 
 
                 #region Validate, that all locations had been sent to the OCPI module
@@ -1740,7 +1738,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
 
 
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0//locations");
+                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/locations");
 
                 #region Validate via HTTP (OpenData, no authorization)
 
@@ -1864,6 +1862,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                 }
 
                 #endregion
+
 
             }
 

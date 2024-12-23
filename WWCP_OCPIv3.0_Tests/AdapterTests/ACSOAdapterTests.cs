@@ -18,7 +18,6 @@
 #region Usings
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
@@ -140,7 +139,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
             commonAPI        = new CommonAPI(
 
                                    OurBaseURL:                          URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/"),
-                                   OurVersionsURL:                      URL.Parse("http://127.0.0.1:3473/ocpi/v3.0//versions"),
+                                   OurVersionsURL:                      URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/versions"),
                                    OurCredentialRoles:                  [
                                                                             new CredentialsRole(
                                                                                 PartyId:          Party_Idv3.Parse("DEGEF"),

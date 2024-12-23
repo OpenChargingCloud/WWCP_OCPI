@@ -20,7 +20,6 @@
 using Newtonsoft.Json.Linq;
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
@@ -28,6 +27,8 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using cloud.charging.open.protocols.OCPI;
 using cloud.charging.open.protocols.OCPIv3_0.HTTP;
+using System.Net.Http.Headers;
+using cloud.charging.open.protocols.WWCP.Virtual;
 
 #endregion
 
@@ -86,21 +87,32 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
 
     /// <summary>
-    /// OCPI v3.0 Node test defaults.
+    /// OCPI v3.0 Node test defaults with 2 CPOs and 2 EMSPs.
     /// </summary>
-    public abstract class ANodeTests
+    public abstract class ATestDefaults_2CPOs2EMSPs
     {
 
         #region Data
 
-        public     URL?             cpoVersionsAPIURL;
+        public     UInt16           cpo1TCPPort    = 3301;
+        public     UInt16           cpo2TCPPort    = 3302;
+        public     UInt16           emsp1TCPPort   = 3401;
+        public     UInt16           emsp2TCPPort   = 3402;
+
+        public     URL?             cpo1VersionsAPIURL;
+        public     URL?             cpo2VersionsAPIURL;
         public     URL?             emsp1VersionsAPIURL;
         public     URL?             emsp2VersionsAPIURL;
 
-        protected  HTTPAPI?         cpoHTTPAPI;
-        protected  CommonAPI?       cpoCommonAPI;
-        protected  CPOAPI?          cpoCPOAPI;
-        protected  OCPICSOAdapter?  cpoAdapter;
+        protected  HTTPAPI?         cpo1HTTPAPI;
+        protected  CommonAPI?       cpo1CommonAPI;
+        protected  CPOAPI?          cpo1CPOAPI;
+        protected  OCPICSOAdapter?  cpo1Adapter;
+
+        protected  HTTPAPI?         cpo2HTTPAPI;
+        protected  CommonAPI?       cpo2CommonAPI;
+        protected  CPOAPI?          cpo2CPOAPI;
+        protected  OCPICSOAdapter?  cpo2Adapter;
 
         protected  HTTPAPI?         emsp1HTTPAPI;
         protected  CommonAPI?       emsp1CommonAPI;
@@ -112,91 +124,75 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         protected  EMSPAPI?         emsp2EMSPAPI;
         protected  OCPIEMPAdapter?  emsp2Adapter;
 
-        //protected readonly Dictionary<Operator_Id, HashSet<EVSEDataRecord>>            EVSEDataRecords;
-        //protected readonly Dictionary<Operator_Id, HashSet<EVSEStatusRecord>>          EVSEStatusRecords;
-        //protected readonly Dictionary<Operator_Id, HashSet<PricingProductDataRecord>>  PricingProductData;
-        //protected readonly Dictionary<Operator_Id, HashSet<EVSEPricing>>               EVSEPricings;
-        //protected readonly Dictionary<Operator_Id, HashSet<ChargeDetailRecord>>        ChargeDetailRecords;
-
         #endregion
 
         #region Constructor(s)
 
-        public ANodeTests()
-        {
-
-            //this.EVSEDataRecords      = new Dictionary<Operator_Id, HashSet<EVSEDataRecord>>();
-            //this.EVSEStatusRecords    = new Dictionary<Operator_Id, HashSet<EVSEStatusRecord>>();
-            //this.PricingProductData   = new Dictionary<Operator_Id, HashSet<PricingProductDataRecord>>();
-            //this.EVSEPricings         = new Dictionary<Operator_Id, HashSet<EVSEPricing>>();
-            //this.ChargeDetailRecords  = new Dictionary<Operator_Id, HashSet<ChargeDetailRecord>>();
-
-        }
-
-        #endregion
-
-
-        #region SetupOnce()
-
-        [OneTimeSetUp]
-        public void SetupOnce()
-        {
-
-        }
-
-        #endregion
-
-        #region SetupEachTest()
-
-        [SetUp]
-        public async virtual Task SetupEachTest()
+        public ATestDefaults_2CPOs2EMSPs()
         {
 
             Timestamp.Reset();
 
-            #region Create cpo/emp1/emp2 HTTP API
+        }
 
-            cpoHTTPAPI           = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(3301),
+        #endregion
+
+
+        #region SetupOCPINetwork()
+
+        public async Task SetupOCPINetwork()
+        {
+
+            #region Create cpo1/cpo2/emsp1/emsp2 HTTP API
+
+            cpo1HTTPAPI          = new HTTPAPI(
+                                       HTTPServerPort:                      IPPort.Parse(cpo1TCPPort),
                                        AutoStart:                           true
                                    );
 
-            emsp1HTTPAPI          = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(3401),
+            cpo2HTTPAPI          = new HTTPAPI(
+                                       HTTPServerPort:                      IPPort.Parse(cpo2TCPPort),
                                        AutoStart:                           true
                                    );
 
-            emsp2HTTPAPI          = new HTTPAPI(
-                                       HTTPServerPort:                      IPPort.Parse(3402),
+            emsp1HTTPAPI         = new HTTPAPI(
+                                       HTTPServerPort:                      IPPort.Parse(emsp1TCPPort),
                                        AutoStart:                           true
                                    );
 
-            ClassicAssert.IsNotNull(cpoHTTPAPI);
-            ClassicAssert.IsNotNull(emsp1HTTPAPI);
-            ClassicAssert.IsNotNull(emsp2HTTPAPI);
+            emsp2HTTPAPI         = new HTTPAPI(
+                                       HTTPServerPort:                      IPPort.Parse(emsp2TCPPort),
+                                       AutoStart:                           true
+                                   );
+
+            Assert.That(cpo1HTTPAPI,   Is.Not.Null);
+            Assert.That(cpo2HTTPAPI,   Is.Not.Null);
+            Assert.That(emsp1HTTPAPI,  Is.Not.Null);
+            Assert.That(emsp2HTTPAPI,  Is.Not.Null);
 
             #endregion
 
-            #region Create cpo/emsp1/emsp2 OCPI Common API
 
-            cpoVersionsAPIURL    = URL.Parse("http://127.0.0.1:3301/ocpi/v3.0/versions");
+            #region Create CPO #1  Common/CPO API
 
-            cpoCommonAPI         = new CommonAPI(
+            cpo1VersionsAPIURL   = URL.Parse($"http://127.0.0.1:{cpo1TCPPort}/ocpi/v3.0/versions");
 
-                                       OurBaseURL:                          URL.Parse("http://127.0.0.1:3301/ocpi/v2.2"),
-                                       OurVersionsURL:                      cpoVersionsAPIURL.Value,
+            cpo1CommonAPI        = new CommonAPI(
+
+                                       OurBaseURL:                          URL.Parse($"http://127.0.0.1:{cpo1TCPPort}/ocpi/v3.0"),
+                                       OurVersionsURL:                      cpo1VersionsAPIURL.Value,
                                        OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      Party_Idv3.Parse("DEGEF"),
-                                                                                     Roles.   CPO,
+                                                                                     Roles.CPO,
                                                                                      new BusinessDetails(
-                                                                                         "GraphDefined CSO Services",
-                                                                                         URL.Parse("https://www.graphdefined.com/cso")
+                                                                                         "GraphDefined CPO #1 Services",
+                                                                                         URL.Parse("https://www.graphdefined.com/cpo1")
                                                                                      )
                                                                                 )
                                                                             ],
                                        DefaultPartyId:                      Party_Idv3.Parse("DEGEF"),
-                                       HTTPServer:                          cpoHTTPAPI.HTTPServer,
+                                       HTTPServer:                          cpo1HTTPAPI.HTTPServer,
 
                                        AdditionalURLPathPrefix:             null,
                                        KeepRemovedEVSEs:                    null,
@@ -209,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.2"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
@@ -230,17 +226,143 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
                                    );
 
+            cpo1CPOAPI            = new CPOAPI(
 
-            emsp1VersionsAPIURL  = URL.Parse("http://127.0.0.1:3401/ocpi/v3.0/versions");
+                                       CommonAPI:                           cpo1CommonAPI,
+                                       AllowDowngrades:                     null,
+
+                                       HTTPHostname:                        null,
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/cpo"),
+                                       APIVersionHashes:                    null,
+
+                                       DisableMaintenanceTasks:             null,
+                                       MaintenanceInitialDelay:             null,
+                                       MaintenanceEvery:                    null,
+
+                                       DisableWardenTasks:                  null,
+                                       WardenInitialDelay:                  null,
+                                       WardenCheckEvery:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null,
+                                       AutoStart:                           false
+
+                                   );
+
+            Assert.That(cpo1CommonAPI, Is.Not.Null);
+            Assert.That(cpo1CPOAPI,    Is.Not.Null);
+
+            #endregion
+
+            #region Create CPO #2  Common/CPO API
+
+            cpo2VersionsAPIURL   = URL.Parse($"http://127.0.0.1:{cpo2TCPPort}/ocpi/v3.0/versions");
+
+            cpo2CommonAPI        = new CommonAPI(
+
+                                       OurBaseURL:                          URL.Parse($"http://127.0.0.1:{cpo2TCPPort}/ocpi/v3.0"),
+                                       OurVersionsURL:                      cpo1VersionsAPIURL.Value,
+                                       OurCredentialRoles:                  [
+                                                                                new CredentialsRole(
+                                                                                     Party_Idv3.Parse("DEGE2"),
+                                                                                     Roles.CPO,
+                                                                                     new BusinessDetails(
+                                                                                         "GraphDefined CPO #2 Services",
+                                                                                         URL.Parse("https://www.graphdefined.com/cpo2")
+                                                                                     )
+                                                                                )
+                                                                            ],
+                                       DefaultPartyId:                      Party_Idv3.Parse("DEGE2"),
+                                       HTTPServer:                          cpo2HTTPAPI.HTTPServer,
+
+                                       AdditionalURLPathPrefix:             null,
+                                       KeepRemovedEVSEs:                    null,
+                                       LocationsAsOpenData:                 true,
+                                       AllowDowngrades:                     null,
+                                       Disable_RootServices:                false,
+
+                                       HTTPHostname:                        null,
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0"),
+                                       APIVersionHashes:                    null,
+
+                                       DisableMaintenanceTasks:             null,
+                                       MaintenanceInitialDelay:             null,
+                                       MaintenanceEvery:                    null,
+
+                                       DisableWardenTasks:                  null,
+                                       WardenInitialDelay:                  null,
+                                       WardenCheckEvery:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null,
+                                       AutoStart:                           false
+
+                                   );
+
+            cpo2CPOAPI            = new CPOAPI(
+
+                                       CommonAPI:                           cpo2CommonAPI,
+                                       AllowDowngrades:                     null,
+
+                                       HTTPHostname:                        null,
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/cpo"),
+                                       APIVersionHashes:                    null,
+
+                                       DisableMaintenanceTasks:             null,
+                                       MaintenanceInitialDelay:             null,
+                                       MaintenanceEvery:                    null,
+
+                                       DisableWardenTasks:                  null,
+                                       WardenInitialDelay:                  null,
+                                       WardenCheckEvery:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null,
+                                       AutoStart:                           false
+
+                                   );
+
+            Assert.That(cpo2CommonAPI, Is.Not.Null);
+            Assert.That(cpo2CPOAPI,    Is.Not.Null);
+
+            #endregion
+
+            #region Create EMSP #1 Common/EMSP API
+
+            emsp1VersionsAPIURL  = URL.Parse($"http://127.0.0.1:{emsp1TCPPort}/ocpi/v3.0/versions");
 
             emsp1CommonAPI       = new CommonAPI(
 
-                                       OurBaseURL:                          URL.Parse("http://127.0.0.1:3401/ocpi/v2.2"),
+                                       OurBaseURL:                          URL.Parse($"http://127.0.0.1:{emsp1TCPPort}/ocpi/v3.0"),
                                        OurVersionsURL:                      emsp1VersionsAPIURL.Value,
                                        OurCredentialRoles:                  [
                                                                                 new CredentialsRole(
                                                                                      Party_Idv3.Parse("DEGDF"),
-                                                                                     Roles.   EMSP,
+                                                                                     Roles.EMSP,
                                                                                      new BusinessDetails(
                                                                                          "GraphDefined EMSP #1 Services",
                                                                                          URL.Parse("https://www.graphdefined.com/emsp1")
@@ -261,102 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.2"),
-                                       APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null,
-                                       AutoStart:                           false
-
-                                   );
-
-
-            emsp2VersionsAPIURL  = URL.Parse("http://127.0.0.1:3402/ocpi/v3.0/versions");
-
-            emsp2CommonAPI       = new CommonAPI(
-
-                                       OurBaseURL:                          URL.Parse("http://127.0.0.1:3402/ocpi/v2.2"),
-                                       OurVersionsURL:                      emsp2VersionsAPIURL.Value,
-                                       OurCredentialRoles:                  [
-                                                                                new CredentialsRole(
-                                                                                     Party_Idv3.Parse("DEGD2"),
-                                                                                     Roles.   EMSP,
-                                                                                     new BusinessDetails(
-                                                                                         "GraphDefined EMSP #2 Services",
-                                                                                         URL.Parse("https://www.graphdefined.com/emsp2")
-                                                                                     )
-                                                                                )
-                                                                            ],
-                                       DefaultPartyId:                      Party_Idv3.Parse("DEGD2"),
-                                       HTTPServer:                          emsp2HTTPAPI.HTTPServer,
-
-                                       AdditionalURLPathPrefix:             null,
-                                       KeepRemovedEVSEs:                    null,
-                                       LocationsAsOpenData:                 true,
-                                       AllowDowngrades:                     null,
-                                       Disable_RootServices:                false,
-
-                                       HTTPHostname:                        null,
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v2.2"),
-                                       APIVersionHashes:                    null,
-
-                                       DisableMaintenanceTasks:             null,
-                                       MaintenanceInitialDelay:             null,
-                                       MaintenanceEvery:                    null,
-
-                                       DisableWardenTasks:                  null,
-                                       WardenInitialDelay:                  null,
-                                       WardenCheckEvery:                    null,
-
-                                       IsDevelopment:                       null,
-                                       DevelopmentServers:                  null,
-                                       DisableLogging:                      null,
-                                       LoggingPath:                         null,
-                                       LogfileName:                         null,
-                                       LogfileCreator:                      null,
-                                       AutoStart:                           false
-
-                                   );
-
-            ClassicAssert.IsNotNull(cpoVersionsAPIURL);
-            ClassicAssert.IsNotNull(emsp1VersionsAPIURL);
-            ClassicAssert.IsNotNull(emsp2VersionsAPIURL);
-
-            ClassicAssert.IsNotNull(cpoCommonAPI);
-            ClassicAssert.IsNotNull(emsp1CommonAPI);
-            ClassicAssert.IsNotNull(emsp2CommonAPI);
-
-            #endregion
-
-            #region Create cpo CPO API / emsp1 EMP API / emsp2 EMP API
-
-            cpoCPOAPI            = new CPOAPI(
-
-                                       CommonAPI:                           cpoCommonAPI,
-                                       AllowDowngrades:                     null,
-
-                                       HTTPHostname:                        null,
-                                       ExternalDNSName:                     null,
-                                       HTTPServiceName:                     null,
-                                       BasePath:                            null,
-
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/v2.2.1/cpo"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
@@ -387,7 +414,65 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/v2.2.1/emsp"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/emsp"),
+                                       APIVersionHashes:                    null,
+
+                                       DisableMaintenanceTasks:             null,
+                                       MaintenanceInitialDelay:             null,
+                                       MaintenanceEvery:                    null,
+
+                                       DisableWardenTasks:                  null,
+                                       WardenInitialDelay:                  null,
+                                       WardenCheckEvery:                    null,
+
+                                       IsDevelopment:                       null,
+                                       DevelopmentServers:                  null,
+                                       DisableLogging:                      null,
+                                       LoggingPath:                         null,
+                                       LogfileName:                         null,
+                                       LogfileCreator:                      null,
+                                       AutoStart:                           false
+
+                                   );
+
+            Assert.That(emsp1CommonAPI, Is.Not.Null);
+            Assert.That(emsp1EMSPAPI,   Is.Not.Null);
+
+            #endregion
+
+            #region Create EMSP #2 Common/EMSP API
+
+            emsp2VersionsAPIURL  = URL.Parse($"http://127.0.0.1:{emsp2TCPPort}/ocpi/v3.0/versions");
+
+            emsp2CommonAPI       = new CommonAPI(
+
+                                       OurBaseURL:                          URL.Parse($"http://127.0.0.1:{emsp2TCPPort}/ocpi/v3.0"),
+                                       OurVersionsURL:                      emsp2VersionsAPIURL.Value,
+                                       OurCredentialRoles:                  [
+                                                                                new CredentialsRole(
+                                                                                     Party_Idv3.Parse("DEGD2"),
+                                                                                     Roles.EMSP,
+                                                                                     new BusinessDetails(
+                                                                                         "GraphDefined EMSP #2 Services",
+                                                                                         URL.Parse("https://www.graphdefined.com/emsp2")
+                                                                                     )
+                                                                                )
+                                                                            ],
+                                       DefaultPartyId:                      Party_Idv3.Parse("DEGD2"),
+                                       HTTPServer:                          emsp2HTTPAPI.HTTPServer,
+
+                                       AdditionalURLPathPrefix:             null,
+                                       KeepRemovedEVSEs:                    null,
+                                       LocationsAsOpenData:                 true,
+                                       AllowDowngrades:                     null,
+                                       Disable_RootServices:                false,
+
+                                       HTTPHostname:                        null,
+                                       ExternalDNSName:                     null,
+                                       HTTPServiceName:                     null,
+                                       BasePath:                            null,
+
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
@@ -418,7 +503,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                        HTTPServiceName:                     null,
                                        BasePath:                            null,
 
-                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/v2.2.1/emsp"),
+                                       URLPathPrefix:                       HTTPPath.Parse("/ocpi/v3.0/emsp"),
                                        APIVersionHashes:                    null,
 
                                        DisableMaintenanceTasks:             null,
@@ -439,15 +524,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
                                    );
 
-            ClassicAssert.IsNotNull(cpoCPOAPI);
-            ClassicAssert.IsNotNull(emsp1EMSPAPI);
-            ClassicAssert.IsNotNull(emsp2EMSPAPI);
+            Assert.That(emsp2CommonAPI, Is.Not.Null);
+            Assert.That(emsp2EMSPAPI,   Is.Not.Null);
 
             #endregion
 
-            #region Add Remote Parties
 
-            await cpoCommonAPI.AddRemoteParty  (Id:                          RemoteParty_Id.Parse(
+            #region Add CPO #1's  Remote Parties
+
+            await cpo1CommonAPI.AddRemoteParty (Id:                          RemoteParty_Id.Parse(
                                                                                  emsp1CommonAPI.OurCredentialRoles.First().PartyId,
                                                                                  emsp1CommonAPI.OurCredentialRoles.First().Role
                                                                              ),
@@ -460,10 +545,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                                                  )
                                                                              ],
 
-                                                AccessToken:                 AccessToken.Parse("cso-2-emp1:token"),
+                                                AccessToken:                 AccessToken.Parse("cpo1-to-emsp1:token"),
                                                 AccessStatus:                AccessStatus.ALLOWED,
 
-                                                RemoteAccessToken:           AccessToken.Parse("emp1-2-cso:token"),
+                                                RemoteAccessToken:           AccessToken.Parse("emsp1-to-cpo1:token"),
                                                 RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v3.0/versions"),
                                                 RemoteVersionIds:            null,
                                                 AccessTokenBase64Encoding:   true,
@@ -471,7 +556,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
                                                 PartyStatus:                 PartyStatus.ENABLED);
 
-            await cpoCommonAPI.AddRemoteParty  (Id:                          RemoteParty_Id.Parse(
+            await cpo1CommonAPI.AddRemoteParty (Id:                          RemoteParty_Id.Parse(
                                                                                  emsp2CommonAPI.OurCredentialRoles.First().PartyId,
                                                                                  emsp2CommonAPI.OurCredentialRoles.First().Role
                                                                              ),
@@ -484,72 +569,204 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
                                                                                  )
                                                                              ],
 
-                                                AccessToken:                 AccessToken.Parse("cso-2-emp2:token"),
+                                                AccessToken:                 AccessToken.Parse("cpo1-to-emsp2:token"),
                                                 AccessStatus:                AccessStatus.ALLOWED,
-                                                RemoteAccessToken:           AccessToken.Parse("emp2-2-cso:token"),
+                                                RemoteAccessToken:           AccessToken.Parse("emsp2-to-cpo1:token"),
                                                 RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2HTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v3.0/versions"),
                                                 RemoteVersionIds:            null,
                                                 AccessTokenBase64Encoding:   true,
                                                 RemoteStatus:                RemoteAccessStatus.ONLINE,
                                                 PartyStatus:                 PartyStatus.ENABLED);
 
-
-
-            await emsp1CommonAPI.AddRemoteParty(Id:                          RemoteParty_Id.Parse(
-                                                                                 cpoCommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                 cpoCommonAPI.OurCredentialRoles.First().Role
-                                                                             ),
-                                                CredentialsRoles:            [
-                                                                                 new CredentialsRole(
-                                                                                     PartyId:          cpoCommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                     Role:             Roles.CPO,
-                                                                                     BusinessDetails:  cpoCommonAPI.OurCredentialRoles.First().BusinessDetails,
-                                                                                     AllowDowngrades:  false
-                                                                                 )
-                                                                             ],
-
-                                                AccessToken:                 AccessToken.Parse("emp1-2-cso:token"),
-                                                AccessStatus:                AccessStatus.ALLOWED,
-
-                                                RemoteAccessToken:           AccessToken.Parse("cso-2-emp1:token"),
-                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v3.0/versions"),
-                                                RemoteVersionIds:            null,
-                                                AccessTokenBase64Encoding:   true,
-                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
-
-                                                PartyStatus:                 PartyStatus.ENABLED);
-
-
-            await emsp2CommonAPI.AddRemoteParty(Id:                          RemoteParty_Id.Parse(
-                                                                                 cpoCommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                 cpoCommonAPI.OurCredentialRoles.First().Role
-                                                                             ),
-                                                CredentialsRoles:            [
-                                                                                 new CredentialsRole(
-                                                                                     PartyId:          cpoCommonAPI.OurCredentialRoles.First().PartyId,
-                                                                                     Role:             Roles.CPO,
-                                                                                     BusinessDetails:  cpoCommonAPI.OurCredentialRoles.First().BusinessDetails,
-                                                                                     AllowDowngrades:  false
-                                                                                 )
-                                                                             ],
-
-                                                AccessToken:                 AccessToken.Parse("emp2-2-cso:token"),
-                                                AccessStatus:                AccessStatus.ALLOWED,
-
-                                                RemoteAccessToken:           AccessToken.Parse("cso-2-emp2:token"),
-                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpoHTTPAPI.HTTPServer.IPPorts.First()}/ocpi/v3.0/versions"),
-                                                RemoteVersionIds:            null,
-                                                AccessTokenBase64Encoding:   true,
-                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
-
-                                                PartyStatus:                 PartyStatus.ENABLED);
-
-
-            ClassicAssert.AreEqual(2, cpoCommonAPI.  RemoteParties.Count());
-            ClassicAssert.AreEqual(1, emsp1CommonAPI.RemoteParties.Count());
-            ClassicAssert.AreEqual(1, emsp2CommonAPI.RemoteParties.Count());
+            Assert.That(cpo1CommonAPI.RemoteParties.Count(), Is.EqualTo(2));
 
             #endregion
+
+            #region Add CPO #2's  Remote Parties
+
+            await cpo2CommonAPI.AddRemoteParty (Id:                          RemoteParty_Id.Parse(
+                                                                                 emsp1CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                 emsp1CommonAPI.OurCredentialRoles.First().Role
+                                                                             ),
+                                                CredentialsRoles:            [
+                                                                                 new CredentialsRole(
+                                                                                     PartyId:          emsp1CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                     Role:             Roles.EMSP,
+                                                                                     BusinessDetails:  emsp1CommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                                                     AllowDowngrades:  false
+                                                                                 )
+                                                                             ],
+
+                                                AccessToken:                 AccessToken.Parse("cpo2-to-emsp1:token"),
+                                                AccessStatus:                AccessStatus.ALLOWED,
+
+                                                RemoteAccessToken:           AccessToken.Parse("emsp1-to-cpo2:token"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp1TCPPort}/ocpi/v3.0/versions"),
+                                                RemoteVersionIds:            null,
+                                                AccessTokenBase64Encoding:   true,
+                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                                PartyStatus:                 PartyStatus.ENABLED);
+
+            await cpo2CommonAPI.AddRemoteParty (Id:                          RemoteParty_Id.Parse(
+                                                                                 emsp2CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                 emsp2CommonAPI.OurCredentialRoles.First().Role
+                                                                             ),
+                                                CredentialsRoles:            [
+                                                                                 new CredentialsRole(
+                                                                                     PartyId:          emsp2CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                     Role:             Roles.EMSP,
+                                                                                     BusinessDetails:  emsp2CommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                                                     AllowDowngrades:  false
+                                                                                 )
+                                                                             ],
+
+                                                AccessToken:                 AccessToken.Parse("cpo2-to-emsp2:token"),
+                                                AccessStatus:                AccessStatus.ALLOWED,
+                                                RemoteAccessToken:           AccessToken.Parse("emsp2-to-cpo2:token"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{emsp2TCPPort}/ocpi/v3.0/versions"),
+                                                RemoteVersionIds:            null,
+                                                AccessTokenBase64Encoding:   true,
+                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
+                                                PartyStatus:                 PartyStatus.ENABLED);
+
+            Assert.That(cpo2CommonAPI.RemoteParties.Count(), Is.EqualTo(2));
+
+            #endregion
+
+            #region Add EMSP #1's Remote Parties
+
+            await emsp1CommonAPI.AddRemoteParty(Id:                          RemoteParty_Id.Parse(
+                                                                                 cpo1CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                 cpo1CommonAPI.OurCredentialRoles.First().Role
+                                                                             ),
+                                                CredentialsRoles:            [
+                                                                                 new CredentialsRole(
+                                                                                     PartyId:          cpo1CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                     Role:             Roles.CPO,
+                                                                                     BusinessDetails:  cpo1CommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                                                     AllowDowngrades:  false
+                                                                                 )
+                                                                             ],
+
+                                                AccessToken:                 AccessToken.Parse("emsp1-to-cpo1:token"),
+                                                AccessStatus:                AccessStatus.ALLOWED,
+
+                                                RemoteAccessToken:           AccessToken.Parse("cpo1-to-emsp1:token"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1TCPPort}/ocpi/v3.0/versions"),
+                                                RemoteVersionIds:            null,
+                                                AccessTokenBase64Encoding:   true,
+                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                                PartyStatus:                 PartyStatus.ENABLED);
+
+            await emsp1CommonAPI.AddRemoteParty(Id:                          RemoteParty_Id.Parse(
+                                                                                 cpo2CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                 cpo2CommonAPI.OurCredentialRoles.First().Role
+                                                                             ),
+                                                CredentialsRoles:            [
+                                                                                 new CredentialsRole(
+                                                                                     PartyId:          cpo2CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                     Role:             Roles.CPO,
+                                                                                     BusinessDetails:  cpo2CommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                                                     AllowDowngrades:  false
+                                                                                 )
+                                                                             ],
+
+                                                AccessToken:                 AccessToken.Parse("emsp1-to-cpo2:token"),
+                                                AccessStatus:                AccessStatus.ALLOWED,
+
+                                                RemoteAccessToken:           AccessToken.Parse("cpo2-to-emsp1:token"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2TCPPort}/ocpi/v3.0/versions"),
+                                                RemoteVersionIds:            null,
+                                                AccessTokenBase64Encoding:   true,
+                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                                PartyStatus:                 PartyStatus.ENABLED);
+
+            Assert.That(emsp1CommonAPI.RemoteParties.Count(), Is.EqualTo(2));
+
+            #endregion
+
+            #region Add EMSP #1's Remote Parties
+
+            await emsp2CommonAPI.AddRemoteParty(Id:                          RemoteParty_Id.Parse(
+                                                                                 cpo1CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                 cpo1CommonAPI.OurCredentialRoles.First().Role
+                                                                             ),
+                                                CredentialsRoles:            [
+                                                                                 new CredentialsRole(
+                                                                                     PartyId:          cpo1CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                     Role:             Roles.CPO,
+                                                                                     BusinessDetails:  cpo1CommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                                                     AllowDowngrades:  false
+                                                                                 )
+                                                                             ],
+
+                                                AccessToken:                 AccessToken.Parse("emsp2-to-cpo1:token"),
+                                                AccessStatus:                AccessStatus.ALLOWED,
+
+                                                RemoteAccessToken:           AccessToken.Parse("cpo1-to-emsp2:token"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo1TCPPort}/ocpi/v3.0/versions"),
+                                                RemoteVersionIds:            null,
+                                                AccessTokenBase64Encoding:   true,
+                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                                PartyStatus:                 PartyStatus.ENABLED);
+
+            await emsp2CommonAPI.AddRemoteParty(Id:                          RemoteParty_Id.Parse(
+                                                                                 cpo2CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                 cpo2CommonAPI.OurCredentialRoles.First().Role
+                                                                             ),
+                                                CredentialsRoles:            [
+                                                                                 new CredentialsRole(
+                                                                                     PartyId:          cpo2CommonAPI.OurCredentialRoles.First().PartyId,
+                                                                                     Role:             Roles.CPO,
+                                                                                     BusinessDetails:  cpo2CommonAPI.OurCredentialRoles.First().BusinessDetails,
+                                                                                     AllowDowngrades:  false
+                                                                                 )
+                                                                             ],
+
+                                                AccessToken:                 AccessToken.Parse("emsp2-to-cpo2:token"),
+                                                AccessStatus:                AccessStatus.ALLOWED,
+
+                                                RemoteAccessToken:           AccessToken.Parse("cpo2-to-emsp2:token"),
+                                                RemoteVersionsURL:           URL.Parse($"http://localhost:{cpo2TCPPort}/ocpi/v3.0/versions"),
+                                                RemoteVersionIds:            null,
+                                                AccessTokenBase64Encoding:   true,
+                                                RemoteStatus:                RemoteAccessStatus.ONLINE,
+
+                                                PartyStatus:                 PartyStatus.ENABLED);
+
+            Assert.That(emsp2CommonAPI.RemoteParties.Count(), Is.EqualTo(2));
+
+            #endregion
+
+
+        }
+
+        #endregion
+
+
+        #region SetupOnce()
+
+        [OneTimeSetUp]
+        public virtual async Task SetupOnce()
+        {
+
+            await SetupOCPINetwork();
+
+        }
+
+        #endregion
+
+        #region SetupEachTest()
+
+        [SetUp]
+        public virtual async Task SetupEachTest()
+        {
+
+            
 
         }
 
@@ -558,12 +775,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         #region ShutdownEachTest()
 
         [TearDown]
-        public virtual void ShutdownEachTest()
+        public virtual async Task ShutdownEachTest()
         {
 
-            cpoHTTPAPI?.  Shutdown();
-            emsp1HTTPAPI?.Shutdown();
-            emsp2HTTPAPI?.Shutdown();
+            
 
         }
 
@@ -572,8 +787,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         #region ShutdownOnce()
 
         [OneTimeTearDown]
-        public void ShutdownOnce()
+        public virtual async Task ShutdownOnce()
         {
+
+            cpo1HTTPAPI? .Shutdown();
+            cpo2HTTPAPI?. Shutdown();
+            emsp1HTTPAPI?.Shutdown();
+            emsp2HTTPAPI?.Shutdown();
 
         }
 

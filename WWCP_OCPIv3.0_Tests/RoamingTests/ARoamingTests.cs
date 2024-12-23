@@ -33,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
     /// Roaming test defaults for a charging station operator connected
     /// to two e-mobility providers via OCPI v2.2.1.
     /// </summary>
-    public abstract class ARoamingTests : ANodeTests
+    public abstract class ARoamingTests : ATestDefaults_2CPOs2EMSPs
     {
 
         #region Data
@@ -54,6 +54,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         #region Constructor(s)
 
         public ARoamingTests()
+            : base()
         {
 
         }
@@ -64,8 +65,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         #region SetupOnce()
 
         [OneTimeSetUp]
-        public void SetupOnce()
+        public override async Task SetupOnce()
         {
+
+            await base.SetupOnce();
 
         }
 
@@ -216,22 +219,22 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
             #region Create cpo/emsp1/emsp2 adapter
 
-            ClassicAssert.IsNotNull(cpoCommonAPI);
+            ClassicAssert.IsNotNull(cpo1CommonAPI);
             ClassicAssert.IsNotNull(emsp1CommonAPI);
             ClassicAssert.IsNotNull(emsp2CommonAPI);
 
-            if (cpoCommonAPI   is not null &&
+            if (cpo1CommonAPI   is not null &&
                 emsp1CommonAPI is not null &&
                 emsp2CommonAPI is not null)
             {
 
-                cpoAdapter           = csoRoamingNetwork.CreateOCPIv3_0_CSOAdapter(
+                cpo1Adapter           = csoRoamingNetwork.CreateOCPIv3_0_CSOAdapter(
 
                                            Id:                                  CSORoamingProvider_Id.Parse("OCPIv2.2.1_CSO_" + this.csoRoamingNetwork.Id),
                                            Name:                                I18NString.Create(Languages.de, "OCPI v2.2.1 CSO"),
                                            Description:                         I18NString.Create(Languages.de, "OCPI v2.2.1 CSO Roaming"),
 
-                                           CommonAPI:                           cpoCommonAPI,
+                                           CommonAPI:                           cpo1CommonAPI,
 
                                            CustomEVSEIdConverter:               null,
                                            CustomEVSEConverter:                 null,
@@ -315,7 +318,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
 
                                        );
 
-                ClassicAssert.IsNotNull(cpoAdapter);
+                ClassicAssert.IsNotNull(cpo1Adapter);
                 ClassicAssert.IsNotNull(emsp1Adapter);
                 ClassicAssert.IsNotNull(emsp2Adapter);
 
@@ -330,10 +333,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         #region ShutdownEachTest()
 
         [TearDown]
-        public override void ShutdownEachTest()
+        public override async Task ShutdownEachTest()
         {
 
-            base.ShutdownEachTest();
+            await base.ShutdownEachTest();
 
         }
 
@@ -342,8 +345,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests
         #region ShutdownOnce()
 
         [OneTimeTearDown]
-        public void ShutdownOnce()
+        public override async Task ShutdownOnce()
         {
+
+            await base.ShutdownOnce();
 
         }
 

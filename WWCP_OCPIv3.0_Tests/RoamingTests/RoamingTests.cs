@@ -147,8 +147,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                 #endregion
 
 
-                // OCPI does not have stations!
-
                 #region Add DE*GEF*STATION*1*A
 
                 var addChargingStationResult1 = await chargingPool1!.AddChargingStation(
@@ -261,7 +259,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                 if (chargingStation1 is not null && evse1 is not null)
                 {
 
-                    var ocpiLocation1  = cpoAdapter!.CommonAPI.GetLocations().FirstOrDefault(location => location.Name         == chargingPool1!.Name.FirstText());
+                    var ocpiLocation1  = cpo1Adapter!.CommonAPI.GetLocations().FirstOrDefault(location => location.Name         == chargingPool1!.Name.FirstText());
                     Assert.That(ocpiLocation1,  Is.Not.Null);
 
                     var ocpiStation1   = ocpiLocation1!.ChargingPool.         FirstOrDefault(station  => station.Id.ToString() == chargingStation1.Id.ToString());
@@ -279,7 +277,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 }
 
-                Assert.That(cpoAdapter!.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool).SelectMany(station => station.EVSEs).Count(), Is.EqualTo(1));
+                Assert.That(cpo1Adapter!.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool).SelectMany(station => station.EVSEs).Count(), Is.EqualTo(1));
 
                 #endregion
 
@@ -389,7 +387,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that all locations had been sent to the CPO OCPI module
 
-                var allLocationsAtCPO = cpoAdapter.CommonAPI.GetLocations().ToArray();
+                var allLocationsAtCPO = cpo1Adapter.CommonAPI.GetLocations().ToArray();
                 Assert.That(allLocationsAtCPO,                  Is.Not.Null);
                 Assert.That(allLocationsAtCPO.Length,           Is.EqualTo(2));
 
@@ -397,7 +395,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that all charging stations had been sent to the CPO OCPI module
 
-                var allChargingStationsAtCPO = cpoAdapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
+                var allChargingStationsAtCPO = cpo1Adapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
                 Assert.That(allChargingStationsAtCPO,           Is.Not.Null);
                 Assert.That(allChargingStationsAtCPO.Length,    Is.EqualTo(3));
 
@@ -405,7 +403,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that all EVSEs had been sent to the CPO OCPI module
 
-                var allEVSEsAtCPO = cpoAdapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
+                var allEVSEsAtCPO = cpo1Adapter.CommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
                 Assert.That(allEVSEsAtCPO,                      Is.Not.Null);
                 Assert.That(allEVSEsAtCPO.Length,               Is.EqualTo(4));
 
@@ -413,7 +411,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that both locations have the correct number of Charging Stations and EVSEs
 
-                if (cpoAdapter.CommonAPI.TryGetLocation(Party_Idv3.   Parse("DEGEF"),
+                if (cpo1Adapter.CommonAPI.TryGetLocation(Party_Idv3.   Parse("DEGEF"),
                                                         Location_Id.Parse(chargingPool1!.Id.ToString()),
                                                         out var location1) &&
                     location1 is not null)
@@ -427,7 +425,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                     Assert.Fail("location1 was not found!");
 
 
-                if (cpoAdapter.CommonAPI.TryGetLocation(Party_Idv3.   Parse("DEGEF"),
+                if (cpo1Adapter.CommonAPI.TryGetLocation(Party_Idv3.   Parse("DEGEF"),
                                                         Location_Id.Parse(chargingPool2!.Id.ToString()),
                                                         out var location2) &&
                     location2 is not null)
@@ -443,7 +441,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                 #endregion
 
 
-                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0//locations");
+                var remoteURL = URL.Parse("http://127.0.0.1:3473/ocpi/v3.0/locations");
 
                 #region Validate via HTTP (OpenData, no authorization)
 
@@ -492,7 +490,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate via HTTP (with authorization)
 
-                await cpoAdapter.CommonAPI.AddRemoteParty(
+                await cpo1Adapter.CommonAPI.AddRemoteParty(
                           Id:                RemoteParty_Id.Parse("DE-GDF_EMSP"),
                           CredentialsRoles:  [
                                                  new CredentialsRole(
@@ -666,8 +664,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #endregion
 
-
-                // OCPI does not have stations!
 
                 #region Add DE*GEF*STATION*1*A
 
@@ -866,7 +862,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that locations had been sent to the OCPI module
 
-                var allLocations  = cpoCommonAPI.GetLocations().ToArray();
+                var allLocations  = cpo1CommonAPI.GetLocations().ToArray();
                 ClassicAssert.IsNotNull(allLocations);
                 ClassicAssert.AreEqual (2, allLocations.Length);
 
@@ -874,7 +870,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that charging stations had been sent to the OCPI module
 
-                var allChargingStations = cpoCommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
+                var allChargingStations = cpo1CommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
                 ClassicAssert.IsNotNull(allChargingStations);
                 ClassicAssert.AreEqual(3, allChargingStations.Length);
 
@@ -882,7 +878,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that EVSEs had been sent to the OCPI module
 
-                var allEVSEs      = cpoCommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
+                var allEVSEs      = cpo1CommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
                 ClassicAssert.IsNotNull(allEVSEs);
                 ClassicAssert.AreEqual (4, allEVSEs.Length);
 
@@ -890,7 +886,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that both locations have Stations and EVSEs
 
-                if (cpoCommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
+                if (cpo1CommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
                                                 Location_Id.Parse(chargingPool1.Id.ToString()),
                                                 out var location1) &&
                     location1 is not null)
@@ -904,7 +900,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                     Assert.Fail("location1 was not found!");
 
 
-                if (cpoCommonAPI.TryGetLocation(chargingPool2.Operator.Id.ToOCPI(),
+                if (cpo1CommonAPI.TryGetLocation(chargingPool2.Operator.Id.ToOCPI(),
                                                 Location_Id.Parse(chargingPool2.Id.ToString()),
                                                 out var location2) &&
                     location2 is not null)
@@ -1095,8 +1091,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #endregion
 
-                cpoCommonAPI.OnLocationChanged += async (location) => { };
-                cpoCommonAPI.OnEVSEChanged     += async (evse)     => { };
+                cpo1CommonAPI.OnLocationChanged += async (location) => { };
+                cpo1CommonAPI.OnEVSEChanged     += async (evse)     => { };
 
 
                 chargingPool1!.Name.       Set(Languages.en, "Test pool #1 (updated)");
@@ -1106,7 +1102,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                 ClassicAssert.AreEqual("Test pool #1 (updated)",                             graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Name       [Languages.en]);
                 ClassicAssert.AreEqual("GraphDefined charging pool for tests #1 (updated)",  graphDefinedCSO.GetChargingPoolById(chargingPool1!.Id)!.Description[Languages.en]);
 
-                cpoCommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
+                cpo1CommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
                                             Location_Id.Parse(chargingPool1!.Id.Suffix),
                                             out var location);
 
@@ -1479,7 +1475,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that locations had been sent to the OCPI module
 
-                var allLocations  = cpoCommonAPI.GetLocations().ToArray();
+                var allLocations  = cpo1CommonAPI.GetLocations().ToArray();
                 ClassicAssert.IsNotNull(allLocations);
                 ClassicAssert.AreEqual (2, allLocations.Length);
 
@@ -1487,7 +1483,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that charging stations had been sent to the OCPI module
 
-                var allChargingStations = cpoCommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
+                var allChargingStations = cpo1CommonAPI.GetLocations().SelectMany(location => location.ChargingPool).ToArray();
                 ClassicAssert.IsNotNull(allChargingStations);
                 ClassicAssert.AreEqual(3, allChargingStations.Length);
 
@@ -1495,7 +1491,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that EVSEs had been sent to the OCPI module
 
-                var allEVSEs      = cpoCommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
+                var allEVSEs      = cpo1CommonAPI.GetLocations().SelectMany(location => location.ChargingPool.SelectMany(station => station.EVSEs)).ToArray();
                 ClassicAssert.IsNotNull(allEVSEs);
                 ClassicAssert.AreEqual (4, allEVSEs.Length);
 
@@ -1503,7 +1499,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 #region Validate, that both locations have EVSEs
 
-                if (cpoCommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
+                if (cpo1CommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
                                                 Location_Id.Parse(chargingPool1.Id.Suffix),
                                                 out var location1) &&
                     location1 is not null)
@@ -1516,7 +1512,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                     Assert.Fail("location1 was not found!");
 
 
-                if (cpoCommonAPI.TryGetLocation(chargingPool2.Operator.Id.ToOCPI(),
+                if (cpo1CommonAPI.TryGetLocation(chargingPool2.Operator.Id.ToOCPI(),
                                                         Location_Id.Parse(chargingPool2.Id.Suffix),
                                                         out var location2) &&
                     location2 is not null)
@@ -1578,14 +1574,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 var updatedOCPIEVSEStatus = new List<StatusType>();
 
-                cpoCommonAPI.OnEVSEChanged += (evse) => {
+                cpo1CommonAPI.OnEVSEChanged += (evse) => {
 
                     updatedOCPIEVSEStatus.Add(evse.Status);
                     return Task.CompletedTask;
 
                 };
 
-                cpoCommonAPI.OnEVSEStatusChanged += (timestamp,
+                cpo1CommonAPI.OnEVSEStatusChanged += (timestamp,
                                                              evse,
                                                              oldEVSEStatus,
                                                              newEVSEStatus) => {
@@ -1601,7 +1597,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 {
                     if (evse1_UId.HasValue &&
-                        cpoCommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
+                        cpo1CommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
                                                     Location_Id.Parse(chargingPool1!.Id.Suffix),
                                                     out var location) &&
                         location is not null &&
@@ -1625,7 +1621,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
 
                 {
                     if (evse1_UId.HasValue &&
-                        cpoCommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
+                        cpo1CommonAPI.TryGetLocation(chargingPool1.Operator.Id.ToOCPI(),
                                                     Location_Id.Parse(chargingPool1!.Id.Suffix),
                                                     out var location) &&
                         location is not null &&
@@ -1661,7 +1657,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.RoamingTests
                 emp1RoamingNetwork is not null &&
                 emp2RoamingNetwork is not null &&
 
-                cpoCPOAPI          is not null &&
+                cpo1CPOAPI          is not null &&
                 emsp1EMSPAPI       is not null &&
                 emsp2EMSPAPI       is not null &&
 

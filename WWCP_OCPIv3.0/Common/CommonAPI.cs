@@ -6811,6 +6811,21 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region Charging Stations
 
+        public delegate Task OnChargingStationAddedDelegate(ChargingStation ChargingStation);
+
+        public event OnChargingStationAddedDelegate? OnChargingStationAdded;
+
+
+        public delegate Task OnChargingStationChangedDelegate(ChargingStation ChargingStation);
+
+        public event OnChargingStationChangedDelegate? OnChargingStationChanged;
+
+
+
+        public delegate Task OnChargingStationRemovedDelegate(ChargingStation ChargingStation);
+
+        public event OnChargingStationRemovedDelegate? OnChargingStationRemoved;
+
 
         #region AddOrUpdateChargingStation       (Location, newOrUpdatedChargingStation, AllowDowngrades = false)
 
