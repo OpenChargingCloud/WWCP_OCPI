@@ -45,7 +45,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Data
 
-        private readonly Lock patchLock = new();
+        private readonly Lock patchLock = new ();
 
         #endregion
 
@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The authentication method used.
         /// </summary>
         [Mandatory]
-        public   AuthMethods                         AuthMethod                  { get; }
+        public   AuthMethod                          AuthMethod                  { get; }
 
         /// <summary>
         /// The optional reference to the authorization given by the eMSP.
@@ -362,7 +362,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    DateTime                                                Start,
                    DateTime                                                End,
                    CDRToken                                                CDRToken,
-                   AuthMethods                                             AuthMethod,
+                   AuthMethod                                              AuthMethod,
                    CDRLocation                                             Location,
                    OCPI.Currency                                           Currency,
                    IEnumerable<ChargingPeriod>                             ChargingPeriods,
@@ -735,7 +735,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if (!JSON.ParseMandatoryEnum("auth_method",
                                              "authentication method",
-                                             out AuthMethods AuthMethod,
+                                             out AuthMethod AuthMethod,
                                              out ErrorResponse))
                 {
                     return false;

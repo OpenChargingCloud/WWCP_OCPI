@@ -260,8 +260,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public CDRDimension Clone()
 
-            => new (Type.Clone,
-                    Volume);
+            => new (
+                   Type.Clone(),
+                   Volume
+               );
 
         #endregion
 

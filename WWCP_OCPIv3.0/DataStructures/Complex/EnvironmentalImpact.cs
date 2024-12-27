@@ -220,8 +220,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public EnvironmentalImpact Clone()
 
-            => new (Category.Clone,
-                    Amount);
+            => new (
+                   Category.Clone(),
+                   Amount
+               );
 
         #endregion
 

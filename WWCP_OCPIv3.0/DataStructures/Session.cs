@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
     /// <summary>
     /// A charging session.
     /// </summary>
-    public class Session : IHasId<Session_Id>,
+    public class Session : APartyIssuedObject<Session_Id>,
                            IEquatable<Session>,
                            IComparable<Session>,
                            IComparable
@@ -43,99 +43,84 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Data
 
-        private readonly Lock patchLock = new();
+        /// <summary>
+        /// The default JSON-LD context of locations.
+        /// </summary>
+        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/3.0/session");
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// The parent CommonAPI of this charging location.
-        /// </summary>
-        internal CommonAPI?                          CommonAPI                    { get; set; }
-
-        /// <summary>
-        /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this session.
-        /// </summary>
-        [Mandatory]
-        public   CountryCode                         CountryCode                  { get; }
-
-        /// <summary>
-        /// The identification of the charge point operator that 'owns' this session (following the ISO-15118 standard).
-        /// </summary>
-        [Mandatory]
-        public   Party_Idv3                            PartyId                      { get; }
-
-        /// <summary>
-        /// The identification of the session within the charge point operator's platform (and suboperator platforms).
-        /// </summary>
-        [Mandatory]
-        public   Session_Id                          Id                           { get; }
-
-        /// <summary>
-        /// The time when the session became active.
+        /// The timestamp when the session became ACTIVE in the charging station.
+        /// When the session is still PENDING, this field SHALL be set to the time the session was created at the charging station.
+        /// When a session goes from PENDING to ACTIVE, this field SHALL be updated to the moment the session went to ACTIVE in the charging station.
         /// </summary>
         [Mandatory]
         public   DateTime                            Start                        { get; }
 
         /// <summary>
-        /// The time when the session is completed.
+        /// The timestamp when the session was completed/finished, charging might have finished before the session ends,
+        /// for example: EV is full, but parking cost also has to be paid.
         /// </summary>
         [Optional]
         public   DateTime?                           End                          { get; }
 
-#pragma warning disable IDE1006 // Naming Styles
         /// <summary>
-        /// The amount of kWhs that had been charged.
+        /// How many kWh of energy were transferred through the EVSE into the vehicle.
         /// </summary>
         [Mandatory]
-        public   Decimal                             kWh                          { get; }
-#pragma warning restore IDE1006 // Naming Styles
+        public   WattHour                            Energy                       { get; }
 
         /// <summary>
-        /// The authentication token used to start this charging session, including all
-        /// relevant information to identify the unique token.
+        /// Token used to start this charging session, including all the relevant information to identify the unique token.
         /// </summary>
         [Mandatory]
         public   CDRToken                            CDRToken                     { get; }
 
         /// <summary>
-        /// The method used for authentication.
+        /// Method used for authorization. This might change during a session.This can happen for example when the session was
+        /// started with a reservation according to use case Reserve an EVSE at a location.
+        /// Initially the authorization method will be COMMAND which changes to WHITELIST when the driver arrives and starts
+        /// charging using a Token that is whitelisted.
         /// </summary>
         [Mandatory]
-        public   AuthMethods                         AuthMethod                   { get; }
+        public   AuthMethod                          AuthMethod                   { get; }
 
         /// <summary>
-        /// The optional reference to the authorization given by the eMSP.
-        /// When the eMSP provided an authorization_reference in either: real-time authorization
-        /// or StartSession, this field SHALL contain the same value.
+        /// Reference to the authorization given by the eMSP. When the eMSP provided an authorization_reference
+        /// in either: realtime authorization, Start a Session or Reserve an EVSE at a Location this field SHALL
+        /// contain the same value. When different authorization_reference values have been given by the eMSP that
+        /// are relevant to this Session, the last given value SHALL be used here.
         /// </summary>
         [Optional]
         public   AuthorizationReference?             AuthorizationReference       { get; }
 
         /// <summary>
-        /// The identification of the location at which the charging session is/was happening.
+        /// The identification of the location of this CPO, on which the charging session is/was happening.
         /// </summary>
         [Mandatory]
         public   Location_Id                         LocationId                   { get; }
 
         /// <summary>
-        /// The unique internal identification of the EVSE at which the charging session is/was happening.
-        /// </summary>
-        [Mandatory]
-        public   EVSE_UId                            EVSEUId                      { get; }
-
-        /// <summary>
-        /// The unique identification of the connector at which the charging session is/was happening.
-        /// </summary>
-        [Mandatory]
-        public   Connector_Id                        ConnectorId                  { get; }
-
-        /// <summary>
-        /// The optional identification of the kWh energy meter.
+        /// The Connector that the Session happened on. This is allowed to be unset if and only if the session
+        /// is created for a reservation for which no EVSE has been assigned yet.
         /// </summary>
         [Optional]
-        public   Meter_Id?                           MeterId                      { get; }
+        public   SessionConnector?                   Connector                    { get; }
+
+        ///// <summary>
+        ///// The unique internal identification of the EVSE at which the charging session is/was happening.
+        ///// </summary>
+        //[Mandatory]
+        //public   EVSE_UId                            EVSEUId                      { get; }
+
+        ///// <summary>
+        ///// The unique identification of the connector at which the charging session is/was happening.
+        ///// </summary>
+        //[Mandatory]
+        //public   Connector_Id                        ConnectorId                  { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this session.
@@ -150,6 +135,20 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public   IEnumerable<ChargingPeriod>         ChargingPeriods              { get; }
 
         /// <summary>
+        /// The ID of the Tariff Association that was used to look up the Tariff of this Session.
+        /// When the session is free, the ID of a Tariff Association for a Free of Charge tariff is to be given in this field.
+        /// </summary>
+        [Mandatory]
+        public   TariffAssociation_Id                TariffAssociationId          { get; }
+
+        /// <summary>
+        /// The ID of the Tariff that was used to compute what this Session costs.
+        /// When the session is free, the ID of a Free of Charge tariff is to be given in this field.
+        /// </summary>
+        [Mandatory]
+        public   Tariff_Id                           TariffId                     { get; }
+
+        /// <summary>
         /// The total costs of the session in the specified currency. This is the price that the eMSP will
         /// have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price
         /// information is given in the Session object, it does not imply the session is/was free of charge.
@@ -161,7 +160,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The status of the session.
         /// </summary>
         [Mandatory]
-        public   SessionStatusTypes                  Status                       { get; }
+        public   SessionStatus                       Status                       { get; }
+
+        /// <summary>
+        /// The optional identification of the energy meter.
+        /// </summary>
+        [Optional]
+        public   Meter_Id?                           MeterId                      { get; }
+
+        /// <summary>
+        /// The optional energy meter used for this session.
+        /// </summary>
+        [Optional, NonStandard]
+        public   EnergyMeter?                        EnergyMeter                  { get; }
 
         /// <summary>
         /// The timestamp when this session was created.
@@ -185,18 +196,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new charging session.
+        /// Create a new session.
         /// </summary>
-        /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this session.</param>
-        /// <param name="PartyId">An identification of the charge point operator that 'owns' this session (following the ISO-15118 standard).</param>
-        /// <param name="Id">An unique identification of the session within the CPOs platform (and suboperator platforms).</param>
+        /// <param name="CommonAPI">The common OCPI API hosting this session.</param>
+        /// <param name="PartyId">The party identification of the party that issued this session.</param>
+        /// <param name="Id">An identification of the session within the party.</param>
+        /// <param name="VersionId">The version identification of the session.</param>
+        /// 
         /// <param name="Start">A timestamp when the session became active.</param>
-        /// <param name="kWh">An amount of kWhs that had been charged.</param>
+        /// <param name="Energy">An amount of kWhs that had been charged.</param>
         /// <param name="CDRToken">An authentication token used to start this charging session, including all relevant information to identify the unique token.</param>
         /// <param name="AuthMethod">A method used for authentication.</param>
         /// <param name="AuthorizationReference">The optional reference to the authorization given by the eMSP. When the eMSP provided an authorization_reference in either: real-time authorization or StartSession, this field SHALL contain the same value.</param>
         /// <param name="LocationId">The identification of the location at which the charging session is/was happening.</param>
-        /// <param name="EVSEUId">An unique internal identification of the EVSE at which the charging session is/was happening.</param>
         /// <param name="ConnectorId">An unique identification of the connector at which the charging session is/was happening.</param>
         /// <param name="Currency">An ISO 4217 code of the currency used for this session.</param>
         /// <param name="Status">A status of the session.</param>
@@ -211,63 +223,74 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// 
         /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        /// <param name="CustomSessionConnectorSerializer">A delegate to serialize custom session connector JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        public Session(CountryCode                                       CountryCode,
+        public Session(CommonAPI?                                          CommonAPI,
                        Party_Idv3                                          PartyId,
-                       Session_Id                                        Id,
-                       DateTime                                          Start,
-                       Decimal                                           kWh,
-                       CDRToken                                          CDRToken,
-                       AuthMethods                                       AuthMethod,
-                       Location_Id                                       LocationId,
-                       EVSE_UId                                          EVSEUId,
-                       Connector_Id                                      ConnectorId,
-                       OCPI.Currency                                     Currency,
-                       SessionStatusTypes                                Status,
+                       Session_Id                                          Id,
+                       UInt64                                              VersionId,
 
-                       DateTime?                                         End                              = null,
-                       AuthorizationReference?                           AuthorizationReference           = null,
-                       Meter_Id?                                         MeterId                          = null,
-                       IEnumerable<ChargingPeriod>?                      ChargingPeriods                  = null,
-                       Price?                                            TotalCosts                       = null,
+                       DateTime                                            Start,
+                       WattHour                                            Energy,
+                       CDRToken                                            CDRToken,
+                       AuthMethod                                          AuthMethod,
+                       Location_Id                                         LocationId,
+                       OCPI.Currency                                       Currency,
+                       TariffAssociation_Id                                TariffAssociationId,
+                       Tariff_Id                                           TariffId,
+                       SessionStatus                                       Status,
 
-                       DateTime?                                         Created                          = null,
-                       DateTime?                                         LastUpdated                      = null,
+                       DateTime?                                           End                                = null,
+                       AuthorizationReference?                             AuthorizationReference             = null,
+                       SessionConnector?                                   Connector                          = null,
+                       IEnumerable<ChargingPeriod>?                        ChargingPeriods                    = null,
+                       Price?                                              TotalCosts                         = null,
+                       Meter_Id?                                           MeterId                            = null,
+                       EnergyMeter?                                        EnergyMeter                        = null,
 
-                       CustomJObjectSerializerDelegate<Session>?         CustomSessionSerializer          = null,
-                       CustomJObjectSerializerDelegate<CDRToken>?        CustomCDRTokenSerializer         = null,
-                       CustomJObjectSerializerDelegate<ChargingPeriod>?  CustomChargingPeriodSerializer   = null,
-                       CustomJObjectSerializerDelegate<CDRDimension>?    CustomCDRDimensionSerializer     = null,
-                       CustomJObjectSerializerDelegate<Price>?           CustomPriceSerializer            = null)
+                       DateTime?                                           Created                            = null,
+                       DateTime?                                           LastUpdated                        = null,
+
+                       CustomJObjectSerializerDelegate<Session>?           CustomSessionSerializer            = null,
+                       CustomJObjectSerializerDelegate<CDRToken>?          CustomCDRTokenSerializer           = null,
+                       CustomJObjectSerializerDelegate<SessionConnector>?  CustomSessionConnectorSerializer   = null,
+                       CustomJObjectSerializerDelegate<ChargingPeriod>?    CustomChargingPeriodSerializer     = null,
+                       CustomJObjectSerializerDelegate<CDRDimension>?      CustomCDRDimensionSerializer       = null,
+                       CustomJObjectSerializerDelegate<Price>?             CustomPriceSerializer              = null)
+
+            : base(CommonAPI,
+                   PartyId,
+                   Id,
+                   VersionId)
 
         {
 
-            this.CountryCode             = CountryCode;
-            this.PartyId                 = PartyId;
-            this.Id                      = Id;
             this.Start                   = Start;
-            this.kWh                     = kWh;
+            this.Energy                  = Energy;
             this.CDRToken                = CDRToken;
             this.AuthMethod              = AuthMethod;
             this.LocationId              = LocationId;
-            this.EVSEUId                 = EVSEUId;
-            this.ConnectorId             = ConnectorId;
             this.Currency                = Currency;
+            this.TariffAssociationId     = TariffAssociationId;
+            this.TariffId                = TariffId;
             this.Status                  = Status;
 
             this.End                     = End;
             this.AuthorizationReference  = AuthorizationReference;
-            this.MeterId                 = MeterId;
-            this.ChargingPeriods         = ChargingPeriods?.Distinct() ?? Array.Empty<ChargingPeriod>();
+            this.Connector               = Connector;
+            this.ChargingPeriods         = ChargingPeriods?.Distinct() ?? [];
             this.TotalCosts              = TotalCosts;
+            this.MeterId                 = MeterId;
+            this.EnergyMeter             = EnergyMeter;
 
             this.Created                 = Created                     ?? LastUpdated ?? Timestamp.Now;
             this.LastUpdated             = LastUpdated                 ?? Created     ?? Timestamp.Now;
 
             this.ETag                    = CalcSHA256Hash(CustomSessionSerializer,
                                                           CustomCDRTokenSerializer,
+                                                          CustomSessionConnectorSerializer,
                                                           CustomChargingPeriodSerializer,
                                                           CustomCDRDimensionSerializer,
                                                           CustomPriceSerializer);
@@ -275,26 +298,30 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             unchecked
             {
 
-                hashCode = this.CountryCode.            GetHashCode()       * 67 ^
-                           this.PartyId.                GetHashCode()       * 61 ^
-                           this.Id.                     GetHashCode()       * 59 ^
-                           this.Start.                  GetHashCode()       * 53 ^
-                           this.kWh.                    GetHashCode()       * 47 ^
-                           this.CDRToken.               GetHashCode()       * 43 ^
-                           this.AuthMethod.             GetHashCode()       * 41 ^
-                           this.LocationId.             GetHashCode()       * 37 ^
-                           this.EVSEUId.                GetHashCode()       * 31 ^
-                           this.ConnectorId.            GetHashCode()       * 29 ^
-                           this.Currency.               GetHashCode()       * 23 ^
-                           this.Status.                 GetHashCode()       * 19 ^
-                           this.Created.                GetHashCode()       * 17 ^
-                           this.LastUpdated.            GetHashCode()       * 13 ^
+                hashCode = this.PartyId.                GetHashCode()       * 79 ^
+                           this.Id.                     GetHashCode()       * 73 ^
+                           this.VersionId.              GetHashCode()       * 71 ^
 
-                          (this.End?.                   GetHashCode() ?? 0) * 11 ^
-                          (this.AuthorizationReference?.GetHashCode() ?? 0) *  7 ^
-                          (this.MeterId?.               GetHashCode() ?? 0) *  5 ^
-                           this.ChargingPeriods.        GetHashCode()       *  3 ^
-                           this.TotalCosts?.            GetHashCode() ?? 0;
+                           this.Start.                  GetHashCode()       * 61 ^
+                           this.Energy.                 GetHashCode()       * 59 ^
+                           this.CDRToken.               GetHashCode()       * 53 ^
+                           this.AuthMethod.             GetHashCode()       * 47 ^
+                           this.LocationId.             GetHashCode()       * 43 ^
+                           this.Currency.               GetHashCode()       * 41 ^
+                           this.TariffAssociationId.    GetHashCode()       * 37 ^
+                           this.TariffId.               GetHashCode()       * 31 ^
+                           this.Status.                 GetHashCode()       * 29 ^
+
+                          (this.End?.                   GetHashCode() ?? 0) * 23 ^
+                          (this.AuthorizationReference?.GetHashCode() ?? 0) * 19 ^
+                          (this.Connector?.             GetHashCode() ?? 0) * 17 ^
+                           this.ChargingPeriods.        CalcHashCode()      * 13 ^
+                          (this.TotalCosts?.            GetHashCode() ?? 0) * 11 ^
+                          (this.MeterId?.               GetHashCode() ?? 0) *  7 ^
+                          (this.EnergyMeter?.           GetHashCode() ?? 0) *  5 ^
+
+                           this.Created.                GetHashCode()       *  3 ^
+                           this.LastUpdated.            GetHashCode();
 
             }
 
@@ -306,32 +333,32 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region (static) Parse   (JSON, CountryCodeURL= null, PartyIdURL= null, SessionIdURL = null, CustomSessionParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of a charging session.
+        /// Parse the given JSON representation of a session.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
         /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="SessionIdURL">An optional charging session identification, e.g. from the HTTP URL.</param>
+        /// <param name="VersionIdURL">An optional version identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomSessionParser">A delegate to parse custom session JSON objects.</param>
         public static Session Parse(JObject                                JSON,
-                                    CountryCode?                           CountryCodeURL        = null,
-                                    Party_Idv3?                              PartyIdURL            = null,
+                                    Party_Idv3?                            PartyIdURL            = null,
                                     Session_Id?                            SessionIdURL          = null,
+                                    UInt64?                                VersionIdURL          = null,
                                     CustomJObjectParserDelegate<Session>?  CustomSessionParser   = null)
         {
 
             if (TryParse(JSON,
                          out var session,
                          out var errorResponse,
-                         CountryCodeURL,
                          PartyIdURL,
                          SessionIdURL,
+                         VersionIdURL,
                          CustomSessionParser))
             {
                 return session;
             }
 
-            throw new ArgumentException("The given JSON representation of a charging session is invalid: " + errorResponse,
+            throw new ArgumentException("The given JSON representation of a session is invalid: " + errorResponse,
                                         nameof(JSON));
 
         }
@@ -343,7 +370,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of a charging session.
+        /// Try to parse the given JSON representation of a session.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Session">The parsed charging session.</param>
@@ -362,21 +389,21 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
         /// <summary>
-        /// Try to parse the given JSON representation of a charging session.
+        /// Try to parse the given JSON representation of a session.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Session">The parsed charging session.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
         /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="SessionIdURL">An optional charging session identification, e.g. from the HTTP URL.</param>
+        /// <param name="VersionIdURL">An optional version identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomSessionParser">A delegate to parse custom session JSON objects.</param>
         public static Boolean TryParse(JObject                                JSON,
                                        [NotNullWhen(true)]  out Session?      Session,
                                        [NotNullWhen(false)] out String?       ErrorResponse,
-                                       CountryCode?                           CountryCodeURL        = null,
-                                       Party_Idv3?                              PartyIdURL            = null,
+                                       Party_Idv3?                            PartyIdURL            = null,
                                        Session_Id?                            SessionIdURL          = null,
+                                       UInt64?                                VersionIdURL          = null,
                                        CustomJObjectParserDelegate<Session>?  CustomSessionParser   = null)
         {
 
@@ -391,33 +418,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                     return false;
                 }
 
-                #region Parse CountryCode               [optional]
-
-                if (JSON.ParseOptional("country_code",
-                                       "country code",
-                                       CountryCode.TryParse,
-                                       out CountryCode? CountryCodeBody,
-                                       out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
-                {
-                    ErrorResponse = "The country code is missing!";
-                    return false;
-                }
-
-                if (CountryCodeURL.HasValue && CountryCodeBody.HasValue && CountryCodeURL.Value != CountryCodeBody.Value)
-                {
-                    ErrorResponse = "The optional country code given within the JSON body does not match the one given in the URL!";
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse PartyIdURL                [optional]
+                #region Parse PartyId                   [optional]
 
                 if (JSON.ParseOptional("party_id",
                                        "party identification",
@@ -469,6 +470,32 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
+                #region Parse VersionId                 [optional]
+
+                if (JSON.ParseOptional("version",
+                                       "version identification",
+                                       out UInt64? VersionIdBody,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                if (!VersionIdURL.HasValue && !VersionIdBody.HasValue)
+                {
+                    ErrorResponse = "The version identification is missing!";
+                    return false;
+                }
+
+                if (VersionIdURL.HasValue && VersionIdBody.HasValue && VersionIdURL.Value != VersionIdBody.Value)
+                {
+                    ErrorResponse = "The optional version identification given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
+
+
                 #region Parse Start                     [mandatory]
 
                 if (!JSON.ParseMandatory("start_date_time",
@@ -494,11 +521,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse KWh                       [mandatory]
+                #region Parse Energy                    [mandatory]
 
-                if (!JSON.ParseMandatory("kwh",
-                                         "charged kWh",
-                                         out Decimal KWh,
+                if (!JSON.ParseMandatory("energy",
+                                         "charged energy kWh",
+                                         WattHour.TryParse,
+                                         out WattHour Energy,
                                          out ErrorResponse))
                 {
                     return false;
@@ -521,10 +549,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse AuthMethod                [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("auth_method",
-                                             "authentication method",
-                                             out AuthMethods AuthMethod,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("auth_method",
+                                         "authentication method",
+                                         OCPIv3_0.AuthMethod.TryParse,
+                                         out AuthMethod AuthMethod,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -558,26 +587,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse EVSEUId                   [mandatory]
+                #region Parse Connector                 [optional]
 
-                if (!JSON.ParseMandatory("evse_uid",
-                                         "EVSE identification",
-                                         EVSE_UId.TryParse,
-                                         out EVSE_UId EVSEUId,
-                                         out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse ConnectorId               [mandatory]
-
-                if (!JSON.ParseMandatory("connector_id",
-                                         "connector identification",
-                                         Connector_Id.TryParse,
-                                         out Connector_Id ConnectorId,
-                                         out ErrorResponse))
+                if (!JSON.ParseOptionalJSON("connector",
+                                            "session connector",
+                                            SessionConnector.TryParse,
+                                            out SessionConnector Connector,
+                                            out ErrorResponse))
                 {
                     return false;
                 }
@@ -625,6 +641,32 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
+                #region Parse TariffAssociationId       [mandatory]
+
+                if (!JSON.ParseMandatory("tariff_association_id",
+                                         "tariff association identification",
+                                         TariffAssociation_Id.TryParse,
+                                         out TariffAssociation_Id TariffAssociationId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse TariffId                  [mandatory]
+
+                if (!JSON.ParseMandatory("tariff_id",
+                                         "tariff identification",
+                                         Tariff_Id.TryParse,
+                                         out Tariff_Id TariffId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
                 #region Parse TotalCosts                [optional]
 
                 if (JSON.ParseOptionalJSON("total_cost",
@@ -641,12 +683,27 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse Status                    [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("status",
-                                             "session status",
-                                             out SessionStatusTypes Status,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("status",
+                                         "session status",
+                                         SessionStatus.TryParse,
+                                         out SessionStatus Status,
+                                         out ErrorResponse))
                 {
                     return false;
+                }
+
+                #endregion
+
+                #region Parse EnergyMeter               [optional]
+
+                if (JSON.ParseOptionalJSON("energy_meter",
+                                           "energy meter",
+                                           OCPI.EnergyMeter.TryParse,
+                                           out EnergyMeter? EnergyMeter,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
                 }
 
                 #endregion
@@ -679,27 +736,33 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
                 Session = new Session(
-                              CountryCodeBody ?? CountryCodeURL!.Value,
-                              PartyIdBody     ?? PartyIdURL!.    Value,
-                              SessionIdBody   ?? SessionIdURL!.  Value,
+
+                              null,
+                              PartyIdBody   ?? PartyIdURL!.  Value,
+                              SessionIdBody ?? SessionIdURL!.Value,
+                              VersionIdBody ?? VersionIdURL!.Value,
+
                               Start,
-                              KWh,
+                              Energy,
                               CDRToken,
                               AuthMethod,
                               LocationId,
-                              EVSEUId,
-                              ConnectorId,
                               Currency,
+                              TariffAssociationId,
+                              TariffId,
                               Status,
 
                               End,
                               AuthorizationReference,
-                              MeterId,
+                              Connector,
                               ChargingPeriods,
                               TotalCosts,
+                              MeterId,
+                              EnergyMeter,
 
                               Created,
                               LastUpdated
+
                           );
 
 
@@ -713,7 +776,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             catch (Exception e)
             {
                 Session        = default;
-                ErrorResponse  = "The given JSON representation of a charging session is invalid: " + e.Message;
+                ErrorResponse  = "The given JSON representation of a session is invalid: " + e.Message;
                 return false;
             }
 
@@ -726,23 +789,40 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
+        /// <param name="IncludeOwnerInformation">Whether to include optional owner information.</param>
+        /// <param name="IncludeVersionInformation">Whether to include version information.</param>
+        /// <param name="IncludeCreatedTimestamp">Whether to include the created timestamp.</param>
+        /// <param name="IncludeExtensions">Whether to include optional data model extensions.</param>
         /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        /// <param name="CustomSessionConnectorSerializer">A delegate to serialize custom session connector JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Session>?         CustomSessionSerializer          = null,
-                              CustomJObjectSerializerDelegate<CDRToken>?        CustomCDRTokenSerializer         = null,
-                              CustomJObjectSerializerDelegate<ChargingPeriod>?  CustomChargingPeriodSerializer   = null,
-                              CustomJObjectSerializerDelegate<CDRDimension>?    CustomCDRDimensionSerializer     = null,
-                              CustomJObjectSerializerDelegate<Price>?           CustomPriceSerializer            = null)
+        public JObject ToJSON(Boolean                                             IncludeOwnerInformation            = true,
+                              Boolean                                             IncludeVersionInformation          = true,
+                              Boolean                                             IncludeCreatedTimestamp            = true,
+                              Boolean                                             IncludeExtensions                  = true,
+                              CustomJObjectSerializerDelegate<Session>?           CustomSessionSerializer            = null,
+                              CustomJObjectSerializerDelegate<CDRToken>?          CustomCDRTokenSerializer           = null,
+                              CustomJObjectSerializerDelegate<SessionConnector>?  CustomSessionConnectorSerializer   = null,
+                              CustomJObjectSerializerDelegate<ChargingPeriod>?    CustomChargingPeriodSerializer     = null,
+                              CustomJObjectSerializerDelegate<CDRDimension>?      CustomCDRDimensionSerializer       = null,
+                              CustomJObjectSerializerDelegate<Price>?             CustomPriceSerializer              = null)
         {
 
             var json = JSONObject.Create(
 
-                                 new JProperty("country_code",              CountryCode.           ToString()),
-                                 new JProperty("party_id",                  PartyId.               ToString()),
+                           IncludeOwnerInformation
+                               ? new JProperty("party_id",                  PartyId.               ToString())
+                               : null,
+
                                  new JProperty("id",                        Id.                    ToString()),
+
+                           IncludeVersionInformation
+                               ? new JProperty("version",                   VersionId.             ToString())
+                               : null,
+
 
                                  new JProperty("start_date_time",           Start.                 ToIso8601()),
 
@@ -750,7 +830,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                ? new JProperty("end_date_time",             End.             Value.ToIso8601())
                                : null,
 
-                                 new JProperty("kwh",                       kWh),
+                                 new JProperty("energy",                    Energy.Value),
 
                                  new JProperty("cdr_token",                 CDRToken.              ToJSON(CustomCDRTokenSerializer)),
                                  new JProperty("auth_method",               AuthMethod.            ToString()),
@@ -760,8 +840,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                : null,
 
                                  new JProperty("location_id",               LocationId.            ToString()),
-                                 new JProperty("evse_uid",                  EVSEUId.               ToString()),
-                                 new JProperty("connector_id",              ConnectorId.           ToString()),
+
+                           Connector.HasValue
+                               ? new JProperty("connector",                 Connector.Value.       ToJSON(CustomSessionConnectorSerializer))
+                               : null,
 
                            MeterId.HasValue
                                ? new JProperty("meter_id",                  MeterId.               ToString())
@@ -769,10 +851,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                  new JProperty("currency",                  Currency.              ToString()),
 
-                           ChargingPeriods.SafeAny()
+                           ChargingPeriods.Any()
                                ? new JProperty("charging_periods",          new JArray(ChargingPeriods.Select(chargingPeriod => chargingPeriod.ToJSON(CustomChargingPeriodSerializer,
                                                                                                                                                       CustomCDRDimensionSerializer))))
                                : null,
+
+                                 new JProperty("tariff_association_id",     TariffAssociationId.   ToString()),
+                                 new JProperty("tariff_id",                 TariffId.              ToString()),
 
                            TotalCosts.HasValue
                                ? new JProperty("total_cost",                TotalCosts.      Value.ToJSON(CustomPriceSerializer))
@@ -781,7 +866,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  new JProperty("status",                    Status.                ToString()),
 
 
-                                 new JProperty("created",                   Created.               ToIso8601()),
+                           IncludeCreatedTimestamp
+                               ? new JProperty("created",                   Created.               ToIso8601())
+                               : null,
+
                                  new JProperty("last_updated",              LastUpdated.           ToIso8601())
 
                        );
@@ -801,28 +889,34 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public Session Clone()
 
-            => new (
-                   CountryCode.            Clone(),
+            => new(
+
+                   CommonAPI,
                    PartyId.                Clone(),
                    Id.                     Clone(),
+                   VersionId,
+
                    Start,
-                   kWh,
+                   Energy.                 Clone(),
                    CDRToken.               Clone(),
-                   AuthMethod,
+                   AuthMethod.             Clone(),
                    LocationId.             Clone(),
-                   EVSEUId.                Clone(),
-                   ConnectorId.            Clone(),
                    Currency.               Clone(),
-                   Status,
+                   TariffAssociationId.    Clone(),
+                   TariffId.               Clone(),
+                   Status.                 Clone(),
 
                    End,
                    AuthorizationReference?.Clone(),
+                   Connector?.             Clone(),
+                   ChargingPeriods.        Select(chargingPeriod => chargingPeriod.Clone()).ToArray(),
+                   TotalCosts?.            Clone(),
                    MeterId?.               Clone(),
-                   ChargingPeriods.Select(chargingPeriod => chargingPeriod.Clone()).ToArray(),
-                   TotalCosts,
+                   EnergyMeter?.           Clone(),
 
                    Created,
                    LastUpdated
+
                );
 
         #endregion
@@ -840,15 +934,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 if      (property.Key == "country_code")
                     return PatchResult<JObject>.Failed(EventTrackingId, JSON,
-                                                       "Patching the 'country code' of a charging session is not allowed!");
+                                                       "Patching the 'country code' of a session is not allowed!");
 
                 else if (property.Key == "party_id")
                     return PatchResult<JObject>.Failed(EventTrackingId, JSON,
-                                                       "Patching the 'party identification' of a charging session is not allowed!");
+                                                       "Patching the 'party identification' of a session is not allowed!");
 
                 else if (property.Key == "id")
                     return PatchResult<JObject>.Failed(EventTrackingId, JSON,
-                                                       "Patching the 'identification' of a charging session is not allowed!");
+                                                       "Patching the 'identification' of a session is not allowed!");
 
                 else if (property.Value is null)
                     JSON.Remove(property.Key);
@@ -948,7 +1042,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 else
                     return PatchResult<Session>.Failed(EventTrackingId, this,
-                                                       "Invalid JSON merge patch of a charging session: " + errorResponse);
+                                                       "Invalid JSON merge patch of a session: " + errorResponse);
 
             }
 
@@ -964,23 +1058,34 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        /// <param name="CustomSessionConnectorSerializer">A delegate to serialize custom session connector JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Session>?         CustomSessionSerializer          = null,
-                                     CustomJObjectSerializerDelegate<CDRToken>?        CustomCDRTokenSerializer         = null,
-                                     CustomJObjectSerializerDelegate<ChargingPeriod>?  CustomChargingPeriodSerializer   = null,
-                                     CustomJObjectSerializerDelegate<CDRDimension>?    CustomCDRDimensionSerializer     = null,
-                                     CustomJObjectSerializerDelegate<Price>?           CustomPriceSerializer            = null)
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Session>?           CustomSessionSerializer            = null,
+                                     CustomJObjectSerializerDelegate<CDRToken>?          CustomCDRTokenSerializer           = null,
+                                     CustomJObjectSerializerDelegate<SessionConnector>?  CustomSessionConnectorSerializer   = null,
+                                     CustomJObjectSerializerDelegate<ChargingPeriod>?    CustomChargingPeriodSerializer     = null,
+                                     CustomJObjectSerializerDelegate<CDRDimension>?      CustomCDRDimensionSerializer       = null,
+                                     CustomJObjectSerializerDelegate<Price>?             CustomPriceSerializer              = null)
         {
 
-            this.ETag = SHA256.HashData(ToJSON(CustomSessionSerializer,
-                                                           CustomCDRTokenSerializer,
-                                                           CustomChargingPeriodSerializer,
-                                                           CustomCDRDimensionSerializer,
-                                                           CustomPriceSerializer).ToUTF8Bytes()).ToBase64();
+            ETag = SHA256.HashData(
+                       ToJSON(
+                           true,
+                           true,
+                           true,
+                           true,
+                           CustomSessionSerializer,
+                           CustomCDRTokenSerializer,
+                           CustomSessionConnectorSerializer,
+                           CustomChargingPeriodSerializer,
+                           CustomCDRDimensionSerializer,
+                           CustomPriceSerializer
+                       ).ToUTF8Bytes()
+                   ).ToBase64();
 
-            return this.ETag;
+            return ETag;
 
         }
 
@@ -1106,7 +1211,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => Object is Session session
                    ? CompareTo(session)
-                   : throw new ArgumentException("The given object is not a charging session!",
+                   : throw new ArgumentException("The given object is not a session!",
                                                  nameof(Object));
 
         #endregion
@@ -1123,52 +1228,55 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             if (Session is null)
                 throw new ArgumentNullException(nameof(Session), "The given charging session must not be null!");
 
-            var c = CountryCode.CompareTo(Session.CountryCode);
+            var c = PartyId.            CompareTo(Session.PartyId);
 
             if (c == 0)
-                c = PartyId.    CompareTo(Session.PartyId);
+                c = Id.                 CompareTo(Session.Id);
 
             if (c == 0)
-                c = Id.         CompareTo(Session.Id);
+                c = VersionId.          CompareTo(Session.VersionId);
+
 
             if (c == 0)
-                c = Start.      CompareTo(Session.Start);
+                c = Created.            CompareTo(Session.Created);
 
             if (c == 0)
-                c = LocationId. CompareTo(Session.LocationId);
+                c = LastUpdated.        CompareTo(Session.LastUpdated);
+
 
             if (c == 0)
-                c = EVSEUId.    CompareTo(Session.EVSEUId);
+                c = Start.              CompareTo(Session.Start);
 
             if (c == 0)
-                c = ConnectorId.CompareTo(Session.ConnectorId);
+                c = Energy.             CompareTo(Session.Energy);
 
             if (c == 0)
-                c = kWh.        CompareTo(Session.kWh);
+                c = CDRToken.           CompareTo(Session.CDRToken);
 
             if (c == 0)
-                c = CDRToken.   CompareTo(Session.CDRToken);
+                c = AuthMethod.         CompareTo(Session.AuthMethod);
 
             if (c == 0)
-                c = AuthMethod. CompareTo(Session.AuthMethod);
+                c = LocationId.         CompareTo(Session.LocationId);
 
             if (c == 0)
-                c = Currency.   CompareTo(Session.Currency);
+                c = Currency.           CompareTo(Session.Currency);
 
             if (c == 0)
-                c = Status.     CompareTo(Session.Status);
+                c = TariffAssociationId.CompareTo(Session.TariffAssociationId);
 
             if (c == 0)
-                c = Created.    CompareTo(Session.Created);
+                c = TariffId.           CompareTo(Session.TariffId);
+
 
             if (c == 0)
-                c = LastUpdated.CompareTo(Session.LastUpdated);
+                c = Status.             CompareTo(Session.Status);
 
-            // End
-            // AuthorizationReference
-            // MeterId
-            // ChargingPeriods
-            // TotalCost
+            if (c == 0)
+                c = Created.            CompareTo(Session.Created);
+
+            if (c == 0)
+                c = LastUpdated.        CompareTo(Session.LastUpdated);
 
             return c;
 
@@ -1203,17 +1311,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             => Session is not null &&
 
-               CountryCode.            Equals(Session.CountryCode)             &&
                PartyId.                Equals(Session.PartyId)                 &&
                Id.                     Equals(Session.Id)                      &&
+               VersionId.              Equals(Session.VersionId)               &&
+
                Start.                  Equals(Session.Start)                   &&
-               kWh.                    Equals(Session.kWh)                     &&
+               Energy.                 Equals(Session.Energy)                  &&
                CDRToken.               Equals(Session.CDRToken)                &&
                AuthMethod.             Equals(Session.AuthMethod)              &&
                LocationId.             Equals(Session.LocationId)              &&
-               EVSEUId.                Equals(Session.EVSEUId)                 &&
-               ConnectorId.            Equals(Session.ConnectorId)             &&
                Currency.               Equals(Session.Currency)                &&
+               TariffAssociationId.    Equals(Session.TariffAssociationId)     &&
+               TariffId.               Equals(Session.TariffId)                &&
+
                Status.                 Equals(Session.Status)                  &&
                Created.    ToIso8601().Equals(Session.Created.    ToIso8601()) &&
                LastUpdated.ToIso8601().Equals(Session.LastUpdated.ToIso8601()) &&
@@ -1259,7 +1369,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             => String.Concat(
 
                    Id,                      " (",
-                   CountryCode,             "-",
                    PartyId,                 ", ",
                    Status,                  "), ",
 
@@ -1276,11 +1385,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                        ? "auth ref: " + AuthorizationReference.Value.ToString() + ", "
                        : "",
 
-                   "location: ",  LocationId. ToString(),  ", ",
-                   "evse: ",      EVSEUId.    ToString(),  ", ",
-                   "connector: ", ConnectorId.ToString(),  ", ",
+                   "location: ",  LocationId.ToString(),  ", ",
+                   "connector: ", Connector?. ToString() ?? "",  ", ",
 
-                   kWh,                     " kWh, ",
+                   Energy, " kWh, ",
 
                    TotalCosts.HasValue
                        ? TotalCosts.Value.ToString() + " " + Currency.ToString() + ", "

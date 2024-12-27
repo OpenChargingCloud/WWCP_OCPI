@@ -743,9 +743,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #region Data
 
-        private static readonly  Object                                               lockObject                    = new();
-        private static readonly  SemaphoreSlim                                        logHTTPRequest_toDisc_Lock    = new(1,1);
-        private static readonly  SemaphoreSlim                                        logHTTPResponse_toDisc_Lock   = new(1,1);
+        private static readonly  Object                                               lockObject                    = new ();
+        private static readonly  SemaphoreSlim                                        logHTTPRequest_toDisc_Lock    = new (1,1);
+        private static readonly  SemaphoreSlim                                        logHTTPResponse_toDisc_Lock   = new (1,1);
 
         /// <summary>
         /// The maximum number of retries to write to a logfile.

@@ -166,15 +166,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this energy contract identification.
         /// </summary>
-        public EnergyContract_Id Clone
+        public EnergyContract_Id Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

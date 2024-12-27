@@ -203,31 +203,31 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// A light-duty van with a height smaller than 275 cm.
         /// </summary>
         public static VehicleType  VAN                              { get; }
-            = new("VAN");
+            = new ("VAN");
 
         /// <summary>
         /// A heavy-duty truck without a trailer.
         /// </summary>
         public static VehicleType  TRUCK                            { get; }
-            = new("TRUCK");
+            = new ("TRUCK");
 
         /// <summary>
         /// A heavy-duty truck with a trailer attached.
         /// </summary>
         public static VehicleType  TRUCK_WITH_TRAILER               { get; }
-            = new("TRUCK_WITH_TRAILER");
+            = new ("TRUCK_WITH_TRAILER");
 
         /// <summary>
         /// A bus or a motor coach.
         /// </summary>
         public static VehicleType  BUS                              { get; }
-            = new("BUS");
+            = new ("BUS");
 
         /// <summary>
         /// A vehicle with a permit for parking spaces for people with disabilities.
         /// </summary>
         public static VehicleType  DISABLED                         { get; }
-            = new("DISABLED");
+            = new ("DISABLED");
 
         #endregion
 

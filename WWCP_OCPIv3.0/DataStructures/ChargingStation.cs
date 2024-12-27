@@ -599,7 +599,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
                                            OCPI.EnergyMeter.TryParse,
-                                           out EnergyMeter EnergyMeter,
+                                           out EnergyMeter? EnergyMeter,
                                            out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -1488,7 +1488,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// The enumeration of available connectors attached to this ChargingStation.
             /// </summary>
             [Mandatory]
-            public ConcurrentDictionary<EVSE_UId, EVSE>  EVSEs                      { get; } = new();
+            public ConcurrentDictionary<EVSE_UId, EVSE>  EVSEs                 { get; } = new ();
 
             /// <summary>
             /// The enumeration of connector identifications attached to this ChargingStation.

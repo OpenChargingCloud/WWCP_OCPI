@@ -43,7 +43,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Data
 
-        private readonly Lock patchLock = new();
+        private readonly Lock patchLock = new ();
 
         #endregion
 
@@ -64,7 +64,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// The party identification of the charge point operator that 'owns' this token (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public   Party_Idv3         PartyId           { get; }
+        public   Party_Idv3       PartyId           { get; }
 
         /// <summary>
         /// The unique identification of the token.
@@ -133,7 +133,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// set via: SetChargingPreferences.
         /// </summary>
         [Optional]
-        public   ProfileTypes?    DefaultProfile    { get; }
+        public   ProfileType?     DefaultProfile    { get; }
 
         /// <summary>
         /// When the EVSE supports using your own energy supplier/contract, information about
@@ -188,7 +188,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTokenSerializer"></param>
         /// <param name="CustomEnergyContractSerializer"></param>
         public Token(CountryCode                                       CountryCode,
-                     Party_Idv3                                          PartyId,
+                     Party_Idv3                                        PartyId,
                      Token_Id                                          Id,
                      TokenType                                         Type,
                      Contract_Id                                       ContractId,
@@ -199,7 +199,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                      String?                                           VisualNumber                     = null,
                      Group_Id?                                         GroupId                          = null,
                      Languages?                                        UILanguage                       = null,
-                     ProfileTypes?                                     DefaultProfile                   = null,
+                     ProfileType?                                      DefaultProfile                   = null,
                      EnergyContract?                                   EnergyContract                   = null,
 
                      DateTime?                                         Created                          = null,
@@ -271,7 +271,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomTokenParser">A delegate to parse custom token JSON objects.</param>
         public static Token Parse(JObject                              JSON,
                                   CountryCode?                         CountryCodeURL      = null,
-                                  Party_Idv3?                            PartyIdURL          = null,
+                                  Party_Idv3?                          PartyIdURL          = null,
                                   Token_Id?                            TokenIdURL          = null,
                                   CustomJObjectParserDelegate<Token>?  CustomTokenParser   = null)
         {
@@ -331,7 +331,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                        [NotNullWhen(true)]  out Token?      Token,
                                        [NotNullWhen(false)] out String?     ErrorResponse,
                                        CountryCode?                         CountryCodeURL      = null,
-                                       Party_Idv3?                            PartyIdURL          = null,
+                                       Party_Idv3?                          PartyIdURL          = null,
                                        Token_Id?                            TokenIdURL          = null,
                                        CustomJObjectParserDelegate<Token>?  CustomTokenParser   = null)
         {
@@ -523,10 +523,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #region Parse DefaultProfile    [optional]
 
-                if (JSON.ParseOptionalEnum("default_profile_type",
-                                           "user-interface language",
-                                           out ProfileTypes? DefaultProfile,
-                                           out ErrorResponse))
+                if (JSON.ParseOptional("default_profile_type",
+                                       "user-interface language",
+                                       ProfileType.TryParse,
+                                       out ProfileType? DefaultProfile,
+                                       out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -576,6 +577,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
 
                 Token = new Token(
+
                             CountryCodeBody ?? CountryCodeURL!.Value,
                             PartyIdBody     ?? PartyIdURL!.    Value,
                             TokenIdBody     ?? TokenIdURL!.    Value,
@@ -592,6 +594,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                             Created,
                             LastUpdated
+
                         );
 
 
@@ -626,39 +629,39 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             var json = JSONObject.Create(
 
-                                 new JProperty("country_code",          CountryCode.         ToString()),
-                                 new JProperty("party_id",              PartyId.             ToString()),
-                                 new JProperty("uid",                   Id.                  ToString()),
-                                 new JProperty("type",                  Type.                ToString()),
-                                 new JProperty("contract_id",           ContractId.          ToString()),
+                                 new JProperty("country_code",           CountryCode.         ToString()),
+                                 new JProperty("party_id",               PartyId.             ToString()),
+                                 new JProperty("uid",                    Id.                  ToString()),
+                                 new JProperty("type",                   Type.                ToString()),
+                                 new JProperty("contract_id",            ContractId.          ToString()),
 
                            VisualNumber.IsNotNullOrEmpty()
-                               ? new JProperty("visual_number",         VisualNumber)
+                               ? new JProperty("visual_number",          VisualNumber)
                                : null,
 
-                                 new JProperty("issuer",                Issuer),
+                                 new JProperty("issuer",                 Issuer),
 
                            GroupId.HasValue
-                               ? new JProperty("group_id",              GroupId.       Value.ToString())
+                               ? new JProperty("group_id",               GroupId.       Value.ToString())
                                : null,
 
-                                 new JProperty("valid",                 IsValid),
-                                 new JProperty("whitelist",             WhitelistType.       AsText()),
+                                 new JProperty("valid",                  IsValid),
+                                 new JProperty("whitelist",              WhitelistType.       AsText()),
 
                            UILanguage.HasValue
-                               ? new JProperty("language",              UILanguage.    Value.ToString())
+                               ? new JProperty("language",               UILanguage.    Value.ToString())
                                : null,
 
                            DefaultProfile.HasValue
-                               ? new JProperty("default_profile_type",  DefaultProfile.Value.ToString())
+                               ? new JProperty("default_profile_type",   DefaultProfile.Value.ToString())
                                : null,
 
                            EnergyContract.HasValue
-                               ? new JProperty("energy_contract",       EnergyContract.Value.ToJSON(CustomEnergyContractSerializer))
+                               ? new JProperty("energy_contract",        EnergyContract.Value.ToJSON(CustomEnergyContractSerializer))
                                : null,
 
-                                 new JProperty("created",               Created.             ToIso8601()),
-                                 new JProperty("last_updated",          LastUpdated.         ToIso8601())
+                                 new JProperty("created",                Created.             ToIso8601()),
+                                 new JProperty("last_updated",           LastUpdated.         ToIso8601())
 
                        );
 

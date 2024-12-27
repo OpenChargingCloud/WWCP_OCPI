@@ -419,14 +419,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public LocalAccessInfo2 Clone()
 
-            => new(AccessToken,
+            => new (
+                   AccessToken,
                    Status,
                    Roles.Select(credentialsRole => credentialsRole.Clone()).ToArray(),
                    NotBefore,
                    NotAfter,
                    VersionsURL,
                    AccessTokenIsBase64Encoded,
-                   AllowDowngrades);
+                   AllowDowngrades
+               );
 
         #endregion
 

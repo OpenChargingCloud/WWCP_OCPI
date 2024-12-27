@@ -237,9 +237,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             var json = JSONObject.Create(
 
-                           new JProperty("group",                            new JArray(Groups.Select(parkingRestrictionGroup => parkingRestrictionGroup.ToString()))),
+                           new JProperty("group",                           new JArray(Groups.Select(parkingRestrictionGroup => parkingRestrictionGroup.ToString()))),
 
-                           new JProperty("applies_outside_opening_hours",    AppliesOutsideOpeningHours)
+                           new JProperty("applies_outside_opening_hours",   AppliesOutsideOpeningHours)
 
                        );
 

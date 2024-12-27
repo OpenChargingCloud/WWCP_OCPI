@@ -40,26 +40,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Type of Smart Charging Profile selected by the driver.
         /// </summary>
-        public ProfileTypes  ProfileType            { get; }
+        public ProfileType  ProfileType            { get; }
 
         /// <summary>
         /// Expected departure. The driver has given this timestamp as expected departure moment.
         /// It is only an estimation and not necessarily the timestamp of the actual departure.
         /// </summary>
-        public DateTime?     Departure              { get; }
+        public DateTime?    Departure              { get; }
 
         /// <summary>
         /// Requested amount of energy in kWh.
         /// The EV driver wants to have this amount of energy charged.
         /// </summary>
-        public Double?       EnergyNeed             { get; }
+        public Double?      EnergyNeed             { get; }
 
         /// <summary>
         /// The driver allows their EV to be discharged when needed, as long as the other
         /// preferences are met: EV is charged with the preferred energy (energy_need) until
         /// the preferred departure moment (departure_time).
         /// </summary>
-        public Boolean       DischargeAllowed       { get; }
+        public Boolean      DischargeAllowed       { get; }
 
         #endregion
 
@@ -72,10 +72,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Departure">Expected departure. The driver has given this timestamp as expected departure moment. It is only an estimation and not necessarily the timestamp of the actual departure.</param>
         /// <param name="EnergyNeed">Requested amount of energy in kWh. The EV driver wants to have this amount of energy charged.</param>
         /// <param name="DischargeAllowed">The driver allows their EV to be discharged when needed, as long as the other preferences are met.</param>
-        public ChargingPreference(ProfileTypes  ProfileType,
-                                  DateTime?     Departure,
-                                  Double?       EnergyNeed,
-                                  Boolean       DischargeAllowed)
+        public ChargingPreference(ProfileType  ProfileType,
+                                  DateTime?    Departure,
+                                  Double?      EnergyNeed,
+                                  Boolean      DischargeAllowed)
         {
 
             this.ProfileType       = ProfileType;

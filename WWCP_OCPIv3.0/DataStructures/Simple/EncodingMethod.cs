@@ -165,15 +165,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this encoding method.
         /// </summary>
-        public EncodingMethod Clone
+        public EncodingMethod Clone()
 
             => new (
-                   new String(InternalId?.ToCharArray())
+                   InternalId.CloneString()
                );
 
         #endregion

@@ -40,7 +40,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Data
 
-        private readonly Lock patchLock = new();
+        /// <summary>
+        /// The default JSON-LD context of locations.
+        /// </summary>
+        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/3.0/evse/status");
 
         #endregion
 

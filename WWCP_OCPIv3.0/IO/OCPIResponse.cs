@@ -276,15 +276,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                          Request_Id?      RequestId               = null,
                                          Correlation_Id?  CorrelationId           = null)
 
-            => new(null,
-                   -1,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
+            => new (null,
+                    -1,
+                    StatusMessage,
+                    AdditionalInformation,
+                    Timestamp,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                    HTTPResponse,
+                    RequestId,
+                    CorrelationId);
 
         #endregion
 
@@ -299,15 +299,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                          Request_Id?      RequestId               = null,
                                          Correlation_Id?  CorrelationId           = null)
 
-            => new(null,
-                   StatusCode,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
+            => new (null,
+                    StatusCode,
+                    StatusMessage,
+                    AdditionalInformation,
+                    Timestamp,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                    HTTPResponse,
+                    RequestId,
+                    CorrelationId);
 
         #endregion
 
@@ -320,15 +320,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                              Request_Id?      RequestId               = null,
                                              Correlation_Id?  CorrelationId           = null)
 
-            => new(null,
-                   -1,
-                   Exception.Message,
-                   Exception.StackTrace,
-                   Timestamp,
+            => new (null,
+                    -1,
+                    Exception.Message,
+                    Exception.StackTrace,
+                    Timestamp,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                    HTTPResponse,
+                    RequestId,
+                    CorrelationId);
 
         #endregion
 
@@ -617,15 +617,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                         Request_Id?      RequestId               = null,
                                                         Correlation_Id?  CorrelationId           = null)
 
-            => new(null,
-                   -1,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
+            => new (null,
+                    -1,
+                    StatusMessage,
+                    AdditionalInformation,
+                    Timestamp,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                    HTTPResponse,
+                    RequestId,
+                    CorrelationId);
 
         #endregion
 
@@ -640,14 +640,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                         Request_Id?      RequestId               = null,
                                                         Correlation_Id?  CorrelationId           = null)
 
-            => new(StatusCode,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
+            => new (StatusCode,
+                    StatusMessage,
+                    AdditionalInformation,
+                    Timestamp,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                    HTTPResponse,
+                    RequestId,
+                    CorrelationId);
 
         #endregion
 
@@ -660,14 +660,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                             Request_Id?      RequestId               = null,
                                                             Correlation_Id?  CorrelationId           = null)
 
-            => new(-1,
-                   Exception.Message,
-                   Exception.StackTrace,
-                   Timestamp,
+            => new (-1,
+                    Exception.Message,
+                    Exception.StackTrace,
+                    Timestamp,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                    HTTPResponse,
+                    RequestId,
+                    CorrelationId);
 
         #endregion
 
@@ -1058,16 +1058,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                               Request_Id?      RequestId               = null,
                                                               Correlation_Id?  CorrelationId           = null)
 
-            => new(Request,
-                   null,
-                   StatusCode,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
+            => new (Request,
+                    null,
+                    StatusCode,
+                    StatusMessage,
+                    AdditionalInformation,
+                    Timestamp,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                    HTTPResponse,
+                    RequestId,
+                    CorrelationId);
 
         #endregion
 
@@ -1082,16 +1082,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                               Request_Id?      RequestId               = null,
                                                               Correlation_Id?  CorrelationId           = null)
 
-            => new(Request,
-                   null,
-                   -1,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
+            => new (Request,
+                    null,
+                    -1,
+                    StatusMessage,
+                    AdditionalInformation,
+                    Timestamp,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                    HTTPResponse,
+                    RequestId,
+                    CorrelationId);
 
         #endregion
 
@@ -1106,16 +1106,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                   Request_Id?      RequestId               = null,
                                                                   Correlation_Id?  CorrelationId           = null)
 
-            => new(default,
-                   null,
-                   StatusCode,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
+            => new (default,
+                    null,
+                    StatusCode,
+                    StatusMessage,
+                    AdditionalInformation,
+                    Timestamp,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                    HTTPResponse,
+                    RequestId,
+                    CorrelationId);
 
         #endregion
 
@@ -1129,16 +1129,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                   Request_Id?      RequestId               = null,
                                                                   Correlation_Id?  CorrelationId           = null)
 
-            => new(default,
-                   null,
-                   -1,
-                   StatusMessage,
-                   AdditionalInformation,
-                   Timestamp,
+            => new (default,
+                    null,
+                    -1,
+                    StatusMessage,
+                    AdditionalInformation,
+                    Timestamp,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                    HTTPResponse,
+                    RequestId,
+                    CorrelationId);
 
         #endregion
 
@@ -1151,16 +1151,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                       Request_Id?      RequestId               = null,
                                                                       Correlation_Id?  CorrelationId           = null)
 
-            => new(default,
-                   null,
-                   -1,
-                   Exception.Message,
-                   Exception.StackTrace,
-                   Timestamp,
+            => new (default,
+                    null,
+                    -1,
+                    Exception.Message,
+                    Exception.StackTrace,
+                    Timestamp,
 
-                   HTTPResponse,
-                   RequestId,
-                   CorrelationId);
+                    HTTPResponse,
+                    RequestId,
+                    CorrelationId);
 
         #endregion
 

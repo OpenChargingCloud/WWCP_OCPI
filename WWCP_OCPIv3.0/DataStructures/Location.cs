@@ -597,10 +597,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Parse the given JSON representation of a location.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
+        /// <param name="VersionIdURL">An optional version identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Location Parse(JObject                                 JSON,
-                                     Party_Idv3?                               PartyIdURL             = null,
+                                     Party_Idv3?                             PartyIdURL             = null,
                                      Location_Id?                            LocationIdURL          = null,
                                      UInt64?                                 VersionIdURL           = null,
                                      CustomJObjectParserDelegate<Location>?  CustomLocationParser   = null)
@@ -653,12 +655,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Location">The parsed location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
+        /// <param name="VersionIdURL">An optional version identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Boolean TryParse(JObject                                 JSON,
                                        [NotNullWhen(true)]  out Location?      Location,
                                        [NotNullWhen(false)] out String?        ErrorResponse,
-                                       Party_Idv3?                               PartyIdURL             = null,
+                                       Party_Idv3?                             PartyIdURL             = null,
                                        Location_Id?                            LocationIdURL          = null,
                                        UInt64?                                 VersionIdURL           = null,
                                        CustomJObjectParserDelegate<Location>?  CustomLocationParser   = null)
@@ -1106,6 +1110,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         /// <param name="IncludeOwnerInformation">Whether to include optional owner information.</param>
         /// <param name="IncludeVersionInformation">Whether to include version information.</param>
+        /// <param name="IncludeCreatedTimestamp">Whether to include a timestamp of when this location was created.</param>
         /// <param name="IncludeExtensions">Whether to include optional data model extensions.</param>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomPublishTokenSerializer">A delegate to serialize custom publish token type JSON objects.</param>
@@ -1130,6 +1135,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomLocationMaxPowerSerializer">A delegate to serialize custom location max power JSON objects.</param>
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = true,
                               Boolean                                                       IncludeVersionInformation                    = true,
+                              Boolean                                                       IncludeCreatedTimestamp                      = true,
                               Boolean                                                       IncludeExtensions                            = true,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
@@ -1261,8 +1267,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                : null,
 
 
-                           new JProperty("created",                      Created.          ToIso8601()),
-                           new JProperty("last_updated",                 LastUpdated.      ToIso8601())
+                           IncludeCreatedTimestamp
+                               ? new JProperty("created",                Created.          ToIso8601())
+                               : null,
+
+                                 new JProperty("last_updated",           LastUpdated.      ToIso8601())
 
                        );
 
@@ -1661,6 +1670,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             ETag = SHA256.HashData(
                        ToJSON(
+                           true,
                            true,
                            true,
                            true,
@@ -2068,7 +2078,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             /// that make up the physical charging infrastructure of this Location.
             /// </summary>
             [Mandatory]
-            public ConcurrentDictionary<ChargingStation_Id, ChargingStation> ChargingPool { get; } = new();
+            public ConcurrentDictionary<ChargingStation_Id, ChargingStation>  ChargingPool    { get; } = new ();
 
             /// <summary>
             /// The optional enumeration of human-readable directions on how to reach the location.

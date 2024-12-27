@@ -5639,6 +5639,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   true,
                                   true,
                                   true,
+                                  true,
                                   CustomLocationSerializer,
                                   CustomPublishTokenSerializer,
                                   CustomAddressSerializer,
@@ -5754,6 +5755,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                     await LogAsset(
                               addLocation,
                               Location.ToJSON(
+                                  true,
                                   true,
                                   true,
                                   true,
@@ -5896,6 +5898,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                       true,
                                       true,
                                       true,
+                                      true,
                                       CustomLocationSerializer,
                                       CustomPublishTokenSerializer,
                                       CustomAddressSerializer,
@@ -6030,6 +6033,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                     await LogAsset(
                               addOrUpdateLocation,
                               Location.ToJSON(
+                                  true,
                                   true,
                                   true,
                                   true,
@@ -6174,6 +6178,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                     await LogAsset(
                               updateLocation,
                               Location.ToJSON(
+                                  true,
                                   true,
                                   true,
                                   true,

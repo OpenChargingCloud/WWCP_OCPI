@@ -1163,6 +1163,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                                                          requestBuilder.Content        = Location.ToJSON(true,
                                                                                                                                          true,
                                                                                                                                          true,
+                                                                                                                                         true,
                                                                                                                                          CustomLocationSerializer,
                                                                                                                                          CustomPublishTokenSerializer,
                                                                                                                                          CustomAddressSerializer,
@@ -3839,9 +3840,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.CPO.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     remoteURL.Value.Path + Session.CountryCode.ToString() +
-                                                                                                            Session.PartyId.    ToString() +
-                                                                                                            Session.Id.         ToString(),
+                                                                                     remoteURL.Value.Path + Session.Id.ToString(),
                                                                                      RequestBuilder: requestBuilder => {
                                                                                          requestBuilder.Authorization  = TokenAuth;
                                                                                          requestBuilder.ContentType    = HTTPContentType.Application.JSON_UTF8;

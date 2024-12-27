@@ -256,9 +256,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public SignedValue Clone()
 
             => new (
-                   Nature.Clone,
-                   new String(PlainData. ToCharArray()),
-                   new String(SignedData.ToCharArray())
+                   Nature.    Clone(),
+                   PlainData. CloneString(),
+                   SignedData.CloneString()
                );
 
         #endregion

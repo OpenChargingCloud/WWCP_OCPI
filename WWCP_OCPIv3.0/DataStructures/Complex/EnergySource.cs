@@ -220,8 +220,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public EnergySource Clone()
 
-            => new (Source.Clone,
-                    Percentage);
+            => new (
+                   Source.Clone(),
+                   Percentage
+               );
 
         #endregion
 

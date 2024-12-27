@@ -67,19 +67,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Indicates whether this parking restriction group is null or empty.
         /// </summary>
-        public Boolean IsNullOrEmpty
+        public Boolean  IsNullOrEmpty
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
         /// Indicates whether this parking restriction group is NOT null or empty.
         /// </summary>
-        public Boolean IsNotNullOrEmpty
+        public Boolean  IsNotNullOrEmpty
             => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the parking restriction group.
         /// </summary>
-        public UInt64 Length
+        public UInt64   Length
             => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
@@ -182,34 +182,40 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         #region Static definitions
 
         /// <summary>
+        /// Parking only for people who work at a site, building, or complex that the Location belongs to.
+        /// </summary>
+        public static ParkingRestrictionGroup  EMPLOYEES    { get; }
+            = new ("EMPLOYEES");
+
+        /// <summary>
         /// Reserved parking spot for electric vehicles.
         /// </summary>
-        public static ParkingRestrictionGroup EV_ONLY        { get; }
+        public static ParkingRestrictionGroup  EV_ONLY      { get; }
             = new ("EV_ONLY");
 
         /// <summary>
         /// Parking allowed only while plugged in (charging).
         /// </summary>
-        public static ParkingRestrictionGroup PLUGGED        { get; }
+        public static ParkingRestrictionGroup  PLUGGED      { get; }
             = new ("PLUGGED");
-
-        /// <summary>
-        /// Reserved parking spot for disabled people with valid ID.
-        /// </summary>
-        public static ParkingRestrictionGroup DISABLED        { get; }
-            = new ("DISABLED");
 
         /// <summary>
         /// Parking spot for customers/guests only, for example in case of a hotel or shop.
         /// </summary>
-        public static ParkingRestrictionGroup CUSTOMERS        { get; }
+        public static ParkingRestrictionGroup  CUSTOMERS    { get; }
             = new ("CUSTOMERS");
 
         /// <summary>
-        /// Parking spot only suitable for (electric) motorcycles or scooters.
+        /// Parking only for taxi vehicles.
         /// </summary>
-        public static ParkingRestrictionGroup MOTORCYCLES        { get; }
-            = new ("MOTORCYCLES");
+        public static ParkingRestrictionGroup  TAXI_ONLY    { get; }
+            = new ("TAXI_ONLY");
+
+        /// <summary>
+        /// Parking only for people who live in a complex that the Location belongs to.
+        /// </summary>
+        public static ParkingRestrictionGroup  TENANTS      { get; }
+            = new ("TENANTS");
 
         #endregion
 

@@ -166,15 +166,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region Clone
+        #region Clone()
 
         /// <summary>
         /// Clone this tariff dimension.
         /// </summary>
-        public TariffDimension Clone
+        public TariffDimension Clone()
 
-            => new(
-                   new String(InternalId?.ToCharArray())
+            => new (
+                   InternalId.CloneString()
                );
 
         #endregion
@@ -185,19 +185,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Defined in kWh, step_size multiplier: 1 Wh.
         /// </summary>
-        public static TariffDimension ENERGY          { get; }
+        public static TariffDimension  ENERGY          { get; }
             = new ("ENERGY");
 
         /// <summary>
         /// Flat fee without unit for step_size.
         /// </summary>
-        public static TariffDimension FLAT            { get; }
+        public static TariffDimension  FLAT            { get; }
             = new ("FLAT");
 
         /// <summary>
         /// Time not charging: defined in hours, step_size multiplier: 1 second.
         /// </summary>
-        public static TariffDimension PARKING_TIME    { get; }
+        public static TariffDimension  PARKING_TIME    { get; }
             = new ("PARKING_TIME");
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// Can also be used in combination with a RESERVATION restriction to describe
         /// the price of the reservation time.
         /// </summary>
-        public static TariffDimension TIME            { get; }
+        public static TariffDimension  TIME            { get; }
             = new ("TIME");
 
         #endregion

@@ -262,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <summary>
         /// Clone this remote party identification.
         /// </summary>
-        public RemoteParty_Id Clone
+        public RemoteParty_Id Clone()
 
             => new (
                    PartyId.Clone(),

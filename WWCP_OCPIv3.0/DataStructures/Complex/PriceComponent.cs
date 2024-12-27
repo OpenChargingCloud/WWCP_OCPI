@@ -361,9 +361,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public PriceComponent Clone()
 
-            => new (Type.Clone,
-                    Price,
-                    StepSize);
+            => new (
+                   Type.Clone(),
+                   Price,
+                   StepSize
+               );
 
         #endregion
 

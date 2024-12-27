@@ -249,8 +249,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         public EnergyContract Clone()
 
-            => new (new String(SupplierName.ToCharArray()),
-                    ContractId.Clone);
+            => new (
+                   SupplierName.CloneString(),
+                   ContractId.  Clone()
+               );
 
         #endregion
 
