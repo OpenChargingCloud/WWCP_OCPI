@@ -17,6 +17,8 @@
 
 #region Usings
 
+using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -60,7 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// continue indefinitely or until end of the transaction in case startProfile is absent.
         /// </summary>
         [Optional]
-        public Single?                             MinChargingRate            { get; }
+        public Decimal?                            MinChargingRate            { get; }
 
         /// <summary>
         /// Duration of the charging profile in seconds. If the duration is left empty, the last period will
@@ -84,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public ChargingProfile(ChargingRateUnits                    ChargingRateUnit,
                                DateTime?                            Start                    = null,
                                TimeSpan?                            Duration                 = null,
-                               Single?                              MinChargingRate          = null,
+                               Decimal?                             MinChargingRate          = null,
                                IEnumerable<ChargingProfilePeriod>?  ChargingProfilePeriods   = null)
         {
 
@@ -92,7 +94,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
             this.Start                   = Start;
             this.Duration                = Duration;
             this.MinChargingRate         = MinChargingRate;
-            this.ChargingProfilePeriods  = ChargingProfilePeriods?.Distinct() ?? Array.Empty<ChargingProfilePeriod>();
+            this.ChargingProfilePeriods  = ChargingProfilePeriods?.Distinct() ?? [];
+
+            unchecked
+            {
+
+                hashCode = this.ChargingRateUnit.      GetHashCode()       * 11 ^
+                          (this.Start?.                GetHashCode() ?? 0) *  7 ^
+                          (this.Duration?.             GetHashCode() ?? 0) *  5 ^
+                          (this.MinChargingRate?.      GetHashCode() ?? 0) *  3 ^
+                           this.ChargingProfilePeriods.CalcHashCode();
+
+            }
 
         }
 
@@ -115,7 +128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                          out var errorResponse,
                          CustomChargingProfileParser))
             {
-                return chargingProfile!;
+                return chargingProfile;
             }
 
             throw new ArgumentException("The given JSON representation of a charging profile is invalid: " + errorResponse,
@@ -135,9 +148,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="ChargingProfile">The parsed charging profile.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject               JSON,
-                                       out ChargingProfile?  ChargingProfile,
-                                       out String?           ErrorResponse)
+        public static Boolean TryParse(JObject                                    JSON,
+                                       [NotNullWhen(true)]  out ChargingProfile?  ChargingProfile,
+                                       [NotNullWhen(false)] out String?           ErrorResponse)
 
             => TryParse(JSON,
                         out ChargingProfile,
@@ -153,8 +166,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomChargingProfileParser">A delegate to parse custom charging profile JSON objects.</param>
         public static Boolean TryParse(JObject                                        JSON,
-                                       out ChargingProfile?                           ChargingProfile,
-                                       out String?                                    ErrorResponse,
+                                       [NotNullWhen(true)]  out ChargingProfile?      ChargingProfile,
+                                       [NotNullWhen(false)] out String?               ErrorResponse,
                                        CustomJObjectParserDelegate<ChargingProfile>?  CustomChargingProfileParser   = null)
         {
 
@@ -200,16 +213,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (JSON.ParseOptional("duration",
                                        "duration",
-                                       out UInt32? duration,
+                                       TimeSpanExtensions.TryParseSeconds,
+                                       out TimeSpan? Duration,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
                 }
-
-                var Duration = duration.HasValue
-                                   ? new TimeSpan?(TimeSpan.FromSeconds(duration.Value))
-                                   : null;
 
                 #endregion
 
@@ -217,7 +227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
                 if (JSON.ParseOptional("min_charging_rate",
                                        "min charging rate",
-                                       out Single? MinChargingRate,
+                                       out Decimal? MinChargingRate,
                                        out ErrorResponse))
                 {
 
@@ -244,10 +254,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
                 #endregion
 
 
-                ChargingProfile = new ChargingProfile(ChargingRateUnit,
-                                                      Start,
-                                                      Duration,
-                                                      MinChargingRate);
+                ChargingProfile = new ChargingProfile(
+                                      ChargingRateUnit,
+                                      Start,
+                                      Duration,
+                                      MinChargingRate
+                                  );
 
                 if (CustomChargingProfileParser is not null)
                     ChargingProfile = CustomChargingProfileParser(JSON,
@@ -280,22 +292,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
             var json = JSONObject.Create(
 
-                           new JProperty("charging_rate_unit",             ChargingRateUnit.     ToString()),
+                                 new JProperty("charging_rate_unit",        ChargingRateUnit.     ToString()),
 
                            Start.HasValue
-                               ? new JProperty("start_date_time",          Start.          Value.ToIso8601())
+                               ? new JProperty("start_date_time",           Start.          Value.ToIso8601())
                                : null,
 
                            Duration.HasValue
-                               ? new JProperty("duration",                 Duration.       Value.TotalSeconds)
+                               ? new JProperty("duration",                  Duration.       Value.TotalSeconds)
                                : null,
 
                            MinChargingRate.HasValue
-                               ? new JProperty("min_charging_rate",        MinChargingRate.Value.ToString("0.0"))
+                               ? new JProperty("min_charging_rate",         MinChargingRate.Value.ToString("0.0"))
                                : null,
 
                            ChargingProfilePeriods.SafeAny()
-                               ? new JProperty("charging_profile_period",  new JArray(ChargingProfilePeriods.Select(chargingProfilePeriods => chargingProfilePeriods.ToJSON(CustomChargingProfilePeriodSerializer))))
+                               ? new JProperty("charging_profile_period",   new JArray(ChargingProfilePeriods.Select(chargingProfilePeriods => chargingProfilePeriods.ToJSON(CustomChargingProfilePeriodSerializer))))
                                : null
 
 
@@ -494,23 +506,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return ChargingRateUnit.      GetHashCode()       * 11 ^
-                       ChargingProfilePeriods.GetHashCode()       *  7 ^
-                      (Start?.                GetHashCode() ?? 0) *  5 ^
-                      (Duration?.             GetHashCode() ?? 0) *  3 ^
-                       MinChargingRate?.      GetHashCode() ?? 0;
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

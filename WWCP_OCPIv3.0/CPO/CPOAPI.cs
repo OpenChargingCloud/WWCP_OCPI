@@ -100,6 +100,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                          { get; set; }
         public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer                { get; set; }
         public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer            { get; set; }
         public CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                   { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
         public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
@@ -1609,6 +1611,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                                                                                                  CustomAdditionalGeoLocationSerializer,
                                                                                                                                  CustomChargingStationSerializer,
                                                                                                                                  CustomEVSESerializer,
+                                                                                                                                 CustomParkingSerializer,
+                                                                                                                                 CustomParkingRestrictionSerializer,
                                                                                                                                  CustomStatusScheduleSerializer,
                                                                                                                                  CustomConnectorSerializer,
                                                                                                                                  CustomEnergyMeterSerializer,
@@ -1738,6 +1742,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                                                           CustomAdditionalGeoLocationSerializer,
                                                                                           CustomChargingStationSerializer,
                                                                                           CustomEVSESerializer,
+                                                                                          CustomParkingSerializer,
+                                                                                          CustomParkingRestrictionSerializer,
                                                                                           CustomStatusScheduleSerializer,
                                                                                           CustomConnectorSerializer,
                                                                                           CustomEnergyMeterSerializer,
@@ -1844,13 +1850,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = evse.ToJSON(CustomEVSESerializer,
-                                                                                      CustomStatusScheduleSerializer,
                                                                                       CustomConnectorSerializer,
+                                                                                      CustomParkingSerializer,
+                                                                                      CustomParkingRestrictionSerializer,
+                                                                                      CustomImageSerializer,
+                                                                                      CustomStatusScheduleSerializer,
                                                                                       CustomEnergyMeterSerializer,
                                                                                       CustomTransparencySoftwareStatusSerializer,
                                                                                       CustomTransparencySoftwareSerializer,
-                                                                                      CustomDisplayTextSerializer,
-                                                                                      CustomImageSerializer),
+                                                                                      CustomDisplayTextSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = [ "OPTIONS", "GET" ],

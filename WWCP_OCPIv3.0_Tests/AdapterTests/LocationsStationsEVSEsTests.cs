@@ -1686,7 +1686,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
 
                 csoAdapter.CommonAPI.OnEVSEChanged += (evse) => {
 
-                    updatedOCPIEVSEStatus.Add(evse.Status);
+                    if (evse.Status.HasValue)
+                        updatedOCPIEVSEStatus.Add(evse.Status.Value);
+
                     return Task.CompletedTask;
 
                 };
@@ -1697,6 +1699,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.UnitTests.AdapterTests
                                                              oldEVSEStatus) => {
 
                     updatedOCPIEVSEStatus.Add(newEVSEStatus);
+
                     return Task.CompletedTask;
 
                 };

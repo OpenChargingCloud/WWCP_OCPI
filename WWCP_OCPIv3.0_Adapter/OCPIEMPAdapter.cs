@@ -504,13 +504,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         Boolean IPullEVSEData.PullEVSEData_IsDisabled { get; set; }
 
-
-        Task<POIDataPull<WWCP.EVSE>> IPullEVSEData.PullEVSEData(DateTime? LastCall, GeoCoordinate? SearchCenter, Single DistanceKM, EMobilityProvider_Id? ProviderId, IEnumerable<ChargingStationOperator_Id> OperatorIdFilter, IEnumerable<Country> CountryCodeFilter, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id EventTrackingId, TimeSpan? RequestTimeout)
+        public Task<POIDataPull<WWCP.EVSE>> PullEVSEData(DateTime? LastCall = null, GeoCoordinate? SearchCenter = null, float DistanceKM = 0, EMobilityProvider_Id? ProviderId = null, IEnumerable<ChargingStationOperator_Id>? OperatorIdFilter = null, IEnumerable<Country>? CountryCodeFilter = null, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        Task<StatusPull<EVSEStatus>> IPullEVSEStatus.PullEVSEStatus(DateTime? LastCall, GeoCoordinate? SearchCenter, Single DistanceKM, EVSEStatusType? EVSEStatusFilter, EMobilityProvider_Id? ProviderId, DateTime? Timestamp, CancellationToken CancellationToken, EventTracking_Id EventTrackingId, TimeSpan? RequestTimeout)
+        public Task<StatusPull<WWCP.EVSEStatus>> PullEVSEStatus(DateTime? LastCall = null, GeoCoordinate? SearchCenter = null, float DistanceKM = 0, EVSEStatusType? EVSEStatusFilter = null, EMobilityProvider_Id? ProviderId = null, DateTime? Timestamp = null, CancellationToken CancellationToken = default, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }

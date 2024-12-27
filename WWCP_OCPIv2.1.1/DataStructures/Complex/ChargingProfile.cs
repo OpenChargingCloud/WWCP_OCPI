@@ -17,9 +17,7 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json.Linq;
 
@@ -33,9 +31,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// The charging profile defines an enumeration of charging periods.
     /// </summary>
-    public readonly struct ChargingProfile : IEquatable<ChargingProfile>,
-                                             IComparable<ChargingProfile>,
-                                             IComparable
+    public class ChargingProfile : IEquatable<ChargingProfile>,
+                                   IComparable<ChargingProfile>,
+                                   IComparable
     {
 
         #region Properties
@@ -64,7 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// continue indefinitely or until end of the transaction in case startProfile is absent.
         /// </summary>
         [Optional]
-        public Single?                             MinChargingRate            { get; }
+        public Decimal?                            MinChargingRate            { get; }
 
         /// <summary>
         /// Duration of the charging profile in seconds. If the duration is left empty, the last period will
@@ -85,18 +83,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Duration">Duration of the charging profile in seconds. If the duration is left empty, the last period will continue indefinitely or until end of the transaction in case startProfile is absent.</param>
         /// <param name="MinChargingRate">Duration of the charging profile in seconds. If the duration is left empty, the last period will continue indefinitely or until end of the transaction in case startProfile is absent.</param>
         /// <param name="ChargingProfilePeriods">Duration of the charging profile in seconds. If the duration is left empty, the last period will continue indefinitely or until end of the transaction in case startProfile is absent.</param>
-        public ChargingProfile(ChargingRateUnits                   ChargingRateUnit,
-                               DateTime?                           Start                    = null,
-                               TimeSpan?                           Duration                 = null,
-                               Single?                             MinChargingRate          = null,
-                               IEnumerable<ChargingProfilePeriod>  ChargingProfilePeriods   = null)
+        public ChargingProfile(ChargingRateUnits                    ChargingRateUnit,
+                               DateTime?                            Start                    = null,
+                               TimeSpan?                            Duration                 = null,
+                               Decimal?                             MinChargingRate          = null,
+                               IEnumerable<ChargingProfilePeriod>?  ChargingProfilePeriods   = null)
         {
 
             this.ChargingRateUnit        = ChargingRateUnit;
             this.Start                   = Start;
             this.Duration                = Duration;
             this.MinChargingRate         = MinChargingRate;
-            this.ChargingProfilePeriods  = ChargingProfilePeriods?.Distinct() ?? new ChargingProfilePeriod[0];
+            this.ChargingProfilePeriods  = ChargingProfilePeriods?.Distinct() ?? [];
+
+            unchecked
+            {
+
+                hashCode = this.ChargingRateUnit.      GetHashCode()       * 11 ^
+                          (this.Start?.                GetHashCode() ?? 0) *  7 ^
+                          (this.Duration?.             GetHashCode() ?? 0) *  5 ^
+                          (this.MinChargingRate?.      GetHashCode() ?? 0) *  3 ^
+                           this.ChargingProfilePeriods.CalcHashCode();
+
+            }
 
         }
 
@@ -110,94 +119,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomChargingProfileParser">A delegate to parse custom charging profile JSON objects.</param>
-        public static ChargingProfile Parse(JObject                                       JSON,
-                                            CustomJObjectParserDelegate<ChargingProfile>  CustomChargingProfileParser   = null)
+        public static ChargingProfile Parse(JObject                                        JSON,
+                                            CustomJObjectParserDelegate<ChargingProfile>?  CustomChargingProfileParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ChargingProfile  chargingProfile,
-                         out String           ErrorResponse,
+                         out var chargingProfile,
+                         out var errorResponse,
                          CustomChargingProfileParser))
             {
                 return chargingProfile;
             }
 
-            throw new ArgumentException("The given JSON representation of a charging profile is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomChargingProfileParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a charging profile.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomChargingProfileParser">A delegate to parse custom charging profile JSON objects.</param>
-        public static ChargingProfile Parse(String                                        Text,
-                                            CustomJObjectParserDelegate<ChargingProfile>  CustomChargingProfileParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ChargingProfile  chargingProfile,
-                         out String           ErrorResponse,
-                         CustomChargingProfileParser))
-            {
-                return chargingProfile;
-            }
-
-            throw new ArgumentException("The given text representation of a charging profile is invalid: " + ErrorResponse, nameof(Text));
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(JSON, CustomChargingProfileParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a charging profile.
-        /// </summary>
-        /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomChargingProfileParser">A delegate to parse custom charging profile JSON objects.</param>
-        public static ChargingProfile? TryParse(JObject                                       JSON,
-                                                CustomJObjectParserDelegate<ChargingProfile>  CustomChargingProfileParser   = null)
-        {
-
-            if (TryParse(JSON,
-                         out ChargingProfile  chargingProfile,
-                         out String           ErrorResponse,
-                         CustomChargingProfileParser))
-            {
-                return chargingProfile;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomChargingProfileParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a charging profile.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomChargingProfileParser">A delegate to parse custom charging profile JSON objects.</param>
-        public static ChargingProfile? TryParse(String                                        Text,
-                                                CustomJObjectParserDelegate<ChargingProfile>  CustomChargingProfileParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ChargingProfile  chargingProfile,
-                         out String           ErrorResponse,
-                         CustomChargingProfileParser))
-            {
-                return chargingProfile;
-            }
-
-            return default;
+            throw new ArgumentException("The given JSON representation of a charging profile is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -214,8 +149,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ChargingProfile">The parsed charging profile.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject              JSON,
-                                       out ChargingProfile  ChargingProfile,
-                                       out String           ErrorResponse)
+                                       [NotNullWhen(true)]  out ChargingProfile?  ChargingProfile,
+                                       [NotNullWhen(false)] out String?           ErrorResponse)
 
             => TryParse(JSON,
                         out ChargingProfile,
@@ -230,16 +165,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ChargingProfile">The parsed charging profile.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomChargingProfileParser">A delegate to parse custom charging profile JSON objects.</param>
-        public static Boolean TryParse(JObject                                       JSON,
-                                       out ChargingProfile                           ChargingProfile,
-                                       out String                                    ErrorResponse,
-                                       CustomJObjectParserDelegate<ChargingProfile>  CustomChargingProfileParser   = null)
+        public static Boolean TryParse(JObject                                        JSON,
+                                       [NotNullWhen(true)]  out ChargingProfile?      ChargingProfile,
+                                       [NotNullWhen(false)] out String?               ErrorResponse,
+                                       CustomJObjectParserDelegate<ChargingProfile>?  CustomChargingProfileParser   = null)
         {
 
             try
             {
 
-                ChargingProfile = default;
+                ChargingProfile = null;
 
                 if (JSON?.HasValues != true)
                 {
@@ -278,7 +213,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptional("duration",
                                        "duration",
-                                       out UInt32? Duration,
+                                       TimeSpanExtensions.TryParseSeconds,
+                                       out TimeSpan? Duration,
                                        out ErrorResponse))
                 {
 
@@ -293,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptional("min_charging_rate",
                                        "min charging rate",
-                                       out Single? MinChargingRate,
+                                       out Decimal? MinChargingRate,
                                        out ErrorResponse))
                 {
 
@@ -320,10 +256,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                ChargingProfile = new ChargingProfile(ChargingRateUnit,
-                                                      Start,
-                                                      Duration.HasValue ? new TimeSpan?(TimeSpan.FromSeconds(Duration.Value)) : null,
-                                                      MinChargingRate);
+                ChargingProfile = new ChargingProfile(
+                                      ChargingRateUnit,
+                                      Start,
+                                      Duration,
+                                      MinChargingRate
+                                  );
 
                 if (CustomChargingProfileParser is not null)
                     ChargingProfile = CustomChargingProfileParser(JSON,
@@ -334,43 +272,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
             catch (Exception e)
             {
-                ChargingProfile  = default;
+                ChargingProfile  = null;
                 ErrorResponse    = "The given JSON representation of a charging profile is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out ChargingProfile, out ErrorResponse, CustomChargingProfileParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a charging profile.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="ChargingProfile">The parsed chargingProfile.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomChargingProfileParser">A delegate to parse custom charging profile JSON objects.</param>
-        public static Boolean TryParse(String                                        Text,
-                                       out ChargingProfile                           ChargingProfile,
-                                       out String                                    ErrorResponse,
-                                       CustomJObjectParserDelegate<ChargingProfile>  CustomChargingProfileParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out ChargingProfile,
-                                out ErrorResponse,
-                                CustomChargingProfileParser);
-
-            }
-            catch (Exception e)
-            {
-                ChargingProfile  = default;
-                ErrorResponse    = "The given text representation of a charging profile is invalid: " + e.Message;
                 return false;
             }
 
@@ -385,28 +288,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="CustomChargingProfileSerializer">A delegate to serialize custom charging profile JSON objects.</param>
         /// <param name="CustomChargingProfilePeriodSerializer">A delegate to serialize custom charging profile period JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingProfile>        CustomChargingProfileSerializer         = null,
-                              CustomJObjectSerializerDelegate<ChargingProfilePeriod>  CustomChargingProfilePeriodSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingProfile>?        CustomChargingProfileSerializer         = null,
+                              CustomJObjectSerializerDelegate<ChargingProfilePeriod>?  CustomChargingProfilePeriodSerializer   = null)
         {
 
             var json = JSONObject.Create(
 
-                           new JProperty("charging_rate_unit",             ChargingRateUnit.     ToString()),
+                                 new JProperty("charging_rate_unit",        ChargingRateUnit.     ToString()),
 
                            Start.HasValue
-                               ? new JProperty("start_date_time",          Start.          Value.ToIso8601())
+                               ? new JProperty("start_date_time",           Start.          Value.ToIso8601())
                                : null,
 
                            Duration.HasValue
-                               ? new JProperty("duration",                 Duration.       Value.TotalSeconds)
+                               ? new JProperty("duration",                  Duration.       Value.TotalSeconds)
                                : null,
 
                            MinChargingRate.HasValue
-                               ? new JProperty("min_charging_rate",        MinChargingRate.Value.ToString("0.0"))
+                               ? new JProperty("min_charging_rate",         MinChargingRate.Value.ToString("0.0"))
                                : null,
 
                            ChargingProfilePeriods.SafeAny()
-                               ? new JProperty("charging_profile_period",  new JArray(ChargingProfilePeriods.Select(profilePeriod => profilePeriod.ToJSON(CustomChargingProfilePeriodSerializer))))
+                               ? new JProperty("charging_profile_period",   new JArray(ChargingProfilePeriods.Select(profilePeriod => profilePeriod.ToJSON(CustomChargingProfilePeriodSerializer))))
                                : null
 
 
@@ -520,10 +423,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging profiles.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A charging profile to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is ChargingProfile chargingProfile
                    ? CompareTo(chargingProfile)
@@ -535,11 +438,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(ChargingProfile)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging profiles.
         /// </summary>
-        /// <param name="ChargingProfile">An object to compare with.</param>
-        public Int32 CompareTo(ChargingProfile ChargingProfile)
+        /// <param name="ChargingProfile">A charging profile to compare with.</param>
+        public Int32 CompareTo(ChargingProfile? ChargingProfile)
         {
+
+            if (ChargingProfile is null)
+                throw new ArgumentNullException(nameof(ChargingProfile), "The given charging profile must not be null!");
 
             var c = 0;
 
@@ -568,11 +474,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging profiles for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A charging profile to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is ChargingProfile chargingProfile &&
                    Equals(chargingProfile);
@@ -585,10 +490,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two charging profiles for equality.
         /// </summary>
         /// <param name="ChargingProfile">A charging profile to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(ChargingProfile ChargingProfile)
+        public Boolean Equals(ChargingProfile? ChargingProfile)
 
-            => ChargingRateUnit.Equals(ChargingProfile.ChargingRateUnit) &&
+            => ChargingProfile is not null &&
+
+               ChargingRateUnit.Equals(ChargingProfile.ChargingRateUnit) &&
                Start.           Equals(ChargingProfile.Start)            &&
                Duration.        Equals(ChargingProfile.Duration)         &&
                MinChargingRate. Equals(ChargingProfile.MinChargingRate)  &&
@@ -602,32 +508,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region (override) GetHashCode()
 
+        private readonly Int32 hashCode;
+
         /// <summary>
         /// Return the hash code of this object.
         /// </summary>
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            unchecked
-            {
-
-                return ChargingRateUnit.      GetHashCode() * 11 ^
-                       ChargingProfilePeriods.GetHashCode() *  7 ^
-
-                       (Start.HasValue
-                            ? Start.          GetHashCode() *  5
-                            : 0) ^
-
-                       (Duration.HasValue
-                            ? Duration.       GetHashCode() *  3
-                            : 0) ^
-
-                       (MinChargingRate.HasValue
-                            ? MinChargingRate.GetHashCode()
-                            : 0);
-
-            }
-        }
+            => hashCode;
 
         #endregion
 

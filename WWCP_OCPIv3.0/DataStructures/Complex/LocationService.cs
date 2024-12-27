@@ -36,8 +36,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
     /// The address of a location.
     /// </summary>
     public class LocationService : IEquatable<LocationService>,
-                           IComparable<LocationService>,
-                           IComparable
+                                   IComparable<LocationService>,
+                                   IComparable
     {
 
         #region Properties
@@ -98,11 +98,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="PostalCode">An optional postal code.</param>
         /// <param name="State">An optional state or province.</param>
         public LocationService(String         Street,
-                       String         City,
-                       CountryCode    Country,
-                       GeoCoordinate  Coordinates,
-                       String?        PostalCode   = null,
-                       String?        State        = null)
+                               String         City,
+                               CountryCode    Country,
+                               GeoCoordinate  Coordinates,
+                               String?        PostalCode   = null,
+                               String?        State        = null)
         {
 
             this.Street       = Street.     Trim();

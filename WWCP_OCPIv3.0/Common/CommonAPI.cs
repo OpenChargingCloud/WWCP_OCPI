@@ -1992,6 +1992,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?        CustomAdditionalGeoLocationSerializer         { get; }
         public CustomJObjectSerializerDelegate<ChargingStation>?              CustomChargingStationSerializer               { get; }
         public CustomJObjectSerializerDelegate<EVSE>?                         CustomEVSESerializer                          { get; }
+        public CustomJObjectSerializerDelegate<Parking>?                      CustomParkingSerializer                       { get; }
+        public CustomJObjectSerializerDelegate<ParkingRestriction>?           CustomParkingRestrictionSerializer            { get; }
         public CustomJObjectSerializerDelegate<StatusSchedule>?               CustomStatusScheduleSerializer                { get; }
         public CustomJObjectSerializerDelegate<Connector>?                    CustomConnectorSerializer                     { get; }
         public CustomJObjectSerializerDelegate<EnergyMeter>?                  CustomEnergyMeterSerializer                   { get; }
@@ -5643,6 +5645,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomAdditionalGeoLocationSerializer,
                                   CustomChargingStationSerializer,
                                   CustomEVSESerializer,
+                                  CustomParkingSerializer,
+                                  CustomParkingRestrictionSerializer,
                                   CustomStatusScheduleSerializer,
                                   CustomConnectorSerializer,
                                   CustomEnergyMeterSerializer,
@@ -5759,6 +5763,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomAdditionalGeoLocationSerializer,
                                   CustomChargingStationSerializer,
                                   CustomEVSESerializer,
+                                  CustomParkingSerializer,
+                                  CustomParkingRestrictionSerializer,
                                   CustomStatusScheduleSerializer,
                                   CustomConnectorSerializer,
                                   CustomEnergyMeterSerializer,
@@ -5896,6 +5902,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                       CustomAdditionalGeoLocationSerializer,
                                       CustomChargingStationSerializer,
                                       CustomEVSESerializer,
+                                      CustomParkingSerializer,
+                                      CustomParkingRestrictionSerializer,
                                       CustomStatusScheduleSerializer,
                                       CustomConnectorSerializer,
                                       CustomEnergyMeterSerializer,
@@ -6031,6 +6039,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomAdditionalGeoLocationSerializer,
                                   CustomChargingStationSerializer,
                                   CustomEVSESerializer,
+                                  CustomParkingSerializer,
+                                  CustomParkingRestrictionSerializer,
                                   CustomStatusScheduleSerializer,
                                   CustomConnectorSerializer,
                                   CustomEnergyMeterSerializer,
@@ -6173,6 +6183,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                   CustomAdditionalGeoLocationSerializer,
                                   CustomChargingStationSerializer,
                                   CustomEVSESerializer,
+                                  CustomParkingSerializer,
+                                  CustomParkingRestrictionSerializer,
                                   CustomStatusScheduleSerializer,
                                   CustomConnectorSerializer,
                                   CustomEnergyMeterSerializer,

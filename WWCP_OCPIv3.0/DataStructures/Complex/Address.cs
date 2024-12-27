@@ -115,12 +115,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             unchecked
             {
 
-                hashCode = Street.      GetHashCode()       * 13 ^
-                           City.        GetHashCode()       * 11 ^
-                           Country.     GetHashCode()       *  7 ^
-                           Coordinates. GetHashCode()       *  5 ^
-                          (PostalCode?. GetHashCode() ?? 0) *  3 ^
-                          (State?.      GetHashCode() ?? 0);
+                hashCode = this.Street.     GetHashCode()       * 13 ^
+                           this.City.       GetHashCode()       * 11 ^
+                           this.Country.    GetHashCode()       *  7 ^
+                           this.Coordinates.GetHashCode()       *  5 ^
+                          (this.PostalCode?.GetHashCode() ?? 0) *  3 ^
+                          (this.State?.     GetHashCode() ?? 0);
 
             }
 

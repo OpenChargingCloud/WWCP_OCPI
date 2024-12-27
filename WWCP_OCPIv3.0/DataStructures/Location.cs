@@ -312,15 +312,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                         CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
                         CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                        CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                         CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                        CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
+                        CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
+                        CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
+                        CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                         CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
                         CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                         CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
                         CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                         CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                         CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
-                        CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
                         CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
                         CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
                         CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null)
@@ -361,15 +363,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                    CustomAdditionalGeoLocationSerializer,
                    CustomChargingStationSerializer,
                    CustomEVSESerializer,
-                   CustomStatusScheduleSerializer,
                    CustomConnectorSerializer,
+                   CustomParkingSerializer,
+                   CustomParkingRestrictionSerializer,
+                   CustomImageSerializer,
+                   CustomStatusScheduleSerializer,
                    CustomEnergyMeterSerializer,
                    CustomTransparencySoftwareStatusSerializer,
                    CustomTransparencySoftwareSerializer,
                    CustomDisplayTextSerializer,
                    CustomBusinessDetailsSerializer,
                    CustomHoursSerializer,
-                   CustomImageSerializer,
                    CustomEnergyMixSerializer,
                    CustomEnergySourceSerializer,
                    CustomEnvironmentalImpactSerializer)
@@ -465,15 +469,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                           CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                           CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
                           CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                          CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                           CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                          CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
+                          CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
+                          CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
+                          CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                           CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
                           CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                           CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
                           CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                           CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                           CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
-                          CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
                           CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
                           CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
                           CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null)
@@ -528,15 +534,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                            CustomAdditionalGeoLocationSerializer,
                                            CustomChargingStationSerializer,
                                            CustomEVSESerializer,
-                                           CustomStatusScheduleSerializer,
                                            CustomConnectorSerializer,
+                                           CustomParkingSerializer,
+                                           CustomParkingRestrictionSerializer,
+                                           CustomImageSerializer,
+                                           CustomStatusScheduleSerializer,
                                            CustomEnergyMeterSerializer,
                                            CustomTransparencySoftwareStatusSerializer,
                                            CustomTransparencySoftwareSerializer,
                                            CustomDisplayTextSerializer,
                                            CustomBusinessDetailsSerializer,
                                            CustomHoursSerializer,
-                                           CustomImageSerializer,
                                            CustomEnergyMixSerializer,
                                            CustomEnergySourceSerializer,
                                            CustomEnvironmentalImpactSerializer
@@ -1104,6 +1112,9 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomAddressSerializer">A delegate to serialize custom address JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomChargingStationSerializer">A delegate to serialize custom charging station JSON objects.</param>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
+        /// <param name="CustomParkingRestrictionSerializer">A delegate to serialize custom parking restriction JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
@@ -1116,6 +1127,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        /// <param name="CustomLocationMaxPowerSerializer">A delegate to serialize custom location max power JSON objects.</param>
         public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = true,
                               Boolean                                                       IncludeVersionInformation                    = true,
                               Boolean                                                       IncludeExtensions                            = true,
@@ -1125,6 +1137,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                               CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+                              CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
+                              CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
                               CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
@@ -1184,14 +1198,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                                                                                              true,
                                                                                                                                                              true,
                                                                                                                                                              CustomChargingStationSerializer,
-                                                                                                                                                             CustomStatusScheduleSerializer,
                                                                                                                                                              CustomEVSESerializer,
                                                                                                                                                              CustomConnectorSerializer,
+                                                                                                                                                             CustomParkingSerializer,
+                                                                                                                                                             CustomParkingRestrictionSerializer,
+                                                                                                                                                             CustomImageSerializer,
+                                                                                                                                                             CustomStatusScheduleSerializer,
                                                                                                                                                              CustomEnergyMeterSerializer,
                                                                                                                                                              CustomTransparencySoftwareStatusSerializer,
                                                                                                                                                              CustomTransparencySoftwareSerializer,
-                                                                                                                                                             CustomDisplayTextSerializer,
-                                                                                                                                                             CustomImageSerializer))))
+                                                                                                                                                             CustomDisplayTextSerializer))))
                                : null,
 
                            Directions.Any()
@@ -1606,15 +1622,18 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomAddressSerializer">A delegate to serialize custom address JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomChargingStationSerializer">A delegate to serialize custom ChargingStation JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
+        /// <param name="CustomParkingRestrictionSerializer">A delegate to serialize custom parking restriction JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
@@ -1624,15 +1643,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                      CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                                      CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
                                      CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                                     CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                                      CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                                     CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
+                                     CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
+                                     CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
+                                     CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
                                      CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
                                      CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                                      CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
                                      CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                                      CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                                      CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
-                                     CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
                                      CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
                                      CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
                                      CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null)
@@ -1649,6 +1670,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                            CustomAdditionalGeoLocationSerializer,
                            CustomChargingStationSerializer,
                            CustomEVSESerializer,
+                           CustomParkingSerializer,
+                           CustomParkingRestrictionSerializer,
                            CustomStatusScheduleSerializer,
                            CustomConnectorSerializer,
                            CustomEnergyMeterSerializer,

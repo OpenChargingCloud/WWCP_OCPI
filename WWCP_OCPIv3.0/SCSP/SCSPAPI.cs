@@ -113,6 +113,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer         { get; set; }
         public CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer               { get; set; }
         public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                          { get; set; }
+        public CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer            { get; set; }
         public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer                { get; set; }
         public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                     { get; set; }
         public CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                   { get; set; }
@@ -2303,6 +2305,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                                                                                      CustomAdditionalGeoLocationSerializer,
                                                                                                                      CustomChargingStationSerializer,
                                                                                                                      CustomEVSESerializer,
+                                                                                                                     CustomParkingSerializer,
+                                                                                                                     CustomParkingRestrictionSerializer,
                                                                                                                      CustomStatusScheduleSerializer,
                                                                                                                      CustomConnectorSerializer,
                                                                                                                      CustomEnergyMeterSerializer,
@@ -2481,6 +2485,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                                                           CustomAdditionalGeoLocationSerializer,
                                                                                           CustomChargingStationSerializer,
                                                                                           CustomEVSESerializer,
+                                                                                          CustomParkingSerializer,
+                                                                                          CustomParkingRestrictionSerializer,
                                                                                           CustomStatusScheduleSerializer,
                                                                                           CustomConnectorSerializer,
                                                                                           CustomEnergyMeterSerializer,
@@ -2591,6 +2597,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                                                                             CustomAdditionalGeoLocationSerializer,
                                                                                                             CustomChargingStationSerializer,
                                                                                                             CustomEVSESerializer,
+                                                                                                            CustomParkingSerializer,
+                                                                                                            CustomParkingRestrictionSerializer,
                                                                                                             CustomStatusScheduleSerializer,
                                                                                                             CustomConnectorSerializer,
                                                                                                             CustomEnergyMeterSerializer,
@@ -2623,6 +2631,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                                                                       CustomAdditionalGeoLocationSerializer,
                                                                                                       CustomChargingStationSerializer,
                                                                                                       CustomEVSESerializer,
+                                                                                                      CustomParkingSerializer,
+                                                                                                      CustomParkingRestrictionSerializer,
                                                                                                       CustomStatusScheduleSerializer,
                                                                                                       CustomConnectorSerializer,
                                                                                                       CustomEnergyMeterSerializer,
@@ -2724,6 +2734,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                                                   CustomAdditionalGeoLocationSerializer,
                                                                                   CustomChargingStationSerializer,
                                                                                   CustomEVSESerializer,
+                                                                                  CustomParkingSerializer,
+                                                                                  CustomParkingRestrictionSerializer,
                                                                                   CustomStatusScheduleSerializer,
                                                                                   CustomConnectorSerializer,
                                                                                   CustomEnergyMeterSerializer,
@@ -2817,6 +2829,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                                                               CustomAdditionalGeoLocationSerializer,
                                                                                               CustomChargingStationSerializer,
                                                                                               CustomEVSESerializer,
+                                                                                              CustomParkingSerializer,
+                                                                                              CustomParkingRestrictionSerializer,
                                                                                               CustomStatusScheduleSerializer,
                                                                                               CustomConnectorSerializer,
                                                                                               CustomEnergyMeterSerializer,

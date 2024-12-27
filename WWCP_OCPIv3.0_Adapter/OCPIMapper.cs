@@ -1084,18 +1084,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                 return new EVSE(
 
                            UId:                   evseUId.Value,
-                           Status:                EVSE.Status.Value.ToOCPI(),
+                           Presence:              PresenceStatus.PRESENT,
                            Connectors:            connectors,
+                           Parking:               new Parking(
+                                                      VehicleTypes:          [ VehicleType.VAN ],
+                                                      EVSEPosition:          EVSEPosition.LEFT,
+                                                      Direction:             ParkingDirection.PARALLEL,
+                                                      RestrictedToType:      false,
+                                                      ReservationRequired:   false
+                                                  ),
 
                            EVSEId:                evseId,
+                           Status:                EVSE.Status.Value.ToOCPI(),
                            StatusSchedule:        [],
-                           Capabilities:          EVSE.ChargingStation.ToOCPI_Capabilities(),
+                     //      Capabilities:          EVSE.ChargingStation.ToOCPI_Capabilities(),
                            EnergyMeter:           EVSE.EnergyMeter?.ToOCPI(),
-                           FloorLevel:            EVSE.ChargingStation.Address?.FloorLevel ?? EVSE.ChargingPool.Address?.FloorLevel,
-                           Coordinates:           EVSE.ChargingStation.GeoLocation         ?? EVSE.ChargingPool.GeoLocation,
+                     //      FloorLevel:            EVSE.ChargingStation.Address?.FloorLevel ?? EVSE.ChargingPool.Address?.FloorLevel,
+                     //      Coordinates:           EVSE.ChargingStation.GeoLocation         ?? EVSE.ChargingPool.GeoLocation,
                            PhysicalReference:     EVSE.PhysicalReference                   ?? EVSE.ChargingStation.PhysicalReference,
-                           Directions:            EVSE.ChargingStation.ArrivalInstructions.ToOCPI(),
-                           ParkingRestrictions:   [],
+                     //      Directions:            EVSE.ChargingStation.ArrivalInstructions.ToOCPI(),
+                     //      ParkingRestrictions:   [],
                            Images:                [],
 
                            LastUpdated:           LastUpdate ?? EVSE.LastChangeDate
