@@ -310,10 +310,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         /// <param name="CustomAuthorizationInfoSerializer">A delegate to serialize custom authorizationInfo JSON objects.</param>
         /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
+        /// <param name="CustomEnergyContractSerializer">A delegate to serialize custom energy contract JSON objects.</param>
         /// <param name="CustomLocationReferenceSerializer">A delegate to serialize custom location reference JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<AuthorizationInfo>?  CustomAuthorizationInfoSerializer   = null,
                               CustomJObjectSerializerDelegate<Token>?              CustomTokenSerializer               = null,
+                              CustomJObjectSerializerDelegate<EnergyContract>?     CustomEnergyContractSerializer      = null,
                               CustomJObjectSerializerDelegate<LocationReference>?  CustomLocationReferenceSerializer   = null,
                               CustomJObjectSerializerDelegate<DisplayText>?        CustomDisplayTextSerializer         = null)
         {
@@ -323,7 +325,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                  new JProperty("allowed",                   Allowed.                     ToString()),
 
                            Token is not null
-                               ? new JProperty("token",                     Token.                       ToJSON(CustomTokenSerializer))
+                               ? new JProperty("token",                     Token.                       ToJSON(true,
+                                                                                                                true,
+                                                                                                                true,
+                                                                                                                true,
+                                                                                                                CustomTokenSerializer,
+                                                                                                                CustomEnergyContractSerializer))
                                : null,
 
                            Location.HasValue

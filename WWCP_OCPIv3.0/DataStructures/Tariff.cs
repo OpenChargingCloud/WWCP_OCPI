@@ -42,15 +42,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
     public class Tariff : APartyIssuedObject<Tariff_Id>,
                           IEquatable<Tariff>,
                           IComparable<Tariff>,
-                          IComparable,
-                          INotBeforeNotAfter
+                          IComparable 
+                          //INotBeforeNotAfter
     {
+
         #region Data
 
         /// <summary>
         /// The default JSON-LD context of tariffs.
         /// </summary>
-        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/3.0/tariffs");
+        public static readonly JSONLDContext DefaultJSONLDContext = JSONLDContext.Parse("https://open.charging.cloud/contexts/OCPI/3.0/tariff");
 
         #endregion
 
@@ -61,13 +62,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// </summary>
         [Mandatory]
         public   OCPI.Currency               Currency             { get; }
-
-        /// <summary>
-        /// The optional tariff type allows to distinguish between charging preferences.
-        /// When omitted, this tariff is valid for all charging sessions.
-        /// </summary>
-        [Optional]
-        public   TariffType?                 TariffType           { get; }
 
         /// <summary>
         /// The optional multi-language alternative tariff info text.
@@ -105,21 +99,21 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         [Mandatory]
         public   IEnumerable<TariffElement>  TariffElements       { get; }
 
-        /// <summary>
-        /// The optional timestamp when this tariff becomes active (UTC).
-        /// Typically used for a new tariff that is already given with the charging location,
-        /// before it becomes active.
-        /// </summary>
-        [Optional]
-        public   DateTime?                   Start                { get; }
+        ///// <summary>
+        ///// The optional timestamp when this tariff becomes active (UTC).
+        ///// Typically used for a new tariff that is already given with the charging location,
+        ///// before it becomes active.
+        ///// </summary>
+        //[Optional]
+        //public   DateTime?                   Start                { get; }
 
-        /// <summary>
-        /// The optional timestamp after which this tariff is no longer valid (UTC).
-        /// Typically used when this tariff is going to be replaced with a different tariff
-        /// in the near future.
-        /// </summary>
-        [Optional]
-        public   DateTime?                   End                  { get; }
+        ///// <summary>
+        ///// The optional timestamp after which this tariff is no longer valid (UTC).
+        ///// Typically used when this tariff is going to be replaced with a different tariff
+        ///// in the near future.
+        ///// </summary>
+        //[Optional]
+        //public   DateTime?                   End                  { get; }
 
         /// <summary>
         /// Optional details on the energy supplied with this tariff.
@@ -133,19 +127,19 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         [Mandatory, NonStandard("Pagination")]
         public   DateTime                    Created              { get; }
 
-        /// <summary>
-        /// The optional timestamp when this tariff becomes relevant.
-        /// </summary>
-        [Optional, NonStandard("TimeTraveling")]
-        public   DateTime?                   NotBefore
-            => Start;
+        ///// <summary>
+        ///// The optional timestamp when this tariff becomes relevant.
+        ///// </summary>
+        //[Optional, NonStandard("TimeTraveling")]
+        //public   DateTime?                   NotBefore
+        //    => Start;
 
-        /// <summary>
-        /// The optional timestamp when this tariff is no longer relevant.
-        /// </summary>
-        [Optional, NonStandard("TimeTraveling")]
-        public   DateTime?                   NotAfter
-            => End;
+        ///// <summary>
+        ///// The optional timestamp when this tariff is no longer relevant.
+        ///// </summary>
+        //[Optional, NonStandard("TimeTraveling")]
+        //public   DateTime?                   NotAfter
+        //    => End;
 
         /// <summary>
         /// The timestamp when this tariff was last updated (or created).
@@ -162,107 +156,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Constructor(s)
 
-        //#region Tariff(...)
-
-        ///// <summary>
-        ///// Create a new tariff.
-        ///// </summary>
-        ///// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this session.</param>
-        ///// <param name="PartyId">An identification of the charge point operator that 'owns' this session (following the ISO-15118 standard).</param>
-        ///// <param name="Id">An identification of the tariff within the CPOs platform (and suboperator platforms).</param>
-        ///// <param name="Currency">An ISO 4217 code of the currency used for this tariff.</param>
-        ///// <param name="TariffElements">An enumeration of tariff elements.</param>
-        ///// 
-        ///// <param name="TariffType">An optional tariff type, that allows to distinguish between charging preferences. When omitted, this tariff is valid for all charging sessions.</param>
-        ///// <param name="TariffAltText">An optional multi-language alternative tariff info text.</param>
-        ///// <param name="TariffAltURL">An optional URL to a web page that contains an explanation of the tariff information in human readable form.</param>
-        ///// <param name="MinPrice">When this optional field is set, a charging session with this tariff will at least cost this amount.</param>
-        ///// <param name="MaxPrice">When this optional field is set, a charging session with this tariff will NOT cost more than this amount.</param>
-        ///// <param name="Start">An optional timestamp when this tariff becomes active (UTC).</param>
-        ///// <param name="End">An optional timestamp after which this tariff is no longer valid (UTC).</param>
-        ///// <param name="EnergyMix">Optional details on the energy supplied with this tariff.</param>
-        ///// 
-        ///// <param name="Created">An optional timestamp when this tariff was created.</param>
-        ///// <param name="LastUpdated">An optional timestamp when this tariff was last updated (or created).</param>
-        ///// 
-        ///// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
-        ///// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        ///// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        ///// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
-        ///// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
-        ///// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
-        ///// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
-        ///// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
-        ///// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        //public Tariff(Party_Idv3                                             PartyId,
-        //              Tariff_Id                                              Id,
-        //              UInt64                                                 VersionId,
-
-        //              OCPI.Currency                                          Currency,
-        //              IEnumerable<TariffElement>                             TariffElements,
-
-        //              TariffType?                                            TariffType                            = null,
-        //              IEnumerable<DisplayText>?                              TariffAltText                         = null,
-        //              URL?                                                   TariffAltURL                          = null,
-        //              Price?                                                 MinPrice                              = null,
-        //              Price?                                                 MaxPrice                              = null,
-        //              DateTime?                                              Start                                 = null,
-        //              DateTime?                                              End                                   = null,
-        //              EnergyMix?                                             EnergyMix                             = null,
-
-        //              DateTime?                                              Created                               = null,
-        //              DateTime?                                              LastUpdated                           = null,
-
-        //              CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
-        //              CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
-        //              CustomJObjectSerializerDelegate<Price>?                CustomPriceSerializer                 = null,
-        //              CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer         = null,
-        //              CustomJObjectSerializerDelegate<PriceComponent>?       CustomPriceComponentSerializer        = null,
-        //              CustomJObjectSerializerDelegate<TariffRestrictions>?   CustomTariffRestrictionsSerializer    = null,
-        //              CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             = null,
-        //              CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          = null,
-        //              CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
-
-        //    : this(null,
-        //           PartyId,
-        //           Id,
-        //           VersionId,
-
-        //           Currency,
-        //           TariffElements,
-
-        //           TariffType,
-        //           TariffAltText,
-        //           TariffAltURL,
-        //           MinPrice,
-        //           MaxPrice,
-        //           Start,
-        //           End,
-        //           EnergyMix,
-
-        //           Created,
-        //           LastUpdated,
-
-        //           CustomTariffSerializer,
-        //           CustomDisplayTextSerializer,
-        //           CustomPriceSerializer,
-        //           CustomTariffElementSerializer,
-        //           CustomPriceComponentSerializer,
-        //           CustomTariffRestrictionsSerializer,
-        //           CustomEnergyMixSerializer,
-        //           CustomEnergySourceSerializer,
-        //           CustomEnvironmentalImpactSerializer)
-
-        //{ }
-
-        //#endregion
-
-        //#region (internal) Tariff(CommonAPI, ...)
+        #region Tariff()
 
         /// <summary>
         /// Create a new tariff.
         /// </summary>
-        /// <param name="CommonAPI">The common OCPI API hosting this tariff.</param>
         /// <param name="PartyId">The party identification of the party that issued this tariff.</param>
         /// <param name="Id">An identification of the tariff within the party.</param>
         /// <param name="VersionId">The version identification of the tariff.</param>
@@ -270,13 +168,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="Currency">An ISO 4217 code of the currency used for this tariff.</param>
         /// <param name="TariffElements">An enumeration of tariff elements.</param>
         /// 
-        /// <param name="TariffType">An optional tariff type, that allows to distinguish between charging preferences. When omitted, this tariff is valid for all charging sessions.</param>
         /// <param name="TariffAltText">An optional multi-language alternative tariff info text.</param>
         /// <param name="TariffAltURL">An optional URL to a web page that contains an explanation of the tariff information in human readable form.</param>
         /// <param name="MinPrice">When this optional field is set, a charging session with this tariff will at least cost this amount.</param>
         /// <param name="MaxPrice">When this optional field is set, a charging session with this tariff will NOT cost more than this amount.</param>
-        /// <param name="Start">An optional timestamp when this tariff becomes active (UTC).</param>
-        /// <param name="End">An optional timestamp after which this tariff is no longer valid (UTC).</param>
         /// <param name="EnergyMix">Optional details on the energy supplied with this tariff.</param>
         /// 
         /// <param name="Created">An optional timestamp when this tariff was created.</param>
@@ -291,21 +186,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public Tariff(CommonAPI?                                             CommonAPI,
-                      Party_Idv3                                             PartyId,
+        public Tariff(Party_Idv3                                             PartyId,
                       Tariff_Id                                              Id,
                       UInt64                                                 VersionId,
 
                       OCPI.Currency                                          Currency,
                       IEnumerable<TariffElement>                             TariffElements,
 
-                      TariffType?                                            TariffType                            = null,
                       IEnumerable<DisplayText>?                              TariffAltText                         = null,
                       URL?                                                   TariffAltURL                          = null,
                       Price?                                                 MinPrice                              = null,
                       Price?                                                 MaxPrice                              = null,
-                      DateTime?                                              Start                                 = null,
-                      DateTime?                                              End                                   = null,
                       EnergyMix?                                             EnergyMix                             = null,
 
                       DateTime?                                              Created                               = null,
@@ -321,6 +212,95 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                       CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          = null,
                       CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
 
+            : this(null,
+                   PartyId,
+                   Id,
+                   VersionId,
+
+                   Currency,
+                   TariffElements,
+
+                   TariffAltText,
+                   TariffAltURL,
+                   MinPrice,
+                   MaxPrice,
+                   EnergyMix,
+
+                   Created,
+                   LastUpdated,
+
+                   CustomTariffSerializer,
+                   CustomDisplayTextSerializer,
+                   CustomPriceSerializer,
+                   CustomTariffElementSerializer,
+                   CustomPriceComponentSerializer,
+                   CustomTariffRestrictionsSerializer,
+                   CustomEnergyMixSerializer,
+                   CustomEnergySourceSerializer,
+                   CustomEnvironmentalImpactSerializer)
+
+        { }
+
+        #endregion
+
+        #region (internal) Tariff(CommonAPI, ...)
+
+        /// <summary>
+        /// Create a new tariff.
+        /// </summary>
+        /// <param name="CommonAPI">The common OCPI API hosting this tariff.</param>
+        /// <param name="PartyId">The party identification of the party that issued this tariff.</param>
+        /// <param name="Id">An identification of the tariff within the party.</param>
+        /// <param name="VersionId">The version identification of the tariff.</param>
+        /// 
+        /// <param name="Currency">An ISO 4217 code of the currency used for this tariff.</param>
+        /// <param name="TariffElements">An enumeration of tariff elements.</param>
+        /// 
+        /// <param name="TariffAltText">An optional multi-language alternative tariff info text.</param>
+        /// <param name="TariffAltURL">An optional URL to a web page that contains an explanation of the tariff information in human readable form.</param>
+        /// <param name="MinPrice">When this optional field is set, a charging session with this tariff will at least cost this amount.</param>
+        /// <param name="MaxPrice">When this optional field is set, a charging session with this tariff will NOT cost more than this amount.</param>
+        /// <param name="EnergyMix">Optional details on the energy supplied with this tariff.</param>
+        /// 
+        /// <param name="Created">An optional timestamp when this tariff was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this tariff was last updated (or created).</param>
+        /// 
+        /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
+        /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
+        /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
+        /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        internal Tariff(CommonAPI?                                             CommonAPI,
+                        Party_Idv3                                             PartyId,
+                        Tariff_Id                                              Id,
+                        UInt64                                                 VersionId,
+
+                        OCPI.Currency                                          Currency,
+                        IEnumerable<TariffElement>                             TariffElements,
+
+                        IEnumerable<DisplayText>?                              TariffAltText                         = null,
+                        URL?                                                   TariffAltURL                          = null,
+                        Price?                                                 MinPrice                              = null,
+                        Price?                                                 MaxPrice                              = null,
+                        EnergyMix?                                             EnergyMix                             = null,
+
+                        DateTime?                                              Created                               = null,
+                        DateTime?                                              LastUpdated                           = null,
+
+                        CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
+                        CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
+                        CustomJObjectSerializerDelegate<Price>?                CustomPriceSerializer                 = null,
+                        CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer         = null,
+                        CustomJObjectSerializerDelegate<PriceComponent>?       CustomPriceComponentSerializer        = null,
+                        CustomJObjectSerializerDelegate<TariffRestrictions>?   CustomTariffRestrictionsSerializer    = null,
+                        CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             = null,
+                        CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          = null,
+                        CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
+
             : base(CommonAPI,
                    PartyId,
                    Id,
@@ -334,13 +314,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             this.Currency        = Currency;
             this.TariffElements  = TariffElements.Distinct();
 
-            this.TariffType      = TariffType;
             this.TariffAltText   = TariffAltText?.Distinct() ?? [];
             this.TariffAltURL    = TariffAltURL;
             this.MinPrice        = MinPrice;
             this.MaxPrice        = MaxPrice;
-            this.Start           = Start;
-            this.End             = End;
             this.EnergyMix       = EnergyMix;
 
             this.Created         = Created                   ?? LastUpdated ?? Timestamp.Now;
@@ -361,42 +338,42 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             unchecked
             {
 
-                hashCode = this.PartyId.       GetHashCode()        * 41 ^
-                           this.Id.            GetHashCode()        * 37 ^
+                hashCode = this.PartyId.       GetHashCode()        * 79 ^
+                           this.Id.            GetHashCode()        * 73 ^
+                           this.VersionId.     GetHashCode()        * 71 ^
+
                            this.Currency.      GetHashCode()        * 31 ^
                            this.TariffElements.CalcHashCode()       * 29 ^
-                           this.LastUpdated.   GetHashCode()        * 23 ^
-                          (this.TariffType?.   GetHashCode()  ?? 0) * 19 ^
                            this.TariffAltText. CalcHashCode()       * 17 ^
                           (this.TariffAltURL?. GetHashCode()  ?? 0) * 13 ^
                           (this.MinPrice?.     GetHashCode()  ?? 0) * 11 ^
                           (this.MaxPrice?.     GetHashCode()  ?? 0) *  7 ^
-                          (this.Start?.        GetHashCode()  ?? 0) *  5 ^
-                          (this.End?.          GetHashCode()  ?? 0) *  3 ^
-                           this.EnergyMix?.    GetHashCode()  ?? 0;
+                           this.EnergyMix?.    GetHashCode()  ?? 0 ^
+
+                           this.Created.       GetHashCode()       *  3 ^
+                           this.LastUpdated.   GetHashCode();
 
             }
 
         }
 
-        //#endregion
+        #endregion
 
         #endregion
 
 
-        #region (static) Parse   (JSON, CountryCodeURL = null, PartyIdURL = null, TariffIdURL = null, CustomTariffParser = null)
+        #region (static) Parse   (JSON, ...)
 
         /// <summary>
         /// Parse the given JSON representation of a tariff.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
         /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="TariffIdURL">An optional tariff identification, e.g. from the HTTP URL.</param>
+        /// <param name="VersionIdURL">An optional version identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomTariffParser">A delegate to parse custom tariff JSON objects.</param>
         public static Tariff Parse(JObject                               JSON,
-                                   CountryCode?                          CountryCodeURL       = null,
-                                   Party_Idv3?                             PartyIdURL           = null,
+                                   Party_Idv3?                           PartyIdURL           = null,
                                    Tariff_Id?                            TariffIdURL          = null,
                                    UInt64?                               VersionIdURL         = null,
                                    CustomJObjectParserDelegate<Tariff>?  CustomTariffParser   = null)
@@ -420,7 +397,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #endregion
 
-        #region (static) TryParse(JSON, out Tariff, out ErrorResponse, TariffIdURL = null, CustomTariffParser = null)
+        #region (static) TryParse(JSON, out Tariff, out ErrorResponse, ...)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
@@ -449,14 +426,14 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Tariff">The parsed tariff.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
         /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="TariffIdURL">An optional tariff identification, e.g. from the HTTP URL.</param>
+        /// <param name="VersionIdURL">An optional version identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomTariffParser">A delegate to parse custom tariff JSON objects.</param>
         public static Boolean TryParse(JObject                               JSON,
                                        [NotNullWhen(true)]  out Tariff?      Tariff,
                                        [NotNullWhen(false)] out String?      ErrorResponse,
-                                       Party_Idv3?                             PartyIdURL           = null,
+                                       Party_Idv3?                           PartyIdURL           = null,
                                        Tariff_Id?                            TariffIdURL          = null,
                                        UInt64?                               VersionIdURL         = null,
                                        CustomJObjectParserDelegate<Tariff>?  CustomTariffParser   = null)
@@ -564,20 +541,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse TariffType        [optional]
-
-                if (JSON.ParseOptional("type",
-                                       "tariff type",
-                                       OCPIv3_0.TariffType.TryParse,
-                                       out TariffType? TariffType,
-                                       out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
                 #region Parse TariffAltText     [optional]
 
                 if (JSON.ParseOptionalJSON("tariff_alt_text",
@@ -648,32 +611,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                 #endregion
 
-                #region Parse Start             [optional]
-
-                if (JSON.ParseOptional("start_date_time",
-                                       "start timestamp",
-                                       out DateTime? Start,
-                                       out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
-                #region Parse End               [optional]
-
-                if (JSON.ParseOptional("end_date_time",
-                                       "end timestamp",
-                                       out DateTime? End,
-                                       out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
                 #region Parse EnergyMix         [optional]
 
                 if (JSON.ParseOptionalJSON("energy_mix",
@@ -725,13 +662,10 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                              Currency,
                              TariffElements,
 
-                             TariffType,
                              TariffAltText,
                              TariffAltURL,
                              MinPrice,
                              MaxPrice,
-                             Start,
-                             End,
                              EnergyMix,
 
                              Created,
@@ -776,6 +710,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         public JObject ToJSON(Boolean                                                IncludeOwnerInformation               = true,
                               Boolean                                                IncludeVersionInformation             = true,
+                              Boolean                                                IncludeCreatedTimestamp               = true,
                               Boolean                                                IncludeExtensions                     = true,
                               CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
                               CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
@@ -803,10 +738,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                                  new JProperty("currency",          Currency.        ToString()),
 
-                           TariffType.HasValue
-                               ? new JProperty("type",              TariffType.Value.ToString())
-                               : null,
-
                            TariffAltText.SafeAny()
                                ? new JProperty("tariff_alt_text",   new JArray(TariffAltText.Select(tariffAltText => tariffAltText.ToJSON(CustomDisplayTextSerializer))))
                                : null,
@@ -829,21 +760,16 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                                                                                                            CustomTariffRestrictionsSerializer))))
                                : null,
 
-                           Start.HasValue
-                               ? new JProperty("start_date_time",   Start.Value.     ToIso8601())
-                               : null,
-
-                           End.HasValue
-                               ? new JProperty("end_date_time",     End.  Value.     ToIso8601())
-                               : null,
-
                            EnergyMix is not null
                                ? new JProperty("energy_mix",        EnergyMix.       ToJSON(CustomEnergyMixSerializer,
                                                                                             CustomEnergySourceSerializer,
                                                                                             CustomEnvironmentalImpactSerializer))
                                : null,
 
-                                 new JProperty("created",           Created.         ToIso8601()),
+                           IncludeCreatedTimestamp
+                               ? new JProperty("created",           Created.         ToIso8601())
+                               : null,
+
                                  new JProperty("last_updated",      LastUpdated.     ToIso8601())
 
                        );
@@ -864,6 +790,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         public Tariff Clone()
 
             => new (
+
                    CommonAPI,
                    PartyId.       Clone(),
                    Id.            Clone(),
@@ -871,17 +798,15 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
                    Currency.      Clone(),
                    TariffElements.Select(tariffElement => tariffElement.Clone()).ToArray(),
-                   TariffType?.   Clone(),
                    TariffAltText. Select(displayText   => displayText.  Clone()).ToArray(),
                    TariffAltURL?. Clone(),
                    MinPrice?.     Clone(),
                    MaxPrice?.     Clone(),
-                   Start,
-                   End,
                    EnergyMix?.    Clone(),
 
                    Created,
                    LastUpdated
+
                );
 
         #endregion
@@ -1043,6 +968,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             ETag = SHA256.HashData(
                        ToJSON(
+                           true,
                            true,
                            true,
                            true,
@@ -1221,7 +1147,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             // TariffElements
             // 
-            // TariffType
             // TariffAltText
             // TariffAltURL
             // MinPrice
@@ -1273,23 +1198,17 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                LastUpdated.ToIso8601().Equals(Tariff.LastUpdated.ToIso8601()) &&
 
 
-            ((!TariffType.HasValue    && !Tariff.TariffType.HasValue) ||
-              (TariffType.HasValue    &&  Tariff.TariffType.HasValue    && TariffType.Value.Equals(Tariff.TariffType.Value))) &&
-
-            ((!TariffType.HasValue    && !Tariff.TariffType.HasValue) ||
-              (TariffType.HasValue    &&  Tariff.TariffType.HasValue    && TariffType.Value.Equals(Tariff.TariffType.Value))) &&
-
             ((!MinPrice.  HasValue    && !Tariff.MinPrice.  HasValue) ||
               (MinPrice.  HasValue    &&  Tariff.MinPrice.  HasValue    && MinPrice.  Value.Equals(Tariff.MinPrice.  Value))) &&
 
             ((!MaxPrice.  HasValue    && !Tariff.MaxPrice.  HasValue) ||
               (MaxPrice.  HasValue    &&  Tariff.MaxPrice.  HasValue    && MaxPrice.  Value.Equals(Tariff.MaxPrice.  Value))) &&
 
-            ((!Start.     HasValue    && !Tariff.Start.     HasValue) ||
-              (Start.     HasValue    &&  Tariff.Start.     HasValue    && Start.     Value.Equals(Tariff.Start.     Value))) &&
+            //((!Start.     HasValue    && !Tariff.Start.     HasValue) ||
+            //  (Start.     HasValue    &&  Tariff.Start.     HasValue    && Start.     Value.Equals(Tariff.Start.     Value))) &&
 
-            ((!End.       HasValue    && !Tariff.End.       HasValue) ||
-              (End.       HasValue    &&  Tariff.End.       HasValue    && End.       Value.Equals(Tariff.End.       Value))) &&
+            //((!End.       HasValue    && !Tariff.End.       HasValue) ||
+            //  (End.       HasValue    &&  Tariff.End.       HasValue    && End.       Value.Equals(Tariff.End.       Value))) &&
 
              ((EnergyMix  is     null &&  Tariff.EnergyMix  is null)  ||
               (EnergyMix  is not null &&  Tariff.EnergyMix  is not null && EnergyMix.       Equals(Tariff.EnergyMix)))        &&

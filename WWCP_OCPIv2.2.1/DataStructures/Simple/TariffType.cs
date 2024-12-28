@@ -108,8 +108,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static TariffType Parse(String Text)
         {
 
-            if (TryParse(Text, out var tariffDimension))
-                return tariffDimension;
+            if (TryParse(Text, out var tariffType))
+                return tariffType;
 
             throw new ArgumentException($"Invalid text representation of a tariff type: '" + Text + "'!",
                                         nameof(Text));
@@ -127,8 +127,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         public static TariffType? TryParse(String Text)
         {
 
-            if (TryParse(Text, out var tariffDimension))
-                return tariffDimension;
+            if (TryParse(Text, out var tariffType))
+                return tariffType;
 
             return null;
 
@@ -325,8 +325,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Object">A tariff type to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
-            => Object is TariffType tariffDimension
-                   ? CompareTo(tariffDimension)
+            => Object is TariffType tariffType
+                   ? CompareTo(tariffType)
                    : throw new ArgumentException("The given object is not a tariff type!",
                                                  nameof(Object));
 
@@ -358,8 +358,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2_1
         /// <param name="Object">A tariff type to compare with.</param>
         public override Boolean Equals(Object? Object)
 
-            => Object is TariffType tariffDimension &&
-                   Equals(tariffDimension);
+            => Object is TariffType tariffType &&
+                   Equals(tariffType);
 
         #endregion
 

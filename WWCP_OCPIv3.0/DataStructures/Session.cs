@@ -190,6 +190,116 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Constructor(s)
 
+        #region Session(...)
+
+        /// <summary>
+        /// Create a new session.
+        /// </summary>
+        /// <param name="PartyId">The party identification of the party that issued this session.</param>
+        /// <param name="Id">An identification of the session within the party.</param>
+        /// <param name="VersionId">The version identification of the session.</param>
+        /// 
+        /// <param name="Start">A timestamp when the session became active.</param>
+        /// <param name="Energy">An amount of kWhs that had been charged.</param>
+        /// <param name="CDRToken">An authentication token used to start this charging session, including all relevant information to identify the unique token.</param>
+        /// <param name="AuthMethod">A method used for authentication.</param>
+        /// <param name="LocationId">The identification of the location at which the charging session is/was happening.</param>
+        /// <param name="Currency">An ISO 4217 code of the currency used for this session.</param>
+        /// <param name="TariffAssociationId">The identification of the tariff association that was used to look up the tariff of this session.</param>
+        /// <param name="TariffId">The identification of the tariff that was used to compute what this session costs.</param>
+        /// <param name="Status">A status of the session.</param>
+        /// 
+        /// <param name="End">An optional timestamp when the session was completed.</param>
+        /// <param name="AuthorizationReference">The optional reference to the authorization given by the eMSP. When the eMSP provided an authorization_reference in either: real-time authorization or StartSession, this field SHALL contain the same value.</param>
+        /// <param name="Connector">The optional connector that the session happened on.</param>
+        /// <param name="ChargingPeriods">An optional enumeration of charging periods that can be used to calculate and verify the total cost.</param>
+        /// <param name="TotalCosts">The total costs of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO. A total_cost of 0.00 means free of charge. When omitted, i.e. no price information is given in the Session object, it does not imply the session is/was free of charge.</param>
+        /// <param name="MeterId">The optional identification of the kWh energy meter.</param>
+        /// <param name="EnergyMeter">The optional energy meter used for this session.</param>
+        /// <param name="TransparencySoftwares">An optional enumeration of valid transparency softwares which can be used to validate the signed charging session and metering data.</param>
+        /// 
+        /// <param name="Created">An optional timestamp when this charging session was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charging session was last updated (or created).</param>
+        /// 
+        /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
+        /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        /// <param name="CustomSessionConnectorSerializer">A delegate to serialize custom session connector JSON objects.</param>
+        /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
+        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
+        public Session(Party_Idv3                                          PartyId,
+                       Session_Id                                          Id,
+                       UInt64                                              VersionId,
+
+                       DateTime                                            Start,
+                       WattHour                                            Energy,
+                       CDRToken                                            CDRToken,
+                       AuthMethod                                          AuthMethod,
+                       Location_Id                                         LocationId,
+                       OCPI.Currency                                       Currency,
+                       TariffAssociation_Id                                TariffAssociationId,
+                       Tariff_Id                                           TariffId,
+                       SessionStatus                                       Status,
+
+                       DateTime?                                           End                                = null,
+                       AuthorizationReference?                             AuthorizationReference             = null,
+                       SessionConnector?                                   Connector                          = null,
+                       IEnumerable<ChargingPeriod>?                        ChargingPeriods                    = null,
+                       Price?                                              TotalCosts                         = null,
+                       Meter_Id?                                           MeterId                            = null,
+                       EnergyMeter?                                        EnergyMeter                        = null,
+                       IEnumerable<TransparencySoftwareStatus>?            TransparencySoftwares              = null,
+
+                       DateTime?                                           Created                            = null,
+                       DateTime?                                           LastUpdated                        = null,
+
+                       CustomJObjectSerializerDelegate<Session>?           CustomSessionSerializer            = null,
+                       CustomJObjectSerializerDelegate<CDRToken>?          CustomCDRTokenSerializer           = null,
+                       CustomJObjectSerializerDelegate<SessionConnector>?  CustomSessionConnectorSerializer   = null,
+                       CustomJObjectSerializerDelegate<ChargingPeriod>?    CustomChargingPeriodSerializer     = null,
+                       CustomJObjectSerializerDelegate<CDRDimension>?      CustomCDRDimensionSerializer       = null,
+                       CustomJObjectSerializerDelegate<Price>?             CustomPriceSerializer              = null)
+
+            : this(null,
+                   PartyId,
+                   Id,
+                   VersionId,
+
+                   Start,
+                   Energy,
+                   CDRToken,
+                   AuthMethod,
+                   LocationId,
+                   Currency,
+                   TariffAssociationId,
+                   TariffId,
+                   Status,
+
+                   End,
+                   AuthorizationReference,
+                   Connector,
+                   ChargingPeriods,
+                   TotalCosts,
+                   MeterId,
+                   EnergyMeter,
+                   TransparencySoftwares,
+
+                   Created,
+                   LastUpdated,
+
+                   CustomSessionSerializer,
+                   CustomCDRTokenSerializer,
+                   CustomSessionConnectorSerializer,
+                   CustomChargingPeriodSerializer,
+                   CustomCDRDimensionSerializer,
+                   CustomPriceSerializer)
+
+        { }
+
+        #endregion
+
+        #region (internal) Session(CommonAPI, ...)
+
         /// <summary>
         /// Create a new session.
         /// </summary>
@@ -226,39 +336,39 @@ namespace cloud.charging.open.protocols.OCPIv3_0
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        public Session(CommonAPI?                                          CommonAPI,
-                       Party_Idv3                                          PartyId,
-                       Session_Id                                          Id,
-                       UInt64                                              VersionId,
+        internal Session(CommonAPI?                                          CommonAPI,
+                         Party_Idv3                                          PartyId,
+                         Session_Id                                          Id,
+                         UInt64                                              VersionId,
 
-                       DateTime                                            Start,
-                       WattHour                                            Energy,
-                       CDRToken                                            CDRToken,
-                       AuthMethod                                          AuthMethod,
-                       Location_Id                                         LocationId,
-                       OCPI.Currency                                       Currency,
-                       TariffAssociation_Id                                TariffAssociationId,
-                       Tariff_Id                                           TariffId,
-                       SessionStatus                                       Status,
+                         DateTime                                            Start,
+                         WattHour                                            Energy,
+                         CDRToken                                            CDRToken,
+                         AuthMethod                                          AuthMethod,
+                         Location_Id                                         LocationId,
+                         OCPI.Currency                                       Currency,
+                         TariffAssociation_Id                                TariffAssociationId,
+                         Tariff_Id                                           TariffId,
+                         SessionStatus                                       Status,
 
-                       DateTime?                                           End                                = null,
-                       AuthorizationReference?                             AuthorizationReference             = null,
-                       SessionConnector?                                   Connector                          = null,
-                       IEnumerable<ChargingPeriod>?                        ChargingPeriods                    = null,
-                       Price?                                              TotalCosts                         = null,
-                       Meter_Id?                                           MeterId                            = null,
-                       EnergyMeter?                                        EnergyMeter                        = null,
-                       IEnumerable<TransparencySoftwareStatus>?            TransparencySoftwares              = null,
+                         DateTime?                                           End                                = null,
+                         AuthorizationReference?                             AuthorizationReference             = null,
+                         SessionConnector?                                   Connector                          = null,
+                         IEnumerable<ChargingPeriod>?                        ChargingPeriods                    = null,
+                         Price?                                              TotalCosts                         = null,
+                         Meter_Id?                                           MeterId                            = null,
+                         EnergyMeter?                                        EnergyMeter                        = null,
+                         IEnumerable<TransparencySoftwareStatus>?            TransparencySoftwares              = null,
 
-                       DateTime?                                           Created                            = null,
-                       DateTime?                                           LastUpdated                        = null,
+                         DateTime?                                           Created                            = null,
+                         DateTime?                                           LastUpdated                        = null,
 
-                       CustomJObjectSerializerDelegate<Session>?           CustomSessionSerializer            = null,
-                       CustomJObjectSerializerDelegate<CDRToken>?          CustomCDRTokenSerializer           = null,
-                       CustomJObjectSerializerDelegate<SessionConnector>?  CustomSessionConnectorSerializer   = null,
-                       CustomJObjectSerializerDelegate<ChargingPeriod>?    CustomChargingPeriodSerializer     = null,
-                       CustomJObjectSerializerDelegate<CDRDimension>?      CustomCDRDimensionSerializer       = null,
-                       CustomJObjectSerializerDelegate<Price>?             CustomPriceSerializer              = null)
+                         CustomJObjectSerializerDelegate<Session>?           CustomSessionSerializer            = null,
+                         CustomJObjectSerializerDelegate<CDRToken>?          CustomCDRTokenSerializer           = null,
+                         CustomJObjectSerializerDelegate<SessionConnector>?  CustomSessionConnectorSerializer   = null,
+                         CustomJObjectSerializerDelegate<ChargingPeriod>?    CustomChargingPeriodSerializer     = null,
+                         CustomJObjectSerializerDelegate<CDRDimension>?      CustomCDRDimensionSerializer       = null,
+                         CustomJObjectSerializerDelegate<Price>?             CustomPriceSerializer              = null)
 
             : base(CommonAPI,
                    PartyId,
@@ -328,6 +438,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             }
 
         }
+
+        #endregion
 
         #endregion
 

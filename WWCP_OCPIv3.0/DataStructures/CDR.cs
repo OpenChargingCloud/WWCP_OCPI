@@ -256,6 +256,180 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Constructor(s)
 
+        #region CDR(...)
+
+        /// <summary>
+        /// Create a new charge detail record.
+        /// </summary>
+        /// <param name="PartyId">The party identification of the party that issued this location.</param>
+        /// <param name="Id">An identification of the charge detail record within the charge point operator's platform (and suboperator platforms).</param>
+        /// <param name="VersionId">The version identification of the location.</param>
+        /// 
+        /// <param name="Start">The start timestamp of the charging session, or in-case of a reservation (before the start of a session) the start of the reservation.</param>
+        /// <param name="End">The timestamp when the session was completed/finished. Charging might have finished before the session ends, for example: EV is full, but parking cost also has to be paid.</param>
+        /// <param name="CDRToken">The token used to start this charging session, includes all relevant information to identify the unique token.</param>
+        /// <param name="AuthMethod">The authentication method used.</param>
+        /// <param name="CDRLocation">The location where the charging session took place, including only the relevant EVSE and connector.</param>
+        /// <param name="Currency">The ISO 4217 code of the currency used for this charge detail record.</param>
+        /// <param name="ChargingPeriods">The enumeration of charging periods that make up this charging session. A session consist of 1 or more periodes with, each period has a different relevant charging tariff.</param>
+        /// <param name="TotalCosts">The total sum of all the costs of this transaction in the specified currency.</param>
+        /// <param name="TotalEnergy">The total energy charged (in kWh).</param>
+        /// <param name="TotalTime">The total duration of the charging session, including the duration of charging and not charging.</param>
+        /// 
+        /// <param name="SessionId">The optional unique identification of the charging session. Is only allowed to be omitted when the CPO has not implemented the sessions module or this charge detail record is the result of a reservation that never became a charging session.</param>
+        /// <param name="AuthorizationReference">The optional reference to the authorization given by the eMSP.</param>
+        /// <param name="MeterId">The optional identification of the energy meter.</param>
+        /// <param name="EnergyMeter">The optional energy meter.</param>
+        /// <param name="TransparencySoftwares">The enumeration of valid transparency softwares which can be used to validate the singed charging session and metering data.</param>
+        /// 
+        /// <param name="SignedData">The optional signed metering data that belongs to this charging session.</param>
+        /// <param name="TotalFixedCosts">The optional total sum of all the costs of this transaction in the specified currency.</param>
+        /// <param name="TotalEnergyCost">The optional total sum of all the cost of all the energy used, in the specified currency.</param>
+        /// <param name="TotalTimeCost">The optional total sum of all the cost related to duration of charging during this transaction, in the specified currency.</param>
+        /// <param name="TotalReservationCost">The optional total sum of all the cost related to a reservation of a charge point, including fixed price components, in the specified currency.</param>
+        /// <param name="Remark">The optional remark can be used to provide addition human readable information to the charge detail record, for example a reason why a transaction was stopped.</param>
+        /// <param name="Credit">The optional indication, that this charge detail record is a "credit CDR". When set to true the field credit_reference_id needs to be set as well.</param>
+        /// <param name="CreditReferenceId">The optional credit reference identification is required to be set for a "credit CDR". This SHALL contain the identification of the charge detail record for which this is a "credit CDR".</param>
+        /// <param name="HomeChargingCompensation">When set to true, this charge detail record is for a charging session using the home charger of the EV driver for which the energy cost needs to be financial compensated to the EV driver.</param>
+        /// 
+        /// <param name="Created">An optional timestamp when this charge detail record was created.</param>
+        /// <param name="LastUpdated">An optional timestamp when this charge detail record was last updated (or created).</param>
+        /// 
+        /// <param name="CustomCDRSerializer">A delegate to serialize custom charge detail record JSON objects.</param>
+        /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
+        /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
+        /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
+        /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
+        /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
+        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
+        /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
+        public CDR(Party_Idv3                                                    PartyId,
+                   CDR_Id                                                        Id,
+                   UInt64                                                        VersionId,
+
+                   DateTime                                                      Start,
+                   DateTime                                                      End,
+                   CDRToken                                                      CDRToken,
+                   AuthMethod                                                    AuthMethod,
+                   CDRLocation                                                   CDRLocation,
+                   OCPI.Currency                                                 Currency,
+                   TariffAssociation_Id                                          TariffAssociationId,
+                   Tariff_Id                                                     TariffId,
+                   IEnumerable<ChargingPeriod>                                   ChargingPeriods,
+                   Price                                                         TotalCosts,
+                   WattHour                                                      TotalEnergy,
+                   TimeSpan                                                      TotalTime,
+
+                   Session_Id?                                                   SessionId                                    = null,
+                   AuthorizationReference?                                       AuthorizationReference                       = null,
+                   Meter_Id?                                                     MeterId                                      = null,
+                   EnergyMeter?                                                  EnergyMeter                                  = null,
+                   IEnumerable<TransparencySoftwareStatus>?                      TransparencySoftwares                        = null,
+                   SignedData?                                                   SignedData                                   = null,
+                   Price?                                                        TotalFixedCosts                              = null,
+                   Price?                                                        TotalEnergyCost                              = null,
+                   Price?                                                        TotalTimeCost                                = null,
+                   Price?                                                        TotalReservationCost                         = null,
+                   String?                                                       Remark                                       = null,
+                   Boolean?                                                      Credit                                       = null,
+                   CreditReference_Id?                                           CreditReferenceId                            = null,
+                   Boolean?                                                      HomeChargingCompensation                     = null,
+
+                   DateTime?                                                     Created                                      = null,
+                   DateTime?                                                     LastUpdated                                  = null,
+
+                   CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
+                   CustomJObjectSerializerDelegate<CDRToken>?                    CustomCDRTokenSerializer                     = null,
+                   CustomJObjectSerializerDelegate<CDRLocation>?                 CustomCDRLocationSerializer                  = null,
+                   CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                   CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                   CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                   CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                       = null,
+                   CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
+                   CustomJObjectSerializerDelegate<Price>?                       CustomPriceSerializer                        = null,
+                   CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                = null,
+                   CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer               = null,
+                   CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer           = null,
+                   CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
+                   CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
+                   CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null,
+                   CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer               = null,
+                   CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                 = null,
+                   CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                   = null,
+                   CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                  = null)
+
+            : this(null,
+                   PartyId,
+                   Id,
+                   VersionId,
+
+                   Start,
+                   End,
+                   CDRToken,
+                   AuthMethod,
+                   CDRLocation,
+                   Currency,
+                   TariffAssociationId,
+                   TariffId,
+                   ChargingPeriods,
+                   TotalCosts,
+                   TotalEnergy,
+                   TotalTime,
+
+                   SessionId,
+                   AuthorizationReference,
+                   MeterId,
+                   EnergyMeter,
+                   TransparencySoftwares,
+                   SignedData,
+                   TotalFixedCosts,
+                   TotalEnergyCost,
+                   TotalTimeCost,
+                   TotalReservationCost,
+                   Remark,
+                   Credit,
+                   CreditReferenceId,
+                   HomeChargingCompensation,
+
+                   Created,
+                   LastUpdated,
+
+                   CustomCDRSerializer,
+                   CustomCDRTokenSerializer,
+                   CustomCDRLocationSerializer,
+                   CustomEnergyMeterSerializer,
+                   CustomTransparencySoftwareStatusSerializer,
+                   CustomTransparencySoftwareSerializer,
+                   CustomTariffSerializer,
+                   CustomDisplayTextSerializer,
+                   CustomPriceSerializer,
+                   CustomTariffElementSerializer,
+                   CustomPriceComponentSerializer,
+                   CustomTariffRestrictionsSerializer,
+                   CustomEnergyMixSerializer,
+                   CustomEnergySourceSerializer,
+                   CustomEnvironmentalImpactSerializer,
+                   CustomChargingPeriodSerializer,
+                   CustomCDRDimensionSerializer,
+                   CustomSignedDataSerializer,
+                   CustomSignedValueSerializer)
+
+        { }
+
+        #endregion
+
+        #region (internal) CDR(CommonAPI, ...)
+
         /// <summary>
         /// Create a new charge detail record.
         /// </summary>
@@ -477,6 +651,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             }
 
         }
+
+        #endregion
 
         #endregion
 

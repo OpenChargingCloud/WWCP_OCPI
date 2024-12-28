@@ -154,7 +154,101 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Constructor(s)
 
-        #region (internal) ChargingStation(ParentLocation, UId, Status, Connectors, ... )
+        #region ChargingStation(...)
+
+        /// <summary>
+        /// Create a new charging station.
+        /// </summary>
+        /// <param name="PartyId">The party identification of the party that issued this charging station.</param>
+        /// <param name="Id">An identification of the charging station within the party.</param>
+        /// <param name="VersionId">The version identification of the charging station.</param>
+        /// 
+        /// <param name="Capabilities">An enumeration of functionalities that the charging station is capable of.</param>
+        /// <param name="EnergyMeter">An optional energy meter, e.g. for the German calibration law.</param>
+        /// <param name="FloorLevel">An optional floor level on which the charging station is located (in garage buildings) in the locally displayed numbering scheme.</param>
+        /// <param name="Coordinates">An optional geographical location of the charging station.</param>
+        /// <param name="PhysicalReference">An optional number/string printed on the outside of the charging station for visual identification.</param>
+        /// <param name="Directions">An optional multi-language human-readable directions when more detailed information on how to reach the charging station from the location is required.</param>
+        /// <param name="Images">An optional enumeration of images related to the charging station such as photos or logos.</param>
+        /// 
+        /// <param name="Created">The optional timestamp when this charging station was created.</param>
+        /// <param name="LastUpdated">The optional timestamp when this charging station was last updated (or created).</param>
+        /// 
+        /// <param name="CustomChargingStationSerializer">A delegate to serialize custom ChargingStation JSON objects.</param>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
+        /// <param name="CustomParkingRestrictionSerializer">A delegate to serialize custom parking restriction JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        public ChargingStation(//Party_Idv3                                                    PartyId,
+                               ChargingStation_Id                                            Id,
+                              // UInt64                                                        VersionId,
+
+                               IEnumerable<EVSE>?                                            EVSEs                                        = null,
+                               IEnumerable<Capability>?                                      Capabilities                                 = null,
+                               String?                                                       FloorLevel                                   = null,
+                               GeoCoordinate?                                                Coordinates                                  = null,
+                               String?                                                       PhysicalReference                            = null,
+                               IEnumerable<DisplayText>?                                     Directions                                   = null,
+                               IEnumerable<Image>?                                           Images                                       = null,
+                               EnergyMeter?                                                  EnergyMeter                                  = null,
+
+                               DateTime?                                                     Created                                      = null,
+                               DateTime?                                                     LastUpdated                                  = null,
+
+                               EMSP_Id?                                                      EMSPId                                       = null,
+                               CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
+                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                               CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
+                               CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
+                               CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
+                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                               CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                               CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                               CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                               CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
+
+            : this(null,
+                   //PartyId,
+                   Id,
+                   //VersionId,
+
+                   EVSEs,
+                   Capabilities,
+                   FloorLevel,
+                   Coordinates,
+                   PhysicalReference,
+                   Directions,
+                   Images,
+                   EnergyMeter,
+
+                   Created,
+                   LastUpdated,
+
+                   EMSPId,
+                   CustomChargingStationSerializer,
+                   CustomEVSESerializer,
+                   CustomConnectorSerializer,
+                   CustomParkingSerializer,
+                   CustomParkingRestrictionSerializer,
+                   CustomImageSerializer,
+                   CustomStatusScheduleSerializer,
+                   CustomEnergyMeterSerializer,
+                   CustomTransparencySoftwareStatusSerializer,
+                   CustomTransparencySoftwareSerializer,
+                   CustomDisplayTextSerializer)
+
+            { }
+
+        #endregion
+
+        #region (internal) ChargingStation(ParentLocation, ... )
 
         /// <summary>
         /// Create a new charging station.
@@ -259,100 +353,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                          );
 
         }
-
-        #endregion
-
-        #region ChargingStation(UId, Status, Connectors, ... )
-
-        /// <summary>
-        /// Create a new charging station.
-        /// </summary>
-        /// <param name="PartyId">The party identification of the party that issued this charging station.</param>
-        /// <param name="Id">An identification of the charging station within the party.</param>
-        /// <param name="VersionId">The version identification of the charging station.</param>
-        /// 
-        /// <param name="Capabilities">An enumeration of functionalities that the charging station is capable of.</param>
-        /// <param name="EnergyMeter">An optional energy meter, e.g. for the German calibration law.</param>
-        /// <param name="FloorLevel">An optional floor level on which the charging station is located (in garage buildings) in the locally displayed numbering scheme.</param>
-        /// <param name="Coordinates">An optional geographical location of the charging station.</param>
-        /// <param name="PhysicalReference">An optional number/string printed on the outside of the charging station for visual identification.</param>
-        /// <param name="Directions">An optional multi-language human-readable directions when more detailed information on how to reach the charging station from the location is required.</param>
-        /// <param name="Images">An optional enumeration of images related to the charging station such as photos or logos.</param>
-        /// 
-        /// <param name="Created">The optional timestamp when this charging station was created.</param>
-        /// <param name="LastUpdated">The optional timestamp when this charging station was last updated (or created).</param>
-        /// 
-        /// <param name="CustomChargingStationSerializer">A delegate to serialize custom ChargingStation JSON objects.</param>
-        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
-        /// <param name="CustomParkingRestrictionSerializer">A delegate to serialize custom parking restriction JSON objects.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
-        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
-        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
-        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        public ChargingStation(//Party_Idv3                                                    PartyId,
-                               ChargingStation_Id                                            Id,
-                              // UInt64                                                        VersionId,
-
-                               IEnumerable<EVSE>?                                            EVSEs                                        = null,
-                               IEnumerable<Capability>?                                      Capabilities                                 = null,
-                               String?                                                       FloorLevel                                   = null,
-                               GeoCoordinate?                                                Coordinates                                  = null,
-                               String?                                                       PhysicalReference                            = null,
-                               IEnumerable<DisplayText>?                                     Directions                                   = null,
-                               IEnumerable<Image>?                                           Images                                       = null,
-                               EnergyMeter?                                                  EnergyMeter                                  = null,
-
-                               DateTime?                                                     Created                                      = null,
-                               DateTime?                                                     LastUpdated                                  = null,
-
-                               EMSP_Id?                                                      EMSPId                                       = null,
-                               CustomJObjectSerializerDelegate<ChargingStation>?             CustomChargingStationSerializer              = null,
-                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                               CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                               CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
-                               CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
-                               CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
-                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
-                               CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
-                               CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                               CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                               CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
-
-            : this(null,
-                   //PartyId,
-                   Id,
-                   //VersionId,
-
-                   EVSEs,
-                   Capabilities,
-                   FloorLevel,
-                   Coordinates,
-                   PhysicalReference,
-                   Directions,
-                   Images,
-                   EnergyMeter,
-
-                   Created,
-                   LastUpdated,
-
-                   EMSPId,
-                   CustomChargingStationSerializer,
-                   CustomEVSESerializer,
-                   CustomConnectorSerializer,
-                   CustomParkingSerializer,
-                   CustomParkingRestrictionSerializer,
-                   CustomImageSerializer,
-                   CustomStatusScheduleSerializer,
-                   CustomEnergyMeterSerializer,
-                   CustomTransparencySoftwareStatusSerializer,
-                   CustomTransparencySoftwareSerializer,
-                   CustomDisplayTextSerializer)
-
-            { }
 
         #endregion
 

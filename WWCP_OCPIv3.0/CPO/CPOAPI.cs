@@ -2099,6 +2099,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                                                                   Select        (tariff => tariff.ToJSON(true,
                                                                                                                          true,
                                                                                                                          true,
+                                                                                                                         true,
                                                                                                                          CustomTariffSerializer,
                                                                                                                          CustomDisplayTextSerializer,
                                                                                                                          CustomPriceSerializer,

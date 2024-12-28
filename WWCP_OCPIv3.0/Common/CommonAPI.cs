@@ -46,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
     public delegate Boolean IncludeRemoteParty(RemoteParty RemoteParty);
 
     public delegate IEnumerable<Tariff_Id>  GetTariffIds2_Delegate(CountryCode    CPOCountryCode,
-                                                                   Party_Idv3       CPOPartyId,
+                                                                   Party_Idv3     CPOPartyId,
                                                                    Location_Id?   Location      = null,
                                                                    EVSE_UId?      EVSEUId       = null,
                                                                    Connector_Id?  ConnectorId   = null,
@@ -58,7 +58,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         public Party_Idv3  Id    { get; } = Id;
 
         public ConcurrentDictionary<Location_Id, Location>  Locations   = [];
-        public TimeRangeDictionary <Tariff_Id,   Tariff>    Tariffs     = [];
+        public ConcurrentDictionary<Tariff_Id,   Tariff>    Tariffs     = [];
         public ConcurrentDictionary<Session_Id,  Session>   Sessions    = [];
         public ConcurrentDictionary<Token_Id,    Token>     Tokens      = [];
         public ConcurrentDictionary<CDR_Id,      CDR>       CDRs        = [];
@@ -2014,6 +2014,24 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
         public CustomJObjectSerializerDelegate<TariffElement>?                CustomTariffElementSerializer                 { get; }
         public CustomJObjectSerializerDelegate<PriceComponent>?               CustomPriceComponentSerializer                { get; }
         public CustomJObjectSerializerDelegate<TariffRestrictions>?           CustomTariffRestrictionsSerializer            { get; }
+
+
+        public CustomJObjectSerializerDelegate<Session>?                      CustomSessionSerializer                       { get; }
+        public CustomJObjectSerializerDelegate<CDRToken>?                     CustomCDRTokenSerializer                      { get; }
+        public CustomJObjectSerializerDelegate<SessionConnector>?             CustomSessionConnectorSerializer              { get; }
+        public CustomJObjectSerializerDelegate<ChargingPeriod>?               CustomChargingPeriodSerializer                { get; }
+        public CustomJObjectSerializerDelegate<CDRDimension>?                 CustomCDRDimensionSerializer                  { get; }
+
+
+        public CustomJObjectSerializerDelegate<Token>?                        CustomTokenSerializer                         { get; }
+        public CustomJObjectSerializerDelegate<EnergyContract>?               CustomEnergyContractSerializer                { get; }
+
+
+
+        public CustomJObjectSerializerDelegate<CDR>?                          CustomCDRSerializer                           { get; }
+        public CustomJObjectSerializerDelegate<CDRLocation>?                  CustomCDRLocationSerializer                   { get; }
+        public CustomJObjectSerializerDelegate<SignedData>?                   CustomSignedDataSerializer                    { get; }
+        public CustomJObjectSerializerDelegate<SignedValue>?                  CustomSignedValueSerializer                   { get; }
 
         #endregion
 
@@ -6169,8 +6187,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
 
                 if (party.Locations.TryUpdate(Location.Id,
-                                        Location,
-                                        existingLocation))
+                                              Location,
+                                              existingLocation))
                 {
 
                     Location.CommonAPI = this;
@@ -7544,6 +7562,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
         #endregion
 
+        // EVSE Status?????
+
         #region Tariffs
 
         #region Events
@@ -7580,6 +7600,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                     await LogAsset(addTariff,
                                    Tariff.ToJSON(true,
+                                                 true,
                                                  true,
                                                  true,
                                                  CustomTariffSerializer,
@@ -7655,6 +7676,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                    Tariff.ToJSON(true,
                                                  true,
                                                  true,
+                                                 true,
                                                  CustomTariffSerializer,
                                                  CustomDisplayTextSerializer,
                                                  CustomPriceSerializer,
@@ -7721,9 +7743,8 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                 #region Update Tariff
 
-                if (party.Tariffs.TryGetValue(Tariff.Id,
-                                              out var existingTariff,
-                                              Tariff.NotBefore ?? DateTime.MinValue))
+                if (party.Tariffs.TryGetValue(Tariff.Id, out var existingTariff))
+                                              //Tariff.NotBefore ?? DateTime.MinValue))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -7736,11 +7757,12 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                                );
                     }
 
-                    party.Tariffs.AddOrUpdate(Tariff.Id, Tariff);
+                    party.Tariffs.TryUpdate(Tariff.Id, Tariff, existingTariff);
                     Tariff.CommonAPI = this;
 
                     await LogAsset(addOrUpdateTariff,
                                    Tariff.ToJSON(true,
+                                                 true,
                                                  true,
                                                  true,
                                                  CustomTariffSerializer,
@@ -7793,6 +7815,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                     await LogAsset(addOrUpdateTariff,
                                    Tariff.ToJSON(true,
+                                                 true,
                                                  true,
                                                  true,
                                                  CustomTariffSerializer,
@@ -7864,7 +7887,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                 #region Validate AllowDowngrades
 
-                if (party.Tariffs.TryGetValue(Tariff.Id, out var existingTariff, Timestamp.Now))
+                if (party.Tariffs.TryGetValue(Tariff.Id, out var existingTariff))//, Timestamp.Now))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -7896,6 +7919,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                     await LogAsset(updateTariff,
                                    Tariff.ToJSON(true,
+                                                 true,
                                                  true,
                                                  true,
                                                  CustomTariffSerializer,
@@ -7971,7 +7995,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             if (parties.TryGetValue(Tariff.PartyId, out var party))
             {
 
-                if (party.Tariffs.TryGetValue(Tariff.Id, out var existingTariff, Timestamp.Now))
+                if (party.Tariffs.TryGetValue(Tariff.Id, out var existingTariff))//, Timestamp.Now))
                 {
 
                     var patchResult = existingTariff.TryPatch(TariffPatch,
@@ -7985,6 +8009,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
                         await LogAsset(updateTariff,
                                        Tariff.ToJSON(true,
+                                                     true,
                                                      true,
                                                      true,
                                                      CustomTariffSerializer,
@@ -8111,7 +8136,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
             foreach (var party in parties.Values)
             {
-                foreach (var location in party.Tariffs.Values())
+                foreach (var location in party.Tariffs.Values)
                 {
                     if (location is not null &&
                         IncludeTariff(location))
@@ -8136,13 +8161,13 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             {
 
                 if (parties.TryGetValue(PartyId.Value, out var party))
-                    return party.Tariffs.Values();
+                    return party.Tariffs.Values;
 
                 return [];
 
             }
 
-            return parties.Values.SelectMany(party => party.Tariffs.Values());
+            return parties.Values.SelectMany(party => party.Tariffs.Values);
 
         }
 
@@ -8185,28 +8210,43 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             EventTrackingId ??= EventTracking_Id.New;
 
             if (parties .     TryGetValue(PartyId,   out var party) &&
-                party.Tariffs.TryRemove  (Tariff.Id, out var removedTariffs))
+                party.Tariffs.TryRemove  (Tariff.Id, out var removedTariff))
             {
 
-                if (removedTariffs.Any())
+                //if (removedTariffs.Any())
                     await LogAsset(removeTariff,
-                                   new JArray(
-                                       removedTariffs.Select(tariff => tariff.ToJSON(
-                                                                           true,
-                                                                           true,
-                                                                           true,
-                                                                           CustomTariffSerializer,
-                                                                           CustomDisplayTextSerializer,
-                                                                           CustomPriceSerializer,
-                                                                           CustomTariffElementSerializer,
-                                                                           CustomPriceComponentSerializer,
-                                                                           CustomTariffRestrictionsSerializer,
-                                                                           CustomEnergyMixSerializer,
-                                                                           CustomEnergySourceSerializer,
-                                                                           CustomEnvironmentalImpactSerializer
-                                                                       )
-                                                           )
-                                   ),
+                                   removedTariff.ToJSON(
+                                                     true,
+                                                     true,
+                                                     true,
+                                                     true,
+                                                     CustomTariffSerializer,
+                                                     CustomDisplayTextSerializer,
+                                                     CustomPriceSerializer,
+                                                     CustomTariffElementSerializer,
+                                                     CustomPriceComponentSerializer,
+                                                     CustomTariffRestrictionsSerializer,
+                                                     CustomEnergyMixSerializer,
+                                                     CustomEnergySourceSerializer,
+                                                     CustomEnvironmentalImpactSerializer
+                                                 ),
+                                   //new JArray(
+                                   //    removedTariffs.Select(tariff => tariff.ToJSON(
+                                   //                                        true,
+                                   //                                        true,
+                                   //                                        true,
+                                   //                                        CustomTariffSerializer,
+                                   //                                        CustomDisplayTextSerializer,
+                                   //                                        CustomPriceSerializer,
+                                   //                                        CustomTariffElementSerializer,
+                                   //                                        CustomPriceComponentSerializer,
+                                   //                                        CustomTariffRestrictionsSerializer,
+                                   //                                        CustomEnergyMixSerializer,
+                                   //                                        CustomEnergySourceSerializer,
+                                   //                                        CustomEnvironmentalImpactSerializer
+                                   //                                    )
+                                   //                        )
+                                   //),
                                    EventTrackingId,
                                    CurrentUserId);
 
@@ -8241,34 +8281,49 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             EventTrackingId ??= EventTracking_Id.New;
 
             if (parties .     TryGetValue(PartyId,  out var party) &&
-                party.Tariffs.TryRemove  (TariffId, out var removedTariffs))
+                party.Tariffs.TryRemove  (TariffId, out var removedTariff))
             {
 
-                if (removedTariffs.Any())
+                //if (removedTariffs.Any())
                     await LogAsset(removeTariff,
                                    new JArray(
-                                       removedTariffs.Select(tariff => tariff.ToJSON(
-                                                                           true,
-                                                                           true,
-                                                                           true,
-                                                                           CustomTariffSerializer,
-                                                                           CustomDisplayTextSerializer,
-                                                                           CustomPriceSerializer,
-                                                                           CustomTariffElementSerializer,
-                                                                           CustomPriceComponentSerializer,
-                                                                           CustomTariffRestrictionsSerializer,
-                                                                           CustomEnergyMixSerializer,
-                                                                           CustomEnergySourceSerializer,
-                                                                           CustomEnvironmentalImpactSerializer
-                                                                       )
-                                                           )
+                                       //removedTariffs.Select(tariff => tariff.ToJSON(
+                                       //                                    true,
+                                       //                                    true,
+                                       //                                    true,
+                                       //                                    CustomTariffSerializer,
+                                       //                                    CustomDisplayTextSerializer,
+                                       //                                    CustomPriceSerializer,
+                                       //                                    CustomTariffElementSerializer,
+                                       //                                    CustomPriceComponentSerializer,
+                                       //                                    CustomTariffRestrictionsSerializer,
+                                       //                                    CustomEnergyMixSerializer,
+                                       //                                    CustomEnergySourceSerializer,
+                                       //                                    CustomEnvironmentalImpactSerializer
+                                       //                                )
+                                       //                    )
+                                       removedTariff.ToJSON(
+                                           true,
+                                           true,
+                                           true,
+                                           true,
+                                           CustomTariffSerializer,
+                                           CustomDisplayTextSerializer,
+                                           CustomPriceSerializer,
+                                           CustomTariffElementSerializer,
+                                           CustomPriceComponentSerializer,
+                                           CustomTariffRestrictionsSerializer,
+                                           CustomEnergyMixSerializer,
+                                           CustomEnergySourceSerializer,
+                                           CustomEnvironmentalImpactSerializer
+                                       )
                                    ),
                                    EventTrackingId,
                                    CurrentUserId);
 
                 return RemoveResult<Tariff>.Success(
                            EventTrackingId,
-                           removedTariffs.Last()
+                           removedTariff
                        );
 
             }
@@ -8303,7 +8358,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
             foreach (var party in parties.Values)
             {
-                foreach (var tariff in party.Tariffs.Values())
+                foreach (var tariff in party.Tariffs.Values)
                 {
                     if (tariff is not null &&
                         IncludeTariffs(tariff))
@@ -8331,25 +8386,26 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
             if (removedTariffs.Count > 0)
                 await LogAsset(removeTariff,
-                                new JArray(
-                                    removedTariffs.Select(tariff => tariff.ToJSON(
-                                                                        true,
-                                                                        true,
-                                                                        true,
-                                                                        CustomTariffSerializer,
-                                                                        CustomDisplayTextSerializer,
-                                                                        CustomPriceSerializer,
-                                                                        CustomTariffElementSerializer,
-                                                                        CustomPriceComponentSerializer,
-                                                                        CustomTariffRestrictionsSerializer,
-                                                                        CustomEnergyMixSerializer,
-                                                                        CustomEnergySourceSerializer,
-                                                                        CustomEnvironmentalImpactSerializer
-                                                                    )
-                                                        )
-                                ),
-                                EventTrackingId,
-                                CurrentUserId);
+                               new JArray(
+                                   removedTariffs.Select(tariff => tariff.ToJSON(
+                                                                       true,
+                                                                       true,
+                                                                       true,
+                                                                       true,
+                                                                       CustomTariffSerializer,
+                                                                       CustomDisplayTextSerializer,
+                                                                       CustomPriceSerializer,
+                                                                       CustomTariffElementSerializer,
+                                                                       CustomPriceComponentSerializer,
+                                                                       CustomTariffRestrictionsSerializer,
+                                                                       CustomEnergyMixSerializer,
+                                                                       CustomEnergySourceSerializer,
+                                                                       CustomEnvironmentalImpactSerializer
+                                                                   )
+                                                       )
+                               ),
+                               EventTrackingId,
+                               CurrentUserId);
 
             return RemoveResult<IEnumerable<Tariff>>.Success(
                        EventTrackingId,
@@ -8381,7 +8437,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
 
             foreach (var party in parties.Values)
             {
-                foreach (var tariff in party.Tariffs.Values())
+                foreach (var tariff in party.Tariffs.Values)
                 {
                     if (IncludeTariffIds(party.Id, tariff.Id))
                         removedTariffs.Add(tariff);
@@ -8408,6 +8464,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 await LogAsset(removeTariff,
                                 new JArray(
                                     removedTariffs.Select(tariff => tariff.ToJSON(
+                                                                        true,
                                                                         true,
                                                                         true,
                                                                         true,
@@ -8458,7 +8515,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             {
                 if (parties.TryGetValue(PartyId.Value, out var party))
                 {
-                    removedTariffs.AddRange(party.Tariffs.Values());
+                    removedTariffs.AddRange(party.Tariffs.Values);
                     party.Tariffs.Clear();
                 }
             }
@@ -8467,7 +8524,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             {
                 foreach (var party in parties.Values)
                 {
-                    removedTariffs.AddRange(party.Tariffs.Values());
+                    removedTariffs.AddRange(party.Tariffs.Values);
                     party.Tariffs.Clear();
                 }
             }
@@ -8476,6 +8533,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
                 await LogAsset(removeTariff,
                                 new JArray(
                                     removedTariffs.Select(tariff => tariff.ToJSON(
+                                                                        true,
                                                                         true,
                                                                         true,
                                                                         true,
@@ -8497,6 +8555,1620 @@ namespace cloud.charging.open.protocols.OCPIv3_0.HTTP
             return RemoveResult<IEnumerable<Tariff>>.Success(
                        EventTrackingId,
                        removedTariffs
+                   );
+
+        }
+
+        #endregion
+
+        #endregion
+
+        // Tariff Associations
+
+        #region Sessions
+
+        #region Events
+
+        public delegate Task OnSessionAddedDelegate(Session Session);
+
+        public event OnSessionAddedDelegate? OnSessionAdded;
+
+        public delegate Task OnSessionChangedDelegate(Session Session);
+
+        public event OnSessionChangedDelegate? OnSessionChanged;
+
+        #endregion
+
+
+        #region AddSession            (Session, ...)
+
+        public async Task<AddResult<Session>>
+
+            AddSession(Session            Session,
+                       Boolean            SkipNotifications   = false,
+                       EventTracking_Id?  EventTrackingId     = null,
+                       User_Id?           CurrentUserId       = null,
+                       CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Session.PartyId, out var party))
+            {
+
+                if (party.Sessions.TryAdd(Session.Id, Session))
+                {
+
+                    DebugX.Log($"OCPI {Version.String} Session '{Session.Id}': '{Session}' added...");
+
+                    Session.CommonAPI = this;
+
+                    await LogAsset(
+                              addSession,
+                              Session.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomSessionSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomSessionConnectorSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomPriceSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnSessionAddedLocal = OnSessionAdded;
+                        if (OnSessionAddedLocal is not null)
+                        {
+                            try
+                            {
+                                await OnSessionAddedLocal(Session);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddSession), " ", nameof(OnSessionAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return AddResult<Session>.Success(
+                               EventTrackingId,
+                               Session
+                           );
+
+                }
+
+                return AddResult<Session>.Failed(
+                           EventTrackingId,
+                           Session,
+                           "The given session already exists!"
+                       );
+
+            }
+
+            return AddResult<Session>.Failed(
+                       EventTrackingId,
+                       Session,
+                       "The party identification of the session is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region AddSessionIfNotExists (Session, ...)
+
+        public async Task<AddResult<Session>>
+
+            AddSessionIfNotExists(Session            Session,
+                                  Boolean            SkipNotifications   = false,
+                                  EventTracking_Id?  EventTrackingId     = null,
+                                  User_Id?           CurrentUserId       = null,
+                                  CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Session.PartyId, out var party))
+            {
+
+                if (party.Sessions.TryAdd(Session.Id, Session))
+                {
+
+                    DebugX.Log($"OCPI {Version.String} Session '{Session.Id}': '{Session}' added...");
+
+                    Session.CommonAPI = this;
+
+                    await LogAsset(
+                              addSession,
+                              Session.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomSessionSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomSessionConnectorSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomPriceSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnSessionAddedLocal = OnSessionAdded;
+                        if (OnSessionAddedLocal is not null)
+                        {
+                            try
+                            {
+                                await OnSessionAddedLocal(Session);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddSession), " ", nameof(OnSessionAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return AddResult<Session>.Success(
+                               EventTrackingId,
+                               Session
+                           );
+
+                }
+
+                return AddResult<Session>.NoOperation(
+                           EventTrackingId,
+                           Session,
+                           "The given session already exists."
+                       );
+
+            }
+
+            return AddResult<Session>.Failed(
+                       EventTrackingId,
+                       Session,
+                       "The party identification of the session is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateSession    (Session,                          AllowDowngrades = false, ...)
+
+        public async Task<AddOrUpdateResult<Session>>
+
+            AddOrUpdateSession(Session            Session,
+                               Boolean?           AllowDowngrades     = false,
+                               Boolean            SkipNotifications   = false,
+                               EventTracking_Id?  EventTrackingId     = null,
+                               User_Id?           CurrentUserId       = null,
+                               CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Session.PartyId, out var party))
+            {
+
+                #region Update an existing session
+
+                if (party.Sessions.TryGetValue(Session.Id, out var existingSession))
+                {
+
+                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                        Session.LastUpdated <= existingSession.LastUpdated)
+                    {
+                        return AddOrUpdateResult<Session>.Failed(
+                                   EventTrackingId, Session,
+                                   "The 'lastUpdated' timestamp of the new session must be newer then the timestamp of the existing session!"
+                               );
+                    }
+
+                    //if (Session.LastUpdated.ToIso8601() == existingSession.LastUpdated.ToIso8601())
+                    //    return AddOrUpdateResult<Session>.NoOperation(Session,
+                    //                                                   "The 'lastUpdated' timestamp of the new session must be newer then the timestamp of the existing session!");
+
+                    var aa = existingSession.Equals(existingSession);
+
+                    if (party.Sessions.TryUpdate(Session.Id,
+                                                  Session,
+                                                  existingSession))
+                    {
+
+                        Session.CommonAPI = this;
+
+                        await LogAsset(
+                                  addOrUpdateSession,
+                                  Session.ToJSON(
+                                      true,
+                                      true,
+                                      true,
+                                      true,
+                                      CustomSessionSerializer,
+                                      CustomCDRTokenSerializer,
+                                      CustomSessionConnectorSerializer,
+                                      CustomChargingPeriodSerializer,
+                                      CustomCDRDimensionSerializer,
+                                      CustomPriceSerializer
+                                  ),
+                                  EventTrackingId,
+                                  CurrentUserId,
+                                  CancellationToken
+                              );
+
+                        if (!SkipNotifications)
+                        {
+
+                            var OnSessionChangedLocal = OnSessionChanged;
+                            if (OnSessionChangedLocal is not null)
+                            {
+                                try
+                                {
+                                    OnSessionChangedLocal(Session).Wait();
+                                }
+                                catch (Exception e)
+                                {
+                                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionChanged), ": ",
+                                                Environment.NewLine, e.Message,
+                                                Environment.NewLine, e.StackTrace ?? "");
+                                }
+                            }
+
+                            //var oldEVSEUIds = new HashSet<EVSE_UId>(existingSession.EVSEs.Select(evse => evse.UId));
+                            //var newEVSEUIds = new HashSet<EVSE_UId>(Session.        EVSEs.Select(evse => evse.UId));
+
+                            //foreach (var evseUId in new HashSet<EVSE_UId>(oldEVSEUIds.Union(newEVSEUIds)))
+                            //{
+
+                            //    if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId) && existingSession.GetEVSE(evseUId)! != Session.GetEVSE(evseUId)!)
+                            //    {
+                            //        var OnEVSEChangedLocal = OnEVSEChanged;
+                            //        if (OnEVSEChangedLocal is not null)
+                            //        {
+                            //            try
+                            //            {
+                            //                await OnEVSEChangedLocal(existingSession.GetEVSE(evseUId)!);
+                            //            }
+                            //            catch (Exception e)
+                            //            {
+                            //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnEVSEChanged), ": ",
+                            //                            Environment.NewLine, e.Message,
+                            //                            Environment.NewLine, e.StackTrace ?? "");
+                            //            }
+                            //        }
+                            //    }
+                            //    else if (!oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
+                            //    {
+                            //        var OnEVSEAddedLocal = OnEVSEAdded;
+                            //        if (OnEVSEAddedLocal is not null)
+                            //        {
+                            //            try
+                            //            {
+                            //                await OnEVSEAddedLocal(existingSession.GetEVSE(evseUId)!);
+                            //            }
+                            //            catch (Exception e)
+                            //            {
+                            //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnEVSEAdded), ": ",
+                            //                            Environment.NewLine, e.Message,
+                            //                            Environment.NewLine, e.StackTrace ?? "");
+                            //            }
+                            //        }
+                            //    }
+                            //    else if ( oldEVSEUIds.Contains(evseUId) && !newEVSEUIds.Contains(evseUId))
+                            //    {
+                            //        var OnEVSERemovedLocal = OnEVSERemoved;
+                            //        if (OnEVSERemovedLocal is not null)
+                            //        {
+                            //            try
+                            //            {
+                            //                await OnEVSERemovedLocal(existingSession.GetEVSE(evseUId)!);
+                            //            }
+                            //            catch (Exception e)
+                            //            {
+                            //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnEVSERemoved), ": ",
+                            //                            Environment.NewLine, e.Message,
+                            //                            Environment.NewLine, e.StackTrace ?? "");
+                            //            }
+                            //        }
+                            //    }
+
+                            //}
+
+                        }
+
+                        return AddOrUpdateResult<Session>.Updated(
+                                   EventTrackingId,
+                                   Session
+                               );
+
+                    }
+
+                    return AddOrUpdateResult<Session>.Failed(
+                               EventTrackingId,
+                               Session,
+                               "Updating the given session failed!"
+                           );
+
+                }
+
+                #endregion
+
+                #region Add a new session
+
+                if (party.Sessions.TryAdd(Session.Id, Session))
+                {
+
+                    Session.CommonAPI = this;
+
+                    await LogAsset(
+                              addOrUpdateSession,
+                              Session.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomSessionSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomSessionConnectorSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomPriceSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnSessionAddedLocal = OnSessionAdded;
+                        if (OnSessionAddedLocal is not null)
+                        {
+                            try
+                            {
+                                OnSessionAddedLocal(Session).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnSessionAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                        //var OnEVSEAddedLocal = OnEVSEAdded;
+                        //if (OnEVSEAddedLocal is not null)
+                        //{
+                        //    try
+                        //    {
+                        //        foreach (var evse in Session.EVSEs)
+                        //            await OnEVSEAddedLocal(evse);
+                        //    }
+                        //    catch (Exception e)
+                        //    {
+                        //        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateSession), " ", nameof(OnEVSEAdded), ": ",
+                        //                    Environment.NewLine, e.Message,
+                        //                    Environment.NewLine, e.StackTrace ?? "");
+                        //    }
+                        //}
+
+                    }
+
+                    return AddOrUpdateResult<Session>.Created(
+                               EventTrackingId,
+                               Session
+                           );
+
+                }
+
+                #endregion
+
+                return AddOrUpdateResult<Session>.Failed(
+                           EventTrackingId,
+                           Session,
+                           "Adding the given session failed because of concurrency issues!"
+                       );
+
+            }
+
+            return AddOrUpdateResult<Session>.Failed(
+                       EventTrackingId,
+                       Session,
+                       "The party identification of the session is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region UpdateSession         (Session,                          AllowDowngrades = false, ...)
+
+        public async Task<UpdateResult<Session>>
+
+            UpdateSession(Session            Session,
+                          Boolean?           AllowDowngrades     = false,
+                          Boolean            SkipNotifications   = false,
+                          EventTracking_Id?  EventTrackingId     = null,
+                          User_Id?           CurrentUserId       = null,
+                          CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(Session.PartyId, out var party))
+            {
+
+                if (!party.Sessions.TryGetValue(Session.Id, out var existingSession))
+                    return UpdateResult<Session>.Failed(
+                               EventTrackingId,
+                               Session,
+                               $"The given session identification '{Session.Id}' is unknown!"
+                           );
+
+                #region Validate AllowDowngrades
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    Session.LastUpdated <= existingSession.LastUpdated)
+                {
+
+                    return UpdateResult<Session>.Failed(
+                                EventTrackingId, Session,
+                                "The 'lastUpdated' timestamp of the new charging session must be newer then the timestamp of the existing session!"
+                            );
+
+                }
+
+                #endregion
+
+
+                if (party.Sessions.TryUpdate(Session.Id,
+                                              Session,
+                                              existingSession))
+                {
+
+                    Session.CommonAPI = this;
+
+                    await LogAsset(
+                              updateSession,
+                              Session.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomSessionSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomSessionConnectorSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomPriceSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnSessionChangedLocal = OnSessionChanged;
+                        if (OnSessionChangedLocal is not null)
+                        {
+                            try
+                            {
+                                OnSessionChangedLocal(Session).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnSessionChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                        //var oldEVSEUIds = new HashSet<EVSE_UId>(existingSession.EVSEs.Select(evse => evse.UId));
+                        //var newEVSEUIds = new HashSet<EVSE_UId>(Session.        EVSEs.Select(evse => evse.UId));
+
+                        //foreach (var evseUId in new HashSet<EVSE_UId>(oldEVSEUIds.Union(newEVSEUIds)))
+                        //{
+
+                        //    if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
+                        //    {
+
+                        //        if (existingSession.TryGetEVSE(evseUId, out var oldEVSE) &&
+                        //            Session.        TryGetEVSE(evseUId, out var newEVSE) &&
+                        //            oldEVSE is not null &&
+                        //            newEVSE is not null)
+                        //        {
+
+                        //            if (oldEVSE != newEVSE)
+                        //            {
+                        //                var OnEVSEChangedLocal = OnEVSEChanged;
+                        //                if (OnEVSEChangedLocal is not null)
+                        //                {
+                        //                    try
+                        //                    {
+                        //                        await OnEVSEChangedLocal(newEVSE);
+                        //                    }
+                        //                    catch (Exception e)
+                        //                    {
+                        //                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSEChanged), ": ",
+                        //                                    Environment.NewLine, e.Message,
+                        //                                    Environment.NewLine, e.StackTrace ?? "");
+                        //                    }
+                        //                }
+                        //            }
+
+                        //            if (oldEVSE.Status != newEVSE.Status)
+                        //            {
+                        //                var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                        //                if (OnEVSEStatusChangedLocal is not null)
+                        //                {
+                        //                    try
+                        //                    {
+                        //                        await OnEVSEStatusChangedLocal(Timestamp.Now,
+                        //                                                       newEVSE,
+                        //                                                       newEVSE.Status,
+                        //                                                       oldEVSE.Status);
+                        //                    }
+                        //                    catch (Exception e)
+                        //                    {
+                        //                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSEChanged), ": ",
+                        //                                    Environment.NewLine, e.Message,
+                        //                                    Environment.NewLine, e.StackTrace ?? "");
+                        //                    }
+                        //                }
+                        //            }
+
+                        //        }
+
+                        //    }
+                        //    else if (!oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
+                        //    {
+
+                        //        var OnEVSEAddedLocal = OnEVSEAdded;
+                        //        if (OnEVSEAddedLocal is not null)
+                        //        {
+                        //            try
+                        //            {
+                        //                if (Session.TryGetEVSE(evseUId, out var evse) &&
+                        //                    evse is not null)
+                        //                {
+                        //                    await OnEVSEAddedLocal(evse);
+                        //                }
+                        //            }
+                        //            catch (Exception e)
+                        //            {
+                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSEAdded), ": ",
+                        //                            Environment.NewLine, e.Message,
+                        //                            Environment.NewLine, e.StackTrace ?? "");
+                        //            }
+                        //        }
+
+                        //        var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                        //        if (OnEVSEStatusChangedLocal is not null)
+                        //        {
+                        //            try
+                        //            {
+                        //                if (Session.TryGetEVSE(evseUId, out var evse) &&
+                        //                    evse is not null)
+                        //                {
+                        //                    await OnEVSEStatusChangedLocal(Timestamp.Now,
+                        //                                                   evse,
+                        //                                                   evse.Status);
+                        //                }
+                        //            }
+                        //            catch (Exception e)
+                        //            {
+                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSEChanged), ": ",
+                        //                            Environment.NewLine, e.Message,
+                        //                            Environment.NewLine, e.StackTrace ?? "");
+                        //            }
+                        //        }
+
+                        //    }
+                        //    else if ( oldEVSEUIds.Contains(evseUId) && !newEVSEUIds.Contains(evseUId))
+                        //    {
+
+                        //        var OnEVSERemovedLocal = OnEVSERemoved;
+                        //        if (OnEVSERemovedLocal is not null)
+                        //        {
+                        //            try
+                        //            {
+                        //                if (existingSession.TryGetEVSE(evseUId, out var evse) &&
+                        //                    evse is not null)
+                        //                {
+                        //                    await OnEVSERemovedLocal(evse);
+                        //                }
+                        //            }
+                        //            catch (Exception e)
+                        //            {
+                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSERemoved), ": ",
+                        //                            Environment.NewLine, e.Message,
+                        //                            Environment.NewLine, e.StackTrace ?? "");
+                        //            }
+                        //        }
+
+                        //        var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                        //        if (OnEVSEStatusChangedLocal is not null)
+                        //        {
+                        //            try
+                        //            {
+                        //                if (existingSession.TryGetEVSE(evseUId, out var oldEVSE) &&
+                        //                    Session.        TryGetEVSE(evseUId, out var newEVSE) &&
+                        //                    oldEVSE is not null &&
+                        //                    newEVSE is not null)
+                        //                {
+                        //                    await OnEVSEStatusChangedLocal(Timestamp.Now,
+                        //                                                   oldEVSE,
+                        //                                                   newEVSE.Status,
+                        //                                                   oldEVSE.Status);
+                        //                }
+                        //            }
+                        //            catch (Exception e)
+                        //            {
+                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateSession), " ", nameof(OnEVSEChanged), ": ",
+                        //                            Environment.NewLine, e.Message,
+                        //                            Environment.NewLine, e.StackTrace ?? "");
+                        //            }
+                        //        }
+
+                        //    }
+
+                        //}
+
+                    }
+
+                    return UpdateResult<Session>.Success(
+                               EventTrackingId,
+                               Session
+                           );
+
+                }
+
+                return UpdateResult<Session>.Failed(
+                           EventTrackingId,
+                           Session,
+                           "sessions.TryUpdate(Session.Id, Session, Session) failed!"
+                       );
+
+            }
+
+            return UpdateResult<Session>.Failed(
+                       EventTrackingId,
+                       Session,
+                       "The party identification of the session is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region TryPatchSession       (PartyId, SessionId, SessionPatch, AllowDowngrades = false, ...)
+
+        public async Task<PatchResult<Session>> TryPatchSession(Party_Idv3         PartyId,
+                                                                Session_Id         SessionId,
+                                                                JObject            SessionPatch,
+                                                                Boolean?           AllowDowngrades     = false,
+                                                                Boolean            SkipNotifications   = false,
+                                                                EventTracking_Id?  EventTrackingId     = null,
+                                                                User_Id?           CurrentUserId       = null,
+                                                                CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(PartyId, out var party))
+            {
+
+                if (party.Sessions.TryGetValue(SessionId, out var existingSession))
+                {
+
+                    var patchResult = existingSession.TryPatch(
+                                          SessionPatch,
+                                          AllowDowngrades ?? this.AllowDowngrades ?? false,
+                                          EventTrackingId
+                                      );
+
+                    if (patchResult.IsSuccess &&
+                        patchResult.PatchedData is not null)
+                    {
+
+                        var updateSessionResult = await UpdateSession(
+                                                            patchResult.PatchedData,
+                                                            AllowDowngrades,
+                                                            SkipNotifications,
+                                                            EventTrackingId,
+                                                            CurrentUserId,
+                                                            CancellationToken
+                                                        );
+
+                        if (updateSessionResult.IsFailed)
+                            return PatchResult<Session>.Failed(
+                                       EventTrackingId,
+                                       existingSession,
+                                       "Could not update the session: " + updateSessionResult.ErrorResponse
+                                   );
+
+                    }
+
+                    return patchResult;
+
+                }
+
+                return PatchResult<Session>.Failed(
+                           EventTrackingId,
+                           $"The given session '{SessionId}' is unknown!"
+                       );
+
+            }
+
+            return PatchResult<Session>.Failed(
+                       EventTrackingId,
+                       $"The party identification '{PartyId}' of the session is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #endregion
+
+        // Tokens
+
+        #region CDRs
+
+        #region Events
+
+        public delegate Task OnCDRAddedDelegate(CDR CDR);
+
+        public event OnCDRAddedDelegate? OnCDRAdded;
+
+        public delegate Task OnCDRChangedDelegate(CDR CDR);
+
+        public event OnCDRChangedDelegate? OnCDRChanged;
+
+        #endregion
+
+
+        #region AddCDR            (CDR, ...)
+
+        public async Task<AddResult<CDR>>
+
+            AddCDR(CDR                CDR,
+                   Boolean            SkipNotifications   = false,
+                   EventTracking_Id?  EventTrackingId     = null,
+                   User_Id?           CurrentUserId       = null,
+                   CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(CDR.PartyId, out var party))
+            {
+
+                if (party.CDRs.TryAdd(CDR.Id, CDR))
+                {
+
+                    DebugX.Log($"OCPI {Version.String} CDR '{CDR.Id}': '{CDR}' added...");
+
+                    CDR.CommonAPI = this;
+
+                    await LogAsset(
+                              addChargeDetailRecord,
+                              CDR.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomCDRSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomCDRLocationSerializer,
+                                  CustomEnergyMeterSerializer,
+                                  CustomTransparencySoftwareStatusSerializer,
+                                  CustomTransparencySoftwareSerializer,
+                                  CustomDisplayTextSerializer,
+                                  CustomPriceSerializer,
+                                  CustomTariffElementSerializer,
+                                  CustomPriceComponentSerializer,
+                                  CustomTariffRestrictionsSerializer,
+                                  CustomEnergyMixSerializer,
+                                  CustomEnergySourceSerializer,
+                                  CustomEnvironmentalImpactSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomSignedDataSerializer,
+                                  CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnCDRAddedLocal = OnCDRAdded;
+                        if (OnCDRAddedLocal is not null)
+                        {
+                            try
+                            {
+                                await OnCDRAddedLocal(CDR);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnCDRAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return AddResult<CDR>.Success(
+                               EventTrackingId,
+                               CDR
+                           );
+
+                }
+
+                return AddResult<CDR>.Failed(
+                           EventTrackingId,
+                           CDR,
+                           "The given charge deatil record already exists!"
+                       );
+
+            }
+
+            return AddResult<CDR>.Failed(
+                       EventTrackingId,
+                       CDR,
+                       "The party identification of the charge deatil record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region AddCDRIfNotExists (CDR, ...)
+
+        public async Task<AddResult<CDR>>
+
+            AddCDRIfNotExists(CDR                CDR,
+                              Boolean            SkipNotifications   = false,
+                              EventTracking_Id?  EventTrackingId     = null,
+                              User_Id?           CurrentUserId       = null,
+                              CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(CDR.PartyId, out var party))
+            {
+
+                if (party.CDRs.TryAdd(CDR.Id, CDR))
+                {
+
+                    DebugX.Log($"OCPI {Version.String} CDR '{CDR.Id}': '{CDR}' added...");
+
+                    CDR.CommonAPI = this;
+
+                    await LogAsset(
+                              addChargeDetailRecord,
+                              CDR.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomCDRSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomCDRLocationSerializer,
+                                  CustomEnergyMeterSerializer,
+                                  CustomTransparencySoftwareStatusSerializer,
+                                  CustomTransparencySoftwareSerializer,
+                                  CustomDisplayTextSerializer,
+                                  CustomPriceSerializer,
+                                  CustomTariffElementSerializer,
+                                  CustomPriceComponentSerializer,
+                                  CustomTariffRestrictionsSerializer,
+                                  CustomEnergyMixSerializer,
+                                  CustomEnergySourceSerializer,
+                                  CustomEnvironmentalImpactSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomSignedDataSerializer,
+                                  CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnCDRAddedLocal = OnCDRAdded;
+                        if (OnCDRAddedLocal is not null)
+                        {
+                            try
+                            {
+                                await OnCDRAddedLocal(CDR);
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddCDR), " ", nameof(OnCDRAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                    }
+
+                    return AddResult<CDR>.Success(
+                               EventTrackingId,
+                               CDR
+                           );
+
+                }
+
+                return AddResult<CDR>.NoOperation(
+                           EventTrackingId,
+                           CDR,
+                           "The given charge deatil record already exists."
+                       );
+
+            }
+
+            return AddResult<CDR>.Failed(
+                       EventTrackingId,
+                       CDR,
+                       "The party identification of the charge deatil record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region AddOrUpdateCDR    (CDR,                          AllowDowngrades = false, ...)
+
+        public async Task<AddOrUpdateResult<CDR>>
+
+            AddOrUpdateCDR(CDR                CDR,
+                           Boolean?           AllowDowngrades     = false,
+                           Boolean            SkipNotifications   = false,
+                           EventTracking_Id?  EventTrackingId     = null,
+                           User_Id?           CurrentUserId       = null,
+                           CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(CDR.PartyId, out var party))
+            {
+
+                #region Update an existing charge deatil record
+
+                if (party.CDRs.TryGetValue(CDR.Id, out var existingCDR))
+                {
+
+                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                        CDR.LastUpdated <= existingCDR.LastUpdated)
+                    {
+                        return AddOrUpdateResult<CDR>.Failed(
+                                   EventTrackingId, CDR,
+                                   "The 'lastUpdated' timestamp of the new charge deatil record must be newer then the timestamp of the existing charge deatil record!"
+                               );
+                    }
+
+                    //if (CDR.LastUpdated.ToIso8601() == existingCDR.LastUpdated.ToIso8601())
+                    //    return AddOrUpdateResult<CDR>.NoOperation(CDR,
+                    //                                                   "The 'lastUpdated' timestamp of the new charge deatil record must be newer then the timestamp of the existing charge deatil record!");
+
+                    var aa = existingCDR.Equals(existingCDR);
+
+                    if (party.CDRs.TryUpdate(CDR.Id,
+                                                  CDR,
+                                                  existingCDR))
+                    {
+
+                        CDR.CommonAPI = this;
+
+                        await LogAsset(
+                                  addOrUpdateChargeDetailRecord,
+                                  CDR.ToJSON(
+                                      true,
+                                      true,
+                                      true,
+                                      true,
+                                      CustomCDRSerializer,
+                                      CustomCDRTokenSerializer,
+                                      CustomCDRLocationSerializer,
+                                      CustomEnergyMeterSerializer,
+                                      CustomTransparencySoftwareStatusSerializer,
+                                      CustomTransparencySoftwareSerializer,
+                                      CustomDisplayTextSerializer,
+                                      CustomPriceSerializer,
+                                      CustomTariffElementSerializer,
+                                      CustomPriceComponentSerializer,
+                                      CustomTariffRestrictionsSerializer,
+                                      CustomEnergyMixSerializer,
+                                      CustomEnergySourceSerializer,
+                                      CustomEnvironmentalImpactSerializer,
+                                      CustomChargingPeriodSerializer,
+                                      CustomCDRDimensionSerializer,
+                                      CustomSignedDataSerializer,
+                                      CustomSignedValueSerializer
+                                  ),
+                                  EventTrackingId,
+                                  CurrentUserId,
+                                  CancellationToken
+                              );
+
+                        if (!SkipNotifications)
+                        {
+
+                            var OnCDRChangedLocal = OnCDRChanged;
+                            if (OnCDRChangedLocal is not null)
+                            {
+                                try
+                                {
+                                    OnCDRChangedLocal(CDR).Wait();
+                                }
+                                catch (Exception e)
+                                {
+                                    DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnCDRChanged), ": ",
+                                                Environment.NewLine, e.Message,
+                                                Environment.NewLine, e.StackTrace ?? "");
+                                }
+                            }
+
+                            //var oldEVSEUIds = new HashSet<EVSE_UId>(existingCDR.EVSEs.Select(evse => evse.UId));
+                            //var newEVSEUIds = new HashSet<EVSE_UId>(CDR.        EVSEs.Select(evse => evse.UId));
+
+                            //foreach (var evseUId in new HashSet<EVSE_UId>(oldEVSEUIds.Union(newEVSEUIds)))
+                            //{
+
+                            //    if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId) && existingCDR.GetEVSE(evseUId)! != CDR.GetEVSE(evseUId)!)
+                            //    {
+                            //        var OnEVSEChangedLocal = OnEVSEChanged;
+                            //        if (OnEVSEChangedLocal is not null)
+                            //        {
+                            //            try
+                            //            {
+                            //                await OnEVSEChangedLocal(existingCDR.GetEVSE(evseUId)!);
+                            //            }
+                            //            catch (Exception e)
+                            //            {
+                            //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnEVSEChanged), ": ",
+                            //                            Environment.NewLine, e.Message,
+                            //                            Environment.NewLine, e.StackTrace ?? "");
+                            //            }
+                            //        }
+                            //    }
+                            //    else if (!oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
+                            //    {
+                            //        var OnEVSEAddedLocal = OnEVSEAdded;
+                            //        if (OnEVSEAddedLocal is not null)
+                            //        {
+                            //            try
+                            //            {
+                            //                await OnEVSEAddedLocal(existingCDR.GetEVSE(evseUId)!);
+                            //            }
+                            //            catch (Exception e)
+                            //            {
+                            //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnEVSEAdded), ": ",
+                            //                            Environment.NewLine, e.Message,
+                            //                            Environment.NewLine, e.StackTrace ?? "");
+                            //            }
+                            //        }
+                            //    }
+                            //    else if ( oldEVSEUIds.Contains(evseUId) && !newEVSEUIds.Contains(evseUId))
+                            //    {
+                            //        var OnEVSERemovedLocal = OnEVSERemoved;
+                            //        if (OnEVSERemovedLocal is not null)
+                            //        {
+                            //            try
+                            //            {
+                            //                await OnEVSERemovedLocal(existingCDR.GetEVSE(evseUId)!);
+                            //            }
+                            //            catch (Exception e)
+                            //            {
+                            //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnEVSERemoved), ": ",
+                            //                            Environment.NewLine, e.Message,
+                            //                            Environment.NewLine, e.StackTrace ?? "");
+                            //            }
+                            //        }
+                            //    }
+
+                            //}
+
+                        }
+
+                        return AddOrUpdateResult<CDR>.Updated(
+                                   EventTrackingId,
+                                   CDR
+                               );
+
+                    }
+
+                    return AddOrUpdateResult<CDR>.Failed(
+                               EventTrackingId,
+                               CDR,
+                               "Updating the given charge deatil record failed!"
+                           );
+
+                }
+
+                #endregion
+
+                #region Add a new charge deatil record
+
+                if (party.CDRs.TryAdd(CDR.Id, CDR))
+                {
+
+                    CDR.CommonAPI = this;
+
+                    await LogAsset(
+                              addOrUpdateChargeDetailRecord,
+                              CDR.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomCDRSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomCDRLocationSerializer,
+                                  CustomEnergyMeterSerializer,
+                                  CustomTransparencySoftwareStatusSerializer,
+                                  CustomTransparencySoftwareSerializer,
+                                  CustomDisplayTextSerializer,
+                                  CustomPriceSerializer,
+                                  CustomTariffElementSerializer,
+                                  CustomPriceComponentSerializer,
+                                  CustomTariffRestrictionsSerializer,
+                                  CustomEnergyMixSerializer,
+                                  CustomEnergySourceSerializer,
+                                  CustomEnvironmentalImpactSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomSignedDataSerializer,
+                                  CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnCDRAddedLocal = OnCDRAdded;
+                        if (OnCDRAddedLocal is not null)
+                        {
+                            try
+                            {
+                                OnCDRAddedLocal(CDR).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnCDRAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                        //var OnEVSEAddedLocal = OnEVSEAdded;
+                        //if (OnEVSEAddedLocal is not null)
+                        //{
+                        //    try
+                        //    {
+                        //        foreach (var evse in CDR.EVSEs)
+                        //            await OnEVSEAddedLocal(evse);
+                        //    }
+                        //    catch (Exception e)
+                        //    {
+                        //        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(AddOrUpdateCDR), " ", nameof(OnEVSEAdded), ": ",
+                        //                    Environment.NewLine, e.Message,
+                        //                    Environment.NewLine, e.StackTrace ?? "");
+                        //    }
+                        //}
+
+                    }
+
+                    return AddOrUpdateResult<CDR>.Created(
+                               EventTrackingId,
+                               CDR
+                           );
+
+                }
+
+                #endregion
+
+                return AddOrUpdateResult<CDR>.Failed(
+                           EventTrackingId,
+                           CDR,
+                           "Adding the given charge deatil record failed because of concurrency issues!"
+                       );
+
+            }
+
+            return AddOrUpdateResult<CDR>.Failed(
+                       EventTrackingId,
+                       CDR,
+                       "The party identification of the charge deatil record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region UpdateCDR         (CDR,                          AllowDowngrades = false, ...)
+
+        public async Task<UpdateResult<CDR>>
+
+            UpdateCDR(CDR                CDR,
+                      Boolean?           AllowDowngrades     = false,
+                      Boolean            SkipNotifications   = false,
+                      EventTracking_Id?  EventTrackingId     = null,
+                      User_Id?           CurrentUserId       = null,
+                      CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(CDR.PartyId, out var party))
+            {
+
+                if (!party.CDRs.TryGetValue(CDR.Id, out var existingCDR))
+                    return UpdateResult<CDR>.Failed(
+                               EventTrackingId,
+                               CDR,
+                               $"The given charge deatil record identification '{CDR.Id}' is unknown!"
+                           );
+
+                #region Validate AllowDowngrades
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    CDR.LastUpdated <= existingCDR.LastUpdated)
+                {
+
+                    return UpdateResult<CDR>.Failed(
+                                EventTrackingId, CDR,
+                                "The 'lastUpdated' timestamp of the new charging charge deatil record must be newer then the timestamp of the existing charge deatil record!"
+                            );
+
+                }
+
+                #endregion
+
+
+                if (party.CDRs.TryUpdate(CDR.Id,
+                                         CDR,
+                                         existingCDR))
+                {
+
+                    CDR.CommonAPI = this;
+
+                    await LogAsset(
+                              updateChargeDetailRecord,
+                              CDR.ToJSON(
+                                  true,
+                                  true,
+                                  true,
+                                  true,
+                                  CustomCDRSerializer,
+                                  CustomCDRTokenSerializer,
+                                  CustomCDRLocationSerializer,
+                                  CustomEnergyMeterSerializer,
+                                  CustomTransparencySoftwareStatusSerializer,
+                                  CustomTransparencySoftwareSerializer,
+                                  CustomDisplayTextSerializer,
+                                  CustomPriceSerializer,
+                                  CustomTariffElementSerializer,
+                                  CustomPriceComponentSerializer,
+                                  CustomTariffRestrictionsSerializer,
+                                  CustomEnergyMixSerializer,
+                                  CustomEnergySourceSerializer,
+                                  CustomEnvironmentalImpactSerializer,
+                                  CustomChargingPeriodSerializer,
+                                  CustomCDRDimensionSerializer,
+                                  CustomSignedDataSerializer,
+                                  CustomSignedValueSerializer
+                              ),
+                              EventTrackingId,
+                              CurrentUserId,
+                              CancellationToken
+                          );
+
+                    if (!SkipNotifications)
+                    {
+
+                        var OnCDRChangedLocal = OnCDRChanged;
+                        if (OnCDRChangedLocal is not null)
+                        {
+                            try
+                            {
+                                OnCDRChangedLocal(CDR).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnCDRChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace ?? "");
+                            }
+                        }
+
+                        //var oldEVSEUIds = new HashSet<EVSE_UId>(existingCDR.EVSEs.Select(evse => evse.UId));
+                        //var newEVSEUIds = new HashSet<EVSE_UId>(CDR.        EVSEs.Select(evse => evse.UId));
+
+                        //foreach (var evseUId in new HashSet<EVSE_UId>(oldEVSEUIds.Union(newEVSEUIds)))
+                        //{
+
+                        //    if      ( oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
+                        //    {
+
+                        //        if (existingCDR.TryGetEVSE(evseUId, out var oldEVSE) &&
+                        //            CDR.        TryGetEVSE(evseUId, out var newEVSE) &&
+                        //            oldEVSE is not null &&
+                        //            newEVSE is not null)
+                        //        {
+
+                        //            if (oldEVSE != newEVSE)
+                        //            {
+                        //                var OnEVSEChangedLocal = OnEVSEChanged;
+                        //                if (OnEVSEChangedLocal is not null)
+                        //                {
+                        //                    try
+                        //                    {
+                        //                        await OnEVSEChangedLocal(newEVSE);
+                        //                    }
+                        //                    catch (Exception e)
+                        //                    {
+                        //                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnEVSEChanged), ": ",
+                        //                                    Environment.NewLine, e.Message,
+                        //                                    Environment.NewLine, e.StackTrace ?? "");
+                        //                    }
+                        //                }
+                        //            }
+
+                        //            if (oldEVSE.Status != newEVSE.Status)
+                        //            {
+                        //                var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                        //                if (OnEVSEStatusChangedLocal is not null)
+                        //                {
+                        //                    try
+                        //                    {
+                        //                        await OnEVSEStatusChangedLocal(Timestamp.Now,
+                        //                                                       newEVSE,
+                        //                                                       newEVSE.Status,
+                        //                                                       oldEVSE.Status);
+                        //                    }
+                        //                    catch (Exception e)
+                        //                    {
+                        //                        DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnEVSEChanged), ": ",
+                        //                                    Environment.NewLine, e.Message,
+                        //                                    Environment.NewLine, e.StackTrace ?? "");
+                        //                    }
+                        //                }
+                        //            }
+
+                        //        }
+
+                        //    }
+                        //    else if (!oldEVSEUIds.Contains(evseUId) &&  newEVSEUIds.Contains(evseUId))
+                        //    {
+
+                        //        var OnEVSEAddedLocal = OnEVSEAdded;
+                        //        if (OnEVSEAddedLocal is not null)
+                        //        {
+                        //            try
+                        //            {
+                        //                if (CDR.TryGetEVSE(evseUId, out var evse) &&
+                        //                    evse is not null)
+                        //                {
+                        //                    await OnEVSEAddedLocal(evse);
+                        //                }
+                        //            }
+                        //            catch (Exception e)
+                        //            {
+                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnEVSEAdded), ": ",
+                        //                            Environment.NewLine, e.Message,
+                        //                            Environment.NewLine, e.StackTrace ?? "");
+                        //            }
+                        //        }
+
+                        //        var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                        //        if (OnEVSEStatusChangedLocal is not null)
+                        //        {
+                        //            try
+                        //            {
+                        //                if (CDR.TryGetEVSE(evseUId, out var evse) &&
+                        //                    evse is not null)
+                        //                {
+                        //                    await OnEVSEStatusChangedLocal(Timestamp.Now,
+                        //                                                   evse,
+                        //                                                   evse.Status);
+                        //                }
+                        //            }
+                        //            catch (Exception e)
+                        //            {
+                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnEVSEChanged), ": ",
+                        //                            Environment.NewLine, e.Message,
+                        //                            Environment.NewLine, e.StackTrace ?? "");
+                        //            }
+                        //        }
+
+                        //    }
+                        //    else if ( oldEVSEUIds.Contains(evseUId) && !newEVSEUIds.Contains(evseUId))
+                        //    {
+
+                        //        var OnEVSERemovedLocal = OnEVSERemoved;
+                        //        if (OnEVSERemovedLocal is not null)
+                        //        {
+                        //            try
+                        //            {
+                        //                if (existingCDR.TryGetEVSE(evseUId, out var evse) &&
+                        //                    evse is not null)
+                        //                {
+                        //                    await OnEVSERemovedLocal(evse);
+                        //                }
+                        //            }
+                        //            catch (Exception e)
+                        //            {
+                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnEVSERemoved), ": ",
+                        //                            Environment.NewLine, e.Message,
+                        //                            Environment.NewLine, e.StackTrace ?? "");
+                        //            }
+                        //        }
+
+                        //        var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                        //        if (OnEVSEStatusChangedLocal is not null)
+                        //        {
+                        //            try
+                        //            {
+                        //                if (existingCDR.TryGetEVSE(evseUId, out var oldEVSE) &&
+                        //                    CDR.        TryGetEVSE(evseUId, out var newEVSE) &&
+                        //                    oldEVSE is not null &&
+                        //                    newEVSE is not null)
+                        //                {
+                        //                    await OnEVSEStatusChangedLocal(Timestamp.Now,
+                        //                                                   oldEVSE,
+                        //                                                   newEVSE.Status,
+                        //                                                   oldEVSE.Status);
+                        //                }
+                        //            }
+                        //            catch (Exception e)
+                        //            {
+                        //                DebugX.LogT($"OCPI {Version.String} {nameof(CommonAPI)} ", nameof(UpdateCDR), " ", nameof(OnEVSEChanged), ": ",
+                        //                            Environment.NewLine, e.Message,
+                        //                            Environment.NewLine, e.StackTrace ?? "");
+                        //            }
+                        //        }
+
+                        //    }
+
+                        //}
+
+                    }
+
+                    return UpdateResult<CDR>.Success(
+                               EventTrackingId,
+                               CDR
+                           );
+
+                }
+
+                return UpdateResult<CDR>.Failed(
+                           EventTrackingId,
+                           CDR,
+                           "charge deatil records.TryUpdate(CDR.Id, CDR, CDR) failed!"
+                       );
+
+            }
+
+            return UpdateResult<CDR>.Failed(
+                       EventTrackingId,
+                       CDR,
+                       "The party identification of the charge deatil record is unknown!"
+                   );
+
+        }
+
+        #endregion
+
+        #region TryPatchCDR       (PartyId, CDRId, CDRPatch, AllowDowngrades = false, ...)
+
+        public async Task<PatchResult<CDR>> TryPatchCDR(Party_Idv3         PartyId,
+                                                        CDR_Id             CDRId,
+                                                        JObject            CDRPatch,
+                                                        Boolean?           AllowDowngrades     = false,
+                                                        Boolean            SkipNotifications   = false,
+                                                        EventTracking_Id?  EventTrackingId     = null,
+                                                        User_Id?           CurrentUserId       = null,
+                                                        CancellationToken  CancellationToken   = default)
+
+        {
+
+            EventTrackingId ??= EventTracking_Id.New;
+
+            if (parties.TryGetValue(PartyId, out var party))
+            {
+
+                if (party.CDRs.TryGetValue(CDRId, out var existingCDR))
+                {
+
+                    var patchResult = existingCDR.TryPatch(
+                                          CDRPatch,
+                                          AllowDowngrades ?? this.AllowDowngrades ?? false,
+                                          EventTrackingId
+                                      );
+
+                    if (patchResult.IsSuccess &&
+                        patchResult.PatchedData is not null)
+                    {
+
+                        var updateCDRResult = await UpdateCDR(
+                                                        patchResult.PatchedData,
+                                                        AllowDowngrades,
+                                                        SkipNotifications,
+                                                        EventTrackingId,
+                                                        CurrentUserId,
+                                                        CancellationToken
+                                                    );
+
+                        if (updateCDRResult.IsFailed)
+                            return PatchResult<CDR>.Failed(
+                                       EventTrackingId,
+                                       existingCDR,
+                                       "Could not update the charge deatil record: " + updateCDRResult.ErrorResponse
+                                   );
+
+                    }
+
+                    return patchResult;
+
+                }
+
+                return PatchResult<CDR>.Failed(
+                           EventTrackingId,
+                           $"The given charge deatil record '{CDRId}' is unknown!"
+                       );
+
+            }
+
+            return PatchResult<CDR>.Failed(
+                       EventTrackingId,
+                       $"The party identification '{PartyId}' of the charge deatil record is unknown!"
                    );
 
         }

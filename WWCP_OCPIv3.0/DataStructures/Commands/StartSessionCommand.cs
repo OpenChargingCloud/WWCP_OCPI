@@ -356,7 +356,11 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
             var json = JSONObject.Create(
 
-                                 new JProperty("token",                    Token.                 ToJSON(CustomTokenSerializer,
+                                 new JProperty("token",                    Token.                 ToJSON(true,
+                                                                                                         true,
+                                                                                                         true,
+                                                                                                         true,
+                                                                                                         CustomTokenSerializer,
                                                                                                          CustomEnergyContractSerializer)),
 
                                  new JProperty("location_id",              LocationId.            ToString()),

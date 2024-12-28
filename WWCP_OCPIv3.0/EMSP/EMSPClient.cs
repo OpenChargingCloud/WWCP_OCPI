@@ -2980,7 +2980,7 @@ namespace cloud.charging.open.protocols.OCPIv3_0.EMSP.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     remoteURL.Value.Path + Token.CountryCode.ToString() +
+                                                                                     remoteURL.Value.Path + //Token.CountryCode.ToString() +
                                                                                                             Token.PartyId.    ToString() +
                                                                                                             Token.Id.         ToString(),
                                                                                      RequestBuilder: requestBuilder => {

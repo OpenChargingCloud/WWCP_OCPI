@@ -132,7 +132,61 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Constructor(s)
 
-        #region (internal) Connector(ParentEVSE, Id, Standard, ... )
+        #region Connector(...)
+
+        /// <summary>
+        /// A connector is the socket or cable available for the electric vehicle to make use of.
+        /// </summary>
+        /// <param name="Id">Identifier of the connector within the EVSE.</param>
+        /// <param name="Standard">The standard of the installed connector.</param>
+        /// <param name="Format">The format (socket/cable) of the installed connector.</param>
+        /// <param name="PowerType">The type of power at the connector.</param>
+        /// <param name="MaxVoltage">The maximum voltage of the connector (line to neutral for AC_3_PHASE).</param>
+        /// <param name="MaxAmperage">The maximum amperage of the connector.</param>
+        /// <param name="CableLength">The length of the attached cable in centimeters. Only applicable if the value of the format field is CABLE.</param>
+        /// <param name="MaxElectricPower">The maximum electric power that can be delivered by this connector.</param>
+        /// <param name="TermsAndConditions">An optional URL to the operator's terms and conditions.</param>
+        /// 
+        /// <param name="Created">The optional timestamp when this connector was created.</param>
+        /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        public Connector(Connector_Id                                 Id,
+                         ConnectorType                                Standard,
+                         ConnectorFormats                             Format,
+                         PowerTypes                                   PowerType,
+                         Volt                                         MaxVoltage,
+                         Ampere                                       MaxAmperage,
+                         Meter?                                       CableLength                 = null,
+                         Watt?                                        MaxElectricPower            = null,
+                         URL?                                         TermsAndConditions          = null,
+                         IEnumerable<ConnectorCapability>?            Capabilities                = null,
+
+                         DateTime?                                    Created                     = null,
+                         DateTime?                                    LastUpdated                 = null,
+                         CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
+
+            : this(null,
+
+                   Id,
+                   Standard,
+                   Format,
+                   PowerType,
+                   MaxVoltage,
+                   MaxAmperage,
+                   CableLength,
+                   MaxElectricPower,
+                   TermsAndConditions,
+                   Capabilities,
+
+                   Created,
+                   LastUpdated,
+                   CustomConnectorSerializer)
+
+        { }
+
+        #endregion
+
+        #region (internal) Connector(ParentEVSE, ... )
 
         /// <summary>
         /// A connector is the socket or cable available for the electric vehicle to make use of.
@@ -208,60 +262,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
             }
 
         }
-
-        #endregion
-
-        #region Connector(Id, Standard, ... )
-
-        /// <summary>
-        /// A connector is the socket or cable available for the electric vehicle to make use of.
-        /// </summary>
-        /// <param name="Id">Identifier of the connector within the EVSE.</param>
-        /// <param name="Standard">The standard of the installed connector.</param>
-        /// <param name="Format">The format (socket/cable) of the installed connector.</param>
-        /// <param name="PowerType">The type of power at the connector.</param>
-        /// <param name="MaxVoltage">The maximum voltage of the connector (line to neutral for AC_3_PHASE).</param>
-        /// <param name="MaxAmperage">The maximum amperage of the connector.</param>
-        /// <param name="CableLength">The length of the attached cable in centimeters. Only applicable if the value of the format field is CABLE.</param>
-        /// <param name="MaxElectricPower">The maximum electric power that can be delivered by this connector.</param>
-        /// <param name="TermsAndConditions">An optional URL to the operator's terms and conditions.</param>
-        /// 
-        /// <param name="Created">The optional timestamp when this connector was created.</param>
-        /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        public Connector(Connector_Id                                 Id,
-                         ConnectorType                                Standard,
-                         ConnectorFormats                             Format,
-                         PowerTypes                                   PowerType,
-                         Volt                                         MaxVoltage,
-                         Ampere                                       MaxAmperage,
-                         Meter?                                       CableLength                 = null,
-                         Watt?                                        MaxElectricPower            = null,
-                         URL?                                         TermsAndConditions          = null,
-                         IEnumerable<ConnectorCapability>?            Capabilities                = null,
-
-                         DateTime?                                    Created                     = null,
-                         DateTime?                                    LastUpdated                 = null,
-                         CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
-
-            : this(null,
-
-                   Id,
-                   Standard,
-                   Format,
-                   PowerType,
-                   MaxVoltage,
-                   MaxAmperage,
-                   CableLength,
-                   MaxElectricPower,
-                   TermsAndConditions,
-                   Capabilities,
-
-                   Created,
-                   LastUpdated,
-                   CustomConnectorSerializer)
-
-        { }
 
         #endregion
 

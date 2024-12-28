@@ -166,7 +166,97 @@ namespace cloud.charging.open.protocols.OCPIv3_0
 
         #region Constructor(s)
 
-        #region (internal) EVSE(ParentLocation, UId, Presence, Connectors, Parking, ... )
+        #region EVSE(...)
+
+        /// <summary>
+        /// Create a new EVSE.
+        /// </summary>
+        /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
+        /// <param name="Presence">Whether this EVSE is currently physically present, or only planned for the future, or already removed.</param>
+        /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
+        /// <param name="Parking">The description of the available parking for the EVSE.</param>
+        /// 
+        /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
+        /// <param name="Status">The optional current status of the EVSE. Since OCPI v3.0 this is a vendor extension!</param>
+        /// <param name="StatusSchedule">An enumeration of planned future status of the EVSE.</param>
+        /// <param name="PhysicalReference">An optional number/string printed on the outside of the EVSE for visual identification.</param>
+        /// <param name="Images">An optional enumeration of images related to the EVSE such as photos or logos.</param>
+        /// <param name="CalibrationInfoURL"></param>
+        /// <param name="EnergyMeter">An optional energy meter, e.g. for the German calibration law.</param>
+        /// 
+        /// <param name="Created">The optional timestamp when this EVSE was created.</param>
+        /// <param name="LastUpdated">The optional timestamp when this EVSE was last updated (or created).</param>
+        /// 
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
+        /// <param name="CustomParkingRestrictionSerializer">A delegate to serialize custom parking restriction JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        public EVSE(EVSE_UId                                                      UId,
+                    PresenceStatus                                                Presence,
+                    IEnumerable<Connector>                                        Connectors,
+                    Parking                                                       Parking,
+
+                    EVSE_Id?                                                      EVSEId                                       = null,
+                    StatusType?                                                   Status                                       = null,
+                    IEnumerable<StatusSchedule>?                                  StatusSchedule                               = null,
+                    String?                                                       PhysicalReference                            = null,
+                    IEnumerable<Image>?                                           Images                                       = null,
+                    URL?                                                          CalibrationInfoURL                           = null,
+                    EnergyMeter?                                                  EnergyMeter                                  = null,
+
+                    DateTime?                                                     Created                                      = null,
+                    DateTime?                                                     LastUpdated                                  = null,
+
+                    CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+                    CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                    CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
+                    CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
+                    CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
+                    CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                    CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                    CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                    CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                    CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
+
+            : this(null,
+                   UId,
+                   Presence,
+                   Connectors,
+                   Parking,
+
+                   EVSEId,
+                   Status,
+                   StatusSchedule,
+                   PhysicalReference,
+                   Images,
+                   CalibrationInfoURL,
+                   EnergyMeter,
+
+                   Created,
+                   LastUpdated,
+
+                   CustomEVSESerializer,
+                   CustomConnectorSerializer,
+                   CustomParkingSerializer,
+                   CustomParkingRestrictionSerializer,
+                   CustomImageSerializer,
+                   CustomStatusScheduleSerializer,
+                   CustomEnergyMeterSerializer,
+                   CustomTransparencySoftwareStatusSerializer,
+                   CustomTransparencySoftwareSerializer,
+                   CustomDisplayTextSerializer)
+
+            { }
+
+        #endregion
+
+        #region (internal) EVSE(ParentLocation, ... )
 
         /// <summary>
         /// Create a new EVSE.
@@ -264,96 +354,6 @@ namespace cloud.charging.open.protocols.OCPIv3_0
                                                          CustomDisplayTextSerializer);
 
         }
-
-        #endregion
-
-        #region EVSE(UId, Presence, Connectors, Parking, ... )
-
-        /// <summary>
-        /// Create a new EVSE.
-        /// </summary>
-        /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
-        /// <param name="Presence">Whether this EVSE is currently physically present, or only planned for the future, or already removed.</param>
-        /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
-        /// <param name="Parking">The description of the available parking for the EVSE.</param>
-        /// 
-        /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
-        /// <param name="Status">The optional current status of the EVSE. Since OCPI v3.0 this is a vendor extension!</param>
-        /// <param name="StatusSchedule">An enumeration of planned future status of the EVSE.</param>
-        /// <param name="PhysicalReference">An optional number/string printed on the outside of the EVSE for visual identification.</param>
-        /// <param name="Images">An optional enumeration of images related to the EVSE such as photos or logos.</param>
-        /// <param name="CalibrationInfoURL"></param>
-        /// <param name="EnergyMeter">An optional energy meter, e.g. for the German calibration law.</param>
-        /// 
-        /// <param name="Created">The optional timestamp when this EVSE was created.</param>
-        /// <param name="LastUpdated">The optional timestamp when this EVSE was last updated (or created).</param>
-        /// 
-        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomParkingSerializer">A delegate to serialize custom parking JSON objects.</param>
-        /// <param name="CustomParkingRestrictionSerializer">A delegate to serialize custom parking restriction JSON objects.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
-        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
-        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
-        public EVSE(EVSE_UId                                                      UId,
-                    PresenceStatus                                                Presence,
-                    IEnumerable<Connector>                                        Connectors,
-                    Parking                                                       Parking,
-
-                    EVSE_Id?                                                      EVSEId                                       = null,
-                    StatusType?                                                   Status                                       = null,
-                    IEnumerable<StatusSchedule>?                                  StatusSchedule                               = null,
-                    String?                                                       PhysicalReference                            = null,
-                    IEnumerable<Image>?                                           Images                                       = null,
-                    URL?                                                          CalibrationInfoURL                           = null,
-                    EnergyMeter?                                                  EnergyMeter                                  = null,
-
-                    DateTime?                                                     Created                                      = null,
-                    DateTime?                                                     LastUpdated                                  = null,
-
-                    CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
-                    CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
-                    CustomJObjectSerializerDelegate<Parking>?                     CustomParkingSerializer                      = null,
-                    CustomJObjectSerializerDelegate<ParkingRestriction>?          CustomParkingRestrictionSerializer           = null,
-                    CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
-                    CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
-                    CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
-                    CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                    CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                    CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null)
-
-            : this(null,
-                   UId,
-                   Presence,
-                   Connectors,
-                   Parking,
-
-                   EVSEId,
-                   Status,
-                   StatusSchedule,
-                   PhysicalReference,
-                   Images,
-                   CalibrationInfoURL,
-                   EnergyMeter,
-
-                   Created,
-                   LastUpdated,
-
-                   CustomEVSESerializer,
-                   CustomConnectorSerializer,
-                   CustomParkingSerializer,
-                   CustomParkingRestrictionSerializer,
-                   CustomImageSerializer,
-                   CustomStatusScheduleSerializer,
-                   CustomEnergyMeterSerializer,
-                   CustomTransparencySoftwareStatusSerializer,
-                   CustomTransparencySoftwareSerializer,
-                   CustomDisplayTextSerializer)
-
-            { }
 
         #endregion
 
